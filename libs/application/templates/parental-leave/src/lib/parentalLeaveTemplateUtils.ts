@@ -12,10 +12,10 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   requiresOtherParentApproval,
+  residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { disableResidenceGrantApplication } from './answerValidationSections/utils'
 
 export function allEmployersHaveApproved(context: ApplicationContext) {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -89,6 +89,11 @@ export function findActionName(context: ApplicationContext) {
   }
 
   return undefined
+}
+
+export const disableResidenceGrantApplication = (dateOfBirth: string) => {
+  if (!residentGrantIsOpenForApplication(dateOfBirth)) return false
+  return true
 }
 
 export function hasDateOfBirth(context: ApplicationContext) {

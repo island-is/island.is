@@ -820,10 +820,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+
   const employerLastSixMonths = getValueViaPath(
     answers,
     'employerLastSixMonths',
   ) as YesOrNo
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -1004,6 +1009,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUsage,
     employers,
     employerLastSixMonths,
+    isNotStillEmployed,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -1862,4 +1868,21 @@ export const getChildrenOptions = (application: Application) => {
       subLabel,
     }
   })
+}
+
+// applicant that cannot apply for residence grant: secondary parents, adoption and foster care
+export const showResidenceGrant = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData)
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+  const childrenData = children as unknown as ChildInformation[]
+  if (
+    childrenData?.length &&
+    childrenData[0]?.parentalRelation?.match('primary') &&
+    noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
+    noChildrenFoundTypeOfApplication !== ADOPTION
+  )
+    return true
+  return false
 }

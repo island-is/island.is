@@ -100,7 +100,7 @@ const StateModal = ({
     },
     {
       state: ApplicationState.DATANEEDED,
-      modalHeader: 'Vantar gögn',
+      modalHeader: 'Vantar upplýsingar',
     },
   ]
 

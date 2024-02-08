@@ -52,7 +52,7 @@ auth-admin-web:
             - '/admin'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -156,7 +156,7 @@ identity-server:
             - '/'
   namespace: 'identity-server'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -230,7 +230,7 @@ services-auth-admin-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/backend/liveness'
+      path: '/backend/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -254,7 +254,7 @@ services-auth-admin-api:
             - '/backend'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -307,7 +307,7 @@ services-auth-delegation-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -330,7 +330,7 @@ services-auth-delegation-api:
             - '/'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -389,7 +389,7 @@ services-auth-ids-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -440,7 +440,7 @@ services-auth-ids-api:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -482,7 +482,7 @@ services-auth-personal-representative:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -505,7 +505,7 @@ services-auth-personal-representative:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -543,7 +543,7 @@ services-auth-personal-representative-public:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -574,7 +574,7 @@ services-auth-personal-representative-public:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -630,7 +630,7 @@ services-auth-public-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -657,7 +657,7 @@ services-auth-public-api:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2

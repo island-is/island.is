@@ -788,43 +788,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      // [States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]: {
-      //   entry: 'assignToVMST',
-      //   meta: {
-      //     status: 'inprogress',
-      //     name: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
-      //     actionCard: {
-      //       description: statesMessages.additionalDocumentRequiredDescription,
-      //     },
-      //     lifecycle: pruneAfterDays(970),
-      //     progress: 0.5,
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //           import('../forms/InReviewAdditionalDocumentsRequired').then(
-      //             (val) =>
-      //               Promise.resolve(val.InReviewAdditionalDocumentsRequired),
-      //           ),
-      //         read: 'all',
-      //         write: 'all',
-      //       },
-      //       {
-      //         id: Roles.ORGINISATION_REVIEWER,
-      //         formLoader: () =>
-      //           import('../forms/InReview').then((val) =>
-      //             Promise.resolve(val.InReview),
-      //           ),
-      //         write: 'all',
-      //       },
-      //     ],
-      //   },
-      //   on: {
-      //     [DefaultEvents.EDIT]: {
-      //       target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
-      //     },
-      //   },
-      // },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
         entry: 'assignToVMST',
         exit: 'setActionName',
@@ -1021,40 +984,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
-      // [States.RECEIVED]: {
-      //   meta: {
-      //     name: States.RECEIVED,
-      //     actionCard: {
-      //       description: statesMessages.receivedDescription,
-      //     },
-      //     lifecycle: DEPRECATED_DefaultStateLifeCycle,
-      //     progress: 0.8,
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //         import('../forms/InReview').then((val) =>
-      //         Promise.resolve(val.InReview),
-      //         ),
-      //         read: 'all',
-      //       },
-      //       {
-      //         id: Roles.ORGINISATION_REVIEWER,
-      //         formLoader: () =>
-      //         import('../forms/InReview').then((val) =>
-      //         Promise.resolve(val.InReview),
-      //         ),
-      //         write: 'all',
-      //       },
-      //     ],
-      //   },
-      //   on: {
-      //     ADDITIONALDOCUMENTSREQUIRED: { target: States.ADDITIONAL_DOCUMENTS_REQUIRED },
-      //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
-      //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-      //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS },
-      //   },
-      // },
       [States.APPROVED]: {
         entry: ['assignToVMST', 'removePreviousState'],
         exit: 'setPreviousState',
@@ -1266,8 +1195,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -1355,8 +1284,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -1498,8 +1427,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -1589,8 +1518,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',

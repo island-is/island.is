@@ -74,7 +74,6 @@ export enum States {
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
-  INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED = 'inReviewAdditionalDocumentsRequired',
 
   APPROVED = 'approved',
   CLOSED = 'closed',
@@ -96,8 +95,6 @@ export enum States {
 
 export enum AnswerValidationConstants {
   EMPLOYER = 'employer',
-  FILEUPLOAD = 'fileUpload',
-  PAYMENTS = 'payments',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
   // When attempting to continue from the periods repeater main screen
@@ -107,7 +104,6 @@ export enum AnswerValidationConstants {
   // the repeater sends all the periods saved in 'periods'
   // to this validator, which will validate the latest one
   VALIDATE_LATEST_PERIOD = 'periods',
-  RESIDENCE_GRANT = 'residenceGrant',
   EMPLOYERS = 'employers',
 }
 
