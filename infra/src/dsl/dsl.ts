@@ -324,6 +324,12 @@ export class ServiceBuilder<ServiceType extends string> {
   db(): this
   db(postgres: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
+    // Strip -worker and -job postfixes from database name
+    for (const postfix of ['-worker', '-job']) {
+      if (postgres?.name?.endsWith(postfix)) {
+        postgres.name = postgres.name.replace(postfix, '')
+      }
+    }
     this.serviceDef.postgres = this.postrgesDefaults(postgres ?? {})
     return this
   }
