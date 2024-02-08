@@ -112,15 +112,6 @@ export const mapStatusEnumToStatus = (status?: string) => {
   }
 }
 
-export const isApplicationValid = (applicationContext: ApplicationContext) => {
-  const status = getValueViaPath(
-    applicationContext.application.externalData,
-    'validateApplication.data.type',
-  )
-
-  return status === 'success'
-}
-
 export const mapIdToType = (id?: TypeIds | string) => {
   if (!id) return ''
   switch (id) {

@@ -17,12 +17,10 @@ import {
 import { dataSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
-import { isApplicationValid } from './utils'
 
 export enum ApplicationStates {
   PREREQUISITS = 'prerequisites',
   DRAFT = 'draft',
-  IN_REVIEW = 'inReview',
   COMPLETE = 'complete',
 }
 
@@ -56,9 +54,10 @@ const OJOITemplate: ApplicationTemplate<
     states: {
       [ApplicationStates.PREREQUISITS]: {
         meta: {
-          name: 'Umsókn um stjórnartíðindi',
+          name: general.applicationName.defaultMessage,
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
+          progress: 0.33,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -82,8 +81,9 @@ const OJOITemplate: ApplicationTemplate<
       },
       [ApplicationStates.DRAFT]: {
         meta: {
-          name: '',
-          status: 'draft',
+          name: general.applicationName.defaultMessage,
+          status: 'inprogress',
+          progress: 0.66,
           lifecycle: DefaultStateLifeCycle,
           onEntry: [
             defineTemplateApi({
@@ -97,7 +97,6 @@ const OJOITemplate: ApplicationTemplate<
               order: 2,
             }),
           ],
-          // onExit -> validate
           roles: [
             {
               id: Roles.APPLICANT,
@@ -122,18 +121,15 @@ const OJOITemplate: ApplicationTemplate<
           SUBMIT: [
             {
               target: ApplicationStates.COMPLETE,
-              cond: isApplicationValid,
-            },
-            {
-              target: ApplicationStates.DRAFT,
             },
           ],
         },
       },
       [ApplicationStates.COMPLETE]: {
         meta: {
-          name: '',
+          name: general.applicationName.defaultMessage,
           status: 'completed',
+          progress: 1,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
@@ -142,7 +138,6 @@ const OJOITemplate: ApplicationTemplate<
             action: TemplateApiActions.submitApplication,
             shouldPersistToExternalData: true,
             externalDataId: 'submitApplication',
-            throwOnError: true,
           }),
           roles: [
             {

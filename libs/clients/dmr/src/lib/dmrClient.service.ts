@@ -13,6 +13,7 @@ import {
   JournalAdvertDepartmentsResponse,
   JournalAdvertTypesResponse,
   JournalAdvertsResponse,
+  JournalPostApplicationBody,
 } from '../../gen/fetch'
 
 const BASE_PATH = 'http://localhost:3000/api/v1'
@@ -56,5 +57,18 @@ export class DmrClientService {
     params: JournalControllerCategoriesRequest,
   ): Promise<JournalAdvertCategoriesResponse> {
     return await fetch(`${BASE_PATH}/categories`).then((res) => res.json())
+  }
+
+  public async submitApplication(
+    auth: User,
+    params: JournalPostApplicationBody,
+  ) {
+    return await fetch(`${BASE_PATH}/application`, {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => res.json())
   }
 }

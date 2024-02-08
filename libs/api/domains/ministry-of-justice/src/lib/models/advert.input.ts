@@ -26,3 +26,27 @@ export class QueryParams {
   @Field(() => String, { nullable: true })
   page?: number
 }
+
+@InputType('MinistryOfJusticeSubmitApplicationInput')
+export class SubmitApplicationInput {
+  @Field(() => String)
+  applicationId!: string
+
+  @Field(() => String)
+  department!: string
+
+  @Field(() => String)
+  type!: string
+
+  @Field(() => [String])
+  categories!: string[]
+
+  @Field(() => String)
+  subject!: string
+
+  @Field(() => String)
+  requestedPublicationDate!: string
+
+  @Field(() => String)
+  document!: string
+}

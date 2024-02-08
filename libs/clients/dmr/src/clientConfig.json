@@ -253,6 +253,34 @@
         }
       }
     },
+    "/api/v1/application": {
+      "post": {
+        "operationId": "JournalController_application",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JournalPostApplicationBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Submit a journal advert application",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalPostApplicationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/error": {
       "get": {
         "operationId": "JournalController_error",
@@ -658,6 +686,76 @@
           }
         },
         "required": ["categories", "paging"]
+      },
+      "JournalPostApplicationBody": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string",
+            "description": "Application id",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "department": {
+            "type": "string",
+            "description": "Application selected department id",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "type": {
+            "type": "string",
+            "description": "Application selected type id",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "categories": {
+            "description": "Application selected array of categories ids",
+            "example": [
+              "00000000-0000-0000-0000-000000000000",
+              "11111111-1111-1111-1111-111111111111"
+            ],
+            "nullable": false,
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "subject": {
+            "type": "string",
+            "description": "Subject of the submitted application",
+            "example": "um hundahald í Reykjavíkurborg",
+            "nullable": false
+          },
+          "requestedPublicationDate": {
+            "type": "string",
+            "description": "Requested publication date of the advert in the submitted application",
+            "example": "2006-10-17 00:00:00.0000",
+            "nullable": false
+          },
+          "document": {
+            "type": "string",
+            "description": "Contents of the advert's document in the submitted application (HTML string)",
+            "example": "<p>GJALDSKRÁ um hundahald í Reykjavík</p><div><p>Dagur B. Eggertsson</p></div>",
+            "nullable": false
+          }
+        },
+        "required": [
+          "applicationId",
+          "department",
+          "type",
+          "categories",
+          "subject",
+          "requestedPublicationDate",
+          "document"
+        ]
+      },
+      "JournalPostApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "description": "Return the submitted application",
+            "allOf": [{ "$ref": "#/components/schemas/JournalAdvert" }]
+          }
+        },
+        "required": ["application"]
       }
     }
   }

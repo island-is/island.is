@@ -55,9 +55,9 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
 
   const onSave = (advert: MinistryOfJusticeAdvert) => {
     const newState: typeof state = {
-      type: advert.type.slug,
+      type: advert.type.id,
       title: advert.title,
-      department: advert.department.slug,
+      department: advert.department.id,
       documentContents: advert.document.html ?? '',
       subType: '', // TODO updated values when API is updated
       template: '',
@@ -110,7 +110,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
 
   const typeInternalKey = `${state.department}-${state.type}-${
     typeOptions?.types.length
-      ? typeOptions.types.map((t) => t.slug).join('-')
+      ? typeOptions.types.map((t) => t.id).join('-')
       : ''
   }`
 
@@ -140,7 +140,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             defaultValue={state.department}
             options={departments.data.departments.map((d) => ({
               label: d.title,
-              value: d.slug,
+              value: d.id,
             }))}
             onSelect={(opt) => {
               setState({
@@ -168,7 +168,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             backgroundColor="blue"
             options={typeOptions?.types.map((t) => ({
               label: t.title,
-              value: t.slug,
+              value: t.id,
             }))}
             onSelect={(opt) => {
               const adverb =

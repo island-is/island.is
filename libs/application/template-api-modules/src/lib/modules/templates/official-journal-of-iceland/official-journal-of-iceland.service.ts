@@ -5,6 +5,12 @@ import { User } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { SharedTemplateApiService } from '../../shared'
 import { MinistryOfJusticeService } from '@island.is/api/domains/ministry-of-justice'
+import { TemplateApiModuleActionProps } from '../../../types'
+import { OJOIApplication } from '@island.is/application-templates-official-journal-of-iceland'
+
+type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
+  application: OJOIApplication
+}
 
 @Injectable()
 export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
@@ -21,5 +27,21 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
 
   async types(user: User) {
     return this.ministryOfJusticeService.types(user, {})
+  }
+
+  async submitApplication({ application, auth }: Props) {
+    const { answers } = application
+
+    return this.ministryOfJusticeService.submitApplication(auth, {
+      applicationId: application.id,
+      categories: answers.publishingPreferences.contentCategories.map(
+        (c) => c.value,
+      ),
+      department: answers.advert.department,
+      document: answers.advert.documentContents,
+      requestedPublicationDate: answers.publishingPreferences.date,
+      subject: answers.advert.title,
+      type: answers.advert.type,
+    })
   }
 }

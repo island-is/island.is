@@ -48,7 +48,7 @@ export const PublishingPreferences = ({
         data.ministryOfJusticeCategories.categories.map(
           (c: MinistryOfJusticeAdvertEntity) => ({
             label: c.title,
-            value: c.slug,
+            value: c.id,
           }),
         ),
       )

@@ -1,6 +1,7 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { dataSchema, type answerSchemas } from './dataSchema'
 import { INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
+import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
 
 export const InputFields = {
   prerequisites: {
@@ -97,10 +98,6 @@ export enum AnswerOption {
   NO = 'no',
 }
 
-type MinistryStatusRespnose =
-  | { type: 'success' }
-  | { type: 'error'; reason: string }
-
 export type ErrorSchema = NestedType<answerSchemas>
 
 export interface ExternalData {
@@ -115,15 +112,8 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
-
-  validateApplication: {
-    data: MinistryStatusRespnose
-    date: string
-    status: StatusProvider
-  }
-
   submitApplication: {
-    data: MinistryStatusRespnose
+    data: { advert: MinistryOfJusticeAdvert }
     date: string
     status: StatusProvider
   }

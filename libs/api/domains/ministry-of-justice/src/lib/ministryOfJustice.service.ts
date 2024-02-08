@@ -5,7 +5,11 @@ import {
 } from '@island.is/clients/dmr'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
-import { QueryParams, TypeQueryParams } from './models/advert.input'
+import {
+  QueryParams,
+  SubmitApplicationInput,
+  TypeQueryParams,
+} from './models/advert.input'
 import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
@@ -57,5 +61,9 @@ export class MinistryOfJusticeService {
     }
 
     return response
+  }
+
+  async submitApplication(auth: User, input: SubmitApplicationInput) {
+    return await this.dmrService.submitApplication(auth, input)
   }
 }
