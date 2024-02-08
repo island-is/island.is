@@ -306,6 +306,10 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   migrations(postgres?: PostgresInfo): this {
+    // Inherit DB config
+    if (this.serviceDef.postgres) {
+      postgres = { ...this.serviceDef.postgres, ...postgres }
+    }
     return this.initContainer({
       containers: [{ name: 'migrations', command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres,
@@ -387,6 +391,10 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   private postrgesDefaults = (pg: PostgresInfo): PostgresInfo => {
+    const pgExtensions = [
+      ...(this.serviceDef.initContainers?.postgres?.extensions ?? []),
+      ...(pg.extensions ?? []),
+    ]
     return {
       host: pg.host, // Allows missing host
       username:
@@ -394,10 +402,7 @@ export class ServiceBuilder<ServiceType extends string> {
       passwordSecret:
         pg.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
       name: pg.name ?? postgresIdentifier(this.serviceDef.name),
-      extensions: [
-        ...(this.serviceDef.initContainers?.postgres?.extensions ?? []),
-        ...(pg.extensions ?? []),
-      ],
+      extensions: pgExtensions.length > 0 ? pgExtensions : undefined,
     }
   }
 }
