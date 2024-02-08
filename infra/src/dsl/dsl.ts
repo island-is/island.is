@@ -353,7 +353,8 @@ export class ServiceBuilder<ServiceType extends string> {
   private postrgesDefaults = (pg: PostgresInfo): PostgresInfo => {
     return {
       host: pg.host, // Allows missing host
-      username: pg.username ?? pg.name ?? postgresIdentifier(this.serviceDef.name),
+      username:
+        pg.username ?? pg.name ?? postgresIdentifier(this.serviceDef.name),
       passwordSecret:
         pg.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
       name: pg.name ?? postgresIdentifier(this.serviceDef.name),
