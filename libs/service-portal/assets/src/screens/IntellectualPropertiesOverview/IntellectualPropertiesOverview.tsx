@@ -51,7 +51,19 @@ const IntellectualPropertiesOverview = () => {
   }
 
   if (!data?.intellectualProperties?.totalCount && !loading) {
-    return <Problem type="no_data" />
+    return (
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(m.noDataFoundVariable, {
+          arg: formatMessage(m.intellectualProperties).toLowerCase(),
+        })}
+        message={formatMessage(m.noDataFoundVariableDetailVariation, {
+          arg: formatMessage(m.intellectualProperties).toLowerCase(),
+        })}
+        imgSrc="./assets/images/sofa.svg"
+      />
+    )
   }
 
   return (
