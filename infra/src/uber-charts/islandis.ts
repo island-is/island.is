@@ -22,8 +22,8 @@ import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroa
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 
-import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
-import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/web'
+import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
+import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
 
 import { serviceSetup as serviceDocumentsSetup } from '../../../apps/services/documents/infra/documents-service'
 import { serviceSetup as serviceNameRegistryBackendSetup } from '../../../apps/icelandic-names-registry/backend/infra/icelandic-names-registry-backend'
