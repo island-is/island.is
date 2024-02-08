@@ -131,7 +131,7 @@ export const createCaseFilesRecord = async (
   pdfDocument
     .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
       bold: true,
-      marginTop: 1,
+      marginTop: 4,
       newLine: false,
     })
     .addParagraph(
@@ -146,7 +146,7 @@ export const createCaseFilesRecord = async (
     pdfDocument
       .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
         bold: true,
-        marginTop: 1,
+        marginTop: 4,
         newLine: false,
       })
       .addParagraph(
@@ -171,7 +171,7 @@ export const createCaseFilesRecord = async (
   pdfDocument.addText(
     formatMessage(caseFilesRecord.tableOfContentsHeading),
     subtitleFontSize,
-    { alignment: Alignment.Center, bold: true, marginTop: 9 },
+    { alignment: Alignment.Center, bold: true, marginTop: 9, marginBottom: 45 },
   )
 
   const pageCount = pdfDocument.getPageCount()
@@ -183,29 +183,28 @@ export const createCaseFilesRecord = async (
 
   for (const chapter of chapters) {
     if (chapter === 0) {
-      pdfDocument.addText(
-        formatMessage(caseFilesRecord.pageNumberHeading),
-        textFontSize,
-        {
+      pdfDocument
+        .addText(
+          formatMessage(caseFilesRecord.pageNumberHeading),
+          textFontSize,
+          {
+            bold: true,
+            newLine: false,
+            alignment: Alignment.Right,
+          },
+        )
+        .addText(formatMessage(caseFilesRecord.date), textFontSize, {
           bold: true,
           newLine: false,
-          alignment: Alignment.Right,
-          marginTop: chapter > 0 ? 1 : 2,
-        },
-      )
-
-      pdfDocument.addText(formatMessage(caseFilesRecord.date), textFontSize, {
-        bold: true,
-        newLine: false,
-        alignment: Alignment.Left,
-        position: { x: pageDateIndent },
-      })
+          alignment: Alignment.Left,
+          position: { x: pageDateIndent },
+        })
     }
 
     pdfDocument.addText(
       formatMessage(caseFilesRecord.chapterName, { chapter }),
       textFontSize,
-      { bold: true },
+      { bold: true, marginTop: chapter > 0 ? 4 : 0 },
     )
 
     for (const pageReference of pageReferences.filter(
@@ -225,16 +224,17 @@ export const createCaseFilesRecord = async (
           pageLink: pageReference.pageLink,
           newLine: false,
           position: { x: pageDateIndent },
+          marginTop: 1,
         },
       )
 
-      const a =
+      const nameChunks =
         pageReference.name.length > 40
-          ? pageReference.name.match(/.{40}/g)
+          ? pageReference.name.match(/(.{1,40})(?=.|$)/g)
           : [pageReference.name]
 
-      for (const b of a ?? []) {
-        pdfDocument.addText(b, textFontSize, {
+      for (const chunck of nameChunks ?? []) {
+        pdfDocument.addText(chunck, textFontSize, {
           newLine: true,
           pageLink: pageReference.pageLink,
           position: { x: pageReferenceIndent },
@@ -255,6 +255,7 @@ export const createCaseFilesRecord = async (
           alignment: Alignment.Right,
           pageLink: lineReference.pageLink,
           newLine: false,
+          marginTop: 1,
         },
       )
   }
