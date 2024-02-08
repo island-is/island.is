@@ -29,6 +29,7 @@ import { format } from 'kennitala'
 import chunk from 'lodash/chunk'
 import { WorkMachinesAction, WorkMachinesLink } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -54,24 +55,6 @@ const WorkMachinesDetail = () => {
       },
     },
   })
-
-  if (error) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.workMachines).toLowerCase(),
-        })}
-      />
-    )
-  }
-
-  if (!data?.workMachine && !loading) {
-    return <NotFound title={formatMessage(vehicleMessage.notFound)} />
-  }
 
   const workMachine = data?.workMachine
 
@@ -148,190 +131,208 @@ const WorkMachinesDetail = () => {
           serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
         />
       </Box>
-      <GridRow marginBottom={2}>
-        <GridColumn span="12/12">
-          <Box marginBottom={3} paddingRight={2}>
-            <Inline space={2}>
-              {workMachine?.links?.length && createLinks(workMachine.links)}
-            </Inline>
-          </Box>
-        </GridColumn>
-      </GridRow>
-      <Box marginBottom={[2, 2, 6]}>
-        <Stack space={2}>
-          <Text variant="eyebrow" color="purple400">
-            {formatMessage(messages.baseInfoWorkMachineTitle)}
-          </Text>
-          <UserInfoLine
-            label={labels.registrationNumber ?? ''}
-            content={workMachine?.registrationNumber ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.type ?? ''}
-            content={workMachine?.type ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.category ?? ''}
-            content={workMachine?.category ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.subCategory ?? ''}
-            content={workMachine?.subCategory ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.registrationDate ?? ''}
-            content={formatDate(workMachine?.registrationDate ?? '')}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.status ?? ''}
-            content={workMachine?.status ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-      </Box>
-      <Box marginBottom={[2, 2, 6]}>
-        <TableGrid
-          title={formatMessage(messages.baseInfoWorkMachineTitle)}
-          dataArray={chunk(
-            [
-              workMachine?.type
-                ? {
-                    title: labels.type,
-                    value: workMachine.type,
-                  }
-                : undefined,
-              workMachine?.status
-                ? {
-                    title: labels.status,
-                    value: workMachine.status,
-                  }
-                : undefined,
-              workMachine?.category
-                ? {
-                    title: labels.category,
-                    value: workMachine.category,
-                  }
-                : undefined,
-              workMachine?.productionNumber
-                ? {
-                    title: labels.productionNumber,
-                    value: workMachine.productionNumber,
-                  }
-                : undefined,
-              workMachine?.subCategory
-                ? {
-                    title: labels.subCategory,
-                    value: workMachine.subCategory,
-                  }
-                : undefined,
-              workMachine?.productionCountry
-                ? {
-                    title: labels.productionCountry,
-                    value: workMachine.productionCountry,
-                  }
-                : undefined,
-              workMachine?.productionYear
-                ? {
-                    title: labels.productionYear,
-                    value: workMachine.productionYear.toString(),
-                  }
-                : undefined,
-              workMachine?.importer
-                ? {
-                    title: labels.importer,
-                    value: workMachine.importer,
-                  }
-                : undefined,
-              workMachine?.insurer
-                ? {
-                    title: labels.insurer,
-                    value: workMachine.insurer,
-                  }
-                : undefined,
-              workMachine?.registrationDate
-                ? {
-                    title: labels.registrationDate,
-                    value: formatDate(workMachine.registrationDate),
-                  }
-                : undefined,
-            ].filter(isDefined),
-            2,
-          )}
-          mt
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && !data?.workMachine && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noDataFoundVariable, {
+            arg: formatMessage(m.workMachines),
+          })}
+          message={formatMessage(m.noDataFoundVariableDetailVariation, {
+            arg: formatMessage(m.workMachines),
+          })}
+          imgSrc="./assets/images/sofa.svg"
         />
-      </Box>
-      <Box marginBottom={[2, 2, 6]}>
-        <Stack space={2}>
-          <Text variant="eyebrow" color="purple400">
-            {labels.owner}
-          </Text>
-          <UserInfoLine
-            label={labels.ownerName}
-            content={workMachine?.ownerName ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.ownerNationalId}
-            content={format(workMachine?.ownerNationalId ?? '')}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.ownerAddress}
-            content={workMachine?.ownerAddress ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.ownerPostcode}
-            content={workMachine?.ownerPostcode ?? ''}
-            loading={loading}
-          />
-        </Stack>
-      </Box>
-      <Box marginBottom={[2, 2, 6]}>
-        <Stack space={2}>
-          <Text variant="eyebrow" color="purple400">
-            {formatMessage(vehicleMessage.operator)}
-          </Text>
-          <UserInfoLine
-            label={labels.supervisorName}
-            content={workMachine?.supervisorName ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.supervisorNationalId}
-            content={format(workMachine?.supervisorNationalId ?? '')}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.supervisorAddress}
-            content={workMachine?.supervisorAddress ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={labels.supervisorPostcode}
-            content={workMachine?.supervisorPostcode ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-      </Box>
+      )}
+      {!error && (loading || data?.workMachine) && (
+        <>
+          <GridRow marginBottom={2}>
+            <GridColumn span="12/12">
+              <Box marginBottom={3} paddingRight={2}>
+                <Inline space={2}>
+                  {workMachine?.links?.length && createLinks(workMachine.links)}
+                </Inline>
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <Box marginBottom={[2, 2, 6]}>
+            <Stack space={2}>
+              <Text variant="eyebrow" color="purple400">
+                {formatMessage(messages.baseInfoWorkMachineTitle)}
+              </Text>
+              <UserInfoLine
+                label={labels.registrationNumber ?? ''}
+                content={workMachine?.registrationNumber ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.type ?? ''}
+                content={workMachine?.type ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.category ?? ''}
+                content={workMachine?.category ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.subCategory ?? ''}
+                content={workMachine?.subCategory ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.registrationDate ?? ''}
+                content={formatDate(workMachine?.registrationDate ?? '')}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.status ?? ''}
+                content={workMachine?.status ?? ''}
+                loading={loading}
+              />
+              <Divider />
+            </Stack>
+          </Box>
+          <Box marginBottom={[2, 2, 6]}>
+            <TableGrid
+              title={formatMessage(messages.baseInfoWorkMachineTitle)}
+              dataArray={chunk(
+                [
+                  workMachine?.type
+                    ? {
+                        title: labels.type,
+                        value: workMachine.type,
+                      }
+                    : undefined,
+                  workMachine?.status
+                    ? {
+                        title: labels.status,
+                        value: workMachine.status,
+                      }
+                    : undefined,
+                  workMachine?.category
+                    ? {
+                        title: labels.category,
+                        value: workMachine.category,
+                      }
+                    : undefined,
+                  workMachine?.productionNumber
+                    ? {
+                        title: labels.productionNumber,
+                        value: workMachine.productionNumber,
+                      }
+                    : undefined,
+                  workMachine?.subCategory
+                    ? {
+                        title: labels.subCategory,
+                        value: workMachine.subCategory,
+                      }
+                    : undefined,
+                  workMachine?.productionCountry
+                    ? {
+                        title: labels.productionCountry,
+                        value: workMachine.productionCountry,
+                      }
+                    : undefined,
+                  workMachine?.productionYear
+                    ? {
+                        title: labels.productionYear,
+                        value: workMachine.productionYear.toString(),
+                      }
+                    : undefined,
+                  workMachine?.importer
+                    ? {
+                        title: labels.importer,
+                        value: workMachine.importer,
+                      }
+                    : undefined,
+                  workMachine?.insurer
+                    ? {
+                        title: labels.insurer,
+                        value: workMachine.insurer,
+                      }
+                    : undefined,
+                  workMachine?.registrationDate
+                    ? {
+                        title: labels.registrationDate,
+                        value: formatDate(workMachine.registrationDate),
+                      }
+                    : undefined,
+                ].filter(isDefined),
+                2,
+              )}
+              mt
+            />
+          </Box>
+          <Box marginBottom={[2, 2, 6]}>
+            <Stack space={2}>
+              <Text variant="eyebrow" color="purple400">
+                {labels.owner}
+              </Text>
+              <UserInfoLine
+                label={labels.ownerName}
+                content={workMachine?.ownerName ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.ownerNationalId}
+                content={format(workMachine?.ownerNationalId ?? '')}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.ownerAddress}
+                content={workMachine?.ownerAddress ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.ownerPostcode}
+                content={workMachine?.ownerPostcode ?? ''}
+                loading={loading}
+              />
+            </Stack>
+          </Box>
+          <Box marginBottom={[2, 2, 6]}>
+            <Stack space={2}>
+              <Text variant="eyebrow" color="purple400">
+                {formatMessage(vehicleMessage.operator)}
+              </Text>
+              <UserInfoLine
+                label={labels.supervisorName}
+                content={workMachine?.supervisorName ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.supervisorNationalId}
+                content={format(workMachine?.supervisorNationalId ?? '')}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.supervisorAddress}
+                content={workMachine?.supervisorAddress ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={labels.supervisorPostcode}
+                content={workMachine?.supervisorPostcode ?? ''}
+                loading={loading}
+              />
+              <Divider />
+            </Stack>
+          </Box>
+        </>
+      )}
     </>
   )
 }

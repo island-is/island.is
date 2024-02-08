@@ -32,6 +32,7 @@ import { messages } from '../../lib/messages'
 import { useDebounce } from 'react-use'
 import { WorkMachinesFileType } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 type FilterValue = {
   label: string
@@ -124,21 +125,6 @@ const WorkMachinesOverview = () => {
       },
     })
   }
-
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.workMachines).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -249,15 +235,20 @@ const WorkMachinesOverview = () => {
           <CardLoader />
         </Box>
       )}
-
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {!loading && !data?.workMachinesPaginatedCollection?.data?.length && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noDataFoundVariableFeminine, {
+            arg: formatMessage(m.workMachines).toLowerCase(),
+          })}
+          message={formatMessage(m.noDataFoundVariableDetailVariationFeminine, {
+            arg: formatMessage(m.workMachines).toLowerCase(),
+          })}
+          imgSrc="./assets/images/sofa.svg"
+        />
       )}
-
       {!loading &&
         !error &&
         !!data?.workMachinesPaginatedCollection?.data &&
