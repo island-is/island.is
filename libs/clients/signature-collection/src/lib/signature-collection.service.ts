@@ -14,7 +14,7 @@ import {
   CanSignInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import { List, mapList, mapListBase } from './types/list.dto'
+import { List, SignedList, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { Success, mapReasons } from './types/success.dto'
@@ -137,14 +137,20 @@ export class SignatureCollectionClientService {
   }
 
   async signList(listId: string, auth: User): Promise<Signature> {
-    const signature = await this.getApiWithAuth(
+    const { signature } = await this.getSignee(auth)
+    // If user has already signed list be sure to throw error
+    if (signature) {
+      throw new Error('User has already signed a list')
+    }
+
+    const newSignature = await this.getApiWithAuth(
       this.listsApi,
       auth,
     ).medmaelalistarIDAddMedmaeliPost({
       kennitala: auth.nationalId,
       iD: parseInt(listId),
     })
-    return mapSignature(signature)
+    return mapSignature(newSignature)
   }
 
   async unsignList(listId: string, auth: User): Promise<Success> {
@@ -209,12 +215,18 @@ export class SignatureCollectionClientService {
     return { success: true }
   }
 
-  async getSignedList(auth: User): Promise<List | null> {
+  async getSignedList(auth: User): Promise<SignedList | null> {
     const { signature } = await this.getSignee(auth)
     if (!signature) {
       return null
     }
-    return this.getList(signature.listId, auth)
+    const list = await this.getList(signature.listId, auth)
+    return {
+      signedDate: signature.created,
+      isDigital: signature.isDigital,
+      pageNumber: signature.pageNumber,
+      ...list,
+    }
   }
 
   async canSign({
