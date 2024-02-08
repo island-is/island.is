@@ -205,7 +205,7 @@ const StateModal = ({
           prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
             new Date(applicationCreated).getMonth(),
           )} hefur verið synjað.`}
-          postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+          postfixText="Frekari upplýsingar um fjárhagsaðstoð má finna í reglunum hér fyrir neðan."
           municipalityEmail={applicationMunicipality?.email}
         />
       </Box>
