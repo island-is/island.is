@@ -1,5 +1,6 @@
 // TODO: Add tests
 import {
+  CaseAppealRulingDecision,
   isIndictmentCase,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
@@ -457,8 +458,10 @@ export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
 
   return (
     appealState === CaseAppealState.COMPLETED ||
+    appealState === CaseAppealState.WITHDRAWN ||
     (appealRulingDecision !== null &&
-      validate([[appealConclusion, ['empty']]]).isValid)
+      validate([[appealConclusion, ['empty']]]).isValid) ||
+    appealRulingDecision === CaseAppealRulingDecision.WITHDRAWN
   )
 }
 
