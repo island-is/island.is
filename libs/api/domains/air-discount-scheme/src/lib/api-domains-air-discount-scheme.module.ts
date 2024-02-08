@@ -3,6 +3,8 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { AirDiscountSchemeClientModule } from '@island.is/clients/air-discount-scheme'
 
 import { DiscountResolver } from './discount/discount.resolver'
+import { NewDiscountResolver } from './newDiscount/newDiscount.resolver'
+import { NewDiscountService } from './newDiscount/newDiscount.service'
 import { DiscountService } from './discount/discount.service'
 import { DiscountAdminResolver } from './discount-admin/discount-admin.resolver'
 import { DiscountAdminService } from './discount-admin/discount-admin.service'
@@ -15,6 +17,8 @@ import { FlightLegService } from './flight-leg/flight-leg.service'
   providers: [
     DiscountResolver,
     DiscountService,
+    NewDiscountResolver,
+    NewDiscountService,
     FlightLegAdminResolver,
     FlightLegAdminService,
     FlightLegResolver,
