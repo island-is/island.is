@@ -7,7 +7,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
     .namespace('identity-server')
     .image('services-auth-ids-api')
-    .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -92,7 +91,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .xroad(Base, Client, RskProcuring)
     .readiness('/health/check')
     .liveness('/liveness')
-    .migrations()
+    .db({ name: 'servicesauth' })
+    .migrations({ extensions: ['uuid-ossp'] })
     .seed()
     .resources({
       limits: {
