@@ -18,7 +18,6 @@ import {
   PodDisruptionBudget,
 } from './types/input-types'
 
-
 /**
  * Allows you to make some properties of a type optional.
  *
@@ -44,7 +43,11 @@ import {
  * }
  * ```
  */
-type Optional<OriginalType, OptionalKeys extends keyof OriginalType> = Omit<OriginalType, OptionalKeys> & Partial<Pick<OriginalType, OptionalKeys>>;
+type Optional<OriginalType, OptionalKeys extends keyof OriginalType> = Omit<
+  OriginalType,
+  OptionalKeys
+> &
+  Partial<Pick<OriginalType, OptionalKeys>>
 
 export class ServiceBuilder<ServiceType extends string> {
   serviceDef: ServiceDefinition
@@ -238,7 +241,10 @@ export class ServiceBuilder<ServiceType extends string> {
    */
   initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
     // Combine current and new containers
-    ic.containers = [...this.serviceDef.initContainers?.containers ?? [], ...ic.containers]
+    ic.containers = [
+      ...(this.serviceDef.initContainers?.containers ?? []),
+      ...ic.containers,
+    ]
 
     if (ic.postgres) {
       ic.postgres = {
@@ -311,7 +317,13 @@ export class ServiceBuilder<ServiceType extends string> {
       postgres = { ...this.serviceDef.postgres, ...postgres }
     }
     return this.initContainer({
-      containers: [{ name: 'migrations', command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      containers: [
+        {
+          name: 'migrations',
+          command: 'npx',
+          args: ['sequelize-cli', 'db:migrate'],
+        },
+      ],
       postgres,
     })
   }
