@@ -22,7 +22,8 @@ charts() {
     echo "    So you don't have to 😘"
     echo "       Just remember to commit them ✅"
     echo "          (check git status & .charts.log)"
-    echo ""
+    wait
+    echo " < DONE > "
   fi
   return 0
 }
