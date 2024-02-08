@@ -17,7 +17,34 @@ import {
   XroadConfig,
   PodDisruptionBudget,
 } from './types/input-types'
-type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
+
+
+/**
+ * Allows you to make some properties of a type optional.
+ *
+ * @template OriginalType The original type with all properties.
+ * @template OptionalKeys The keys (or names) of the properties that should be made optional.
+ *
+ * @returns A new type with the same properties as `OriginalType`, but with the properties specified by `OptionalKeys` made optional.
+ *
+ * @example
+ * ```
+ * type A = {
+ *  foo: string
+ *  bar: number
+ *  baz: any
+ * }
+ *
+ * // The following two are equivalent
+ * type B = Optional<A, 'bar'>
+ * type B = {
+ *  foo: string
+ *  bar?: number
+ *  baz: any
+ * }
+ * ```
+ */
+type Optional<OriginalType, OptionalKeys extends keyof OriginalType> = Omit<OriginalType, OptionalKeys> & Partial<Pick<OriginalType, OptionalKeys>>;
 
 export class ServiceBuilder<ServiceType extends string> {
   serviceDef: ServiceDefinition
