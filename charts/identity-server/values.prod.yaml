@@ -208,7 +208,7 @@ services-auth-admin-api:
   enabled: true
   env:
     DB_HOST: 'postgres-ids.internal'
-    DB_NAME: 'services_auth_admin_api'
+    DB_NAME: 'serviceauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'services_auth_admin_api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -264,8 +264,13 @@ services-auth-admin-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-ids.internal'
+      DB_NAME: 'serviceauth'
+      DB_REPLICAS_HOST: 'postgres-ids.internal'
+      DB_USER: 'services_auth_admin_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/services-auth-admin-api/DB_PASSWORD'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: 1
@@ -292,7 +297,7 @@ services-auth-delegation-api:
   enabled: true
   env:
     DB_HOST: 'postgres-ids.internal'
-    DB_NAME: 'services_auth_delegation_api'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'services_auth_delegation_api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
@@ -357,8 +362,13 @@ services-auth-delegation-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-ids.internal'
+      DB_NAME: 'servicesauth'
+      DB_REPLICAS_HOST: 'postgres-ids.internal'
+      DB_USER: 'services_auth_delegation_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/services-auth-delegation-api/DB_PASSWORD'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     minAvailable: 1
@@ -387,9 +397,8 @@ services-auth-ids-api:
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
-    DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-ids.internal'
-    DB_NAME: 'services_auth_ids_api'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'services_auth_ids_api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
@@ -448,14 +457,8 @@ services-auth-ids-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: 'uuid-ossp'
-      DB_HOST: 'postgres-ids.internal'
-      DB_NAME: 'services_auth_ids_api'
-      DB_REPLICAS_HOST: 'postgres-ids.internal'
-      DB_USER: 'services_auth_ids_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets:
-      DB_PASS: '/k8s/services-auth-ids-api/DB_PASSWORD'
+    secrets: {}
   namespace: 'identity-server'
   podDisruptionBudget:
     minAvailable: 1
@@ -563,7 +566,7 @@ services-auth-personal-representative-public:
   enabled: true
   env:
     DB_HOST: 'postgres-ids.internal'
-    DB_NAME: 'services_auth_personal_representative_public'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'services_auth_personal_representative_public'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -622,8 +625,13 @@ services-auth-personal-representative-public:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-ids.internal'
+      DB_NAME: 'servicesauth'
+      DB_REPLICAS_HOST: 'postgres-ids.internal'
+      DB_USER: 'services_auth_personal_representative_public'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/services-auth-personal-representative-public/DB_PASSWORD'
   namespace: 'personal-representative'
   podDisruptionBudget:
     minAvailable: 1
