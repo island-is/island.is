@@ -6,6 +6,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
+import { ApplicationModel } from './models'
 
 @Controller('api/v1')
 export class AppController {
@@ -20,7 +21,7 @@ export class AppController {
     @Headers('API-Key') apiKey: string,
     @Headers('Municipality-Code') municipalityCode: string,
     @Query() filters: FilterApplicationsDto,
-  ) {
+  ): Promise<ApplicationModel[]> {
     this.logger.info('Gets all application')
     return this.appService
       .getApplications(apiKey, municipalityCode, filters)
