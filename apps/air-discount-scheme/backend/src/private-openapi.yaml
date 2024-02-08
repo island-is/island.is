@@ -26,6 +26,109 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
+  /health/check:
+    get:
+      operationId: HealthController_check
+      parameters: []
+      responses:
+        '200':
+          description: The Health Check is successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  info:
+                    type: object
+                    example:
+                      database:
+                        status: up
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  error:
+                    type: object
+                    example: {}
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  details:
+                    type: object
+                    example:
+                      database:
+                        status: up
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+        '503':
+          description: The Health Check is not successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  info:
+                    type: object
+                    example:
+                      database:
+                        status: up
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  error:
+                    type: object
+                    example:
+                      redis:
+                        status: down
+                        message: Could not connect
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  details:
+                    type: object
+                    example:
+                      database:
+                        status: up
+                      redis:
+                        status: down
+                        message: Could not connect
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
   /api/public/discounts/{discountCode}/user:
     get:
       operationId: PublicDiscountController_getUserByDiscountCode
