@@ -40,9 +40,6 @@ export const HeirsAndPartitionRepeater: FC<
 
   const values = getValues()
 
-  console.log('application', application)
-  console.log('values', getValues())
-
   const selectedEstate = application.answers.selectedEstate
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
