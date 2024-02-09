@@ -1,12 +1,15 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { BYPASS_AUTH_KEY, getRequest } from '@island.is/auth-nest-tools'
-import { OwnerAccess } from '../decorators/needsOwner.decorator'
+import {
+  OwnerAccess,
+  UserAccess,
+} from '../decorators/acessRequirement.decorator'
 import { SignatureCollectionSignee } from '../models/signee.model'
 import { SignatureCollectionService } from '../signatureCollection.service'
 
 @Injectable()
-export class NeedsOwnerGuard implements CanActivate {
+export class UserAccessGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private readonly signatureCollectionService: SignatureCollectionService,
@@ -21,20 +24,25 @@ export class NeedsOwnerGuard implements CanActivate {
     if (bypassAuth) {
       return true
     }
-    const ownerRestriction = this.reflector.get<OwnerAccess>(
-      'is-owner',
+    const ownerRestriction = this.reflector.get<OwnerAccess | UserAccess>(
+      'owner-access',
       context.getHandler(),
     )
+    const request = getRequest(context)
+
+    const user = request.user
+    const isDelegatedUser = !!user?.actor?.nationalId
     // IsOwner decorator not used
     if (!ownerRestriction) {
       return true
     }
-
-    const request = getRequest(context)
+    if (ownerRestriction === UserAccess.RestrictActor) {
+      return isDelegatedUser ? false : true
+    }
 
     const signee: SignatureCollectionSignee = request.body.signee
-    const user = request.user
-    const isDelegatedUser = !!user?.actor?.nationalId
+    // const user = request.user
+    // const isDelegatedUser = !!user?.actor?.nationalId
     const { candidate } = signee
 
     if (signee.isOwner && candidate) {
