@@ -53,9 +53,9 @@ const SignedList = () => {
           <ActionCard
             heading={signedList.title}
             eyebrow={
-              formatMessage(m.endTime) +
+              formatMessage(m.signedTime) +
               ' ' +
-              format(new Date(signedList.endTime), 'dd.MM.yyyy')
+              format(new Date(signedList.signedDate), 'dd.MM.yyyy')
             }
             text={formatMessage(m.collectionTitle)}
             cta={

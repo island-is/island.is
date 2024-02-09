@@ -58,6 +58,11 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagur:',
     description: '',
   },
+  signedTime: {
+    id: 'sp.signatureCollection:signedTime',
+    defaultMessage: 'Skrifað undir:',
+    description: '',
+  },
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',

@@ -14,6 +14,7 @@ import { SignatureCollection } from './models/collection.model'
 import {
   SignatureCollectionList,
   SignatureCollectionListBase,
+  SignatureCollectionSignedList,
 } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
@@ -99,11 +100,11 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @Query(() => SignatureCollectionList, { nullable: true })
+  @Query(() => SignatureCollectionSignedList, { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
     @CurrentUser() user: User,
-  ): Promise<SignatureCollectionList | null> {
+  ): Promise<SignatureCollectionSignedList | null> {
     return this.signatureCollectionService.signedList(user)
   }
 
