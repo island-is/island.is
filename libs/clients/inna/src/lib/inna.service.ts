@@ -25,7 +25,7 @@ export class InnaClientService {
 
   getDiplomas = (auth: User): Promise<InlineResponse200 | null> =>
     this.getInnaWithAuth(auth)
-      .dipomainfolistGet({
+      .diplomainfolistGet({
         locale: 'is',
       })
       .catch(handle404)

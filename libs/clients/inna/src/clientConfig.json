@@ -32,18 +32,11 @@
             "required": true,
             "schema": { "type": "string", "pattern": "^[^/]+$" },
             "description": "implicit"
-          },
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "pattern": "^[^/]+$" },
-            "description": "implicit"
           }
         ]
       }
     },
-    "/dipomainfolist": {
+    "/diplomainfolist": {
       "get": {
         "description": "Retrieve records from API Namsferlaveita",
         "security": [{ "BearerAuth": [] }],
