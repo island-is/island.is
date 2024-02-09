@@ -61,7 +61,6 @@ const PaperUpload = ({ listId }: { listId: string }) => {
         pageNumber: d.Bls ?? 0,
       }
     })
-    console.log(data)
 
     paperUpload(data)
   }
