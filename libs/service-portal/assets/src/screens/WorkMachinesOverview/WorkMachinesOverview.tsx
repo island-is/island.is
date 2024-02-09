@@ -130,6 +130,7 @@ const WorkMachinesOverview = () => {
         intro={formatMessage(messages.workMachinesDescription)}
         serviceProviderSlug={VINNUEFTIRLITID_SLUG}
         serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+        fixedImgWidth
       />
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">
