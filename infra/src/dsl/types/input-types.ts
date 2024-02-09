@@ -51,11 +51,11 @@ export type Secrets = { [name: string]: string }
 
 export type EnvironmentVariableValue =
   | Optional<
-      {
-        [idx in OpsEnvWithLocal]: ValueType
-      },
-      'local'
-    >
+    {
+      [idx in OpsEnvWithLocal]: ValueType
+    },
+    'local'
+  >
   | ValueType
 
 export type EnvironmentVariables = {
@@ -183,17 +183,19 @@ export type ReplicaCount = {
   scalingMagicNumber?: number
 }
 
+type Container = {
+  command: string
+  image?: string
+  args?: string[]
+  name?: string
+  resources?: Resources
+}
+
 export type InitContainers = {
   envs: EnvironmentVariables
   secrets: Secrets
   features: Partial<Features>
-  containers: {
-    command: string
-    image?: string
-    args?: string[]
-    name?: string
-    resources?: Resources
-  }[]
+  containers: Container[]
   /**
    * @deprecated Don't pass custom postgres info
    */
