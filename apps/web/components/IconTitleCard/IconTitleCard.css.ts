@@ -64,6 +64,12 @@ export const iconBig = style({
   objectFit: 'cover',
   width: '100%',
   height: 'auto',
-  maxWidth: 75,
-  maxHeight: 75,
+  maxWidth: 65,
+  maxHeight: 65,
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxWidth: 75,
+      maxHeight: 75,
+    },
+  }),
 })
