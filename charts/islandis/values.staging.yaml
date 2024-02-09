@@ -1304,10 +1304,10 @@ icelandic-names-registry-backend:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:seed:all'
+          - 'db:migrate'
         command:
           - 'npx'
-        name: 'seed'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -1317,10 +1317,10 @@ icelandic-names-registry-backend:
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
+          - 'db:seed:all'
         command:
           - 'npx'
-        name: 'migrations'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
@@ -2456,10 +2456,10 @@ services-university-gateway:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:seed:all'
+          - 'db:migrate'
         command:
           - 'npx'
-        name: 'seed'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2469,10 +2469,10 @@ services-university-gateway:
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
+          - 'db:seed:all'
         command:
           - 'npx'
-        name: 'migrations'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
