@@ -17,70 +17,75 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  formatText,
   NO_ANSWER,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
-import {
-  getAllPeriodDates,
-  getSelectedChild,
-  requiresOtherParentApproval,
-  isParentWithoutBirthParent,
-  getApplicationAnswers,
-  allowOtherParent,
-  getApplicationExternalData,
-  getMaxMultipleBirthsDays,
-  getDurationTitle,
-  getFirstPeriodTitle,
-  getLeavePlanTitle,
-  getPeriodImageTitle,
-  getPeriodSectionTitle,
-  getRatioTitle,
-  getRightsDescTitle,
-  getStartDateDesc,
-  getStartDateTitle,
-  getMultipleBirthRequestDays,
-  getMinimumStartDate,
-  allowOtherParentToUsePersonalAllowance,
-  getBeginningOfMonth3MonthsAgo,
-  getOtherParentOptions,
-} from '../lib/parentalLeaveUtils'
-import {
-  GetPensionFunds,
-  GetUnions,
-  GetPrivatePensionFunds,
-} from '../graphql/queries'
-import {
-  FILE_SIZE_LIMIT,
-  MANUAL,
-  SPOUSE,
-  NO,
-  NO_PRIVATE_PENSION_FUND,
-  NO_UNION,
-  ParentalRelations,
-  PARENTAL_GRANT_STUDENTS,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  SINGLE,
-  StartDateOptions,
-  UnEmployedBenefitTypes,
-  YES,
-  PERMANENT_FOSTER_CARE,
-  ADOPTION,
-} from '../constants'
-import Logo from '../assets/Logo'
-import { minPeriodDays } from '../config'
-import {
-  GetPensionFundsQuery,
-  GetPrivatePensionFundsQuery,
-  GetUnionsQuery,
-} from '../types/schema'
 import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import ManWithStrollerIllustration from '../assets/Images/ManWithStrollerIllustration'
+import Logo from '../assets/Logo'
+import { minPeriodDays } from '../config'
+import {
+  ADOPTION,
+  FILE_SIZE_LIMIT,
+  MANUAL,
+  NO,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  ParentalRelations,
+  PERMANENT_FOSTER_CARE,
+  SINGLE,
+  SPOUSE,
+  StartDateOptions,
+  UnEmployedBenefitTypes,
+  YES,
+} from '../constants'
+import {
+  GetPensionFunds,
+  GetPrivatePensionFunds,
+  GetUnions,
+} from '../graphql/queries'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import {
+  allowOtherParent,
+  allowOtherParentToUsePersonalAllowance,
+  getAllPeriodDates,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getBeginningOfMonth3MonthsAgo,
+  getConclusionScreenSteps,
+  getDurationTitle,
+  getFirstPeriodTitle,
+  getLeavePlanTitle,
+  getMaxMultipleBirthsDays,
+  getMinimumStartDate,
+  getMultipleBirthRequestDays,
+  getOtherParentOptions,
+  getPeriodImageTitle,
+  getPeriodSectionTitle,
+  getRatioTitle,
+  getRightsDescTitle,
+  getSelectedChild,
+  getStartDateDesc,
+  getStartDateTitle,
+  isParentWithoutBirthParent,
+  requiresOtherParentApproval,
+} from '../lib/parentalLeaveUtils'
+import {
+  GetPensionFundsQuery,
+  GetPrivatePensionFundsQuery,
+  GetUnionsQuery,
+} from '../types/schema'
+
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { useLocale } from '@island.is/localization'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -1577,12 +1582,28 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: parentalLeaveFormMessages.finalScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertType: 'success',
+      expandableHeader: parentalLeaveFormMessages.finalScreen.title,
+      expandableDescription: (application: Application) => {
+        const nextSteps = getConclusionScreenSteps(application)
+
+        // Create a markdown from the steps translations strings
+        let markdown = ''
+
+        nextSteps.forEach((step) => {
+          const translation = formatText(
+            step,
+            application,
+            useLocale().formatMessage,
+          )
+          markdown += `* ${translation} \n`
+        })
+
+        return markdown
+      },
     }),
   ],
 })

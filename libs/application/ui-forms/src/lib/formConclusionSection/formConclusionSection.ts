@@ -7,7 +7,7 @@ import {
   buildLinkField,
   coreMessages,
 } from '@island.is/application/core'
-import { FormText } from '@island.is/application/types'
+import { Application, FormText } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { StaticText } from 'static-text'
 import { conclusion } from './messages'
@@ -22,7 +22,9 @@ type Props = Partial<{
   secondButtonMessage: MessageDescriptor
   expandableHeader: MessageDescriptor
   expandableIntro: MessageDescriptor
-  expandableDescription: MessageDescriptor
+  expandableDescription:
+    | MessageDescriptor
+    | ((application: Application) => StaticText | null | undefined)
   conclusionLinkS3FileKey: FormText
   conclusionLink: string
   conclusionLinkLabel: MessageDescriptor

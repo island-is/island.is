@@ -48,6 +48,7 @@ import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
+import { MessageDescriptor } from 'react-intl'
 import {
   additionalSingleParentMonths,
   daysInMonth,
@@ -1135,22 +1136,18 @@ export const requiresOtherParentApproval = (
 
 export const otherParentApprovalDescription = (
   answers: Application['answers'],
-  formatMessage: FormatMessage,
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
 
   const { isRequestingRights, usePersonalAllowanceFromSpouse } =
     applicationAnswers
 
-  const description =
-    isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
-      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
-      : isRequestingRights === YES
-      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
-      : parentalLeaveFormMessages.reviewScreen
-          .otherParentDescRequestingPersonalDiscount
-
-  return formatMessage(description)
+  return isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+    ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+    : isRequestingRights === YES
+    ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+    : parentalLeaveFormMessages.reviewScreen
+        .otherParentDescRequestingPersonalDiscount
 }
 
 export const allowOtherParentToUsePersonalAllowance = (
@@ -1885,4 +1882,52 @@ export const showResidenceGrant = (application: Application) => {
   )
     return true
   return false
+}
+
+export const getConclusionScreenSteps = (
+  application: Application,
+): MessageDescriptor[] => {
+  const {
+    isSelfEmployed,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    employerLastSixMonths,
+    employers,
+  } = getApplicationAnswers(application.answers)
+
+  const steps = [
+    parentalLeaveFormMessages.finalScreen.step3,
+  ] as MessageDescriptor[]
+
+  // Added this check for applications that is in the db already
+  const oldApplication = applicationType === undefined
+  const isBeneficiaries = !oldApplication
+    ? applicationType === PARENTAL_LEAVE
+      ? isReceivingUnemploymentBenefits === YES
+      : false
+    : false
+  const isStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === YES,
+  )
+
+  if (isSelfEmployed === NO && !isBeneficiaries) {
+    steps.unshift(parentalLeaveFormMessages.reviewScreen.employerDesc)
+  }
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isStillEmployed
+  ) {
+    steps.unshift(parentalLeaveFormMessages.reviewScreen.employerDesc)
+  }
+
+  if (
+    requiresOtherParentApproval(application.answers, application.externalData)
+  ) {
+    steps.unshift(otherParentApprovalDescription(application.answers))
+  }
+
+  return steps
 }
