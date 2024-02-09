@@ -301,9 +301,7 @@ export class ServiceBuilder<ServiceType extends string> {
     withDB = false,
   ) {
     // Combine current and new containers
-    ic.containers = ic.containers.concat(
-      this.serviceDef.initContainers?.containers ?? [],
-    )
+    ic.containers = (this.serviceDef.initContainers?.containers ?? []).concat(ic.containers)
     if (withDB || ic.postgres) {
       ic.postgres = this.grantDB(
         ic.postgres,
@@ -424,9 +422,9 @@ export class ServiceBuilder<ServiceType extends string> {
       username: postgresIdentifier(
         this.stripPostfix(
           pg.username ??
-            pg.name ??
-            this.serviceDef.postgres?.username ??
-            this.serviceDef.name,
+          pg.name ??
+          this.serviceDef.postgres?.username ??
+          this.serviceDef.name,
         ),
       ),
       passwordSecret:
