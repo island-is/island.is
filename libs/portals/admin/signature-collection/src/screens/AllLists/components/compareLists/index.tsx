@@ -74,7 +74,7 @@ const CompareLists = () => {
     let data = await getFileData(newFile)
 
     data = data.map((d: { Kennitala: any }) => {
-      return String(d.Kennitala)
+      return String(d.Kennitala).replace('-', '')
     })
 
     compareLists(data)
