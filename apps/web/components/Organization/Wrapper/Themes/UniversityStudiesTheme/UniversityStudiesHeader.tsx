@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { CSSProperties } from '@vanilla-extract/css'
 
-import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
+import { Box, Button, Hidden, LinkV2, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -80,7 +80,7 @@ const UniversityStudiesHeader: React.FC<
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization?.logo && (
-              <Link
+              <LinkV2
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
                 }
@@ -91,7 +91,7 @@ const UniversityStudiesHeader: React.FC<
                   className={styles.headerLogo}
                   alt={logoAltText}
                 />
-              </Link>
+              </LinkV2>
             )
           }
         >
@@ -103,7 +103,7 @@ const UniversityStudiesHeader: React.FC<
                   : 'hidden',
               }}
             >
-              <Link
+              <LinkV2
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
                 }
@@ -114,7 +114,7 @@ const UniversityStudiesHeader: React.FC<
                   className={styles.headerLogo}
                   alt={logoAltText}
                 />
-              </Link>
+              </LinkV2>
             </Box>
           </Hidden>
         </SidebarLayout>

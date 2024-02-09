@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -40,6 +40,7 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 interface LandingPageProps {
@@ -60,6 +61,7 @@ const LandingPage: Screen<LandingPageProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const [searchTerm, setSearchTerm] = useState('')
+  useSetZIndexOnHeader()
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -150,7 +152,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                 <Text variant="eyebrow" color="blueberry600">
                   {' '}
                   {/* TODO Translations */}
-                  Háskólar
+                  {n('universities', 'Háskólar')}
                 </Text>
                 {universities.map((university) => {
                   return (
@@ -200,7 +202,10 @@ const LandingPage: Screen<LandingPageProps> = ({
               />
             )
           })}
-          <GridColumn offset="1/9" span="7/9">
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
             <Box marginY={4}>
               <AlertMessage
                 type="warning"
@@ -208,7 +213,10 @@ const LandingPage: Screen<LandingPageProps> = ({
               />
             </Box>
           </GridColumn>
-          <GridColumn offset="1/9" span="7/9">
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
             <Input
               placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
@@ -233,7 +241,10 @@ const LandingPage: Screen<LandingPageProps> = ({
               <Icon size="large" icon="search" color="blue400" />
             </button>
           </GridColumn>
-          <GridColumn offset="1/9" span="7/9">
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
             <Box marginY={4}>
               <ActionCard
                 heading={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
