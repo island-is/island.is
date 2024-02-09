@@ -33,6 +33,10 @@ export const messages = defineMessages({
     id: 'sp.assets:housing',
     defaultMessage: 'Íbúðarhúsnæði',
   },
+  realEstate: {
+    id: 'sp.assets:real-estate',
+    defaultMessage: 'Fasteign',
+  },
   appraisal: {
     id: 'sp.assets:appraisal',
     defaultMessage: 'Fasteignamat',
