@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import {
   Context,
   EnvironmentVariables,
@@ -217,43 +218,6 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
-   * @param ic - InitContainers definitions
-   */
-  initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
-    // Combine current and new containers
-    ic.containers = [
-      ...(this.serviceDef.initContainers?.containers ?? []),
-      ...ic.containers,
-    ]
-
-    // Combine DB config
-    if (ic.postgres) {
-      ic.postgres = {
-        ...this.serviceDef.postgres,
-        ...{ extensions: ic?.postgres?.extensions },
-      }
-    } else if (this.serviceDef.postgres) {
-      ic.postgres = this.postgresDefaults(ic.postgres ?? {})
-    }
-
-    const uniqueNames = new Set(ic.containers.map((c) => c.name))
-    if (uniqueNames.size != ic.containers.length) {
-      throw new Error(
-        'For multiple init containers, you must set a unique name for each container.',
-      )
-    }
-
-    this.serviceDef.initContainers = {
-      envs: {},
-      secrets: {},
-      features: {},
-      ...ic,
-    }
-    return this
-  }
-
-  /**
    * Secrets are configuration that is resolved at deployment time. Their values are _paths_ in the Parameter Store in AWS Systems Manager. There is a service in Kubernetes that resolves the concrete value of these secrets and they appear as environment variables on the service or the `initContainer`. Mapped to [ExternalSecrets](https://github.com/godaddy/kubernetes-external-secrets). Like environment variables, secrets are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope.
    *
    * To provision secrets in the Parameter Store, you need to get in touch with the DevOps team.
@@ -304,39 +268,60 @@ export class ServiceBuilder<ServiceType extends string> {
     return name
   }
 
-  migrations(postgres?: PostgresInfo): this {
-    // Inherit DB config
-    if (this.serviceDef.postgres) {
-      postgres = { ...this.serviceDef.postgres, ...postgres }
+  private grantDB(target?: PostgresInfo, postgres?: PostgresInfo, copy = false): PostgresInfo {
+    if (copy) {
+      const targetCopy = this.grantDB({}, target, false)
+      return this.grantDB(targetCopy, postgres, false)
     }
-    return this.initContainer({
-      containers: [
-        {
-          name: 'migrations',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:migrate'],
-        },
-      ],
-      postgres,
-    })
+    if (!target) { target = {} }
+    const dbExtensions = (target.extensions ?? []).concat(postgres?.extensions ?? [])
+
+    merge(target, postgres)
+    merge(target, this.postgresDefaults(postgres ?? {}))
+    if (dbExtensions) target.extensions = dbExtensions
+    if (target.extensions?.length === 0) target.extensions = undefined
+
+    return target
   }
-  seed(postgres?: PostgresInfo): this {
-    return this.initContainer({
-      postgres: postgres,
-      containers: [
-        {
-          name: 'seed',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:seed:all'],
-        },
-      ],
-    })
+
+  /**
+   * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
+   * @param ic - InitContainers definitions
+   */
+  initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>, withDB = false) {
+    // Combine current and new containers
+    ic.containers = ic.containers.concat(this.serviceDef.initContainers?.containers ?? [])
+    if (withDB || ic.postgres) {
+      ic.postgres = this.grantDB(ic.postgres, this.serviceDef.initContainers?.postgres)
+      withDB = true
+    }
+
+    const uniqueNames = new Set((ic.containers ?? []).map((c) => c.name))
+    if (uniqueNames.size != ic.containers.length) {
+      throw new Error(
+        'For multiple init containers, you must set a unique name for each container.',
+      )
+    }
+
+    this.serviceDef.initContainers = {
+      envs: {},
+      secrets: {},
+      features: {},
+      ...ic,
+    }
+    if (withDB) {
+      this.serviceDef.postgres = ic.postgres
+    }
+    console.log(`Created initcontainer for ${this.serviceDef.name}:`, { ic: this.serviceDef.initContainers })
+    return this
   }
 
   db(): this
   db(postgres: PostgresInfo): this
+  db(postgres?: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
-    this.serviceDef.postgres = this.postgresDefaults(postgres ?? {})
+    this.serviceDef.postgres = this.grantDB(this.serviceDef.postgres, postgres)
+    console.log(`Setting DB config for ${this.serviceDef.name} to:`, { postgres: this.serviceDef.postgres })
     return this
   }
 
@@ -350,6 +335,33 @@ export class ServiceBuilder<ServiceType extends string> {
       return this.db()
     }
     return this.db(...args)
+  }
+
+  migrations(postgres?: PostgresInfo): this {
+    postgres = this.grantDB(this.serviceDef.initContainers?.postgres, postgres)
+    return this.initContainer({
+      containers: [
+        {
+          name: 'migrations',
+          command: 'npx',
+          args: ['sequelize-cli', 'db:migrate'],
+        },
+      ],
+      postgres,
+    })
+  }
+  seed(postgres?: PostgresInfo): this {
+    postgres = this.grantDB(this.serviceDef.initContainers?.postgres, postgres)
+    return this.initContainer({
+      containers: [
+        {
+          name: 'seed',
+          command: 'npx',
+          args: ['sequelize-cli', 'db:seed:all'],
+        },
+      ],
+      postgres,
+    })
   }
 
   /**
@@ -386,30 +398,28 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   private postgresDefaults = (pg: PostgresInfo): PostgresInfo => {
-    const pgExtensions = [
-      ...(this.serviceDef.initContainers?.postgres?.extensions ?? []),
-      ...(pg.extensions ?? []),
-    ]
+    pg = merge(pg, this.serviceDef.postgres)
     return {
       host: pg.host ?? this.serviceDef.postgres?.host, // Allows missing host
       username: postgresIdentifier(
         this.stripPostfix(
           pg.username ??
-            pg.name ??
-            this.serviceDef.postgres?.username ??
-            this.serviceDef.name,
+          pg.name ??
+          this.serviceDef.postgres?.username ??
+          this.serviceDef.name,
         ),
       ),
       passwordSecret:
         pg.passwordSecret ??
         this.serviceDef.postgres?.passwordSecret ??
         `/k8s/${pg.name ?? this.serviceDef.name}/DB_PASSWORD`,
-      name: postgresIdentifier(
-        this.stripPostfix(
-          pg.name ?? this.serviceDef.postgres?.name ?? this.serviceDef.name,
-        ),
-      ),
-      extensions: pgExtensions.length > 0 ? pgExtensions : undefined,
+      name:
+        postgresIdentifier(this.stripPostfix(
+          pg.name ??
+          this.serviceDef.postgres?.name ??
+          this.serviceDef.name
+        )),
+      extensions: pg.extensions,
     }
   }
 }
