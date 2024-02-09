@@ -77,6 +77,49 @@ export const information = {
         description: 'select exam location label',
       },
     }),
+    modeOfDeliverySection: defineMessages({
+      sectionTitle: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.sectionTitle',
+        defaultMessage: 'Form kennslu',
+        description: 'Mode of delivery section title',
+      },
+      title: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.title',
+        defaultMessage: 'Form kennslu',
+        description: 'Mode of delivery title',
+      },
+      subTitle: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.subTitle',
+        defaultMessage:
+          'Vinsamlegast veldu hvernig þú vilt haga náminu þínu (vantar texta hér)',
+        description: 'Mode of delivery subtitle',
+      },
+      ON_SITE: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.onSite',
+        defaultMessage: 'Staðnám',
+        description: 'On site value',
+      },
+      REMOTE: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.remote',
+        defaultMessage: 'Fjarnám',
+        description: 'remote value',
+      },
+      ONLINE: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.online',
+        defaultMessage: 'Netnám',
+        description: 'online value',
+      },
+      MIXED: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.mixed',
+        defaultMessage: 'Blandað nám',
+        description: 'mixed value',
+      },
+      UNDEFINED: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.undefined',
+        defaultMessage: 'Óskilgreint',
+        description: 'undefined value',
+      },
+    }),
     extraPermission: defineMessages({
       sectionTitle: {
         id: 'uni.application:information.labels.extraPermission.sectionTitle',

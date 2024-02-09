@@ -154,6 +154,13 @@ export class CreateApplicationDto {
 
   @IsUUID()
   @ApiProperty({
+    description: 'Application ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  applicationId!: string
+
+  @IsUUID()
+  @ApiProperty({
     description: 'Program ID',
     example: '00000000-0000-0000-0000-000000000000',
   })

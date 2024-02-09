@@ -92,6 +92,7 @@ export class UniversityApplicationService {
 
     // Wrap answers in obj that can be sent to libs/clients for universities
     const applicationObj: IApplication = {
+      id: applicationDto.applicationId,
       programExternalId: program.externalId,
       modeOfDelivery: programModeOfDelivery.modeOfDelivery,
       startingSemesterYear: program.startingSemesterYear,
@@ -122,6 +123,7 @@ export class UniversityApplicationService {
     // Create application in our DB
     const applicationId = (
       await this.applicationModel.create({
+        id: applicationDto.applicationId,
         nationalId: user.nationalId,
         universityId: university.id,
         programId: program.id,

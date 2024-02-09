@@ -7,7 +7,7 @@ export const mapUglaApplication = (
 ): ApplicationsPostRequest => {
   const uglaApplication: ApplicationsPostRequest = {
     inlineObject: {
-      guid: 'TODO',
+      guid: application.id,
       kennitala: application.applicant.nationalId,
 
       simi: application.applicant.phone,

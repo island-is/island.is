@@ -16,7 +16,7 @@ export const Overview: FC<FieldBaseProps> = ({
 }) => {
   const answers = application.answers as UniversityApplication
   const getApplicationById = useLazyApplicationQuery()
-  const getVehicleDetailsCallback = useCallback(
+  const getUniversityApplicationCallback = useCallback(
     async ({ id }: { id: string }) => {
       const { data } = await getApplicationById({
         id,
@@ -27,9 +27,11 @@ export const Overview: FC<FieldBaseProps> = ({
   )
 
   useEffect(() => {
-    getVehicleDetailsCallback({ id: application.id }).then((response) => {
-      console.log('response', response)
-    })
+    getUniversityApplicationCallback({ id: application.id }).then(
+      (response) => {
+        console.log('response', response)
+      },
+    )
   }, [])
 
   return (

@@ -97,7 +97,6 @@ export class UniversityService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    console.log('in the submit')
     // const { paymentUrl } = application.externalData.createCharge.data as {
     //   paymentUrl: string
     // }
@@ -131,13 +130,14 @@ export class UniversityService extends BaseTemplateApiService {
       postalCode: nationalRegistryUser.address?.postalCode || '',
       city: nationalRegistryUser.address?.city || '', // TODO what to use then?
       municipalityCode: nationalRegistryUser.address?.municipalityCode || '',
-      countryCode: nationalRegistryUser.address?.locality || '', // TODO is this right?
+      countryCode: '', // TODO get this from residenceHistory in dataProvider
       email: userFromAnswers.email,
       phone: userFromAnswers.phone,
     }
 
     const createApplicationDto = {
       createApplicationDto: {
+        applicationId: application.id,
         universityId: answers.programInformation.university,
         programId: answers.programInformation.program,
         modeOfDelivery: mapStringToEnum(
@@ -145,7 +145,6 @@ export class UniversityService extends BaseTemplateApiService {
           CreateApplicationDtoModeOfDeliveryEnum,
         ),
         applicant: user,
-        preferredLanguage: '', // TODO What is this?
         educationList: answers.educationDetails.map((education) => {
           return {
             schoolName: education.school,
