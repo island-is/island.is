@@ -44,7 +44,11 @@ export const CardWithFeaturedItems = ({
       padding={3}
       flexDirection={['columnReverse', 'row']}
     >
-      <Box display="flex" flexDirection={"column"} justifyContent="spaceBetween">
+      <Box
+        display="flex"
+        flexDirection={'column'}
+        justifyContent="spaceBetween"
+      >
         <Text variant="h3" color="purple600" truncate marginBottom={[1, 0]}>
           {heading}
         </Text>
