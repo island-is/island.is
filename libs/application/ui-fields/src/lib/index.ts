@@ -23,3 +23,4 @@ export { PdfLinkButtonFormField } from './PdfLinkButtonFormField/PdfLinkButtonFo
 export { NationalIdWithNameFormField } from './NationalIdWithNameFormField/NationalIdWithNameFormField'
 export { ActionCardListFormField } from './ActionCardListFormField/ActionCardListFormField'
 export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFormField'
+export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'

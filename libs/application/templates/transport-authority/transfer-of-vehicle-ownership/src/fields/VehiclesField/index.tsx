@@ -1,14 +1,20 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC, useCallback, useEffect } from 'react'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useFormContext } from 'react-hook-form'
 import { CurrentVehiclesAndRecords } from '../../shared'
-import { useMutation } from '@apollo/client'
+import { ApolloQueryResult, useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { VehicleFindField } from './VehicleFindField'
 import { VehicleSelectField } from './VehicleSelectField'
+import { FindVehicleFormField } from '@island.is/application/ui-fields'
+import { information, applicationCheck, error } from '../../lib/messages'
+import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -19,6 +25,22 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const currentVehicleList = application.externalData.currentVehicleList
     .data as CurrentVehiclesAndRecords
+
+  const getVehicleDetails = useLazyVehicleDetails()
+  const createGetVehicleDetailsWrapper = (
+    getVehicleDetailsFunction: (variables: {
+      permno: string
+    }) => Promise<ApolloQueryResult<any>>,
+  ) => {
+    return async (plate: string) => {
+      const variables = { permno: plate }
+      const result = await getVehicleDetailsFunction(variables)
+      // Extract relevant data based on your query structure
+      console.log('result', result)
+      return result.data.vehicleOwnerchangeChecksByPermno // Adjust based on your query
+    }
+  }
+
   const updateData = useCallback(async () => {
     await updateApplication({
       variables: {
@@ -39,9 +61,33 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   return (
     <Box paddingTop={2}>
       {currentVehicleList.totalRecords > 20 ? (
-        <VehicleFindField
-          currentVehicleList={currentVehicleList.vehicles}
-          {...props}
+        <FindVehicleFormField
+          application={application}
+          setFieldLoadingState={props.setFieldLoadingState}
+          setSubmitButtonDisabled={props.setSubmitButtonDisabled}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            description: information.labels.pickVehicle.description,
+            type: FieldTypes.FIND_VEHICLE,
+            component: FieldComponents.FIND_VEHICLE,
+            children: undefined,
+            getVehicleDetails:
+              createGetVehicleDetailsWrapper(getVehicleDetails),
+            validationErrors: applicationCheck.validation,
+            additionalErrors: true,
+            fallbackErrorMessage:
+              applicationCheck.validation.fallbackErrorMessage,
+            isNotDebtLessTag: information.labels.pickVehicle.isNotDebtLessTag,
+            findPlatePlaceholder:
+              information.labels.pickVehicle.findPlatePlaceholder,
+            findVehicleButtonText: information.labels.pickVehicle.findButton,
+            hasErrorTitle: information.labels.pickVehicle.hasErrorTitle,
+            notFoundErrorMessage:
+              information.labels.pickVehicle.notFoundMessage,
+            notFoundErrorTitle: information.labels.pickVehicle.notFoundTitle,
+            requiredValidVehicleErrorMessage: error.requiredValidVehicle,
+          }}
         />
       ) : currentVehicleList.totalRecords > 5 ? (
         <VehicleSelectField

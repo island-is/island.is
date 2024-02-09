@@ -59,8 +59,13 @@ export const information = {
       },
       notFoundTitle: {
         id: 'ta.tvo.application:information.labels.pickVehicle.notFoundTitle',
-        defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
         description: 'vehicle not found',
+      },
+      notFoundMessage: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundMessage',
+        defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
+        description: 'vehicle not found message',
       },
       hasErrorTitle: {
         id: 'ta.tvo.application:information.labels.pickVehicle.hasErrorTitle',
