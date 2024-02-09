@@ -802,6 +802,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     .map((item, index) => {
                       const dataItem =
                         item.item as UniversityGatewayProgramWithStatus
+                      const specializedName =
+                        locale === 'en'
+                          ? dataItem.specializationNameEn ?? undefined
+                          : dataItem.specializationNameIs ?? undefined
+                      const subHeading =
+                        specializedName !== undefined
+                          ? (locale === 'en'
+                              ? 'Field of study: '
+                              : 'Kjörsvið: ') + specializedName
+                          : undefined
+                      console.log(dataItem)
+
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard
@@ -816,6 +828,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 ? dataItem.nameEn
                                 : dataItem.nameIs
                             }
+                            subHeading={subHeading}
                             text={
                               locale === 'en'
                                 ? stripHtml(dataItem.descriptionEn)
