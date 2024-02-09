@@ -291,6 +291,19 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
+  private stripPostfix(name: string): string
+  private stripPostfix(name: undefined): undefined
+  private stripPostfix(name?: string) {
+    if (!name) return
+    // Strip -worker and -job postfixes from database name
+    for (const postfix of ['-worker', '-job']) {
+      if (name.endsWith(postfix)) {
+        name = name.replace(postfix, '')
+      }
+    }
+    return name
+  }
+
   migrations(postgres?: PostgresInfo): this {
     // Inherit DB config
     if (this.serviceDef.postgres) {
@@ -323,12 +336,6 @@ export class ServiceBuilder<ServiceType extends string> {
   db(): this
   db(postgres: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
-    // Strip -worker and -job postfixes from database name
-    for (const postfix of ['-worker', '-job']) {
-      if (postgres?.name?.endsWith(postfix)) {
-        postgres.name = postgres.name.replace(postfix, '')
-      }
-    }
     this.serviceDef.postgres = this.postgresDefaults(postgres ?? {})
     return this
   }
@@ -389,7 +396,7 @@ export class ServiceBuilder<ServiceType extends string> {
         pg.username ??
         pg.name ??
         this.serviceDef.postgres?.username ??
-        postgresIdentifier(this.serviceDef.name),
+        postgresIdentifier(this.stripPostfix(this.serviceDef.name)),
       passwordSecret:
         pg.passwordSecret ??
         this.serviceDef.postgres?.passwordSecret ??
@@ -397,7 +404,7 @@ export class ServiceBuilder<ServiceType extends string> {
       name:
         pg.name ??
         this.serviceDef.postgres?.name ??
-        postgresIdentifier(this.serviceDef.name),
+        postgresIdentifier(this.stripPostfix(this.serviceDef.name)),
       extensions: pgExtensions.length > 0 ? pgExtensions : undefined,
     }
   }
