@@ -59,8 +59,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgHiddenBelow="sm"
               />
               {/*<ListReviewedAlert />*/}
-              {list.collectors &&
-                list.collectors.length > 0 &&
+              {list.collectors?.length &&
                 list.collectors.map((collector) => (
                   <Box key={collector.name} marginBottom={5}>
                     <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
