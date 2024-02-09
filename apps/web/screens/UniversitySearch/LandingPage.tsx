@@ -182,83 +182,63 @@ const LandingPage: Screen<LandingPageProps> = ({
         </>
       }
       mainContent={
-        <Box paddingTop={0}>
+        <Box
+          paddingTop={0}
+          style={{ gap: '2.5rem' }}
+          display="flex"
+          flexDirection={'column'}
+        >
           {organizationPage?.slices?.map((slice, index) => {
             return (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                namespace={namespace}
-                slug={organizationPage.slug}
-                fullWidth={organizationPage.theme === 'landing_page'}
-                marginBottom={
-                  index === organizationPage.slices.length - 1 ? 5 : 0
-                }
-                paddingBottom={
-                  !organizationPage.description && index === 0 ? 0 : 6
-                }
-              />
+              <Box key={index}>
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  namespace={namespace}
+                  slug={organizationPage.slug}
+                  fullWidth={organizationPage.theme === 'landing_page'}
+                  marginBottom={
+                    index === organizationPage.slices.length - 1 ? 5 : 0
+                  }
+                  paddingBottom={
+                    !organizationPage.description && index === 0 ? 0 : 6
+                  }
+                />
+                {index === 0 && (
+                  <GridColumn
+                    span={['9/9', '9/9', '11/12']}
+                    offset={['0', '0', '1/12']}
+                  >
+                    <Input
+                      placeholder={n('searchPrograms', 'Leit í háskólanámi')}
+                      id="searchuniversity"
+                      name="filterInput"
+                      size="md"
+                      value={searchTerm}
+                      className={cn(styles.searchInput)}
+                      backgroundColor="blue"
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value)
+                      }}
+                      onKeyDown={(k) => {
+                        if (k.code === 'Enter') {
+                          routeToSearch()
+                        }
+                      }}
+                    />
+                    <button
+                      className={cn(styles.searchIcon)}
+                      onClick={() => routeToSearch()}
+                    >
+                      <Icon size="large" icon="search" color="blue400" />
+                    </button>
+                  </GridColumn>
+                )}
+              </Box>
             )
           })}
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <Box marginY={4}>
-              <AlertMessage
-                type="warning"
-                message="ATH. Tímabundin BETA útgáfa"
-              />
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <Input
-              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
-              id="searchuniversity"
-              name="filterInput"
-              size="md"
-              value={searchTerm}
-              className={cn(styles.searchInput)}
-              backgroundColor="blue"
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
-              }}
-              onKeyDown={(k) => {
-                if (k.code === 'Enter') {
-                  routeToSearch()
-                }
-              }}
-            />
-            <button
-              className={cn(styles.searchIcon)}
-              onClick={() => routeToSearch()}
-            >
-              <Icon size="large" icon="search" color="blue400" />
-            </button>
-          </GridColumn>
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <Box marginY={4}>
-              <ActionCard
-                heading={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
-                text={n(
-                  'straightToApplying',
-                  'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið.',
-                )}
-                cta={{
-                  label: n('applyToUniversity', 'Sækja um í háskóla'),
-                  onClick: routeToStudies, // TODO Route me!
-                }}
-              />
-            </Box>
-          </GridColumn>
         </Box>
       }
     >
@@ -279,11 +259,6 @@ const LandingPage: Screen<LandingPageProps> = ({
           }}
         />
       ))}
-      {organizationPage?.theme === 'landing_page' && (
-        <LandingPageFooter
-          footerItems={organizationPage.organization?.footerItems}
-        />
-      )}
     </OrganizationWrapper>
   )
 }

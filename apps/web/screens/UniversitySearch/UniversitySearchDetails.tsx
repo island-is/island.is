@@ -342,7 +342,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                         <Icon icon={'school'} type="outline" color="blue400" />
                       </Box>
                       <Text variant="medium">
-                        {`${n(
+                        {`${n('degreeType', 'Námsstig')}: ${n(
                           data.degreeType,
                           TranslationDefaults[data.degreeType],
                         )}, ${data.degreeAbbreviation}`}
@@ -358,7 +358,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                           color="blue400"
                         />
                       </Box>
-                      <Text variant="medium">{`${n('begins', 'Hefst')} ${n(
+                      <Text variant="medium">{`${n('begins', 'Nám hefst')}: ${n(
                         data.startingSemesterSeason,
                         TranslationDefaults[data.startingSemesterSeason],
                       )} ${data.startingSemesterYear}`}</Text>
@@ -411,18 +411,19 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       <Box marginRight={1}>
                         <Icon icon={'person'} type="outline" color="blue400" />
                       </Box>
-                      <Text variant="medium">{`${data.modeOfDelivery.map(
-                        (delivery, index) => {
-                          if (index !== 0) {
-                            return `, ${n(
-                              delivery,
-                              TranslationDefaults[delivery],
-                            )}`
-                          } else {
-                            return n(delivery, TranslationDefaults[delivery])
-                          }
-                        },
-                      )}`}</Text>
+                      <Text variant="medium">{`${n(
+                        'modeOfDelivery',
+                        'Námsform',
+                      )}: ${data.modeOfDelivery.map((delivery, index) => {
+                        if (index !== 0) {
+                          return `, ${n(
+                            delivery,
+                            TranslationDefaults[delivery],
+                          )}`
+                        } else {
+                          return n(delivery, TranslationDefaults[delivery])
+                        }
+                      })}`}</Text>
                     </Box>
                   </GridColumn>
                 </GridRow>
