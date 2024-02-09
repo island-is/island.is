@@ -4,7 +4,13 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import Signees from './components/signees'
 import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
@@ -12,6 +18,7 @@ import PaperUpload from './components/paperUpload'
 import ListReviewedAlert from './components/listReviewedAlert'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { format as formatNationalId } from 'kennitala'
 
 export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { list } = useLoaderData() as { list: SignatureCollectionList }
@@ -51,7 +58,21 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ListReviewedAlert />
+              {/*<ListReviewedAlert />*/}
+              {list.collectors &&
+                list.collectors.length > 0 &&
+                list.collectors.map((collector) => (
+                  <Box key={collector.name} marginBottom={5}>
+                    <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
+                    <Text>
+                      {collector.name +
+                        ' ' +
+                        '(' +
+                        formatNationalId(collector.nationalId) +
+                        ')'}
+                    </Text>
+                  </Box>
+                ))}
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
@@ -61,7 +82,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               {allowedToProcess && (
                 <>
                   <PaperUpload listId={list.id} />
-                  <ActionReviewComplete />
+                  {/*<ActionReviewComplete />*/}
                 </>
               )}
             </>
