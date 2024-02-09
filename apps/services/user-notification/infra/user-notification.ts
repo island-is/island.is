@@ -152,7 +152,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .serviceAccount(serviceCleanupWorkerName)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
-    .db()
+    .db({ name: 'user-notification' })
     .migrations()
     .extraAttributes({
       dev: { schedule: '@hourly' },
