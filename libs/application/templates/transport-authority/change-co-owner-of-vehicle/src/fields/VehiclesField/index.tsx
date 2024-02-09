@@ -48,8 +48,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     return async (plate: string) => {
       const variables = { permno: plate }
       const result = await getVehicleDetailsFunction(variables)
-      // Extract relevant data based on your query structure
-      console.log('result', result)
       return result.data.vehicleOwnerchangeChecksByPermno // Adjust based on your query
     }
   }
