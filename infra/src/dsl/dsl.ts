@@ -307,7 +307,11 @@ export class ServiceBuilder<ServiceType extends string> {
   migrations(postgres?: PostgresInfo): this {
     // Inherit DB config
     if (this.serviceDef.postgres) {
-      postgres = { ...this.serviceDef.postgres, ...postgres }
+      const defaults = this.postgresDefaults(postgres ?? {})
+      postgres = { ...this.serviceDef.postgres, ...defaults }
+      if (postgres.extensions) {
+        postgres.extensions.push(...this.serviceDef.postgres?.extensions ?? [])
+      }
     }
     return this.initContainer({
       containers: [
