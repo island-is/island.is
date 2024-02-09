@@ -63,7 +63,6 @@ export const EducationDetailsSubSection = buildSubSection({
             return chosenOption !== 'exemption' // Every other options shows this field
           },
           options: () => {
-            // TODO insert correct options
             return [
               {
                 label: 'Stúdentspróf',
@@ -83,7 +82,6 @@ export const EducationDetailsSubSection = buildSubSection({
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            // console.log('chosenOption', chosenOption)
             return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
           },
         }),
@@ -164,7 +162,7 @@ export const EducationDetailsSubSection = buildSubSection({
               {
                 label:
                   formerEducation.labels.educationDetails
-                    .degreeFinishedCheckboxLabel, // TODO Check if this works without formatMessage
+                    .degreeFinishedCheckboxLabel,
                 value: YES,
               },
             ]

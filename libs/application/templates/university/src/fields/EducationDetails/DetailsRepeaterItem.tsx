@@ -17,7 +17,6 @@ import { formerEducation } from '../../lib/messages/formerEducation'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { FileUploadController } from '@island.is/application/ui-components'
 import { useFormContext } from 'react-hook-form'
-import { HiddenTextInput } from '../HiddenTextInput'
 import { EducationDetailsItem } from '../../shared/types'
 
 interface DetailsRepeaterItemProps extends FieldBaseProps {
@@ -157,19 +156,16 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
                 index,
               )
             }
-            options={
-              // TODO insert correct options
-              [
-                {
-                  label: 'Stúdentspróf',
-                  value: 'studentsprof',
-                },
-                {
-                  label: 'Sveinspróf',
-                  value: 'sveinsprof',
-                },
-              ]
-            }
+            options={[
+              {
+                label: 'Stúdentspróf',
+                value: 'studentsprof',
+              },
+              {
+                label: 'Sveinspróf',
+                value: 'sveinsprof',
+              },
+            ]}
           />
         </GridColumn>
       </GridRow>

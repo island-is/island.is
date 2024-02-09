@@ -27,12 +27,6 @@ export const OtherDocumentsSubSection = buildSubSection({
             const chosenOption = answers.educationOptions
             return true
           },
-          //   uploadHeader:
-          //     supportingDocuments.labels.otherDocuments.birthCertificate,
-          //   uploadDescription:
-          //     supportingDocuments.labels.otherDocuments.acceptedFileTypes,
-          //   uploadButtonLabel:
-          //     supportingDocuments.labels.otherDocuments.buttonText,
         }),
       ],
     }),

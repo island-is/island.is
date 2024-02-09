@@ -19,8 +19,6 @@ export const ProgramReview: FC<Props> = ({
   const answers = application.answers as UniversityApplication
   const { formatMessage } = useLocale()
 
-  console.log('answers.programInfomration', answers.programInformation)
-
   return (
     <GenericReview
       application={application}

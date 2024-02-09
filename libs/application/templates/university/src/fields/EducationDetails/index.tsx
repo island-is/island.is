@@ -14,7 +14,6 @@ export const EducationDetails: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  // TODO change any to correct type
   const [educationList, setEducationList] = useState<EducationDetailsItem[]>(
     getValueViaPath(
       application.answers,

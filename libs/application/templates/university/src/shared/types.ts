@@ -5,7 +5,7 @@ export type EducationDetailsItem = z.TypeOf<
   typeof RepeateableEducationDetailsSchema
 >
 
-export type CurrentApplciation = {
+export type CurrentApplication = {
   id: string
   nationalId: string
 }
