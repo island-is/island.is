@@ -77,7 +77,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .migrations()
     .liveness('/liveness')
     .readiness('/liveness')
-    .db()
+    .db({ name: 'judicial-system' })
     .resources({
       requests: { cpu: '100m', memory: '512Mi' },
       limits: { cpu: '400m', memory: '1024Mi' },
