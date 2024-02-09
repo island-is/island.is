@@ -64,6 +64,14 @@ export class TransportAuthorityApi {
       showCoowned: true,
       showOperated: false,
     })
+    const vehicle = await this.vehiclesApiWithAuth(
+      auth,
+    ).basicVehicleInformationGet({ permno: permno })
+    if (!vehicle) {
+      throw Error(
+        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
+      )
+    }
     const isOwnerOrCoOwner = !!myVehicles?.find(
       (vehicle: VehicleMiniDto) => vehicle.permno === permno,
     )
@@ -89,6 +97,12 @@ export class TransportAuthorityApi {
       validationErrorMessages: ownerChangeValidation?.hasError
         ? ownerChangeValidation.errorMessages
         : null,
+      basicVehicleInformation: {
+        permno: vehicle.permno,
+        make: `${vehicle.make} ${vehicle.vehcom}`,
+        color: vehicle.color,
+        requireMileage: vehicle.requiresMileageRegistration,
+      },
     }
   }
 
@@ -235,10 +249,8 @@ export class TransportAuthorityApi {
       showCoowned: true,
       showOperated: false,
     })
-    const isOwnerOrCoOwner = !!myVehicles?.find(
-      (vehicle: VehicleMiniDto) => vehicle.permno === permno,
-    )
-    if (!isOwnerOrCoOwner) {
+    const vehicle = myVehicles?.find((vehicle) => vehicle.permno === permno)
+    if (vehicle?.permno !== permno) {
       throw Error(
         'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
       )
@@ -260,6 +272,12 @@ export class TransportAuthorityApi {
       validationErrorMessages: operatorChangeValidation?.hasError
         ? operatorChangeValidation.errorMessages
         : null,
+      basicVehicleInformation: {
+        color: vehicle.color,
+        make: vehicle.make,
+        permno: vehicle.permno,
+        role: vehicle.role,
+      },
     }
   }
 
@@ -334,6 +352,12 @@ export class TransportAuthorityApi {
       validationErrorMessages: validation?.hasError
         ? validation.errorMessages
         : null,
+      basicVehicleInformation: {
+        color: vehicleInfo.color,
+        make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
+        permno: vehicleInfo.permno,
+        requireMileage: vehicleInfo.requiresMileageRegistration,
+      },
     }
   }
 
