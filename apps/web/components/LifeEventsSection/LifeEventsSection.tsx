@@ -84,12 +84,12 @@ export const LifeEventsSection = ({
       </GridItems>
       <GridItems
         mobileItemWidth={270}
-        mobileItemsRows={2}
+        mobileItemsRows={1}
         paddingBottom={3}
         insideGridContainer
       >
         {items
-          .slice(3)
+          .slice(3, 7)
           .filter((x: { slug: string; title: string }) => x.slug && x.title)
           .map((lifeEvent, index: number) => {
             return (
