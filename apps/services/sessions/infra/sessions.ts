@@ -32,8 +32,6 @@ const workerPostgresInfo = {
   // name: dbName,
   // passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
   extensions: ['uuid-ossp'],
-  username: 'services_sessions_read',
-  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
 }
 
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
@@ -41,7 +39,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
     .namespace(namespace)
     .image(imageName)
     .redis()
-    .db(postgresInfo)
+    .db()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -96,7 +94,11 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .db(workerPostgresInfo)
+    .db({
+      extensions: workerPostgresInfo.extensions,
+      username: 'services_sessions_read',
+      passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+    })
     .migrations(workerPostgresInfo)
     .liveness('/liveness')
     .readiness('/liveness')
