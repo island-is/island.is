@@ -15,6 +15,8 @@ export const Overview: FC<FieldBaseProps> = ({
   goToScreen,
 }) => {
   const answers = application.answers as UniversityApplication
+  const educationList = answers.educationDetails
+
   const getApplicationById = useLazyApplicationQuery()
   const getUniversityApplicationCallback = useCallback(
     async ({ id }: { id: string }) => {
@@ -29,7 +31,7 @@ export const Overview: FC<FieldBaseProps> = ({
   useEffect(() => {
     getUniversityApplicationCallback({ id: application.id }).then(
       (response) => {
-        console.log('response', response)
+        return
       },
     )
   }, [])
@@ -41,12 +43,19 @@ export const Overview: FC<FieldBaseProps> = ({
       <Divider />
       <ApplicantReview field={field} application={application} />
       <Divider />
-      <SchoolCareerReview
-        field={field}
-        application={application}
-        route={Routes.EDUCATIONDETAILS}
-        goToScreen={goToScreen}
-      />
+      {educationList &&
+        educationList.length > 0 &&
+        educationList.map((educationItem) => {
+          return (
+            <SchoolCareerReview
+              educationItem={educationItem}
+              field={field}
+              application={application}
+              route={Routes.EDUCATIONDETAILS}
+              goToScreen={goToScreen}
+            />
+          )
+        })}
       <Divider />
       <OtherDocumentsReview
         field={field}

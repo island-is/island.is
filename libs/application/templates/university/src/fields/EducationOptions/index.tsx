@@ -18,7 +18,7 @@ import { useLocale } from '@island.is/localization'
 import { formerEducation } from '../../lib/messages/formerEducation'
 import { information } from '../../lib/messages'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
-import { ProgramBase } from '@island.is/clients/university-gateway-api'
+import { Program } from '@island.is/clients/university-gateway-api'
 
 export const EducationOptions: FC<FieldBaseProps> = ({
   application,
@@ -32,14 +32,13 @@ export const EducationOptions: FC<FieldBaseProps> = ({
     answers,
     `${Routes.EDUCATIONOPTIONS}`,
   ) as Array<string>
-  const { formatMessage, lang } = useLocale()
-  console.log('lang', lang)
+  const { formatMessage } = useLocale()
 
-  const programs = externalData.programs.data as Array<ProgramBase>
+  const programs = externalData.programs.data as Array<Program>
 
-  //   const showExeption = programs.filter(
-  //     (x) => x.id === answers.programInformation.program,
-  //   )[0].allowException
+  const showExeption = programs.filter(
+    (x) => x.id === answers.programInformation.program,
+  )[0].allowException
 
   const options = [
     {
@@ -62,15 +61,6 @@ export const EducationOptions: FC<FieldBaseProps> = ({
     },
     {
       label: formatMessage(
-        formerEducation.labels.educationOptions.exemptionLabel,
-      ),
-      subLabel: formatMessage(
-        formerEducation.labels.educationOptions.exemptionDescription,
-      ),
-      value: 'exemption',
-    },
-    {
-      label: formatMessage(
         formerEducation.labels.educationOptions.thirdLevelLabel,
       ),
       subLabel: formatMessage(
@@ -79,6 +69,18 @@ export const EducationOptions: FC<FieldBaseProps> = ({
       value: 'thirdLevel',
     },
   ]
+
+  if (showExeption) {
+    options.push({
+      label: formatMessage(
+        formerEducation.labels.educationOptions.exemptionLabel,
+      ),
+      subLabel: formatMessage(
+        formerEducation.labels.educationOptions.exemptionDescription,
+      ),
+      value: 'exemption',
+    })
+  }
   return (
     <Box>
       <FieldDescription

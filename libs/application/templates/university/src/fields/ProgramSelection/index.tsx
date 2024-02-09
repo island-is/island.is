@@ -8,12 +8,13 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { UniversityExternalData } from '../../types'
-import { ProgramBase } from '@island.is/clients/university-gateway-api'
+import { Program } from '@island.is/clients/university-gateway-api'
 import { information } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLazyUniversityQuery } from '../../hooks/useGetUniversityInformation'
 import { UniversityGatewayUniversity } from '@island.is/api/schema'
+import { useFormContext } from 'react-hook-form'
 
 export const ProgramSelection: FC<FieldBaseProps> = ({
   application,
@@ -23,11 +24,13 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
   const answers = application.answers as UniversityApplication
   const externalData = application.externalData
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+
+  const { setValue } = useFormContext()
 
   const universities = externalData.universities
     .data as Array<UniversityExternalData>
-  const programs = externalData.programs.data as Array<ProgramBase>
+  const programs = externalData.programs.data as Array<Program>
 
   const programAnswer = getValueViaPath(
     answers,
@@ -54,11 +57,38 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
 
   useEffect(() => {
     getUniversityInformationCallback().then((response) => {
-      console.log('response', response)
       setContentfulUniversities(response.universityGatewayUniversities)
       setLoadingUniversities(false)
     })
   }, [])
+
+  const ChooseUniversity = (value: string) => {
+    setChosenUniversity(value)
+    setValue(
+      `${Routes.PROGRAMINFORMATION}.universityName`,
+      contentfulUniversities.filter((x) => x.id === value)[0].contentfulTitle ||
+        '',
+    )
+  }
+
+  const ChooseProgram = (value: string) => {
+    const programInfo = programs.filter(
+      (program) => program.universityId === chosenUniversity,
+    )[0]
+    const extra =
+      lang === 'is'
+        ? programInfo.specializationNameEn
+          ? ` - ${programInfo.specializationNameEn}`
+          : ''
+        : programInfo.specializationNameEn
+        ? ` - ${programInfo.specializationNameEn}`
+        : ''
+    const programName = `${
+      lang === 'is' ? programInfo.nameIs : programInfo.nameEn
+    }${extra}`
+    setChosenProgram(value)
+    setValue(`${Routes.PROGRAMINFORMATION}.programName`, programName)
+  }
 
   return !loadingUniversities ? (
     <Box>
@@ -70,7 +100,7 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
             information.labels.programSelection.selectUniversityPlaceholder,
           )}
           backgroundColor="blue"
-          onSelect={(value) => setChosenUniversity(value.value)}
+          onSelect={(value) => ChooseUniversity(value.value as string)}
           options={universities.map((uni) => {
             return {
               label:
@@ -90,15 +120,22 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
               information.labels.programSelection.selectProgramPlaceholder,
             )}
             defaultValue={chosenProgram}
-            onSelect={(value) => setChosenProgram(value.value)}
+            onSelect={(value) => ChooseProgram(value.value as string)}
             options={programs
               .filter((program) => program.universityId === chosenUniversity)
               .map((program) => {
-                const extra = program.specializationNameIs
-                  ? ` - ${program.specializationNameIs}`
-                  : ''
+                const extra =
+                  lang === 'is'
+                    ? program.specializationNameEn
+                      ? ` - ${program.specializationNameEn}`
+                      : ''
+                    : program.specializationNameEn
+                    ? ` - ${program.specializationNameEn}`
+                    : ''
                 return {
-                  label: `${program.nameIs}${extra}`,
+                  label: `${
+                    lang === 'is' ? program.nameIs : program.nameEn
+                  }${extra}`,
                   value: program.id,
                 }
               })}

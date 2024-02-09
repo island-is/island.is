@@ -155,7 +155,6 @@ export class UniversityGatewayApi {
       id: id,
     })
 
-    console.log('results here', results)
     return {
       id: results.id,
       nationalId: results.nationalId,

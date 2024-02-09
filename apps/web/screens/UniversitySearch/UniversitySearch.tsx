@@ -276,7 +276,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         activeFilters: activeFiltersFound,
       })
 
-      console.log('results', results)
       setFilteredResults(results)
     }
     localStorage.setItem('savedFilters', JSON.stringify(filters))

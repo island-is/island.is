@@ -8,7 +8,6 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -27,8 +26,6 @@ import {
   UniversityApi,
   ProgramApi,
 } from '../dataProviders'
-import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes } from '../utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -125,79 +122,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PENDING_SCHOOL },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
-      },
-      // [States.PAYMENT]: buildPaymentState({
-      //   organizationId: InstitutionNationalIds.HASKOLARADUNEYTI,
-      //   chargeItemCodes: getChargeItemCodes,
-      //   submitTarget: States.COMPLETED,
-      //   onExit: [
-      //     defineTemplateApi({
-      //       action: ApiActions.submitApplication,
-      //       triggerEvent: DefaultEvents.SUBMIT,
-      //     }),
-      //   ],
-      // }),
-      [States.PENDING_SCHOOL]: {
-        meta: {
-          name: 'Umsókn um háskóla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardDraft,
-              variant: 'blue',
-            },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyApprovedBySchool,
-              },
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
-              },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationApproved,
-              },
-            ],
-            // pendingAction: reviewStatePendingAction,
-          },
-          lifecycle: pruneAfterDays(1),
-          onEntry: defineTemplateApi({
-            action: ApiActions.addSchoolAcceptance,
-            shouldPersistToExternalData: true,
-          }),
-          // onExit: defineTemplateApi({
-          //   action: ApiActions.validateApplication,
-          // }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Overview').then((module) =>
-                  Promise.resolve(module.OverviewForm),
-                ),
-              // write: {
-              //   answers: [
-              //     'sellerCoOwner',
-              //     'buyer',
-              //     'buyerCoOwnerAndOperator',
-              //     'insurance',
-              //     'rejecter',
-              //   ],
-              // },
-              read: 'all',
-              delete: true,
-            },
-          ],
-        },
-        // on: {
-        //   [DefaultEvents.APPROVE]: { target: States.REVIEW },
-        //   [DefaultEvents.REJECT]: { target: States.REJECTED },
-        //   [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-        // },
       },
       [States.COMPLETED]: {
         meta: {

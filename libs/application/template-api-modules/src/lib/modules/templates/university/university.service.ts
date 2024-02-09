@@ -82,7 +82,6 @@ export class UniversityService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    console.log('application', application)
     return
   }
 
@@ -155,7 +154,6 @@ export class UniversityService extends BaseTemplateApiService {
         extraFieldList: [],
       },
     }
-    console.log('createApplicationDto', createApplicationDto)
     await this.universityApplicationApiWithAuth(
       auth,
     ).universityApplicationControllerCreateApplication(createApplicationDto)

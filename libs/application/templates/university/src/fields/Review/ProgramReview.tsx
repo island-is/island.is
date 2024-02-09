@@ -19,10 +19,15 @@ export const ProgramReview: FC<Props> = ({
   const answers = application.answers as UniversityApplication
   const { formatMessage } = useLocale()
 
+  console.log('answers.programInfomration', answers.programInformation)
+
   return (
     <GenericReview
       application={application}
-      leftColumnItems={[' TODO ']}
+      leftColumnItems={[
+        answers?.programInformation.programName,
+        answers?.programInformation.universityName,
+      ]}
       leftDescription={formatMessage(review.labels.chosenProgram)}
       goToScreen={goToScreen}
       route={route}

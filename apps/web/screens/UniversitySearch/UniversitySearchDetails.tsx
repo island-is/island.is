@@ -244,7 +244,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               alt="University infomation"
             />
             <Box width="full">
-              <Button onClick={() => console.log('Route me!')} fluid>
+              <Button fluid>
                 <Box display={'flex'} style={{ gap: '0.5rem' }}>
                   {n('applyToUniversityProgram', 'Sækja um háskólanám')}
                   <Icon icon="open" type="outline" />

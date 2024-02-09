@@ -50,11 +50,37 @@ export const ModeOfDeliverySelection: FC<FieldBaseProps> = ({
             .modeOfDelivery.length > 0 && (
             <RadioController
               id={`${Routes.PROGRAMINFORMATION}.modeOfDelivery`}
-              split="1/2"
+              largeButtons
               onSelect={(value) => setChosenModeOfDelivery(value)}
               options={programs
                 .filter((program) => program.id === programAnswer)[0]
                 .modeOfDelivery.map((deliveryMethod) => {
+                  let extraParam = ''
+                  switch (deliveryMethod.modeOfDelivery) {
+                    case 'ON_SITE':
+                      extraParam = formatMessage(
+                        information.labels.modeOfDeliverySection.ON_SITE_EXTRA,
+                      )
+                      break
+                    case 'ONLINE':
+                      extraParam = formatMessage(
+                        information.labels.modeOfDeliverySection.ONLINE_EXTRA,
+                      )
+                      break
+                    case 'MIXED':
+                      extraParam = formatMessage(
+                        information.labels.modeOfDeliverySection.MIXED_EXTRA,
+                      )
+                      break
+                    case 'REMOTE':
+                      extraParam = formatMessage(
+                        information.labels.modeOfDeliverySection.REMOTE_EXTRA,
+                      )
+                      break
+                    default:
+                      extraParam = ''
+                      break
+                  }
                   return {
                     label: formatMessage(
                       information.labels.modeOfDeliverySection[
@@ -62,6 +88,7 @@ export const ModeOfDeliverySelection: FC<FieldBaseProps> = ({
                       ],
                     ),
                     value: deliveryMethod.modeOfDelivery,
+                    subLabel: extraParam,
                   }
                 })}
             />

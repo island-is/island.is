@@ -69,12 +69,10 @@ export class UniversityOfIcelandApplicationClient {
         )
       },
     )
-    console.log('mappedApplication', mappedApplication)
 
     const response = await this.applicationApi.applicationsPost(
       mappedApplication,
     )
-    console.log('response from HÍ application api endpoint', response)
     return response
   }
 

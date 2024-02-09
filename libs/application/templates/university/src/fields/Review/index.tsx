@@ -14,6 +14,7 @@ export const Review: FC<FieldBaseProps> = ({
   goToScreen,
 }) => {
   const answers = application.answers as UniversityApplication
+  const educationList = answers.educationDetails
   return (
     <Box>
       <Divider />
@@ -21,12 +22,19 @@ export const Review: FC<FieldBaseProps> = ({
       <Divider />
       <ApplicantReview field={field} application={application} />
       <Divider />
-      <SchoolCareerReview
-        field={field}
-        application={application}
-        route={Routes.EDUCATIONDETAILS}
-        goToScreen={goToScreen}
-      />
+      {educationList &&
+        educationList.length > 0 &&
+        educationList.map((educationItem) => {
+          return (
+            <SchoolCareerReview
+              educationItem={educationItem}
+              field={field}
+              application={application}
+              route={Routes.EDUCATIONDETAILS}
+              goToScreen={goToScreen}
+            />
+          )
+        })}
       <Divider />
       <OtherDocumentsReview
         field={field}

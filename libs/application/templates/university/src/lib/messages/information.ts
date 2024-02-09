@@ -119,6 +119,31 @@ export const information = {
         defaultMessage: 'Óskilgreint',
         description: 'undefined value',
       },
+      ON_SITE_EXTRA: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.onSiteExtra',
+        defaultMessage: 'Kennsla er alfarið á staðnum',
+        description: 'On site extra sub label value',
+      },
+      REMOTE_EXTRA: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.remoteExtra',
+        defaultMessage: 'Fjarnám getur falið í sér kröfu um viðveru',
+        description: 'remote extra sub label value',
+      },
+      ONLINE_EXTRA: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.onlineExtra',
+        defaultMessage: 'Netnám getur falið í sér kröfu um viðveru',
+        description: 'online extra sub label value',
+      },
+      MIXED_EXTRA: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.mixedExtra',
+        defaultMessage: 'TODO',
+        description: 'mixed extra sub label value',
+      },
+      UNDEFINED_EXTRA: {
+        id: 'uni.application:information.labels.modeOfDeliverySection.undefinedExtra',
+        defaultMessage: '',
+        description: 'undefined extra sub label value',
+      },
     }),
     extraPermission: defineMessages({
       sectionTitle: {

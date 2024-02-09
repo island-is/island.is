@@ -53,7 +53,6 @@ export class UniversityApplicationService {
     applicationDto: CreateApplicationDto,
     user: User,
   ): Promise<Application> {
-    console.log('applicationDto', applicationDto)
     // Get university national id
     const university = await this.universityModel.findByPk(
       applicationDto.universityId,
@@ -118,8 +117,6 @@ export class UniversityApplicationService {
       extraFieldList: applicationDto.extraFieldList,
     }
 
-    console.log('applicationObj', applicationObj)
-
     // Create application in our DB
     const applicationId = (
       await this.applicationModel.create({
@@ -132,8 +129,6 @@ export class UniversityApplicationService {
         externalId: 'testid123',
       })
     ).id
-
-    console.log('applicationId', applicationId)
 
     // Create application in University DB
     let applicationExternalId: string | undefined
@@ -155,7 +150,6 @@ export class UniversityApplicationService {
           applicationObj,
         )
         applicationExternalId = response.id
-        console.log('in here applicationExternalId', applicationExternalId)
       } catch (e) {
         throw new Error(
           `Failed to create application in University of Iceland DB`,
@@ -179,7 +173,6 @@ export class UniversityApplicationService {
     const application = await this.applicationModel.findOne({
       where: { id: applicationId, nationalId: user.nationalId },
     })
-    console.log('application', application)
     if (!application) {
       throw new Error(
         `Application with id ${applicationId} for user with national id ${user.nationalId} not found`,

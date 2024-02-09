@@ -34,7 +34,9 @@ const FileDocumentSchema = z.object({
 
 const ProgramSchema = z.object({
   university: z.string(),
+  universityName: z.string(),
   program: z.string(),
+  programName: z.string(),
   modeOfDelivery: z.string().optional(), //z.enum(['Online', 'OnSite']), // TODO have dyncamic or static or just have a string?
   examLocation: z.string().optional(), // TODO make conditional requirement if the mode of delivery Online is chosen
 })
