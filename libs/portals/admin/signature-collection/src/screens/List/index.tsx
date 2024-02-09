@@ -51,7 +51,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ListReviewedAlert />
+              {/*<ListReviewedAlert />*/}
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
@@ -61,7 +61,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               {allowedToProcess && (
                 <>
                   <PaperUpload listId={list.id} />
-                  <ActionReviewComplete />
+                  {/*<ActionReviewComplete />*/}
                 </>
               )}
             </>
