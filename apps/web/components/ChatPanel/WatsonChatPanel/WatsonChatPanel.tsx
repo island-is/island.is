@@ -39,7 +39,7 @@ interface ChatFeedbackPanelProps {
   submitText: string
   heading: string
   successText: string
-  errorText: string
+
   inputPlaceholder?: string
   pushUp?: boolean
 }
@@ -49,7 +49,7 @@ const ChatFeedbackPanel = ({
   submitText,
   heading,
   successText,
-  errorText,
+
   inputPlaceholder = '',
   pushUp = false,
 }: ChatFeedbackPanelProps) => {
@@ -74,21 +74,10 @@ const ChatFeedbackPanel = ({
     setThumbStatus(ThumbStatus.NoChoice)
   }
 
-  const [submitFeedback, { loading }] = useMutation<
+  const [submitFeedback] = useMutation<
     Mutation,
     MutationWatsonAssistantChatSubmitFeedbackArgs
-  >(SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK, {
-    onCompleted() {
-      toast.success(successText)
-      resetState()
-      onClose()
-    },
-    onError() {
-      toast.error(errorText)
-      resetState()
-      onClose()
-    },
-  })
+  >(SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK)
 
   return (
     <Box
@@ -102,6 +91,7 @@ const ChatFeedbackPanel = ({
           <Box
             onKeyDown={(ev) => {
               if (ev.key === 'Enter' || ev.key === ' ') {
+                resetState()
                 onClose()
                 ev.preventDefault()
               }
@@ -129,10 +119,28 @@ const ChatFeedbackPanel = ({
               onKeyDown={(ev) => {
                 if (ev.key === 'Enter' || ev.key === ' ') {
                   updateThumbStatus(ThumbStatus.Up)
+                  submitFeedback({
+                    variables: {
+                      input: {
+                        assistantChatLog: chatLog,
+                        thumbStatus: ThumbStatus.Up,
+                        url: window.location.href,
+                      },
+                    },
+                  })
                   ev.preventDefault()
                 }
               }}
               onClick={() => {
+                submitFeedback({
+                  variables: {
+                    input: {
+                      assistantChatLog: chatLog,
+                      thumbStatus: ThumbStatus.Up,
+                      url: window.location.href,
+                    },
+                  },
+                })
                 updateThumbStatus(ThumbStatus.Up)
               }}
               cursor="pointer"
@@ -152,10 +160,28 @@ const ChatFeedbackPanel = ({
               onKeyDown={(ev) => {
                 if (ev.key === 'Enter' || ev.key === ' ') {
                   updateThumbStatus(ThumbStatus.Down)
+                  submitFeedback({
+                    variables: {
+                      input: {
+                        assistantChatLog: chatLog,
+                        thumbStatus: ThumbStatus.Down,
+                        url: window.location.href,
+                      },
+                    },
+                  })
                   ev.preventDefault()
                 }
               }}
               onClick={() => {
+                submitFeedback({
+                  variables: {
+                    input: {
+                      assistantChatLog: chatLog,
+                      thumbStatus: ThumbStatus.Down,
+                      url: window.location.href,
+                    },
+                  },
+                })
                 updateThumbStatus(ThumbStatus.Down)
               }}
               cursor="pointer"
@@ -192,7 +218,6 @@ const ChatFeedbackPanel = ({
               !(feedbackText.length > 0 || thumbStatus !== ThumbStatus.NoChoice)
             }
             size="small"
-            loading={loading}
             onClick={() => {
               const chatLogCopy = [...chatLog]
               submitFeedback({
@@ -207,6 +232,9 @@ const ChatFeedbackPanel = ({
               })
               // Clear the chat log when submitting feedback
               chatLog.length = 0
+              resetState()
+              onClose()
+              toast.success(successText)
             }}
           >
             {submitText}
@@ -435,10 +463,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           successText={n(
             'chatFeedbackSubmitSuccessText',
             activeLocale === 'is' ? 'Sending tókst' : 'Submission succeeded',
-          )}
-          errorText={n(
-            'chatFeedbackSubmitErrorText',
-            activeLocale === 'is' ? 'Ekki tókst að senda' : 'Submission failed',
           )}
         />
       )}
