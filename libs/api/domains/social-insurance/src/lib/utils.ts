@@ -108,7 +108,7 @@ export const mapPensionCalculationInput = (
       ? periodIncomeTypeMapping[input.typeOfPeriodIncome]
       : input.typeOfPeriodIncome,
     ageNow: input.birthdate
-      ? differenceInYears(new Date(input.birthdate), new Date())
+      ? Math.abs(differenceInYears(new Date(input.birthdate), new Date()))
       : undefined,
   }
 }

@@ -73,14 +73,20 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   const maxMonthPensionDelay = 156 // TODO: add to namespace
 
   const [loadingResultPage, setLoadingResultPage] = useState(false)
-  const [hasLivedAbroad, setHasLivedAbroad] = useState(false)
-  const [birthdate, setBirthdate] = useState<string>()
+  const [hasLivedAbroad, setHasLivedAbroad] = useState(
+    methods.formState.defaultValues?.livingConditionAbroadInYears
+      ? true
+      : false,
+  )
+  const [birthdate, setBirthdate] = useState<string | undefined | null>(
+    defaultValues.birthdate,
+  )
   const [basePensionType, setBasePensionType] = useState<BasePensionType>(
-    BasePensionType.Retirement,
+    defaultValues.typeOfBasePension || BasePensionType.Retirement,
   )
 
   const maxMonthPensionHurry =
-    basePensionType === BasePensionType.Retirement ? 12 * 7 : 12 * 2 // TODO: add to namespace
+    basePensionType === BasePensionType.FishermanRetirement ? 12 * 7 : 12 * 2 // TODO: add to namespace
 
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     const options = [
@@ -377,7 +383,6 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                         name={'typeOfBasePension' as keyof CalculationInput}
                         label="Tegund lífeyris"
                         options={basePensionTypeOptions}
-                        defaultValue={BasePensionType.Retirement}
                         onSelect={(option) => {
                           if (option) {
                             setBasePensionType(option.value)
@@ -499,7 +504,6 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                             name={
                               'mobilityImpairment' as keyof CalculationInput
                             }
-                            defaultValue={false}
                             render={({ field: { value, onChange } }) => (
                               <Inline space={3}>
                                 <RadioButton
@@ -527,32 +531,28 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       <Stack space={2}>
                         <Text>Hefur búið erlendis</Text>
                         <Box className={styles.inputContainer}>
-                          <Controller
-                            name={'hasLivedAbroad' as keyof CalculationInput}
-                            defaultValue={false}
-                            render={({ field: { value, onChange } }) => (
-                              <Inline space={3}>
-                                <RadioButton
-                                  id="hasLivedAbroadNo"
-                                  checked={value === false}
-                                  onChange={() => {
-                                    onChange(false)
-                                    setHasLivedAbroad(false)
-                                  }}
-                                  label={'Nei'}
-                                />
-                                <RadioButton
-                                  id="hasLivedAbroadYes"
-                                  checked={value === true}
-                                  onChange={() => {
-                                    onChange(true)
-                                    setHasLivedAbroad(true)
-                                  }}
-                                  label={'Já'}
-                                />
-                              </Inline>
-                            )}
-                          />
+                          <Inline space={3}>
+                            <RadioButton
+                              id="hasLivedAbroadNo"
+                              checked={hasLivedAbroad === false}
+                              onChange={() => {
+                                setHasLivedAbroad(false)
+                                methods.setValue(
+                                  'livingConditionAbroadInYears',
+                                  null,
+                                )
+                              }}
+                              label={'Nei'}
+                            />
+                            <RadioButton
+                              id="hasLivedAbroadYes"
+                              checked={hasLivedAbroad === true}
+                              onChange={() => {
+                                setHasLivedAbroad(true)
+                              }}
+                              label={'Já'}
+                            />
+                          </Inline>
                         </Box>
 
                         {hasLivedAbroad && (
@@ -584,7 +584,6 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       <Box className={styles.inputContainer}>
                         <Controller
                           name={'typeOfPeriodIncome' as keyof CalculationInput}
-                          defaultValue={PeriodIncomeType.Month}
                           render={({ field: { value, onChange } }) => (
                             <GridRow rowGap={3}>
                               <GridColumn span={['1/1', '1/2']}>
@@ -785,7 +784,17 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     )
   }
 
-  const defaultValues = convertQueryParametersToCalculationInput(query)
+  let defaultValues = convertQueryParametersToCalculationInput(query)
+
+  defaultValues = {
+    ...defaultValues,
+    typeOfBasePension: defaultValues.typeOfBasePension
+      ? defaultValues.typeOfBasePension
+      : BasePensionType.Retirement,
+    typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
+      ? defaultValues.typeOfPeriodIncome
+      : PeriodIncomeType.Month,
+  }
 
   return {
     organizationPage: getOrganizationPage,
