@@ -268,13 +268,21 @@ export class ServiceBuilder<ServiceType extends string> {
     return name
   }
 
-  private grantDB(target?: PostgresInfo, postgres?: PostgresInfo, copy = false): PostgresInfo {
+  private grantDB(
+    target?: PostgresInfo,
+    postgres?: PostgresInfo,
+    copy = false,
+  ): PostgresInfo {
     if (copy) {
       const targetCopy = this.grantDB({}, target, false)
       return this.grantDB(targetCopy, postgres, false)
     }
-    if (!target) { target = {} }
-    const dbExtensions = (target.extensions ?? []).concat(postgres?.extensions ?? [])
+    if (!target) {
+      target = {}
+    }
+    const dbExtensions = (target.extensions ?? []).concat(
+      postgres?.extensions ?? [],
+    )
 
     merge(target, postgres)
     merge(target, this.postgresDefaults(postgres ?? {}))
@@ -288,11 +296,19 @@ export class ServiceBuilder<ServiceType extends string> {
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic - InitContainers definitions
    */
-  initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>, withDB = false) {
+  initContainer(
+    ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>,
+    withDB = false,
+  ) {
     // Combine current and new containers
-    ic.containers = ic.containers.concat(this.serviceDef.initContainers?.containers ?? [])
+    ic.containers = ic.containers.concat(
+      this.serviceDef.initContainers?.containers ?? [],
+    )
     if (withDB || ic.postgres) {
-      ic.postgres = this.grantDB(ic.postgres, this.serviceDef.initContainers?.postgres)
+      ic.postgres = this.grantDB(
+        ic.postgres,
+        this.serviceDef.initContainers?.postgres,
+      )
       withDB = true
     }
 
@@ -312,7 +328,9 @@ export class ServiceBuilder<ServiceType extends string> {
     if (withDB) {
       this.serviceDef.postgres = ic.postgres
     }
-    console.log(`Created initcontainer for ${this.serviceDef.name}:`, { ic: this.serviceDef.initContainers })
+    console.log(`Created initcontainer for ${this.serviceDef.name}:`, {
+      ic: this.serviceDef.initContainers,
+    })
     return this
   }
 
@@ -321,7 +339,9 @@ export class ServiceBuilder<ServiceType extends string> {
   db(postgres?: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
     this.serviceDef.postgres = this.grantDB(this.serviceDef.postgres, postgres)
-    console.log(`Setting DB config for ${this.serviceDef.name} to:`, { postgres: this.serviceDef.postgres })
+    console.log(`Setting DB config for ${this.serviceDef.name} to:`, {
+      postgres: this.serviceDef.postgres,
+    })
     return this
   }
 
@@ -404,21 +424,20 @@ export class ServiceBuilder<ServiceType extends string> {
       username: postgresIdentifier(
         this.stripPostfix(
           pg.username ??
-          pg.name ??
-          this.serviceDef.postgres?.username ??
-          this.serviceDef.name,
+            pg.name ??
+            this.serviceDef.postgres?.username ??
+            this.serviceDef.name,
         ),
       ),
       passwordSecret:
         pg.passwordSecret ??
         this.serviceDef.postgres?.passwordSecret ??
         `/k8s/${pg.name ?? this.serviceDef.name}/DB_PASSWORD`,
-      name:
-        postgresIdentifier(this.stripPostfix(
-          pg.name ??
-          this.serviceDef.postgres?.name ??
-          this.serviceDef.name
-        )),
+      name: postgresIdentifier(
+        this.stripPostfix(
+          pg.name ?? this.serviceDef.postgres?.name ?? this.serviceDef.name,
+        ),
+      ),
       extensions: pg.extensions,
     }
   }
