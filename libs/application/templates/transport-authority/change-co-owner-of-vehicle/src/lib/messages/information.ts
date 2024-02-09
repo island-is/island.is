@@ -53,6 +53,11 @@ export const information = {
       },
       notFoundTitle: {
         id: 'ta.ccov.application:information.labels.pickVehicle.notFoundTitle',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
+        description: 'vehicle not found',
+      },
+      notFoundMessage: {
+        id: 'ta.ccov.application:information.labels.pickVehicle.notFoundMessage',
         defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
         description: 'vehicle not found',
       },
