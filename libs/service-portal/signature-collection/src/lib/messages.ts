@@ -78,6 +78,11 @@ export const m = defineMessages({
     defaultMessage: 'Hámarki meðmæla náð',
     description: '',
   },
+  paperUploadedSignature: {
+    id: 'sp.signatureCollection:paperUploadedSignature',
+    defaultMessage: 'Meðmæli lesin inn',
+    description: '',
+  },
 
   /* Signee View */
   mySigneeListsHeader: {

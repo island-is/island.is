@@ -45,6 +45,10 @@ export const options: Record<BackgroundVariations, Options> = {
     textMode: 'light',
   },
 
+  hms: {
+    textMode: 'dark',
+  },
+
   default: {
     textMode: 'dark',
   },

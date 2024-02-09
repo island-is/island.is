@@ -59,7 +59,7 @@ const SignedList = () => {
             }
             text={formatMessage(m.collectionTitle)}
             cta={
-              new Date(signedList.endTime) > new Date()
+              new Date(signedList.endTime) > new Date() && signedList.isDigital
                 ? {
                     label: formatMessage(m.unSignList),
                     buttonType: {
@@ -76,6 +76,12 @@ const SignedList = () => {
                 ? {
                     label: formatMessage(m.collectionClosed),
                     variant: 'red',
+                    outlined: true,
+                  }
+                : !signedList.isDigital
+                ? {
+                    label: formatMessage(m.paperUploadedSignature),
+                    variant: 'blue',
                     outlined: true,
                   }
                 : undefined
