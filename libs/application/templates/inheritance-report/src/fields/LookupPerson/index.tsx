@@ -1,7 +1,4 @@
-import {
-  FC,
-  useEffect
-} from 'react'
+import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import * as nationalId from 'kennitala'
 import {
@@ -30,14 +27,12 @@ type LookupProps = {
   error: Record<string, string> | any
 }
 
-export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = (
-  {
-    field,
-    error,
-    message,
-    nested = false,
-  },
-) => {
+export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
+  field,
+  error,
+  message,
+  nested = false,
+}) => {
   const { formatMessage } = useLocale()
   const { id, props } = field
   const { setValue, watch, clearErrors } = useFormContext()

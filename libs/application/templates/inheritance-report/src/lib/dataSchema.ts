@@ -363,9 +363,7 @@ export const inheritanceReportSchema = z.object({
       /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate
-            ? isValidPhoneNumber(advocate.phone)
-            : true
+          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
         },
         {
           path: ['advocate', 'phone'],
@@ -373,9 +371,7 @@ export const inheritanceReportSchema = z.object({
       )
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate
-            ? isValidEmail(advocate.email)
-            : true
+          return enabled && advocate ? isValidEmail(advocate.email) : true
         },
         {
           path: ['advocate', 'email'],
