@@ -34,7 +34,6 @@ export const renderChartComponent = ({
         radius={component.shouldRenderBorderRadius ? [6, 6, 0, 0] : undefined}
         barSize={25}
         stackId={component.stackId?.toString()}
-        stroke={component.color}
         color={component.color}
       />
     )
