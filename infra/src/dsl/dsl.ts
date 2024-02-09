@@ -21,8 +21,8 @@ import {
 /**
  * Allows you to make some properties of a type optional.
  *
- * @template OriginalType The original type with all properties.
- * @template OptionalKeys The keys (or names) of the properties that should be made optional.
+ * @template OriginalType - The original type with all properties.
+ * @template OptionalKeys - The keys (or names) of the properties that should be made optional.
  *
  * @returns A new type with the same properties as `OriginalType`, but with the properties specified by `OptionalKeys` made optional.
  *
@@ -125,10 +125,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Sets the namespace for your service. Default value is `islandis` (optional). It sets the
-   * [namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) for
-   * all resources.
-   * @param name Namespace name
+   * Sets the namespace for your service. Default value is `islandis` (optional). It sets the [namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) for all resources.
+   * @param name - Namespace name
    */
   namespace(name: string) {
     this.serviceDef.namespace = name
@@ -136,10 +134,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * This is necessary to allow access to this service from other namespaces. This can be the case
-   * if a pod from a different namespace is using this service. A good example of that is the
-   * ingress controller service pods that are routing traffic to the services in the cluster.
-   * @param namespaces list of namespaces that have access to the namespace this service is part of
+   * This is necessary to allow access to this service from other namespaces. This can be the case if a pod from a different namespace is using this service. A good example of that is the ingress controller service pods that are routing traffic to the services in the cluster.
+   * @param namespaces - List of namespaces that have access to the namespace this service is part of
    */
   grantNamespaces(...namespaces: string[]) {
     this.serviceDef.grantNamespaces = namespaces
@@ -161,16 +157,9 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Environment variables are used for a configuration that is not a secret. It can be
-   * environment-specific or not. Mapped to
-   * [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/).
-   * Environment variables are only applied to the service. If you need those on an `initContainer`
-   * you need to specify them at that scope. That means you may need to extract and reuse or
-   * duplicate the variables if you need them both for `initContainer` and the service.
+   * Environment variables are used for a configuration that is not a secret. It can be environment-specific or not. Mapped to [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/). Environment variables are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope. That means you may need to extract and reuse or duplicate the variables if you need them both for `initContainer` and the service.
    *
-   * @param envs -  A mapping from environment variable name to its value. A single string sets the
-   * same value across all environment. A dictionary with keys the environments sets an individual
-   * value for each one.
+   * @param envs - A mapping from environment variable name to its value. A single string sets the same value across all environment. A dictionary with keys the environments sets an individual value for each one
    *
    * @example
    * ```
@@ -192,10 +181,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * X-Road configuration blocks to inject to the container. Types of XroadConfig can contain
-   * environment variables and/or secrets that define how to contact an external service through
-   * X-Road
-   * @param ...configs: X-road configs
+   * X-Road configuration blocks to inject to the container. Types of XroadConfig can contain environment variables and/or secrets that define how to contact an external service through X-Road.
+   * @param ...configs - X-road configs
    */
   xroad(...configs: XroadConfig[]) {
     this.serviceDef.xroadConfig = [...this.serviceDef.xroadConfig, ...configs]
@@ -204,7 +191,7 @@ export class ServiceBuilder<ServiceType extends string> {
 
   /**
    * Files to be mounted inside the containers. Files must be in the helm repo.
-   * @param ...files: list of MountedFile
+   * @param ...files - List of MountedFile
    */
   files(...files: MountedFile[]) {
     this.serviceDef.files = [...this.serviceDef.files, ...files]
@@ -212,9 +199,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Volumes to create and attach to containers
-   * @param ...volumes: volume configs
-   *
+   * Volumes to create and attach to containers.
+   * @param ...volumes - Volume configs
    */
   volumes(...volumes: PersistentVolumeClaim[]) {
     this.serviceDef.volumes = [...this.serviceDef.volumes, ...volumes]
@@ -222,11 +208,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * PodDisruptionBudget is a Kubernetes resource that ensures that a minimum number of pods are
-   * available at any given time. It is used to prevent Kubernetes from killing all pods of a
-   * service at once. Mapped to a
-   * [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
-   * @param pdb PodDisruptionBudget definitions
+   * PodDisruptionBudget is a Kubernetes resource that ensures that a minimum number of pods are available at any given time. It is used to prevent Kubernetes from killing all pods of a service at once. Mapped to a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
+   * @param pdb - PodDisruptionBudget definitions
    */
   podDisruption(pdb: PodDisruptionBudget) {
     this.serviceDef.podDisruptionBudget = pdb
@@ -234,10 +217,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * To perform maintenance before deploying the main service(database migrations, etc.), create an
-   * `initContainer` (optional). It maps to a Pod specification for an
-   * [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
-   * @param ic initContainer definitions
+   * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
+   * @param ic - InitContainers definitions
    */
   initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
     // Combine current and new containers
@@ -273,16 +254,11 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Secrets are configuration that is resolved at deployment time. Their values are _paths_ in the
-   * Parameter Store in AWS Systems Manager. There is a service in Kubernetes that resolves the
-   * concrete value of these secrets and they appear as environment variables on the service or the
-   * `initContainer`. Mapped to
-   * [ExternalSecrets](https://github.com/godaddy/kubernetes-external-secrets).
-   * Like environment variables, secrets are only applied to the service. If you need those on an
-   * `initContainer` you need to specify them at that scope.
+   * Secrets are configuration that is resolved at deployment time. Their values are _paths_ in the Parameter Store in AWS Systems Manager. There is a service in Kubernetes that resolves the concrete value of these secrets and they appear as environment variables on the service or the `initContainer`. Mapped to [ExternalSecrets](https://github.com/godaddy/kubernetes-external-secrets). Like environment variables, secrets are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope.
    *
    * To provision secrets in the Parameter Store, you need to get in touch with the DevOps team.
-   * @param secrets Maps of secret names and their corresponding paths
+   *
+   * @param secrets - Maps of secret names and their corresponding paths
    */
   secrets(secrets: Secrets) {
     this.assertUnset(this.serviceDef.secrets, secrets)
@@ -370,10 +346,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * You can allow ingress traffic (traffic from the internet) to your service by creating an
-   * ingress controller. Mapped to an
-   * [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress)
-   * @param ingress Ingress parameters
+   * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress).
+   * @param ingress - Ingress parameters
    */
   ingress(ingress: { [name: string]: Ingress }) {
     this.serviceDef.ingress = ingress
@@ -381,13 +355,11 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * If your service needs to perform AWS API calls, you will need to create a
-   * [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
-   * and associate it with an AWS IAM role using Kubernetes annotations.
+   * If your service needs to perform AWS API calls, you will need to create a [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) and associate it with an AWS IAM role using Kubernetes annotations.
    *
    * The AWS IAM Role and its permissions needs to be provisioned by the DevOps team.
    *
-   * @param name Service account name
+   * @param name - Service account name
    */
   serviceAccount(name?: string) {
     this.serviceDef.accountName = name ?? this.serviceDef.name
