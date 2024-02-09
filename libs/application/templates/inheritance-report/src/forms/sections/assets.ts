@@ -69,6 +69,42 @@ export const assets = buildSection({
       ],
     }),
     buildSubSection({
+      id: 'inventory',
+      title: m.inventoryTitle,
+      children: [
+        buildMultiField({
+          id: 'inventory',
+          title: m.propertiesTitle,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutInnventory.defaultMessage,
+          children: [
+            buildDescriptionField({
+              id: 'inventoryTitle',
+              title: m.inventoryTitle,
+              description: m.inventoryDescription,
+              titleVariant: 'h3',
+              marginBottom: 2,
+            }),
+            buildTextField({
+              id: 'assets.inventory.info',
+              title: m.inventoryTextField,
+              placeholder: m.inventoryTextField,
+              variant: 'textarea',
+              rows: 7,
+            }),
+            buildTextField({
+              id: 'assets.inventory.value',
+              title: m.inventoryValueTitle,
+              width: 'half',
+              variant: 'currency',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
       id: 'assets.vehicles',
       title: m.vehicles,
       children: [
@@ -174,43 +210,6 @@ export const assets = buildSection({
                 sumField: 'propertyValuation',
               },
             ),
-          ],
-        }),
-      ],
-    }),
-
-    buildSubSection({
-      id: 'inventory',
-      title: m.inventoryTitle,
-      children: [
-        buildMultiField({
-          id: 'inventory',
-          title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutInnventory.defaultMessage,
-          children: [
-            buildDescriptionField({
-              id: 'inventoryTitle',
-              title: m.inventoryTitle,
-              description: m.inventoryDescription,
-              titleVariant: 'h3',
-              marginBottom: 2,
-            }),
-            buildTextField({
-              id: 'assets.inventory.info',
-              title: m.inventoryTextField,
-              placeholder: m.inventoryTextField,
-              variant: 'textarea',
-              rows: 7,
-            }),
-            buildTextField({
-              id: 'assets.inventory.value',
-              title: m.inventoryValueTitle,
-              width: 'half',
-              variant: 'currency',
-            }),
           ],
         }),
       ],
