@@ -353,7 +353,6 @@ services-auth-ids-api:
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
-    DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
@@ -402,19 +401,6 @@ services-auth-ids-api:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        name: 'migrations'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-      - args:
-          - 'sequelize-cli'
           - 'db:seed:all'
         command:
           - 'npx'
@@ -426,8 +412,20 @@ services-auth-ids-api:
           requests:
             cpu: '50m'
             memory: '128Mi'
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
     env:
-      DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-ids.internal'
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-ids.internal'

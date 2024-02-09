@@ -1279,7 +1279,7 @@ endorsement-system-api:
       DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/services_endorsements_api/DB_PASSWORD'
+      DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
     minAvailable: 1
@@ -1299,7 +1299,7 @@ endorsement-system-api:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services_endorsements_api/DB_PASSWORD'
+    DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/endorsement-system-api/IDS-shared-secret'
     SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
@@ -1360,10 +1360,10 @@ icelandic-names-registry-backend:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
+          - 'db:seed:all'
         command:
           - 'npx'
-        name: 'migrations'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
@@ -1373,10 +1373,10 @@ icelandic-names-registry-backend:
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
-          - 'db:seed:all'
+          - 'db:migrate'
         command:
           - 'npx'
-        name: 'seed'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2010,8 +2010,13 @@ service-portal-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'service_portal_api'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: 1
@@ -2510,10 +2515,10 @@ services-university-gateway:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
+          - 'db:seed:all'
         command:
           - 'npx'
-        name: 'migrations'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
@@ -2523,10 +2528,10 @@ services-university-gateway:
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
-          - 'db:seed:all'
+          - 'db:migrate'
         command:
           - 'npx'
-        name: 'seed'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
