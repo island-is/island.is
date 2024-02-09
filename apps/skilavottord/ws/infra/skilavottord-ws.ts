@@ -3,7 +3,7 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
   service('skilavottord-ws')
     .namespace('skilavottord')
-    .db()
+    .db({ name: 'skilavottord' })
     .migrations()
     .secrets({
       SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL',
