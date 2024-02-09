@@ -14,7 +14,7 @@ export const serviceSetup =
       .serviceAccount('endorsement-system-api')
       .command('node')
       .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
-      .db()
+      .db({ name: 'services_endorsements_api' })
       .migrations()
       .env({
         EMAIL_REGION: 'eu-west-1',
