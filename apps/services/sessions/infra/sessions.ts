@@ -94,7 +94,11 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .db(workerPostgresInfo)
+    .db({
+      extensions: workerPostgresInfo.extensions,
+      username: 'services_sessions_read',
+      passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
+    })
     .migrations(workerPostgresInfo)
     .liveness('/liveness')
     .readiness('/liveness')
