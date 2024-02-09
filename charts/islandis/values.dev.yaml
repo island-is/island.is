@@ -3120,9 +3120,9 @@ user-notification-cleanup-worker:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'user_notification_cleanup'
+    DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'user_notification_cleanup'
+    DB_USER: 'user_notification'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -3164,12 +3164,12 @@ user-notification-cleanup-worker:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'user_notification_cleanup'
+      DB_NAME: 'user_notification'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'user_notification_cleanup'
+      DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/user-notification-cleanup/DB_PASSWORD'
+      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: 1
@@ -3190,7 +3190,7 @@ user-notification-cleanup-worker:
   schedule: '@hourly'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/user-notification-cleanup/DB_PASSWORD'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
