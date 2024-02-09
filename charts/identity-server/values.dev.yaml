@@ -432,9 +432,9 @@ services-auth-ids-api:
     env:
       DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_auth_ids_api'
+      DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_auth_ids_api'
+      DB_USER: 'servicesauth'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-auth-ids-api/DB_PASSWORD'
