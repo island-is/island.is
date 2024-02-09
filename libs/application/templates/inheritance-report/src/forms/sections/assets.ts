@@ -53,6 +53,10 @@ export const assets = buildSection({
                     id: 'description',
                   },
                   {
+                    title: m.propertyShare.defaultMessage,
+                    id: 'propertyShare',
+                  },
+                  {
                     title: m.propertyValuation.defaultMessage,
                     id: 'propertyValuation',
                     required: true,

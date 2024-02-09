@@ -1,4 +1,11 @@
-import { FC, useState, useEffect, useCallback, Fragment } from 'react'
+import {
+  FC,
+  useState,
+  useEffect,
+  useCallback,
+  Fragment,
+  ReactNode,
+} from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import {
   InputController,
@@ -19,6 +26,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { SpanType } from '@island.is/island-ui/core/types'
 
 type RepeaterProps = {
   field: {
@@ -99,6 +107,7 @@ export const ReportFieldsRepeater: FC<
     setValue(addTotal, total)
 
     setTotal(total)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValues, id, props.sumField])
 
   useEffect(() => {
@@ -171,6 +180,7 @@ export const ReportFieldsRepeater: FC<
 
       calculateTotal()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [faceValue, index, rateOfExchange, setValue])
 
   /* ------ Set heirs calculations ------ */
@@ -204,6 +214,7 @@ export const ReportFieldsRepeater: FC<
       `${index}.taxableInheritance`,
       taxableInheritance,
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     index,
     percentage,
@@ -224,6 +235,7 @@ export const ReportFieldsRepeater: FC<
     if (props.fromExternalData && fields.length === 0 && extData.length) {
       append(extData)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props, fields, append])
 
   const getDefaults = (fieldId: string) => {
@@ -354,8 +366,8 @@ export const ReportFieldsRepeater: FC<
       </Box>
       {!!fields.length && props.sumField && (
         <Box marginTop={5}>
-          <GridRow>
-            <GridColumn span={['1/1', '1/2']}>
+          <DoubleColumnRow
+            right={
               <Input
                 id={`${id}.total`}
                 name={`${id}.total`}
@@ -379,8 +391,8 @@ export const ReportFieldsRepeater: FC<
                 }
                 errorMessage={formatMessage(m.totalPercentageError)}
               />
-            </GridColumn>
-          </GridRow>
+            }
+          />
         </Box>
       )}
     </Box>
@@ -388,3 +400,37 @@ export const ReportFieldsRepeater: FC<
 }
 
 export default ReportFieldsRepeater
+
+const DoubleColumnRow = ({
+  left,
+  right,
+  span = ['1/1', '1/2'],
+}: {
+  left?: ReactNode
+  right?: ReactNode
+  span?: SpanType
+}) => {
+  const onlyLeft = left && !right
+  const onlyRight = right && !left
+
+  return (
+    <GridRow>
+      {onlyLeft ? (
+        <Fragment>
+          <GridColumn span={span}>{left}</GridColumn>
+          <GridColumn hiddenBelow="sm" span={span} />
+        </Fragment>
+      ) : onlyRight ? (
+        <Fragment>
+          <GridColumn hiddenBelow="sm" span={span} />
+          <GridColumn span={span}>{right}</GridColumn>
+        </Fragment>
+      ) : (
+        <Fragment>
+          <GridColumn span={span}>{left}</GridColumn>
+          <GridColumn span={span}>{right}</GridColumn>
+        </Fragment>
+      )}
+    </GridRow>
+  )
+}
