@@ -43,7 +43,7 @@ const getDefaultStyle = (
   } else if (width >= theme.breakpoints.xs) {
     return {
       background:
-        'radial-gradient(132.21% 118.28% at 100% 0%, #D7E6FF 0%, #E9F1FF 18%, #F9D9B8 61.5%, #FDBD4D 100%) center/cover',
+        'linear-gradient(90deg, #C1EDDF 0%, #FDE1AD 79%) center/cover',
     }
   } else {
     return {}
