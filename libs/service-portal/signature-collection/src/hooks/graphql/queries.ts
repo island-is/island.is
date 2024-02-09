@@ -43,7 +43,7 @@ export const GetListSignatures = gql`
         address
       }
       isDigital
-      active
+      valid
       created
     }
   }

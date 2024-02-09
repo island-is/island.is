@@ -100,11 +100,11 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @Query(() => SignatureCollectionSignedList, { nullable: true })
+  @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
     @CurrentUser() user: User,
-  ): Promise<SignatureCollectionSignedList | null> {
+  ): Promise<SignatureCollectionSignedList[] | null> {
     return this.signatureCollectionService.signedList(user)
   }
 

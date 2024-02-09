@@ -13,12 +13,12 @@ const SignedList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { signedList, refetchSignedList } = useGetSignedList()
+  const { signedLists, validList, refetchSignedList } = useGetSignedList()
 
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        id: signedList?.id,
+        id: validList?.id,
       },
     },
   })
@@ -47,76 +47,84 @@ const SignedList = () => {
 
   return (
     <Box>
-      {!!signedList && (
+      {!!signedLists && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
-          <ActionCard
-            heading={signedList.title}
-            eyebrow={
-              formatMessage(m.signedTime) +
-              ' ' +
-              format(new Date(signedList.signedDate), 'dd.MM.yyyy')
-            }
-            text={formatMessage(m.collectionTitle)}
-            cta={
-              new Date(signedList.endTime) > new Date() && signedList.isDigital
-                ? {
-                    label: formatMessage(m.unSignList),
-                    buttonType: {
-                      variant: 'text',
-                      colorScheme: 'destructive',
-                    },
-                    onClick: () => setModalIsOpen(true),
-                    icon: undefined,
+          {signedLists.map((signedList) => {
+            const { isDigital, endTime, title, signedDate, canUnsign } =
+              signedList
+            return (
+              <Box marginBottom={[5, 7]}>
+                <ActionCard
+                  heading={title}
+                  eyebrow={`${
+                    isDigital
+                      ? formatMessage(m.signedTime)
+                      : formatMessage(m.uploadedTime)
+                  } ${format(new Date(signedDate), 'dd.MM.yyyy')}`}
+                  text={formatMessage(m.collectionTitle)}
+                  cta={
+                    canUnsign
+                      ? {
+                          label: formatMessage(m.unSignList),
+                          buttonType: {
+                            variant: 'text',
+                            colorScheme: 'destructive',
+                          },
+                          onClick: () => setModalIsOpen(true),
+                          icon: undefined,
+                        }
+                      : undefined
                   }
-                : undefined
-            }
-            tag={
-              new Date(signedList.endTime) < new Date()
-                ? {
-                    label: formatMessage(m.collectionClosed),
-                    variant: 'red',
-                    outlined: true,
+                  tag={
+                    new Date(endTime) < new Date()
+                      ? {
+                          label: formatMessage(m.collectionClosed),
+                          variant: 'red',
+                          outlined: true,
+                        }
+                      : !isDigital
+                      ? {
+                          label: formatMessage(m.paperUploadedSignature),
+                          variant: 'blue',
+                          outlined: true,
+                        }
+                      : undefined
                   }
-                : !signedList.isDigital
-                ? {
-                    label: formatMessage(m.paperUploadedSignature),
-                    variant: 'blue',
-                    outlined: true,
-                  }
-                : undefined
-            }
-          />
-          <Modal
-            id="unSignList"
-            isVisible={modalIsOpen}
-            toggleClose={false}
-            initialVisibility={false}
-            onCloseModal={() => setModalIsOpen(false)}
-          >
-            <Text variant="h2" marginTop={[5, 0]}>
-              {formatMessage(m.unSignList)}
-            </Text>
-            <Text variant="default" marginTop={2}>
-              {formatMessage(m.unSignModalMessage)}
-            </Text>
-            <Box
-              marginTop={[7, 10]}
-              marginBottom={5}
-              display="flex"
-              justifyContent="center"
-            >
-              <Button
-                loading={loading}
-                colorScheme="destructive"
-                onClick={() => {
-                  onUnSignList()
-                }}
-              >
-                {formatMessage(m.unSignModalConfirmButton)}
-              </Button>
-            </Box>
-          </Modal>
+                />
+                <Modal
+                  id="unSignList"
+                  isVisible={modalIsOpen}
+                  toggleClose={false}
+                  initialVisibility={false}
+                  onCloseModal={() => setModalIsOpen(false)}
+                >
+                  <Text variant="h2" marginTop={[5, 0]}>
+                    {formatMessage(m.unSignList)}
+                  </Text>
+                  <Text variant="default" marginTop={2}>
+                    {formatMessage(m.unSignModalMessage)}
+                  </Text>
+                  <Box
+                    marginTop={[7, 10]}
+                    marginBottom={5}
+                    display="flex"
+                    justifyContent="center"
+                  >
+                    <Button
+                      loading={loading}
+                      colorScheme="destructive"
+                      onClick={() => {
+                        onUnSignList()
+                      }}
+                    >
+                      {formatMessage(m.unSignModalConfirmButton)}
+                    </Button>
+                  </Box>
+                </Modal>
+              </Box>
+            )
+          })}{' '}
         </Box>
       )}
     </Box>

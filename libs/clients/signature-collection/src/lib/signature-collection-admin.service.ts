@@ -71,7 +71,7 @@ export class SignatureCollectionAdminClientService {
     })
     return signatures
       .map((signature) => mapSignature(signature))
-      .filter((s) => s.active)
+      .filter((s) => s.valid)
   }
 
   async getAreas(collectionId?: string) {
@@ -210,7 +210,7 @@ export class SignatureCollectionAdminClientService {
       iD: parseInt(listId),
       requestBody: nationalIds,
     })
-    return signaturesFound.map(mapSignature).filter((s) => s.active)
+    return signaturesFound.map(mapSignature).filter((s) => s.valid)
   }
 
   async compareBulkSignaturesOnAllLists(
@@ -234,7 +234,7 @@ export class SignatureCollectionAdminClientService {
     )
     const signaturesMapped = signaturesFound
       .map(mapSignature)
-      .filter((s) => s.active)
+      .filter((s) => s.valid)
     signaturesMapped.forEach((signature) => {
       signature.listTitle = listNameIndexer[signature.listId]
     })

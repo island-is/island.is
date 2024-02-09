@@ -10,7 +10,7 @@ import SignedList from '../../components/SignedList'
 const SigneeView = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { signedList, loadingSignedList } = useGetSignedList()
+  const { validList, loadingSignedList } = useGetSignedList()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
 
   return (
@@ -65,7 +65,7 @@ const SigneeView = () => {
                               label: formatMessage(m.signList),
                               variant: 'text',
                               icon: 'arrowForward',
-                              disabled: signedList !== null,
+                              disabled: validList !== null,
                               onClick: () => {
                                 window.open(
                                   `${document.location.origin}${list.slug}`,
