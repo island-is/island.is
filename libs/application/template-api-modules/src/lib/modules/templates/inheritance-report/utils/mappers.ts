@@ -57,6 +57,7 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
     estateMembers,
     realEstate: {
       data: realEstate,
+      hasModified: false,
     },
     vehicles: {
       data: vehicles,
@@ -137,6 +138,7 @@ export const expandAnswers = (
             propertyValuation: realEstate.propertyValuation ?? '',
           }
         }),
+        hasModified: answers.assets.realEstate?.hasModified ?? false,
         total: answers.assets.realEstate?.total ?? 0,
       },
       stocks: {

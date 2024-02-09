@@ -68,7 +68,7 @@ export const ReportFieldsRepeater: FC<
         (errors[splitId[0]] as any)?.total
       : undefined
 
-  const { fields, append, remove } = useFieldArray<any>({
+  const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
   })
 
@@ -232,11 +232,16 @@ export const ReportFieldsRepeater: FC<
       props.fromExternalData ? props.fromExternalData : ''
     ]
 
-    if (props.fromExternalData && fields.length === 0 && extData.length) {
-      append(extData)
+    if (
+      !(application?.answers as any)?.assets?.realEstate?.hasModified &&
+      fields.length === 0 &&
+      extData.length
+    ) {
+      replace(extData)
+      setValue('assets.realEstate.hasModified', true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props, fields, append])
+  }, [])
 
   const getDefaults = (fieldId: string) => {
     return fieldId === 'taxFreeInheritance'

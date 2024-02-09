@@ -35,12 +35,20 @@ export const assets = buildSection({
               id: 'assets.realEstate.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'assets.realEstate.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
                 id: 'assets.realEstate.data',
                 doesNotRequireAnswer: true,
                 component: 'ReportFieldsRepeater',
+                childInputIds: [
+                  'assets.realEstate',
+                  'assets.realEstate.hasModified',
+                ],
               },
               {
                 fields: [
