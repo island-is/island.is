@@ -50,7 +50,7 @@ auth-admin-web:
             - '/admin'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -153,7 +153,7 @@ identity-server:
             - '/'
   namespace: 'identity-server'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -251,7 +251,7 @@ services-auth-admin-api:
             - '/backend'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -327,7 +327,7 @@ services-auth-delegation-api:
             - '/'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -435,7 +435,7 @@ services-auth-ids-api:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -500,7 +500,7 @@ services-auth-personal-representative:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -569,7 +569,7 @@ services-auth-personal-representative-public:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -652,7 +652,7 @@ services-auth-public-api:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
