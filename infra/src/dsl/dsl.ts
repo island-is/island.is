@@ -430,7 +430,7 @@ export class ServiceBuilder<ServiceType extends string> {
       passwordSecret:
         pg.passwordSecret ??
         this.serviceDef.postgres?.passwordSecret ??
-        `/k8s/${pg.name ?? this.serviceDef.name}/DB_PASSWORD`,
+        `/k8s/${this.stripPostfix(pg.name ?? this.serviceDef.name)}/DB_PASSWORD`,
       name: postgresIdentifier(
         this.stripPostfix(
           pg.name ?? this.serviceDef.postgres?.name ?? this.serviceDef.name,
