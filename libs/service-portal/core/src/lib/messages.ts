@@ -180,6 +180,10 @@ export const m = defineMessages({
     id: 'service.portal:more-options',
     defaultMessage: 'Fleiri möguleikar',
   },
+  owner: {
+    id: 'service.portal:owner',
+    defaultMessage: 'Eigandi',
+  },
   get: {
     id: 'service.portal:get',
     defaultMessage: 'Sækja',

@@ -268,10 +268,8 @@ const WorkMachinesDetail = () => {
           </Box>
           <Box marginBottom={[2, 2, 6]}>
             <Stack space={2}>
-              <Text variant="eyebrow" color="purple400">
-                {labels.owner}
-              </Text>
               <UserInfoLine
+                title={formatMessage(m.owner)}
                 label={labels.ownerName}
                 content={workMachine?.ownerName ?? ''}
                 loading={loading}
@@ -294,6 +292,7 @@ const WorkMachinesDetail = () => {
                 content={workMachine?.ownerPostcode ?? ''}
                 loading={loading}
               />
+              <Divider />
             </Stack>
           </Box>
           <Box marginBottom={[2, 2, 6]}>

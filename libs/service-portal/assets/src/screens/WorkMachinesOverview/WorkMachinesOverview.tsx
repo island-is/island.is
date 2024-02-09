@@ -228,27 +228,25 @@ const WorkMachinesOverview = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      {error ? (
-        <Problem error={error} noBorder={false} />
-      ) : !error && loading ? (
-        <Box marginBottom={2}>
-          <CardLoader />
-        </Box>
-      )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {!loading && !data?.workMachinesPaginatedCollection?.data?.length && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noDataFoundVariableFeminine, {
-            arg: formatMessage(m.workMachines).toLowerCase(),
-          })}
-          message={formatMessage(m.noDataFoundVariableDetailVariationFeminine, {
-            arg: formatMessage(m.workMachines).toLowerCase(),
-          })}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
+      {!error &&
+        !loading &&
+        !data?.workMachinesPaginatedCollection?.data?.length && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noDataFoundVariableFeminine, {
+              arg: formatMessage(m.workMachines).toLowerCase(),
+            })}
+            message={formatMessage(
+              m.noDataFoundVariableDetailVariationFeminine,
+              {
+                arg: formatMessage(m.workMachines).toLowerCase(),
+              },
+            )}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
       {!loading &&
         !error &&
         !!data?.workMachinesPaginatedCollection?.data &&
