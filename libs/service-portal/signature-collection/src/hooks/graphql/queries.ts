@@ -62,17 +62,9 @@ export const GetSignedList = gql`
       }
       endTime
       startTime
-      candidate {
-        id
-        nationalId
-        name
-        phone
-        email
-      }
-      collectors {
-        nationalId
-        name
-      }
+      isDigital
+      pageNumber
+      signedDate
       active
       collectionId
       slug
