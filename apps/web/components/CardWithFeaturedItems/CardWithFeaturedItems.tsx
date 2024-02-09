@@ -42,13 +42,12 @@ export const CardWithFeaturedItems = ({
       className={styles.container}
       justifyContent={'spaceBetween'}
       padding={3}
+      flexDirection={['columnReverse', 'row']}
     >
-      <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
-        <Link href={href as string} skipTab>
-          <Text variant="h3" color="purple600" truncate>
-            {heading}
-          </Text>
-        </Link>
+      <Box display="flex" flexDirection={"column"} justifyContent="spaceBetween">
+        <Text variant="h3" color="purple600" truncate marginBottom={[1, 0]}>
+          {heading}
+        </Text>
         {featuredItems.length > 0 && (
           <Hidden below="sm">
             <Box marginY={2}>
