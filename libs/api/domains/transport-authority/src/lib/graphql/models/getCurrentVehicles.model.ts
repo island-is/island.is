@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { string } from 'zod'
 
 @ObjectType()
 export class VehicleValidationErrorMessage {
