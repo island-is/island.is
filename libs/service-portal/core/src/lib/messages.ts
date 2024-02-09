@@ -814,6 +814,10 @@ export const m = defineMessages({
     id: 'service.portal:no-data-found',
     defaultMessage: 'Engin gögn fundust fyrir þig',
   },
+  noTransactionFound: {
+    id: 'service.portal:no-transaction-found',
+    defaultMessage: 'Engar færslur eru innan þeirra skilyrða sem valin eru',
+  },
   noData: {
     id: 'service.portal:no-data-found-simple',
     defaultMessage: 'Engin gögn fundust',

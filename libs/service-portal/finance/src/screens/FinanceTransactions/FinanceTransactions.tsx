@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
-  AlertBanner,
   Box,
   Button,
   DatePicker,
@@ -38,6 +37,7 @@ import {
   useGetCustomerChargeTypeQuery,
   useGetCustomerRecordsLazyQuery,
 } from './FinanceTransactions.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -254,10 +254,7 @@ const FinanceTransactions = () => {
 
           <Box marginTop={2}>
             {(error || chargeTypeDataError) && (
-              <AlertBanner
-                description={formatMessage(m.errorFetch)}
-                variant="error"
-              />
+              <Problem error={error || chargeTypeDataError} noBorder={false} />
             )}
             {(loading || chargeTypeDataLoading || !called) &&
               !chargeTypesEmpty &&
@@ -269,9 +266,12 @@ const FinanceTransactions = () => {
               )}
             {((recordsDataArray.length === 0 && called && !loading && !error) ||
               chargeTypesEmpty) && (
-              <AlertBanner
-                description={formatMessage(m.noResultsTryAgain)}
-                variant="warning"
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(m.noData)}
+                message={formatMessage(m.noTransactionFound)}
+                imgSrc="./assets/images/sofa.svg"
               />
             )}
             {recordsDataArray.length > 0 ? (
