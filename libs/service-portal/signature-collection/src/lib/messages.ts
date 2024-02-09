@@ -125,6 +125,16 @@ export const m = defineMessages({
     defaultMessage: 'Tókst ekki að draga meðmæli til baka',
     description: '',
   },
+  actorNoAccessTitle: {
+    id: 'sp.signatureCollection:actorNoAccessTitle',
+    defaultMessage: 'Ekki réttindi',
+    description: '',
+  },
+  actorNoAccessDescription: {
+    id: 'sp.signatureCollection:actorNoAccessDescription',
+    defaultMessage: 'Þú hefur ekki réttindi til að sjá þessar upplýsingar.',
+    description: '',
+  },
 
   /* Hætta við söfnun modal */
   cancelCollectionButton: {
