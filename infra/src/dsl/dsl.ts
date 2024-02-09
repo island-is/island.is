@@ -234,7 +234,7 @@ export class ServiceBuilder<ServiceType extends string> {
         ...{ extensions: ic?.postgres?.extensions },
       }
     } else if (this.serviceDef.postgres) {
-      ic.postgres = this.postrgesDefaults(ic.postgres ?? {})
+      ic.postgres = this.postgresDefaults(ic.postgres ?? {})
     }
 
     const uniqueNames = new Set(ic.containers.map((c) => c.name))
@@ -329,7 +329,7 @@ export class ServiceBuilder<ServiceType extends string> {
         postgres.name = postgres.name.replace(postfix, '')
       }
     }
-    this.serviceDef.postgres = this.postrgesDefaults(postgres ?? {})
+    this.serviceDef.postgres = this.postgresDefaults(postgres ?? {})
     return this
   }
 
@@ -378,7 +378,7 @@ export class ServiceBuilder<ServiceType extends string> {
     }
   }
 
-  private postrgesDefaults = (pg: PostgresInfo): PostgresInfo => {
+  private postgresDefaults = (pg: PostgresInfo): PostgresInfo => {
     const pgExtensions = [
       ...(this.serviceDef.initContainers?.postgres?.extensions ?? []),
       ...(pg.extensions ?? []),
