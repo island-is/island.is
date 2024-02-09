@@ -783,9 +783,9 @@ application-system-api-worker:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'application_system_api_worker'
+    DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'application_system_api_worker'
+    DB_USER: 'application_system_api'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
@@ -2256,9 +2256,9 @@ service-portal-api-worker:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'service_portal_api_worker'
+    DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'service_portal_api_worker'
+    DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
@@ -2561,9 +2561,9 @@ services-sessions-worker:
   env:
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_sessions_worker'
+    DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_sessions_worker'
+    DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -2611,9 +2611,9 @@ services-sessions-worker:
     env:
       DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_sessions_worker'
+      DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_sessions_worker'
+      DB_USER: 'services_sessions'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-sessions-worker/DB_PASSWORD'
@@ -2779,9 +2779,9 @@ services-university-gateway-worker:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_university_gateway_worker'
+    DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_university_gateway_worker'
+    DB_USER: 'services_university_gateway'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=345'
@@ -3115,9 +3115,9 @@ user-notification-cleanup-worker:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'user_notification_cleanup_worker'
+    DB_NAME: 'user_notification_cleanup'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'user_notification_cleanup_worker'
+    DB_USER: 'user_notification_cleanup'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -3159,9 +3159,9 @@ user-notification-cleanup-worker:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'user_notification_cleanup_worker'
+      DB_NAME: 'user_notification_cleanup'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'user_notification_cleanup_worker'
+      DB_USER: 'user_notification_cleanup'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/user-notification-cleanup-worker/DB_PASSWORD'
@@ -3205,9 +3205,9 @@ user-notification-worker:
   env:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'user_notification_worker'
+    DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'user_notification_worker'
+    DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -3264,9 +3264,9 @@ user-notification-worker:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'user_notification_worker'
+      DB_NAME: 'user_notification'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'user_notification_worker'
+      DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/user-notification-worker/DB_PASSWORD'
