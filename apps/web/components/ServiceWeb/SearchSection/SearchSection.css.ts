@@ -37,6 +37,7 @@ export const logoWrapper = style({
 export const logo = style({
   width: 80,
   height: 80,
+  display: 'flex',
 })
 
 export const mobileLogoWrapper = style({
@@ -53,6 +54,7 @@ export const mobileLogoWrapper = style({
 export const mobilelogo = style({
   width: 60,
   height: 60,
+  display: 'flex',
 })
 
 export const logoImg = style({

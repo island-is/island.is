@@ -44,6 +44,8 @@ const TransportAuthority = dynamic(
   { ssr: false },
 )
 
+const Hms = dynamic(() => import('./Variations/Hms/Hms'), { ssr: false })
+
 export const Background = ({
   variation,
   small,
@@ -76,6 +78,9 @@ export const Background = ({
       case 'samgongustofa':
       case 'transport-authority':
         setComponent(<TransportAuthority namespace={namespace} />)
+        break
+      case 'hms':
+        setComponent(<Hms namespace={namespace} />)
         break
       case 'default':
       default:
