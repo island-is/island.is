@@ -58,6 +58,11 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagur:',
     description: '',
   },
+  signedTime: {
+    id: 'sp.signatureCollection:signedTime',
+    defaultMessage: 'Skrifað undir:',
+    description: '',
+  },
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',
@@ -71,6 +76,11 @@ export const m = defineMessages({
   collectionMaxReached: {
     id: 'sp.signatureCollection:collectionMaxReached',
     defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
+  paperUploadedSignature: {
+    id: 'sp.signatureCollection:paperUploadedSignature',
+    defaultMessage: 'Meðmæli lesin inn',
     description: '',
   },
 
