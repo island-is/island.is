@@ -147,9 +147,9 @@ export class PassportService extends BaseTemplateApiService {
     orderId?: string[]
   }> {
     const applicationId = {
-      guid: application.id
+      guid: application.id,
     }
-    this.logger.info("submitPassportApplication",applicationId)
+    this.logger.info('submitPassportApplication', applicationId)
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
       application.id,
@@ -174,7 +174,7 @@ export class PassportService extends BaseTemplateApiService {
       const forUser = !!passport.userPassport
       let result
       if (forUser) {
-        this.logger.info("preregisterIdentityDocument",applicationId)
+        this.logger.info('preregisterIdentityDocument', applicationId)
         result = await this.passportApi.preregisterIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
@@ -187,9 +187,9 @@ export class PassportService extends BaseTemplateApiService {
             email: personalInfo.email,
           },
         })
-        this.logger.info("preregisterIdentityDocument result",result)
+        this.logger.info('preregisterIdentityDocument result', result)
       } else {
-        this.logger.info("preregisterChildIdentityDocument",applicationId)
+        this.logger.info('preregisterChildIdentityDocument', applicationId)
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
@@ -212,8 +212,7 @@ export class PassportService extends BaseTemplateApiService {
             email: childsPersonalInfo.guardian1.email,
           },
         })
-        this.logger.info("preregisterChildIdentityDocument result",result)
-
+        this.logger.info('preregisterChildIdentityDocument result', result)
       }
 
       if (!result || !result.success) {
