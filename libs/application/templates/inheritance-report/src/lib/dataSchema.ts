@@ -14,7 +14,7 @@ export const inheritanceReportSchema = z.object({
 
   applicant: z.object({
     email: z.string().email(),
-    phone: z.string(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v)),
     nationalId: z.string(),
     relation: z.string(),
   }),
