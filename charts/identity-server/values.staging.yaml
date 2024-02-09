@@ -467,9 +467,9 @@ services-auth-personal-representative:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_auth_personal_representative'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_auth_personal_representative'
+    DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
