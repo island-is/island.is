@@ -393,18 +393,22 @@ export class ServiceBuilder<ServiceType extends string> {
     return {
       host: pg.host ?? this.serviceDef.postgres?.host, // Allows missing host
       username:
-        pg.username ??
-        pg.name ??
-        this.serviceDef.postgres?.username ??
-        postgresIdentifier(this.stripPostfix(this.serviceDef.name)),
+        postgresIdentifier(this.stripPostfix(
+          pg.username ??
+          pg.name ??
+          this.serviceDef.postgres?.username ??
+          this.serviceDef.name
+        )),
       passwordSecret:
         pg.passwordSecret ??
         this.serviceDef.postgres?.passwordSecret ??
         `/k8s/${pg.name ?? this.serviceDef.name}/DB_PASSWORD`,
       name:
-        pg.name ??
-        this.serviceDef.postgres?.name ??
-        postgresIdentifier(this.stripPostfix(this.serviceDef.name)),
+        postgresIdentifier(this.stripPostfix(
+          pg.name ??
+          this.serviceDef.postgres?.name ??
+          this.serviceDef.name
+        )),
       extensions: pgExtensions.length > 0 ? pgExtensions : undefined,
     }
   }
