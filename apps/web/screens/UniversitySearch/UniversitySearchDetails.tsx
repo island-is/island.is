@@ -485,25 +485,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     </Text>
                   </AccordionItem>
                 )}
-                <AccordionItem
-                  id="education-orginization"
-                  label={n('educationOrganization', 'Skipulag náms')}
-                  labelUse="p"
-                  labelVariant="h3"
-                  iconVariant="default"
-                  expanded={isOpen[2]}
-                  onToggle={() => toggleIsOpen(2)}
-                >
-                  <Text as="p">
-                    {locale === 'en'
-                      ? ReactHtmlParser(
-                          data.arrangementEn ? data.arrangementEn : '',
-                        )
-                      : ReactHtmlParser(
-                          data.arrangementIs ? data.arrangementIs : '',
-                        )}
-                  </Text>
-                </AccordionItem>
                 {(data.costInformationEn || data.costInformationIs) && (
                   <AccordionItem
                     id="annual-cost"
