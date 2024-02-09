@@ -1286,9 +1286,9 @@ endorsement-system-api:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'endorsement_system_api'
+    DB_NAME: 'services_endorsements_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'endorsement_system_api'
+    DB_USER: 'services_endorsements_api'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
@@ -1345,12 +1345,12 @@ endorsement-system-api:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'endorsement_system_api'
+      DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'endorsement_system_api'
+      DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/endorsement-system-api/DB_PASSWORD'
+      DB_PASS: '/k8s/services_endorsements_api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
     minAvailable: 1
@@ -1370,7 +1370,7 @@ endorsement-system-api:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/endorsement-system-api/DB_PASSWORD'
+    DB_PASS: '/k8s/services_endorsements_api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/endorsement-system-api/IDS-shared-secret'
     SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
