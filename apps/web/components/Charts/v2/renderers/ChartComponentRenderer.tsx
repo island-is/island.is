@@ -137,7 +137,6 @@ export const renderPieChartComponents = (
           total,
         })
       }
-      labelLine={true}
       startAngle={90}
       endAngle={360 + 90}
     >

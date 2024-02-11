@@ -9,8 +9,6 @@ import { ChartComponentType, FillPattern } from './types'
  * 4 1 1 1 => 4 pixels filled 1 pixel empty 1 pixel filled 1 pixel empty
  * ... and so on
  */
-
-// TODO: see in action
 export const PREDEFINED_LINE_DASH_PATTERNS = [
   '16 3',
   '4 8 4 4 8 4',
