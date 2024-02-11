@@ -232,7 +232,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   }, [])
 
   const dateOfCalculationsOptions = useMemo<Option<string>[]>(() => {
-    return [
+    const options: Option<string>[] = pageData?.configJson
+      ?.dateOfCalculationOptions ?? [
       {
         label: '2024',
         value: new Date(2024, 1, 1).toISOString(),
@@ -282,7 +283,29 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
         value: new Date(2015, 2, 1).toISOString(),
       },
     ]
-  }, [])
+
+    const missingYearOptions: Option<string>[] = []
+    if (pageData?.configJson?.addMissingYearsAutomatically !== false) {
+      let year = new Date().getFullYear()
+      while (year > new Date(options[0].value).getFullYear()) {
+        missingYearOptions.push({
+          label: year.toString(),
+          value: new Date(year, 0, 1).toISOString(),
+        })
+        year -= 1
+      }
+      missingYearOptions.reverse()
+    }
+
+    for (const missingYearOption of missingYearOptions) {
+      options.unshift(missingYearOption)
+    }
+
+    return options
+  }, [
+    pageData?.configJson?.addMissingYearsAutomatically,
+    pageData?.configJson?.dateOfCalculationOptions,
+  ])
 
   const [dateOfCalculations, setDateOfCalculations] = useState(
     methods.formState.defaultValues?.dateOfCalculations ??
