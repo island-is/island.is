@@ -66,7 +66,9 @@ export const GetSignedList = gql`
       pageNumber
       signedDate
       active
+      isValid
       collectionId
+      canUnsign
       slug
     }
   }

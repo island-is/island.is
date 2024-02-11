@@ -65,7 +65,7 @@ const SigneeView = () => {
                               label: formatMessage(m.signList),
                               variant: 'text',
                               icon: 'arrowForward',
-                              disabled: validList !== null,
+                              disabled: !!validList,
                               onClick: () => {
                                 window.open(
                                   `${document.location.origin}${list.slug}`,

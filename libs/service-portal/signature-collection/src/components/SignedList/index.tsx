@@ -47,12 +47,13 @@ const SignedList = () => {
 
   return (
     <Box>
-      {!!signedLists && (
+      {!!signedLists && signedLists.length > 0 && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
           {signedLists.map((signedList) => {
             const { isDigital, endTime, title, signedDate, canUnsign } =
               signedList
+            console.log('canUnsign', canUnsign)
             return (
               <Box marginBottom={[5, 7]}>
                 <ActionCard

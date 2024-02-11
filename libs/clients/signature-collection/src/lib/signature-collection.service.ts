@@ -139,7 +139,7 @@ export class SignatureCollectionClientService {
   async signList(listId: string, auth: User): Promise<Signature> {
     const { signatures } = await this.getSignee(auth)
     // If user has already signed list be sure to throw error
-    if (signatures) {
+    if (signatures && signatures?.length > 0) {
       throw new Error('User has already signed a list')
     }
 
@@ -150,6 +150,7 @@ export class SignatureCollectionClientService {
       kennitala: auth.nationalId,
       iD: parseInt(listId),
     })
+
     return mapSignature(newSignature)
   }
 
@@ -221,7 +222,6 @@ export class SignatureCollectionClientService {
     if (!signatures) {
       return null
     }
-    console.log(signatures)
     return await Promise.all(
       signatures.map(async (signature) => {
         // Get title for list
