@@ -235,7 +235,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     return [
       {
         label: '2024',
-        value: new Date(2024, 2, 1),
+        value: new Date(2024, 1, 1),
       },
       {
         label: '2023 (júl-des)',

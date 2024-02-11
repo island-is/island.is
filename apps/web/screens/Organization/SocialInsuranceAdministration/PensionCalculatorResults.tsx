@@ -1,3 +1,5 @@
+import { Fragment } from 'react'
+
 import {
   Accordion,
   AccordionItem,
@@ -60,15 +62,13 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver() // TODO: add query params to pensioncalculator button
 
-  const totalAfterTax = calculation.items.find((item) =>
-    item.name?.includes('Samtals frá TR eftir skatt'),
-  )
+  const highlightedItem = calculation.highlightedItem
 
   const perMonthText = 'á mánuði'
   const perYearText = 'á ári'
   const title = `Reiknivél lífeyris`
 
-  const calculationIsPresent = calculation.items.length > 0
+  const calculationIsPresent = calculation.groups.length > 0
 
   return (
     <PensionCalculatorWrapper
@@ -101,12 +101,12 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                   </Box>
                 </Stack>
                 <Inline alignY="center" justifyContent="spaceBetween" space={5}>
-                  {totalAfterTax && (
+                  {highlightedItem && (
                     <Text variant="h2" as="h2">
                       Samtals greiðslur frá TR eftir skatt
                     </Text>
                   )}
-                  {!totalAfterTax && <Box />}
+                  {!highlightedItem && <Box />}
                   <LinkV2
                     href={`${
                       linkResolver('pensioncalculator').href
@@ -117,11 +117,11 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                     </Button>
                   </LinkV2>
                 </Inline>
-                {totalAfterTax && (
+                {highlightedItem && (
                   <Box display="flex" paddingLeft={5}>
                     <Box textAlign="right" paddingTop={2} paddingRight={4}>
                       <Text variant="h3">
-                        {formatCurrency(totalAfterTax?.monthlyAmount)}
+                        {formatCurrency(highlightedItem?.monthlyAmount)}
                       </Text>
                       <Text>{perMonthText}</Text>
                     </Box>
@@ -130,7 +130,7 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                     </Box>
                     <Box textAlign="right" paddingTop={2} paddingLeft={5}>
                       <Text variant="h3">
-                        {formatCurrency(totalAfterTax?.yearlyAmount)}
+                        {formatCurrency(highlightedItem?.yearlyAmount)}
                       </Text>
                       <Text>{perYearText}</Text>
                     </Box>
@@ -147,53 +147,74 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                 {calculationIsPresent && (
                   <Accordion dividerOnTop={false}>
                     <AccordionItem
-                      startExpanded={!totalAfterTax}
+                      startExpanded={!highlightedItem}
                       id="sundurlidun"
                       label="Sundurliðun"
                     >
-                      <Stack space={3}>
-                        <Box display="flex" justifyContent="flexEnd">
-                          <Button
-                            icon="print"
-                            variant="utility"
-                            onClick={() => {
-                              window.print()
-                            }}
-                          >
-                            Prenta
-                          </Button>
-                        </Box>
-                        <Table.Table>
-                          <Table.Head>
-                            <Table.Row>
-                              <Table.HeadData>
-                                Greiðslur frá Tryggingastofnun
-                              </Table.HeadData>
-                              <Table.HeadData>{perMonthText}</Table.HeadData>
-                              <Table.HeadData>{perYearText}</Table.HeadData>
-                            </Table.Row>
-                          </Table.Head>
-                          <Table.Body>
-                            {calculation.items.map((item, index) => (
-                              <Table.Row key={index}>
-                                <Table.Data>
-                                  <Text>{item.name}</Text>
-                                </Table.Data>
-                                <Table.Data>
-                                  <Text>
-                                    {formatCurrency(item.monthlyAmount)}
-                                  </Text>
-                                </Table.Data>
-                                <Table.Data>
-                                  <Text>
-                                    {formatCurrency(item.yearlyAmount)}
-                                  </Text>
-                                </Table.Data>
-                              </Table.Row>
+                      <Box paddingBottom={3}>
+                        <Stack space={3}>
+                          <Box display="flex" justifyContent="flexEnd">
+                            <Button
+                              icon="print"
+                              variant="utility"
+                              onClick={() => {
+                                window.print()
+                              }}
+                            >
+                              Prenta
+                            </Button>
+                          </Box>
+                          <Table.Table>
+                            {calculation.groups.map((group, groupIndex) => (
+                              <Fragment key={groupIndex}>
+                                {group.name && (
+                                  <Table.Head>
+                                    <Table.Row>
+                                      <Table.HeadData>
+                                        {group.name}
+                                      </Table.HeadData>
+                                      <Table.HeadData>
+                                        {perMonthText}
+                                      </Table.HeadData>
+                                      <Table.HeadData>
+                                        {perYearText}
+                                      </Table.HeadData>
+                                    </Table.Row>
+                                  </Table.Head>
+                                )}
+                                <Table.Body>
+                                  {group.items.map((item, itemIndex) => {
+                                    const isLastItem =
+                                      itemIndex === group.items.length - 1
+                                    const fontWeight = isLastItem
+                                      ? 'semiBold'
+                                      : undefined
+                                    return (
+                                      <Table.Row key={itemIndex}>
+                                        <Table.Data>
+                                          <Text fontWeight={fontWeight}>
+                                            {item.name}
+                                          </Text>
+                                        </Table.Data>
+                                        <Table.Data>
+                                          <Text fontWeight={fontWeight}>
+                                            {formatCurrency(item.monthlyAmount)}
+                                          </Text>
+                                        </Table.Data>
+                                        <Table.Data>
+                                          <Text fontWeight={fontWeight}>
+                                            {formatCurrency(item.yearlyAmount)}
+                                          </Text>
+                                        </Table.Data>
+                                      </Table.Row>
+                                    )
+                                  })}
+                                </Table.Body>
+                              </Fragment>
                             ))}
-                          </Table.Body>
-                        </Table.Table>
-                      </Stack>
+                          </Table.Table>
+                        </Stack>
+                      </Box>
                     </AccordionItem>
                   </Accordion>
                 )}

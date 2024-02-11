@@ -3,10 +3,18 @@ import gql from 'graphql-tag'
 export const GET_PENSION_CALCULATION = gql`
   query GetPensionCalculation($input: SocialInsurancePensionCalculationInput!) {
     getPensionCalculation(input: $input) {
-      items {
+      highlightedItem {
         name
         monthlyAmount
         yearlyAmount
+      }
+      groups {
+        name
+        items {
+          name
+          monthlyAmount
+          yearlyAmount
+        }
       }
     }
   }

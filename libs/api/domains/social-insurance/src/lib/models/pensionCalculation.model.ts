@@ -13,8 +13,20 @@ class PensionCalculationItem {
   yearlyAmount?: number
 }
 
-@ObjectType('SocialInsurancePensionCalculationResponse')
-export class PensionCalculationResponse {
+@ObjectType('SocialInsurancePensionCalculationResponseItemGroup')
+class PensionCalculationItemGroup {
+  @Field(() => String, { nullable: true })
+  name?: string
+
   @CacheField(() => [PensionCalculationItem])
   items!: PensionCalculationItem[]
+}
+
+@ObjectType('SocialInsurancePensionCalculationResponse')
+export class PensionCalculationResponse {
+  @CacheField(() => PensionCalculationItem)
+  highlightedItem!: PensionCalculationItem
+
+  @CacheField(() => [PensionCalculationItemGroup])
+  groups!: PensionCalculationItemGroup[]
 }

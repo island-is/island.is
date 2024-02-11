@@ -107,8 +107,43 @@ export class SocialInsuranceService {
     input: PensionCalculationInput,
   ): Promise<PensionCalculationResponse> {
     const mappedInput = mapPensionCalculationInput(input)
+    const response = await this.socialInsuranceApi.getPensionCalculation(
+      mappedInput,
+    )
+
+    const groups: PensionCalculationResponse['groups'] = []
+
+    groups.push({
+      name: 'Greiðslur frá Tryggingastofnun',
+      items: response.slice(0, 4),
+    })
+
+    groups.push({
+      items: response.slice(4, 7),
+    })
+
+    groups.push({
+      name: 'Tekjur frá öðrum',
+      items: response.slice(7, 17),
+    })
+
+    groups.push({
+      name: 'Fjármagnstekjur',
+      items: response.slice(17, 19),
+    })
+
+    groups.push({
+      name: 'Tekjur samtals',
+      items: response.slice(19, 23),
+    })
+
+    groups.push({
+      items: response.slice(23),
+    })
+
     return {
-      items: await this.socialInsuranceApi.getPensionCalculation(mappedInput),
+      highlightedItem: response[6],
+      groups,
     }
   }
 }

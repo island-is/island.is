@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
@@ -13,4 +13,8 @@ export const fullWidth = style({
 
 export const textMaxWidth = style({
   maxWidth: '793px',
+})
+
+globalStyle('tbody', {
+  borderBottom: '32px solid white',
 })
