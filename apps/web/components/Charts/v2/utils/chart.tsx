@@ -4,7 +4,11 @@ import { theme } from '@island.is/island-ui/theme'
 import type { Locale } from '@island.is/shared/types'
 import { Chart, ChartComponent } from '@island.is/web/graphql/schema'
 
-import { BASE_ACCORDION_HEIGHT, CHART_HEIGHT } from '../constants'
+import {
+  BASE_ACCORDION_HEIGHT,
+  CHART_HEIGHT,
+  DEFAULT_XAXIS_KEY,
+} from '../constants'
 import { ChartComponentType, ChartType } from '../types'
 import { formatValueForPresentation } from './format'
 
@@ -65,7 +69,7 @@ export const getCartesianGridComponents = ({
     return null
   }
 
-  const xAxisKey = slice.xAxisKey || 'date'
+  const xAxisKey = slice.xAxisKey || DEFAULT_XAXIS_KEY
 
   return [
     <CartesianGrid
@@ -81,7 +85,6 @@ export const getCartesianGridComponents = ({
       style={{
         fontSize: theme.typography.baseFontSize,
         fontFamily: theme.typography.fontFamily,
-        color: 'red',
       }}
       dy={theme.spacing.p2}
     />,

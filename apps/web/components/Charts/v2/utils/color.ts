@@ -78,6 +78,9 @@ export const generateComponentStyleConfigs = (
 }
 
 const getValueFromList = (colors: string[], index: number) =>
+  // In theory nobody should ever have enough components to overflow,
+  // the data should always be split into multiple charts at that point,
+  // but in case they do, start from the beginning again
   colors[index % colors.length]
 
 export const decideComponentStyles = (

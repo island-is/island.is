@@ -53,7 +53,6 @@ export class Chart {
 }
 
 export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
-  console.log('mapping chart')
   return {
     id: sys.id,
     typename: 'Chart',
