@@ -17,9 +17,11 @@ import {
 } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
+  CustomPage,
   Organization,
   OrganizationPage,
   Query,
+  QueryGetCustomPageArgs,
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPensionCalculationArgs,
@@ -36,6 +38,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import { GET_CUSTOM_PAGE_QUERY } from '../../queries/CustomPage'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import {
@@ -51,6 +54,7 @@ interface PensionCalculatorResultsProps {
   calculationYear?: number
   calculationInput: SocialInsurancePensionCalculationInput
   queryParamString: string
+  pageData?: CustomPage | null
 }
 
 const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
@@ -58,6 +62,7 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
   organization,
   calculation,
   calculationInput,
+  pageData,
   queryParamString,
 }) => {
   const { linkResolver } = useLinkResolver() // TODO: add query params to pensioncalculator button
@@ -164,11 +169,11 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                               Prenta
                             </Button>
                           </Box>
-                          <Stack space={4}>
+                          <Table.Table>
                             {calculation.groups.map((group, groupIndex) => (
-                              <Table.Table key={groupIndex}>
-                                {group.name && (
-                                  <Table.Head>
+                              <Fragment key={groupIndex}>
+                                <Table.Body>
+                                  {group.name && (
                                     <Table.Row>
                                       <Table.HeadData>
                                         {group.name}
@@ -180,9 +185,7 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                                         {perYearText}
                                       </Table.HeadData>
                                     </Table.Row>
-                                  </Table.Head>
-                                )}
-                                <Table.Body>
+                                  )}
                                   {group.items.map((item, itemIndex) => {
                                     const isLastItem =
                                       itemIndex === group.items.length - 1
@@ -210,9 +213,9 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                                     )
                                   })}
                                 </Table.Body>
-                              </Table.Table>
+                              </Fragment>
                             ))}
-                          </Stack>
+                          </Table.Table>
                         </Stack>
                       </Box>
                     </AccordionItem>
@@ -243,6 +246,9 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getPensionCalculation },
     },
+    {
+      data: { getCustomPage },
+    },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -266,6 +272,15 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_PENSION_CALCULATION,
       variables: {
         input: calculationInput,
+      },
+    }),
+    apolloClient.query<Query, QueryGetCustomPageArgs>({
+      query: GET_CUSTOM_PAGE_QUERY,
+      variables: {
+        input: {
+          uniqueIdentifier: 'PensionCalculator', // TODO: perhaps this value can be typesafe?
+          lang: locale,
+        },
       },
     }),
   ])
@@ -292,6 +307,7 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
     calculation: getPensionCalculation,
     calculationInput,
     queryParamString: queryParams.toString(),
+    pageData: getCustomPage,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

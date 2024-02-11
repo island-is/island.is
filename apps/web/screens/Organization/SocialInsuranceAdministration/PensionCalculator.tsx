@@ -231,61 +231,62 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     ]
   }, [])
 
-  const dateOfCalculationsOptions = useMemo<Option<Date>[]>(() => {
+  const dateOfCalculationsOptions = useMemo<Option<string>[]>(() => {
     return [
       {
         label: '2024',
-        value: new Date(2024, 1, 1),
+        value: new Date(2024, 1, 1).toISOString(),
       },
       {
         label: '2023 (júl-des)',
-        value: new Date(2023, 7, 1),
+        value: new Date(2023, 7, 1).toISOString(),
       },
       {
         label: '2023 (jan-jún)',
-        value: new Date(2023, 2, 1),
+        value: new Date(2023, 2, 1).toISOString(),
       },
       {
         label: '2022 (jún-des)',
-        value: new Date(2022, 7, 1),
+        value: new Date(2022, 7, 1).toISOString(),
       },
       {
         label: '2022 (jan-maí)',
-        value: new Date(2022, 2, 1),
+        value: new Date(2022, 2, 1).toISOString(),
       },
       {
         label: '2021',
-        value: new Date(2021, 2, 1),
+        value: new Date(2021, 2, 1).toISOString(),
       },
       {
         label: '2020',
-        value: new Date(2020, 2, 1),
+        value: new Date(2020, 2, 1).toISOString(),
       },
       {
         label: '2019',
-        value: new Date(2019, 2, 1),
+        value: new Date(2019, 2, 1).toISOString(),
       },
       {
         label: '2018',
-        value: new Date(2018, 2, 1),
+        value: new Date(2018, 2, 1).toISOString(),
       },
       {
         label: '2017',
-        value: new Date(2017, 2, 1),
+        value: new Date(2017, 2, 1).toISOString(),
       },
       {
         label: '2016',
-        value: new Date(2016, 2, 1),
+        value: new Date(2016, 2, 1).toISOString(),
       },
       {
         label: '2015',
-        value: new Date(2015, 2, 1),
+        value: new Date(2015, 2, 1).toISOString(),
       },
     ]
   }, [])
 
   const [dateOfCalculations, setDateOfCalculations] = useState(
-    dateOfCalculationsOptions[0].value,
+    methods.formState.defaultValues?.dateOfCalculations ??
+      dateOfCalculationsOptions[0].value,
   )
 
   const { linkResolver } = useLinkResolver()
@@ -302,8 +303,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   const { activeLocale } = useI18n()
 
   const birthdateRange = {
-    minDate: add(dateOfCalculations, { years: -130 }),
-    maxDate: dateOfCalculations, // TODO: what should this be?
+    minDate: add(new Date(dateOfCalculations), { years: -130 }),
+    maxDate: new Date(dateOfCalculations), // TODO: what should this be?
   }
 
   const startDateRange = !birthdate
@@ -317,7 +318,10 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
         }),
       }
 
-  const title = `Reiknivél lífeyris ${dateOfCalculations.getFullYear()}`
+  const title = `Reiknivél lífeyris ${
+    dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
+      ?.label ?? ''
+  }`
 
   return (
     <PensionCalculatorWrapper
