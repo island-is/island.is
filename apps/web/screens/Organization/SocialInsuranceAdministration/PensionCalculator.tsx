@@ -50,6 +50,7 @@ import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import {
   convertQueryParametersToCalculationInput,
   convertToQueryParams,
+  getDateOfCalculationsOptions,
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
@@ -232,80 +233,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   }, [])
 
   const dateOfCalculationsOptions = useMemo<Option<string>[]>(() => {
-    const options: Option<string>[] = pageData?.configJson
-      ?.dateOfCalculationOptions ?? [
-      {
-        label: '2024',
-        value: new Date(2024, 1, 1).toISOString(),
-      },
-      {
-        label: '2023 (júl-des)',
-        value: new Date(2023, 7, 1).toISOString(),
-      },
-      {
-        label: '2023 (jan-jún)',
-        value: new Date(2023, 2, 1).toISOString(),
-      },
-      {
-        label: '2022 (jún-des)',
-        value: new Date(2022, 7, 1).toISOString(),
-      },
-      {
-        label: '2022 (jan-maí)',
-        value: new Date(2022, 2, 1).toISOString(),
-      },
-      {
-        label: '2021',
-        value: new Date(2021, 2, 1).toISOString(),
-      },
-      {
-        label: '2020',
-        value: new Date(2020, 2, 1).toISOString(),
-      },
-      {
-        label: '2019',
-        value: new Date(2019, 2, 1).toISOString(),
-      },
-      {
-        label: '2018',
-        value: new Date(2018, 2, 1).toISOString(),
-      },
-      {
-        label: '2017',
-        value: new Date(2017, 2, 1).toISOString(),
-      },
-      {
-        label: '2016',
-        value: new Date(2016, 2, 1).toISOString(),
-      },
-      {
-        label: '2015',
-        value: new Date(2015, 2, 1).toISOString(),
-      },
-    ]
-
-    const missingYearOptions: Option<string>[] = []
-    if (pageData?.configJson?.addMissingYearsAutomatically !== false) {
-      let year = new Date().getFullYear()
-      while (year > new Date(options[0].value).getFullYear()) {
-        missingYearOptions.push({
-          label: year.toString(),
-          value: new Date(year, 0, 1).toISOString(),
-        })
-        year -= 1
-      }
-      missingYearOptions.reverse()
-    }
-
-    for (const missingYearOption of missingYearOptions) {
-      options.unshift(missingYearOption)
-    }
-
-    return options
-  }, [
-    pageData?.configJson?.addMissingYearsAutomatically,
-    pageData?.configJson?.dateOfCalculationOptions,
-  ])
+    return getDateOfCalculationsOptions(pageData)
+  }, [pageData])
 
   const [dateOfCalculations, setDateOfCalculations] = useState(
     methods.formState.defaultValues?.dateOfCalculations ??

@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 
 import {
   Accordion,
@@ -11,6 +11,7 @@ import {
   GridRow,
   Inline,
   LinkV2,
+  Option,
   Stack,
   Table,
   Text,
@@ -44,6 +45,7 @@ import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import {
   convertQueryParametersToCalculationInput,
   convertToQueryParams,
+  getDateOfCalculationsOptions,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
@@ -65,13 +67,20 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
   pageData,
   queryParamString,
 }) => {
-  const { linkResolver } = useLinkResolver() // TODO: add query params to pensioncalculator button
+  const { linkResolver } = useLinkResolver()
+  const dateOfCalculationsOptions = useMemo<Option<string>[]>(() => {
+    return getDateOfCalculationsOptions(pageData)
+  }, [pageData])
 
   const highlightedItem = calculation.highlightedItem
 
   const perMonthText = 'á mánuði'
   const perYearText = 'á ári'
-  const title = `Reiknivél lífeyris`
+  const title = `Reiknivél lífeyris ${
+    dateOfCalculationsOptions.find(
+      (o) => o.value === calculationInput.dateOfCalculations,
+    )?.label ?? ''
+  }`
 
   const calculationIsPresent = calculation.groups.length > 0
 
@@ -89,7 +98,7 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
             offset={['0', '0', '0', '1/9']}
             className={styles.fullWidth}
           >
-            <Box paddingY={5}>
+            <Box paddingY={6}>
               <Stack space={5}>
                 <Stack space={2}>
                   <Text variant="h1" as="h1">
