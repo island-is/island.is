@@ -15,6 +15,10 @@ export const textMaxWidth = style({
   maxWidth: '793px',
 })
 
-globalStyle('tbody', {
-  borderBottom: '32px solid white',
+globalStyle('table tr th:first-child, table tr td:first-child', {
+  width: '50%',
+})
+
+globalStyle('table tr th:not(:first-child), table tr td:not(:first-child)', {
+  width: '25%',
 })

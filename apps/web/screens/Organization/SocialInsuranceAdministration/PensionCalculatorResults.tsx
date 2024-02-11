@@ -164,9 +164,9 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                               Prenta
                             </Button>
                           </Box>
-                          <Table.Table>
+                          <Stack space={4}>
                             {calculation.groups.map((group, groupIndex) => (
-                              <Fragment key={groupIndex}>
+                              <Table.Table key={groupIndex}>
                                 {group.name && (
                                   <Table.Head>
                                     <Table.Row>
@@ -210,9 +210,9 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                                     )
                                   })}
                                 </Table.Body>
-                              </Fragment>
+                              </Table.Table>
                             ))}
-                          </Table.Table>
+                          </Stack>
                         </Stack>
                       </Box>
                     </AccordionItem>
