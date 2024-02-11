@@ -2,7 +2,6 @@ import { Chart } from '@island.is/web/graphql/schema'
 
 import {
   COMPONENT_TYPES_WITH_FILL,
-  PREDEFINED_FILL_PATTERNS,
   PREDEFINED_LINE_DASH_PATTERNS,
   PRIMARY_COLORS,
   PRIMARY_FILL_PATTERNS,

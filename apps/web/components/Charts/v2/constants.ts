@@ -23,40 +23,18 @@ export const PREDEFINED_LINE_DASH_PATTERNS = [
 /**
  * Pattern implementations are found in generateFillPattern() from utils.tsx
  */
-export const PREDEFINED_FILL_PATTERNS: FillPattern[] = [
-  FillPattern.diagonalSeToNw,
-  FillPattern.diagonalSwToNe,
-  FillPattern.diagonalSeToNwDense,
-  FillPattern.diagonalSwToNeDense,
-  FillPattern.dotsSmall,
-  FillPattern.dotsMedium,
-  FillPattern.dotsLarge,
-  FillPattern.horizontal,
-  FillPattern.vertical,
-]
-
 export const PRIMARY_FILL_PATTERNS: FillPattern[] = [
   FillPattern.diagonalSeToNw,
   FillPattern.vertical,
-  FillPattern.waves,
+  FillPattern.chevron,
   FillPattern.denseDots,
 ]
 
 export const SECONDARY_FILL_PATTERNS: FillPattern[] = [
   FillPattern.dotsMedium,
   FillPattern.diagonalSeToNw,
-  FillPattern.waves,
+  FillPattern.chevron,
   FillPattern.denseDots,
-]
-
-export const PREDEFINED_PIE_FILL_PATTERNS: FillPattern[] = [
-  FillPattern.dotsSmall,
-  FillPattern.diagonalSeToNw,
-  FillPattern.dotsMedium,
-  FillPattern.diagonalSwToNe,
-  FillPattern.dotsLarge,
-  FillPattern.diagonalSeToNwDense,
-  FillPattern.diagonalSwToNeDense,
 ]
 
 /**
@@ -108,3 +86,5 @@ export const DEFAULT_XAXIS_FORMAT = 'MMM yy'
 
 export const BASE_ACCORDION_HEIGHT = 150
 export const CHART_HEIGHT = 500
+
+export const FILL_BACKGROUND_MAIN_COLOR_OPACITY = 0

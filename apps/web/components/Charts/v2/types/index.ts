@@ -6,15 +6,13 @@ import {
 export enum FillPattern {
   diagonalSwToNe = 'pattern1',
   diagonalSeToNw = 'pattern2',
-  diagonalSwToNeDense = 'pattern3',
-  diagonalSeToNwDense = 'pattern4',
-  horizontal = 'pattern5',
-  vertical = 'pattern6',
-  dotsSmall = 'pattern7',
-  dotsMedium = 'pattern8',
-  dotsLarge = 'pattern9',
-  waves = 'pattern10',
-  denseDots = 'pattern11',
+  horizontal = 'pattern3',
+  vertical = 'pattern4',
+  dotsSmall = 'pattern5',
+  dotsMedium = 'pattern6',
+  dotsLarge = 'pattern7',
+  chevron = 'pattern8',
+  denseDots = 'pattern9',
 }
 
 export enum ChartComponentType {
