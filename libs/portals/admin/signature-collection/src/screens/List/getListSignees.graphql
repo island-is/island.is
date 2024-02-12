@@ -9,7 +9,7 @@ query Signatures($input: SignatureCollectionIdInput!) {
     }
     isDigital
     pageNumber
-    active
+    valid
     created
   }
 }

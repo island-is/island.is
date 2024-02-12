@@ -35,9 +35,7 @@ import { contextMenu } from '../ContextMenu/ContextMenu.strings'
 import { strings } from './AppealCaseFilesOverview.strings'
 import * as styles from './AppealCaseFilesOverview.css'
 
-const AppealCaseFilesOverview: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const AppealCaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -48,26 +46,6 @@ const AppealCaseFilesOverview: React.FC<
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
-
-  const fileDate = (file: CaseFile) => {
-    switch (file.category) {
-      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
-      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
-        return workingCase.appealedDate
-      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
-      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
-        return workingCase.prosecutorStatementDate
-
-      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
-      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
-        return workingCase.defendantStatementDate
-      default: {
-        return file.created
-      }
-    }
-  }
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -157,11 +135,8 @@ const AppealCaseFilesOverview: React.FC<
                 >
                   <Box className={styles.childContainer}>
                     <Text whiteSpace="nowrap">
-                      {`${formatDate(
-                        fileDate(file),
-                        'dd.MM.y',
-                      )} kl. ${formatDate(
-                        fileDate(file),
+                      {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
+                        file.created,
                         constants.TIME_FORMAT,
                       )}`}
                     </Text>

@@ -54,6 +54,6 @@ export class SignatureCollectionManagerClientService {
     })
     return signatures
       .map((signature) => mapSignature(signature))
-      .filter((s) => s.active)
+      .filter((s) => s.valid)
   }
 }
