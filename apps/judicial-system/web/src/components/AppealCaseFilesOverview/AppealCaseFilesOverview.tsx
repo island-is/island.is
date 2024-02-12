@@ -93,7 +93,7 @@ const AppealCaseFilesOverview = () => {
     workingCase.prosecutorPostponedAppealDate,
     workingCase.prosecutorStatementDate,
   ])
-
+  console.log('allFiles', allFiles)
   return (
     isCompletedCase(workingCase.state) &&
     allFiles &&

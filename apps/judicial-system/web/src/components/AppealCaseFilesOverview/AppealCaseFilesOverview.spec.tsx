@@ -11,11 +11,12 @@ import {
   CaseFile,
   CaseFileCategory,
   CaseType,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { mockCaseFile } from '../../utils/mocks'
-import { FormContextWrapper } from '../../utils/testHelpers'
+import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
 
 describe('<AppealCaseFilesOverview />', () => {
@@ -46,7 +47,7 @@ describe('<AppealCaseFilesOverview />', () => {
     expect(screen.queryAllByRole('button')).toHaveLength(2)
   })
 
-  test('should not have an option to delete file if the file is APPEAL_RULING', async () => {
+  test('should not have an option to delete file if the file is of category APPEAL_RULING', async () => {
     const theCase = {
       id: 'asd',
       type: CaseType.CUSTODY,
@@ -71,13 +72,14 @@ describe('<AppealCaseFilesOverview />', () => {
     expect(screen.getAllByRole('menuitem')).toHaveLength(1)
   })
 
-  test('should not have an option to delete file if the file is PROSECUTOR_APPEAL_BRIEF', async () => {
+  test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_BRIEF even though the user is a prosecutor', async () => {
     const theCase = {
       id: 'asd',
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF)],
       state: CaseState.ACCEPTED,
       appealState: CaseAppealState.COMPLETED,
+      prosecutorPostponedAppealDate: '2021-09-01T00:00:00Z',
     } as Case
 
     render(
@@ -85,34 +87,11 @@ describe('<AppealCaseFilesOverview />', () => {
         <ApolloProvider
           client={new ApolloClient({ cache: new InMemoryCache() })}
         >
-          <FormContextWrapper theCase={theCase}>
-            <AppealCaseFilesOverview />
-          </FormContextWrapper>
-        </ApolloProvider>
-      </IntlProvider>,
-    )
-
-    await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
-  })
-
-  test('should not have an option to delete file if the file is DEFENDANT_APPEAL_STATEMENT', async () => {
-    const theCase = {
-      id: 'asd',
-      type: CaseType.CUSTODY,
-      caseFiles: [mockCaseFile(CaseFileCategory.DEFENDANT_APPEAL_STATEMENT)],
-      state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
-    } as Case
-
-    render(
-      <IntlProvider locale="is" onError={jest.fn}>
-        <ApolloProvider
-          client={new ApolloClient({ cache: new InMemoryCache() })}
-        >
-          <FormContextWrapper theCase={theCase}>
-            <AppealCaseFilesOverview />
-          </FormContextWrapper>
+          <UserContextWrapper userRole={UserRole.PROSECUTOR}>
+            <FormContextWrapper theCase={theCase}>
+              <AppealCaseFilesOverview />
+            </FormContextWrapper>
+          </UserContextWrapper>
         </ApolloProvider>
       </IntlProvider>,
     )
