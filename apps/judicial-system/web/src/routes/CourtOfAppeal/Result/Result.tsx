@@ -43,14 +43,13 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <>
-      {isLoadingAppealBanner && (
+      {!isLoadingAppealBanner && (
         <AlertBanner
           variant="warning"
           title={title}
           description={description}
         />
       )}
-
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

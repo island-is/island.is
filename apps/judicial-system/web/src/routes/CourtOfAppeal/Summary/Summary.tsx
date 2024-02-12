@@ -62,7 +62,7 @@ const Summary: React.FC = () => {
       hasSentNotification(
         NotificationType.APPEAL_COMPLETED,
         workingCase.notifications,
-      )
+      ).hasSent
     ) {
       setVisibleModal('AppealRulingModified')
     } else {

@@ -9,6 +9,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import appModuleConfig from './app.config'
 import { FilterApplicationsDto } from './app.dto'
+import { ApplicationModel } from './models'
 
 @Injectable()
 export class AppService {
@@ -22,8 +23,11 @@ export class AppService {
     apiKey: string,
     municipalityCode: string,
     filters: FilterApplicationsDto,
-  ) {
-    this.logger.info(`trying to fetching all applications`, filters)
+  ): Promise<ApplicationModel[]> {
+    this.logger.info(
+      `trying to fetching all applications with municipalityCode ${municipalityCode}`,
+      filters,
+    )
 
     const url = new URL(
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,
@@ -36,6 +40,9 @@ export class AppService {
           representation: 'date',
         }),
     )
+    if (filters.state) {
+      url.searchParams.append('state', filters.state)
+    }
 
     return fetch(url, {
       method: 'GET',
@@ -45,7 +52,6 @@ export class AppService {
         'Municipality-Code': municipalityCode,
       },
     }).then(async (res) => {
-      console.log('res', res)
       return res.json()
     })
   }
