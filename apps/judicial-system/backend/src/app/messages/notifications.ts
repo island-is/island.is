@@ -721,7 +721,8 @@ export const notifications = {
     },
     body: {
       id: 'judicial.system.backend:notifications.case_appeal_withdrawn.body',
-      defaultMessage: 'Kæra í máli {courtCaseNumber} hefur verið afturkölluð.',
+      defaultMessage:
+        'Landsréttur hefur móttekið afturköllun á kæru í máli {courtCaseNumber}. Landsréttarmálið {appealCaseNumber} hefur verið fellt niður.',
       description: 'Texti í pósti til aðila máls þegar kæra er afturkölluð',
     },
   }),

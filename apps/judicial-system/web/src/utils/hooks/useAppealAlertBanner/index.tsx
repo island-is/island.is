@@ -64,7 +64,7 @@ export const getAppealDecision = (
       return formatMessage(appealRuling.decisionDismissedFromCourt)
     case CaseAppealRulingDecision.REMAND:
       return formatMessage(appealRuling.decisionRemand)
-    case CaseAppealRulingDecision.WITHDRAWN:
+    case CaseAppealRulingDecision.DISCONTINUED:
       return formatMessage(appealRuling.decisionWithdrawn)
     default:
       return undefined

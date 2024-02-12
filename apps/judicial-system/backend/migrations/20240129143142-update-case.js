@@ -16,7 +16,7 @@ module.exports = {
         'DISMISSED_FROM_COURT_OF_APPEAL',
         'REMAND',
         'REPEAL',
-        'WITHDRAWN', // New value
+        'DISCONTINUED', // New value
       ],
       enumName: 'enum_case_appeal_ruling_decision',
     })

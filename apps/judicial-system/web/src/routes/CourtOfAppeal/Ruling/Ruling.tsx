@@ -95,7 +95,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const isStepValid = () => {
     return workingCase.appealRulingDecision ===
-      CaseAppealRulingDecision.WITHDRAWN
+      CaseAppealRulingDecision.DISCONTINUED
       ? allFilesUploaded
       : uploadFiles.some(
           (file) =>
@@ -160,7 +160,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     },
     {
       id: 'case-decision-withdrawn',
-      decision: CaseAppealRulingDecision.WITHDRAWN,
+      decision: CaseAppealRulingDecision.DISCONTINUED,
       message: appealRuling.decisionWithdrawn,
     },
   ]
@@ -215,7 +215,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
           </BlueBox>
         </Box>
         {workingCase.appealRulingDecision ===
-        CaseAppealRulingDecision.WITHDRAWN ? (
+        CaseAppealRulingDecision.DISCONTINUED ? (
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload

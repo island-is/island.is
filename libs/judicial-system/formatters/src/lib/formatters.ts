@@ -189,7 +189,7 @@ export const getAppealResultTextByValue = (
       return 'Frávísun'
     case CaseAppealRulingDecision.REMAND:
       return 'Heimvísun'
-    case CaseAppealRulingDecision.WITHDRAWN:
+    case CaseAppealRulingDecision.DISCONTINUED:
       return 'Niðurfellt'
     default:
       return 'Niðurstaða'

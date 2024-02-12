@@ -461,7 +461,7 @@ export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
     appealState === CaseAppealState.WITHDRAWN ||
     (appealRulingDecision !== null &&
       validate([[appealConclusion, ['empty']]]).isValid) ||
-    appealRulingDecision === CaseAppealRulingDecision.WITHDRAWN
+    appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
   )
 }
 

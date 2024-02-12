@@ -2096,7 +2096,7 @@ export class NotificationService {
 
   //#endregion
   //#region APPEAL_WITHDRAWN notifications
-  private async sendAppealCaseWithdrawnNotifications(
+  private async sendAppealWithdrawnNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const hasAssignedJudges = await this.hasSentNotification(
@@ -2109,10 +2109,35 @@ export class NotificationService {
     if (hasAssignedJudges === false) {
       promises.push(this.sendUnassignedAppealWithdrawnNotification(theCase))
     } else {
-      const subject = this.formatMessage(notifications.caseAppealWithdrawn, {
-        appealCaseNumber: theCase.appealCaseNumber,
+      const subject = this.formatMessage(
+        notifications.caseAppealWithdrawn.subject,
+        {
+          appealCaseNumber: theCase.appealCaseNumber,
+          courtCaseNumber: theCase.courtCaseNumber,
+        },
+      )
+      const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
         courtCaseNumber: theCase.courtCaseNumber,
+        appealCaseNumber: theCase.appealCaseNumber,
       })
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          this.formatMessage(notifications.emailNames.courtOfAppeals),
+          this.getCourtEmail(this.config.courtOfAppealsId),
+        ),
+      )
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.appealAssistant?.name,
+          theCase.appealAssistant?.email,
+        ),
+      )
     }
 
     const recipients = await Promise.all(promises)
@@ -2231,7 +2256,7 @@ export class NotificationService {
       case NotificationType.APPEAL_CASE_FILES_UPDATED:
         return this.sendAppealCaseFilesUpdatedNotifications(theCase, user)
       case NotificationType.APPEAL_WITHDRAWN:
-        return this.sendAppealCaseWithdrawnNotifications(theCase)
+        return this.sendAppealWithdrawnNotifications(theCase)
     }
   }
 

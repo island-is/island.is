@@ -36,7 +36,7 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
       }
     | undefined => {
     if (
-      ruling === CaseAppealRulingDecision.WITHDRAWN ||
+      ruling === CaseAppealRulingDecision.DISCONTINUED ||
       state === CaseAppealState.WITHDRAWN
     ) {
       return {
