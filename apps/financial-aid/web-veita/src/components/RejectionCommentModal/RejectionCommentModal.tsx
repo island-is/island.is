@@ -53,7 +53,7 @@ const RejectionCommentModal = ({
             <Text variant="h3">Ástæða synjunar</Text>
           </Box>
 
-          <Text whiteSpace="breakSpaces">
+          <Text>
             <span
               dangerouslySetInnerHTML={{ __html: reason }}
               className="htmlReasonForRejection"

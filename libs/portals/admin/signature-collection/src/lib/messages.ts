@@ -132,6 +132,11 @@ export const m = defineMessages({
       'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
     description: '',
   },
+  collectors: {
+    id: 'admin-portal.signature-collection:collectors',
+    defaultMessage: 'Umboðsaðilar',
+    description: '',
+  },
   noSignees: {
     id: 'admin-portal.signature-collection:noSignees',
     defaultMessage: 'Engin meðmæli',
