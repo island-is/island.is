@@ -126,7 +126,11 @@ const NotificationMenu = ({
                 unread: false,
               },
             ]?.map((item) => (
-              <NotificationLine onClickCallback={onClose} data={item} />
+              <NotificationLine
+                key={item.date}
+                onClickCallback={onClose}
+                data={item}
+              />
             ))}
             <Box
               paddingTop={2}

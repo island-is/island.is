@@ -1,4 +1,4 @@
-import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
+import { style, styleVariants } from '@vanilla-extract/css'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,

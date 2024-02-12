@@ -23,7 +23,7 @@ export class NotificationsResolver {
   ) {}
 
   @Query(() => NotificationsResponse, {
-    name: 'notifications',
+    name: 'userNotifications',
     nullable: true,
   })
   async getNotifications(
@@ -50,7 +50,7 @@ export class NotificationsResolver {
   }
 
   @Query(() => NotificationResponse, {
-    name: 'notification',
+    name: 'userNotification',
     nullable: true,
   })
   async getNotification(

@@ -1,0 +1,37 @@
+query GetUserNotifications($input: NotificationsInput!) {
+  userNotifications(input: $input) {
+    data {
+      id
+      notificationId
+      metadata {
+        sent
+        updated
+        created
+        read
+        status
+      }
+      sender {
+        name
+        logo
+      }
+      recipient {
+        nationalId
+      }
+      message {
+        title
+        body
+        link {
+          uri
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    unreadCount
+    totalCount
+  }
+}
