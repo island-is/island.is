@@ -87,7 +87,7 @@ const CandidateView = () => {
             </Box>
 
             {/* Signed list */}
-            <SignedList />
+            {!user?.profile.actor && <SignedList />}
 
             {/* Candidate created lists */}
             <Text marginTop={[5, 7]} marginBottom={2}>
