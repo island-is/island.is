@@ -716,7 +716,8 @@ export const notifications = {
   caseAppealWithdrawn: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_appeal_withdrawn.subject',
-      defaultMessage: 'Niðurfelling máls {appealCaseNumber}{courtCaseNumber}',
+      defaultMessage:
+        'Niðurfelling máls {appealCaseNumber} ({courtCaseNumber})',
       description: 'Fyrirsögn í pósti til aðila máls þegar kæra er afturkölluð',
     },
     body: {
