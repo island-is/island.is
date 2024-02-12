@@ -20,7 +20,7 @@ const SigneeView = () => {
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
-  const { validList, loadingSignedList } = useGetSignedList()
+  const { signedLists, loadingSignedList } = useGetSignedList()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
 
   return (
@@ -75,7 +75,7 @@ const SigneeView = () => {
                               label: formatMessage(m.signList),
                               variant: 'text',
                               icon: 'arrowForward',
-                              disabled: !!validList,
+                              disabled: !!signedLists.length,
                               onClick: () => {
                                 window.open(
                                   `${document.location.origin}${list.slug}`,

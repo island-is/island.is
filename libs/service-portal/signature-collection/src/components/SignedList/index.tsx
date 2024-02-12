@@ -7,18 +7,21 @@ import { useGetSignedList } from '../../hooks'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { unSignList } from '../../hooks/graphql/mutations'
-import { SignatureCollectionSuccess } from '@island.is/api/schema'
+import {
+  SignatureCollectionSignedList,
+  SignatureCollectionSuccess,
+} from '@island.is/api/schema'
 
 const SignedList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { signedLists, validList, refetchSignedList } = useGetSignedList()
+  const { signedLists, refetchSignedList } = useGetSignedList()
 
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        id: validList?.id,
+        id: signedLists.length === 1 ?? signedLists[0].id,
       },
     },
   })
@@ -47,25 +50,22 @@ const SignedList = () => {
 
   return (
     <Box>
-      {!!signedLists && signedLists.length > 0 && (
+      {!!signedLists && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
-          {signedLists.map((signedList) => {
-            const { isDigital, endTime, title, signedDate, canUnsign } =
-              signedList
-            console.log('canUnsign', canUnsign)
+          {signedLists.map((list: SignatureCollectionSignedList) => {
             return (
-              <Box marginBottom={[5, 7]}>
+              <Box marginBottom={5}>
                 <ActionCard
-                  heading={title}
+                  heading={list.title}
                   eyebrow={`${
-                    isDigital
+                    list.isDigital
                       ? formatMessage(m.signedTime)
                       : formatMessage(m.uploadedTime)
-                  } ${format(new Date(signedDate), 'dd.MM.yyyy')}`}
+                  } ${format(new Date(list.signedDate), 'dd.MM.yyyy')}`}
                   text={formatMessage(m.collectionTitle)}
                   cta={
-                    canUnsign
+                    list.canUnsign
                       ? {
                           label: formatMessage(m.unSignList),
                           buttonType: {
@@ -78,17 +78,23 @@ const SignedList = () => {
                       : undefined
                   }
                   tag={
-                    new Date(endTime) < new Date()
+                    list.isValid && new Date(list.endTime) < new Date()
                       ? {
                           label: formatMessage(m.collectionClosed),
                           variant: 'red',
                           outlined: true,
                         }
-                      : !isDigital
+                      : list.isValid && !list.isDigital
                       ? {
                           label: formatMessage(m.paperUploadedSignature),
                           variant: 'blue',
                           outlined: true,
+                        }
+                      : !list.isValid
+                      ? {
+                          label: formatMessage('Ógilt meðmæli'),
+                          variant: 'red',
+                          outlined: false,
                         }
                       : undefined
                   }
@@ -125,7 +131,7 @@ const SignedList = () => {
                 </Modal>
               </Box>
             )
-          })}{' '}
+          })}
         </Box>
       )}
     </Box>

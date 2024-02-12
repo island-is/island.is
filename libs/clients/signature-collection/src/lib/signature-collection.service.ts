@@ -225,8 +225,11 @@ export class SignatureCollectionClientService {
     return await Promise.all(
       signatures.map(async (signature) => {
         // Get title for list
-        const list = await this.getList(signature.listId, auth)
-        // TODO: isvalid check when list was singed
+        const list = await this.sharedService.getList(
+          signature.listId,
+          this.getApiWithAuth(this.listsApi, auth),
+          this.getApiWithAuth(this.candidateApi, auth),
+        )
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
