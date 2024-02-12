@@ -20,7 +20,12 @@ import { useEffect, useState } from 'react'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { Filters, countryAreas, pageSize } from '../../lib/utils'
+import {
+  CollectionStatus,
+  Filters,
+  countryAreas,
+  pageSize,
+} from '../../lib/utils'
 import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
 import CreateCollection from './components/createCollection'
@@ -32,7 +37,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const allLists = useLoaderData() as SignatureCollectionList[]
+  const { allLists, collectionStatus } = useLoaderData() as {
+    allLists: SignatureCollectionList[]
+    collectionStatus: string
+  }
+
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<Filters>({
@@ -176,8 +185,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     }
                   />
                 </Filter>
-                {/* open when collection.status === "IN_REVIEW" || collection.status === "PROCESSING" */}
-                {allowedToProcess && <CreateCollection />}
+                {allowedToProcess &&
+                  (collectionStatus === CollectionStatus.InReview ||
+                    collectionStatus === CollectionStatus.Processing) && (
+                    <CreateCollection />
+                  )}
               </Box>
             </GridColumn>
           </GridRow>
@@ -218,11 +230,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        tag={{
+                        /*tag={{
                           label: m.confirmListReviewed.defaultMessage,
                           variant: 'mint',
                           outlined: false,
-                        }}
+                        }}*/
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',
@@ -268,11 +280,13 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               )}
             />
           </Box>
-          {/* open when collection.status === "PROCESSING" */}
-          {allowedToProcess && <CompareLists />}
-
-          {/* open when collection.status === "PROCESSING" */}
-          <ActionCompleteCollectionProcessing />
+          {allowedToProcess &&
+            collectionStatus === CollectionStatus.Processing && (
+              <>
+                <CompareLists />
+                <ActionCompleteCollectionProcessing />
+              </>
+            )}
         </GridColumn>
       </GridRow>
     </GridContainer>

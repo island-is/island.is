@@ -167,7 +167,6 @@ const CompareLists = () => {
                               <T.Data>{result.listTitle}</T.Data>
                               <T.Data style={{ minWidth: '160px' }}>
                                 <Button
-                                  /* add enabled when list.status === "IN_REVIEW" || list.status === "REVIEWED" */
                                   variant="utility"
                                   onClick={() => {
                                     unSignFromList(result.id)

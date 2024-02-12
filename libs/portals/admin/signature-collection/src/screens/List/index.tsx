@@ -19,9 +19,13 @@ import ListReviewedAlert from './components/listReviewedAlert'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
+import { ListStatus } from '../../lib/utils'
 
 export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
-  const { list } = useLoaderData() as { list: SignatureCollectionList }
+  const { list, listStatus } = useLoaderData() as {
+    list: SignatureCollectionList
+    listStatus: string
+  }
   const { formatMessage } = useLocale()
 
   return (
@@ -58,8 +62,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              {/* shows when list.status === "REVIEWED" */}
-              <ListReviewedAlert />
+              {listStatus === ListStatus.Reviewed && <ListReviewedAlert />}
               {!!list.collectors?.length &&
                 list.collectors.map((collector) => (
                   <Box key={collector.name} marginBottom={5}>
@@ -73,18 +76,21 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     </Text>
                   </Box>
                 ))}
-              {/* open when list.status === "EXTENDABLE" */}
-              <ActionExtendDeadline
-                listId={list.id}
-                endTime={list.endTime}
-                allowedToProcess={allowedToProcess}
-              />
+              {listStatus === ListStatus.Extendable && (
+                <ActionExtendDeadline
+                  listId={list.id}
+                  endTime={list.endTime}
+                  allowedToProcess={allowedToProcess}
+                />
+              )}
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-              {allowedToProcess && (
+              {allowedToProcess && listStatus === ListStatus.InReview && (
                 <>
-                  {/* open when list.status === "IN_REVIEW" */}
                   <PaperUpload listId={list.id} />
-                  <ActionReviewComplete />
+                  <ActionReviewComplete
+                    listId={list.id}
+                    listStatus={listStatus}
+                  />
                 </>
               )}
             </>

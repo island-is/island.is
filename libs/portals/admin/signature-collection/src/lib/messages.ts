@@ -238,6 +238,11 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  confirmListReviewedToggleBack: {
+    id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
+    defaultMessage: 'Opna fyrir úrvinnslu',
+    description: '',
+  },
   listReviewedModalDescription: {
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
@@ -249,8 +254,28 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu er lokið á þessari söfnun',
     description: '',
   },
+  toggleReviewSuccess: {
+    id: 'admin-portal.signature-collection:toggleReviewSuccess',
+    defaultMessage: 'Úrvinnslu lokið',
+    description: '',
+  },
+  toggleReviewError: {
+    id: 'admin-portal.signature-collection:toggleReviewError',
+    defaultMessage: 'Ekki tókst loka úrvinnslu',
+    description: '',
+  },
+  toggleCollectionProcessSuccess: {
+    id: 'admin-portal.signature-collection:toggleCollectionProcessSuccess',
+    defaultMessage: 'Úrvinnslu safnanna lokið',
+    description: '',
+  },
+  toggleCollectionProcessError: {
+    id: 'admin-portal.signature-collection:toggleCollectionProcessError',
+    defaultMessage: 'Ekki tókst að loka úrvinnslu safnanna',
+    description: '',
+  },
 
-  // Uplo
+  // Upload
   uploadFile: {
     id: 'admin-portal.signature-collection:uploadFile',
     defaultMessage: 'Bæta einning við meðmælum af blaði',

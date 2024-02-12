@@ -1,12 +1,32 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { m } from '../../../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
+import { useRevalidator } from 'react-router-dom'
+import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
 
 const ActionCompleteCollectionProcessing = () => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
+
+  const [processCollectionMutation] = useProcessCollectionMutation()
+  const { revalidate } = useRevalidator()
+
+  const completeProcessing = async () => {
+    try {
+      const res = await processCollectionMutation()
+      if (res.data?.signatureCollectionAdminProcess.success) {
+        toast.success(formatMessage(m.toggleCollectionProcessSuccess))
+        setModalSubmitReviewIsOpen(false)
+        revalidate()
+      } else {
+        toast.error(formatMessage(m.toggleCollectionProcessError))
+      }
+    } catch (e) {
+      toast.error(e.message)
+    }
+  }
 
   return (
     <Box marginTop={10}>
@@ -40,7 +60,7 @@ const ActionCompleteCollectionProcessing = () => {
               iconType="outline"
               variant="ghost"
               colorScheme="destructive"
-              onClick={() => setModalSubmitReviewIsOpen(false)}
+              onClick={() => completeProcessing()}
             >
               {formatMessage(m.completeCollectionProcessing)}
             </Button>
