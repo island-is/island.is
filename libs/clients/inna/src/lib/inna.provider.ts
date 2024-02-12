@@ -21,22 +21,20 @@ export const InnaClientProvider: Provider<DefaultApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-inna',
-          // organizationSlug: 'menntamalastofnun',
-          logErrorResponseBody: true,
-          /*autoAuth: idsClientConfig.isConfigured
+          organizationSlug: 'menntamalastofnun',
+          autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',
                 issuer: idsClientConfig.issuer,
                 clientId: idsClientConfig.clientId,
                 clientSecret: idsClientConfig.clientSecret,
-                scope: ['@mms.is/inna'],
+                scope: config.scope,
               }
-            : undefined,*/
+            : undefined,
         }),
-        basePath: `https://api-test.inna.is/namsferlaveita`,
-        // basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
-          // 'X-Road-Client': xroadConfig.xRoadClient,
+          'X-Road-Client': xroadConfig.xRoadClient,
           Accept: 'application/json',
         },
       }),

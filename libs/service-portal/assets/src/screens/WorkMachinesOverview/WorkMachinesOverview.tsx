@@ -6,8 +6,6 @@ import {
 } from './WorkMachinesOverview.generated'
 import {
   m,
-  ErrorScreen,
-  EmptyState,
   CardLoader,
   ActionCard,
   formSubmit,
@@ -32,6 +30,7 @@ import { messages } from '../../lib/messages'
 import { useDebounce } from 'react-use'
 import { WorkMachinesFileType } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 type FilterValue = {
   label: string
@@ -123,20 +122,6 @@ const WorkMachinesOverview = () => {
         value: !value.value,
       },
     })
-  }
-
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.workMachines).toLowerCase(),
-        })}
-      />
-    )
   }
 
   return (
@@ -244,67 +229,76 @@ const WorkMachinesOverview = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      {loading && (
+      {error ? (
+        <Problem error={error} noBorder={false} />
+      ) : !error && loading ? (
         <Box marginBottom={2}>
           <CardLoader />
         </Box>
+      ) : !error &&
+        !loading &&
+        !data?.workMachinesPaginatedCollection?.data?.length ? (
+        <Problem
+          type="no_data"
+          title={formatMessage(m.noDataFoundVariable, {
+            arg: formatMessage(messages.workMachineSingular).toLowerCase(),
+          })}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/coffee.svg"
+          titleSize="h3"
+          noBorder={false}
+        />
+      ) : (
+        <>
+          {!loading &&
+            !error &&
+            !!data?.workMachinesPaginatedCollection?.data &&
+            data.workMachinesPaginatedCollection.data.map((wm, index) => {
+              return (
+                <Box marginBottom={3} key={index}>
+                  <ActionCard
+                    text={wm.registrationNumber ?? ''}
+                    heading={wm.type ?? ''}
+                    cta={{
+                      label: formatMessage(m.seeDetails),
+                      variant: 'text',
+                      url:
+                        wm.id && wm.registrationNumber
+                          ? AssetsPaths.AssetsWorkMachinesDetail.replace(
+                              ':regNumber',
+                              wm.registrationNumber,
+                            ).replace(':id', wm.id)
+                          : undefined,
+                    }}
+                    tag={{
+                      variant: 'blue',
+                      outlined: false,
+                      label: wm.status ?? '',
+                    }}
+                  />
+                </Box>
+              )
+            })}
+          {!loading &&
+            !error &&
+            !!data?.workMachinesPaginatedCollection?.totalCount && (
+              <Box>
+                <Pagination
+                  page={page}
+                  totalPages={Math.ceil(
+                    data.workMachinesPaginatedCollection.totalCount /
+                      DEFAULT_PAGE_SIZE,
+                  )}
+                  renderLink={(page, className, children) => (
+                    <button className={className} onClick={() => setPage(page)}>
+                      {children}
+                    </button>
+                  )}
+                />
+              </Box>
+            )}
+        </>
       )}
-
-      {!loading && !data?.workMachinesPaginatedCollection?.data?.length && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
-      )}
-
-      {!loading &&
-        !error &&
-        !!data?.workMachinesPaginatedCollection?.data &&
-        data.workMachinesPaginatedCollection.data.map((wm, index) => {
-          return (
-            <Box marginBottom={3} key={index}>
-              <ActionCard
-                text={wm.registrationNumber ?? ''}
-                heading={wm.type ?? ''}
-                cta={{
-                  label: formatMessage(m.seeDetails),
-                  variant: 'text',
-                  url:
-                    wm.id && wm.registrationNumber
-                      ? AssetsPaths.AssetsWorkMachinesDetail.replace(
-                          ':regNumber',
-                          wm.registrationNumber,
-                        ).replace(':id', wm.id)
-                      : undefined,
-                }}
-                tag={{
-                  variant: 'blue',
-                  outlined: false,
-                  label: wm.status ?? '',
-                }}
-              />
-            </Box>
-          )
-        })}
-      {!loading &&
-        !error &&
-        !!data?.workMachinesPaginatedCollection?.totalCount && (
-          <Box>
-            <Pagination
-              page={page}
-              totalPages={Math.ceil(
-                data.workMachinesPaginatedCollection.totalCount /
-                  DEFAULT_PAGE_SIZE,
-              )}
-              renderLink={(page, className, children) => (
-                <button className={className} onClick={() => setPage(page)}>
-                  {children}
-                </button>
-              )}
-            />
-          </Box>
-        )}
       <Box marginTop={2}>
         <FootNote serviceProviderSlug={VINNUEFTIRLITID_SLUG} />
       </Box>

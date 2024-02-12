@@ -27,6 +27,7 @@ import {
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
+  RejectionCommentModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -61,6 +62,9 @@ const ApplicationProfile = ({
   applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
+
+  const [isRejectedReasonModalVisible, setRejectedReasonModalVisible] =
+    useState(false)
 
   const [calculationsModal, setCalculationsModal] = useState<CalculationsModal>(
     {
@@ -121,9 +125,11 @@ const ApplicationProfile = ({
     applicationInfo.push({
       title: 'Aðstoð synjað',
       content: application?.rejection
-        ? application?.rejection
+        ? 'Ástæða synjunar'
         : 'enginn ástæða gefin',
-      fullWidth: true,
+      onclick: () => {
+        setRejectedReasonModalVisible(true)
+      },
     })
   }
 
@@ -292,6 +298,14 @@ const ApplicationProfile = ({
         onVisibilityChange={() => {
           setCalculationsModal({ ...calculationsModal, visible: false })
         }}
+      />
+
+      <RejectionCommentModal
+        isVisible={isRejectedReasonModalVisible}
+        onVisibilityChange={(visability) => {
+          setRejectedReasonModalVisible(visability)
+        }}
+        reason={application.rejection ?? ''}
       />
     </>
   )
