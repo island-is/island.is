@@ -71,6 +71,7 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
+                calcWithShareValue: true,
                 repeaterButtonText: m.addRealEstate.defaultMessage,
                 fromExternalData: 'assets',
                 sumField: 'propertyValuation',

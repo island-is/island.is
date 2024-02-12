@@ -38,6 +38,7 @@ type RepeaterProps = {
       repeaterButtonText: string
       sumField: string
       fromExternalData?: string
+      calcWithShareValue?: boolean
     }
   }
 }
@@ -108,7 +109,13 @@ export const ReportFieldsRepeater: FC<
         : propertyValuationNumber
       const shareValue = isNaN(shareValueNumber) ? 0 : shareValueNumber / 100
 
-      return Number(acc) + propertyValuation * shareValue
+      // TODO: check how precise are these calculations need to be
+      return (
+        Number(acc) +
+        (props?.calcWithShareValue
+          ? Math.floor(propertyValuation * shareValue)
+          : propertyValuation)
+      )
     }, 0)
     const addTotal = id.replace('data', 'total')
     setValue(addTotal, total)
