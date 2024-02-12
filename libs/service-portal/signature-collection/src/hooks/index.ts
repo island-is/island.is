@@ -60,15 +60,15 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
 export const useGetSignedList = () => {
   const {
     data: getSignedList,
-    loading: loadingSignedList,
-    refetch: refetchSignedList,
+    loading: loadingSignedLists,
+    refetch: refetchSignedLists,
   } = useQuery<{
-    signatureCollectionSignedList?: SignatureCollectionSignedList
+    signatureCollectionSignedList?: SignatureCollectionSignedList[]
   }>(GetSignedList)
-  const signedList =
-    (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList) ??
+  const signedLists =
+    (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList[]) ??
     null
-  return { signedList, loadingSignedList, refetchSignedList }
+  return { signedLists, loadingSignedLists, refetchSignedLists }
 }
 
 export const useGetListsForUser = () => {
