@@ -22,7 +22,7 @@ export interface Signee extends CandidateLookup {
   canCreateInfo?: ReasonKey[]
   isOwner: boolean
   area?: Omit<Area, 'min' | 'max'>
-  signature?: Signature
+  signatures?: Signature[]
   ownedLists: ListBase[]
   candidate?: Candidate
 }
