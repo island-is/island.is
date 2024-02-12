@@ -127,7 +127,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   } = field
 
   const [plate, setPlate] = useState<string>(
-    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
+    getValueViaPath(application.answers, `${field.id}.plate`, '') as string,
   )
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -161,11 +161,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         const vehicleDetails = extractVehicleDetails(response)
         setVehicleDetails(vehicleDetails)
         setPlate(plate)
-        setValue('pickVehicle.type', vehicleDetails.make)
-        setValue('pickVehicle.make', vehicleDetails.make)
-        setValue('pickVehicle.plate', plate)
-        setValue('pickVehicle.color', vehicleDetails.color || undefined)
-        setValue('pickVehicle.requireMilage', vehicleDetails.requireMilage)
+        setValue(`${field.id}.type`, vehicleDetails.make)
+        setValue(`${field.id}.make`, vehicleDetails.make)
+        setValue(`${field.id}.plate`, plate)
+        setValue(`${field.id}.color`, vehicleDetails.color || undefined)
+        setValue(`${field.id}.requireMilage`, vehicleDetails.requireMilage)
         setValue('vehicleInfo.plate', plate)
         setValue('vehicleInfo.type', vehicleDetails.make)
         setSubmitButtonDisabled && setSubmitButtonDisabled(false)
@@ -174,7 +174,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         setSubmitButtonDisabled && setSubmitButtonDisabled(true)
       }
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
       setVehicleNotFound(true)
       setVehicleDetails(null)
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
