@@ -88,6 +88,11 @@ export const m = defineMessages({
     defaultMessage: 'Meðmæli lesin inn',
     description: '',
   },
+  signatureIsInvalid: {
+    id: 'sp.signatureCollection:signatureIsInvalid',
+    defaultMessage: 'Ógilt meðmæli',
+    description: '',
+  },
 
   /* Signee View */
   mySigneeListsHeader: {

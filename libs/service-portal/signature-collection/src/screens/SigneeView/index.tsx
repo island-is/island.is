@@ -20,7 +20,7 @@ const SigneeView = () => {
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
-  const { signedLists, loadingSignedList } = useGetSignedList()
+  const { signedLists, loadingSignedLists } = useGetSignedList()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
 
   return (
@@ -29,7 +29,7 @@ const SigneeView = () => {
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescriptionSignee)}
       />
-      {!user?.profile.actor && !loadingSignedList && !loadingUserLists ? (
+      {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
           <Button
             icon="open"

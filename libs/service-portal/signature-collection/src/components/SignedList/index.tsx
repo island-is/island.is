@@ -16,12 +16,15 @@ const SignedList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { signedLists, refetchSignedList } = useGetSignedList()
+
+  // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
+  const { signedLists, loadingSignedLists, refetchSignedLists } =
+    useGetSignedList()
 
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        id: signedLists.length === 1 ?? signedLists[0].id,
+        id: signedLists.length === 1 ? signedLists[0].id : undefined,
       },
     },
   })
@@ -38,7 +41,7 @@ const SignedList = () => {
         ) {
           toast.success(formatMessage(m.unSignSuccess))
           setModalIsOpen(false)
-          refetchSignedList()
+          refetchSignedLists()
         } else {
           setModalIsOpen(false)
         }
@@ -50,12 +53,12 @@ const SignedList = () => {
 
   return (
     <Box>
-      {!!signedLists && (
+      {!loadingSignedLists && !!signedLists.length && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
           {signedLists.map((list: SignatureCollectionSignedList) => {
             return (
-              <Box marginBottom={5}>
+              <Box marginBottom={5} key={list.id}>
                 <ActionCard
                   heading={list.title}
                   eyebrow={`${
@@ -92,7 +95,7 @@ const SignedList = () => {
                         }
                       : !list.isValid
                       ? {
-                          label: formatMessage('Ógilt meðmæli'),
+                          label: formatMessage(m.signatureIsInvalid),
                           variant: 'red',
                           outlined: false,
                         }
