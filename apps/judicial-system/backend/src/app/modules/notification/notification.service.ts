@@ -124,7 +124,6 @@ export class NotificationService {
     const previousNotifications = await this.notificationModel.findAll({
       where: { caseId, type },
     })
-
     return previousNotifications.length > 0
   }
 
@@ -2116,13 +2115,13 @@ export class NotificationService {
     const promises = []
 
     const subject = this.formatMessage(
-      notifications.caseAppealWithdrawn.subject,
+      notifications.caseAppealDiscontinued.subject,
       {
         appealCaseNumber: theCase.appealCaseNumber,
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
-    const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
+    const html = this.formatMessage(notifications.caseAppealDiscontinued.body, {
       courtCaseNumber: theCase.courtCaseNumber,
       appealCaseNumber: theCase.appealCaseNumber,
     })
@@ -2191,17 +2190,14 @@ export class NotificationService {
     recipientEmail?: string,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
-      notifications.unassignedCaseAppealWithdrawn.subject,
+      notifications.caseAppealWithdrawn.subject,
       {
         courtCaseNumber: courtCaseNumber,
       },
     )
-    const html = this.formatMessage(
-      notifications.unassignedCaseAppealWithdrawn.body,
-      {
-        courtCaseNumber: courtCaseNumber,
-      },
-    )
+    const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
+      courtCaseNumber: courtCaseNumber,
+    })
     return this.sendEmail(subject, html, recipientName, recipientEmail)
   }
 
