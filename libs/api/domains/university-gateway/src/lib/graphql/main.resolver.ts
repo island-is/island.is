@@ -9,7 +9,8 @@ import {
   UniversityGatewayProgramFilter,
   UniversityGatewayApplication,
 } from './models'
-import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import { CurrentUser } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Resolver()
 export class MainResolver {
