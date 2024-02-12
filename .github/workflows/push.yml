@@ -59,6 +59,7 @@ jobs:
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
@@ -75,6 +76,16 @@ jobs:
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
 
+      - name: Check user permissions
+        uses: actions-cool/check-user-permission@v2
+        id: check-permission
+
+      - name: Set environment variable to test everything on label 'test everything'
+        if: "contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin'"
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_OUTPUT
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
+
       - name: Check if we want to run workflow
         id: should-run
         env:
@@ -82,10 +93,8 @@ jobs:
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           echo "PRE_RELEASE=false" >> $GITHUB_OUTPUT
-
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
-
             for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
@@ -97,7 +106,6 @@ jobs:
                   exit 0
                 fi
             done
-
             for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
             do
                 echo "Checking branch against pattern '$pattern'"
@@ -118,10 +126,16 @@ jobs:
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
             fi
-            if [[ "$deployFeature" == "true" ]]; then
-              echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-              exit 0
+            PR_LABELS=("${{ github.event.pull_request.labels.*.name }}")
+            ALLOWED_LABELS=("deploy-feature" "test everything")
+            for pr_label in "${PR_LABELS[@]}"; do
+              echo "Searching for '$pr_label' in '${ALLOWED_LABELS[*]}'"
+              if [[ " ${ALLOWED_LABELS[*]} " =~ " $pr_label " ]]; then
+                echo "Pull request contains '$pr_label', continuing with build"
+                echo "PRE_CHECK=label:$pr_label" >> $GITHUB_OUTPUT
+                exit 0
+              fi
+            done
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
@@ -138,6 +152,22 @@ jobs:
                 fi
             done
           echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
+
+  label-checks:
+    runs-on: ec2-runners
+    strategy:
+      fail-fast: false
+      matrix:
+        labels: ['feature-deploy', 'test everything']
+    steps:
+      - name: Check if runnable label is set
+        if: "contains(github.event.pull_request.labels.*.name, '${{ matrix.labels }}') && steps.check-permission.outputs['user-permission'] == 'admin'"
+        run: |
+          PRE_CHECK=""
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
+            PRE_CHECK="feature-deploy"
+          fi
+          echo "PRE_CHECK=$PRE_CHECK" >> $GITHUB_OUTPUT
 
   prepare:
     runs-on: ec2-runners
