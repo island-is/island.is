@@ -1379,4 +1379,26 @@ export const m = defineMessages({
     id: 'service.portal:icelandic',
     defaultMessage: 'Íslenska',
   },
+  noDataFoundVariable: {
+    id: 'sp.health:no-data-found',
+    defaultMessage: 'Engin {arg} skráð',
+  },
+  noDataFoundVariableMasculine: {
+    id: 'sp.health:no-data-found-masculine',
+    defaultMessage: 'Engir {arg} skráðir',
+  },
+  noDataFoundVariableFeminine: {
+    id: 'sp.health:no-data-found-feminine',
+    defaultMessage: 'Engar {arg} skráðar',
+  },
+  noDataFoundVariableDetail: {
+    id: 'sp.health:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariation: {
+    id: 'sp.health:no-data-found-detail-variation',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
 })

@@ -157,9 +157,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
-    entry: (context, event) => {
-      // TODO: Configure all old answers objects to the new structure
-    },
     states: {
       [States.PREREQUISITES]: {
         exit: [
@@ -2184,18 +2181,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { state } = application
         const { answers } = application
-        const e = event.type as unknown as any
+        const e = event.type as unknown
         if (e === 'xstate.init') {
           return context
         }
         if (
-          e === 'APPROVE' &&
-          state === 'residenceGrantApplicationNoBirthDate'
+          e === DefaultEvents.APPROVE &&
+          state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE
         ) {
           return context
         }
-        if (e === 'REJECT' && state === 'residenceGrantApplication') {
-          set(answers, 'previousState', 'residenceGrantApplicationNoBirthDate')
+        if (
+          e === DefaultEvents.REJECT &&
+          state === States.RESIDENCE_GRANT_APPLICATION
+        ) {
+          set(
+            answers,
+            'previousState',
+            States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
+          )
           return context
         }
 
@@ -2205,7 +2209,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setHasAppliedForReidenceGrant: assign((context, event) => {
         const { application } = context
         const { state, answers } = application
-        const e = event.type as unknown as any
+        const e = event.type
         if (
           state === States.RESIDENCE_GRANT_APPLICATION &&
           e === DefaultEvents.APPROVE
