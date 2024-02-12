@@ -115,6 +115,7 @@ const EmailFormatInputModal = ({
           <br />
           <b>[SKRIFA ÁSTÆÐU HÉR]</b>
           <br />
+          <br />
           {postfixText}
 
           {state === ApplicationState.REJECTED && (
@@ -128,7 +129,10 @@ const EmailFormatInputModal = ({
               innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
               samband með tölvupósti á netfangið{` `}
               <a href={'mailto:${municipalityEmail}'} rel="noreferrer noopener">
-                <span className="linkInText">{municipalityEmail}.</span>
+                <span className="linkInText">
+                  {` `}
+                  {municipalityEmail}.
+                </span>
               </a>
               <br />
               <br />

@@ -9,7 +9,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.age.summary',
-      defaultMessage: '35 ára aldursmark er ekki náð',
+      defaultMessage: '18 ára aldursmark er ekki náð',
       description: '',
     },
   }),
