@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 export enum CollectionStatus {
+  InitialActive = 'initialActive',
   Active = 'active',
   InReview = 'inReview',
   Processing = 'processing',
@@ -13,9 +14,11 @@ registerEnumType(CollectionStatus, {
   description:
     'Collection has different statuses to represent the state of collection',
   valuesMap: {
+    InitialActive: {
+      description: 'Collection contains active list. In intial open time.',
+    },
     Active: {
-      description:
-        'Collection contains active list. In intial open time or an extended list.',
+      description: 'Collection contains active extended list.',
     },
     InReview: {
       description:

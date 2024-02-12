@@ -4,6 +4,7 @@ import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
 
 export enum CollectionStatus {
+  InitialActive = 'initialActive',
   Active = 'active',
   InReview = 'inReview',
   Processing = 'processing',

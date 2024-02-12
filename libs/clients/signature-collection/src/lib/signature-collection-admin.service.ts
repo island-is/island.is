@@ -51,7 +51,7 @@ export class SignatureCollectionAdminClientService {
     const collection = await this.currentCollection()
     // Collection in inital opening time
     if (collection.isActive) {
-      return CollectionStatus.Active
+      return CollectionStatus.InitialActive
     }
     const allLists = await this.getLists({ collectionId: collection.id }, auth)
     let hasActive,
@@ -126,6 +126,36 @@ export class SignatureCollectionAdminClientService {
       return ListStatus.Reviewed
     }
     return ListStatus.InActive
+  }
+
+  async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
+    const listStatus = await this.listStatus(listId, auth)
+    // Can only toggle list if it is in review or reviewed
+    if (
+      listStatus === ListStatus.InReview ||
+      listStatus === ListStatus.Reviewed
+    ) {
+      const list = await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      return { success: !!list }
+    }
+    return { success: false }
+  }
+
+  async processCollection(auth: Auth): Promise<Success> {
+    const collectionStatus = await this.collectionStatus(auth)
+    if (collectionStatus === CollectionStatus.Processing) {
+      const collection = await this.getApiWithAuth(
+        this.collectionsApi,
+        auth,
+      ).medmaelasofnunIDToggleSofnunPost({
+        iD: parseInt((await this.currentCollection()).id),
+      })
+      return { success: !!collection }
+    }
+    return { success: false }
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {

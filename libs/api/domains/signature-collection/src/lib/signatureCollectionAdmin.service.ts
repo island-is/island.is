@@ -132,6 +132,10 @@ export class SignatureCollectionAdminService {
     return { status }
   }
 
+  async processCollection(user: User): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.processCollection(user)
+  }
+
   async listStatus(
     listId: string,
     user: User,
@@ -141,5 +145,15 @@ export class SignatureCollectionAdminService {
       user,
     )
     return { status }
+  }
+
+  async toggleListStatus(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.toggleListStatus(
+      listId,
+      user,
+    )
   }
 }

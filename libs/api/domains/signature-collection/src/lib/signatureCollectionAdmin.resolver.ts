@@ -101,6 +101,23 @@ export class SignatureCollectionAdminResolver {
     return this.signatureCollectionService.listStatus(input.id, user)
   }
 
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminToggleListReview(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.toggleListStatus(input.id, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminProcess(
+    @CurrentUser() user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.processCollection(user)
+  }
+
   @Mutation(() => SignatureCollectionSlug)
   @Audit()
   async signatureCollectionAdminCreate(
