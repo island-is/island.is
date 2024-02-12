@@ -56,3 +56,21 @@ export class SignatureCollectionList extends SignatureCollectionListBase {
   @Field(() => [SignatureCollectionCollector], { nullable: true })
   collectors?: SignatureCollectionCollector[]
 }
+
+@ObjectType()
+export class SignatureCollectionSignedList extends SignatureCollectionListBase {
+  @Field(() => Date)
+  signedDate!: Date
+
+  @Field(() => Boolean)
+  isDigital!: boolean
+
+  @Field(() => Boolean)
+  canUnsign!: boolean
+
+  @Field(() => Boolean)
+  isValid!: boolean
+
+  @Field(() => Number, { nullable: true })
+  pageNumber?: number
+}

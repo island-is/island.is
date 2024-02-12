@@ -29,6 +29,14 @@ export interface List {
   maxReached: boolean
 }
 
+export interface SignedList extends List {
+  signedDate: Date
+  isDigital: boolean
+  pageNumber?: number
+  isValid: boolean
+  canUnsign: boolean
+}
+
 export function getSlug(id: number | string): string {
   return `/umsoknir/maela-med-frambodi/?candidate=${id}`
 }

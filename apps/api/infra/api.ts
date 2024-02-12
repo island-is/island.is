@@ -42,6 +42,7 @@ import {
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
+  Inna,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -368,6 +369,7 @@ export const serviceSetup = (services: {
       OccupationalLicenses,
       HealthInsurance,
       IntellectualProperties,
+      Inna,
       Labor,
       DrivingLicense,
       Payment,
