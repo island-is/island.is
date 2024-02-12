@@ -33,6 +33,7 @@ import {
 import IconButton from '../IconButton/IconButton'
 import { contextMenu } from '../ContextMenu/ContextMenu.strings'
 import { strings } from './AppealCaseFilesOverview.strings'
+import * as styles from './AppealCaseFilesOverview.css'
 
 const AppealCaseFilesOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -147,30 +148,27 @@ const AppealCaseFilesOverview: React.FC<
               disabled={isDisabled}
               handleClick={() => onOpen(file.id)}
             >
-              <Box display="flex" alignItems="center">
-                {file.category &&
-                  file.category !== CaseFileCategory.APPEAL_RULING && (
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="flexEnd"
-                    >
-                      <Text whiteSpace="nowrap">
-                        {`${formatDate(
-                          fileDate(file),
-                          'dd.MM.y',
-                        )} kl. ${formatDate(
-                          fileDate(file),
-                          constants.TIME_FORMAT,
-                        )}`}
-                      </Text>
+              <Box
+                display="flex"
+                alignItems={['flexEnd', 'flexEnd', 'center']}
+                justifyContent={['spaceBetween', 'spaceBetween', 'center']}
+              >
+                <Box className={styles.childContainer}>
+                  <Text whiteSpace="nowrap">
+                    {`${formatDate(fileDate(file), 'dd.MM.y')} kl. ${formatDate(
+                      fileDate(file),
+                      constants.TIME_FORMAT,
+                    )}`}
+                  </Text>
+                  {file.category &&
+                    file.category !== CaseFileCategory.APPEAL_RULING && (
                       <Text variant="small">
                         {formatMessage(strings.submittedBy, {
                           filesCategory: prosecutorSubmitted,
                         })}
                       </Text>
-                    </Box>
-                  )}
+                    )}
+                </Box>
                 <Box marginLeft={3}>
                   <ContextMenu
                     items={[
