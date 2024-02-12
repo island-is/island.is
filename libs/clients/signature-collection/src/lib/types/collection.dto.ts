@@ -3,6 +3,14 @@ import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
 
+export enum CollectionStatus {
+  Active = 'active',
+  InReview = 'inReview',
+  Processing = 'processing',
+  Processed = 'processed',
+  InActive = 'inActive',
+}
+
 export interface Collection {
   id: string
   startTime: Date
@@ -13,6 +21,7 @@ export interface Collection {
   name: string
   areas: Area[]
   candidates: Candidate[]
+  processed: boolean
 }
 
 export function mapCollection(
@@ -48,5 +57,6 @@ export function mapCollection(
       ? candidates.map((candidate) => mapCandidate(candidate))
       : [],
     areas: areas.map((area) => mapArea(area)),
+    processed: collection.lokadHandvirkt ?? false,
   }
 }

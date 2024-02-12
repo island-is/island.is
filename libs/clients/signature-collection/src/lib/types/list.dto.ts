@@ -8,6 +8,14 @@ import {
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
 
+export enum ListStatus {
+  Active = 'active',
+  InReview = 'inReview',
+  Reviewed = 'reviewed',
+  Extendable = 'extendable',
+  InActive = 'inActive',
+}
+
 export interface ListBase {
   id: string
   title: string
@@ -27,6 +35,7 @@ export interface List {
   numberOfSignatures: number
   slug: string
   maxReached: boolean
+  reviewed: boolean
 }
 
 export interface SignedList extends List {
@@ -96,5 +105,6 @@ export function mapList(
     active: endTime > new Date(),
     numberOfSignatures,
     maxReached: area.max <= numberOfSignatures,
+    reviewed: list.lokadHandvirkt ?? false,
   }
 }
