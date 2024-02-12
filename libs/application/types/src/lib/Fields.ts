@@ -515,6 +515,8 @@ export interface FindVehicleField extends BaseField {
   isNotDebtLessTag?: FormText
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
+  isVehicle?: boolean
+  isMachine?: boolean
 }
 
 export type Field =

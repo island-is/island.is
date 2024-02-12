@@ -124,6 +124,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     hasErrorTitle,
     isNotDebtLessTag,
     requiredValidVehicleErrorMessage,
+    isMachine,
+    isVehicle,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -137,10 +139,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const [vehicleDetails, setVehicleDetails] = useState<VehicleDetails | null>(
     null,
   )
+  const validPlateRegLength = isMachine ? 6 : 5
   const [submitButtonDisabledCalled, setSubmitButtonDisabledCalled] =
     useState(false)
   const updateInputState = (value: string) => {
-    setButtonDisabled(value.length !== 5)
+    setButtonDisabled(value.length !== validPlateRegLength)
     setPlate(value)
   }
   const findVehicleByPlate = async () => {
@@ -151,6 +154,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       }
 
       const response = await getVehicleDetails(plate.toUpperCase())
+      console.log('response', response)
       const isVehicleFound =
         isVehicleOperatorChangeChecksByPermno(response) ||
         isVehicleOwnerchangeChecksByPermno(response) ||
@@ -193,7 +197,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
       setSubmitButtonDisabledCalled(true)
     }
-    if (plate.length === 5) {
+    if (plate.length === validPlateRegLength) {
       setButtonDisabled(false)
     }
     setFieldLoadingState?.(isLoading)
@@ -218,13 +222,13 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             rules={{
               required: true,
               validate: (value) => {
-                if (value.length !== 5) {
+                if (value.length !== validPlateRegLength) {
                   return false
                 }
                 return true
               },
             }}
-            maxLength={5}
+            maxLength={validPlateRegLength}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>
