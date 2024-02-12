@@ -20,6 +20,7 @@ import {
   Button,
   Input,
   Text,
+  GridColumnProps,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
@@ -288,110 +289,112 @@ export const ReportFieldsRepeater: FC<
               />
             </Box>
             <GridRow>
-              {props.fields.map((field: any) => {
-                return (
-                  <Fragment key={field.id}>
-                    {field?.sectionTitle ? (
-                      <GridColumn span="1/1">
-                        <Text
-                          variant={
-                            field.sectionTitleVariant
-                              ? field.sectionTitleVariant
-                              : 'h5'
-                          }
-                          marginBottom={2}
-                        >
-                          {field.sectionTitle}
-                        </Text>
-                      </GridColumn>
-                    ) : null}
-                    <GridColumn
-                      span={
-                        field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']
+              {props.fields.map((field: any, index) => {
+                const even = props.fields.length % 2 === 0
+                const lastIndex = props.fields.length - 1
+                const pushRight = !even && index === lastIndex
+
+                return field?.sectionTitle ? (
+                  <GridColumn key={field.id} span="1/1">
+                    <Text
+                      variant={
+                        field.sectionTitleVariant
+                          ? field.sectionTitleVariant
+                          : 'h5'
                       }
-                      paddingBottom={2}
-                      key={field.id}
+                      marginBottom={2}
                     >
-                      {field.id === 'propertyShare' ? (
-                        <InputController
-                          id={`${fieldIndex}.${field.id}`}
-                          label={formatMessage(m.propertyShare)}
-                          defaultValue="0"
-                          onChange={(
-                            e: ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >,
-                          ) => {
-                            const num = parseInt(e.target.value, 10)
-                            const value = isNaN(num) ? 0 : num
+                      {field.sectionTitle}
+                    </Text>
+                  </GridColumn>
+                ) : (
+                  <DoubleColumnRow
+                    span={
+                      field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']
+                    }
+                    pushRight={pushRight}
+                    paddingBottom={2}
+                    key={field.id}
+                  >
+                    {field.id === 'propertyShare' ? (
+                      <InputController
+                        id={`${fieldIndex}.${field.id}`}
+                        label={formatMessage(m.propertyShare)}
+                        defaultValue="0"
+                        onChange={(
+                          e: ChangeEvent<
+                            HTMLInputElement | HTMLTextAreaElement
+                          >,
+                        ) => {
+                          const num = parseInt(e.target.value, 10)
+                          const value = isNaN(num) ? 0 : num
 
-                            if (value >= 0 && value <= 100) {
-                              calculateTotal()
-                            }
-                          }}
-                          error={
-                            error && error[index]
-                              ? error[index][field.id]
-                              : undefined
+                          if (value >= 0 && value <= 100) {
+                            calculateTotal()
                           }
-                          type="number"
-                          suffix="%"
-                          required
-                        />
-                      ) : field.id === 'relation' ? (
-                        <SelectController
-                          id={`${fieldIndex}.${field.id}`}
-                          name={`${fieldIndex}.${field.id}`}
-                          label={field.title}
-                          placeholder={field.placeholder}
-                          options={relations}
-                        />
-                      ) : (
-                        <InputController
-                          id={`${fieldIndex}.${field.id}`}
-                          name={`${fieldIndex}.${field.id}`}
-                          defaultValue={
-                            repeaterField[field.id]
-                              ? repeaterField[field.id]
-                              : getDefaults(field.id)
+                        }}
+                        error={
+                          error && error[index]
+                            ? error[index][field.id]
+                            : undefined
+                        }
+                        type="number"
+                        suffix="%"
+                        required
+                      />
+                    ) : field.id === 'relation' ? (
+                      <SelectController
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        options={relations}
+                      />
+                    ) : (
+                      <InputController
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        defaultValue={
+                          repeaterField[field.id]
+                            ? repeaterField[field.id]
+                            : getDefaults(field.id)
+                        }
+                        format={field.format}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        backgroundColor={field.color ? field.color : 'blue'}
+                        currency={field.currency}
+                        readOnly={field.readOnly}
+                        type={field.type}
+                        textarea={field.variant}
+                        rows={field.rows}
+                        required={field.required}
+                        error={
+                          error && error[index]
+                            ? error[index][field.id]
+                            : undefined
+                        }
+                        onChange={(elem) => {
+                          const value = elem.target.value.replace(/\D/g, '')
+
+                          // heirs
+                          if (field.id === 'heirsPercentage') {
+                            setPercentage(Number(value) / 100)
                           }
-                          format={field.format}
-                          label={field.title}
-                          placeholder={field.placeholder}
-                          backgroundColor={field.color ? field.color : 'blue'}
-                          currency={field.currency}
-                          readOnly={field.readOnly}
-                          type={field.type}
-                          textarea={field.variant}
-                          rows={field.rows}
-                          required={field.required}
-                          error={
-                            error && error[index]
-                              ? error[index][field.id]
-                              : undefined
+
+                          if (valueKeys.includes(field.id)) {
+                            updateValue(fieldIndex)
                           }
-                          onChange={(elem) => {
-                            const value = elem.target.value.replace(/\D/g, '')
 
-                            // heirs
-                            if (field.id === 'heirsPercentage') {
-                              setPercentage(Number(value) / 100)
-                            }
+                          if (props.sumField === field.id) {
+                            calculateTotal()
+                          }
 
-                            if (valueKeys.includes(field.id)) {
-                              updateValue(fieldIndex)
-                            }
-
-                            if (props.sumField === field.id) {
-                              calculateTotal()
-                            }
-
-                            setIndex(fieldIndex)
-                          }}
-                        />
-                      )}
-                    </GridColumn>
-                  </Fragment>
+                          setIndex(fieldIndex)
+                        }}
+                      />
+                    )}
+                  </DoubleColumnRow>
                 )
               })}
             </GridRow>
@@ -411,33 +414,35 @@ export const ReportFieldsRepeater: FC<
       </Box>
       {!!fields.length && props.sumField && (
         <Box marginTop={5}>
-          <DoubleColumnRow
-            right={
-              <Input
-                id={`${id}.total`}
-                name={`${id}.total`}
-                value={
-                  props.sumField === 'heirsPercentage'
-                    ? String(total) + ' / 100%'
-                    : formatCurrency(String(isNaN(total) ? 0 : total))
-                }
-                label={
-                  props.sumField === 'heirsPercentage'
-                    ? formatMessage(m.totalPercentage)
-                    : formatMessage(m.total)
-                }
-                backgroundColor="white"
-                readOnly
-                hasError={
-                  (props.sumField === 'heirsPercentage' &&
-                    error &&
-                    total !== 100) ??
-                  false
-                }
-                errorMessage={formatMessage(m.totalPercentageError)}
-              />
-            }
-          />
+          <GridRow>
+            <DoubleColumnRow
+              right={
+                <Input
+                  id={`${id}.total`}
+                  name={`${id}.total`}
+                  value={
+                    props.sumField === 'heirsPercentage'
+                      ? String(total) + ' / 100%'
+                      : formatCurrency(String(isNaN(total) ? 0 : total))
+                  }
+                  label={
+                    props.sumField === 'heirsPercentage'
+                      ? formatMessage(m.totalPercentage)
+                      : formatMessage(m.total)
+                  }
+                  backgroundColor="white"
+                  readOnly
+                  hasError={
+                    (props.sumField === 'heirsPercentage' &&
+                      error &&
+                      total !== 100) ??
+                    false
+                  }
+                  errorMessage={formatMessage(m.totalPercentageError)}
+                />
+              }
+            />
+          </GridRow>
         </Box>
       )}
     </Box>
@@ -449,33 +454,62 @@ export default ReportFieldsRepeater
 const DoubleColumnRow = ({
   left,
   right,
+  pushRight,
   span = ['1/1', '1/2'],
+  bypass,
+  children,
+  ...props
 }: {
   left?: ReactNode
   right?: ReactNode
-  span?: SpanType
-}) => {
+  pushRight?: boolean
+  bypass?: boolean
+  children?: ReactNode
+} & GridColumnProps) => {
   const onlyLeft = left && !right
   const onlyRight = right && !left
 
-  return (
-    <GridRow>
-      {onlyLeft ? (
-        <Fragment>
-          <GridColumn span={span}>{left}</GridColumn>
-          <GridColumn hiddenBelow="sm" span={span} />
-        </Fragment>
-      ) : onlyRight ? (
-        <Fragment>
-          <GridColumn hiddenBelow="sm" span={span} />
-          <GridColumn span={span}>{right}</GridColumn>
-        </Fragment>
-      ) : (
-        <Fragment>
-          <GridColumn span={span}>{left}</GridColumn>
-          <GridColumn span={span}>{right}</GridColumn>
-        </Fragment>
-      )}
-    </GridRow>
+  if (children && pushRight) {
+    return (
+      <Fragment>
+        <GridColumn hiddenBelow="sm" span={span} {...props} />
+        <GridColumn span={span} {...props}>
+          {children}
+        </GridColumn>
+      </Fragment>
+    )
+  }
+
+  if (!left && !right && children) {
+    return (
+      <GridColumn span={span} {...props}>
+        {children}
+      </GridColumn>
+    )
+  }
+
+  return onlyLeft ? (
+    <Fragment>
+      <GridColumn span={span} {...props}>
+        {left}
+      </GridColumn>
+      <GridColumn hiddenBelow="sm" span={span} {...props} />
+    </Fragment>
+  ) : onlyRight ? (
+    <Fragment>
+      <GridColumn hiddenBelow="sm" span={span} {...props} />
+      <GridColumn span={span} {...props}>
+        {right}
+      </GridColumn>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <GridColumn span={span} {...props}>
+        {left}
+      </GridColumn>
+      <GridColumn span={span} {...props}>
+        {right}
+      </GridColumn>
+    </Fragment>
   )
 }

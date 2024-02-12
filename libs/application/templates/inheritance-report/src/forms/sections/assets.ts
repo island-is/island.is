@@ -313,15 +313,15 @@ export const assets = buildSection({
                     id: 'issuer',
                   },
                   {
+                    title: m.nationalId.defaultMessage,
+                    id: 'nationalId',
+                    format: '######-####',
+                  },
+                  {
                     title: m.claimsAmount.defaultMessage,
                     id: 'value',
                     required: true,
                     currency: true,
-                  },
-                  {
-                    title: m.nationalId.defaultMessage,
-                    id: 'nationalId',
-                    format: '######-####',
                   },
                 ],
                 repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
