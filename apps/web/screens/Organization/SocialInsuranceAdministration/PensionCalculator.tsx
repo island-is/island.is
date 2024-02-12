@@ -24,6 +24,7 @@ import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   CustomPage,
+  CustomPageUniqueIdentifier as UniqueIdentifier,
   Organization,
   OrganizationPage,
   Query,
@@ -719,7 +720,7 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_CUSTOM_PAGE_QUERY,
       variables: {
         input: {
-          uniqueIdentifier: 'PensionCalculator', // TODO: perhaps this value can be typesafe?
+          uniqueIdentifier: UniqueIdentifier.PensionCalculator,
           lang: locale,
         },
       },
