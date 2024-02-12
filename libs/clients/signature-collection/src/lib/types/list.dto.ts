@@ -13,7 +13,7 @@ export enum ListStatus {
   InReview = 'inReview',
   Reviewed = 'reviewed',
   Extendable = 'extendable',
-  InActive = 'inActive',
+  Inactive = 'inactive',
 }
 
 export interface ListBase {

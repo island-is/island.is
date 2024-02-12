@@ -6,7 +6,7 @@ export enum CollectionStatus {
   InReview = 'inReview',
   Processing = 'processing',
   Processed = 'processed',
-  InActive = 'inActive',
+  Inactive = 'inactive',
 }
 
 registerEnumType(CollectionStatus, {
@@ -31,7 +31,7 @@ registerEnumType(CollectionStatus, {
     Processed: {
       description: 'Collection has been marked as processed.',
     },
-    InActive: {
+    Inactive: {
       description:
         'Collection is not active, has been closed or has not yet started.',
     },
@@ -49,7 +49,7 @@ export enum ListStatus {
   InReview = 'inReview',
   Reviewed = 'reviewed',
   Extendable = 'extendable',
-  InActive = 'inActive',
+  Inactive = 'inactive',
 }
 
 registerEnumType(ListStatus, {
@@ -72,7 +72,7 @@ registerEnumType(ListStatus, {
       description:
         'Collection has been marked as processed and endtime on lists can be extended.',
     },
-    InActive: {
+    Inactive: {
       description: 'List is not active.',
     },
   },

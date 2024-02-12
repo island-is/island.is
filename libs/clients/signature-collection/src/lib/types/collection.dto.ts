@@ -9,7 +9,7 @@ export enum CollectionStatus {
   InReview = 'inReview',
   Processing = 'processing',
   Processed = 'processed',
-  InActive = 'inActive',
+  Inactive = 'inactive',
 }
 
 export interface Collection {
