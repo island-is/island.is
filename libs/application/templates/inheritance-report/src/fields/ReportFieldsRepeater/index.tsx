@@ -5,6 +5,7 @@ import {
   useCallback,
   Fragment,
   ReactNode,
+  ChangeEvent,
 } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import {
@@ -98,11 +99,17 @@ export const ReportFieldsRepeater: FC<
       return
     }
 
-    const total = values.reduce(
-      (acc: number, current: any) =>
-        Number(acc) + Number(current[props.sumField]),
-      0,
-    )
+    const total = values.reduce((acc: number, current: any) => {
+      const propertyValuationNumber = parseInt(current[props.sumField], 10)
+      const shareValueNumber = parseInt(current?.propertyShare, 10)
+
+      const propertyValuation = isNaN(propertyValuationNumber)
+        ? 0
+        : propertyValuationNumber
+      const shareValue = isNaN(shareValueNumber) ? 0 : shareValueNumber / 100
+
+      return Number(acc) + propertyValuation * shareValue
+    }, 0)
     const addTotal = id.replace('data', 'total')
     setValue(addTotal, total)
 
@@ -298,7 +305,33 @@ export const ReportFieldsRepeater: FC<
                       paddingBottom={2}
                       key={field.id}
                     >
-                      {field.id === 'relation' ? (
+                      {field.id === 'propertyShare' ? (
+                        <InputController
+                          id={`${fieldIndex}.${field.id}`}
+                          label={formatMessage(m.propertyShare)}
+                          defaultValue="0"
+                          onChange={(
+                            e: ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >,
+                          ) => {
+                            const num = parseInt(e.target.value, 10)
+                            const value = isNaN(num) ? 0 : num
+
+                            if (value >= 0 && value <= 100) {
+                              calculateTotal()
+                            }
+                          }}
+                          error={
+                            error && error[index]
+                              ? error[index][field.id]
+                              : undefined
+                          }
+                          type="number"
+                          suffix="%"
+                          required
+                        />
+                      ) : field.id === 'relation' ? (
                         <SelectController
                           id={`${fieldIndex}.${field.id}`}
                           name={`${fieldIndex}.${field.id}`}
