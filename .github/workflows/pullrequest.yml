@@ -209,8 +209,9 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
-      - name: Set up NodeJS
-        uses: setup-node@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
       - name: Prepare lint targets
         id: lint_projects
