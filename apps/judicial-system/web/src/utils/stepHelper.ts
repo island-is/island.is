@@ -146,20 +146,13 @@ export const isReopenedCOACase = (
   )
 }
 
-export const shouldUseAppealWithdrawnRoutes = (
-  appealState?: CaseAppealState | null,
-  appealCaseId?: string | null,
-  appealAssistantId?: string | null,
-  appealJudge1Id?: string | null,
-  appealJudge2Id?: string | null,
-  appealJudge3Id?: string | null,
-): boolean => {
+export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
   return (
-    appealState === CaseAppealState.WITHDRAWN &&
-    (!appealCaseId ||
-      !appealAssistantId ||
-      !appealJudge1Id ||
-      !appealJudge2Id ||
-      !appealJudge3Id)
+    theCase.appealState === CaseAppealState.WITHDRAWN &&
+    (!theCase.appealAssistant ||
+      !theCase.appealCaseNumber ||
+      !theCase.appealJudge1 ||
+      !theCase.appealJudge2 ||
+      !theCase.appealJudge3)
   )
 }

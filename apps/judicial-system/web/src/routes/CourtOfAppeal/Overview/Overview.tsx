@@ -167,13 +167,7 @@ const CourtOfAppealOverview: React.FC<
             previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
             onNextButtonClick={() =>
               handleNavigationTo(
-                shouldUseAppealWithdrawnRoutes(
-                  workingCase.appealState,
-                  workingCase.appealAssistant?.id,
-                  workingCase.appealJudge1?.id,
-                  workingCase.appealJudge2?.id,
-                  workingCase.appealJudge3?.id,
-                )
+                shouldUseAppealWithdrawnRoutes(workingCase)
                   ? constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
                   : constants.COURT_OF_APPEAL_CASE_ROUTE,
               )

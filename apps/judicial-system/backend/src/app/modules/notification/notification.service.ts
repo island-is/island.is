@@ -1973,29 +1973,6 @@ export class NotificationService {
   }
   //#endregion
   //#region APPEAL_COMPLETED notifications
-  private async sendAppealCompletedNotifications(
-    theCase: Case,
-  ): Promise<SendNotificationResponse> {
-    /**
-     * If anyone has received the APPEAL_COMPLETED notification before,
-     * we know that the case is being reopened.
-     */
-
-    let recipients: Recipient[] = []
-    if (
-      theCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
-    ) {
-      recipients = await this.sendAppealDiscontinuedNotifications(theCase)
-    } else {
-      recipients = await this.sendAppealCompletedResultNotifications(theCase)
-    }
-
-    return this.recordNotification(
-      theCase.id,
-      NotificationType.APPEAL_COMPLETED,
-      recipients,
-    )
-  }
 
   private async sendAppealCompletedResultNotifications(
     theCase: Case,
@@ -2145,6 +2122,30 @@ export class NotificationService {
     return Promise.all(promises)
   }
 
+  private async sendAppealCompletedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    /**
+     * If anyone has received the APPEAL_COMPLETED notification before,
+     * we know that the case is being reopened.
+     */
+
+    let recipients: Recipient[] = []
+    if (
+      theCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+    ) {
+      recipients = await this.sendAppealDiscontinuedNotifications(theCase)
+    } else {
+      recipients = await this.sendAppealCompletedResultNotifications(theCase)
+    }
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.APPEAL_COMPLETED,
+      recipients,
+    )
+  }
+
   //#endregion
   //#region APPEAL_WITHDRAWN notifications
   private async sendAppealWithdrawnNotifications(
@@ -2169,8 +2170,23 @@ export class NotificationService {
       promises.push(
         this.sendAppealWithdrawnNotification(
           theCase.courtCaseNumber,
-          theCase.appealAssistant?.name ?? '',
+          theCase.appealAssistant?.name,
           theCase.appealAssistant?.email,
+        ),
+        this.sendAppealWithdrawnNotification(
+          theCase.courtCaseNumber,
+          theCase.appealJudge2?.name,
+          theCase.appealJudge2?.email,
+        ),
+        this.sendAppealWithdrawnNotification(
+          theCase.courtCaseNumber,
+          theCase.appealJudge3?.name,
+          theCase.appealJudge3?.email,
+        ),
+        this.sendAppealWithdrawnNotification(
+          theCase.courtCaseNumber,
+          theCase.appealJudge1?.name,
+          theCase.appealJudge1?.email,
         ),
       )
     }

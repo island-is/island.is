@@ -92,26 +92,10 @@ const useCaseList = () => {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        const isWithdrawnRoute = shouldUseAppealWithdrawnRoutes(
-          caseToOpen.appealState,
-          caseToOpen.appealAssistant?.id,
-          caseToOpen.appealJudge1?.id,
-          caseToOpen.appealJudge2?.id,
-          caseToOpen.appealJudge3?.id,
-        )
-
-        if (
-          findFirstInvalidStep(
-            constants.courtOfAppealRoutes(isWithdrawnRoute),
-            caseToOpen,
-          ) === constants.courtOfAppealRoutes(isWithdrawnRoute)[1]
-        ) {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
-          routeTo = findFirstInvalidStep(
-            constants.courtOfAppealRoutes(isWithdrawnRoute),
-            caseToOpen,
-          )
+          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
         }
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE

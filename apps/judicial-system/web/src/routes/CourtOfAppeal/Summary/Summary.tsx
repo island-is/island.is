@@ -20,6 +20,7 @@ import {
   RulingModifiedModal,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseTransition,
   NotificationType,
@@ -33,7 +34,11 @@ import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/st
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { strings } from './Summary.strings'
 
-type ModalType = 'AppealCompleted' | 'AppealRulingModified' | 'none'
+type ModalType =
+  | 'AppealCompleted'
+  | 'AppealRulingModified'
+  | 'AppealDiscontinued'
+  | 'none'
 
 const Summary: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -53,7 +58,9 @@ const Summary: React.FC = () => {
         : true
 
     if (caseTransitioned) {
-      setVisibleModal('AppealCompleted')
+      workingCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+        ? setVisibleModal('AppealDiscontinued')
+        : setVisibleModal('AppealCompleted')
     }
   }
 
@@ -136,6 +143,15 @@ const Summary: React.FC = () => {
             onCancel={() => setVisibleModal('none')}
             onContinue={handleComplete}
             continueDisabled={isTransitioningCase}
+          />
+        )}
+        {visibleModal === 'AppealDiscontinued' && (
+          <Modal
+            title={formatMessage(strings.appealDiscontinuedModalTitle)}
+            text={formatMessage(strings.appealDiscontinuedModalText)}
+            secondaryButtonText={formatMessage(core.closeModal)}
+            onClose={() => setVisibleModal('none')}
+            onSecondaryButtonClick={() => setVisibleModal('none')}
           />
         )}
       </PageLayout>
