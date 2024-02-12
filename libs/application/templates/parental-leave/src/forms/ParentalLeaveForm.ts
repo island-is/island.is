@@ -8,7 +8,6 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
-  buildImageField,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -26,7 +25,7 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
-import ManWithStrollerIllustration from '../assets/Images/ManWithStrollerIllustration'
+
 import Logo from '../assets/Logo'
 import { minPeriodDays } from '../config'
 import {
@@ -68,7 +67,6 @@ import {
   getMinimumStartDate,
   getMultipleBirthRequestDays,
   getOtherParentOptions,
-  getPeriodImageTitle,
   getPeriodSectionTitle,
   getRatioTitle,
   getRightsDescTitle,
@@ -1346,19 +1344,6 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'leavePeriods',
       title: getPeriodSectionTitle,
       children: [
-        buildMultiField({
-          id: 'periodsImageScreen',
-          title: getPeriodImageTitle,
-          children: [
-            buildImageField({
-              id: 'leavePeriods.image',
-              title: '',
-              image: ManWithStrollerIllustration,
-              imageWidth: 'auto',
-            }),
-          ],
-        }),
-
         buildSubSection({
           id: 'addPeriods',
           title: parentalLeaveFormMessages.leavePlan.subSection,
