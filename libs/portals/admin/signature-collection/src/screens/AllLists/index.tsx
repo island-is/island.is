@@ -26,6 +26,7 @@ import { format as formatNationalId } from 'kennitala'
 import CreateCollection from './components/createCollection'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -175,6 +176,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     }
                   />
                 </Filter>
+                {/* open when collection.status === "IN_REVIEW" || collection.status === "PROCESSING" */}
                 {allowedToProcess && <CreateCollection />}
               </Box>
             </GridColumn>
@@ -216,11 +218,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        /*tag={{
+                        tag={{
                           label: m.confirmListReviewed.defaultMessage,
                           variant: 'mint',
                           outlined: false,
-                        }}*/
+                        }}
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',
@@ -266,7 +268,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               )}
             />
           </Box>
+          {/* open when collection.status === "PROCESSING" */}
           {allowedToProcess && <CompareLists />}
+
+          {/* open when collection.status === "PROCESSING" */}
+          <ActionCompleteCollectionProcessing />
         </GridColumn>
       </GridRow>
     </GridContainer>

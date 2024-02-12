@@ -100,7 +100,7 @@ export const m = defineMessages({
   },
   viewList: {
     id: 'admin-portal.signature-collection:viewList',
-    defaultMessage: 'Skoða lista',
+    defaultMessage: 'Skoða söfnun',
     description: '',
   },
   noLists: {
@@ -110,14 +110,25 @@ export const m = defineMessages({
   },
   noListsFoundBySearch: {
     id: 'admin-portal.signature-collection:noListsFoundBySearch',
-    defaultMessage: 'Engir listar fundust þegar leitað var að',
+    defaultMessage: 'Engin söfnun fannst þegar leitað var að',
+    description: '',
+  },
+  completeCollectionProcessing: {
+    id: 'admin-portal.signature-collection:completeCollectionProcessing',
+    defaultMessage: 'Úrvinnslu safnanna lokið',
+    description: '',
+  },
+  completeCollectionProcessingModalDescription: {
+    id: 'admin-portal.signature-collection:completeCollectionProcessingModalDescription#markdown',
+    defaultMessage:
+      'Þegar búið er að fara yfir alla meðmælalista skal ýta á hnappinn.',
     description: '',
   },
 
   // View list
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
-    defaultMessage: 'Meðmælalisti',
+    defaultMessage: 'Meðmælasöfnun',
     description: '',
   },
   singleListIntro: {
@@ -239,7 +250,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  // Upload
+  // Uplo
   uploadFile: {
     id: 'admin-portal.signature-collection:uploadFile',
     defaultMessage: 'Bæta einning við meðmælum af blaði',

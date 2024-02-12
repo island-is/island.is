@@ -58,7 +58,8 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              {/*<ListReviewedAlert />*/}
+              {/* shows when list.status === "REVIEWED" */}
+              <ListReviewedAlert />
               {!!list.collectors?.length &&
                 list.collectors.map((collector) => (
                   <Box key={collector.name} marginBottom={5}>
@@ -72,6 +73,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     </Text>
                   </Box>
                 ))}
+              {/* open when list.status === "EXTENDABLE" */}
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
@@ -80,8 +82,9 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
               {allowedToProcess && (
                 <>
+                  {/* open when list.status === "IN_REVIEW" */}
                   <PaperUpload listId={list.id} />
-                  {/*<ActionReviewComplete />*/}
+                  <ActionReviewComplete />
                 </>
               )}
             </>

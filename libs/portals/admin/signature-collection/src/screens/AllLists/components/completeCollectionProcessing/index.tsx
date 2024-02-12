@@ -4,7 +4,7 @@ import { m } from '../../../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 
-const ActionReviewComplete = () => {
+const ActionCompleteCollectionProcessing = () => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
 
@@ -19,20 +19,22 @@ const ActionReviewComplete = () => {
             variant="text"
             onClick={() => setModalSubmitReviewIsOpen(true)}
           >
-            {formatMessage(m.confirmListReviewed)}
+            {formatMessage(m.completeCollectionProcessing)}
           </Button>
         </Box>
       </Box>
       <Modal
         id="reviewComplete"
         isVisible={modalSubmitReviewIsOpen}
-        title={formatMessage(m.confirmListReviewed)}
-        label={formatMessage(m.confirmListReviewed)}
+        title={formatMessage(m.completeCollectionProcessing)}
+        label={formatMessage(m.completeCollectionProcessing)}
         onClose={() => setModalSubmitReviewIsOpen(false)}
         closeButtonLabel={''}
       >
         <Box marginTop={5}>
-          <Text>{formatMessage(m.listReviewedModalDescription)}</Text>
+          <Text>
+            {formatMessage(m.completeCollectionProcessingModalDescription)}
+          </Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
@@ -40,7 +42,7 @@ const ActionReviewComplete = () => {
               colorScheme="destructive"
               onClick={() => setModalSubmitReviewIsOpen(false)}
             >
-              {formatMessage(m.confirmListReviewed)}
+              {formatMessage(m.completeCollectionProcessing)}
             </Button>
           </Box>
         </Box>
@@ -49,4 +51,4 @@ const ActionReviewComplete = () => {
   )
 }
 
-export default ActionReviewComplete
+export default ActionCompleteCollectionProcessing
