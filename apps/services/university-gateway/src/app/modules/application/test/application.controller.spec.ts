@@ -38,13 +38,13 @@ describe('ApplicationController', () => {
     await app.cleanUp()
   })
 
-  // describe('GET /applications/{id}', () => {
-  //   it('should throw error', async () => {
-  //     const result = await server.get('/v1/applications')
+  describe('GET /applications/{id}', () => {
+    it('should throw error', async () => {
+      const result = await server.get('/v1/applications')
 
-  //     expect(result.status).toBe(404)
-  //   })
-  // })
+      expect(result.status).toBe(404)
+    })
+  })
 
   // describe('POST /applications', () => {
   //   it('should throw error', async () => {
