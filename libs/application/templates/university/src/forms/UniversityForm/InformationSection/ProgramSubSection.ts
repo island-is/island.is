@@ -12,7 +12,7 @@ export const ProgramSubSection = buildSubSection({
   title: information.labels.programSelection.sectionTitle,
   children: [
     buildMultiField({
-      id: Routes.PROGRAMINFORMATION,
+      id: `${Routes.PROGRAMINFORMATION}MultiField`,
       title: information.labels.programSelection.title,
       description: information.labels.programSelection.subTitle,
       children: [
@@ -22,7 +22,7 @@ export const ProgramSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildCustomField({
-          id: Routes.PROGRAMINFORMATION,
+          id: `${Routes.PROGRAMINFORMATION}.selection`,
           title: '',
           component: 'ProgramSelection',
         }),

@@ -41,7 +41,7 @@ export const application = defineMessages({
     description: 'Description of acceptance by school',
   },
   submit: {
-    id: 'uni.application.submit',
+    id: 'uni.application:submit',
     defaultMessage: 'Senda umsókn',
     description: 'submit button label',
   },

@@ -109,6 +109,7 @@ export const UniversitySchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
   programInformation: ProgramSchema,
+  modeOfDeliveryInformation: z.string().optional(),
   educationOptions: z
     .enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
     .optional(),
