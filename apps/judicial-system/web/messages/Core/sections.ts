@@ -367,7 +367,8 @@ export const sections = {
     withdrawal: {
       id: 'judicial.system.core:sections.court_of_appeal_section.withdrawn',
       defaultMessage: 'Niðurfelling máls',
-      description: 'Notaður sem texti í skrefum á hliðarstiku þegar kæruhafnað',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kæra er dregin til baka',
     },
   }),
   caseResults: defineMessages({

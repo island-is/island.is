@@ -2096,36 +2096,24 @@ export class NotificationService {
 
   //#endregion
   //#region APPEAL_WITHDRAWN notifications
-
   private async sendAppealCaseWithdrawnNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    const subject = this.formatMessage(
-      notifications.caseAppealWithdrawn.subject,
-      {
-        courtCaseNumber: theCase.courtCaseNumber,
-      },
+    const hasAssignedJudges = await this.hasSentNotification(
+      theCase.id,
+      NotificationType.APPEAL_JUDGES_ASSIGNED,
     )
 
-    const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
-      // userHasAccessToRVG: true,
-      courtCaseNumber: theCase.courtCaseNumber,
-      // appealCaseNumber: theCase.appealCaseNumber,
-      // appealRulingDecision: getAppealResultTextByValue(
-      //   theCase.appealRulingDecision,
-      // ),
-      // linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-      // linkEnd: '</a>',
-    })
+    const promises = []
 
-    const promises = [
-      this.sendEmail(
-        subject,
-        html,
-        this.formatMessage(notifications.emailNames.courtOfAppeals),
-        this.getCourtEmail(this.config.courtOfAppealsId),
-      ),
-    ]
+    if (hasAssignedJudges === false) {
+      promises.push(this.sendUnassignedAppealWithdrawnNotification(theCase))
+    } else {
+      const subject = this.formatMessage(notifications.caseAppealWithdrawn, {
+        appealCaseNumber: theCase.appealCaseNumber,
+        courtCaseNumber: theCase.courtCaseNumber,
+      })
+    }
 
     const recipients = await Promise.all(promises)
 
@@ -2136,8 +2124,30 @@ export class NotificationService {
     )
   }
 
-  //#endregion
+  private sendUnassignedAppealWithdrawnNotification(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const subject = this.formatMessage(
+      notifications.unassignedCaseAppealWithdrawn.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+    const html = this.formatMessage(
+      notifications.unassignedCaseAppealWithdrawn.body,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+    return this.sendEmail(
+      subject,
+      html,
+      this.formatMessage(notifications.emailNames.courtOfAppeals),
+      this.getCourtEmail(this.config.courtOfAppealsId),
+    )
+  }
 
+  //#endregion
   //#endregion
   //#region Messages
   private getNotificationMessage(
