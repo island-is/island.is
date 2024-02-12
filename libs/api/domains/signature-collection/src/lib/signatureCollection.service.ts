@@ -81,7 +81,9 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getList(listId, user)
   }
 
-  async signedList(user: User): Promise<SignatureCollectionSignedList | null> {
+  async signedList(
+    user: User,
+  ): Promise<SignatureCollectionSignedList[] | null> {
     return await this.signatureCollectionClientService.getSignedList(user)
   }
 
