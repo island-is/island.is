@@ -38,7 +38,10 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
+import {
+  isTrafficViolationCase,
+  shouldUseAppealWithdrawnRoutes,
+} from '../../stepHelper'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -1188,8 +1191,11 @@ const useSections = (
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
     const { id, appealRulingDecision, appealState } = workingCase
-    const isWithdrawnAppealCase = appealState === CaseAppealState.WITHDRAWN
-    const routeIndex = courtOfAppealRoutes(isWithdrawnAppealCase).findIndex(
+    const useAppealWithdrawnSections =
+      shouldUseAppealWithdrawnRoutes(workingCase)
+    const routeIndex = courtOfAppealRoutes(
+      useAppealWithdrawnSections,
+    ).findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
        * and we want to remove the /[:id] part
@@ -1217,7 +1223,7 @@ const useSections = (
             isActive: routeIndex === 0,
             href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
           },
-          ...(!isWithdrawnAppealCase
+          ...(!useAppealWithdrawnSections
             ? [
                 {
                   name: formatMessage(sections.courtOfAppealSection.reception),
@@ -1239,7 +1245,7 @@ const useSections = (
                 },
               ]
             : []),
-          ...(!isWithdrawnAppealCase
+          ...(!useAppealWithdrawnSections
             ? [
                 {
                   name: formatMessage(sections.courtOfAppealSection.ruling),
@@ -1265,7 +1271,7 @@ const useSections = (
               ]
             : []),
 
-          ...(isWithdrawnAppealCase
+          ...(useAppealWithdrawnSections
             ? [
                 {
                   name: formatMessage(sections.courtOfAppealSection.withdrawal),
@@ -1289,7 +1295,7 @@ const useSections = (
             : []),
           {
             name: formatMessage(sections.courtOfAppealSection.summary),
-            isActive: isWithdrawnAppealCase
+            isActive: useAppealWithdrawnSections
               ? routeIndex === 2
               : routeIndex === 3,
             href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
@@ -1318,7 +1324,7 @@ const useSections = (
           appealState === CaseAppealState.COMPLETED
             ? getAppealResultTextByValue(appealRulingDecision)
             : formatMessage(sections.caseResults.result),
-        isActive: isWithdrawnAppealCase
+        isActive: useAppealWithdrawnSections
           ? routeIndex === 3
           : routeIndex === 4 ||
             workingCase.appealState === CaseAppealState.COMPLETED,

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -131,86 +131,80 @@ const AppealCase = () => {
             />
             <CaseNumberInput />
           </Box>
-          {workingCase.appealState !== CaseAppealState.WITHDRAWN && (
-            <>
-              <Box component="section" marginBottom={5}>
-                <SectionHeading
-                  title={formatMessage(core.appealAssistantHeading)}
-                />
-                <Select
-                  name="assistant"
-                  label={formatMessage(strings.assistantLabel)}
-                  placeholder={formatMessage(strings.assistantPlaceholder)}
-                  value={defaultAssistant}
-                  options={assistants}
-                  onChange={(so) => {
-                    const assistantUpdate = (so as AssistantSelectOption)
-                      .assistant
 
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          appealAssistantId: assistantUpdate.id ?? null,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
-                  required
-                />
-              </Box>
-              <Box component="section" marginBottom={8}>
-                <SectionHeading
-                  title={formatMessage(core.appealJudgesHeading)}
-                />
-                <BlueBox>
-                  {defaultJudges.map((judge, index) => {
-                    return (
-                      <Box marginBottom={2} key={`judgeBox${index + 1}`}>
-                        <Select
-                          name="judge"
-                          label={formatMessage(
-                            index === 0
-                              ? strings.judgeForepersonLabel
-                              : strings.judgeLabel,
-                          )}
-                          placeholder={formatMessage(
-                            index === 0
-                              ? strings.judgeForepersonPlaceholder
-                              : strings.judgePlaceholder,
-                          )}
-                          value={
-                            judge?.id
-                              ? { label: judge.name ?? '', value: judge.id }
-                              : undefined
-                          }
-                          options={judges}
-                          onChange={(so) => {
-                            const judgeUpdate = (so as JudgeSelectOption).judge
-                            const judgeProperty = `appealJudge${index + 1}Id`
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(core.appealAssistantHeading)}
+            />
+            <Select
+              name="assistant"
+              label={formatMessage(strings.assistantLabel)}
+              placeholder={formatMessage(strings.assistantPlaceholder)}
+              value={defaultAssistant}
+              options={assistants}
+              onChange={(so) => {
+                const assistantUpdate = (so as AssistantSelectOption).assistant
 
-                            setAndSendCaseToServer(
-                              [
-                                {
-                                  [judgeProperty]: judgeUpdate.id ?? null,
-                                  force: true,
-                                },
-                              ],
-                              workingCase,
-                              setWorkingCase,
-                            )
-                          }}
-                          required
-                        />
-                      </Box>
-                    )
-                  })}
-                </BlueBox>
-              </Box>
-            </>
-          )}
+                setAndSendCaseToServer(
+                  [
+                    {
+                      appealAssistantId: assistantUpdate.id ?? null,
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }}
+              required
+            />
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
+            <BlueBox>
+              {defaultJudges.map((judge, index) => {
+                return (
+                  <Box marginBottom={2} key={`judgeBox${index + 1}`}>
+                    <Select
+                      name="judge"
+                      label={formatMessage(
+                        index === 0
+                          ? strings.judgeForepersonLabel
+                          : strings.judgeLabel,
+                      )}
+                      placeholder={formatMessage(
+                        index === 0
+                          ? strings.judgeForepersonPlaceholder
+                          : strings.judgePlaceholder,
+                      )}
+                      value={
+                        judge?.id
+                          ? { label: judge.name ?? '', value: judge.id }
+                          : undefined
+                      }
+                      options={judges}
+                      onChange={(so) => {
+                        const judgeUpdate = (so as JudgeSelectOption).judge
+                        const judgeProperty = `appealJudge${index + 1}Id`
+
+                        setAndSendCaseToServer(
+                          [
+                            {
+                              [judgeProperty]: judgeUpdate.id ?? null,
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
+                      }}
+                      required
+                    />
+                  </Box>
+                )
+              })}
+            </BlueBox>
+          </Box>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
