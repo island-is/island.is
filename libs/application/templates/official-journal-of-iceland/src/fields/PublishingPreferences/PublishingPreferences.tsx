@@ -15,7 +15,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { CommunicationChannels } from '../../components/CommunicationChannels/CommunicationChannels'
 import { getErrorViaPath } from '@island.is/application/core'
 import { useLazyQuery } from '@apollo/client'
-import { CATEGORIES } from './queries'
+import { CATEGORIES_QUERY } from '../../graphql/queries'
 import { useEffect, useState } from 'react'
 import { MinistryOfJusticeAdvertEntity } from '@island.is/api/schema'
 
@@ -39,7 +39,7 @@ export const PublishingPreferences = ({
     SelectableCategory[]
   >(answers.publishingPreferences?.contentCategories ?? [])
 
-  const [lazyCategoryQuery] = useLazyQuery(CATEGORIES, {
+  const [lazyCategoryQuery] = useLazyQuery(CATEGORIES_QUERY, {
     onError: (error) => {
       console.error('error', error)
     },

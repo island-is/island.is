@@ -12,6 +12,7 @@ import {
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
+  AdvertDepartmentResponse,
   AdvertResponse,
   AdvertTypeResponse,
 } from './models/advert.response'
@@ -30,6 +31,14 @@ export class MinistryOfJusticeResolver {
     return this.mojService.adverts(user, {
       search: input.search,
     })
+  }
+
+  @Query(() => AdvertDepartmentResponse, {
+    name: 'ministryOfJusticeDepartments',
+  })
+  @Audit()
+  departments(@CurrentUser() user: User, @Args('params') params: QueryParams) {
+    return this.mojService.departments(user, params)
   }
 
   @Query(() => AdvertTypeResponse, {

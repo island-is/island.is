@@ -3,26 +3,62 @@ import { Box, Stack } from '@island.is/island-ui/core'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { Property } from '../../components/Property/Property'
 import { useFormatMessage } from '../../hooks'
-import { summary } from '../../lib/messages'
-import { OJOIFieldBaseProps } from '../../lib/types'
+import { general, summary } from '../../lib/messages'
+import {
+  MinistryOfJusticeGraphqlResponse,
+  OJOIFieldBaseProps,
+} from '../../lib/types'
+import { useQuery } from '@apollo/client'
+import { DEPARTMENTS_QUERY, TYPES_QUERY } from '../../graphql/queries'
+import { MinistryOfJusticeAdvertEntity } from '@island.is/api/schema'
 
 const MOCK_DATA = {
   sender: 'Stofnun X',
-  type: 'Auglýsing',
-  advertTitle:
-    'AUGLÝSING um skrá yfir þau störf hjá Múlaþingi sem eru undanskilin verkfallsheimild.',
-  advertDepartment: 'B-Deild',
-  dateOfSubmission: '25.07.2023',
-  advertFastTrack: 'Nei',
+
   estimatedDateOfPublication: '25.10.2023',
   estimatedPrice: '23.000',
-  advertClassicifation: 'Verkföll og vinnudeilur',
 }
 
 export const Summary = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
   const user = useUserInfo()
+
+  const { answers } = application
+
+  const { data: types } = useQuery<MinistryOfJusticeGraphqlResponse<'types'>>(
+    TYPES_QUERY,
+    {
+      variables: {
+        params: {
+          department: answers.advert.department,
+          search: answers.advert.type,
+        },
+      },
+    },
+  )
+
+  const { data: departments } = useQuery<
+    MinistryOfJusticeGraphqlResponse<'departments'>
+  >(DEPARTMENTS_QUERY, {
+    variables: {
+      params: {
+        search: answers.advert.department,
+      },
+    },
+  })
+
+  const extract = (arr?: MinistryOfJusticeAdvertEntity[]) => {
+    if (!arr) {
+      return ''
+    }
+
+    if (arr.length === 0) {
+      return ''
+    }
+
+    return arr[0].title
+  }
 
   return (
     <Box>
@@ -35,22 +71,27 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
           name={f(summary.properties.sender)}
           value={user.profile.name}
         />
-        <Property name={f(summary.properties.type)} value={MOCK_DATA.type} />
+        <Property
+          name={f(summary.properties.type)}
+          value={extract(types?.ministryOfJusticeTypes.types)}
+        />
         <Property
           name={f(summary.properties.title)}
-          value={MOCK_DATA.advertTitle}
+          value={answers.advert.title}
         />
         <Property
           name={f(summary.properties.department)}
-          value={MOCK_DATA.advertDepartment}
+          value={extract(departments?.ministryOfJusticeDepartments.departments)}
         />
         <Property
           name={f(summary.properties.submissionDate)}
-          value={MOCK_DATA.dateOfSubmission}
+          value={new Date().toLocaleDateString()}
         />
         <Property
           name={f(summary.properties.fastTrack)}
-          value={MOCK_DATA.advertFastTrack}
+          value={f(
+            answers.publishingPreferences.fastTrack ? general.yes : general.no,
+          )}
         />
         <Property
           name={f(summary.properties.estimatedDate)}
@@ -62,7 +103,9 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
         />
         <Property
           name={f(summary.properties.classification)}
-          value={MOCK_DATA.advertClassicifation}
+          value={answers.publishingPreferences.contentCategories
+            .map((c) => c.label)
+            .join(', ')}
         />
       </Stack>
     </Box>

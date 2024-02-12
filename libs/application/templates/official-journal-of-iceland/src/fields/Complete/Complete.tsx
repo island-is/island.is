@@ -12,7 +12,7 @@ export const Complete = ({ application }: OJOIFieldBaseProps) => {
 
   const { externalData } = application
 
-  const success = externalData.submitApplication.data.advert !== undefined
+  const success = externalData.submitApplication.status === 'success'
 
   return (
     <Box>

@@ -117,7 +117,6 @@ export const dataSchema = z.object({
 
           // check name of members
           advert.signature.committee.members?.forEach((member, index) => {
-            console.log('member', member)
             if (!member.name) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,

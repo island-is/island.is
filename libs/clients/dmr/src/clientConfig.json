@@ -277,7 +277,8 @@
                 }
               }
             }
-          }
+          },
+          "400": { "description": "Validation failed." }
         }
       }
     },
@@ -750,12 +751,12 @@
       "JournalPostApplicationResponse": {
         "type": "object",
         "properties": {
-          "application": {
+          "advert": {
             "description": "Return the submitted application",
             "allOf": [{ "$ref": "#/components/schemas/JournalAdvert" }]
           }
         },
-        "required": ["application"]
+        "required": ["advert"]
       }
     }
   }

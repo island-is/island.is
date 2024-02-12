@@ -14,6 +14,7 @@ import {
   JournalAdvertTypesResponse,
   JournalAdvertsResponse,
   JournalPostApplicationBody,
+  JournalPostApplicationResponse,
 } from '../../gen/fetch'
 
 const BASE_PATH = 'http://localhost:3000/api/v1'
@@ -35,7 +36,15 @@ export class DmrClientService {
     auth: User,
     params?: JournalControllerDepartmentsRequest,
   ): Promise<JournalAdvertDepartmentsResponse> {
-    return await fetch(`${BASE_PATH}/departments`).then((res) => res.json())
+    let query = ''
+    if (params) {
+      query = `?${Object.keys(params)
+        .map((key) => `${key}=${params[key as keyof typeof params]}`)
+        .join('&')}`
+    }
+    return await fetch(`${BASE_PATH}/departments${query}`).then((res) =>
+      res.json(),
+    )
   }
 
   public async types(
@@ -56,13 +65,21 @@ export class DmrClientService {
     auth: User,
     params: JournalControllerCategoriesRequest,
   ): Promise<JournalAdvertCategoriesResponse> {
-    return await fetch(`${BASE_PATH}/categories`).then((res) => res.json())
+    let query = ''
+    if (params) {
+      query = `?${Object.keys(params)
+        .map((key) => `${key}=${params[key as keyof typeof params]}`)
+        .join('&')}`
+    }
+    return await fetch(`${BASE_PATH}/categories${query}`).then((res) =>
+      res.json(),
+    )
   }
 
   public async submitApplication(
     auth: User,
     params: JournalPostApplicationBody,
-  ) {
+  ): Promise<JournalPostApplicationResponse> {
     return await fetch(`${BASE_PATH}/application`, {
       method: 'POST',
       body: JSON.stringify(params),

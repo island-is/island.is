@@ -19,7 +19,7 @@ import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { TypeIds } from '../../lib/constants'
 import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
 import { useLazyQuery } from '@apollo/client'
-import { TYPES } from './queries'
+import { TYPES_QUERY } from '../../graphql/queries'
 
 type AvertTypeResponse = {
   ministryOfJusticeTypes: AdvertOption<'types'>
@@ -85,16 +85,19 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
   const { departments } = application.externalData
 
   const [typeOptions, setTypeOptions] = useState<AdvertOption<'types'>>()
-  const [lazyTypeQuery, { refetch }] = useLazyQuery<AvertTypeResponse>(TYPES, {
-    variables: {
-      params: {
-        department: state.department,
+  const [lazyTypeQuery, { refetch }] = useLazyQuery<AvertTypeResponse>(
+    TYPES_QUERY,
+    {
+      variables: {
+        params: {
+          department: state.department,
+        },
+      },
+      onCompleted: (data) => {
+        setTypeOptions(data.ministryOfJusticeTypes)
       },
     },
-    onCompleted: (data) => {
-      setTypeOptions(data.ministryOfJusticeTypes)
-    },
-  })
+  )
 
   useEffect(() => {
     if (state.department) {

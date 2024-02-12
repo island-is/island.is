@@ -1,7 +1,11 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { dataSchema, type answerSchemas } from './dataSchema'
 import { INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
-import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
+import {
+  MinistryOfJusticeAdvert,
+  MinistryOfJusticeAdvertEntity,
+  MinistryOfJusticePaging,
+} from '@island.is/api/schema'
 
 export const InputFields = {
   prerequisites: {
@@ -113,7 +117,7 @@ export interface ExternalData {
     status: StatusProvider
   }
   submitApplication: {
-    data: { advert: MinistryOfJusticeAdvert }
+    data: { application: MinistryOfJusticeAdvert }
     date: string
     status: StatusProvider
   }
@@ -134,3 +138,14 @@ export type OJOIFieldBaseProps = Override<
     errors: ErrorSchema
   }
 >
+
+export type CreateParentKey<Key extends string> =
+  `ministryOfJustice${Capitalize<Key>}`
+
+export type MinistryOfJusticeGraphqlResponse<Key extends string> = {
+  [key in CreateParentKey<Key>]: {
+    [key in Key]: MinistryOfJusticeAdvertEntity[]
+  } & {
+    paging: MinistryOfJusticePaging
+  }
+}

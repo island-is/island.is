@@ -138,6 +138,7 @@ const OJOITemplate: ApplicationTemplate<
             action: TemplateApiActions.submitApplication,
             shouldPersistToExternalData: true,
             externalDataId: 'submitApplication',
+            throwOnError: false,
           }),
           roles: [
             {

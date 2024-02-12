@@ -9,7 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { ADVERTS } from './queries'
 import { general, advert } from '../../lib/messages'
 import * as styles from './Advert.css'
 import { useDebounce } from 'react-use'
@@ -17,6 +16,7 @@ import {
   MinistryOfJusticeAdvert,
   MinistryOfJusticeAdvertsResponse,
 } from '@island.is/api/schema'
+import { ADVERTS_QUERY } from '../../graphql/queries'
 type Props = {
   visible?: boolean
   onClose?: () => void
@@ -32,7 +32,7 @@ export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
   const [loading, setLoading] = useState(false)
   const [lazySearchQuery] = useLazyQuery<{
     ministryOfJusticeAdverts: MinistryOfJusticeAdvertsResponse
-  }>(ADVERTS)
+  }>(ADVERTS_QUERY)
 
   useEffect(() => {
     const load = async () => {

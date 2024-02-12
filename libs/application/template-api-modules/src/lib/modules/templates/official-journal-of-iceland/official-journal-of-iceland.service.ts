@@ -32,7 +32,7 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
   async submitApplication({ application, auth }: Props) {
     const { answers } = application
 
-    return this.ministryOfJusticeService.submitApplication(auth, {
+    const res = await this.ministryOfJusticeService.submitApplication(auth, {
       applicationId: application.id,
       categories: answers.publishingPreferences.contentCategories.map(
         (c) => c.value,
@@ -43,5 +43,11 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
       subject: answers.advert.title,
       type: answers.advert.type,
     })
+
+    if (!res.advert) {
+      throw new Error('Could not submit application')
+    }
+
+    return res
   }
 }
