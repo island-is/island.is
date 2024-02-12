@@ -238,7 +238,7 @@ export const defaultRenderNodeObject: RenderNode = {
           href = `${parentSlug}/${entry?.fields.url?.split('/')?.pop() ?? ''}`
         }
 
-        // Make sure that the href start with a slash
+        // Make sure that the href starts with a slash
         if (href && !href.startsWith('/')) {
           href = `/${href}`
         }
