@@ -15,12 +15,23 @@ export const Review: FC<FieldBaseProps> = ({
 }) => {
   const answers = application.answers as UniversityApplication
   const educationList = answers.educationDetails
+
   return (
     <Box>
       <Divider />
-      <ProgramReview field={field} application={application} />
+      <ProgramReview
+        field={field}
+        application={application}
+        route={Routes.PROGRAMINFORMATION}
+        goToScreen={goToScreen}
+      />
       <Divider />
-      <ApplicantReview field={field} application={application} />
+      <ApplicantReview
+        field={field}
+        application={application}
+        route={Routes.USERINFORMATION}
+        goToScreen={goToScreen}
+      />
       <Divider />
       {educationList &&
         educationList.length > 0 &&
@@ -30,18 +41,12 @@ export const Review: FC<FieldBaseProps> = ({
               educationItem={educationItem}
               field={field}
               application={application}
-              route={Routes.EDUCATIONDETAILS}
+              route={Routes.EDUCATIONOPTIONS}
               goToScreen={goToScreen}
             />
           )
         })}
       <Divider />
-      <OtherDocumentsReview
-        field={field}
-        application={application}
-        route={Routes.OTHERDOCUMENTS}
-        goToScreen={goToScreen}
-      />
     </Box>
   )
 }

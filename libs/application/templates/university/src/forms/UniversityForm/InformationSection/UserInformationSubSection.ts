@@ -25,7 +25,7 @@ export const UserInformationSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'userInformation.name',
+          id: `${Routes.USERINFORMATION}.name`,
           title: personal.labels.userInformation.name,
           backgroundColor: 'white',
           width: 'half',
@@ -41,7 +41,7 @@ export const UserInformationSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'userInformation.nationalId',
+          id: `${Routes.USERINFORMATION}.nationalId`,
           title: personal.labels.userInformation.nationalId,
           backgroundColor: 'white',
           width: 'half',
@@ -58,7 +58,7 @@ export const UserInformationSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'userInformation.address',
+          id: `${Routes.USERINFORMATION}.address`,
           title: personal.labels.userInformation.address,
           backgroundColor: 'white',
           width: 'half',
@@ -74,7 +74,7 @@ export const UserInformationSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'userInformation.postalCode',
+          id: `${Routes.USERINFORMATION}.postalCode`,
           title: personal.labels.userInformation.postalCodeAndCity,
           backgroundColor: 'white',
           width: 'half',

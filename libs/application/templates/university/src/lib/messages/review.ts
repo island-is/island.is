@@ -31,18 +31,18 @@ export const review = {
       description: 'Applicant review label',
     },
     chosenProgram: {
-      id: 'uni.application:review.labels.chosenProgram',
-      defaultMessage: 'Valið háskólanám til umsóknar',
+      id: 'uni.application:review.labels.chosenProgram#markdown',
+      defaultMessage: '**Valið háskólanám til umsóknar**',
       description: 'Chosen program review label',
     },
     schoolCareer: {
-      id: 'uni.application:review.labels.schoolCareer',
-      defaultMessage: 'Námsferill',
+      id: 'uni.application:review.labels.schoolCareer#markdown',
+      defaultMessage: '**Námsferill**',
       description: 'School career review label',
     },
     otherDocuments: {
-      id: 'uni.application:review.labels.otherDocuments',
-      defaultMessage: 'Önnur fylgigögn',
+      id: 'uni.application:review.labels.otherDocuments#markdown',
+      defaultMessage: '**Önnur fylgigögn**',
       description: 'Other documents review label',
     },
     phoneLabel: {
