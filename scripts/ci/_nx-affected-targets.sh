@@ -12,7 +12,15 @@ export BASE=${BASE:-main}
 AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 
-if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]; then
+if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]] || (
+  # Check if current branch is in list of affected branches
+  IFS="," echo "$AFFECTED_ALL" | while read -r AFFECTED_BRANCH; do
+    if [[ "$BRANCH" == "$AFFECTED_BRANCH" ]]; then
+      exit 0
+    fi
+  done
+  exit 1
+); then
   EXTRA_ARGS=""
 else
   EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
