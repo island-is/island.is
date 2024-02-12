@@ -737,6 +737,9 @@ export interface ICustomPageFields {
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
 
+  /** Translation Namespace */
+  translationNamespace?: INamespace | undefined
+
   /** Configuration */
   configJson?: Record<string, any> | undefined
 }

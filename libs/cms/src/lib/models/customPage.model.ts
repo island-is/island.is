@@ -1,9 +1,9 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
+import type { SystemMetadata } from 'api-cms-domain'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
-import { ICustomPage } from '../generated/contentfulTypes'
-import { SystemMetadata } from 'api-cms-domain'
+import type { ICustomPage } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class CustomPage {
@@ -18,6 +18,9 @@ export class CustomPage {
 
   @CacheField(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner | null
+
+  @CacheField(() => GraphQLJSONObject)
+  translationStrings!: Record<string, string>
 }
 
 export const mapCustomPage = ({
@@ -30,5 +33,6 @@ export const mapCustomPage = ({
     uniqueIdentifier: fields.uniqueIdentifier,
     alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
     configJson: fields.configJson,
+    translationStrings: fields.translationNamespace?.fields?.strings || {},
   }
 }

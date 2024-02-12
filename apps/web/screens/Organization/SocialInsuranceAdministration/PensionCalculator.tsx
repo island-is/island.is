@@ -28,7 +28,6 @@ import {
   Organization,
   OrganizationPage,
   Query,
-  QueryGetCustomPageArgs,
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   SocialInsurancePensionCalculationBasePensionType as BasePensionType,
@@ -40,13 +39,13 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { getCustomPage } from '@island.is/web/utils/customPage'
 
 import { Screen } from '../../../types'
 import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { GET_CUSTOM_PAGE_QUERY } from '../../queries/CustomPage'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import {
   convertQueryParametersToCalculationInput,
@@ -60,6 +59,7 @@ interface PensionCalculatorProps {
   organization: Organization
   defaultValues: CalculationInput
   pageData?: CustomPage | null
+  dateOfCalculationsOptions: Option<string>[]
 }
 
 const PensionCalculator: Screen<PensionCalculatorProps> = ({
@@ -67,6 +67,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   organization,
   defaultValues,
   pageData,
+  dateOfCalculationsOptions,
 }) => {
   const methods = useForm<CalculationInput>({
     defaultValues,
@@ -233,10 +234,6 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     ]
   }, [])
 
-  const dateOfCalculationsOptions = useMemo<Option<string>[]>(() => {
-    return getDateOfCalculationsOptions(pageData)
-  }, [pageData])
-
   const [dateOfCalculations, setDateOfCalculations] = useState(
     methods.formState.defaultValues?.dateOfCalculations ??
       dateOfCalculationsOptions[0].value,
@@ -248,7 +245,12 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
   const onSubmit = (data: CalculationInput) => {
     const baseUrl = linkResolver('pensioncalculatorresults').href
-    const queryParams = convertToQueryParams(data)
+    const queryParams = convertToQueryParams({
+      ...data,
+      dateOfCalculations: data.dateOfCalculations
+        ? data.dateOfCalculations
+        : dateOfCalculationsOptions[0].value,
+    })
     setLoadingResultPage(true)
     router.push(`${baseUrl}?${queryParams.toString()}`)
   }
@@ -273,7 +275,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
   const title = `Reiknivél lífeyris ${
     dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
-      ?.label ?? ''
+      ?.label ?? dateOfCalculationsOptions[0].label
   }`
 
   return (
@@ -694,9 +696,7 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganization },
     },
-    {
-      data: { getCustomPage },
-    },
+    customPage,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -716,14 +716,9 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetCustomPageArgs>({
-      query: GET_CUSTOM_PAGE_QUERY,
-      variables: {
-        input: {
-          uniqueIdentifier: UniqueIdentifier.PensionCalculator,
-          lang: locale,
-        },
-      },
+    getCustomPage(apolloClient, {
+      uniqueIdentifier: UniqueIdentifier.PensionCalculator,
+      lang: locale,
     }),
   ])
 
@@ -757,7 +752,8 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
-    pageData: getCustomPage,
+    pageData: customPage,
+    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPage),
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
