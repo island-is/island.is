@@ -86,7 +86,13 @@ export class IntellectualPropertiesResolver {
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
   ) {
-    return this.ipService.getDesignById(user, input.key)
+    const design = await this.ipService.getDesignById(user, input.key)
+
+    if (!design) {
+      return null
+    }
+
+    return design
   }
 
   @Query(() => ImageList, {
@@ -100,6 +106,7 @@ export class IntellectualPropertiesResolver {
     input: IntellectualPropertiesInput,
   ): Promise<ImageList | null> {
     const images = await this.ipService.getDesignImages(user, input.key)
+
     if (!images) {
       return null
     }

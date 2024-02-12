@@ -534,6 +534,16 @@ export const Vehicles = new XroadConf({
   },
 })
 
+export const Inna = new XroadConf({
+  env: {
+    XROAD_INNA_PATH: {
+      dev: 'IS-DEV/EDU/10020/MMS-Protected/inna-v1',
+      staging: 'IS-TEST/EDU/5708150320/MMS-Protected/inna-v1',
+      prod: 'IS/EDU/5708150320/MMS-Protected/inna-v1',
+    },
+  },
+})
+
 export const VehiclesMileage = new XroadConf({
   env: {
     XROAD_VEHICLES_MILEAGE_PATH: {

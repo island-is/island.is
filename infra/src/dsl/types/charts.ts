@@ -18,7 +18,7 @@ export interface EnvironmentConfig {
   releaseName: string
   defaultMaxReplicas: number
   defaultMinReplicas: number
-  defaultMinDisruption?: number
+  defaultMaxDisruption?: number
   type: OpsEnvWithLocal
   featuresOn: FeatureNames[]
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
