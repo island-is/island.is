@@ -658,8 +658,9 @@ export const SignedVerdictOverview: React.FC = () => {
               />
             </Box>
           )}
-
-          <AppealCaseFilesOverview />
+          <Box marginBottom={5}>
+            <AppealCaseFilesOverview />
+          </Box>
           <CaseDocuments
             isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
             handleRequestCourtRecordSignature={

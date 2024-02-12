@@ -119,7 +119,7 @@ const AppealCaseFilesOverview: React.FC<
     allFiles &&
     allFiles.length > 0 ? (
     <>
-      <Box marginBottom={5}>
+      <Box marginBottom={[2, 5]}>
         <Text as="h3" variant="h3" marginBottom={1}>
           {formatMessage(strings.title)}
         </Text>
