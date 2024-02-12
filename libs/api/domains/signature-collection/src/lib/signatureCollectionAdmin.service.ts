@@ -15,6 +15,10 @@ import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInpu
 import { Auth, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
+import {
+  SignatureCollectionListStatus,
+  SignatureCollectionStatus,
+} from './models/status.model'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -117,6 +121,38 @@ export class SignatureCollectionAdminService {
   ): Promise<SignatureCollectionSignature[]> {
     return await this.signatureCollectionClientService.compareBulkSignaturesOnAllLists(
       nationalIds,
+      user,
+    )
+  }
+
+  async collectionStatus(user: User): Promise<SignatureCollectionStatus> {
+    const status = await this.signatureCollectionClientService.collectionStatus(
+      user,
+    )
+    return { status }
+  }
+
+  async processCollection(user: User): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.processCollection(user)
+  }
+
+  async listStatus(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionListStatus> {
+    const status = await this.signatureCollectionClientService.listStatus(
+      listId,
+      user,
+    )
+    return { status }
+  }
+
+  async toggleListStatus(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.toggleListStatus(
+      listId,
       user,
     )
   }
