@@ -14,6 +14,7 @@ import {
   SignatureCollectionList,
   SignatureCollectionSuccess,
   SignatureCollection,
+  SignatureCollectionSignedList,
 } from '@island.is/api/schema'
 
 export const useGetSignatureList = (listId: string) => {
@@ -61,11 +62,11 @@ export const useGetSignedList = () => {
     data: getSignedList,
     loading: loadingSignedList,
     refetch: refetchSignedList,
-  } = useQuery<{ signatureCollectionSignedList?: SignatureCollectionListBase }>(
-    GetSignedList,
-  )
+  } = useQuery<{
+    signatureCollectionSignedList?: SignatureCollectionSignedList
+  }>(GetSignedList)
   const signedList =
-    (getSignedList?.signatureCollectionSignedList as SignatureCollectionListBase) ??
+    (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList) ??
     null
   return { signedList, loadingSignedList, refetchSignedList }
 }

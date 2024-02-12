@@ -26,7 +26,7 @@ import { Problem } from '@island.is/react-spa/shared'
 
 const Dentists = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const location = useLocation()
   // Check if the user was transfered from another health center
   const wasSuccessfulTransfer = location?.state?.transferSuccess
@@ -140,6 +140,7 @@ const Dentists = () => {
               maxDate={sub(selectedDateTo ? selectedDateTo : new Date(), {
                 days: 1,
               })}
+              locale={lang}
             />
             <DatePicker
               size="xs"
@@ -151,6 +152,7 @@ const Dentists = () => {
               minDate={add(selectedDateFrom ? selectedDateFrom : new Date(), {
                 days: 1,
               })}
+              locale={lang}
             />
           </Inline>
           <BillsTable bills={history ?? []} loading={loading} />
