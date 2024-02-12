@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import router from 'next/router'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -125,6 +125,18 @@ const AppealCaseFilesOverview: React.FC<
         {allFiles.map((file) => {
           const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
           const isDisabled = !file.key
+          const canDeleteFile =
+            file.category &&
+            [
+              CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+              CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+              CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+              CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+            ].includes(file.category) &&
+            ((prosecutorSubmitted && isProsecutionUser(user)) ||
+              (!prosecutorSubmitted && isDefenceUser(user)))
 
           return (
             <PdfButton
@@ -135,9 +147,9 @@ const AppealCaseFilesOverview: React.FC<
               disabled={isDisabled}
               handleClick={() => onOpen(file.id)}
             >
-              {file.category &&
-                file.category !== CaseFileCategory.APPEAL_RULING && (
-                  <Box display="flex" alignItems="center">
+              <Box display="flex" alignItems="center">
+                {file.category &&
+                  file.category !== CaseFileCategory.APPEAL_RULING && (
                     <Box
                       display="flex"
                       flexDirection="column"
@@ -158,46 +170,44 @@ const AppealCaseFilesOverview: React.FC<
                         })}
                       </Text>
                     </Box>
-                    {[
-                      CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-                      CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                      CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                      CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-                      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                      CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-                    ].includes(file.category) &&
-                      ((prosecutorSubmitted && isProsecutionUser(user)) ||
-                        (!prosecutorSubmitted && isDefenceUser(user))) && (
-                        <Box marginLeft={3}>
-                          <ContextMenu
-                            items={[
-                              {
-                                title: formatMessage(contextMenu.deleteFile),
-                                onClick: () =>
-                                  handleRemove(file as TUploadFile, () => {
-                                    setAllFiles((prev) =>
-                                      prev.filter((f) => f.id !== file.id),
-                                    )
-                                  }),
-                                icon: 'trash',
-                              },
-                            ]}
-                            menuLabel="Opna valmöguleika á skjali"
-                            disclosure={
-                              <IconButton
-                                icon="ellipsisVertical"
-                                colorScheme="transparent"
-                                onClick={(evt) => {
-                                  evt.stopPropagation()
-                                }}
-                                disabled={isDisabled}
-                              />
-                            }
-                          />
-                        </Box>
-                      )}
-                  </Box>
-                )}
+                  )}
+                <Box marginLeft={3}>
+                  <ContextMenu
+                    items={[
+                      {
+                        title: formatMessage(contextMenu.openFile),
+                        onClick: () => onOpen(file.id),
+                        icon: 'open' as IconMapIcon,
+                      },
+                      ...(canDeleteFile
+                        ? [
+                            {
+                              title: formatMessage(contextMenu.deleteFile),
+                              onClick: () =>
+                                handleRemove(file as TUploadFile, () => {
+                                  setAllFiles((prev) =>
+                                    prev.filter((f) => f.id !== file.id),
+                                  )
+                                }),
+                              icon: 'trash' as IconMapIcon,
+                            },
+                          ]
+                        : []),
+                    ]}
+                    menuLabel="Opna valmöguleika á skjali"
+                    disclosure={
+                      <IconButton
+                        icon="ellipsisVertical"
+                        colorScheme="transparent"
+                        onClick={(evt) => {
+                          evt.stopPropagation()
+                        }}
+                        disabled={isDisabled}
+                      />
+                    }
+                  />
+                </Box>
+              </Box>
             </PdfButton>
           )
         })}
