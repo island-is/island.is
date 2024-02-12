@@ -88,7 +88,7 @@ export class SignatureCollectionAdminClientService {
     if (!hasActive && collection.processed && hasExtended) {
       return CollectionStatus.InReview
     }
-    return CollectionStatus.InActive
+    return CollectionStatus.Inactive
   }
 
   async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
@@ -125,7 +125,7 @@ export class SignatureCollectionAdminClientService {
     if (list.reviewed) {
       return ListStatus.Reviewed
     }
-    return ListStatus.InActive
+    return ListStatus.Inactive
   }
 
   async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
