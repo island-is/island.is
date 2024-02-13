@@ -80,7 +80,7 @@ export class SignatureCollectionManagerClientService {
     })
     // Initial opening time passed not all lists reviewed
     if (!hasActive && !collection.processed && hasInReview) {
-      return CollectionStatus.InReview
+      return CollectionStatus.InInitialReview
     }
     // Initial opening time passed all lists reviewd
     if (!hasActive && !collection.processed && !hasInReview) {
