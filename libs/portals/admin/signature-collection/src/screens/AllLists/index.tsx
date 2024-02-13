@@ -32,6 +32,7 @@ import CreateCollection from './components/createCollection'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
+import ListInfo from '../List/components/listInfoAlert'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -123,6 +124,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
+          {collectionStatus === CollectionStatus.InitialActive && (
+            <ListInfo
+              message={formatMessage(m.signatureCollectionProcessingComplete)}
+            />
+          )}
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
@@ -186,14 +192,13 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   />
                 </Filter>
                 {allowedToProcess &&
-                  (collectionStatus === CollectionStatus.InReview ||
+                  (collectionStatus === CollectionStatus.InInitialReview ||
                     collectionStatus === CollectionStatus.Processing) && (
                     <CreateCollection />
                   )}
               </Box>
             </GridColumn>
           </GridRow>
-
           {lists?.length > 0 ? (
             <>
               <Box marginBottom={2}>

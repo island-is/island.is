@@ -23,6 +23,12 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
+  signatureCollectionProcessingComplete: {
+    id: 'admin-portal.signature-collection:signatureCollectionProcessingComplete',
+    defaultMessage:
+      'Úrvinnslu safnanna fyrir upphaflegan söfnunartíma hefur verið lokið.',
+    description: '',
+  },
   filter: {
     id: 'admin-portal.signature-collection:filter',
     defaultMessage: 'Opna síu',
@@ -246,7 +252,13 @@ export const m = defineMessages({
   listReviewedModalDescription: {
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
-      'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
+      'Þegar búið er að fara yfir meðmælasöfnun skal ýta á hnappinn.',
+    description: '',
+  },
+  listReviewedModalDescriptionToggleBack: {
+    id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
+    defaultMessage:
+      'Þegar þörf eru á að fara yfir meðmælasöfnun aftur skal ýta á hnappinn.',
     description: '',
   },
   listStatusReviewedStatusAlert: {
