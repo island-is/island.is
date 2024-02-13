@@ -365,10 +365,22 @@ export class SignatureCollectionAdminClientService {
       newEndDate: newEndDate,
     })
     const { dagsetningLokar } = list
+    const success = dagsetningLokar
+      ? newEndDate.getTime() === dagsetningLokar.getTime()
+      : false
+
+    if (success) {
+      const listStatus = await this.listStatus(listId, auth)
+      // Can only toggle list if it is in review or reviewed
+      if (listStatus === ListStatus.Reviewed) {
+        await this.getApiWithAuth(
+          this.listsApi,
+          auth,
+        ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      }
+    }
     return {
-      success: dagsetningLokar
-        ? newEndDate.getTime() === dagsetningLokar.getTime()
-        : false,
+      success,
     }
   }
 
