@@ -230,11 +230,15 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        /*tag={{
-                          label: m.confirmListReviewed.defaultMessage,
-                          variant: 'mint',
-                          outlined: false,
-                        }}*/
+                        tag={
+                          list.reviewed
+                            ? {
+                                label: m.confirmListReviewed.defaultMessage,
+                                variant: 'mint',
+                                outlined: false,
+                              }
+                            : undefined
+                        }
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',
