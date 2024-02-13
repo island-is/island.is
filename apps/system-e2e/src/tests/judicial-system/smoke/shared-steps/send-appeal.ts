@@ -4,16 +4,14 @@ import { verifyRequestCompletion } from '../../../../support/api-tools'
 
 export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
   await page.goto(`krafa/yfirlit/${caseId}`)
-
   await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
-  await page.getByRole('button', { name: 'Senda inn kæru' }).click()
-
-  // Send appeal
   await Promise.all([
-    expect(page).toHaveURL(`/kaera/${caseId}`),
+    page.getByRole('button', { name: 'Senda inn kæru' }).click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
+  // Send appeal
+  await expect(page).toHaveURL(`/kaera/${caseId}`)
   await uploadDocument(
     page,
     async () => {
@@ -24,7 +22,6 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestKaera.pdf',
   )
-
   await uploadDocument(
     page,
     async () => {
@@ -35,24 +32,21 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestKaerugognSaekjanda.pdf',
   )
-
   await page.getByTestId('continueButton').click()
-  await page.getByTestId('modalSecondaryButton').click()
+  await Promise.all([
+    page.getByTestId('modalSecondaryButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
 
   // Overview
+  await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
   await Promise.all([
-    expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`),
+    page.getByRole('button', { name: 'Senda greinargerð' }).click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
-
-  await page.getByRole('button', { name: 'Senda greinargerð' }).click()
 
   // Send statement
-  await Promise.all([
-    expect(page).toHaveURL(`/greinargerd/${caseId}`),
-    verifyRequestCompletion(page, '/api/graphql', 'Case'),
-  ])
-
+  await expect(page).toHaveURL(`/greinargerd/${caseId}`)
   await uploadDocument(
     page,
     async () => {
@@ -63,7 +57,6 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestGreinargerdSaekjanda.pdf',
   )
-
   await uploadDocument(
     page,
     async () => {
@@ -74,7 +67,6 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestGreinargerdargognSaekjanda.pdf',
   )
-
   await page.getByTestId('continueButton').click()
   await page.getByTestId('modalSecondaryButton').click()
 }

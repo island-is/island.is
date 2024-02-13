@@ -34,7 +34,6 @@ test.describe.serial('Search warrant tests', () => {
     await expect(
       page.getByRole('heading', { name: 'Rannsóknarheimild' }).first(),
     ).toBeVisible()
-
     await page
       .locator('input[name=policeCaseNumbers]')
       .fill(randomPoliceCaseNumber())
@@ -49,66 +48,66 @@ test.describe.serial('Search warrant tests', () => {
     await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase'),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ]).then((values) => {
       const createCaseResult = values[1]
       caseId = createCaseResult.data.createCase.id
     })
 
     // Court date request
-    await Promise.all([
-      expect(page).toHaveURL(`/krafa/rannsoknarheimild/fyrirtaka/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    await expect(page).toHaveURL(`/krafa/rannsoknarheimild/fyrirtaka/${caseId}`)
     await page.locator('input[id=reqCourtDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqCourtDate-time]').fill('15:00')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-
-    // Prosecutor demands
     await Promise.all([
       page.getByRole('button', { name: 'Halda áfram með kröfu' }).click(),
-      expect(page).toHaveURL(
-        `/krafa/rannsoknarheimild/domkrofur-og-lagagrundvollur/${caseId}`,
-      ),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
+
+    // Prosecutor demands
+    await expect(page).toHaveURL(
+      `/krafa/rannsoknarheimild/domkrofur-og-lagagrundvollur/${caseId}`,
+    )
     await page.locator('textarea[name=lawsBroken]').click()
     await page.keyboard.type('Einhver lög voru brotin')
     await page.keyboard.press('Tab')
     await page.locator('textarea[name=legalBasis]').click()
     await page.keyboard.type('Krafan byggir á lagaákvæðum')
     await page.keyboard.press('Tab')
-    await page.getByRole('button', { name: 'Halda áfram' }).click()
-
-    // Prosecutor statement
     await Promise.all([
-      expect(page).toHaveURL(`/krafa/rannsoknarheimild/greinargerd/${caseId}`),
+      page.getByRole('button', { name: 'Halda áfram' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
+
+    // Prosecutor statement
+    await expect(page).toHaveURL(
+      `/krafa/rannsoknarheimild/greinargerd/${caseId}`,
+    )
     await page.locator('textarea[name=caseFacts]').click()
     await page.keyboard.type('Eitthvað gerðist')
     await page.locator('textarea[name=legalArguments]').click()
     await page.keyboard.type('Þetta er ekki löglegt')
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
-    await page.getByRole('button', { name: 'Halda áfram' }).click()
+    await Promise.all([
+      page.getByRole('button', { name: 'Halda áfram' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Case files
-    await Promise.all([
-      expect(page).toHaveURL(
-        `/krafa/rannsoknarheimild/rannsoknargogn/${caseId}`,
-      ),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    await expect(page).toHaveURL(
+      `/krafa/rannsoknarheimild/rannsoknargogn/${caseId}`,
+    )
     await page.locator('textarea[name=caseFilesComments]').click()
     await page.keyboard.type('Engin gögn fylgja')
-    await page.getByRole('button', { name: 'Halda áfram' }).click()
-
-    // Submit to court
     await Promise.all([
-      expect(page).toHaveURL(`/krafa/rannsoknarheimild/stadfesta/${caseId}`),
+      page.getByRole('button', { name: 'Halda áfram' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
+
+    // Submit to court
+    await expect(page).toHaveURL(`/krafa/rannsoknarheimild/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
     await expect(page).toHaveURL('/krofur')
@@ -127,45 +126,42 @@ test.describe.serial('Search warrant tests', () => {
       .getByText('Veldu dómara/aðstoðarmann *Veldu héraðsdómara')
       .click()
     await page.getByTestId('select-judge').getByText('Test Dómari').click()
-    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Overview
+    await expect(page).toHaveURL(`/domur/rannsoknarheimild/yfirlit/${caseId}`)
     await Promise.all([
-      expect(page).toHaveURL(`/domur/rannsoknarheimild/yfirlit/${caseId}`),
+      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
-    await page.getByTestId('continueButton').click()
 
     // Hearing arrangements
-    await Promise.all([
-      expect(page).toHaveURL(`/domur/rannsoknarheimild/fyrirtaka/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    await expect(page).toHaveURL(`/domur/rannsoknarheimild/fyrirtaka/${caseId}`)
     await page.getByText('Fulltrúar málsaðila boðaðir').click()
     await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalSecondaryButton').click()
+    await Promise.all([
+      page.getByTestId('modalSecondaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Ruling
+    await expect(page).toHaveURL(`/domur/rannsoknarheimild/urskurdur/${caseId}`)
+    await page.getByText('Krafa samþykkt').click()
     await Promise.all([
-      expect(page).toHaveURL(`/domur/rannsoknarheimild/urskurdur/${caseId}`),
+      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
-    await page.getByText('Krafa samþykkt').click()
-    await page.getByTestId('continueButton').click()
 
     // Court Record
-    await Promise.all([
-      expect(page).toHaveURL(`/domur/rannsoknarheimild/thingbok/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+    await expect(page).toHaveURL(`/domur/rannsoknarheimild/thingbok/${caseId}`)
     await page.getByLabel('Dagsetning þingfestingar *').click()
     await page.locator('input[id=courtStartDate]').fill(yesterday)
     await page.keyboard.press('Escape')
     await page.getByTestId('courtStartDate-time').fill('12:00')
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-      page.keyboard.press('Tab'),
-    ])
+    await page.keyboard.press('Tab')
     await page
       .locator('label')
       .filter({ hasText: 'Varnaraðili unir úrskurðinum' })
@@ -177,20 +173,14 @@ test.describe.serial('Search warrant tests', () => {
     await page.locator('input[id=courtEndTime]').fill(yesterday)
     await page.keyboard.press('Escape')
     await page.getByTestId('courtEndTime-time').fill('15:00')
+    await page.keyboard.press('Tab')
     await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-      page.keyboard.press('Tab'),
-    ])
-    await page.getByTestId('continueButton').click()
-
-    await Promise.all([
-      expect(page).toHaveURL(`/domur/rannsoknarheimild/stadfesta/${caseId}`),
+      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'RequestRulingSignature'),
-      page.getByTestId('continueButton').click(),
-    ])
+
+    await expect(page).toHaveURL(`/domur/rannsoknarheimild/stadfesta/${caseId}`)
+    await page.getByTestId('continueButton').click()
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {

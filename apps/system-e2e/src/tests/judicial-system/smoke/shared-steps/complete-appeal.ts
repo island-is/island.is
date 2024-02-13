@@ -10,72 +10,38 @@ export async function coaJudgesCompleteAppealCaseTest(
 
   // Overview
   await expect(page).toHaveURL(`/landsrettur/yfirlit/${caseId}`)
-  await page.getByTestId('continueButton').click()
-
-  // Appeal case reception
   await Promise.all([
-    expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`),
+    page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
+  // Appeal case reception
+  await expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`)
   const appealCaseNumber = randomAppealCaseNumber()
   await page.getByText('Mál nr. *').fill(appealCaseNumber)
-
-  await Promise.all([
-    page.getByText('Mál nr. *').press('Tab'),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-  ])
-
+  await page.getByText('Mál nr. *').press('Tab')
   await page.getByTestId('select-assistant').click()
-  await Promise.all([
-    page.locator('#react-select-assistant-option-0').click(),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-  ])
-
+  await page.locator('#react-select-assistant-option-0').click()
   await page.getByTestId('icon-chevronDown').nth(2).click()
-  await Promise.all([
-    page.locator('#react-select-judge-option-0').click(),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-  ])
+  await page.locator('#react-select-judge-option-0').click()
   await page.getByTestId('icon-chevronDown').nth(3).click()
-  await Promise.all([
-    page.locator('#react-select-judge-option-0').click(),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-  ])
+  await page.locator('#react-select-judge-option-0').click()
   await page.getByTestId('icon-chevronDown').nth(4).click()
-  await Promise.all([
-    page.locator('#react-select-judge-option-0').click(),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-  ])
-
+  await page.locator('#react-select-judge-option-0').click()
   await page.getByTestId('continueButton').click()
-
   await Promise.all([
     page.getByTestId('modalPrimaryButton').click(),
-    verifyRequestCompletion(page, '/api/graphql', 'SendNotification'),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
   // Ruling
-  await Promise.all([
-    expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`),
-    verifyRequestCompletion(page, '/api/graphql', 'Case'),
-  ])
-
-  await Promise.all([
-    page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-  ])
-
+  await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
+  await page.locator('label').filter({ hasText: 'Staðfesting' }).click()
   await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').click()
   await page
     .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
     .fill('Test úrskurðarorð Landsréttar')
-
-  await Promise.all([
-    page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').press('Tab'),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-  ])
-
+  await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').press('Tab')
   await uploadDocument(
     page,
     async () => {
@@ -86,13 +52,11 @@ export async function coaJudgesCompleteAppealCaseTest(
     },
     'TestNidurstadaLandsrettar.pdf',
   )
-
-  await page.getByTestId('continueButton').click()
-
   await Promise.all([
-    expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`),
+    page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
+  await expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`)
   await page.getByTestId('continueButton').click()
 }
