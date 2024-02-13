@@ -166,7 +166,8 @@ export interface RealEstateData {
 }
 
 export interface RealEstate {
-  data: RealEstateData[]
+  data?: RealEstateData[]
+  hasModified?: boolean
   total: number
 }
 

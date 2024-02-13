@@ -14,7 +14,7 @@ export const inheritanceReportSchema = z.object({
 
   applicant: z.object({
     email: z.string().email(),
-    phone: z.string(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v)),
     nationalId: z.string(),
     relation: z.string(),
   }),
@@ -28,9 +28,17 @@ export const inheritanceReportSchema = z.object({
             assetNumber: z.string(),
             description: z.string(),
             propertyValuation: z.string().refine((v) => v),
+            propertyShare: z.string().refine((v) => {
+              const num = parseInt(v, 10)
+
+              const value = isNaN(num) ? 0 : num
+
+              return value >= 0 && value <= 100
+            }),
           })
           .array()
           .optional(),
+        hasModified: z.boolean().optional(),
         total: z.number().optional(),
       })
       .optional(),
