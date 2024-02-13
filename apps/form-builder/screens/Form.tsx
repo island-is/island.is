@@ -25,6 +25,7 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Box,
+  Button,
 } from '@island.is/island-ui/core'
 import Navbar from '../components/Navbar/Navbar'
 import NavbarSelect from '../components/NavbarSelect/NavbarSelect'
@@ -63,22 +64,20 @@ export default function Form({ form }: Props) {
   console.log('FORM: ', form)
   const isMounted = useRef(false)
   useEffect(() => {
-    if (isMounted.current) {
-      if (!isTyping) {
-        //formUpdate()
-      }
-    } else {
-      isMounted.current = true
-      infoDispatch({
-        type: 'changeOrganization',
-        data: formBuilder?.form?.organization.name.is,
-      })
-      infoDispatch({
-        type: 'changeApplicationName',
-        data: formBuilder.form.name.is,
-      })
-    }
-  }, [formBuilder, infoDispatch, isTyping])
+    isMounted.current = true
+    infoDispatch({
+      type: 'changeOrganization',
+      payload: {
+        value: formBuilder?.form?.organization.name.is,
+      },
+    })
+    infoDispatch({
+      type: 'changeApplicationName',
+      payload: {
+        value: formBuilder.form.name.is,
+      },
+    })
+  }, [formBuilder, infoDispatch])
 
   const context: IFormBuilderContext = {
     formBuilder: formBuilder,
