@@ -64,7 +64,12 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-export const valueToNumber = (value?: string | number): number => {
+/**
+ * Returns zero if value is not a number or number string
+ * @param value
+ * @returns number
+ */
+export const valueToNumber = (value?: unknown): number => {
   if (!value) {
     return 0
   }
@@ -74,7 +79,8 @@ export const valueToNumber = (value?: string | number): number => {
   }
 
   if (typeof value === 'string') {
-    const num = parseInt(value, 10)
+    const numStr = value.replace(/[^0-9]/g, '')
+    const num = parseFloat(numStr)
 
     return isNaN(num) ? 0 : num
   }
