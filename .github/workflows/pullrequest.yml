@@ -202,8 +202,6 @@ jobs:
           fi
           echo "PRE_CHECK=$PRE_CHECK" >> $GITHUB_OUTPUT
 
-          targets
-
   prepare-targets:
     runs-on: ec2-runners
     container:
@@ -248,6 +246,9 @@ jobs:
       - prepare-labels
       - prepare-targets
       - prepare-hostcache
+    steps:
+      - name: Aggregate prepare steps
+        run: exit 0
 
   tests:
     needs:
