@@ -280,7 +280,7 @@ export class SignatureCollectionAdminClientService {
     const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
-    ).medmaelasofnunIDEinsInfoKennitalaGet({
+    ).medmaelasofnunIDEinsInfoAdminKennitalaGet({
       kennitala: nationalId,
       iD: parseInt(id),
     })
