@@ -19,10 +19,10 @@ import {
 import { getThemeConfig } from '@island.is/web/components'
 import {
   CustomPage,
+  CustomPageUniqueIdentifier as UniqueIdentifier,
   Organization,
   OrganizationPage,
   Query,
-  QueryGetCustomPageArgs,
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPensionCalculationArgs,
@@ -31,7 +31,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
@@ -39,8 +38,11 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { GET_CUSTOM_PAGE_QUERY } from '../../queries/CustomPage'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
+import {
+  CustomScreen,
+  withCustomPageWrapper,
+} from './CustomPage/CustomPageWrapper'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import {
   convertQueryParametersToCalculationInput,
@@ -59,7 +61,7 @@ interface PensionCalculatorResultsProps {
   pageData?: CustomPage | null
 }
 
-const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
+const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   organizationPage,
   organization,
   calculation,
@@ -255,9 +257,6 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getPensionCalculation },
     },
-    {
-      data: { getCustomPage },
-    },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -281,15 +280,6 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_PENSION_CALCULATION,
       variables: {
         input: calculationInput,
-      },
-    }),
-    apolloClient.query<Query, QueryGetCustomPageArgs>({
-      query: GET_CUSTOM_PAGE_QUERY,
-      variables: {
-        input: {
-          uniqueIdentifier: 'PensionCalculator', // TODO: perhaps this value can be typesafe?
-          lang: locale,
-        },
       },
     }),
   ])
@@ -316,7 +306,6 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
     calculation: getPensionCalculation,
     calculationInput,
     queryParamString: queryParams.toString(),
-    pageData: getCustomPage,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
@@ -324,4 +313,8 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(PensionCalculatorResults)
+export default withMainLayout(
+  withCustomPageWrapper(UniqueIdentifier.PensionCalculator)(
+    PensionCalculatorResults, // TODO
+  ),
+)

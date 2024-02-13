@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import add from 'date-fns/add'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { useRouter } from 'next/router'
+import { useQueryState } from 'next-usequerystate'
 
+import { CustomPageUniqueIdentifier } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -25,7 +28,6 @@ import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   CustomPage,
-  CustomPageUniqueIdentifier as UniqueIdentifier,
   Organization,
   OrganizationPage,
   Query,
@@ -36,22 +38,24 @@ import {
   SocialInsurancePensionCalculationLivingCondition as LivingCondition,
   SocialInsurancePensionCalculationPeriodIncomeType as PeriodIncomeType,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver, useNamespaceStrict } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { getCustomPage } from '@island.is/web/utils/customPage'
 
-import { Screen } from '../../../types'
 import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import {
+  CustomScreen,
+  withCustomPageWrapper,
+} from './CustomPage/CustomPageWrapper'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
+import { pensionCalculatorStrings } from './strings'
 import {
   convertQueryParametersToCalculationInput,
   convertToQueryParams,
-  getDateOfCalculationsOptions,
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
@@ -59,18 +63,18 @@ interface PensionCalculatorProps {
   organizationPage: OrganizationPage
   organization: Organization
   defaultValues: CalculationInput
-  pageData?: CustomPage | null
   dateOfCalculationsOptions: Option<string>[]
+  customPageData?: CustomPage | null
 }
 
-const PensionCalculator: Screen<PensionCalculatorProps> = ({
+const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   organizationPage,
   organization,
   defaultValues,
-  pageData,
   dateOfCalculationsOptions,
+  customPageData,
 }) => {
-  const defaultPensionAge = pageData?.configJson?.defaultPensionAge ?? 67
+  const defaultPensionAge = customPageData?.configJson?.defaultPensionAge ?? 67
 
   const methods = useForm<CalculationInput>({
     defaultValues,
@@ -243,9 +247,13 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     return []
   }, [childCount])
 
-  const [dateOfCalculations, setDateOfCalculations] = useState(
-    methods.formState.defaultValues?.dateOfCalculations ??
-      dateOfCalculationsOptions[0].value,
+  const [dateOfCalculations, setDateOfCalculations] = useQueryState(
+    'dateOfCalculations',
+    {
+      defaultValue:
+        methods.formState.defaultValues?.dateOfCalculations ??
+        dateOfCalculationsOptions[0].value,
+    },
   )
 
   const { linkResolver } = useLinkResolver()
@@ -298,20 +306,15 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
       ? differenceInMonths(new Date(startDate), defaultPensionDate)
       : undefined
 
-  const n = useNamespaceStrict({
-    pensionStartMonthIsDefault: `Þú vilt hefja töku ${defaultPensionAge} ára`,
-    pensionStartMonthIsDelayed: `Þú vilt hefja töku ${
-      typeof monthOffset === 'number'
-        ? String(Math.abs(monthOffset)) + ' mánuðum'
-        : ''
-    } eftir ${defaultPensionAge} ára aldur`,
-    pensionStartMonthIsHurried: `Þú vilt hefja töku ${
-      typeof monthOffset === 'number'
-        ? String(Math.abs(monthOffset)) + ' mánuðum'
-        : ''
-    } fyrir ${defaultPensionAge} ára aldur`,
-  })
+  // const n = useTranslationNamespace(
+  //   customPageData?.translationStrings,
+  //   pensionCalculatorStrings,
+  // )
 
+  // n(pensionCalculatorStrings.pensionStartMonthIsDefault)
+
+  console.log(customPageData)
+  const { formatMessage } = useIntl()
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -319,9 +322,10 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
       ogTitle={title}
       ogImageUrl={organizationPage.featuredImage?.url}
       indexableBySearchEngine={
-        pageData?.configJson?.indexableBySearchEngine ?? false
+        customPageData?.configJson?.indexableBySearchEngine ?? false
       }
     >
+      {formatMessage(pensionCalculatorStrings.pensionStartMonthIsDefault)}
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Stack space={3}>
@@ -439,14 +443,14 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       {typeof monthOffset === 'number' && (
                         <Text>
-                          {n(
+                          {/* {n(
                             monthOffset === 0
                               ? 'pensionStartMonthIsDefault'
                               : monthOffset > 0
                               ? 'pensionStartMonthIsDelayed'
                               : 'pensionStartMonthIsHurried',
                             'a',
-                          )}
+                          )} */}
                         </Text>
                       )}
 
@@ -501,6 +505,24 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                           />
                         </Box>
                       )}
+
+                      {new Date(dateOfCalculations).getFullYear() <= 2020 &&
+                        new Date(dateOfCalculations).getFullYear() > 2015 && (
+                          <Box className={styles.inputContainer}>
+                            <InputController
+                              id={
+                                'livingConditionRatio' as keyof CalculationInput
+                              }
+                              name={
+                                'livingConditionRatio' as keyof CalculationInput
+                              }
+                              label="Búsetuhlutfall"
+                              placeholder="%"
+                              type="number"
+                              suffix="%"
+                            />
+                          </Box>
+                        )}
 
                       {(basePensionType === BasePensionType.Disability ||
                         basePensionType === BasePensionType.Rehabilitation) && (
@@ -758,7 +780,6 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganization },
     },
-    customPage,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -777,10 +798,6 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
           lang: locale,
         },
       },
-    }),
-    getCustomPage(apolloClient, {
-      uniqueIdentifier: UniqueIdentifier.PensionCalculator,
-      lang: locale,
     }),
   ])
 
@@ -808,14 +825,16 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
+    livingConditionRatio: 100,
+    taxCard: 0,
   }
 
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
-    pageData: customPage,
-    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPage),
+    dateOfCalculationsOptions: [{ label: 'TEST', value: '123' }], // TODO
+    // dateOfCalculationsOptions: getDateOfCalculationsOptions(customPage),
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
@@ -823,4 +842,8 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(PensionCalculator)
+export default withMainLayout(
+  withCustomPageWrapper(CustomPageUniqueIdentifier.PensionCalculator)(
+    PensionCalculator, // TODO
+  ),
+)
