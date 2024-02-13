@@ -1,12 +1,22 @@
 import { Tooltip, TooltipProps } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
+import { Chart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
+import { ChartComponentWithRenderProps } from '../../types'
 import { formatValueForPresentation } from '../../utils'
 import * as style from './TooltipRenderer.css'
 
-export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
+interface ExtraTooltipProps {
+  slice: Chart
+  componentsWithAddedProps: ChartComponentWithRenderProps[]
+  tickFormatter: (value: unknown) => string
+}
+
+type CustomTooltipProps = TooltipProps<string, number> & ExtraTooltipProps
+
+export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
   const { active, payload } = props
   const isActive = active && payload && payload.length
 
@@ -17,43 +27,74 @@ export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
   }
 
   return (
-    <ul className={style.list}>
-      {payload.map((item) => {
-        let labelColor =
-          (item as any)?.stroke ?? item?.payload?.stroke ?? theme.color.dark400
+    <div className={style.tooltip}>
+      {props.label && (
+        <p className={style.tooltipLabel}>
+          {props?.tickFormatter(props.label) ?? props.label}
+        </p>
+      )}
+      <ul>
+        {payload.map((item, i) => {
+          const key = item?.payload?.key ?? item.dataKey
+          let labelColor = theme.color.dark400
 
-        if (labelColor === 'white' || labelColor === '#fff') {
-          labelColor = theme.color.dark400
-        }
+          if (key) {
+            const component = props.componentsWithAddedProps.find(
+              (c) => c.sourceDataKey === key,
+            )
 
-        return (
-          <li>
-            <span
-              style={{
-                color: labelColor,
-              }}
-            >
-              {item.name}
-            </span>
-            :{' '}
-            {item.value
-              ? formatValueForPresentation(activeLocale, item.value, false)
-              : ''}
-          </li>
-        )
-      })}
-    </ul>
+            if (component) {
+              labelColor = component.color
+            }
+          }
+
+          if (labelColor === 'white' || labelColor === '#fff') {
+            labelColor = theme.color.blue400
+          }
+
+          return (
+            <li>
+              <span
+                style={{
+                  color: labelColor,
+                }}
+              >
+                {item.name}
+              </span>
+              :{' '}
+              {item.value
+                ? formatValueForPresentation(activeLocale, item.value, true, 1)
+                : ''}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }
 
-export const renderTooltip = (props: any) => {
+export const renderTooltip = ({
+  slice,
+  tickFormatter,
+  componentsWithAddedProps,
+}: ExtraTooltipProps) => {
   return (
     <Tooltip
+      wrapperStyle={{
+        maxWidth: '60%',
+      }}
       cursor={{
         fill: '#ccc',
         fillOpacity: 0.15,
       }}
-      content={CustomTooltipRenderer}
+      content={(props) =>
+        CustomTooltipRenderer({
+          ...(props as TooltipProps<string, number>),
+          slice,
+          componentsWithAddedProps,
+          tickFormatter,
+        })
+      }
     />
   )
 }

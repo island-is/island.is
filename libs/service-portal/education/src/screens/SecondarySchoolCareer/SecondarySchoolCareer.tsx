@@ -14,23 +14,13 @@ import { tagSelector } from '../../utils/tagSelector'
 import { useLocale } from '@island.is/localization'
 import { edMessage } from '../../lib/messages'
 import { defineMessage } from 'react-intl'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const EducationGraduationDetail = () => {
   const { data: innaData, loading, error } = useGetInnaPeriodsQuery()
   const { formatMessage } = useLocale()
 
   const periodItems = innaData?.innaPeriods?.items || []
-
-  if ((!periodItems.length && !loading) || error) {
-    return (
-      <NotFound
-        title={defineMessage({
-          id: 'sp.education-secondary-school:not-found',
-          defaultMessage: 'Engin gögn fundust',
-        })}
-      />
-    )
-  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -66,6 +56,17 @@ export const EducationGraduationDetail = () => {
           </Column>
         )}
       </Box>
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && !loading && !periodItems.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
       {periodItems.length > 0 &&
         !loading &&
         periodItems.map((item, i) => (

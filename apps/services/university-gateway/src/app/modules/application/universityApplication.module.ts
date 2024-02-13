@@ -1,6 +1,11 @@
 import { Module } from '@nestjs/common'
-import { ApplicationController } from './application.controller'
-import { ApplicationService } from './application.service'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { UniversityApplicationController } from './universityApplication.controller'
+import { UniversityApplicationService } from './universityApplication.service'
+import { Application } from './model/application'
+import { ProgramModeOfDelivery } from '../program/model/programModeOfDelivery'
+import { Program } from '../program/model/program'
+import { University } from '../university/model/university'
 import { ReykjavikUniversityApplicationClientModule } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClientModule } from '@island.is/clients/university-application/university-of-iceland'
 import { UniversityOfAkureyriApplicationClientModule } from '@island.is/clients/university-application/university-of-akureyri'
@@ -11,6 +16,12 @@ import { HolarUniversityApplicationClientModule } from '@island.is/clients/unive
 
 @Module({
   imports: [
+    SequelizeModule.forFeature([
+      Application,
+      ProgramModeOfDelivery,
+      Program,
+      University,
+    ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
     UniversityOfAkureyriApplicationClientModule,
@@ -19,7 +30,7 @@ import { HolarUniversityApplicationClientModule } from '@island.is/clients/unive
     AgriculturalUniversityOfIcelandApplicationClientModule,
     HolarUniversityApplicationClientModule,
   ],
-  controllers: [ApplicationController],
-  providers: [ApplicationService],
+  controllers: [UniversityApplicationController],
+  providers: [UniversityApplicationService],
 })
-export class ApplicationModule {}
+export class UniversityApplicationModule {}

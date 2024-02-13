@@ -38,12 +38,57 @@ export class UniversityOfIcelandResolver {
     >,
   ) {}
 
-  @Query(() => StudentInfo, { name: 'universityOfIcelandStudentInfo' })
+  @Query(() => StudentInfo, {
+    name: 'universityOfIcelandStudentInfo',
+    nullable: true,
+  })
   @Audit()
   async studentInfo(
     @CurrentUser() user: User,
     @Args('input') input: StudentInfoInput,
   ): Promise<StudentInfo | null> {
+    return null
+    return {
+      transcripts: [
+        {
+          name: 'belbe',
+          nationalId: '12345',
+          graduationDate: '123',
+          trackNumber: 1,
+          institution: {
+            id: '1',
+            displayName: 'blebel',
+          },
+          school: 'nkoko',
+          faculty: 'beub',
+          studyProgram: 'education',
+          degree: 'bsc',
+        },
+      ],
+      track: {
+        transcript: {
+          name: 'belbe',
+          nationalId: '12345',
+          graduationDate: '123',
+          trackNumber: 1,
+          institution: {
+            id: '1',
+            displayName: 'blebel',
+          },
+          school: 'nkoko',
+          faculty: 'beub',
+          studyProgram: 'education',
+          degree: 'bsc',
+        },
+        files: [],
+        body: {
+          description: 'jrioa',
+          footer: 'bejahib',
+          unconfirmedData: 'fdeajhio',
+        },
+      },
+    }
+
     const data = await this.universityOfIcelandApi.studentInfo(
       user,
       input.locale as NemandiGetLocaleEnum,

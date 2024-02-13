@@ -28,6 +28,7 @@ import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { Problem } from '@island.is/react-spa/shared'
 
 const GetStudentInfoQuery = gql`
   query universityOfIcelandStudentInfo(
@@ -96,20 +97,6 @@ export const EducationGraduationDetail = () => {
 
   const noFiles = files?.length === 0
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.education).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -172,16 +159,19 @@ export const EducationGraduationDetail = () => {
           </Box>
         </GridColumn>
       </GridRow>
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
       {loading && !error && (
         <SkeletonLoader height={20} width={500} repeat={3} />
       )}
       {!loading && !error && !studentInfo && (
         <Box marginTop={8}>
-          <EmptyState
-            title={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-no-data',
-              defaultMessage: 'Engin gögn fundust',
-            })}
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
           />
         </Box>
       )}

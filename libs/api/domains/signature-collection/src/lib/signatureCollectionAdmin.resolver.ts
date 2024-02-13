@@ -27,6 +27,10 @@ import { CollectionGuard } from './guards/collection.guard'
 import { CurrentCollection } from './decorators/current-collection.decorator'
 import { SignatureCollectionAdminService } from './signatureCollectionAdmin.service'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  SignatureCollectionListStatus,
+  SignatureCollectionStatus,
+} from './models/status.model'
 
 @UseGuards(IdsUserGuard, CollectionGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -45,10 +49,6 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => [SignatureCollectionList])
-  @Scopes(
-    AdminPortalScope.signatureCollectionManage,
-    AdminPortalScope.signatureCollectionProcess,
-  )
   @Audit()
   async signatureCollectionAdminLists(
     @CurrentUser() user: User,
@@ -58,10 +58,6 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => SignatureCollectionList)
-  @Scopes(
-    AdminPortalScope.signatureCollectionManage,
-    AdminPortalScope.signatureCollectionProcess,
-  )
   @Audit()
   async signatureCollectionAdminList(
     @CurrentUser() user: User,
@@ -71,10 +67,6 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => [SignatureCollectionSignature], { nullable: true })
-  @Scopes(
-    AdminPortalScope.signatureCollectionManage,
-    AdminPortalScope.signatureCollectionProcess,
-  )
   @Audit()
   async signatureCollectionAdminSignatures(
     @CurrentUser() user: User,
@@ -90,6 +82,40 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionCandidateLookUp> {
     return this.signatureCollectionService.signee(input.id, user)
+  }
+
+  @Query(() => SignatureCollectionStatus)
+  @Audit()
+  async signatureCollectionAdminStatus(
+    @CurrentUser() user: User,
+  ): Promise<SignatureCollectionStatus> {
+    return this.signatureCollectionService.collectionStatus(user)
+  }
+
+  @Query(() => SignatureCollectionListStatus)
+  @Audit()
+  async signatureCollectionAdminListStatus(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionListStatus> {
+    return this.signatureCollectionService.listStatus(input.id, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminToggleListReview(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.toggleListStatus(input.id, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminProcess(
+    @CurrentUser() user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.processCollection(user)
   }
 
   @Mutation(() => SignatureCollectionSlug)

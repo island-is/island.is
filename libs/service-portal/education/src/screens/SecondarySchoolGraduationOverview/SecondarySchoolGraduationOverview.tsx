@@ -2,14 +2,15 @@ import {
   ActionCard,
   CardLoader,
   IntroHeader,
-  NotFound,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { EducationPaths } from '../../lib/paths'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { defineMessage } from 'react-intl'
 import { edMessage } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const EducationGraduationDetail = () => {
   useNamespaces('sp.education-secondary-school')
@@ -18,16 +19,6 @@ export const EducationGraduationDetail = () => {
 
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
 
-  if ((!diplomaItems.length && !loading) || error) {
-    return (
-      <NotFound
-        title={defineMessage({
-          id: 'sp.education-secondary-school:not-found',
-          defaultMessage: 'Engin gögn fundust',
-        })}
-      />
-    )
-  }
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -38,6 +29,17 @@ export const EducationGraduationDetail = () => {
             'Hér getur þú fundið yfirlit yfir þínar útskriftir úr framhaldsskóla.',
         })}
       />
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && !loading && !diplomaItems.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
       <Box marginTop={4}>{loading && <CardLoader />}</Box>
       <Box marginBottom={3}>
         {diplomaItems.length > 0 &&
