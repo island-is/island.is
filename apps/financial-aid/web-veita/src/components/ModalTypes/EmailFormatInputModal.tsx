@@ -115,6 +115,7 @@ const EmailFormatInputModal = ({
           <br />
           <b>[SKRIFA ÁSTÆÐU HÉR]</b>
           <br />
+          <br />
           {postfixText}
 
           {state === ApplicationState.REJECTED && (

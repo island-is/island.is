@@ -35,12 +35,20 @@ export const assets = buildSection({
               id: 'assets.realEstate.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'assets.realEstate.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
                 id: 'assets.realEstate.data',
                 doesNotRequireAnswer: true,
                 component: 'ReportFieldsRepeater',
+                childInputIds: [
+                  'assets.realEstate',
+                  'assets.realEstate.hasModified',
+                ],
               },
               {
                 fields: [
@@ -53,17 +61,58 @@ export const assets = buildSection({
                     id: 'description',
                   },
                   {
+                    title: m.propertyShare.defaultMessage,
+                    id: 'propertyShare',
+                  },
+                  {
                     title: m.propertyValuation.defaultMessage,
                     id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
                 ],
+                calcWithShareValue: true,
                 repeaterButtonText: m.addRealEstate.defaultMessage,
                 fromExternalData: 'assets',
                 sumField: 'propertyValuation',
               },
             ),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
+      id: 'inventory',
+      title: m.inventoryTitle,
+      children: [
+        buildMultiField({
+          id: 'inventory',
+          title: m.propertiesTitle,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutInnventory.defaultMessage,
+          children: [
+            buildDescriptionField({
+              id: 'inventoryTitle',
+              title: m.inventoryTitle,
+              description: m.inventoryDescription,
+              titleVariant: 'h3',
+              marginBottom: 2,
+            }),
+            buildTextField({
+              id: 'assets.inventory.info',
+              title: m.inventoryTextField,
+              placeholder: m.inventoryTextField,
+              variant: 'textarea',
+              rows: 7,
+            }),
+            buildTextField({
+              id: 'assets.inventory.value',
+              title: m.inventoryValueTitle,
+              width: 'half',
+              variant: 'currency',
+            }),
           ],
         }),
       ],
@@ -178,43 +227,6 @@ export const assets = buildSection({
         }),
       ],
     }),
-
-    buildSubSection({
-      id: 'inventory',
-      title: m.inventoryTitle,
-      children: [
-        buildMultiField({
-          id: 'inventory',
-          title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutInnventory.defaultMessage,
-          children: [
-            buildDescriptionField({
-              id: 'inventoryTitle',
-              title: m.inventoryTitle,
-              description: m.inventoryDescription,
-              titleVariant: 'h3',
-              marginBottom: 2,
-            }),
-            buildTextField({
-              id: 'assets.inventory.info',
-              title: m.inventoryTextField,
-              placeholder: m.inventoryTextField,
-              variant: 'textarea',
-              rows: 7,
-            }),
-            buildTextField({
-              id: 'assets.inventory.value',
-              title: m.inventoryValueTitle,
-              width: 'half',
-              variant: 'currency',
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSubSection({
       id: 'estateBankInfo',
       title: m.estateBankInfo,
@@ -301,15 +313,15 @@ export const assets = buildSection({
                     id: 'issuer',
                   },
                   {
+                    title: m.nationalId.defaultMessage,
+                    id: 'nationalId',
+                    format: '######-####',
+                  },
+                  {
                     title: m.claimsAmount.defaultMessage,
                     id: 'value',
                     required: true,
                     currency: true,
-                  },
-                  {
-                    title: m.nationalId.defaultMessage,
-                    id: 'nationalId',
-                    format: '######-####',
                   },
                 ],
                 repeaterButtonText: m.claimsRepeaterButton.defaultMessage,

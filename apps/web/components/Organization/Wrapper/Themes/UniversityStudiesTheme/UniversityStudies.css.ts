@@ -4,7 +4,6 @@ import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   position: 'relative',
-  zIndex: '-1',
   ...themeUtils.responsiveStyle({
     xs: {
       display: 'flex',
@@ -41,6 +40,7 @@ export const iconCircle = style({
   justifyContent: 'center',
   alignItems: 'center',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
+  zIndex: 1000,
   ...themeUtils.responsiveStyle({
     xs: {
       marginTop: 32,

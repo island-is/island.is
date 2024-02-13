@@ -72,7 +72,7 @@ const CandidateView = () => {
               <Button
                 onClick={() => {
                   const copied = copyToClipboard(
-                    `${document.location.origin}/umsoknir/maela-med-frambodi/?candidate=${collectionId}`,
+                    `${document.location.origin}/umsoknir/maela-med-frambodi/?candidate=${listsForOwner[0].slug}`,
                   )
                   if (!copied) {
                     return toast.error(formatMessage(m.copyLinkError))
@@ -87,7 +87,7 @@ const CandidateView = () => {
             </Box>
 
             {/* Signed list */}
-            <SignedList />
+            {!user?.profile.actor && <SignedList />}
 
             {/* Candidate created lists */}
             <Text marginTop={[5, 7]} marginBottom={2}>
