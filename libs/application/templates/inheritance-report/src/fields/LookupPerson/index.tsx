@@ -78,8 +78,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             <AlertMessage
               type="warning"
               message={
-                // message ? message : formatMessage(m.inheritanceUnder18Error)
-                message ? message : 'm.inheritanceUnder18Error'
+                message ? message : formatMessage(m.inheritanceUnder18Error)
               }
             />
           </GridColumn>

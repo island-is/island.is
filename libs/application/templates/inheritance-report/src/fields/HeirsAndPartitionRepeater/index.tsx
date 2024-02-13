@@ -180,7 +180,8 @@ export const HeirsAndPartitionRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [calculateTotal])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!hasEstateMemberUnder18) {
@@ -273,9 +274,7 @@ export const HeirsAndPartitionRepeater: FC<
                     label={formatMessage(m.inheritanceKtLabel)}
                     defaultValue={formatNationalId(member.nationalId || '')}
                     backgroundColor="white"
-                    // TODO: add readOnly again, this is because one of the dummy nationalIds is not
-                    // currently being validated (Stúfur)
-                    // readOnly
+                    readOnly
                     disabled={!member.enabled}
                     format={'######-####'}
                     error={

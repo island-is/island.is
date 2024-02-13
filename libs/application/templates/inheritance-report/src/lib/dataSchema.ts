@@ -291,7 +291,6 @@ export const inheritanceReportSchema = z.object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
         nationalId: z.string().optional(),
-        // custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
@@ -382,11 +381,7 @@ export const inheritanceReportSchema = z.object({
     total: z.number().refine((v) => {
       const val = typeof v === 'string' ? parseInt(v, 10) ?? 0 : v
 
-      if (val !== 100) {
-        return false
-      }
-
-      return true
+      return val === 100
     }),
   }),
 
