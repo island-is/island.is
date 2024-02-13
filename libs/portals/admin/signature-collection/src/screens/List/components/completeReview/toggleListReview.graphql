@@ -1,0 +1,5 @@
+mutation toggleListReview($input: SignatureCollectionIdInput!) {
+  signatureCollectionAdminToggleListReview(input: $input) {
+    success
+  }
+}

@@ -70,7 +70,7 @@ export class SignatureCollectionAdminClientService {
     })
     // Initial opening time passed not all lists reviewed
     if (!hasActive && !collection.processed && hasInReview) {
-      return CollectionStatus.InReview
+      return CollectionStatus.InInitialReview
     }
     // Initial opening time passed all lists reviewd
     if (!hasActive && !collection.processed && !hasInReview) {
@@ -203,10 +203,10 @@ export class SignatureCollectionAdminClientService {
     { collectionId, owner, areas }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, isActive } = await this.currentCollection()
+    const { id } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
-    if (collectionId !== id || !isActive) {
-      throw new Error('Collection is not open')
+    if (collectionId !== id) {
+      throw new Error('Collection id input wrong')
     }
 
     const collectionAreas = await this.getAreas(id)
@@ -280,7 +280,7 @@ export class SignatureCollectionAdminClientService {
     const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
-    ).medmaelasofnunIDEinsInfoKennitalaGet({
+    ).medmaelasofnunIDEinsInfoAdminKennitalaGet({
       kennitala: nationalId,
       iD: parseInt(id),
     })
@@ -365,10 +365,22 @@ export class SignatureCollectionAdminClientService {
       newEndDate: newEndDate,
     })
     const { dagsetningLokar } = list
+    const success = dagsetningLokar
+      ? newEndDate.getTime() === dagsetningLokar.getTime()
+      : false
+
+    if (success) {
+      const listStatus = await this.listStatus(listId, auth)
+      // Can only toggle list if it is in review or reviewed
+      if (listStatus === ListStatus.Reviewed) {
+        await this.getApiWithAuth(
+          this.listsApi,
+          auth,
+        ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      }
+    }
     return {
-      success: dagsetningLokar
-        ? newEndDate.getTime() === dagsetningLokar.getTime()
-        : false,
+      success,
     }
   }
 

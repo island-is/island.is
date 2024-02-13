@@ -23,6 +23,12 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
+  signatureCollectionProcessingComplete: {
+    id: 'admin-portal.signature-collection:signatureCollectionProcessingComplete',
+    defaultMessage:
+      'Úrvinnslu safnanna fyrir upphaflegan söfnunartíma hefur verið lokið.',
+    description: '',
+  },
   filter: {
     id: 'admin-portal.signature-collection:filter',
     defaultMessage: 'Opna síu',
@@ -100,7 +106,7 @@ export const m = defineMessages({
   },
   viewList: {
     id: 'admin-portal.signature-collection:viewList',
-    defaultMessage: 'Skoða lista',
+    defaultMessage: 'Skoða söfnun',
     description: '',
   },
   noLists: {
@@ -110,14 +116,25 @@ export const m = defineMessages({
   },
   noListsFoundBySearch: {
     id: 'admin-portal.signature-collection:noListsFoundBySearch',
-    defaultMessage: 'Engir listar fundust þegar leitað var að',
+    defaultMessage: 'Engin söfnun fannst þegar leitað var að',
+    description: '',
+  },
+  completeCollectionProcessing: {
+    id: 'admin-portal.signature-collection:completeCollectionProcessing',
+    defaultMessage: 'Úrvinnslu safnanna lokið',
+    description: '',
+  },
+  completeCollectionProcessingModalDescription: {
+    id: 'admin-portal.signature-collection:completeCollectionProcessingModalDescription#markdown',
+    defaultMessage:
+      'Þegar búið er að fara yfir alla meðmælalista skal ýta á hnappinn.',
     description: '',
   },
 
   // View list
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
-    defaultMessage: 'Meðmælalisti',
+    defaultMessage: 'Meðmælasöfnun',
     description: '',
   },
   singleListIntro: {
@@ -227,15 +244,62 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  confirmListReviewedToggleBack: {
+    id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
+    defaultMessage: 'Aflæsa úrvinnslu',
+    description: '',
+  },
   listReviewedModalDescription: {
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
-      'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
+      'Þegar búið er að fara yfir meðmælasöfnun skal ýta á hnappinn.',
     description: '',
   },
-  listReviewedAlert: {
-    id: 'admin-portal.signature-collection:listReviewedAlert',
-    defaultMessage: 'Úrvinnslu er lokið á þessari söfnun',
+  listReviewedModalDescriptionToggleBack: {
+    id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
+    defaultMessage:
+      'Þegar þörf eru á að fara yfir meðmælasöfnun aftur skal ýta á hnappinn.',
+    description: '',
+  },
+  listStatusReviewedStatusAlert: {
+    id: 'admin-portal.signature-collection:listStatusReviewedStatusAlert',
+    defaultMessage: 'Úrvinnslu er lokið á þessari söfnun.',
+    description: '',
+  },
+  listStatusActiveAlert: {
+    id: 'admin-portal.signature-collection:listStatusActiveAlert',
+    defaultMessage: 'Söfnun á rafrænum meðmælum er í gangi.',
+    description: '',
+  },
+  listStatusInReviewAlert: {
+    id: 'admin-portal.signature-collection:listStatusInReviewAlert',
+    defaultMessage:
+      'Söfnunin er opin fyrir úrvinnslu. Hægt er að hlaða inn meðmælum af blaði.',
+    description: '',
+  },
+  listStatusExtendableAlert: {
+    id: 'admin-portal.signature-collection:listStatusExtendableAlert',
+    defaultMessage: 'Opið er fyrir framlengingu á söfnun.',
+    description: '',
+  },
+  toggleReviewSuccess: {
+    id: 'admin-portal.signature-collection:toggleReviewSuccess',
+    defaultMessage: 'Úrvinnslu lokið',
+    description: '',
+  },
+  toggleReviewError: {
+    id: 'admin-portal.signature-collection:toggleReviewError',
+    defaultMessage: 'Ekki tókst loka úrvinnslu',
+    description: '',
+  },
+  toggleCollectionProcessSuccess: {
+    id: 'admin-portal.signature-collection:toggleCollectionProcessSuccess',
+    defaultMessage: 'Úrvinnslu safnanna lokið',
+    description: '',
+  },
+  toggleCollectionProcessError: {
+    id: 'admin-portal.signature-collection:toggleCollectionProcessError',
+    defaultMessage: 'Ekki tókst að loka úrvinnslu safnanna',
     description: '',
   },
 
@@ -307,7 +371,7 @@ export const m = defineMessages({
   compareListsDescription: {
     id: 'admin-portal.signature-collection:compareListsDescription',
     defaultMessage:
-      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði',
+      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði.',
     description: '',
   },
   compareListsModalDescription: {
