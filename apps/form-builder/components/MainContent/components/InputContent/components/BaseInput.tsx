@@ -23,7 +23,7 @@ export default function BaseInput() {
   } = useContext(FormBuilderContext)
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
-
+  console.log('formBuilder.inputTypes', formBuilder.inputTypes)
   const options = formBuilder.inputTypes
     .map((it) => {
       return {
@@ -40,22 +40,21 @@ export default function BaseInput() {
 
   return (
     <Stack space={2}>
-      {defaultOption !== undefined && (
-        <Row>
-          <Column span="5/10">
-            <Select
-              label="Tegund"
-              name="inputTypeSelect"
-              options={options}
-              placeholder="Veldu tegund"
-              backgroundColor="blue"
-              isSearchable
-              value={defaultOption}
-              onChange={(e) => changeSelectHandler(e)}
-            />
-          </Column>
-        </Row>
-      )}
+      <Row>
+        <Column span="5/10">
+          <Select
+            label="Tegund"
+            name="inputTypeSelect"
+            options={options}
+            placeholder="Veldu tegund"
+            backgroundColor="blue"
+            isSearchable
+            value={defaultOption}
+            onChange={(e) => changeSelectHandler(e)}
+          />
+        </Column>
+      </Row>
+
       <Row>
         {/* Name  */}
         <Column span="10/10">

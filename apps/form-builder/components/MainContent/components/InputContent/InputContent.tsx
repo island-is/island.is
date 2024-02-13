@@ -19,6 +19,7 @@ import TimeInput from './components/TimeInput'
 import MessageWithLink from './components/MessageWithLink'
 import FileUpload from './components/FileUpload/FileUpload'
 import NumberInput from './components/NumberInput'
+import PropertyNumberInputSettings from './components/PropertyNumberInputSettings'
 
 export default function InputContent() {
   const { formBuilder, lists, selectStatus, setSelectStatus } =
@@ -106,6 +107,7 @@ export default function InputContent() {
       {/* File upload */}
       {currentItem.type === 'Skjal' && <FileUpload />}
       {currentItem.type === 'Tölustafir' && <NumberInput />}
+      {currentItem.type === 'Fasteignanúmer' && <PropertyNumberInputSettings />}
       <Preview
         data={activeItem.data as IInput}
         isLarge={isLarge}

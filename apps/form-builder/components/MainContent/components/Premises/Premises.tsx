@@ -1,22 +1,15 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
 import FormBuilderContext from '../../../../context/FormBuilderContext'
+import { ICertificate } from '../../../../types/interfaces'
 
 export default function Premises() {
   const { formBuilder, formDispatch } = useContext(FormBuilderContext)
+  const { documentTypes } = formBuilder
+  const [formDocumentTypes, setFormDocumentTypes] = useState<ICertificate[]>(
+    formBuilder.form.documentTypes,
+  )
 
-  const newDocuments = (type: string) => {
-    const { documentTypes } = formBuilder.form
-    console.log('documentTypes', documentTypes)
-    if (documentTypes?.includes(type)) {
-      if (documentTypes.length === 1) {
-        return []
-      } else {
-        return documentTypes.filter((item) => item !== type)
-      }
-    }
-    return [...documentTypes, type]
-  }
   return formBuilder ? (
     <Box>
       <Box padding={2} marginBottom={2}>
@@ -33,23 +26,35 @@ export default function Premises() {
             <Checkbox
               key={i}
               label={d.name.is}
+              name={d.name.is}
               subLabel={d.description.is}
+              rightContent={d.description.is}
               value={d.type}
               large
-              checked={formBuilder.form.documentTypes?.includes(d.type)}
-              onChange={() =>
-                formDispatch({
-                  type: 'formSettings',
-                  payload: {
-                    property: 'documents',
-                    value: newDocuments(d.type),
-                  },
-                })
-              }
+              checked={formDocumentTypes.some((f) => f?.id === d.id)}
+              onChange={() => handleCheckboxChange(d.id)}
             />
           )
         })}
       </Stack>
     </Box>
   ) : null
+
+  function handleCheckboxChange(documentTypeId: number) {
+    const newDocumentTypes = formDocumentTypes.some(
+      (f) => f.id === documentTypeId,
+    )
+      ? formDocumentTypes.filter((f) => f.id !== documentTypeId)
+      : [
+          ...formDocumentTypes,
+          documentTypes.find((d) => d.id === documentTypeId),
+        ]
+    setFormDocumentTypes(newDocumentTypes)
+    formDispatch({
+      type: 'updateDocuments',
+      payload: {
+        documents: newDocumentTypes,
+      },
+    })
+  }
 }

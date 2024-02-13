@@ -574,14 +574,14 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
       const input = activeItem.data as IInput
       const { payload } = action
 
-      if (
-        !payload ||
-        !('property' in payload) ||
-        !('checked' in payload) ||
-        !('value' in payload)
-      ) {
-        throw new Error('Invalid payload')
-      }
+      // if (
+      //   !payload ||
+      //   !('property' in payload) ||
+      //   !('checked' in payload) ||
+      //   !('value' in payload)
+      // ) {
+      //   throw new Error('Invalid payload')
+      // }
 
       const { property, checked, value } = payload
 

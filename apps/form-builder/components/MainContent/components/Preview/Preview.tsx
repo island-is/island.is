@@ -19,6 +19,7 @@ import { IInputSettings, IInput } from '../../../../types/interfaces'
 import Ssn from './components/Ssn'
 import Radio from './components/Radio'
 import UtilizationSummary from './components/UtilizationSummary/UtilizationSummary'
+import PropertyNumber from './components/PropertyNumber/PropertyNumber'
 
 type Props = {
   data?: IInput
@@ -105,6 +106,9 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
         )}
         {data.type === 'Fellilisti' && <List currentItem={data as IInput} />}
         {data.type === 'Valhnappar' && <Radio />}
+        {data.type === 'Fasteignanúmer' && (
+          <PropertyNumber currentItem={data as IInput} />
+        )}
       </Box>
     </>
   )

@@ -34,7 +34,7 @@ export default function RelevantParties() {
     IFormApplicantType[]
   >(formBuilder.form.formApplicantTypes)
   const { id: formId } = formBuilder.form
-
+  console.log('applicantTypeTemplates: ', applicantTypeTemplates)
   const [focus, setOnFocus] = useState('')
 
   const createFormApplicantType = (

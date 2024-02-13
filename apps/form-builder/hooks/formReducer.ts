@@ -1,5 +1,10 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
-import { IFormBuilder, ILanguage, ITenging } from '../types/interfaces'
+import {
+  ICertificate,
+  IFormBuilder,
+  ILanguage,
+  ITenging,
+} from '../types/interfaces'
 import { saveFormSettings } from '../services/apiService'
 
 type ChangeNameAction = {
@@ -39,10 +44,10 @@ type AddRemoveConnectionAction = {
   }
 }
 
-type AddRemoveDocuments = {
-  type: 'addRemoveDocuments'
+type UpdateDocuments = {
+  type: 'updateDocuments'
   payload: {
-    documents: string[]
+    documents: ICertificate[]
   }
 }
 
@@ -51,7 +56,10 @@ type FormSettingsPayload =
   | { property: 'dependencies'; value: ITenging }
   | { property: 'stopProgressOnValidatingStep'; value: boolean }
   | { property: 'applicationsDaysToRemove'; value: number }
-  | { property: 'documents'; value: string[] }
+  | {
+      property: 'formDocumentTypes'
+      value: { formId: number; documentTypeId: number }[]
+    }
   | { property: 'adilar'; value: string[] }
   | { property: 'completedMessage'; value: ILanguage }
   | { property: 'isTranslated'; value: boolean }
@@ -68,7 +76,7 @@ type Action =
   | StopProgressOnValidatingStepAction
   | AddRemoveConnectionAction
   | FormSettingsAction
-  | AddRemoveDocuments
+  | UpdateDocuments
 
 export function formReducer(formBuilder: IFormBuilder, action: Action) {
   switch (action.type) {
@@ -161,18 +169,23 @@ export function formReducer(formBuilder: IFormBuilder, action: Action) {
       }
     }
 
-    case 'addRemoveDocuments': {
+    case 'updateDocuments': {
       const { documents } = action.payload
-      console.log('dasdsa')
+      const saveDocuments = documents.map((d) => {
+        return {
+          formId: formBuilder.form.id,
+          documentTypeId: d.id,
+        }
+      })
       saveFormSettings(formBuilder.form.id, {
         id: formBuilder.form.id,
-        documents: documents,
+        formDocumentTypes: saveDocuments,
       })
       return {
         ...formBuilder,
         form: {
           ...formBuilder.form,
-          documents: documents,
+          documentTypes: documents,
         },
       }
     }

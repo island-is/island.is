@@ -163,7 +163,7 @@ export default function ListBuilder({ setInListBuilder }: Props) {
   }
 
   function onDragStart(event: DragStartEvent) {
-    console.log('DRAG START', event.active.data.current.listItem)
+    // console.log('DRAG START', event.active.data.current.listItem)
     listsDispatch({
       type: 'setActiveListItem',
       payload: {
@@ -176,8 +176,8 @@ export default function ListBuilder({ setInListBuilder }: Props) {
     const { active, over } = event
 
     if (!over) return
-    console.log('Active: ', active.data.current.listItem.text.is)
-    console.log('Over: ', over.data.current.listItem.text.is)
+    // console.log('Active: ', active.data.current.listItem.text.is)
+    // console.log('Over: ', over.data.current.listItem.text.is)
     const activeId = active.id
     const overId = over.id
     listsDispatch({
