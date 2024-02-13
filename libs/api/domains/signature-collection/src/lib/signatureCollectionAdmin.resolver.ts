@@ -8,10 +8,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
@@ -30,6 +27,10 @@ import { CollectionGuard } from './guards/collection.guard'
 import { CurrentCollection } from './decorators/current-collection.decorator'
 import { SignatureCollectionAdminService } from './signatureCollectionAdmin.service'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  SignatureCollectionListStatus,
+  SignatureCollectionStatus,
+} from './models/status.model'
 
 @UseGuards(IdsUserGuard, CollectionGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -42,16 +43,16 @@ export class SignatureCollectionAdminResolver {
 
   @Query(() => SignatureCollection)
   async signatureCollectionAdminCurrent(
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollection> {
-    return this.signatureCollectionService.current(collection.id)
+    return collection
   }
 
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionAdminLists(
     @CurrentUser() user: User,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allLists(collection, user)
   }
@@ -83,11 +84,45 @@ export class SignatureCollectionAdminResolver {
     return this.signatureCollectionService.signee(input.id, user)
   }
 
+  @Query(() => SignatureCollectionStatus)
+  @Audit()
+  async signatureCollectionAdminStatus(
+    @CurrentUser() user: User,
+  ): Promise<SignatureCollectionStatus> {
+    return this.signatureCollectionService.collectionStatus(user)
+  }
+
+  @Query(() => SignatureCollectionListStatus)
+  @Audit()
+  async signatureCollectionAdminListStatus(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionListStatus> {
+    return this.signatureCollectionService.listStatus(input.id, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminToggleListReview(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.toggleListStatus(input.id, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminProcess(
+    @CurrentUser() user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.processCollection(user)
+  }
+
   @Mutation(() => SignatureCollectionSlug)
   @Audit()
   async signatureCollectionAdminCreate(
     @CurrentUser() user: User,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
     @Args('input') input: SignatureCollectionListInput,
   ): Promise<SignatureCollectionSlug> {
     return this.signatureCollectionService.create(user, input, collection.id)

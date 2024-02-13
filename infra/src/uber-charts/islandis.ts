@@ -176,6 +176,7 @@ export const Services: EnvironmentServices = {
     sessionsGeoip,
     universityGatewayService,
     universityGatewayWorker,
+    contentfulApps,
   ],
   staging: [
     appSystemApi,

@@ -3,8 +3,8 @@ import React from 'react'
 function WomanWithPhoneIllustration() {
   return (
     <svg
-      width="432"
-      height="445"
+      width="342"
+      height="355"
       viewBox="0 0 432 445"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

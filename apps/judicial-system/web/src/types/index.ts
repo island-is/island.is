@@ -164,14 +164,6 @@ export interface NationalRegistryResponseBusiness {
   error?: string
 }
 
-export interface Lawyer {
-  name: string
-  practice: string
-  email: string
-  phoneNr: string
-  nationalId: string
-}
-
 /**
  * We are in the process of stopping using the Case type and
  * using the generated Case type from /graphql/schema.tsx instead.

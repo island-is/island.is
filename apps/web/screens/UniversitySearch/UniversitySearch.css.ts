@@ -69,8 +69,21 @@ export const gridContainer = style({
   padding: `0`,
 })
 
+export const mainContentWrapper = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginLeft: '110px',
+    },
+  }),
+})
+
 export const filterWrapper = style({
-  width: '320px',
+  width: 'unset',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      width: '320px',
+    },
+  }),
 })
 
 export const tagActive = style({

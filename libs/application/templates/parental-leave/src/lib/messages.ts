@@ -815,16 +815,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Tilhögun fæðingarstyrks',
       description: 'Grant periods',
     },
-    periodsImageTitle: {
-      id: 'pl.application:periods.image.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarorlofsins',
-      description: 'Now it is time to select the parental leave periods',
-    },
-    periodsImageGrantTitle: {
-      id: 'pl.application:periods.image.grant.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarstyrksins',
-      description: 'Now it is time to select the parental grant period',
-    },
     firstPeriodName: {
       id: 'pl.application:first.period.name',
       defaultMessage: 'Fyrsta tímabil orlofsins',
@@ -1196,6 +1186,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:allowance.allowance.usage',
       defaultMessage: 'Hlutfall af persónuafslættinum',
       description: 'Review copy for the usage percentage',
+    },
+    alertDescription: {
+      id: 'pl.application:personal.allowance.alertDescription',
+      defaultMessage:
+        'Óþarfi er að senda inn sérstaka beiðni til Fæðingarorlofssjóðs vegna nýtingar á persónuafslætti þegar sótt er um í gegnum Ísland.is',
+      description:
+        'There is no need to submit a separate request to the Parental Leave Fund for the use of personal allowance when applying through Ísland.is',
     },
   }),
 

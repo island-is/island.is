@@ -1,11 +1,11 @@
-import { Field, ID, ObjectType, OmitType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { SignatureCollectionArea } from './area.model'
 import { SignatureCollectionCandidate } from './candidate.model'
 
 @ObjectType()
-export class SignatureCollectionInfo {
-  @Field()
-  id!: number
+export class SignatureCollection {
+  @Field(() => ID)
+  id!: string
 
   @Field(() => Date)
   endTime!: Date
@@ -18,14 +18,6 @@ export class SignatureCollectionInfo {
 
   @Field()
   isPresidential!: boolean
-}
-
-@ObjectType()
-export class SignatureCollection extends OmitType(SignatureCollectionInfo, [
-  'id',
-]) {
-  @Field(() => ID)
-  id!: string
 
   @Field()
   name!: string

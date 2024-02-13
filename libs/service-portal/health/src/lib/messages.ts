@@ -368,6 +368,10 @@ export const messages = defineMessages({
     id: 'sp.health:physical-therapy',
     defaultMessage: 'Sjúkraþjálfun',
   },
+  overviewTitle: {
+    id: 'sp.health:overview-title',
+    defaultMessage: 'Yfirlit',
+  },
   speechTherapy: {
     id: 'sp.health:speech-therapy',
     defaultMessage: 'Talþjálfun',

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
 import getConfig from 'next/config'
 import NextLink from 'next/link'
@@ -74,6 +74,7 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
@@ -156,8 +157,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
-
   const n = useNamespace(namespace)
+  useSetZIndexOnHeader()
 
   const isMobileScreenWidth = width < theme.breakpoints.lg
   const isTabletScreenWidth = width < theme.breakpoints.xl
@@ -402,7 +403,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
       href: primaryLink?.url,
-      active: primaryLink?.url === router.pathname,
+      active: primaryLink?.url === router.pathname, // TODO This fails because of the contentful url (/haskolanam-temp)
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -411,15 +412,15 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   return (
     <Box>
+      {organizationPage && (
+        <OrganizationHeader organizationPage={organizationPage} />
+      )}
       <GridContainer>
-        {organizationPage && (
-          <OrganizationHeader organizationPage={organizationPage} />
-        )}
         <SidebarLayout
           paddingTop={[2, 2, 9]}
           paddingBottom={[4, 4, 4]}
           isSticky={false}
-          fullWidthContent={false}
+          fullWidthContent={true}
           sidebarContent={
             <Box>
               <Navigation
@@ -507,6 +508,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 if (keyField !== 'OTHER') {
                                   return (
                                     <Checkbox
+                                      key={keyField}
                                       label={
                                         <Box
                                           display="flex"
@@ -611,7 +613,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Box>
           )}
-          <Box minWidth={0}>
+          <Box minWidth={0} className={styles.mainContentWrapper}>
             <Text
               marginTop={0}
               marginBottom={2}
@@ -669,7 +671,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Inline>
               </Box>
             </ContentBlock>
-
             <Hidden above="md">
               <Box width="full" marginTop={2}>
                 <Filter
@@ -739,7 +740,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Filter>
               </Box>
             </Hidden>
-
             <Box
               display="flex"
               flexDirection="row"
@@ -791,7 +791,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Box>
               </Hidden>
             </Box>
-
             {!gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
               <Box>
                 {filteredResults &&
@@ -803,6 +802,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     .map((item, index) => {
                       const dataItem =
                         item.item as UniversityGatewayProgramWithStatus
+                      const specializedName =
+                        locale === 'en'
+                          ? dataItem.specializationNameEn ?? undefined
+                          : dataItem.specializationNameIs ?? undefined
+                      const subHeading =
+                        specializedName !== undefined
+                          ? (locale === 'en'
+                              ? 'Field of study: '
+                              : 'Kjörsvið: ') + specializedName
+                          : undefined
+                      console.log(dataItem)
+
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard
@@ -817,6 +828,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 ? dataItem.nameEn
                                 : dataItem.nameIs
                             }
+                            subHeading={subHeading}
                             text={
                               locale === 'en'
                                 ? stripHtml(dataItem.descriptionEn)
@@ -834,31 +846,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     ? dataItem.nameEn
                                     : dataItem.nameIs
                                 }`}
-                              />
-                            }
-                            customBottomContent={
-                              <Checkbox
-                                label={n('compare', 'Setja í samanburð')}
-                                labelVariant="default"
-                                onChange={() =>
-                                  handleComparisonChange({
-                                    id: dataItem.id,
-                                    nameIs:
-                                      locale === 'en'
-                                        ? dataItem.nameEn
-                                        : dataItem.nameIs,
-                                    iconSrc:
-                                      universities.filter(
-                                        (x) => x.id === dataItem.universityId,
-                                      )[0].contentfulLogoUrl || '',
-                                  })
-                                }
-                                checked={
-                                  selectedComparison.filter(
-                                    (x) => x.id === dataItem.id,
-                                  ).length > 0
-                                }
-                                id={dataItem.id}
                               />
                             }
                             sidePanelConfig={{
@@ -984,6 +971,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       .map((item, index) => {
                         const dataItem =
                           item.item as UniversityGatewayProgramWithStatus
+                        const specializedName =
+                          locale === 'en'
+                            ? dataItem.specializationNameEn ?? undefined
+                            : dataItem.specializationNameIs ?? undefined
+                        const subHeading =
+                          specializedName !== undefined
+                            ? (locale === 'en'
+                                ? 'Field of study: '
+                                : 'Kjörsvið: ') + specializedName
+                            : undefined
                         return (
                           <GridColumn
                             span={
@@ -996,13 +993,17 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             key={index}
                           >
                             <ListViewCard
-                              key={index}
-                              iconText="Háskólinn í Reykjavík"
+                              iconText={
+                                universities.filter(
+                                  (x) => x.id === dataItem.universityId,
+                                )[0].contentfulTitle || ''
+                              }
                               heading={
                                 locale === 'en'
                                   ? dataItem.nameEn
                                   : dataItem.nameIs
                               }
+                              subHeading={subHeading}
                               icon={
                                 <img
                                   src={
@@ -1017,27 +1018,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   }`}
                                 />
                               }
-                              onCheck={() =>
-                                handleComparisonChange({
-                                  id: dataItem.id,
-                                  nameIs:
-                                    locale === 'en'
-                                      ? dataItem.nameEn
-                                      : dataItem.nameIs,
-                                  iconSrc:
-                                    universities.filter(
-                                      (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl || '',
-                                })
-                              }
-                              checked={
-                                selectedComparison.filter(
-                                  (x) => x.id === dataItem.id,
-                                ).length > 0
-                              }
                               buttonLabel={n('apply', 'Sækja um')}
-                              checkboxLabel={n('compare', 'Setja í samanburð')}
-                              checkboxId={dataItem.id}
                               cta={createPrimaryCTA(dataItem)}
                               href={
                                 linkResolver('universitysearchdetails', [
@@ -1153,7 +1134,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </GridRow>
               </GridContainer>
             )}
-
             <Box
               marginTop={2}
               marginBottom={selectedComparison.length > 0 ? 4 : 0}
@@ -1325,7 +1305,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           )}
         {/* <Box marginBottom={8} marginTop={5}>
         </Box> */}
-
         <ToastContainer></ToastContainer>
       </GridContainer>
       <Box className="rs_read">
@@ -1374,58 +1353,59 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Page not found')
   }
 
-  const organizationPage = await apolloClient.query<
-    Query,
-    QueryGetOrganizationPageArgs
-  >({
-    query: GET_ORGANIZATION_PAGE_QUERY,
-    variables: {
-      input: {
-        slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
-        lang: locale as ContentLanguage,
-      },
+  const [
+    {
+      data: { getOrganizationPage },
     },
-  })
-
-  const organization = await apolloClient.query<
-    Query,
-    QueryGetOrganizationPageArgs
-  >({
-    query: GET_ORGANIZATION_QUERY,
-    variables: {
-      input: {
-        slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-        lang: locale as ContentLanguage,
-      },
+    {
+      data: { getOrganization },
     },
-  })
-
-  const newResponse =
-    await apolloClient.query<GetUniversityGatewayProgramsQuery>({
+    {
+      data: { universityGatewayPrograms },
+    },
+    filters,
+    {
+      data: { universityGatewayUniversities },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_QUERY,
+      variables: {
+        input: {
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<GetUniversityGatewayProgramsQuery>({
       query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    })
-
-  const data = newResponse.data.universityGatewayPrograms.data
-
-  const filters =
-    await apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
+    }),
+    apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
       query: GET_UNIVERSITY_GATEWAY_FILTERS,
-    })
-
-  const universities =
-    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+    }),
+    apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-    })
+    }),
+  ])
 
   return {
-    data,
+    data: universityGatewayPrograms.data,
     searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
     namespace,
-    organizationPage: organizationPage.data.getOrganizationPage,
-    organization: organization.data.getOrganization,
-    universities: universities.data.universityGatewayUniversities,
+    organizationPage: getOrganizationPage,
+    organization: getOrganization,
+    universities: universityGatewayUniversities,
   }
 }
 

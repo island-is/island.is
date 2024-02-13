@@ -104,9 +104,9 @@
     "@nestjs/jwt": "8.0.1",
     "@nestjs/passport": "8.2.2",
     "@nestjs/platform-express": "10.0.5",
-    "@nestjs/sequelize": "9.0.2",
+    "@nestjs/sequelize": "10.0.0",
     "@nestjs/swagger": "7.1.1",
-    "@nestjs/terminus": "10.1.1",
+    "@nestjs/terminus": "10.2.0",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
     "@sindresorhus/slugify": "1.0.0",
@@ -476,7 +476,8 @@
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
     "dd-trace@3.32.1": "patch:dd-trace@npm%3A3.32.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch",
     "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
-    "geoip-lite@1.4.7": "patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch"
+    "geoip-lite@1.4.7": "patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch",
+    "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch"
   },
   "volta": {
     "node": "18.16.0"

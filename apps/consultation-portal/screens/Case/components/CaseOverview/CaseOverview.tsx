@@ -19,7 +19,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
 
   const upperInstances = [
     `${loc.upperInstances.case} S-${chosenCase?.caseNumber}`,
-    `${loc.upperInstances.show}: ${getShortDate(chosenCase.created)}`,
+    `${loc.upperInstances.show}: ${getShortDate(chosenCase.publishOnWeb)}`,
     `${loc.upperInstances.advicesCount}: ${chosenCase?.adviceCount}`,
   ]
 

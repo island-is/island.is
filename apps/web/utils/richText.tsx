@@ -151,6 +151,7 @@ const defaultRenderComponent = {
       gridOffset="0"
       slicesAreFullWidth={true}
       dropdownMarginBottom={5}
+      orderOptionsAlphabetically={slice.alphabeticallyOrdered}
     />
   ),
   SectionWithVideo: (slice: SectionWithVideoSchema) => (
@@ -162,9 +163,9 @@ const defaultRenderComponent = {
     <OverviewLinksSlice slice={slice} />
   ),
   Chart: (slice: ChartSchema) => <Chart slice={slice} />,
-  ChartNumberBox: (slice: ChartNumberBoxSchema) => (
-    <ChartNumberBox slice={slice} />
-  ),
+  ChartNumberBox: (
+    slice: ChartNumberBoxSchema & { chartNumberBoxId: string },
+  ) => <ChartNumberBox slice={slice} />,
   SectionWithImage: (slice: SectionWithImageSchema) => (
     <SectionWithImage
       title={slice.title}

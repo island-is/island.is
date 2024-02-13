@@ -232,6 +232,7 @@ export interface DateField extends BaseField {
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
   required?: boolean
+  readOnly?: boolean
 }
 
 export interface DescriptionField extends BaseField {
