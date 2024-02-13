@@ -203,10 +203,10 @@ export class SignatureCollectionAdminClientService {
     { collectionId, owner, areas }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, isActive } = await this.currentCollection()
+    const { id } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
-    if (collectionId !== id || !isActive) {
-      throw new Error('Collection is not open')
+    if (collectionId !== id) {
+      throw new Error('Collection id input wrong')
     }
 
     const collectionAreas = await this.getAreas(id)
