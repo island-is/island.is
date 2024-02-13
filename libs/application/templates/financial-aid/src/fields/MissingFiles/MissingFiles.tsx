@@ -115,9 +115,7 @@ const MissingFiles = ({
             type="warning"
             title={formatMessage(missingFiles.alert.title)}
             message={
-              <span
-                dangerouslySetInnerHTML={{ __html: fileComment?.comment }}
-              />
+              <span dangerouslySetInnerHTML={{ __html: fileComment.comment }} />
             }
           />
         </Box>
