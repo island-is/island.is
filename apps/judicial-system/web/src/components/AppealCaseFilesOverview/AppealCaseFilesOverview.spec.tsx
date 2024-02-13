@@ -99,4 +99,58 @@ describe('<AppealCaseFilesOverview />', () => {
     await userEvent.click(screen.getByRole('button'))
     expect(screen.getAllByRole('menuitem')).toHaveLength(1)
   })
+
+  test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a defender', async () => {
+    const theCase = {
+      id: 'asd',
+      type: CaseType.CUSTODY,
+      caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE)],
+      state: CaseState.ACCEPTED,
+      appealState: CaseAppealState.COMPLETED,
+    } as Case
+
+    render(
+      <IntlProvider locale="is" onError={jest.fn}>
+        <ApolloProvider
+          client={new ApolloClient({ cache: new InMemoryCache() })}
+        >
+          <UserContextWrapper userRole={UserRole.DEFENDER}>
+            <FormContextWrapper theCase={theCase}>
+              <AppealCaseFilesOverview />
+            </FormContextWrapper>
+          </UserContextWrapper>
+        </ApolloProvider>
+      </IntlProvider>,
+    )
+
+    await userEvent.click(screen.getByRole('button'))
+    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
+  })
+
+  test('should have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a prosecutor', async () => {
+    const theCase = {
+      id: 'asd',
+      type: CaseType.CUSTODY,
+      caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE)],
+      state: CaseState.ACCEPTED,
+      appealState: CaseAppealState.COMPLETED,
+    } as Case
+
+    render(
+      <IntlProvider locale="is" onError={jest.fn}>
+        <ApolloProvider
+          client={new ApolloClient({ cache: new InMemoryCache() })}
+        >
+          <UserContextWrapper userRole={UserRole.PROSECUTOR}>
+            <FormContextWrapper theCase={theCase}>
+              <AppealCaseFilesOverview />
+            </FormContextWrapper>
+          </UserContextWrapper>
+        </ApolloProvider>
+      </IntlProvider>,
+    )
+
+    await userEvent.click(screen.getByRole('button'))
+    expect(screen.getAllByRole('menuitem')).toHaveLength(2)
+  })
 })
