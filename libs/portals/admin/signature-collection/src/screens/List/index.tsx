@@ -28,8 +28,6 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   }
   const { formatMessage } = useLocale()
 
-  console.log('list', listStatus)
-
   return (
     <GridContainer>
       <GridRow direction="row">

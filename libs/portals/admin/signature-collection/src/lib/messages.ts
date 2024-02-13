@@ -251,22 +251,22 @@ export const m = defineMessages({
   },
   listStatusReviewedStatusAlert: {
     id: 'admin-portal.signature-collection:listStatusReviewedStatusAlert',
-    defaultMessage: 'Úrvinnslu er lokið á þessari söfnun',
+    defaultMessage: 'Úrvinnslu er lokið á þessari söfnun.',
     description: '',
   },
   listStatusActiveAlert: {
     id: 'admin-portal.signature-collection:listStatusActiveAlert',
-    defaultMessage: 'Söfnun er í gangi',
+    defaultMessage: 'Söfnun á rafrænum meðmælum er í gangi.',
     description: '',
   },
   listStatusInReviewAlert: {
     id: 'admin-portal.signature-collection:listStatusInReviewAlert',
-    defaultMessage: 'Söfnunin er opin fyrir úrvinnslu',
+    defaultMessage: 'Söfnunin er opin fyrir úrvinnslu. Hægt er að hlaða inn meðmælum af blaði.',
     description: '',
   },
   listStatusExtendableAlert: {
     id: 'admin-portal.signature-collection:listStatusExtendableAlert',
-    defaultMessage: 'Opið er fyrir framlengingu á söfnun',
+    defaultMessage: 'Opið er fyrir framlengingu á söfnun.',
     description: '',
   },
   toggleReviewSuccess: {
