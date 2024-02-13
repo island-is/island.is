@@ -261,7 +261,8 @@ export const m = defineMessages({
   },
   listStatusInReviewAlert: {
     id: 'admin-portal.signature-collection:listStatusInReviewAlert',
-    defaultMessage: 'Söfnunin er opin fyrir úrvinnslu. Hægt er að hlaða inn meðmælum af blaði.',
+    defaultMessage:
+      'Söfnunin er opin fyrir úrvinnslu. Hægt er að hlaða inn meðmælum af blaði.',
     description: '',
   },
   listStatusExtendableAlert: {
