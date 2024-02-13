@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test'
 import { uploadDocument } from '../../utils/helpers'
+import { verifyRequestCompletion } from '../../../../support/api-tools'
 
 export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
   await page.goto(`krafa/yfirlit/${caseId}`)
@@ -8,7 +9,10 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
   await page.getByRole('button', { name: 'Senda inn kæru' }).click()
 
   // Send appeal
-  await expect(page).toHaveURL(`/kaera/${caseId}`)
+  await Promise.all([
+    expect(page).toHaveURL(`/kaera/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
 
   await uploadDocument(
     page,
@@ -36,11 +40,18 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
   await page.getByTestId('modalSecondaryButton').click()
 
   // Overview
-  await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
+  await Promise.all([
+    expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
+
   await page.getByRole('button', { name: 'Senda greinargerð' }).click()
 
   // Send statement
-  await expect(page).toHaveURL(`/greinargerd/${caseId}`)
+  await Promise.all([
+    expect(page).toHaveURL(`/greinargerd/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
 
   await uploadDocument(
     page,

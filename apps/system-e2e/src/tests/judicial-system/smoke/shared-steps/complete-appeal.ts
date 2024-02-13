@@ -13,7 +13,11 @@ export async function coaJudgesCompleteAppealCaseTest(
   await page.getByTestId('continueButton').click()
 
   // Appeal case reception
-  await expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`)
+  await Promise.all([
+    expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
+
   const appealCaseNumber = randomAppealCaseNumber()
   await page.getByText('Mál nr. *').fill(appealCaseNumber)
 
@@ -21,6 +25,7 @@ export async function coaJudgesCompleteAppealCaseTest(
     page.getByText('Mál nr. *').press('Tab'),
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
   ])
+
   await page.getByTestId('select-assistant').click()
   await Promise.all([
     page.locator('#react-select-assistant-option-0').click(),
@@ -51,7 +56,11 @@ export async function coaJudgesCompleteAppealCaseTest(
   ])
 
   // Ruling
-  await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
+  await Promise.all([
+    expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
+
   await Promise.all([
     page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
@@ -79,6 +88,11 @@ export async function coaJudgesCompleteAppealCaseTest(
   )
 
   await page.getByTestId('continueButton').click()
-  await expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`)
+
+  await Promise.all([
+    expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
+
   await page.getByTestId('continueButton').click()
 }

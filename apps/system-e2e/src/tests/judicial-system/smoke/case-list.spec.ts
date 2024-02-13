@@ -4,7 +4,7 @@ import { judicialSystemSession } from '../../../support/session'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
-test.describe('Restriction case', () => {
+test.describe('Case list test', () => {
   let context: BrowserContext
 
   test.beforeAll(async ({ browser }) => {

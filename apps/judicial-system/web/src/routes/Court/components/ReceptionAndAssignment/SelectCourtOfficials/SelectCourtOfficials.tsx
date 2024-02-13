@@ -36,7 +36,10 @@ const SelectCourtOfficials = () => {
         judgeId,
       })
 
-      setWorkingCase((wc) => ({ ...wc, judge: updatedCase?.judge }))
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        judge: updatedCase?.judge,
+      }))
     }
   }
 
@@ -46,7 +49,10 @@ const SelectCourtOfficials = () => {
         registrarId: registrarId ?? null,
       })
 
-      setWorkingCase((wc) => ({ ...wc, registrar: updatedCase?.registrar }))
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        registrar: updatedCase?.registrar,
+      }))
     }
   }
 
