@@ -4,6 +4,7 @@ export enum CollectionStatus {
   InitialActive = 'initialActive',
   Active = 'active',
   InReview = 'inReview',
+  InInitialReview = 'inInitialReview',
   Processing = 'processing',
   Processed = 'processed',
   Inactive = 'inactive',

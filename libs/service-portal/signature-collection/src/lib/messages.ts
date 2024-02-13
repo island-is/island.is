@@ -64,7 +64,7 @@ export const m = defineMessages({
     description: '',
   },
   uploadedTime: {
-    id: 'sp.signatureCollection:signedTime',
+    id: 'sp.signatureCollection:uploadedTime',
     defaultMessage: 'Lesið inn:',
     description: '',
   },
