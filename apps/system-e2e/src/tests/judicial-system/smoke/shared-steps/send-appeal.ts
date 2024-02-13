@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test'
-import { uploadDocument } from '../../utils/helpers'
+import { chooseDocument, verifyUpload } from '../../utils/helpers'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 
 export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
@@ -12,7 +12,7 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
 
   // Send appeal
   await expect(page).toHaveURL(`/kaera/${caseId}`)
-  await uploadDocument(
+  await chooseDocument(
     page,
     async () => {
       await page
@@ -22,7 +22,7 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestKaera.pdf',
   )
-  await uploadDocument(
+  await chooseDocument(
     page,
     async () => {
       await page
@@ -32,7 +32,10 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestKaerugognSaekjanda.pdf',
   )
-  await page.getByTestId('continueButton').click()
+  await Promise.all([
+    page.getByTestId('continueButton').click(),
+    verifyUpload(page),
+  ])
   await Promise.all([
     page.getByTestId('modalSecondaryButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
@@ -47,7 +50,7 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
 
   // Send statement
   await expect(page).toHaveURL(`/greinargerd/${caseId}`)
-  await uploadDocument(
+  await chooseDocument(
     page,
     async () => {
       await page
@@ -57,7 +60,7 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestGreinargerdSaekjanda.pdf',
   )
-  await uploadDocument(
+  await chooseDocument(
     page,
     async () => {
       await page
@@ -67,6 +70,9 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     },
     'TestGreinargerdargognSaekjanda.pdf',
   )
-  await page.getByTestId('continueButton').click()
+  await Promise.all([
+    page.getByTestId('continueButton').click(),
+    verifyUpload(page),
+  ])
   await page.getByTestId('modalSecondaryButton').click()
 }

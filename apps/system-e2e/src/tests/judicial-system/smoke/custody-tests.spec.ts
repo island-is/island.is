@@ -7,7 +7,8 @@ import {
   randomPoliceCaseNumber,
   randomCourtCaseNumber,
   getDaysFromNow,
-  uploadDocument,
+  chooseDocument,
+  verifyUpload,
 } from '../utils/helpers'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
@@ -246,7 +247,7 @@ test.describe.serial('Custody tests', () => {
     ])
 
     await expect(page).toHaveURL(`verjandi/greinargerd/${caseId}`)
-    await uploadDocument(
+    await chooseDocument(
       page,
       async () => {
         await page
@@ -255,9 +256,8 @@ test.describe.serial('Custody tests', () => {
           .click()
       },
       'TestGreinargerdVerjanda.pdf',
-      true,
     )
-    await uploadDocument(
+    await chooseDocument(
       page,
       async () => {
         await page
@@ -266,9 +266,11 @@ test.describe.serial('Custody tests', () => {
           .click()
       },
       'TestGreinargerdVerjanda.pdf',
-      true,
     )
-    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyUpload(page, true),
+    ])
     await page.getByTestId('modalSecondaryButton').click()
   })
 
