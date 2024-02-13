@@ -16,8 +16,7 @@ import {
   MENNTAMALASTOFNUN_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import { Problem } from '@island.is/react-spa/shared'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {
@@ -86,8 +85,8 @@ type UseParams = {
 
 const StudentAssessmentTable = () => {
   useNamespaces('sp.education-career')
-  const { formatMessage } = useLocale()
   const { familyIndex } = useParams() as UseParams
+  const { formatMessage } = useLocale()
   const {
     data,
     loading: queryLoading,
