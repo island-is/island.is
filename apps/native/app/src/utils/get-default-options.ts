@@ -21,6 +21,7 @@ export function getDefaultOptions(
       title: {
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,
+        color: theme.shade.foreground,
       },
       largeTitle: {
         fontFamily: 'IBMPlexSans-SemiBold',
