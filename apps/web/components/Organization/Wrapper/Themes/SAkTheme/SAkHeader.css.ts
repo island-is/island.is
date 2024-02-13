@@ -88,7 +88,7 @@ export const titleWrapper = style({
   ...themeUtils.responsiveStyle({
     lg: {
       display: 'flex',
-      justifyContent: 'end',
+      justifyContent: 'flex-end',
     },
   }),
 })

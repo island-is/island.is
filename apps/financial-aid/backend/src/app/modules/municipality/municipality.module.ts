@@ -6,12 +6,14 @@ import { StaffModule } from '../staff/staff.module'
 import { MunicipalityModel } from './models'
 import { MunicipalityController } from './municipality.controller'
 import { MunicipalityService } from './municipality.service'
+import { ApiUserModule } from '../municipalityApiUsers/user.module'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([MunicipalityModel]),
     StaffModule,
     AidModule,
+    ApiUserModule,
   ],
   providers: [MunicipalityService],
   controllers: [MunicipalityController],

@@ -213,13 +213,8 @@ export interface AllDebts {
 }
 
 export interface ApplicationDebts {
-  publicCharges: PublicCharges
+  publicCharges: string
   domesticAndForeignDebts: DomesticAndForeignDebts
-}
-
-export interface PublicChargesData {
-  taxFreeInheritance: number
-  publicChargesAmount: string
 }
 
 interface DomesticAndForeignDebtsData {
@@ -229,13 +224,9 @@ interface DomesticAndForeignDebtsData {
   creditorName: string
   taxFreeInheritance: number
 }
+
 interface DomesticAndForeignDebts {
   data: DomesticAndForeignDebtsData[]
-  total: number
-}
-
-export interface PublicCharges {
-  data: PublicChargesData[]
   total: number
 }
 
@@ -264,4 +255,11 @@ export interface Buisness {
   businessAssets: BuisnessAssets
   businessDebts: BuisnessDebt
   businessTotal: number
+}
+
+// todo: do these value labels make sense?
+export enum RelationEnum {
+  REPRESENTATIVE = 'representative',
+  HEIR = 'heir',
+  EXCHANGEMANAGER = 'exchangeManager',
 }

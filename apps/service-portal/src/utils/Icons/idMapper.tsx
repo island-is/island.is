@@ -14,7 +14,7 @@ import LogOut from '../../components/AnimatedIcon/LogOut'
 import People from '../../components/AnimatedIcon/People'
 import Airplane from '../../components/AnimatedIcon/Airplane'
 import Heart from '../../components/AnimatedIcon/Heart'
-import Framfaerslur from '../../components/AnimatedIcon/Framfaerslur'
+import CardWithCheckmark from '../../components/AnimatedIcon/CardWithCheckmark'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -64,7 +64,7 @@ export const iconIdMapper = (iconType: string) => {
     case 'heart':
       return 'ehtpZ79segF1'
     // Framfærslur
-    case 'framfaerslur':
+    case 'cardWithCheckmark':
       return 'eNwbxRm5ElG1'
     default:
       return ''
@@ -122,8 +122,8 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     case 'heart':
       return <Heart />
     // Framfærslur
-    case 'framfaerslur':
-      return <Framfaerslur />
+    case 'cardWithCheckmark':
+      return <CardWithCheckmark />
     default:
       return undefined
   }

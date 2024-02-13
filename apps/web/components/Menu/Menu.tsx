@@ -143,7 +143,7 @@ export const Menu = ({
           activeLocale={activeLocale}
           placeholder={t.searchPlaceholder}
           autocomplete={true}
-          autosuggest={false}
+          autosuggest={true}
           onRouting={closeModal}
           skipContext
         />

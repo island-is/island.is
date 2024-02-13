@@ -107,7 +107,10 @@ export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
         inputMask="999-9999-9999999"
         inputLabel={formatMessage(m.label)}
         inputPlaceholder={formatMessage(m.placeholder, {
-          prefix: user?.institution?.policeCaseNumberPrefix ?? '',
+          prefix:
+            workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
+            user?.institution?.policeCaseNumberPrefix ??
+            '',
           year: new Date().getFullYear(),
         })}
         onAddValue={onAdd}

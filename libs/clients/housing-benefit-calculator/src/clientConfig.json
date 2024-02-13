@@ -118,6 +118,64 @@
           }
         }
       }
+    },
+    "/api/v1/Reiknivel/reiknivelserstakar": {
+      "post": {
+        "tags": ["Reiknivel"],
+        "summary": "Reiknar sértækan húsnæðisstuðning samkvæmt modeli og skilar módeli aftur með niðurstöðu.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": ["fjoldiHeimilismanna", "husnaedisKostnadur"],
+                "type": "object",
+                "properties": {
+                  "fjoldiHeimilismanna": {
+                    "maximum": 4,
+                    "minimum": 1,
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "description": "Fjöldi heimilismanna í húsnæði",
+                    "format": "int32"
+                  },
+                  "husnaedisKostnadur": {
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "description": "Húsnæðiskostnaður á mánuði",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "fjoldiHeimilismanna": { "style": "form" },
+                "husnaedisKostnadur": { "style": "form" }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelSerReturnModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelSerReturnModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelSerReturnModel"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -148,6 +206,11 @@
             "format": "double",
             "nullable": true
           },
+          "manadarlegarHamarksBaetur": {
+            "type": "number",
+            "description": "Hámarks bætur sem hægt er að fá mánaðarlega",
+            "format": "double"
+          },
           "manadarlegTekjuSkerding": {
             "type": "number",
             "description": "Mánaðarleg tekjuskerðing",
@@ -157,6 +220,23 @@
             "type": "number",
             "description": "Mánaðarleg eignaskerðing",
             "format": "double"
+          },
+          "manadarlegHusnaedisKostnadarSkerding": {
+            "type": "number",
+            "description": "Mánaðarleg skerðing vegna húsnæðiskostnaðar",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReiknivelSerReturnModel": {
+        "type": "object",
+        "properties": {
+          "manadarlegarHusnaedisbaetur": {
+            "type": "number",
+            "description": "Mánaðarlegar húsnæðisbætur",
+            "format": "double",
+            "nullable": true
           },
           "manadarlegarHamarksBaetur": {
             "type": "number",

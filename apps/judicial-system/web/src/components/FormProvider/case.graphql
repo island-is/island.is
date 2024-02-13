@@ -21,6 +21,7 @@ query Case($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defendantWaivesRightToCounsel
+      defendantPlea
     }
     defenderName
     defenderNationalId
@@ -239,6 +240,7 @@ query Case($input: CaseQueryInput!) {
     prosecutorsOffice {
       id
       name
+      policeCaseNumberPrefix
     }
   }
 }

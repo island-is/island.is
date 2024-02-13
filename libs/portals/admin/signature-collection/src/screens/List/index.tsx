@@ -4,14 +4,23 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
-import header from '../../../assets/headerImage.svg'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import Signees from './components/signees'
 import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
+import ListReviewedAlert from './components/listReviewedAlert'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { format as formatNationalId } from 'kennitala'
 
-export const List = () => {
+export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { list } = useLoaderData() as { list: SignatureCollectionList }
   const { formatMessage } = useLocale()
 
@@ -36,15 +45,45 @@ export const List = () => {
             <>
               <IntroHeader
                 title={list.title}
-                intro={formatMessage(m.singleListIntro)}
-                img={header}
+                intro={
+                  allowedToProcess
+                    ? formatMessage(m.singleListIntro)
+                    : formatMessage(m.singleListIntroManage)
+                }
+                img={
+                  allowedToProcess
+                    ? electionsCommitteeLogo
+                    : nationalRegistryLogo
+                }
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
+              {/*<ListReviewedAlert />*/}
+              {!!list.collectors?.length &&
+                list.collectors.map((collector) => (
+                  <Box key={collector.name} marginBottom={5}>
+                    <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
+                    <Text>
+                      {collector.name +
+                        ' ' +
+                        '(' +
+                        formatNationalId(collector.nationalId) +
+                        ')'}
+                    </Text>
+                  </Box>
+                ))}
+              <ActionExtendDeadline
+                listId={list.id}
+                endTime={list.endTime}
+                allowedToProcess={allowedToProcess}
+              />
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-              <PaperUpload listId={list.id} />
-              <ActionReviewComplete />
+              {allowedToProcess && (
+                <>
+                  <PaperUpload listId={list.id} />
+                  {/*<ActionReviewComplete />*/}
+                </>
+              )}
             </>
           )}
         </GridColumn>

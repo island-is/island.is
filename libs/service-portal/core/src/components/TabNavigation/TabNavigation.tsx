@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { Box, FocusableBox, Select } from '@island.is/island-ui/core'
+import { Box, FocusableBox, Select, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
@@ -38,7 +38,6 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       navigate(id)
     }
   }
-
   const isMobile = width < theme.breakpoints.md
   return (
     <>

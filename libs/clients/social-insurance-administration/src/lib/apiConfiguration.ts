@@ -1,8 +1,8 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
-import { Configuration } from '../../gen/fetch'
 import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
+import { Configuration } from '../../gen/fetch'
 
 export const ApiConfiguration = {
   provide: 'SocialInsuranceAdministrationApiConfig',

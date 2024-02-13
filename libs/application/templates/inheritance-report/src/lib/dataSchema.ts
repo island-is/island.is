@@ -11,6 +11,7 @@ export const inheritanceReportSchema = z.object({
     email: z.string().email(),
     phone: z.string(),
     nationalId: z.string(),
+    relation: z.string(),
   }),
 
   /* assets */
@@ -184,17 +185,7 @@ export const inheritanceReportSchema = z.object({
         total: z.number().optional(),
       })
       .optional(),
-    publicCharges: z
-      .object({
-        data: z
-          .object({
-            publicChargesAmount: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
+    publicCharges: z.string().optional(),
     debtsTotal: z.number().optional(),
   }),
 

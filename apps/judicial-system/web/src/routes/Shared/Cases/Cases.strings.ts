@@ -62,6 +62,20 @@ export const cases = {
         'Notaður sem label á filter sem notandi getur notað til að sía mál',
     },
   }),
+  contextMenu: defineMessages({
+    openCase: {
+      id: 'judicial.system.core:cases.context_menu.open_case',
+      defaultMessage: 'Opna mál í nýjum flipa',
+      description:
+        'Notaður sem texti í valmynd fyrir mál til að opna mál í nýjum glugga',
+    },
+    deleteCase: {
+      id: 'judicial.system.core:cases.context_menu.delete_case',
+      defaultMessage: 'Afturkalla',
+      description:
+        'Notaður sem texti í valmynd fyrir mál til að afturkalla mál',
+    },
+  }),
   activeRequests: {
     table: {
       headers: defineMessages({
@@ -132,6 +146,29 @@ export const cases = {
         defaultMessage: 'Engar samþykktar kröfur fundust.',
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
+      },
+    }),
+    deleteCaseModal: defineMessages({
+      title: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.title',
+        defaultMessage: 'Afturkalla mál',
+        description: 'Notaður sem titill í Afturkalla mál modal.',
+      },
+      text: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.text',
+        defaultMessage: 'Ertu viss um að þú viljir afturkalla þetta mál?',
+        description: 'Notaður sem texti í Afturkalla mál modal.',
+      },
+      primaryButtonText: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.primary_button_text',
+        defaultMessage: 'Afturkalla',
+        description:
+          'Notaður sem texti á Afturkalla mál takka í Afturkalla mál.',
+      },
+      secondaryButtonText: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.secondary_button_text',
+        defaultMessage: 'Hætta við',
+        description: 'Notaður sem texti á Halda áfram takka í Afturkalla mál.',
       },
     }),
   },

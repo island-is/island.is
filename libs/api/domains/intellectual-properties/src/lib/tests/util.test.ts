@@ -1,4 +1,5 @@
-import { parseDateIfValid } from '../utils'
+import { checkIfDesignValueIsFalsy, parseDateIfValid } from '../utils'
+import setMilliseconds from 'date-fns/setMilliseconds'
 
 describe('IP Utils', () => {
   describe('parseDateIfValid', () => {
@@ -28,6 +29,40 @@ describe('IP Utils', () => {
 
       it('should abort if placeholder date', () => {
         expect(parseDateIfValid('0001-01-01T')).toBeUndefined()
+      })
+    })
+  })
+
+  describe('checkIfDesignValueIsFalsy', () => {
+    describe('should handle dates', () => {
+      it('should return false if date is exact falsy date', () => {
+        const date = new Date('0001-01-01T00:00:00')
+        expect(checkIfDesignValueIsFalsy(date)).toBeTruthy()
+      })
+      it('should return false if date is truthy', () => {
+        const date = new Date()
+        expect(checkIfDesignValueIsFalsy(date)).toBeFalsy
+      })
+    })
+    describe('should handle numbers', () => {
+      it('should return true if number is falsy', () => {
+        expect(checkIfDesignValueIsFalsy(0)).toBeTruthy()
+      })
+      it('should return false if number is truthy', () => {
+        expect(checkIfDesignValueIsFalsy(62897)).toBeFalsy()
+      })
+    })
+    describe('should handle nulls', () => {
+      it('should return true if null', () => {
+        expect(checkIfDesignValueIsFalsy(null)).toBeTruthy()
+      })
+    })
+    describe('should handle booleans', () => {
+      it('should return true if false', () => {
+        expect(checkIfDesignValueIsFalsy(false)).toBeTruthy()
+      })
+      it('should return false if true', () => {
+        expect(checkIfDesignValueIsFalsy(true)).toBeFalsy()
       })
     })
   })

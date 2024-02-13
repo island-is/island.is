@@ -27,7 +27,13 @@ const Signees = () => {
   const [signees, setSignees] = useState(listSignees)
 
   const [page, setPage] = useState(1)
-  const page_size = 10
+  const pageSize = 10
+
+  useEffect(() => {
+    if (!loadingSignees) {
+      setSignees(listSignees)
+    }
+  }, [listSignees])
 
   // list search
   useEffect(() => {
@@ -44,12 +50,6 @@ const Signees = () => {
     setPage(1)
     setSignees(filteredSignees)
   }, [searchTerm])
-
-  useEffect(() => {
-    if (listSignees) {
-      setSignees(listSignees)
-    }
-  }, [listSignees])
 
   return (
     <Box marginTop={5}>
@@ -71,7 +71,7 @@ const Signees = () => {
       </Box>
       {!loadingSignees ? (
         signees.length > 0 ? (
-          <Box marginTop={[2, 5]}>
+          <Box marginTop={[3, 5]}>
             <T.Table>
               <T.Head>
                 <T.Row>
@@ -82,31 +82,33 @@ const Signees = () => {
                 </T.Row>
               </T.Head>
               <T.Body>
-                {signees.map((s: Signature) => {
-                  return (
-                    <T.Row key={s.id}>
-                      <T.Data text={{ variant: 'medium' }}>
-                        {format(new Date(), 'dd.MM.yyyy')}
-                      </T.Data>
-                      <T.Data text={{ variant: 'medium' }}>
-                        {s.signee.name}
-                      </T.Data>
-                      <T.Data text={{ variant: 'medium' }}>
-                        {formatNationalId(s.signee.nationalId)}
-                      </T.Data>
-                      <T.Data text={{ variant: 'medium' }}>
-                        {s.signee.address}
-                      </T.Data>
-                    </T.Row>
-                  )
-                })}
+                {signees
+                  .slice(pageSize * (page - 1), pageSize * page)
+                  .map((s: Signature) => {
+                    return (
+                      <T.Row key={s.id}>
+                        <T.Data text={{ variant: 'medium' }}>
+                          {format(new Date(), 'dd.MM.yyyy')}
+                        </T.Data>
+                        <T.Data text={{ variant: 'medium' }}>
+                          {s.signee.name}
+                        </T.Data>
+                        <T.Data text={{ variant: 'medium' }}>
+                          {formatNationalId(s.signee.nationalId)}
+                        </T.Data>
+                        <T.Data text={{ variant: 'medium' }}>
+                          {s.signee.address}
+                        </T.Data>
+                      </T.Row>
+                    )
+                  })}
               </T.Body>
             </T.Table>
 
             <Box marginTop={5}>
               <Pagination
                 totalItems={signees.length}
-                itemsPerPage={page_size}
+                itemsPerPage={pageSize}
                 page={page}
                 renderLink={(page, className, children) => (
                   <Box

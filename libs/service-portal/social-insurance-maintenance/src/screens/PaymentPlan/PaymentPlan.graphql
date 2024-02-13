@@ -1,0 +1,23 @@
+query getPaymentPlan($input: SocialInsurancePaymentPlanInput!) {
+  socialInsurancePaymentPlan(input: $input) {
+    nextPayment
+    previousPayment
+    paymentGroups {
+      __typename
+      type
+      totalYearCumulativeAmount
+      payments {
+        type
+        totalYearCumulativeAmount
+        monthlyPaymentHistory {
+          monthIndex
+          amount
+        }
+      }
+      monthlyPaymentHistory {
+        monthIndex
+        amount
+      }
+    }
+  }
+}

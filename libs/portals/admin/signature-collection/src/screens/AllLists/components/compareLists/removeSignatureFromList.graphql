@@ -1,5 +1,5 @@
 mutation UnsignAdmin($input: SignatureCollectionIdInput!) {
-  signatureCollectionUnsignAdmin(input: $input) {
+  signatureCollectionAdminUnsign(input: $input) {
     success
     reasons
   }

@@ -15,7 +15,7 @@ const ViewList = () => {
 
   return (
     <>
-      {!loadingList && (
+      {!loadingList && !!listInfo && (
         <Stack space={5}>
           <Box>
             <Text variant="h3">

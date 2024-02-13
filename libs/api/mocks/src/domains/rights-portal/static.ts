@@ -69,18 +69,13 @@ export const getPaymentOverviewDocument = {
 }
 
 export const getCopaymentStatus = {
-  items: [
-    {
-      insuranceStatus: {
-        display: 'Almenn staða',
-        code: 'ALM',
-      },
-      maximumMonthlyPayment: 28162,
-      maximumPayment: 27662,
-      basePayment: 4694,
-    },
-  ],
-  errors: [],
+  insuranceStatus: {
+    display: 'Almenn staða',
+    code: 'ALM',
+  },
+  maximumMonthlyPayment: 28162,
+  maximumPayment: 27662,
+  basePayment: 4694,
 }
 
 export const getCopaymentPeriods = {

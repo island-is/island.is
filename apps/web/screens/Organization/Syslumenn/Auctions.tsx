@@ -933,6 +933,24 @@ const Auctions: Screen<AuctionsProps> = ({
                       </Text>
                     )}
 
+                  {auction.lotItems && (
+                    <DialogPrompt
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      baseId={auction.lotId}
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      title={auction.lotName}
+                      description={auction.lotItems.split('|').join('  •  ')}
+                      ariaLabel="Upplýsingar um innihald uppboðs."
+                      disclosureElement={
+                        <Button variant="text" size="small" icon="arrowForward">
+                          {n('auctionLotItemsLink', 'Nánar')}
+                        </Button>
+                      }
+                    />
+                  )}
+
                   <Box
                     alignItems="flexEnd"
                     display="flex"
@@ -940,32 +958,6 @@ const Auctions: Screen<AuctionsProps> = ({
                     justifyContent="spaceBetween"
                     marginLeft="auto"
                   >
-                    <Box>
-                      {auction.lotItems && (
-                        <DialogPrompt
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          baseId={auction.lotId}
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          title={auction.lotName}
-                          description={auction.lotItems
-                            .split('|')
-                            .join('  •  ')}
-                          ariaLabel="Upplýsingar um innihald uppboðs."
-                          disclosureElement={
-                            <Button
-                              variant="text"
-                              size="small"
-                              icon="arrowForward"
-                            >
-                              {n('auctionLotItemsLink', 'Nánar')}
-                            </Button>
-                          }
-                        />
-                      )}
-                    </Box>
-
                     {!displayCustomCardMessage && (
                       <Text variant="small">
                         {auction.lotType}{' '}
@@ -1056,11 +1048,15 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getProps = async ({ apolloClient, locale, req }) => {
+Auctions.getProps = async ({ apolloClient, locale, req, res }) => {
   const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'uppbod'
+
+  if (res) {
+    res.setHeader('Cache-Control', 'no-store, must-revalidate')
+  }
 
   const [
     {

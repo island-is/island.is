@@ -28,6 +28,7 @@ interface Props {
   excludeDates?: DatePickerProps['excludeDates']
   onChange?: (_: string) => void
   required?: boolean
+  readOnly?: boolean
 }
 
 const df = 'yyyy-MM-dd'
@@ -49,6 +50,7 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   required,
   minYear,
   maxYear,
+  readOnly,
   onChange = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
@@ -75,6 +77,7 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
           minYear={minYear}
           maxYear={maxYear}
           excludeDates={excludeDates}
+          readOnly={readOnly}
           handleChange={(date) => {
             clearErrors(id)
             const newVal = format(date, df)
