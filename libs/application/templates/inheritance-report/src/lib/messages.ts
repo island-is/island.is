@@ -327,6 +327,11 @@ export const m = defineMessages({
   },
   propertyValuation: {
     id: 'ir.application:propertyValuation',
+    defaultMessage: 'Fasteignamat',
+    description: '',
+  },
+  propertyValuationOnDeath: {
+    id: 'ir.application:propertyValuationOnDeath',
     defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
   },
@@ -657,9 +662,14 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: '',
   },
+  realEstateEstimationOnDeath: {
+    id: 'ir.application:realEstateEstimationOnDeath',
+    defaultMessage: 'Fasteignamat samtals á dánardegi',
+    description: '',
+  },
   realEstateEstimation: {
     id: 'ir.application:realEstateEstimation',
-    defaultMessage: 'Fasteignamat samtals á dánardegi',
+    defaultMessage: 'Fasteignamat samtals',
     description: '',
   },
   marketValue: {

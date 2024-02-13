@@ -24,11 +24,10 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
-import { getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { SpanType } from '@island.is/island-ui/core/types'
 
 type RepeaterProps = {
   field: {
@@ -274,6 +273,7 @@ export const ReportFieldsRepeater: FC<
     <Box>
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
+
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box position="absolute" className={styles.removeFieldButton}>
@@ -293,6 +293,9 @@ export const ReportFieldsRepeater: FC<
                 const even = props.fields.length % 2 === 0
                 const lastIndex = props.fields.length - 1
                 const pushRight = !even && index === lastIndex
+
+                const fieldId = `${fieldIndex}.${field.id}`
+                const err = errors && getErrorViaPath(errors, fieldId)
 
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
@@ -321,6 +324,7 @@ export const ReportFieldsRepeater: FC<
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(m.propertyShare)}
                         defaultValue="0"
+                        backgroundColor="blue"
                         onChange={(
                           e: ChangeEvent<
                             HTMLInputElement | HTMLTextAreaElement
@@ -333,11 +337,7 @@ export const ReportFieldsRepeater: FC<
                             calculateTotal()
                           }
                         }}
-                        error={
-                          error && error[index]
-                            ? error[index][field.id]
-                            : undefined
-                        }
+                        error={err}
                         type="number"
                         suffix="%"
                         required
@@ -369,11 +369,7 @@ export const ReportFieldsRepeater: FC<
                         textarea={field.variant}
                         rows={field.rows}
                         required={field.required}
-                        error={
-                          error && error[index]
-                            ? error[index][field.id]
-                            : undefined
-                        }
+                        error={err}
                         onChange={(elem) => {
                           const value = elem.target.value.replace(/\D/g, '')
 
