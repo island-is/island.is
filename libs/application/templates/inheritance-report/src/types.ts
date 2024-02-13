@@ -265,3 +265,10 @@ export interface Buisness {
   businessDebts: BuisnessDebt
   businessTotal: number
 }
+
+// todo: do these value labels make sense?
+export enum RelationEnum {
+  REPRESENTATIVE = 'representative',
+  HEIR = 'heir',
+  EXCHANGEMANAGER = 'exchangeManager',
+}

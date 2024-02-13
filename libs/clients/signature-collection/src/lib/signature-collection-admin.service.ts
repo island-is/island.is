@@ -6,8 +6,8 @@ import {
   BulkUploadInput,
   CanCreateInput,
 } from './signature-collection.types'
-import { Collection } from './types/collection.dto'
-import { List, mapList, mapListBase } from './types/list.dto'
+import { Collection, CollectionStatus } from './types/collection.dto'
+import { List, ListStatus, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
 import { BulkUpload, mapBulkResponse } from './types/bulkUpload.dto'
@@ -45,6 +45,117 @@ export class SignatureCollectionAdminClientService {
 
   async currentCollection(): Promise<Collection> {
     return await this.sharedService.currentCollection(this.collectionsApi)
+  }
+
+  async collectionStatus(auth: Auth): Promise<CollectionStatus> {
+    const collection = await this.currentCollection()
+    // Collection in inital opening time
+    if (collection.isActive) {
+      return CollectionStatus.InitialActive
+    }
+    const allLists = await this.getLists({ collectionId: collection.id }, auth)
+    let hasActive,
+      hasExtended,
+      hasInReview = false
+    allLists.forEach((list) => {
+      if (list.active) {
+        hasActive = true
+      }
+      if (list.endTime > collection.endTime) {
+        hasExtended = true
+      }
+      if (!list.reviewed) {
+        hasInReview = true
+      }
+    })
+    // Initial opening time passed not all lists reviewed
+    if (!hasActive && !collection.processed && hasInReview) {
+      return CollectionStatus.InReview
+    }
+    // Initial opening time passed all lists reviewd
+    if (!hasActive && !collection.processed && !hasInReview) {
+      return CollectionStatus.Processing
+    }
+    // Initial opening time passed, collection has been manually processed
+    if (!hasActive && collection.processed && !hasInReview) {
+      return CollectionStatus.Processed
+    }
+    // Collection active if any lists have been extended
+    if (hasActive && collection.processed && hasExtended) {
+      return CollectionStatus.Active
+    }
+    // Collection had extended lists that have all expired
+    if (!hasActive && collection.processed && hasExtended) {
+      return CollectionStatus.InReview
+    }
+    return CollectionStatus.Inactive
+  }
+
+  async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
+    const collection = await this.currentCollection()
+
+    const list = await this.getList(listId, auth)
+    // Collection is open and list is active
+    // List has been extended and is active
+    if (list.endTime > new Date()) {
+      return ListStatus.Active
+    }
+    const isExtended = list.endTime > collection.endTime
+
+    // Initial collection time has passed and list is not active and has not been manually reviewed
+    // Extended list has expired in review
+    if (!list.reviewed) {
+      return ListStatus.InReview
+    }
+
+    if (!isExtended) {
+      // Check if all lists have been reviewed and list is extendable
+      // If collection is processed or if collection is active and not list
+      const collectionStatus = await this.collectionStatus(auth)
+      if (
+        collectionStatus === CollectionStatus.Processed ||
+        collectionStatus === CollectionStatus.Active
+      ) {
+        return ListStatus.Extendable
+      }
+    }
+
+    // Initial collection time has passed and list is not active and has been manually reviewed
+    // Extended list has expired and has been manually reviewed
+    if (list.reviewed) {
+      return ListStatus.Reviewed
+    }
+    return ListStatus.Inactive
+  }
+
+  async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
+    const listStatus = await this.listStatus(listId, auth)
+    // Can only toggle list if it is in review or reviewed
+    if (
+      listStatus === ListStatus.InReview ||
+      listStatus === ListStatus.Reviewed
+    ) {
+      const list = await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      return { success: !!list }
+    }
+    return { success: false }
+  }
+
+  async processCollection(auth: Auth): Promise<Success> {
+    const collectionStatus = await this.collectionStatus(auth)
+    if (collectionStatus === CollectionStatus.Processing) {
+      const collection = await this.getApiWithAuth(
+        this.collectionsApi,
+        auth,
+      ).medmaelasofnunIDToggleSofnunPost({
+        iD: parseInt((await this.currentCollection()).id),
+      })
+      return { success: !!collection }
+    }
+    return { success: false }
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
