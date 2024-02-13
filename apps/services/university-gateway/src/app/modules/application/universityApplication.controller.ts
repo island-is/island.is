@@ -8,7 +8,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { UniversityGatewayScope } from '@island.is/auth/scopes'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
-import { ApplicationService } from './application.service'
+import { UniversityApplicationService } from './universityApplication.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { Application } from './model/application'
@@ -16,18 +16,20 @@ import { CreateApplicationDto } from './dto/createApplicationDto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(UniversityGatewayScope.main)
 @ApiTags('Application')
 @Controller({
   path: 'applications',
   version: ['1'],
 })
-export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+export class UniversityApplicationController {
+  constructor(
+    private readonly applicationService: UniversityApplicationService,
+  ) {}
 
   @Get(':id')
   @Documentation({
-    description: 'Get application by ID',
+    description:
+      'Get application by ID (only status for now) for logged in user',
     response: {
       status: 200,
       type: Application,
@@ -51,7 +53,7 @@ export class ApplicationController {
 
   @Post()
   @Documentation({
-    description: 'Create application',
+    description: 'Create application for logged in user',
     response: {
       status: 201,
       type: Application,
@@ -66,7 +68,7 @@ export class ApplicationController {
 
   @Patch(':id')
   @Documentation({
-    description: 'Update application status',
+    description: 'Update application (only status for now) for logged in user',
     response: {
       status: 200,
       type: Application,
