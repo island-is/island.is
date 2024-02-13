@@ -11,6 +11,7 @@ export const inheritanceReportSchema = z.object({
     email: z.string().email(),
     phone: z.string(),
     nationalId: z.string(),
+    relation: z.string(),
   }),
 
   /* assets */
