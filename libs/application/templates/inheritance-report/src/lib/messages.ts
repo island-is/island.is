@@ -470,6 +470,16 @@ export const m = defineMessages({
     defaultMessage: 'Bankareikningur',
     description: '',
   },
+  bankAccountForeign: {
+    id: 'ir.application:bankAccountForeign',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
+  bankAccountForeignLabel: {
+    id: 'ir.application:bankAccountForeignLabel',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
   bankAccountBalance: {
     id: 'ir.application:bankAccountBalance',
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
