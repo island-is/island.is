@@ -260,7 +260,7 @@ export const m = defineMessages({
     description: '',
   },
   listStatusInReviewAlert: {
-    id: 'admin-portal.signature-collection:listStatusActiveAlert',
+    id: 'admin-portal.signature-collection:listStatusInReviewAlert',
     defaultMessage: 'Söfnunin er opin fyrir úrvinnslu',
     description: '',
   },
