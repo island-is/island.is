@@ -244,19 +244,17 @@ export const ReportFieldsRepeater: FC<
         const fieldIndex = `${id}[${index}]`
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box>
-              <Box position="absolute" className={styles.removeFieldButton}>
-                <Button
-                  variant="ghost"
-                  size="small"
-                  circle
-                  icon="remove"
-                  onClick={() => {
-                    remove(index)
-                    calculateTotal()
-                  }}
-                />
-              </Box>
+            <Box position="absolute" className={styles.removeFieldButton}>
+              <Button
+                variant="ghost"
+                size="small"
+                circle
+                icon="remove"
+                onClick={() => {
+                  remove(index)
+                  calculateTotal()
+                }}
+              />
             </Box>
             <GridRow>
               {props.fields.map((field: any) => {
@@ -364,7 +362,7 @@ export const ReportFieldsRepeater: FC<
                 value={
                   props.sumField === 'heirsPercentage'
                     ? String(total) + ' / 100%'
-                    : formatCurrency(isNaN(total) ? String(0) : String(total))
+                    : formatCurrency(String(isNaN(total) ? 0 : total))
                 }
                 label={
                   props.sumField === 'heirsPercentage'

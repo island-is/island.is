@@ -6,18 +6,14 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import {
-  AllDebts,
-  ApplicationDebts,
-  PublicCharges,
-  PublicChargesData,
-} from '../../types'
+import { AllDebts, ApplicationDebts } from '../../types'
 
 export const debts = buildSection({
   id: 'debts',
@@ -97,27 +93,12 @@ export const debts = buildSection({
               id: 'debts.publicCharges.total',
               title: '',
             }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'debts.publicCharges.data',
-                component: 'ReportFieldsRepeater',
-              },
-              {
-                fields: [
-                  {
-                    title: m.amount.defaultMessage,
-                    id: 'publicChargesAmount',
-                    width: 'full',
-                    required: true,
-                    currency: true,
-                  },
-                ],
-                repeaterButtonText:
-                  m.publicChargesRepeaterButton.defaultMessage,
-                sumField: 'publicChargesAmount',
-              },
-            ),
+            buildTextField({
+              title: m.amount.defaultMessage,
+              id: 'debts.publicCharges',
+              width: 'half',
+              variant: 'currency',
+            }),
           ],
         }),
       ],
@@ -200,27 +181,28 @@ export const debts = buildSection({
               },
               {
                 cards: ({ answers }: Application) => {
-                  const puclicCharges = (
+                  const publicCharges = (
                     answers.debts as unknown as ApplicationDebts
-                  ).publicCharges.data
-                  return (
-                    puclicCharges.map((charge: PublicChargesData) => ({
-                      title: m.amount.defaultMessage,
-                      description: [
-                        `${formatCurrency(charge.publicChargesAmount ?? '0')}`,
-                      ],
-                    })) ?? []
-                  )
+                  ).publicCharges
+                  return publicCharges
+                    ? [
+                        {
+                          title: m.publicChargesTitle.defaultMessage,
+                          description: [`${formatCurrency(publicCharges)}`],
+                        },
+                      ]
+                    : []
                 },
               },
             ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(getValueViaPath(answers, 'debts.publicCharges.total')),
-                ),
+              value: ({ answers }) => {
+                const value =
+                  getValueViaPath<string>(answers, 'debts.publicCharges') || '0'
+                return formatCurrency(value)
+              },
             }),
             buildDividerField({}),
             buildCustomField({
