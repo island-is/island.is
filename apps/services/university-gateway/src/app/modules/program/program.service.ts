@@ -59,7 +59,6 @@ export class ProgramService {
           'studyRequirementsEn',
           'costInformationIs',
           'costInformationEn',
-          'allowException',
           'allowThirdLevelQualification',
           'courses',
           'extraApplicationFields',
