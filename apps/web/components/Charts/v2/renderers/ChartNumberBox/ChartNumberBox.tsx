@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import cn from 'classnames'
-import round from 'lodash/round'
 
 import { Icon, SkeletonLoader, Tooltip } from '@island.is/island-ui/core'
 import { ChartNumberBox as IChartNumberBox } from '@island.is/web/graphql/schema'
@@ -16,7 +15,7 @@ import {
 import * as styles from './ChartNumberBox.css'
 
 type ChartNumberBoxRendererProps = {
-  slice: IChartNumberBox
+  slice: IChartNumberBox & { chartNumberBoxId: string }
 }
 
 interface ChartNumberBoxData {
@@ -86,6 +85,8 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
   return (
     <div
+      role="group"
+      aria-labelledby={`${slice.chartNumberBoxId}.title`}
       className={cn({
         [styles.wrapper]: true,
         [styles.wrapperTwoChildren]: boxData.length === 2,
@@ -103,14 +104,31 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
         const change = index === 0 ? 1 : mostRecentValue / comparisonValue
 
+        const ariaValue =
+          data.valueType === 'number'
+            ? formatValueForPresentation(activeLocale, mostRecentValue)
+            : formatPercentageForPresentation(
+                index === 0 ? mostRecentValue : change - 1,
+              )
+
+        const displayedValue =
+          data.valueType === 'number'
+            ? formatValueForPresentation(activeLocale, mostRecentValue)
+            : formatPercentageForPresentation(
+                index === 0 ? mostRecentValue : Math.abs(change - 1),
+              )
+
         return (
           <div
             className={cn({
               [styles.numberBox]: true,
               [styles.numberBoxFillWidth]: boxData.length === 3 && index === 0,
             })}
+            id={index === 0 ? `${slice.chartNumberBoxId}.title` : undefined}
+            aria-label={`${data.title}: ${ariaValue}`}
+            tabIndex={0}
           >
-            <div className={styles.titleWrapper}>
+            <div className={styles.titleWrapper} id={`${slice.id}.title`}>
               <h3 className={styles.title}>{data.title}</h3>
               {index === 0 && (
                 <Tooltip
@@ -126,13 +144,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
                   icon={change > 1 ? 'arrowUp' : 'arrowDown'}
                 />
               )}
-              <span>
-                {data.valueType === 'number'
-                  ? formatValueForPresentation(activeLocale, mostRecentValue)
-                  : formatPercentageForPresentation(
-                      index === 0 ? mostRecentValue : change - 1,
-                    )}
-              </span>
+              <span>{displayedValue}</span>
             </p>
           </div>
         )

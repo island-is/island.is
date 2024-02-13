@@ -65,6 +65,12 @@ export class SignatureCollectionSignedList extends SignatureCollectionListBase {
   @Field(() => Boolean)
   isDigital!: boolean
 
+  @Field(() => Boolean)
+  canUnsign!: boolean
+
+  @Field(() => Boolean)
+  isValid!: boolean
+
   @Field(() => Number, { nullable: true })
   pageNumber?: number
 }
