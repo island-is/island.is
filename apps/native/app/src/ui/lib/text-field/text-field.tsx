@@ -37,6 +37,8 @@ const Label = styled.Text`
 
 const Input = styled.TextInput`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
+  padding-top: 0px;
+  padding-bottom: 0px;
   ${font({
     fontSize: 16,
     lineHeight: 20,
