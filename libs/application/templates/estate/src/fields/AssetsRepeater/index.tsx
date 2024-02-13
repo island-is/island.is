@@ -13,6 +13,8 @@ import {
 } from '@island.is/island-ui/core'
 import { AssetFormField } from '../../types'
 
+import { EstateAsset } from '@island.is/clients/syslumenn'
+
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
@@ -44,7 +46,7 @@ export const AssetsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
+  const { control, clearErrors, setValue } = useFormContext()
 
   const estateData = getEstateDataFromApplication(application)
 
@@ -52,7 +54,6 @@ export const AssetsRepeater: FC<
     if (fields.length === 0 && estateData.estate?.[assetName]) {
       replace(estateData.estate[assetName])
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddAsset = () =>
