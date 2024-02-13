@@ -85,11 +85,11 @@ export const EducationGraduationDetail = () => {
     },
   })
 
-  const studentInfo = data?.universityOfIcelandStudentInfo.track.transcript
-  const text = data?.universityOfIcelandStudentInfo.track.body
-  const files = data?.universityOfIcelandStudentInfo.track.files
+  const studentInfo = data?.universityOfIcelandStudentInfo?.track?.transcript
+  const text = data?.universityOfIcelandStudentInfo?.track?.body
+  const files = data?.universityOfIcelandStudentInfo?.track?.files
   const downloadServiceURL =
-    data?.universityOfIcelandStudentInfo.track.downloadServiceURL
+    data?.universityOfIcelandStudentInfo?.track?.downloadServiceURL
 
   const graduationDate = studentInfo
     ? formatDate(studentInfo?.graduationDate)
@@ -175,75 +175,77 @@ export const EducationGraduationDetail = () => {
           />
         </Box>
       )}
-      <>
-        <Stack space={1}>
-          <UserInfoLine
-            title={formatMessage(m.overview)}
-            label={m.fullName}
-            loading={loading}
-            content={studentInfo?.name}
-            translate="no"
-          />
-          <Divider />
-          <UserInfoLine
-            label={m.date}
-            loading={loading}
-            content={graduationDate}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-degree',
-              defaultMessage: 'Gráða',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.degree ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-program',
-              defaultMessage: 'Námsleið',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.studyProgram ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-faculty',
-              defaultMessage: 'Deild',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.faculty ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-school',
-              defaultMessage: 'Svið',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.school ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-instutution',
-              defaultMessage: 'Stofnun',
-            })}
-            loading={loading}
-            content={formatNationalId(
-              studentInfo?.institution?.displayName ?? '',
-            )}
-          />
-          <Divider />
-        </Stack>
-        <Box marginTop={5}>
-          {loading && !error && <SkeletonLoader height={20} repeat={2} />}
-          <Text variant="small">{text?.footer}</Text>
-        </Box>
-      </>
+      {!error && (loading || studentInfo) && (
+        <>
+          <Stack space={1}>
+            <UserInfoLine
+              title={formatMessage(m.overview)}
+              label={m.fullName}
+              loading={loading}
+              content={studentInfo?.name}
+              translate="no"
+            />
+            <Divider />
+            <UserInfoLine
+              label={m.date}
+              loading={loading}
+              content={graduationDate}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-degree',
+                defaultMessage: 'Gráða',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.degree ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-program',
+                defaultMessage: 'Námsleið',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.studyProgram ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-faculty',
+                defaultMessage: 'Deild',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.faculty ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-school',
+                defaultMessage: 'Svið',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.school ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-instutution',
+                defaultMessage: 'Stofnun',
+              })}
+              loading={loading}
+              content={formatNationalId(
+                studentInfo?.institution?.displayName ?? '',
+              )}
+            />
+            <Divider />
+          </Stack>
+          <Box marginTop={5}>
+            {loading && !error && <SkeletonLoader height={20} repeat={2} />}
+            <Text variant="small">{text?.footer}</Text>
+          </Box>
+        </>
+      )}
     </Box>
   )
 }

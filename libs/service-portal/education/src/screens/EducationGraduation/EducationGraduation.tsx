@@ -54,7 +54,7 @@ export const EducationGraduation = () => {
   })
   const organizations = orgData?.getOrganizations?.items || {}
 
-  const studentInfo = data?.universityOfIcelandStudentInfo.transcripts || []
+  const studentInfo = data?.universityOfIcelandStudentInfo?.transcripts || []
 
   return (
     <Box marginBottom={[6, 6, 10]}>
