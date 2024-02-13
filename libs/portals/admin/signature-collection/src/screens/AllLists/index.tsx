@@ -124,7 +124,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          {collectionStatus === CollectionStatus.InitialActive && (
+          {collectionStatus === CollectionStatus.InReview && (
             <ListInfo
               message={formatMessage(m.signatureCollectionProcessingComplete)}
             />
