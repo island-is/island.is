@@ -79,19 +79,18 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   listStatus === ListStatus.Reviewed ? 'success' : undefined
                 }
               />
-              {!!list.collectors?.length &&
-                list.collectors.map((collector) => (
-                  <Box key={collector.name} marginBottom={5}>
-                    <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
-                    <Text>
-                      {collector.name +
-                        ' ' +
-                        '(' +
-                        formatNationalId(collector.nationalId) +
-                        ')'}
-                    </Text>
-                  </Box>
-                ))}
+              {list.collectors?.map((collector) => (
+                <Box key={collector.name} marginBottom={5}>
+                  <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
+                  <Text>
+                    {collector.name +
+                      ' ' +
+                      '(' +
+                      formatNationalId(collector.nationalId) +
+                      ')'}
+                  </Text>
+                </Box>
+              ))}
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
