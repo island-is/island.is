@@ -516,6 +516,9 @@
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
+      "@island.is/clients/smart-solutions": [
+        "libs/clients/smart-solutions-v2/src/index.ts"
+      ],
       "@island.is/clients/administration-of-occupational-safety-and-health": [
         "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
       ],
