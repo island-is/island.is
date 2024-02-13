@@ -18,20 +18,20 @@ export type Filters = {
 }
 
 export enum ListStatus {
-  Active = 'active',
-  InReview = 'inReview',
-  Reviewed = 'reviewed',
-  Extendable = 'extendable',
-  Inactive = 'inactive',
+  Active = 'Active',
+  InReview = 'InReview',
+  Reviewed = 'Reviewed',
+  Extendable = 'Extendable',
+  Inactive = 'Inactive',
 }
 
 export enum CollectionStatus {
-  InitialActive = 'initialActive',
-  Active = 'active',
-  InReview = 'inReview',
-  Processing = 'processing',
-  Processed = 'processed',
-  Inactive = 'inactive',
+  InitialActive = 'InitialActive',
+  Active = 'Active',
+  InReview = 'InReview',
+  Processing = 'Processing',
+  Processed = 'Processed',
+  Inactive = 'Inactive',
 }
 
 export const downloadFile = () => {

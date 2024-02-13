@@ -240,7 +240,7 @@ export const m = defineMessages({
   },
   confirmListReviewedToggleBack: {
     id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
-    defaultMessage: 'Opna fyrir úrvinnslu',
+    defaultMessage: 'Aflæsa úrvinnslu',
     description: '',
   },
   listReviewedModalDescription: {
@@ -249,9 +249,24 @@ export const m = defineMessages({
       'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
     description: '',
   },
-  listReviewedAlert: {
-    id: 'admin-portal.signature-collection:listReviewedAlert',
+  listStatusReviewedStatusAlert: {
+    id: 'admin-portal.signature-collection:listStatusReviewedStatusAlert',
     defaultMessage: 'Úrvinnslu er lokið á þessari söfnun',
+    description: '',
+  },
+  listStatusActiveAlert: {
+    id: 'admin-portal.signature-collection:listStatusActiveAlert',
+    defaultMessage: 'Söfnun er í gangi',
+    description: '',
+  },
+  listStatusInReviewAlert: {
+    id: 'admin-portal.signature-collection:listStatusActiveAlert',
+    defaultMessage: 'Söfnunin er opin fyrir úrvinnslu',
+    description: '',
+  },
+  listStatusExtendableAlert: {
+    id: 'admin-portal.signature-collection:listStatusExtendableAlert',
+    defaultMessage: 'Opið er fyrir framlengingu á söfnun',
     description: '',
   },
   toggleReviewSuccess: {
@@ -343,7 +358,7 @@ export const m = defineMessages({
   compareListsDescription: {
     id: 'admin-portal.signature-collection:compareListsDescription',
     defaultMessage:
-      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði',
+      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði.',
     description: '',
   },
   compareListsModalDescription: {

@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
+import { CollectionStatus } from '../../../../lib/utils'
 
 const ActionCompleteCollectionProcessing = () => {
   const { formatMessage } = useLocale()

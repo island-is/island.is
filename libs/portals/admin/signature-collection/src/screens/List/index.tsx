@@ -15,7 +15,7 @@ import Signees from './components/signees'
 import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
-import ListReviewedAlert from './components/listReviewedAlert'
+import ListInfo from './components/listInfoAlert'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
@@ -27,6 +27,8 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
     listStatus: string
   }
   const { formatMessage } = useLocale()
+
+  console.log('list', listStatus)
 
   return (
     <GridContainer>
@@ -62,7 +64,21 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              {listStatus === ListStatus.Reviewed && <ListReviewedAlert />}
+
+              <ListInfo
+                message={
+                  listStatus === ListStatus.Extendable
+                    ? formatMessage(m.listStatusExtendableAlert)
+                    : listStatus === ListStatus.InReview
+                    ? formatMessage(m.listStatusInReviewAlert)
+                    : listStatus === ListStatus.Reviewed
+                    ? formatMessage(m.listStatusReviewedStatusAlert)
+                    : formatMessage(m.listStatusActiveAlert)
+                }
+                type={
+                  listStatus === ListStatus.Reviewed ? 'success' : undefined
+                }
+              />
               {!!list.collectors?.length &&
                 list.collectors.map((collector) => (
                   <Box key={collector.name} marginBottom={5}>
@@ -76,17 +92,17 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     </Text>
                   </Box>
                 ))}
-              {listStatus === ListStatus.Extendable && (
-                <ActionExtendDeadline
-                  listId={list.id}
-                  endTime={list.endTime}
-                  allowedToProcess={allowedToProcess}
-                />
-              )}
+              <ActionExtendDeadline
+                listId={list.id}
+                endTime={list.endTime}
+                allowedToProcess={
+                  allowedToProcess && listStatus === ListStatus.Extendable
+                }
+              />
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-              {allowedToProcess && listStatus === ListStatus.InReview && (
+              {allowedToProcess && (
                 <>
-                  <PaperUpload listId={list.id} />
+                  <PaperUpload listId={list.id} listStatus={listStatus} />
                   <ActionReviewComplete
                     listId={list.id}
                     listStatus={listStatus}

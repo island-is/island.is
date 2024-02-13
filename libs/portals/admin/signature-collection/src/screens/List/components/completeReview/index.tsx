@@ -47,6 +47,10 @@ const ActionReviewComplete = ({
           <Button
             iconType="outline"
             variant="text"
+            disabled={
+              listStatus !== ListStatus.Reviewed &&
+              listStatus !== ListStatus.InReview
+            }
             icon={
               listStatus === ListStatus.Reviewed ? 'lockOpened' : 'lockClosed'
             }
