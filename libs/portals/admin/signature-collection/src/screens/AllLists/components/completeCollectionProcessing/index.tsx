@@ -5,13 +5,13 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
-import { CollectionStatus } from '../../../../lib/utils'
 
 const ActionCompleteCollectionProcessing = () => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
 
-  const [processCollectionMutation] = useProcessCollectionMutation()
+  const [processCollectionMutation, { loading }] =
+    useProcessCollectionMutation()
   const { revalidate } = useRevalidator()
 
   const completeProcessing = async () => {
@@ -62,6 +62,7 @@ const ActionCompleteCollectionProcessing = () => {
               variant="ghost"
               colorScheme="destructive"
               onClick={() => completeProcessing()}
+              loading={loading}
             >
               {formatMessage(m.completeCollectionProcessing)}
             </Button>

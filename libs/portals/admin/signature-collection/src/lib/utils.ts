@@ -28,6 +28,7 @@ export enum ListStatus {
 export enum CollectionStatus {
   InitialActive = 'InitialActive',
   Active = 'Active',
+  InInitialReview = 'InInitialReview',
   InReview = 'InReview',
   Processing = 'Processing',
   Processed = 'Processed',

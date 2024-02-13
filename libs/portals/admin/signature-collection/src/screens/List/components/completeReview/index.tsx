@@ -16,8 +16,12 @@ const ActionReviewComplete = ({
 }) => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
-  const [toggleListReviewMutation] = useToggleListReviewMutation()
+  const [toggleListReviewMutation, { loading }] = useToggleListReviewMutation()
   const { revalidate } = useRevalidator()
+  const listReviewed = listStatus === ListStatus.Reviewed
+  const modalText = listReviewed
+    ? formatMessage(m.confirmListReviewedToggleBack)
+    : formatMessage(m.confirmListReviewed)
 
   const toggleReview = async () => {
     try {
@@ -51,38 +55,37 @@ const ActionReviewComplete = ({
               listStatus !== ListStatus.Reviewed &&
               listStatus !== ListStatus.InReview
             }
-            icon={
-              listStatus === ListStatus.Reviewed ? 'lockOpened' : 'lockClosed'
-            }
-            colorScheme={
-              listStatus === ListStatus.Reviewed ? 'default' : 'destructive'
-            }
+            icon={listReviewed ? 'lockOpened' : 'lockClosed'}
+            colorScheme={listReviewed ? 'default' : 'destructive'}
             onClick={() => setModalSubmitReviewIsOpen(true)}
           >
-            {listStatus === ListStatus.Reviewed
-              ? formatMessage(m.confirmListReviewedToggleBack)
-              : formatMessage(m.confirmListReviewed)}
+            {modalText}
           </Button>
         </Box>
       </Box>
       <Modal
-        id="reviewComplete"
+        id="toggleReviewComplete"
         isVisible={modalSubmitReviewIsOpen}
-        title={formatMessage(m.confirmListReviewed)}
-        label={formatMessage(m.confirmListReviewed)}
+        title={modalText}
         onClose={() => setModalSubmitReviewIsOpen(false)}
+        label={''}
         closeButtonLabel={''}
       >
         <Box marginTop={5}>
-          <Text>{formatMessage(m.listReviewedModalDescription)}</Text>
+          <Text>
+            {listReviewed
+              ? formatMessage(m.listReviewedModalDescriptionToggleBack)
+              : formatMessage(m.listReviewedModalDescription)}
+          </Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
               variant="ghost"
               colorScheme="destructive"
               onClick={() => toggleReview()}
+              loading={loading}
             >
-              {formatMessage(m.confirmListReviewed)}
+              {modalText}
             </Button>
           </Box>
         </Box>
