@@ -67,13 +67,15 @@ test.describe.serial('Travel ban tests', () => {
       })
       .fill('Lagaákvæðin g')
     await page.getByLabel('a-lið 1. mgr. 95. gr. sml.').click()
-
     await page.getByRole('button', { name: 'Halda áfram' }).click()
 
     await page.getByRole('textbox', { name: 'Málsatvik' }).fill('Málsatvik')
     await page.getByRole('textbox', { name: 'Lagarök' }).fill('Lagarök')
+
     await page.getByRole('button', { name: 'Halda áfram' }).click()
+
     await page.getByRole('button', { name: 'Halda áfram' }).click()
+
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
   })
