@@ -60,6 +60,9 @@ export class VehicleMileagePutModel {
 
   @Field(() => String, { nullable: true })
   mileage?: string
+
+  @Field(() => Number, { nullable: true })
+  mileageNumber?: number | null
 }
 
 @ObjectType()

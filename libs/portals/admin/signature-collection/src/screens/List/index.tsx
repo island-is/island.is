@@ -15,13 +15,17 @@ import Signees from './components/signees'
 import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
-import ListReviewedAlert from './components/listReviewedAlert'
+import ListInfo from './components/listInfoAlert'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
+import { ListStatus } from '../../lib/utils'
 
 export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
-  const { list } = useLoaderData() as { list: SignatureCollectionList }
+  const { list, listStatus } = useLoaderData() as {
+    list: SignatureCollectionList
+    listStatus: string
+  }
   const { formatMessage } = useLocale()
 
   return (
@@ -58,30 +62,48 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              {/*<ListReviewedAlert />*/}
-              {list.collectors?.length &&
-                list.collectors.map((collector) => (
-                  <Box key={collector.name} marginBottom={5}>
-                    <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
-                    <Text>
-                      {collector.name +
-                        ' ' +
-                        '(' +
-                        formatNationalId(collector.nationalId) +
-                        ')'}
-                    </Text>
-                  </Box>
-                ))}
+
+              <ListInfo
+                message={
+                  listStatus === ListStatus.Extendable
+                    ? formatMessage(m.listStatusExtendableAlert)
+                    : listStatus === ListStatus.InReview
+                    ? formatMessage(m.listStatusInReviewAlert)
+                    : listStatus === ListStatus.Reviewed
+                    ? formatMessage(m.listStatusReviewedStatusAlert)
+                    : formatMessage(m.listStatusActiveAlert)
+                }
+                type={
+                  listStatus === ListStatus.Reviewed ? 'success' : undefined
+                }
+              />
+              {list.collectors?.map((collector) => (
+                <Box key={collector.name} marginBottom={5}>
+                  <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
+                  <Text>
+                    {collector.name +
+                      ' ' +
+                      '(' +
+                      formatNationalId(collector.nationalId) +
+                      ')'}
+                  </Text>
+                </Box>
+              ))}
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
-                allowedToProcess={allowedToProcess}
+                allowedToProcess={
+                  allowedToProcess && listStatus === ListStatus.Extendable
+                }
               />
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
               {allowedToProcess && (
                 <>
-                  <PaperUpload listId={list.id} />
-                  {/*<ActionReviewComplete />*/}
+                  <PaperUpload listId={list.id} listStatus={listStatus} />
+                  <ActionReviewComplete
+                    listId={list.id}
+                    listStatus={listStatus}
+                  />
                 </>
               )}
             </>

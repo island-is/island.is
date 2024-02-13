@@ -161,6 +161,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/home-support'),
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: () =>
     import('@island.is/application/templates/aosh/change-machine-supervisor'),
+  [ApplicationTypes.UNIVERSITY]: () =>
+    import('@island.is/application/templates/university'),
 }
 
 export default templates
