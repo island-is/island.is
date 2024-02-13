@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import add from 'date-fns/add'
+import differenceInMonths from 'date-fns/differenceInMonths'
 import { useRouter } from 'next/router'
 
 import {
@@ -35,7 +36,7 @@ import {
   SocialInsurancePensionCalculationLivingCondition as LivingCondition,
   SocialInsurancePensionCalculationPeriodIncomeType as PeriodIncomeType,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -69,10 +70,11 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   pageData,
   dateOfCalculationsOptions,
 }) => {
+  const defaultPensionAge = pageData?.configJson?.defaultPensionAge ?? 67
+
   const methods = useForm<CalculationInput>({
     defaultValues,
   })
-  const defaultPensionAge = pageData?.configJson?.defaultPensionAge ?? 67
   const maxMonthPensionDelay = 156 // TODO: add to namespace
 
   const [loadingResultPage, setLoadingResultPage] = useState(false)
@@ -81,11 +83,13 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
       ? true
       : false,
   )
-  const [birthdate, setBirthdate] = useState<string | undefined | null>(
-    defaultValues.birthdate,
-  )
+  const [birthdate, setBirthdate] = useState(defaultValues.birthdate)
+  const [startDate, setStartDate] = useState(defaultValues.startDate)
   const [basePensionType, setBasePensionType] = useState<BasePensionType>(
     defaultValues.typeOfBasePension || BasePensionType.Retirement,
+  )
+  const [childCount, setChildCount] = useState<number | undefined | null>(
+    methods.formState.defaultValues?.childCount,
   )
 
   const maxMonthPensionHurry =
@@ -190,49 +194,54 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   }, [])
 
   const childSupportCountOptions = useMemo<Option<number>[]>(() => {
-    return [
+    const options = [
       {
         label: 'Engu barni',
         value: 0,
       },
       {
-        label: '1 barn',
+        label: '1 barni',
         value: 1,
       },
       {
-        label: '2 börn',
+        label: '2 börnum',
         value: 2,
       },
       {
-        label: '3 börn',
+        label: '3 börnum',
         value: 3,
       },
       {
-        label: '4 börn',
+        label: '4 börnum',
         value: 4,
       },
       {
-        label: '5 börn',
+        label: '5 börnum',
         value: 5,
       },
       {
-        label: '6 börn',
+        label: '6 börnum',
         value: 6,
       },
       {
-        label: '7 börn',
+        label: '7 börnum',
         value: 7,
       },
       {
-        label: '8 börn',
+        label: '8 börnum',
         value: 8,
       },
       {
-        label: '9 börn',
+        label: '9 börnum',
         value: 9,
       },
     ]
-  }, [])
+
+    if (typeof childCount === 'number') {
+      return options.slice(0, childCount + 1)
+    }
+    return []
+  }, [childCount])
 
   const [dateOfCalculations, setDateOfCalculations] = useState(
     methods.formState.defaultValues?.dateOfCalculations ??
@@ -258,8 +267,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   const { activeLocale } = useI18n()
 
   const birthdateRange = {
-    minDate: add(new Date(dateOfCalculations), { years: -130 }),
-    maxDate: new Date(dateOfCalculations), // TODO: what should this be?
+    minDate: add(new Date(), { years: -130 }),
+    maxDate: new Date(), // TODO: what should this be?
   }
 
   const startDateRange = !birthdate
@@ -277,6 +286,31 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
       ?.label ?? dateOfCalculationsOptions[0].label
   }`
+
+  const defaultPensionDate = birthdate
+    ? add(new Date(birthdate), {
+        years: defaultPensionAge,
+      })
+    : null
+
+  const monthOffset =
+    defaultPensionDate && startDate
+      ? differenceInMonths(new Date(startDate), defaultPensionDate)
+      : undefined
+
+  const n = useNamespaceStrict({
+    pensionStartMonthIsDefault: `Þú vilt hefja töku ${defaultPensionAge} ára`,
+    pensionStartMonthIsDelayed: `Þú vilt hefja töku ${
+      typeof monthOffset === 'number'
+        ? String(Math.abs(monthOffset)) + ' mánuðum'
+        : ''
+    } eftir ${defaultPensionAge} ára aldur`,
+    pensionStartMonthIsHurried: `Þú vilt hefja töku ${
+      typeof monthOffset === 'number'
+        ? String(Math.abs(monthOffset)) + ' mánuðum'
+        : ''
+    } fyrir ${defaultPensionAge} ára aldur`,
+  })
 
   return (
     <PensionCalculatorWrapper
@@ -370,7 +404,14 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                           maxDate={birthdateRange.maxDate}
                           minYear={birthdateRange.minDate.getFullYear()}
                           maxYear={birthdateRange.maxDate.getFullYear()}
-                          onChange={setBirthdate}
+                          onChange={(date) => {
+                            setBirthdate(date)
+                            const newStartDate = add(new Date(date), {
+                              years: defaultPensionAge,
+                            }).toISOString()
+                            methods.setValue('startDate', newStartDate)
+                            setStartDate(newStartDate)
+                          }}
                         />
                       </Box>
 
@@ -392,8 +433,22 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                             !birthdate &&
                             !methods.formState.defaultValues?.birthdate
                           }
+                          onChange={setStartDate}
                         />
                       </Box>
+
+                      {typeof monthOffset === 'number' && (
+                        <Text>
+                          {n(
+                            monthOffset === 0
+                              ? 'pensionStartMonthIsDefault'
+                              : monthOffset > 0
+                              ? 'pensionStartMonthIsDelayed'
+                              : 'pensionStartMonthIsHurried',
+                            'a',
+                          )}
+                        </Text>
+                      )}
 
                       <Text variant="h2" as="h2">
                         Þínar aðstæður
@@ -426,18 +481,26 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                           label="Börn yngri en 18 ára"
                           placeholder="Veldu fjölda barna"
                           options={childCountOptions}
+                          onSelect={(option) => {
+                            if (option) {
+                              setChildCount(option.value)
+                              methods.setValue('childSupportCount', 0)
+                            }
+                          }}
                         />
                       </Box>
 
-                      <Box className={styles.inputContainer}>
-                        <SelectController
-                          id={'childSupportCount' as keyof CalculationInput}
-                          name={'childSupportCount' as keyof CalculationInput}
-                          label="Fær meðlag greitt með"
-                          placeholder="Veldu fjölda barna"
-                          options={childSupportCountOptions}
-                        />
-                      </Box>
+                      {typeof childCount === 'number' && childCount > 0 && (
+                        <Box className={styles.inputContainer}>
+                          <SelectController
+                            id={'childSupportCount' as keyof CalculationInput}
+                            name={'childSupportCount' as keyof CalculationInput}
+                            label="Fær meðlag greitt með"
+                            placeholder="Veldu fjölda barna"
+                            options={childSupportCountOptions}
+                          />
+                        </Box>
+                      )}
 
                       {(basePensionType === BasePensionType.Disability ||
                         basePensionType === BasePensionType.Rehabilitation) && (
@@ -575,7 +638,6 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                           id={'taxCard' as keyof CalculationInput}
                           name={'taxCard' as keyof CalculationInput}
                           label="Hlutfall skattkorts hjá TR"
-                          required={true}
                           placeholder="%"
                           type="number"
                           suffix="%"
