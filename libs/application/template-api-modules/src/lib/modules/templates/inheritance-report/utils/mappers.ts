@@ -201,14 +201,7 @@ export const expandAnswers = (
         ),
         total: answers.debts.domesticAndForeignDebts?.total ?? 0,
       },
-      publicCharges: {
-        data: (answers.debts.publicCharges?.data ?? []).map((charge) => {
-          return {
-            publicChargesAmount: charge.publicChargesAmount ?? 0,
-          }
-        }),
-        total: answers.debts.publicCharges?.total ?? 0,
-      },
+      publicCharges: (answers.debts.publicCharges ?? 0).toString(),
     },
     funeralCostAmount: answers.funeralCostAmount ?? '',
     heirs: {
