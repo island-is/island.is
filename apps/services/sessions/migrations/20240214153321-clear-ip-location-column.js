@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     // Remove clear all data from the ip_location column due to bug caused by outdated GEOIP database
     await queryInterface.sequelize.query(
-      'UPDATE sessions SET ip_location = NULL',
+      'UPDATE session SET ip_location = NULL',
     )
   },
 
