@@ -5,6 +5,7 @@ import { verifyRequestCompletion } from '../../../support/api-tools'
 import { getDaysFromNow, randomCourtCaseNumber } from '../utils/helpers'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
+import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -171,5 +172,11 @@ test.describe.serial('Travel ban tests', () => {
 
   test('judge should receive appealed case', async ({ judgePage }) => {
     await judgeReceivesAppealTest(judgePage, caseId)
+  })
+
+  test('coa judge should submit decision in appeal case', async ({
+    coaPage,
+  }) => {
+    await coaJudgesCompleteAppealCaseTest(coaPage, caseId)
   })
 })
