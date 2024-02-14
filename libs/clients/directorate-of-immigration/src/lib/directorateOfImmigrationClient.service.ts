@@ -271,6 +271,7 @@ export class DirectorateOfImmigrationClient {
         auth,
       ).apiApplicationCitizenshipChildCompletePost({
         applicationCitizenshipChildCompleteNewModel: {
+          parentApplicationId: applicationId,
           applicant: {
             icelandicIDNO: childInfo.nationalId,
             givenName: childInfo.givenName,
@@ -296,7 +297,6 @@ export class DirectorateOfImmigrationClient {
               ? new Date(selectedChild.otherParentBirtDate).toISOString()
               : undefined,
             parent2Name: selectedChild.otherParentName,
-            // ParentApplicationID: applicationId,
           },
         },
       })
