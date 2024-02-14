@@ -27,7 +27,6 @@ import {
 import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig } from '@island.is/web/components'
 import {
-  CustomPage,
   Organization,
   OrganizationPage,
   Query,
@@ -104,23 +103,25 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     const options = [
       {
-        label: formatMessage(translationStrings.basePensionRetirement),
+        label: formatMessage(translationStrings.basePensionRetirementLabel),
         value: BasePensionType.Retirement,
       },
       {
-        label: formatMessage(translationStrings.basePensionFishermanRetirement),
+        label: formatMessage(
+          translationStrings.basePensionFishermanRetirementLabel,
+        ),
         value: BasePensionType.FishermanRetirement,
       },
       {
-        label: formatMessage(translationStrings.basePensionDisability),
+        label: formatMessage(translationStrings.basePensionDisabilityLabel),
         value: BasePensionType.Disability,
       },
       {
-        label: formatMessage(translationStrings.basePensionRehabilitation),
+        label: formatMessage(translationStrings.basePensionRehabilitationLabel),
         value: BasePensionType.Rehabilitation,
       },
       {
-        label: formatMessage(translationStrings.basePensionHalfRetirement),
+        label: formatMessage(translationStrings.basePensionHalfRetirementLabel),
         value: BasePensionType.HalfRetirement,
       },
     ]
@@ -131,11 +132,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const hasSpouseOptions = useMemo<Option<boolean>[]>(() => {
     return [
       {
-        label: formatMessage(translationStrings.hasSpouseNo),
+        label: formatMessage(translationStrings.hasSpouseNoLabel),
         value: false,
       },
       {
-        label: formatMessage(translationStrings.hasSpouseYes),
+        label: formatMessage(translationStrings.hasSpouseYesLabel),
         value: true,
       },
     ]
@@ -144,11 +145,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const livingConditionOptions = useMemo<Option<LivingCondition>[]>(() => {
     return [
       {
-        label: formatMessage(translationStrings.livesAloneYes),
+        label: formatMessage(translationStrings.livesAloneYesLabel),
         value: LivingCondition.LivesAlone,
       },
       {
-        label: formatMessage(translationStrings.livesAloneNo),
+        label: formatMessage(translationStrings.livesAloneNoLabel),
         value: LivingCondition.DoesNotLiveAlone,
       },
     ]
@@ -157,43 +158,43 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const childCountOptions = useMemo<Option<number>[]>(() => {
     return [
       {
-        label: formatMessage(translationStrings.childCountOptionsNone),
+        label: formatMessage(translationStrings.childCountOptionsNoneLabel),
         value: 0,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsOne),
+        label: formatMessage(translationStrings.childCountOptionsOneLabel),
         value: 1,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsTwo),
+        label: formatMessage(translationStrings.childCountOptionsTwoLabel),
         value: 2,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsThree),
+        label: formatMessage(translationStrings.childCountOptionsThreeLabel),
         value: 3,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsFour),
+        label: formatMessage(translationStrings.childCountOptionsFourLabel),
         value: 4,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsFive),
+        label: formatMessage(translationStrings.childCountOptionsFiveLabel),
         value: 5,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsSix),
+        label: formatMessage(translationStrings.childCountOptionsSixLabel),
         value: 6,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsSeven),
+        label: formatMessage(translationStrings.childCountOptionsSevenLabel),
         value: 7,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsEight),
+        label: formatMessage(translationStrings.childCountOptionsEightLabel),
         value: 8,
       },
       {
-        label: formatMessage(translationStrings.childCountOptionsNine),
+        label: formatMessage(translationStrings.childCountOptionsNineLabel),
         value: 9,
       },
     ]
@@ -202,43 +203,63 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const childSupportCountOptions = useMemo<Option<number>[]>(() => {
     const options = [
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsNone),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsNoneLabel,
+        ),
         value: 0,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsOne),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsOneLabel,
+        ),
         value: 1,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsTwo),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsTwoLabel,
+        ),
         value: 2,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsThree),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsThreeLabel,
+        ),
         value: 3,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsFour),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsFourLabel,
+        ),
         value: 4,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsFive),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsFiveLabel,
+        ),
         value: 5,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsSix),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsSixLabel,
+        ),
         value: 6,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsSeven),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsSevenLabel,
+        ),
         value: 7,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsEight),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsEightLabel,
+        ),
         value: 8,
       },
       {
-        label: formatMessage(translationStrings.childSupportCountOptionsNine),
+        label: formatMessage(
+          translationStrings.childSupportCountOptionsNineLabel,
+        ),
         value: 9,
       },
     ]
@@ -374,7 +395,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         id={'typeOfBasePension' as keyof CalculationInput}
                         name={'typeOfBasePension' as keyof CalculationInput}
                         label={formatMessage(
-                          translationStrings.typeOfBasePension,
+                          translationStrings.typeOfBasePensionLabel,
                         )}
                         options={basePensionTypeOptions}
                         onSelect={(option) => {
@@ -398,7 +419,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <DatePickerController
                           id={'birthdate' as keyof CalculationInput}
                           name={'birthdate' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.birthdate)}
+                          label={formatMessage(
+                            translationStrings.birthdateLabel,
+                          )}
                           placeholder={formatMessage(
                             translationStrings.birthdatePlaceholder,
                           )}
@@ -425,7 +448,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <DatePickerController
                           id={'startDate' as keyof CalculationInput}
                           name={'startDate' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.startDate)}
+                          label={formatMessage(
+                            translationStrings.startDateLabel,
+                          )}
                           placeholder={formatMessage(
                             translationStrings.startDatePlaceholder,
                           )}
@@ -464,7 +489,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <SelectController
                           id={'hasSpouse' as keyof CalculationInput}
                           name={'hasSpouse' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.hasSpouse)}
+                          label={formatMessage(
+                            translationStrings.hasSpouseLabel,
+                          )}
                           placeholder={formatMessage(
                             translationStrings.hasSpousePlaceholder,
                           )}
@@ -477,7 +504,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           id={'livingCondition' as keyof CalculationInput}
                           name={'livingCondition' as keyof CalculationInput}
                           label={formatMessage(
-                            translationStrings.livingCondition,
+                            translationStrings.livingConditionLabel,
                           )}
                           placeholder={formatMessage(
                             translationStrings.livingConditionPlaceholder,
@@ -490,7 +517,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <SelectController
                           id={'childCount' as keyof CalculationInput}
                           name={'childCount' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.childCount)}
+                          label={formatMessage(
+                            translationStrings.childCountLabel,
+                          )}
                           placeholder={formatMessage(
                             translationStrings.childCountPlaceholder,
                           )}
@@ -510,7 +539,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             id={'childSupportCount' as keyof CalculationInput}
                             name={'childSupportCount' as keyof CalculationInput}
                             label={formatMessage(
-                              translationStrings.childSupportCount,
+                              translationStrings.childSupportCountLabel,
                             )}
                             placeholder={formatMessage(
                               translationStrings.childSupportCountPlaceholder,
@@ -531,7 +560,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 'livingConditionRatio' as keyof CalculationInput
                               }
                               label={formatMessage(
-                                translationStrings.livingConditionRatio,
+                                translationStrings.livingConditionRatioLabel,
                               )}
                               placeholder="%"
                               type="number"
@@ -561,7 +590,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
                       <Stack space={2}>
                         <Text>
-                          {formatMessage(translationStrings.mobilityImpairment)}
+                          {formatMessage(
+                            translationStrings.mobilityImpairmentLabel,
+                          )}
                         </Text>
                         <Box className={styles.inputContainer}>
                           <Controller
@@ -598,7 +629,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
                       <Stack space={2}>
                         <Text>
-                          {formatMessage(translationStrings.hasLivedAbroad)}
+                          {formatMessage(
+                            translationStrings.hasLivedAbroadLabel,
+                          )}
                         </Text>
                         <Box className={styles.inputContainer}>
                           <Inline space={3}>
@@ -639,7 +672,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 'livingConditionAbroadInYears' as keyof CalculationInput
                               }
                               label={formatMessage(
-                                translationStrings.livingConditionAbroadInYears,
+                                translationStrings.livingConditionAbroadInYearsLabel,
                               )}
                               placeholder="0 ár"
                               type="number"
@@ -674,7 +707,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     onChange(PeriodIncomeType.Month)
                                   }}
                                   label={formatMessage(
-                                    translationStrings.typeOfPeriodIncomeMonth,
+                                    translationStrings.typeOfPeriodIncomeMonthLabel,
                                   )}
                                 />
                               </GridColumn>
@@ -686,7 +719,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     onChange(PeriodIncomeType.Year)
                                   }}
                                   label={formatMessage(
-                                    translationStrings.typeOfPeriodIncomeYear,
+                                    translationStrings.typeOfPeriodIncomeYearLabel,
                                   )}
                                 />
                               </GridColumn>
@@ -699,7 +732,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'taxCard' as keyof CalculationInput}
                           name={'taxCard' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.taxCardRatio)}
+                          label={formatMessage(
+                            translationStrings.taxCardRatioLabel,
+                          )}
                           placeholder="%"
                           type="number"
                           suffix="%"
@@ -710,7 +745,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'income' as keyof CalculationInput}
                           name={'income' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.income)}
+                          label={formatMessage(translationStrings.incomeLabel)}
                           placeholder="kr."
                           currency={true}
                         />
@@ -720,7 +755,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           id={'pensionPayments' as keyof CalculationInput}
                           name={'pensionPayments' as keyof CalculationInput}
                           label={formatMessage(
-                            translationStrings.pensionPayments,
+                            translationStrings.pensionPaymentsLabel,
                           )}
                           placeholder="kr."
                           currency={true}
@@ -736,7 +771,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             'privatePensionPayments' as keyof CalculationInput
                           }
                           label={formatMessage(
-                            translationStrings.privatePensionPayments,
+                            translationStrings.privatePensionPaymentsLabel,
                           )}
                           placeholder="kr."
                           currency={true}
@@ -747,7 +782,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'otherIncome' as keyof CalculationInput}
                           name={'otherIncome' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.otherIncome)}
+                          label={formatMessage(
+                            translationStrings.otherIncomeLabel,
+                          )}
                           placeholder="kr."
                           currency={true}
                         />
@@ -758,7 +795,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           id={'capitalIncome' as keyof CalculationInput}
                           name={'capitalIncome' as keyof CalculationInput}
                           label={formatMessage(
-                            translationStrings.capitalIncome,
+                            translationStrings.capitalIncomeLabel,
                           )}
                           placeholder="kr."
                           currency={true}
@@ -774,7 +811,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             'benefitsFromMunicipality' as keyof CalculationInput
                           }
                           label={formatMessage(
-                            translationStrings.benefitsFromMunicipality,
+                            translationStrings.benefitsFromMunicipalityLabel,
                           )}
                           placeholder="kr."
                           currency={true}
@@ -785,7 +822,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'premium' as keyof CalculationInput}
                           name={'premium' as keyof CalculationInput}
-                          label={formatMessage(translationStrings.premium)}
+                          label={formatMessage(translationStrings.premiumLabel)}
                           placeholder="kr."
                           currency={true}
                         />
@@ -796,7 +833,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           id={'foreignBasicPension' as keyof CalculationInput}
                           name={'foreignBasicPension' as keyof CalculationInput}
                           label={formatMessage(
-                            translationStrings.foreignBasicPension,
+                            translationStrings.foreignBasicPensionLabel,
                           )}
                           placeholder="kr."
                           currency={true}

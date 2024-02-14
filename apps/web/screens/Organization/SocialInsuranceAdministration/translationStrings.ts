@@ -17,203 +17,203 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þú vilt hefja töku fyrir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt flýta töku ellilífeyris',
   },
-  hasSpouseYes: {
-    id: 'web.pensionCalculator:hasSpouseYes',
+  hasSpouseYesLabel: {
+    id: 'web.pensionCalculator:hasSpouseYesLabel',
     defaultMessage: 'Á maka',
     description: 'Hjúskaparstaða, á maka',
   },
-  hasSpouseNo: {
-    id: 'web.pensionCalculator:hasSpouseNo',
+  hasSpouseNoLabel: {
+    id: 'web.pensionCalculator:hasSpouseNoLabel',
     defaultMessage: 'Á ekki maka',
     description: 'Hjúskaparstaða, á ekki maka',
   },
-  livesAloneYes: {
-    id: 'web.pensionCalculator:livesAloneYes',
+  livesAloneYesLabel: {
+    id: 'web.pensionCalculator:livesAloneYesLabel',
     defaultMessage: 'Býr ein(n)',
     description: 'Heimilisaðstæður, býr ein(n)',
   },
-  livesAloneNo: {
-    id: 'web.pensionCalculator:livesAloneNo',
+  livesAloneNoLabel: {
+    id: 'web.pensionCalculator:livesAloneNoLabel',
     defaultMessage: 'Býr ekki ein(n)',
     description: 'Heimilisaðstæður, býr ekki ein(n)',
   },
-  basePensionRetirement: {
-    id: 'web.pensionCalculator:basePensionRetirement',
+  basePensionRetirementLabel: {
+    id: 'web.pensionCalculator:basePensionRetirementLabel',
     defaultMessage: 'Ellilífeyrir',
     description: 'Tegund lífeyris, Ellilífeyrir',
   },
-  basePensionFishermanRetirement: {
-    id: 'web.pensionCalculator:basePensionFishermanRetirement',
+  basePensionFishermanRetirementLabel: {
+    id: 'web.pensionCalculator:basePensionFishermanRetirementLabel',
     defaultMessage: 'Ellilífeyrir sjómanna',
     description: 'Tegund lífeyris, Ellilífeyrir sjómanna',
   },
-  basePensionDisability: {
-    id: 'web.pensionCalculator:basePensionDisability',
+  basePensionDisabilityLabel: {
+    id: 'web.pensionCalculator:basePensionDisabilityLabel',
     defaultMessage: 'Örorkulífeyrir',
     description: 'Tegund lífeyris, Örorkulífeyrir',
   },
-  basePensionRehabilitation: {
-    id: 'web.pensionCalculator:basePensionRehabilitation',
+  basePensionRehabilitationLabel: {
+    id: 'web.pensionCalculator:basePensionRehabilitationLabel',
     defaultMessage: 'Endurhæfingarlífeyrir',
     description: 'Tegund lífeyris, Endurhæfingarlífeyrir',
   },
-  basePensionHalfRetirement: {
-    id: 'web.pensionCalculator:basePensionHalfRetirement',
+  basePensionHalfRetirementLabel: {
+    id: 'web.pensionCalculator:basePensionHalfRetirementLabel',
     defaultMessage: 'Hálfur ellilífeyrir',
     description: 'Tegund lífeyris, Hálfur ellilífeyrir',
   },
-  childCountOptionsNone: {
-    id: 'web.pensionCalculator:childCountOptionsNone',
+  childCountOptionsNoneLabel: {
+    id: 'web.pensionCalculator:childCountOptionsNoneLabel',
     defaultMessage: 'Ekkert barn',
     description: 'Börn yngri en 18 ára, Ekkert barn',
   },
-  childCountOptionsOne: {
-    id: 'web.pensionCalculator:childCountOptionsOne',
+  childCountOptionsOneLabel: {
+    id: 'web.pensionCalculator:childCountOptionsOneLabel',
     defaultMessage: '1 barn',
     description: 'Börn yngri en 18 ára, 1 barn',
   },
-  childCountOptionsTwo: {
-    id: 'web.pensionCalculator:childCountOptionsTwo',
+  childCountOptionsTwoLabel: {
+    id: 'web.pensionCalculator:childCountOptionsTwoLabel',
     defaultMessage: '2 börn',
     description: 'Börn yngri en 18 ára, 1 barn',
   },
-  childCountOptionsThree: {
-    id: 'web.pensionCalculator:childCountOptionsThree',
+  childCountOptionsThreeLabel: {
+    id: 'web.pensionCalculator:childCountOptionsThreeLabel',
     defaultMessage: '3 börn',
     description: 'Börn yngri en 18 ára, 3 börn',
   },
-  childCountOptionsFour: {
-    id: 'web.pensionCalculator:childCountOptionsFour',
+  childCountOptionsFourLabel: {
+    id: 'web.pensionCalculator:childCountOptionsFourLabel',
     defaultMessage: '4 börn',
     description: 'Börn yngri en 18 ára, 4 börn',
   },
-  childCountOptionsFive: {
-    id: 'web.pensionCalculator:childCountOptionsFive',
+  childCountOptionsFiveLabel: {
+    id: 'web.pensionCalculator:childCountOptionsFiveLabel',
     defaultMessage: '5 börn',
     description: 'Börn yngri en 18 ára, 5 börn',
   },
-  childCountOptionsSix: {
-    id: 'web.pensionCalculator:childCountOptionsSix',
+  childCountOptionsSixLabel: {
+    id: 'web.pensionCalculator:childCountOptionsSixLabel',
     defaultMessage: '6 börn',
     description: 'Börn yngri en 18 ára, 6 börn',
   },
-  childCountOptionsSeven: {
-    id: 'web.pensionCalculator:childCountOptionsSeven',
+  childCountOptionsSevenLabel: {
+    id: 'web.pensionCalculator:childCountOptionsSevenLabel',
     defaultMessage: '7 börn',
     description: 'Börn yngri en 18 ára, 7 börn',
   },
-  childCountOptionsEight: {
-    id: 'web.pensionCalculator:childCountOptionsEight',
+  childCountOptionsEightLabel: {
+    id: 'web.pensionCalculator:childCountOptionsEightLabel',
     defaultMessage: '8 börn',
     description: 'Börn yngri en 18 ára, 8 börn',
   },
-  childCountOptionsNine: {
-    id: 'web.pensionCalculator:childCountOptionsNine',
+  childCountOptionsNineLabel: {
+    id: 'web.pensionCalculator:childCountOptionsNineLabel',
     defaultMessage: '9 börn',
     description: 'Börn yngri en 18 ára, 9 börn',
   },
-  childSupportCountOptionsNone: {
-    id: 'web.pensionCalculator:childSupportCountOptionsNone',
+  childSupportCountOptionsNoneLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsNoneLabel',
     defaultMessage: 'Engu barni',
     description: 'Fær meðlag greitt með, Engu barni',
   },
-  childSupportCountOptionsOne: {
-    id: 'web.pensionCalculator:childSupportCountOptionsOne',
+  childSupportCountOptionsOneLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsOneLabel',
     defaultMessage: '1 barni',
     description: 'Fær meðlag greitt með, 1 barni',
   },
-  childSupportCountOptionsTwo: {
-    id: 'web.pensionCalculator:childSupportCountOptionsTwo',
+  childSupportCountOptionsTwoLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsTwoLabel',
     defaultMessage: '2 börnum',
     description: 'Fær meðlag greitt með, 2 börnum',
   },
-  childSupportCountOptionsThree: {
-    id: 'web.pensionCalculator:childSupportCountOptionsThree',
+  childSupportCountOptionsThreeLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsThreeLabel',
     defaultMessage: '3 börnum',
     description: 'Fær meðlag greitt með, 3 börnum',
   },
-  childSupportCountOptionsFour: {
-    id: 'web.pensionCalculator:childSupportCountOptionsFour',
+  childSupportCountOptionsFourLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsFourLabel',
     defaultMessage: '4 börnum',
     description: 'Fær meðlag greitt með, 4 börnum',
   },
-  childSupportCountOptionsFive: {
-    id: 'web.pensionCalculator:childSupportCountOptionsFive',
+  childSupportCountOptionsFiveLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsFiveLabel',
     defaultMessage: '5 börnum',
     description: 'Fær meðlag greitt með, 5 börnum',
   },
-  childSupportCountOptionsSix: {
-    id: 'web.pensionCalculator:childSupportCountOptionsSix',
+  childSupportCountOptionsSixLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsSixLabel',
     defaultMessage: '6 börnum',
     description: 'Fær meðlag greitt með, 6 börnum',
   },
-  childSupportCountOptionsSeven: {
-    id: 'web.pensionCalculator:childSupportCountOptionsSeven',
+  childSupportCountOptionsSevenLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsSevenLabel',
     defaultMessage: '7 börnum',
     description: 'Fær meðlag greitt með, 7 börnum',
   },
-  childSupportCountOptionsEight: {
-    id: 'web.pensionCalculator:childSupportCountOptionsEight',
+  childSupportCountOptionsEightLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsEightLabel',
     defaultMessage: '8 börnum',
     description: 'Fær meðlag greitt með, 8 börnum',
   },
-  childSupportCountOptionsNine: {
-    id: 'web.pensionCalculator:childSupportCountOptionsNine',
+  childSupportCountOptionsNineLabel: {
+    id: 'web.pensionCalculator:childSupportCountOptionsNineLabel',
     defaultMessage: '9 börnum',
     description: 'Fær meðlag greitt með, 9 börnum',
   },
-  typeOfPeriodIncomeMonth: {
-    id: 'web.pensionCalculator:typeOfPeriodIncomeMonth',
+  typeOfPeriodIncomeMonthLabel: {
+    id: 'web.pensionCalculator:typeOfPeriodIncomeMonthLabel',
     defaultMessage: 'Mánaðartekjur',
     description: 'Mánaðartekjur',
   },
-  typeOfPeriodIncomeYear: {
-    id: 'web.pensionCalculator:typeOfPeriodIncomeYear',
+  typeOfPeriodIncomeYearLabel: {
+    id: 'web.pensionCalculator:typeOfPeriodIncomeYearLabel',
     defaultMessage: 'Árstekjur',
     description: 'Árstekjur',
   },
-  taxCardRatio: {
-    id: 'web.pensionCalculator:taxCardRatio',
+  taxCardRatioLabel: {
+    id: 'web.pensionCalculator:taxCardRatioLabel',
     defaultMessage: 'Hlutfall skattkorts hjá TR',
     description: 'Hlutfall skattkorts hjá TR',
   },
-  income: {
-    id: 'web.pensionCalculator:income',
+  incomeLabel: {
+    id: 'web.pensionCalculator:incomeLabel',
     defaultMessage: 'Tekjur m.a. af atvinnu, eftirlaunum og atvinnuleysisbótum',
     description: 'Tekjur m.a. af atvinnu, eftirlaunum og atvinnuleysisbótum',
   },
-  pensionPayments: {
-    id: 'web.pensionCalculator:pensionPayments',
+  pensionPaymentsLabel: {
+    id: 'web.pensionCalculator:pensionPaymentsLabel',
     defaultMessage: 'Greiðslur frá lífeyrissjóðum',
     description: 'Greiðslur frá lífeyrissjóðum',
   },
-  privatePensionPayments: {
-    id: 'web.pensionCalculator:privatePensionPayments',
+  privatePensionPaymentsLabel: {
+    id: 'web.pensionCalculator:privatePensionPaymentsLabel',
     defaultMessage: 'Greiðslur viðbótarlífeyrissparnaðar',
     description: 'Greiðslur viðbótarlífeyrissparnaðar',
   },
-  otherIncome: {
-    id: 'web.pensionCalculator:otherIncome',
+  otherIncomeLabel: {
+    id: 'web.pensionCalculator:otherIncomeLabel',
     defaultMessage: 'Aðrar tekjur',
     description: 'Aðrar tekjur',
   },
-  capitalIncome: {
-    id: 'web.pensionCalculator:capitalIncome',
+  capitalIncomeLabel: {
+    id: 'web.pensionCalculator:capitalIncomeLabel',
     defaultMessage: 'Fjármagnstekjur',
     description: 'Fjármagnstekjur',
   },
-  benefitsFromMunicipality: {
-    id: 'web.pensionCalculator:benefitsFromMunicipality',
+  benefitsFromMunicipalityLabel: {
+    id: 'web.pensionCalculator:benefitsFromMunicipalityLabel',
     defaultMessage: 'Skattskyldar bætur sveitarfélaga',
     description: 'Skattskyldar bætur sveitarfélaga',
   },
-  premium: {
-    id: 'web.pensionCalculator:premium',
+  premiumLabel: {
+    id: 'web.pensionCalculator:premiumLabel',
     defaultMessage: 'Frádregin iðgjöld í lífeyrissjóði',
     description: 'Frádregin iðgjöld í lífeyrissjóði',
   },
-  foreignBasicPension: {
-    id: 'web.pensionCalculator:foreignBasicPension',
+  foreignBasicPensionLabel: {
+    id: 'web.pensionCalculator:foreignBasicPensionLabel',
     defaultMessage: 'Erlendur grunnlífeyrir',
     description: 'Erlendur grunnlífeyrir',
   },
@@ -232,8 +232,8 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Tekjur',
     description: 'H2, Tekjur',
   },
-  hasLivedAbroad: {
-    id: 'web.pensionCalculator:hasLivedAbroad',
+  hasLivedAbroadLabel: {
+    id: 'web.pensionCalculator:hasLivedAbroadLabel',
     defaultMessage: 'Hefur búið erlendis',
     description: 'Hefur búið erlendis',
   },
@@ -247,8 +247,8 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Já',
     description: 'Hefur búið erlendis, Já',
   },
-  livingConditionAbroadInYears: {
-    id: 'web.pensionCalculator:livingConditionAbroadInYears',
+  livingConditionAbroadInYearsLabel: {
+    id: 'web.pensionCalculator:livingConditionAbroadInYearsLabel',
     defaultMessage: 'Fjöldi ára erlendrar búsetu frá 16 til 67 ára',
     description: 'Fjöldi ára erlendrar búsetu',
   },
@@ -262,8 +262,8 @@ export const translationStrings = defineMessages({
     defaultMessage: '0 ár',
     description: '0 ár',
   },
-  mobilityImpairment: {
-    id: 'web.pensionCalculator:mobilityImpairment',
+  mobilityImpairmentLabel: {
+    id: 'web.pensionCalculator:mobilityImpairmentLabel',
     defaultMessage: 'Með hreyfihömlunarmat',
     description: 'Með hreyfihömlunarmat',
   },
@@ -282,13 +282,13 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Fyrsta 75% örorkumat',
     description: 'Fyrsta 75% örorkumat',
   },
-  livingConditionRatio: {
-    id: 'web.pensionCalculator:livingConditionRatio',
+  livingConditionRatioLabel: {
+    id: 'web.pensionCalculator:livingConditionRatioLabel',
     defaultMessage: 'Búsetuhlutfall',
     description: 'Búsetuhlutfall',
   },
-  childSupportCount: {
-    id: 'web.pensionCalculator:childSupportCount',
+  childSupportCountLabel: {
+    id: 'web.pensionCalculator:childSupportCountLabel',
     defaultMessage: 'Fær meðlag greitt með',
     description: 'Fær meðlag greitt með',
   },
@@ -297,7 +297,7 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Veldu fjölda barna',
     description: 'Fær meðlag greitt með, placeholder',
   },
-  childCount: {
+  childCountLabel: {
     id: 'web.pensionCalculator:childCount',
     defaultMessage: 'Börn yngri en 18 ára',
     description: 'Börn yngri en 18 ára',
@@ -307,8 +307,8 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Veldu fjölda barna',
     description: 'Börn yngri en 18 ára, placeholder',
   },
-  livingCondition: {
-    id: 'web.pensionCalculator:livingCondition',
+  livingConditionLabel: {
+    id: 'web.pensionCalculator:livingConditionLabel',
     defaultMessage: 'Heimilisaðstæður',
     description: 'Heimilisaðstæður',
   },
@@ -317,8 +317,8 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Heimilisaðstæður',
     description: 'Heimilisaðstæður, placeholder',
   },
-  hasSpouse: {
-    id: 'web.pensionCalculator:hasSpouse',
+  hasSpouseLabel: {
+    id: 'web.pensionCalculator:hasSpouseLabel',
     defaultMessage: 'Hjúskaparstaða',
     description: 'Hjúskaparstaða',
   },
@@ -332,8 +332,8 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þínar aðstæður',
     description: 'H2, Þínar aðstæður',
   },
-  startDate: {
-    id: 'web.pensionCalculator:startDate',
+  startDateLabel: {
+    id: 'web.pensionCalculator:startDateLabel',
     defaultMessage: 'Hvenær viltu hefja töku á ellilífeyri',
     description: 'Hvenær viltu hefja töku á ellilífeyri',
   },
@@ -342,8 +342,8 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Veldu dagsetningu',
     description: 'Hvenær viltu hefja töku á ellilífeyri, placeholder',
   },
-  birthdate: {
-    id: 'web.pensionCalculator:birthdate',
+  birthdateLabel: {
+    id: 'web.pensionCalculator:birthdateLabel',
     defaultMessage: 'Fæðingardagur',
     description: 'Fæðingardagur',
   },
@@ -352,8 +352,8 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Veldu fæðingardag',
     description: 'Fæðingardagur, placeholder',
   },
-  typeOfBasePension: {
-    id: 'web.pensionCalculator:typeOfBasePension',
+  typeOfBasePensionLabel: {
+    id: 'web.pensionCalculator:typeOfBasePensionLabel',
     defaultMessage: 'Tegund lífeyris',
     description: 'Tegund lífeyris',
   },

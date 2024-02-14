@@ -100,7 +100,7 @@ export const routesTemplate = {
     en: '',
   },
   pensioncalculatorresults: {
-    is: '/s/tryggingastofnun/reiknivel/nidurstada',
+    is: '/s/tryggingastofnun/reiknivel/nidurstodur',
     en: '/en/o/social-insurance-administration/calculator/results',
   },
   pensioncalculator: {
