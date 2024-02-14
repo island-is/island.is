@@ -9,7 +9,7 @@ mutation BulkCompare($input: SignatureCollectionNationalIdsInput!) {
       address
     }
     isDigital
-    active
+    valid
     created
   }
 }

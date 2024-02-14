@@ -2,7 +2,13 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  InputFileUpload,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -31,13 +37,9 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 import { strings } from './AppealCaseFiles.strings'
-
-interface UploadState {
-  isUploading: boolean
-  error: boolean
-}
 
 const AppealFiles = () => {
   const { workingCase } = useContext(FormContext)
@@ -46,13 +48,12 @@ const AppealFiles = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
-  const { uploadFiles, addUploadFiles, removeUploadFile } = useUploadFiles(
-    workingCase.caseFiles,
-  )
+  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
 
-  const { handleUpload } = useS3Upload(workingCase.id)
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
-  const [uploadState, setUploadState] = useState<UploadState>({
+  const [uploadState, setUploadState] = useState<UploadFileState>({
     isUploading: false,
     error: false,
   })
@@ -79,33 +80,63 @@ const AppealFiles = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const newFiles = uploadFiles.filter((file) => {
+  const newUploadFiles = uploadFiles.filter((file) => {
     return (
       workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
       undefined
     )
   })
 
-  const handleNextButtonClick = useCallback(async () => {
-    setUploadState({ isUploading: true, error: false })
+  const handleNextButtonClick = useCallback(
+    async (isRetry: boolean) => {
+      setUploadState({ isUploading: true, error: false })
 
-    const uploadSuccess = await handleUpload(newFiles, () => {
-      // Do nothing
-    })
+      const uploadSuccess = await handleUpload(
+        newUploadFiles.filter((uf) =>
+          isRetry ? uf.status === 'error' : !uf.key,
+        ),
+        updateUploadFile,
+      )
 
-    if (!uploadSuccess) {
-      setUploadState({ isUploading: false, error: true })
-      return
+      if (!uploadSuccess) {
+        setUploadState({ isUploading: false, error: true })
+        return
+      }
+
+      await sendNotification(
+        workingCase.id,
+        NotificationType.APPEAL_CASE_FILES_UPDATED,
+      )
+
+      setVisibleModal(true)
+      setUploadState({ isUploading: false, error: false })
+    },
+    [
+      handleUpload,
+      newUploadFiles,
+      sendNotification,
+      updateUploadFile,
+      workingCase.id,
+    ],
+  )
+
+  const handleRemoveFile = (file: UploadFile) => {
+    if (file.key) {
+      handleRemove(file, removeUploadFile)
+    } else {
+      removeUploadFile(file)
     }
 
-    await sendNotification(
-      workingCase.id,
-      NotificationType.APPEAL_CASE_FILES_UPDATED,
-    )
-
-    setVisibleModal(true)
     setUploadState({ isUploading: false, error: false })
-  }, [handleUpload, newFiles, sendNotification, workingCase.id])
+  }
+
+  const handleChange = (files: File[], type: CaseFileCategory) => {
+    setUploadState({ isUploading: false, error: false })
+    addUploadFiles(files, type, undefined, {
+      status: 'done',
+      percent: 0,
+    })
+  }
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -162,13 +193,10 @@ const AppealFiles = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            fileList={newUploadFiles.filter(
               (file) =>
                 file.category &&
-                caseFilesTypesToDisplay.includes(file.category) &&
-                workingCase.caseFiles?.find(
-                  (caseFile) => caseFile.id === file.id,
-                ) === undefined,
+                caseFilesTypesToDisplay.includes(file.category),
             )}
             accept={'application/pdf'}
             header={formatMessage(core.uploadBoxTitle)}
@@ -177,13 +205,13 @@ const AppealFiles = () => {
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => {
-              setUploadState({ isUploading: false, error: false })
-              addUploadFiles(files, appealCaseFilesType, undefined, {
-                status: 'done',
-                percent: 100,
-              })
+              handleChange(files, appealCaseFilesType)
             }}
-            onRemove={(file) => removeUploadFile(file)}
+            onRemove={(file) => handleRemoveFile(file)}
+            hideIcons={newUploadFiles
+              .filter((file) => file.category === appealCaseFilesType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
           />
         </Box>
         {isProsecutionUser(user) && (
@@ -195,7 +223,7 @@ const AppealFiles = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => handleNextButtonClick(uploadState.error)}
           nextButtonText={formatMessage(
             uploadState.error
               ? strings.uploadFailedNextButtonText
@@ -203,12 +231,8 @@ const AppealFiles = () => {
           )}
           nextButtonIcon={undefined}
           nextIsLoading={uploadState.isUploading}
-          nextIsDisabled={newFiles.length === 0}
-          nextButtonColorScheme={
-            uploadState.error && !uploadState.isUploading && newFiles.length > 0
-              ? 'destructive'
-              : 'default'
-          }
+          nextIsDisabled={newUploadFiles.length === 0}
+          nextButtonColorScheme={uploadState.error ? 'destructive' : 'default'}
         />
       </FormContentContainer>
       {visibleModal === true && (

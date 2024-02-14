@@ -28,7 +28,6 @@ export const subSectionProperties = buildSubSection({
           title: 'realEstateRepeater',
           id: 'assets',
           component: 'RealEstateRepeater',
-          childInputIds: ['assets.assets', 'assets.encountered'],
         }),
         buildDescriptionField({
           id: 'vehiclesTitle',

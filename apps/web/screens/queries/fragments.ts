@@ -832,6 +832,7 @@ export const slices = gql`
 
   fragment ChartNumberBoxFields on ChartNumberBox {
     __typename
+    chartNumberBoxId: id
     title
     numberBoxDescription
     sourceDataKey
