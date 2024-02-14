@@ -94,8 +94,8 @@ const EmailFormatInputModal = ({
           setHasError(true)
           return
         }
-        const modifiedHtml = ref.current.innerHTML.replace(/<br\s*\/?>/g, '\n')
-        onSaveApplication(modifiedHtml)
+
+        onSaveApplication(ref.current.innerHTML)
       }}
       submitButtonText={submitButtonText}
       isModalVisable={isModalVisable}
@@ -113,7 +113,8 @@ const EmailFormatInputModal = ({
           {prefixText}
           <br />
           <br />
-          <strong>[SKRIFA ÁSTÆÐU HÉR]</strong>
+          <b>[SKRIFA ÁSTÆÐU HÉR]</b>
+          <br />
           <br />
           {postfixText}
 
@@ -126,9 +127,12 @@ const EmailFormatInputModal = ({
               Bent skal á að unnt er að skjóta ákvörðun þessari til
               áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
               innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
-              samband með tölvupósti á netfangið
+              samband með tölvupósti á netfangið{` `}
               <a href={'mailto:${municipalityEmail}'} rel="noreferrer noopener">
-                <span className="linkInText">{municipalityEmail}.</span>
+                <span className="linkInText">
+                  {` `}
+                  {municipalityEmail}.
+                </span>
               </a>
               <br />
               <br />

@@ -16,6 +16,7 @@ import {
   Field,
   FormValue,
   Option,
+  PendingAction,
   RepeaterProps,
 } from '@island.is/application/types'
 
@@ -29,6 +30,7 @@ import {
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
+  Roles,
   SINGLE,
   SPOUSE,
   StartDateOptions,
@@ -38,7 +40,7 @@ import {
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { parentalLeaveFormMessages } from '../lib/messages'
+import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
 
 import { FormatMessage } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
@@ -820,10 +822,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+
   const employerLastSixMonths = getValueViaPath(
     answers,
     'employerLastSixMonths',
   ) as YesOrNo
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -1004,6 +1011,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUsage,
     employers,
     employerLastSixMonths,
+    isNotStillEmployed,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -1462,13 +1470,6 @@ export const getRightsDescTitle = (application: Application) => {
     : parentalLeaveFormMessages.shared.rightsDescription
 }
 
-export const getPeriodImageTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
-  }
-  return parentalLeaveFormMessages.shared.periodsImageTitle
-}
-
 export const getEditOrAddInfoSectionTitle = (application: Application) => {
   if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
@@ -1810,8 +1811,66 @@ export const setTestBirthAndExpectedDate = (
   }
 }
 
-export const formatDateOfBirth = (value: string) =>
-  format(new Date(value), dateFormat.is)
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.nameGrant
+  }
+
+  return parentalLeaveFormMessages.shared.name
+}
+
+export const otherParentApprovalStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.otherParentRequestApprovalTitle,
+      content: statesMessages.otherParentRequestApprovalDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    const applicationAnswers = getApplicationAnswers(application.answers)
+
+    const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+      applicationAnswers
+
+    const description =
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+        : isRequestingRights === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+        : parentalLeaveFormMessages.reviewScreen
+            .otherParentDescRequestingPersonalDiscount
+
+    return {
+      title: statesMessages.otherParentApprovalDescription,
+      content: description,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const employerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.employerApprovalPendingActionTitle,
+      content: statesMessages.employerApprovalPendingActionDescription,
+      displayStatus: 'info',
+    }
+  } else {
+    return {
+      title: statesMessages.employerWaitingToAssignDescription,
+      content: parentalLeaveFormMessages.reviewScreen.employerDesc,
+      displayStatus: 'info',
+    }
+  }
+}
 
 export const getChildrenOptions = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData) as {
@@ -1823,6 +1882,9 @@ export const getChildrenOptions = (application: Application) => {
       parentalRelation: ParentalRelations
     }[]
   }
+
+  const formatDateOfBirth = (value: string) =>
+    format(new Date(value), dateFormat.is)
 
   return children.map((child, index) => {
     const subLabel =

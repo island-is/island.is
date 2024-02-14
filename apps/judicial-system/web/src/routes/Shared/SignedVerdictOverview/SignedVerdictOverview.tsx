@@ -355,10 +355,10 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: undefined,
-        })
+        }))
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
@@ -379,8 +379,8 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: {
             id: institution?.value as string,
             name: institution?.label as string,
@@ -389,10 +389,10 @@ export const SignedVerdictOverview: React.FC = () => {
             modified: new Date().toString(),
             active: true,
           },
-          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
+          isHeightenedSecurityLevel: prevWorkingCase.isHeightenedSecurityLevel
             ? false
-            : workingCase.isHeightenedSecurityLevel,
-        })
+            : prevWorkingCase.isHeightenedSecurityLevel,
+        }))
 
         updateCase(workingCase.id, {
           sharedWithProsecutorsOfficeId: institution?.value as string,
@@ -411,7 +411,7 @@ export const SignedVerdictOverview: React.FC = () => {
       return false
     }
 
-    setWorkingCase((theCase) => ({ ...theCase, ...update }))
+    setWorkingCase((prevWorkingCase) => ({ ...prevWorkingCase, ...update }))
 
     return true
   }
