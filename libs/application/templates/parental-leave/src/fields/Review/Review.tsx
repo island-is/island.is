@@ -6,7 +6,10 @@ import { Application, RecordObject, Field } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 
-import { getApplicationAnswers, getSelectedChild } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getSelectedChild,
+} from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'

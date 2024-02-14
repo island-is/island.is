@@ -7,7 +7,13 @@ import {
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { NO, YES, parentalLeaveFormMessages, PARENTAL_LEAVE, getApplicationAnswers } from '../../..'
+import {
+  NO,
+  YES,
+  parentalLeaveFormMessages,
+  PARENTAL_LEAVE,
+  getApplicationAnswers,
+} from '../../..'
 import { EmployersTable } from '../../components/EmployersTable'
 
 export const Employment = ({

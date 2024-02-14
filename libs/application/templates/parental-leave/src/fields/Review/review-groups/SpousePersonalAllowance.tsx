@@ -4,7 +4,12 @@ import {
   ReviewGroup,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { NO, YES, getApplicationAnswers, parentalLeaveFormMessages } from '../../..'
+import {
+  NO,
+  YES,
+  getApplicationAnswers,
+  parentalLeaveFormMessages,
+} from '../../..'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
 
@@ -14,8 +19,10 @@ export const SpousePersonalAllowance = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { 
-    usePersonalAllowanceFromSpouse, spouseUseAsMuchAsPossible, spouseUsage 
+  const {
+    usePersonalAllowanceFromSpouse,
+    spouseUseAsMuchAsPossible,
+    spouseUsage,
   } = getApplicationAnswers(application.answers)
 
   return (

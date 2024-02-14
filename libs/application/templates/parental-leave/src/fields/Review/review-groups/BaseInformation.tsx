@@ -4,7 +4,10 @@ import {
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { getApplicationAnswers, getApplicationExternalData } from '../../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../lib/parentalLeaveUtils'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../..'
 import { format as formatKennitala } from 'kennitala'
@@ -16,8 +19,9 @@ export const BaseInformation = ({
   goToScreen,
   hasError,
 }: ReviewGroupProps) => {
-  const { applicantEmail, applicantPhoneNumber } =
-    getApplicationAnswers(application.answers)
+  const { applicantEmail, applicantPhoneNumber } = getApplicationAnswers(
+    application.answers,
+  )
 
   const { applicantName } = getApplicationExternalData(application.externalData)
   const { formatMessage } = useLocale()
