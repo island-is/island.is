@@ -20,7 +20,7 @@ import {
   getSelectedChild,
   requiresOtherParentApproval,
 } from '../../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { ReviewGroupProps } from './props'
 

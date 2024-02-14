@@ -7,7 +7,8 @@ import {
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { NO, YES, parentalLeaveFormMessages, PARENTAL_LEAVE } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { NO, YES, PARENTAL_LEAVE } from '../../../constants'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { EmployersTable } from '../../components/EmployersTable'
 

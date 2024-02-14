@@ -66,6 +66,7 @@ import {
   YES,
   PERMANENT_FOSTER_CARE,
   ADOPTION,
+  Languages,
 } from '../constants'
 import Logo from '../assets/Logo'
 import { minPeriodDays } from '../config'
@@ -145,14 +146,15 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'applicant.language',
                   title: parentalLeaveFormMessages.applicant.languageTitle,
                   width: 'half',
+                  required: true,
                   space: 3,
                   options: [
                     {
-                      value: '',
+                      value: Languages.IS,
                       label: parentalLeaveFormMessages.applicant.icelandic,
                     },
                     {
-                      value: 'EN',
+                      value: Languages.EN,
                       label: parentalLeaveFormMessages.applicant.english,
                     },
                   ],

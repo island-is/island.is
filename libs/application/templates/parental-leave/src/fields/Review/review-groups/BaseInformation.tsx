@@ -8,7 +8,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { getApplicationExternalData } from '../../../lib/parentalLeaveUtils'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { useLocale } from '@island.is/localization'
-import { parentalLeaveFormMessages } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { ReviewGroupProps } from './props'
 

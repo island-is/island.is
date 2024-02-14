@@ -25,7 +25,8 @@ import {
   YES,
 } from '../../../constants'
 import { coreErrorMessages } from '@island.is/application/core'
-import { YesOrNo, parentalLeaveFormMessages } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { YesOrNo } from '../../../types'
 import {
   InputController,
   RadioController,
