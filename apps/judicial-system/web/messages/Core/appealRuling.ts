@@ -43,8 +43,8 @@ export const appealRuling = defineMessages({
     description:
       'Ómerking og heimvísun í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
   },
-  decisionWithdrawn: {
-    id: 'judicial.system.core:appeal_ruling.decision_withdrawn',
+  decisionDiscontinued: {
+    id: 'judicial.system.core:appeal_ruling.decision_discontinued',
     defaultMessage: 'Niðurfelling',
     description:
       'Kæra afturkölluð/niðurfelld í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',

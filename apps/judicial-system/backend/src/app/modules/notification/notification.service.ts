@@ -2158,71 +2158,74 @@ export class NotificationService {
       theCase.id,
       NotificationType.APPEAL_JUDGES_ASSIGNED,
     )
-
-    const promises = []
     const withdrawnByProsecution = isProsecutionUser(user)
 
-    promises.push(
-      this.sendAppealWithdrawnNotification(
-        theCase.courtCaseNumber,
-        this.formatMessage(notifications.emailNames.courtOfAppeals),
-        this.getCourtEmail(this.config.courtOfAppealsId),
-        withdrawnByProsecution,
-      ),
+    const promises: Promise<Recipient>[] = []
+    const notificationRecipients = [
+      { name: theCase.judge?.name, email: theCase.judge?.email },
+    ]
+
+    const subject = this.formatMessage(
+      notifications.caseAppealWithdrawn.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
     )
+    const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
+      withdrawnByProsecution: withdrawnByProsecution ?? false,
+      courtCaseNumber: theCase.courtCaseNumber,
+    })
 
     if (
       isProsecutionUser(user) &&
       theCase.defenderName &&
       theCase.defenderEmail
     ) {
-      promises.push(
-        this.sendAppealWithdrawnNotification(
-          theCase.courtCaseNumber,
-          theCase.defenderName,
-          theCase.defenderEmail,
-          withdrawnByProsecution,
-        ),
-      )
+      notificationRecipients.push({
+        name: theCase.defenderName,
+        email: theCase.defenderEmail,
+      })
     } else if (isDefenceUser(user)) {
-      promises.push(
-        this.sendAppealWithdrawnNotification(
-          theCase.courtCaseNumber,
-          theCase.prosecutor?.name,
-          theCase.prosecutor?.email,
-          withdrawnByProsecution,
-        ),
-      )
+      notificationRecipients.push({
+        name: theCase.prosecutor?.name,
+        email: theCase.prosecutor?.email,
+      })
+    }
+
+    if (theCase.appealReceivedByCourtDate) {
+      notificationRecipients.push({
+        name: this.formatMessage(notifications.emailNames.courtOfAppeals),
+        email: this.getCourtEmail(this.config.courtOfAppealsId),
+      })
     }
 
     if (hasBeenAssigned) {
-      promises.push(
-        this.sendAppealWithdrawnNotification(
-          theCase.courtCaseNumber,
-          theCase.appealAssistant?.name,
-          theCase.appealAssistant?.email,
-          withdrawnByProsecution,
-        ),
-        this.sendAppealWithdrawnNotification(
-          theCase.courtCaseNumber,
-          theCase.appealJudge2?.name,
-          theCase.appealJudge2?.email,
-          withdrawnByProsecution,
-        ),
-        this.sendAppealWithdrawnNotification(
-          theCase.courtCaseNumber,
-          theCase.appealJudge3?.name,
-          theCase.appealJudge3?.email,
-          withdrawnByProsecution,
-        ),
-        this.sendAppealWithdrawnNotification(
-          theCase.courtCaseNumber,
-          theCase.appealJudge1?.name,
-          theCase.appealJudge1?.email,
-          withdrawnByProsecution,
-        ),
-      )
+      notificationRecipients.push({
+        name: theCase.appealAssistant?.name,
+        email: theCase.appealAssistant?.email,
+      })
+
+      notificationRecipients.push({
+        name: theCase.appealJudge1?.name,
+        email: theCase.appealJudge1?.email,
+      })
+
+      notificationRecipients.push({
+        name: theCase.appealJudge2?.name,
+        email: theCase.appealJudge2?.email,
+      })
+
+      notificationRecipients.push({
+        name: theCase.appealJudge3?.name,
+        email: theCase.appealJudge3?.email,
+      })
     }
+
+    notificationRecipients.forEach((recipient) => {
+      promises.push(
+        this.sendEmail(subject, html, recipient.name, recipient.email),
+      )
+    })
 
     const recipients = await Promise.all(promises)
 
@@ -2231,25 +2234,6 @@ export class NotificationService {
       NotificationType.APPEAL_WITHDRAWN,
       recipients,
     )
-  }
-
-  private sendAppealWithdrawnNotification(
-    courtCaseNumber?: string,
-    recipientName?: string,
-    recipientEmail?: string,
-    withdrawnByProsecution?: boolean,
-  ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.caseAppealWithdrawn.subject,
-      {
-        courtCaseNumber: courtCaseNumber,
-      },
-    )
-    const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
-      withdrawnByProsecution: withdrawnByProsecution ?? false,
-      courtCaseNumber: courtCaseNumber,
-    })
-    return this.sendEmail(subject, html, recipientName, recipientEmail)
   }
 
   //#endregion

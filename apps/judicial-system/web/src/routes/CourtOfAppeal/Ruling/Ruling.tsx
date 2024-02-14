@@ -159,9 +159,9 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
       message: appealRuling.decisionRemand,
     },
     {
-      id: 'case-decision-withdrawn',
+      id: 'case-decision-discontinued',
       decision: CaseAppealRulingDecision.DISCONTINUED,
-      message: appealRuling.decisionWithdrawn,
+      message: appealRuling.decisionDiscontinued,
     },
   ]
 

@@ -37,6 +37,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseTransition,
@@ -360,7 +361,12 @@ export class CaseController {
         }
         break
       case CaseTransition.WITHDRAW_APPEAL:
-        if (!theCase.appealRulingDecision) {
+        // if the case has not been received by the court of appeals, the appeal is withdrawn
+        // without a ruling decision
+        if (
+          !theCase.appealRulingDecision &&
+          theCase.appealState === CaseAppealState.RECEIVED
+        ) {
           update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
         }
         break
