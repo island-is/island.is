@@ -87,12 +87,16 @@ export class RenderedNotificationDto {
   @ApiProperty({ example: 'Compelling nofication body' })
   @IsString()
   body!: string
-  @ApiProperty({ example: 'Extra body text for further viewing' })
+
+  @ApiPropertyOptional({ example: 'Extra body text for further viewing' })
   @IsString()
-  dataCopy!: string | null | undefined
-  @ApiProperty({ example: '//inbox/document-uuid' })
+  @IsOptional()
+  dataCopy?: string
+
+  @ApiPropertyOptional({ example: '//inbox/document-uuid' })
   @IsString()
-  clickAction!: string | null | undefined
+  @IsOptional()
+  clickAction?: string
 
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()

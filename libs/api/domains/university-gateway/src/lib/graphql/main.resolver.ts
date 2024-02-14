@@ -7,7 +7,10 @@ import {
 import {
   UniversityGatewayProgramDetails,
   UniversityGatewayProgramFilter,
+  UniversityGatewayApplication,
 } from './models'
+import { CurrentUser } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Resolver()
 export class MainResolver {
@@ -28,5 +31,13 @@ export class MainResolver {
   @Query(() => [UniversityGatewayProgramFilter])
   universityGatewayProgramFilters() {
     return this.universityGatewayApi.getProgramFilters()
+  }
+
+  @Query(() => [UniversityGatewayApplication])
+  universityGatewayApplicationById(
+    @Args('id', { type: () => String }) id: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.universityGatewayApi.getUniversityApplicationById(user, id)
   }
 }

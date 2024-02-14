@@ -8,7 +8,6 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
-  buildImageField,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -34,7 +33,6 @@ import {
   getDurationTitle,
   getFirstPeriodTitle,
   getLeavePlanTitle,
-  getPeriodImageTitle,
   getPeriodSectionTitle,
   getRatioTitle,
   getRightsDescTitle,
@@ -80,7 +78,6 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
-import ManWithStrollerIllustration from '../assets/Images/ManWithStrollerIllustration'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -1091,11 +1088,27 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
+              id: 'fileUpload.employmentTerminationCertificateFile',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateTitle,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
-              maxSize: FILE_SIZE_LIMIT,
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateDescription,
+              condition: (answers) => {
+                const {
+                  applicationType,
+                  employerLastSixMonths,
+                  isNotStillEmployed,
+                } = getApplicationAnswers(answers)
+
+                return (
+                  (applicationType === PARENTAL_GRANT ||
+                    applicationType === PARENTAL_GRANT_STUDENTS) &&
+                  employerLastSixMonths === YES &&
+                  isNotStillEmployed
+                )
+              },
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
@@ -1106,28 +1119,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.employmentTerminationCertificateFile',
-              title:
-                parentalLeaveFormMessages.attachmentScreen
-                  .employmentTerminationCertificateTitle,
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.title,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .employmentTerminationCertificateDescription,
-              condition: (answers) => {
-                const { applicationType, employerLastSixMonths, employers } =
-                  getApplicationAnswers(answers)
-
-                const isNotStillEmployed = employers?.some(
-                  (employer) => employer.stillEmployed === NO,
-                )
-
-                return (
-                  (applicationType === PARENTAL_GRANT ||
-                    applicationType === PARENTAL_GRANT_STUDENTS) &&
-                  employerLastSixMonths === YES &&
-                  isNotStillEmployed
-                )
-              },
+                parentalLeaveFormMessages.attachmentScreen.description,
+              maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
@@ -1342,19 +1338,6 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'leavePeriods',
       title: getPeriodSectionTitle,
       children: [
-        buildMultiField({
-          id: 'periodsImageScreen',
-          title: getPeriodImageTitle,
-          children: [
-            buildImageField({
-              id: 'leavePeriods.image',
-              title: '',
-              image: ManWithStrollerIllustration,
-              imageWidth: 'auto',
-            }),
-          ],
-        }),
-
         buildSubSection({
           id: 'addPeriods',
           title: parentalLeaveFormMessages.leavePlan.subSection,
