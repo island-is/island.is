@@ -80,7 +80,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const methods = useForm<CalculationInput>({
     defaultValues,
   })
-  const maxMonthPensionDelay = 156 // TODO: add to namespace
+  const maxMonthPensionDelay =
+    customPageData?.configJson?.maxMonthPensionDelay ?? 156
 
   const [loadingResultPage, setLoadingResultPage] = useState(false)
   const [hasLivedAbroad, setHasLivedAbroad] = useState(
@@ -98,7 +99,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   )
 
   const maxMonthPensionHurry =
-    basePensionType === BasePensionType.FishermanRetirement ? 12 * 7 : 12 * 2 // TODO: add to namespace
+    customPageData?.configJson?.maxMonthPensionHurry?.[basePensionType] ??
+    basePensionType === BasePensionType.FishermanRetirement
+      ? 12 * 7
+      : 12 * 2
 
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     const options = [
@@ -297,9 +301,15 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
   const { activeLocale } = useI18n()
 
+  const today = new Date()
+
   const birthdateRange = {
-    minDate: add(new Date(), { years: -130 }),
-    maxDate: new Date(), // TODO: what should this be?
+    minDate: add(today, {
+      years: customPageData?.configJson?.minYearOffset ?? -130,
+    }),
+    maxDate: add(today, {
+      years: customPageData?.configJson?.maxYearOffset ?? 0,
+    }),
   }
 
   const startDateRange = !birthdate
