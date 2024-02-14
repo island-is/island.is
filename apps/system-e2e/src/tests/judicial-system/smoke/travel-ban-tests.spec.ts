@@ -3,6 +3,8 @@ import { urls } from '../../../support/urls'
 import { test } from '../utils/judicialSystemTest'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { getDaysFromNow, randomCourtCaseNumber } from '../utils/helpers'
+import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
+import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -161,5 +163,13 @@ test.describe.serial('Travel ban tests', () => {
     // Confirmation
     await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
     await page.getByTestId('continueButton').click()
+  })
+
+  test('prosecutor should appeal case', async ({ prosecutorPage }) => {
+    await prosecutorAppealsCaseTest(prosecutorPage, caseId)
+  })
+
+  test('judge should receive appealed case', async ({ judgePage }) => {
+    await judgeReceivesAppealTest(judgePage, caseId)
   })
 })
