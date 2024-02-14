@@ -82,6 +82,12 @@ yarn start web
 
 This starts a server on `localhost:4200`
 
+### To update translation namespaces in Contentful
+
+```bash
+yarn nx extract-strings web
+```
+
 ## Further Documentation
 
 [Subpages](./docs/subpages.md) - Information on Layouts and Components used when

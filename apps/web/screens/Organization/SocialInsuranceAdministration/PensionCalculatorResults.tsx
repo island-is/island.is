@@ -35,14 +35,14 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
 import {
+  CustomScreen,
+  withCustomPageWrapper,
+} from '../../CustomPage/CustomPageWrapper'
+import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
-import {
-  CustomScreen,
-  withCustomPageWrapper,
-} from './CustomPage/CustomPageWrapper'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import {
   convertQueryParametersToCalculationInput,
@@ -314,7 +314,8 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
 }
 
 export default withMainLayout(
-  withCustomPageWrapper(UniqueIdentifier.PensionCalculator)(
-    PensionCalculatorResults, // TODO
+  withCustomPageWrapper(
+    UniqueIdentifier.PensionCalculator,
+    PensionCalculatorResults,
   ),
 )

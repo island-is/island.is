@@ -44,15 +44,15 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  CustomScreen,
+  withCustomPageWrapper,
+} from '../../CustomPage/CustomPageWrapper'
+import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import {
-  CustomScreen,
-  withCustomPageWrapper,
-} from './CustomPage/CustomPageWrapper'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
-import { pensionCalculatorStrings } from './strings'
+import { translationStrings } from './translationStrings'
 import {
   convertQueryParametersToCalculationInput,
   convertToQueryParams,
@@ -74,6 +74,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   dateOfCalculationsOptions,
   customPageData,
 }) => {
+  const { formatMessage } = useIntl()
   const defaultPensionAge = customPageData?.configJson?.defaultPensionAge ?? 67
 
   const methods = useForm<CalculationInput>({
@@ -102,141 +103,141 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     const options = [
       {
-        label: 'Ellilífeyrir',
+        label: formatMessage(translationStrings.basePensionRetirement),
         value: BasePensionType.Retirement,
       },
       {
-        label: 'Ellilífeyrir sjómanna',
+        label: formatMessage(translationStrings.basePensionFishermanRetirement),
         value: BasePensionType.FishermanRetirement,
       },
       {
-        label: 'Örorkulífeyrir',
+        label: formatMessage(translationStrings.basePensionDisability),
         value: BasePensionType.Disability,
       },
       {
-        label: 'Endurhæfingarlífeyrir',
+        label: formatMessage(translationStrings.basePensionRehabilitation),
         value: BasePensionType.Rehabilitation,
       },
       {
-        label: 'Hálfur ellilífeyrir',
+        label: formatMessage(translationStrings.basePensionHalfRetirement),
         value: BasePensionType.HalfRetirement,
       },
     ]
     options.sort(sortAlpha('label'))
     return options
-  }, [])
+  }, [formatMessage])
 
   const hasSpouseOptions = useMemo<Option<boolean>[]>(() => {
     return [
       {
-        label: 'Á ekki maka',
+        label: formatMessage(translationStrings.hasSpouseNo),
         value: false,
       },
       {
-        label: 'Á maka',
+        label: formatMessage(translationStrings.hasSpouseYes),
         value: true,
       },
     ]
-  }, [])
+  }, [formatMessage])
 
   const livingConditionOptions = useMemo<Option<LivingCondition>[]>(() => {
     return [
       {
-        label: 'Býr ein(n)',
+        label: formatMessage(translationStrings.livesAloneYes),
         value: LivingCondition.LivesAlone,
       },
       {
-        label: 'Býr ekki ein(n)',
+        label: formatMessage(translationStrings.livesAloneNo),
         value: LivingCondition.DoesNotLiveAlone,
       },
     ]
-  }, [])
+  }, [formatMessage])
 
   const childCountOptions = useMemo<Option<number>[]>(() => {
     return [
       {
-        label: 'Ekkert barn',
+        label: formatMessage(translationStrings.childCountOptionsNone),
         value: 0,
       },
       {
-        label: '1 barn',
+        label: formatMessage(translationStrings.childCountOptionsOne),
         value: 1,
       },
       {
-        label: '2 börn',
+        label: formatMessage(translationStrings.childCountOptionsTwo),
         value: 2,
       },
       {
-        label: '3 börn',
+        label: formatMessage(translationStrings.childCountOptionsThree),
         value: 3,
       },
       {
-        label: '4 börn',
+        label: formatMessage(translationStrings.childCountOptionsFour),
         value: 4,
       },
       {
-        label: '5 börn',
+        label: formatMessage(translationStrings.childCountOptionsFive),
         value: 5,
       },
       {
-        label: '6 börn',
+        label: formatMessage(translationStrings.childCountOptionsSix),
         value: 6,
       },
       {
-        label: '7 börn',
+        label: formatMessage(translationStrings.childCountOptionsSeven),
         value: 7,
       },
       {
-        label: '8 börn',
+        label: formatMessage(translationStrings.childCountOptionsEight),
         value: 8,
       },
       {
-        label: '9 börn',
+        label: formatMessage(translationStrings.childCountOptionsNine),
         value: 9,
       },
     ]
-  }, [])
+  }, [formatMessage])
 
   const childSupportCountOptions = useMemo<Option<number>[]>(() => {
     const options = [
       {
-        label: 'Engu barni',
+        label: formatMessage(translationStrings.childSupportCountOptionsNone),
         value: 0,
       },
       {
-        label: '1 barni',
+        label: formatMessage(translationStrings.childSupportCountOptionsOne),
         value: 1,
       },
       {
-        label: '2 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsTwo),
         value: 2,
       },
       {
-        label: '3 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsThree),
         value: 3,
       },
       {
-        label: '4 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsFour),
         value: 4,
       },
       {
-        label: '5 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsFive),
         value: 5,
       },
       {
-        label: '6 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsSix),
         value: 6,
       },
       {
-        label: '7 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsSeven),
         value: 7,
       },
       {
-        label: '8 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsEight),
         value: 8,
       },
       {
-        label: '9 börnum',
+        label: formatMessage(translationStrings.childSupportCountOptionsNine),
         value: 9,
       },
     ]
@@ -245,7 +246,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       return options.slice(0, childCount + 1)
     }
     return []
-  }, [childCount])
+  }, [childCount, formatMessage])
 
   const [dateOfCalculations, setDateOfCalculations] = useQueryState(
     'dateOfCalculations',
@@ -306,15 +307,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ? differenceInMonths(new Date(startDate), defaultPensionDate)
       : undefined
 
-  // const n = useTranslationNamespace(
-  //   customPageData?.translationStrings,
-  //   pensionCalculatorStrings,
-  // )
-
-  // n(pensionCalculatorStrings.pensionStartMonthIsDefault)
-
-  console.log(customPageData)
-  const { formatMessage } = useIntl()
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -325,7 +317,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         customPageData?.configJson?.indexableBySearchEngine ?? false
       }
     >
-      {formatMessage(pensionCalculatorStrings.pensionStartMonthIsDefault)}
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Stack space={3}>
@@ -352,8 +343,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         </Text>
                         <Box className={styles.textMaxWidth}>
                           <Text>
-                            Vinsamlegast athugið að reiknivélin gefur ekki
-                            bindandi niðurstöður
+                            {formatMessage(translationStrings.disclaimer)}
                           </Text>
                         </Box>
                       </Stack>
@@ -361,8 +351,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <SelectController
                           id={'dateOfCalculations' as keyof CalculationInput}
                           name={'dateOfCalculations' as keyof CalculationInput}
-                          label="Reiknivélar síðustu ára"
-                          placeholder="Veldu ár"
+                          label={formatMessage(
+                            translationStrings.dateOfCalculationsLabel,
+                          )}
+                          placeholder={formatMessage(
+                            translationStrings.dateOfCalculationsPlaceholder,
+                          )}
                           size="sm"
                           options={dateOfCalculationsOptions}
                           onSelect={(option) => {
@@ -378,7 +372,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                       <SelectController
                         id={'typeOfBasePension' as keyof CalculationInput}
                         name={'typeOfBasePension' as keyof CalculationInput}
-                        label="Tegund lífeyris"
+                        label={formatMessage(
+                          translationStrings.typeOfBasePension,
+                        )}
                         options={basePensionTypeOptions}
                         onSelect={(option) => {
                           if (option) {
@@ -401,8 +397,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <DatePickerController
                           id={'birthdate' as keyof CalculationInput}
                           name={'birthdate' as keyof CalculationInput}
-                          label="Fæðingardagur"
-                          placeholder="Veldu fæðingardag"
+                          label={formatMessage(translationStrings.birthdate)}
+                          placeholder={formatMessage(
+                            translationStrings.birthdatePlaceholder,
+                          )}
                           locale={activeLocale}
                           minDate={birthdateRange.minDate}
                           maxDate={birthdateRange.maxDate}
@@ -426,8 +424,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <DatePickerController
                           id={'startDate' as keyof CalculationInput}
                           name={'startDate' as keyof CalculationInput}
-                          label="Hvenær viltu hefja töku á ellilífeyri"
-                          placeholder="Veldu dagsetningu"
+                          label={formatMessage(translationStrings.startDate)}
+                          placeholder={formatMessage(
+                            translationStrings.startDatePlaceholder,
+                          )}
                           locale={activeLocale}
                           minDate={startDateRange.minDate}
                           maxDate={startDateRange.maxDate}
@@ -443,27 +443,30 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
                       {typeof monthOffset === 'number' && (
                         <Text>
-                          {/* {n(
+                          {formatMessage(
                             monthOffset === 0
-                              ? 'pensionStartMonthIsDefault'
+                              ? translationStrings.pensionStartIsDefault
                               : monthOffset > 0
-                              ? 'pensionStartMonthIsDelayed'
-                              : 'pensionStartMonthIsHurried',
-                            'a',
-                          )} */}
+                              ? translationStrings.pensionStartIsDelayed
+                              : translationStrings.pensionStartIsHurried,
+                          )}
                         </Text>
                       )}
 
                       <Text variant="h2" as="h2">
-                        Þínar aðstæður
+                        {formatMessage(
+                          translationStrings.yourCircumstancesHeading,
+                        )}
                       </Text>
 
                       <Box className={styles.inputContainer}>
                         <SelectController
                           id={'hasSpouse' as keyof CalculationInput}
                           name={'hasSpouse' as keyof CalculationInput}
-                          label="Hjúskaparstaða"
-                          placeholder="Veldu hjúskaparstöðu"
+                          label={formatMessage(translationStrings.hasSpouse)}
+                          placeholder={formatMessage(
+                            translationStrings.hasSpousePlaceholder,
+                          )}
                           options={hasSpouseOptions}
                         />
                       </Box>
@@ -472,8 +475,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <SelectController
                           id={'livingCondition' as keyof CalculationInput}
                           name={'livingCondition' as keyof CalculationInput}
-                          label="Heimilisaðstæður"
-                          placeholder="Heimilisaðstæður"
+                          label={formatMessage(
+                            translationStrings.livingCondition,
+                          )}
+                          placeholder={formatMessage(
+                            translationStrings.livingConditionPlaceholder,
+                          )}
                           options={livingConditionOptions}
                         />
                       </Box>
@@ -482,8 +489,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <SelectController
                           id={'childCount' as keyof CalculationInput}
                           name={'childCount' as keyof CalculationInput}
-                          label="Börn yngri en 18 ára"
-                          placeholder="Veldu fjölda barna"
+                          label={formatMessage(translationStrings.childCount)}
+                          placeholder={formatMessage(
+                            translationStrings.childCountPlaceholder,
+                          )}
                           options={childCountOptions}
                           onSelect={(option) => {
                             if (option) {
@@ -499,8 +508,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           <SelectController
                             id={'childSupportCount' as keyof CalculationInput}
                             name={'childSupportCount' as keyof CalculationInput}
-                            label="Fær meðlag greitt með"
-                            placeholder="Veldu fjölda barna"
+                            label={formatMessage(
+                              translationStrings.childSupportCount,
+                            )}
+                            placeholder={formatMessage(
+                              translationStrings.childSupportCountPlaceholder,
+                            )}
                             options={childSupportCountOptions}
                           />
                         </Box>
@@ -516,7 +529,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               name={
                                 'livingConditionRatio' as keyof CalculationInput
                               }
-                              label="Búsetuhlutfall"
+                              label={formatMessage(
+                                translationStrings.livingConditionRatio,
+                              )}
                               placeholder="%"
                               type="number"
                               suffix="%"
@@ -535,14 +550,18 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
                             }
                             label="Fyrsta 75% örorkumat"
-                            suffix=" ára"
+                            suffix={formatMessage(
+                              translationStrings.yearsSuffix,
+                            )}
                             type="number"
                           />
                         </Box>
                       )}
 
                       <Stack space={2}>
-                        <Text>Með hreyfihömlunarmat</Text>
+                        <Text>
+                          {formatMessage(translationStrings.mobilityImpairment)}
+                        </Text>
                         <Box className={styles.inputContainer}>
                           <Controller
                             name={
@@ -556,7 +575,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   onChange={() => {
                                     onChange(false)
                                   }}
-                                  label={'Nei'}
+                                  label={formatMessage(
+                                    translationStrings.mobilityImpairmentNo,
+                                  )}
                                 />
                                 <RadioButton
                                   id="mobilityImpairmentYes"
@@ -564,7 +585,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   onChange={() => {
                                     onChange(true)
                                   }}
-                                  label={'Já'}
+                                  label={formatMessage(
+                                    translationStrings.mobilityImpairmentYes,
+                                  )}
                                 />
                               </Inline>
                             )}
@@ -573,7 +596,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                       </Stack>
 
                       <Stack space={2}>
-                        <Text>Hefur búið erlendis</Text>
+                        <Text>
+                          {formatMessage(translationStrings.hasLivedAbroad)}
+                        </Text>
                         <Box className={styles.inputContainer}>
                           <Inline space={3}>
                             <RadioButton
@@ -586,7 +611,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   null,
                                 )
                               }}
-                              label={'Nei'}
+                              label={formatMessage(
+                                translationStrings.hasLivedAbroadNo,
+                              )}
                             />
                             <RadioButton
                               id="hasLivedAbroadYes"
@@ -594,7 +621,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               onChange={() => {
                                 setHasLivedAbroad(true)
                               }}
-                              label={'Já'}
+                              label={formatMessage(
+                                translationStrings.hasLivedAbroadYes,
+                              )}
                             />
                           </Inline>
                         </Box>
@@ -608,21 +637,27 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               name={
                                 'livingConditionAbroadInYears' as keyof CalculationInput
                               }
-                              label="Fjöldi ára erlendrar búsetu frá 16 til 67 ára"
+                              label={formatMessage(
+                                translationStrings.livingConditionAbroadInYears,
+                              )}
                               placeholder="0 ár"
                               type="number"
-                              suffix=" ár"
+                              suffix={formatMessage(
+                                translationStrings.yearsSuffix,
+                              )}
                             />
                           </Box>
                         )}
                       </Stack>
 
                       <Text variant="h2" as="h2">
-                        Tekjur
+                        {formatMessage(translationStrings.incomeHeading)}
                       </Text>
 
                       <Text variant="h3" as="h3">
-                        Tekjur fyrir skatt
+                        {formatMessage(
+                          translationStrings.incomeBeforeTaxHeading,
+                        )}
                       </Text>
 
                       <Box className={styles.inputContainer}>
@@ -637,7 +672,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   onChange={() => {
                                     onChange(PeriodIncomeType.Month)
                                   }}
-                                  label={'Mánaðartekjur'}
+                                  label={formatMessage(
+                                    translationStrings.typeOfPeriodIncomeMonth,
+                                  )}
                                 />
                               </GridColumn>
                               <GridColumn span={['1/1', '1/2']}>
@@ -647,7 +684,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   onChange={() => {
                                     onChange(PeriodIncomeType.Year)
                                   }}
-                                  label={'Árstekjur'}
+                                  label={formatMessage(
+                                    translationStrings.typeOfPeriodIncomeYear,
+                                  )}
                                 />
                               </GridColumn>
                             </GridRow>
@@ -659,7 +698,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'taxCard' as keyof CalculationInput}
                           name={'taxCard' as keyof CalculationInput}
-                          label="Hlutfall skattkorts hjá TR"
+                          label={formatMessage(translationStrings.taxCardRatio)}
                           placeholder="%"
                           type="number"
                           suffix="%"
@@ -670,7 +709,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'income' as keyof CalculationInput}
                           name={'income' as keyof CalculationInput}
-                          label="Tekjur m.a. af atvinnu, eftirlaunum og atvinnuleysisbótum"
+                          label={formatMessage(translationStrings.income)}
                           placeholder="kr."
                           currency={true}
                         />
@@ -679,7 +718,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'pensionPayments' as keyof CalculationInput}
                           name={'pensionPayments' as keyof CalculationInput}
-                          label="Greiðslur frá lífeyrissjóðum"
+                          label={formatMessage(
+                            translationStrings.pensionPayments,
+                          )}
                           placeholder="kr."
                           currency={true}
                         />
@@ -693,7 +734,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           name={
                             'privatePensionPayments' as keyof CalculationInput
                           }
-                          label="Greiðslur viðbótarlífeyrissparnaðar"
+                          label={formatMessage(
+                            translationStrings.privatePensionPayments,
+                          )}
                           placeholder="kr."
                           currency={true}
                         />
@@ -703,7 +746,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'otherIncome' as keyof CalculationInput}
                           name={'otherIncome' as keyof CalculationInput}
-                          label="Aðrar tekjur"
+                          label={formatMessage(translationStrings.otherIncome)}
                           placeholder="kr."
                           currency={true}
                         />
@@ -713,7 +756,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'capitalIncome' as keyof CalculationInput}
                           name={'capitalIncome' as keyof CalculationInput}
-                          label="Fjármagnstekjur"
+                          label={formatMessage(
+                            translationStrings.capitalIncome,
+                          )}
                           placeholder="kr."
                           currency={true}
                         />
@@ -727,7 +772,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           name={
                             'benefitsFromMunicipality' as keyof CalculationInput
                           }
-                          label="Skattskyldar bætur sveitarfélaga"
+                          label={formatMessage(
+                            translationStrings.benefitsFromMunicipality,
+                          )}
                           placeholder="kr."
                           currency={true}
                         />
@@ -737,7 +784,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'premium' as keyof CalculationInput}
                           name={'premium' as keyof CalculationInput}
-                          label="Frádregin iðgjöld í lífeyrissjóði"
+                          label={formatMessage(translationStrings.premium)}
                           placeholder="kr."
                           currency={true}
                         />
@@ -747,14 +794,16 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <InputController
                           id={'foreignBasicPension' as keyof CalculationInput}
                           name={'foreignBasicPension' as keyof CalculationInput}
-                          label="Erlendur grunnlífeyrir"
+                          label={formatMessage(
+                            translationStrings.foreignBasicPension,
+                          )}
                           placeholder="kr."
                           currency={true}
                         />
                       </Box>
 
                       <Button loading={loadingResultPage} type="submit">
-                        Reikna niðurstöður
+                        {formatMessage(translationStrings.calculateResults)}
                       </Button>
                     </Stack>
                   </GridColumn>
@@ -843,7 +892,8 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
 }
 
 export default withMainLayout(
-  withCustomPageWrapper(CustomPageUniqueIdentifier.PensionCalculator)(
-    PensionCalculator, // TODO
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.PensionCalculator,
+    PensionCalculator,
   ),
 )
