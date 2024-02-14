@@ -11,7 +11,11 @@ import {
 import { Chart as IChart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
-import { CHART_HEIGHT, DEFAULT_XAXIS_VALUE_TYPE } from '../constants'
+import {
+  CHART_HEIGHT,
+  DEFAULT_XAXIS_KEY,
+  DEFAULT_XAXIS_VALUE_TYPE,
+} from '../constants'
 import {
   useGetChartBaseComponent,
   useGetChartComponentsWithRenderProps,
@@ -85,9 +89,18 @@ export const Chart = ({ slice }: ChartProps) => {
     )
   }
 
-  const data = slice.sourceData
-    ? JSON.parse(slice.sourceData)
-    : queryResult.data ?? []
+  const xAxisKey = slice.xAxisKey || DEFAULT_XAXIS_KEY
+  const xAxisValueType = slice.xAxisValueType || DEFAULT_XAXIS_VALUE_TYPE
+
+  const data = (
+    slice.sourceData ? JSON.parse(slice.sourceData) : queryResult.data ?? []
+  ).map((d: Record<string, unknown>) => ({
+    ...d,
+    [xAxisKey]:
+      xAxisValueType === 'date' || xAxisValueType === 'number'
+        ? Number(d[xAxisKey])
+        : d[xAxisKey],
+  }))
 
   if (!data || data.length === 0) {
     return messages[activeLocale].noDataForChart
@@ -96,6 +109,8 @@ export const Chart = ({ slice }: ChartProps) => {
   const Wrapper = slice.displayAsCard ? AccordionCard : React.Fragment
 
   const skipId = `skip-chart_${slice.id}`
+
+  console.log({ data })
 
   return (
     <Box width="full" height="full">
@@ -122,7 +137,7 @@ export const Chart = ({ slice }: ChartProps) => {
       >
         <Box width="full" height="full" marginTop={2}>
           <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-            <BaseChartComponent data={data} width={400} height={400}>
+            <BaseChartComponent
               {cartesianGridComponents}
               {renderLegend({
                 componentsWithAddedProps,

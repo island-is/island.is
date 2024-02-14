@@ -78,7 +78,7 @@ export const COMPONENT_TYPES_WITH_FILL = [
   ChartComponentType.pie,
 ]
 
-export const DEFAULT_XAXIS_KEY = 'date'
+export const DEFAULT_XAXIS_KEY = 'header'
 export const DEFAULT_XAXIS_VALUE_TYPE = 'date'
 export const DEFAULT_XAXIS_FORMAT = 'MMM yy'
 

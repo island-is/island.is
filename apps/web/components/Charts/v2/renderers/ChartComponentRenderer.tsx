@@ -115,7 +115,7 @@ export const renderPieChartComponents = (
   data: ChartData,
   activeLocale: Locale,
 ) => {
-  const pieData = data?.[0]?.statisticsForDate ?? []
+  const pieData = data?.[0]?.statisticsForHeader ?? []
   const total = pieData.reduce(
     (total, { value }) => total + (value ? value : 0),
     0,
