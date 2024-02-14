@@ -17,9 +17,7 @@
   "paths": {
     "/authenticate": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "parameters": [
           {
             "name": "api-version",
@@ -147,9 +145,7 @@
     },
     "/withcontract": {
       "post": {
-        "tags": [
-          "OwnerChange"
-        ],
+        "tags": ["OwnerChange"],
         "parameters": [
           {
             "name": "api-version",
@@ -352,9 +348,7 @@
     },
     "/financialcompanies": {
       "post": {
-        "tags": [
-          "OwnerChange"
-        ],
+        "tags": ["OwnerChange"],
         "parameters": [
           {
             "name": "api-version",
@@ -557,9 +551,7 @@
     },
     "/": {
       "post": {
-        "tags": [
-          "OwnerChange"
-        ],
+        "tags": ["OwnerChange"],
         "parameters": [
           {
             "name": "api-version",
@@ -720,9 +712,7 @@
     },
     "/personcheck": {
       "post": {
-        "tags": [
-          "OwnerChange"
-        ],
+        "tags": ["OwnerChange"],
         "parameters": [
           {
             "name": "api-version",
@@ -856,9 +846,7 @@
     },
     "/vehiclecheck": {
       "post": {
-        "tags": [
-          "OwnerChange"
-        ],
+        "tags": ["OwnerChange"],
         "parameters": [
           {
             "name": "api-version",
@@ -992,9 +980,7 @@
     },
     "/{permno}": {
       "get": {
-        "tags": [
-          "OwnerChange"
-        ],
+        "tags": ["OwnerChange"],
         "operationId": "GetOwnerChange",
         "parameters": [
           {
@@ -1124,10 +1110,7 @@
   "components": {
     "schemas": {
       "AuthenticateModel": {
-        "required": [
-          "password",
-          "username"
-        ],
+        "required": ["password", "username"],
         "type": "object",
         "properties": {
           "username": {
@@ -1248,9 +1231,7 @@
         "description": "Data transfer object for owner change"
       },
       "PostCoOwner": {
-        "required": [
-          "personIdNumber"
-        ],
+        "required": ["personIdNumber"],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -1265,10 +1246,7 @@
         "description": "Co owner entity"
       },
       "PostOperator": {
-        "required": [
-          "mainOperator",
-          "personIdNumber"
-        ],
+        "required": ["mainOperator", "personIdNumber"],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -1400,10 +1378,7 @@
         "description": "Model to post owner change"
       },
       "PostOwnerChangeForFinancialCompanies": {
-        "required": [
-          "permno",
-          "personIdNumber"
-        ],
+        "required": ["permno", "personIdNumber"],
         "type": "object",
         "properties": {
           "permno": {
@@ -1656,11 +1631,7 @@
         "description": "Check if person owner change is ok"
       },
       "PostVehicleOwnerChange": {
-        "required": [
-          "dateOfPurchase",
-          "permno",
-          "useGroup"
-        ],
+        "required": ["dateOfPurchase", "permno", "useGroup"],
         "type": "object",
         "properties": {
           "permno": {
