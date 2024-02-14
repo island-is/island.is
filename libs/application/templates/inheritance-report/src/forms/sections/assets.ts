@@ -274,7 +274,6 @@ export const assets = buildSection({
                   },
                   {
                     title: m.bankAccountForeign.defaultMessage,
-                    type: 'checkbox',
                     id: 'foreignBankAccount',
                   },
                 ],

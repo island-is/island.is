@@ -35,7 +35,6 @@ import { YES } from '../../lib/constants'
 type RepeaterProps = {
   field: {
     props: {
-      type?: 'checkbox' | 'radio' | 'select' | 'text' | 'textarea'
       sectionTitle?: string
       sectionTitleVariant?: string
       fields: Array<object>
@@ -353,10 +352,6 @@ export const ReportFieldsRepeater: FC<
                     {field.id === 'foreignBankAccount' ? (
                       <CheckboxController
                         id={`${fieldIndex}.${field.id}`}
-                        // defaultValue={getValueViaPath(
-                        //   answers,
-                        //   `${fieldIndex}.${field.id}`,
-                        // )}
                         options={[
                           {
                             label: formatMessage(m.bankAccountForeignLabel),
@@ -364,18 +359,13 @@ export const ReportFieldsRepeater: FC<
                           },
                         ]}
                         onSelect={(val) => {
-                          if (val.length) {
-                            setForeignBankAccountIndexes([
-                              ...foreignBankAccountIndexes,
-                              mainIndex,
-                            ])
-                          } else {
-                            setForeignBankAccountIndexes(
-                              foreignBankAccountIndexes.filter(
-                                (i) => i !== mainIndex,
-                              ),
-                            )
-                          }
+                          setForeignBankAccountIndexes(
+                            val.length
+                              ? [...foreignBankAccountIndexes, mainIndex]
+                              : foreignBankAccountIndexes.filter(
+                                  (i) => i !== mainIndex,
+                                ),
+                          )
                         }}
                       />
                     ) : field.id === 'accountNumber' ? (
