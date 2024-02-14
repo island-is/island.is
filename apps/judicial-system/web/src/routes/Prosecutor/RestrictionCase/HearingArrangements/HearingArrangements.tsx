@@ -175,7 +175,6 @@ export const HearingArrangements: React.FC<
                   'translator',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

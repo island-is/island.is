@@ -1,4 +1,8 @@
-import { EstateAsset, EstateInfo } from '@island.is/clients/syslumenn'
+import {
+  EstateAsset,
+  EstateInfo,
+  EstateMember,
+} from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 
@@ -11,6 +15,7 @@ const initialMapper = <T>(element: T) => {
     initial: true,
     enabled: true,
     propertyValuation: '0',
+    propertyShare: '0',
   }
 }
 
@@ -20,15 +25,40 @@ export const trueOrHasYes = (element: string | boolean): string => {
   return value.toString()
 }
 
+const estateMemberMapper = (element: EstateMember) => {
+  return {
+    ...element,
+    initial: true,
+    enabled: true,
+    heirsPercentage: '',
+    inheritance: '',
+    inheritanceTax: '',
+    taxableInheritance: '',
+    taxFreeInheritance: '',
+    phone: '',
+    email: '',
+    advocate: element.advocate
+      ? {
+          ...element.advocate,
+          phone: '',
+          email: '',
+        }
+      : undefined,
+  }
+}
+
 export const estateTransformer = (estate: EstateInfo): InheritanceData => {
   const realEstate = estate.assets.map((el) => initialMapper<EstateAsset>(el))
   const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
   const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
+  const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
-  return {
+  const data = {
     ...estate,
+    estateMembers,
     realEstate: {
       data: realEstate,
+      hasModified: false,
     },
     vehicles: {
       data: vehicles,
@@ -37,6 +67,8 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
       data: guns,
     },
   }
+
+  return data
 }
 
 // -----------------------------------------------------------------
@@ -104,9 +136,11 @@ export const expandAnswers = (
           return {
             assetNumber: realEstate.assetNumber ?? '',
             description: realEstate.description ?? '',
-            propertyValuation: realEstate.propertyValuation ?? '',
+            propertyValuation: realEstate.propertyValuation ?? '0',
+            propertyShare: realEstate.propertyShare ?? '0',
           }
         }),
+        hasModified: answers.assets.realEstate?.hasModified ?? false,
         total: answers.assets.realEstate?.total ?? 0,
       },
       stocks: {
@@ -177,16 +211,26 @@ export const expandAnswers = (
     heirs: {
       data: (answers.heirs?.data ?? []).map((heir) => {
         return {
+          ...heir,
           email: heir.email ?? '',
-          heirsName: heir.heirsName ?? '',
-          heirsPercentage: heir.heirsPercentage ?? 0,
-          inheritance: heir.inheritance ?? '',
-          inheritanceTax: heir.inheritanceTax ?? 0,
-          nationalId: heir.nationalId ?? '',
+          heirsName: heir.name ?? '',
+          heirsPercentage: heir.heirsPercentage ?? '',
           phone: heir.phone ?? '',
           relation: heir.relation ?? '',
-          taxableInheritance: heir.taxableInheritance ?? 0,
-          taxFreeInheritance: heir.taxFreeInheritance ?? 0,
+          nationalId: heir.nationalId ?? '',
+          inheritance: heir.inheritance ?? '',
+          inheritanceTax: heir.inheritanceTax ?? '',
+          taxableInheritance: heir.taxableInheritance ?? '',
+          taxFreeInheritance: heir.taxFreeInheritance ?? '',
+          dateOfBirth: heir.dateOfBirth ?? '',
+          enabled: heir.enabled ?? true,
+          advocate: {
+            address: '',
+            email: heir.advocate?.email ?? '',
+            name: heir.advocate?.name ?? '',
+            nationalId: heir.advocate?.nationalId ?? '',
+            phone: heir.advocate?.phone ?? '',
+          },
         }
       }),
       total: answers.heirs?.total ?? 0,
