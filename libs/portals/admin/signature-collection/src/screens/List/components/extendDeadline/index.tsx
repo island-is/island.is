@@ -25,7 +25,7 @@ const ActionExtendDeadline = ({
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
   const [endDate, setEndDate] = useState(endTime)
-  const [extendDeadlineMutation] = useExtendDeadlineMutation()
+  const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
   const { revalidate } = useRevalidator()
 
   useEffect(() => {
@@ -93,6 +93,7 @@ const ActionExtendDeadline = ({
           />
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
+              loading={loading}
               onClick={() => {
                 extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)
