@@ -188,7 +188,13 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                   {group.name && (
                                     <Table.Row>
                                       <Table.HeadData>
-                                        {group.name}
+                                        {group.name in translationStrings
+                                          ? formatMessage(
+                                              translationStrings[
+                                                group.name as keyof typeof translationStrings
+                                              ],
+                                            )
+                                          : group.name}
                                       </Table.HeadData>
                                       <Table.HeadData>
                                         {perMonthText}
@@ -204,11 +210,22 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                     const fontWeight = isLastItem
                                       ? 'semiBold'
                                       : undefined
+                                    let itemName = item?.name
+                                    if (
+                                      itemName &&
+                                      itemName in translationStrings
+                                    ) {
+                                      itemName = formatMessage(
+                                        translationStrings[
+                                          itemName as keyof typeof translationStrings
+                                        ],
+                                      )
+                                    }
                                     return (
                                       <Table.Row key={itemIndex}>
                                         <Table.Data>
                                           <Text fontWeight={fontWeight}>
-                                            {item.name}
+                                            {itemName}
                                           </Text>
                                         </Table.Data>
                                         <Table.Data>

@@ -420,4 +420,24 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Á ári',
     description: 'Á ári',
   },
+  TR_PAYMENTS: {
+    id: 'web.pensionCalculator:TR_PAYMENTS',
+    defaultMessage: 'Greiðslur frá Tryggingastofnun',
+    description: 'Greiðslur frá Tryggingastofnun',
+  },
+  INCOME_FROM_OTHERS: {
+    id: 'web.pensionCalculator:INCOME_FROM_OTHERS',
+    defaultMessage: 'Tekjur frá öðrum',
+    description: 'Tekjur frá öðrum',
+  },
+  CAPITAL_INCOME: {
+    id: 'web.pensionCalculator:CAPITAL_INCOME',
+    defaultMessage: 'Fjármagnstekjur',
+    description: 'Fjármagnstekjur',
+  },
+  TOTAL_INCOME: {
+    id: 'web.pensionCalculator:TOTAL_INCOME',
+    defaultMessage: 'Tekjur samtals',
+    description: 'Tekjur samtals',
+  },
 })
