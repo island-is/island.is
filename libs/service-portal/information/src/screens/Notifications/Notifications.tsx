@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Stack } from '@island.is/island-ui/core'
+import { Box, Button, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FootNote,
@@ -107,13 +107,24 @@ const UserNotifications = () => {
           ))}
         {loadingMore && <CardLoader />}
         {data?.userNotifications?.pageInfo.hasNextPage ? (
-          <Button
-            onClick={() =>
-              loadMore(data?.userNotifications?.pageInfo.endCursor ?? '')
-            }
+          <Box
+            display="flex"
+            alignItems="center"
+            marginTop={1}
+            justifyContent="center"
           >
-            {formatMessage(m.fetchMore)}
-          </Button>
+            <Button
+              onClick={() =>
+                loadMore(data?.userNotifications?.pageInfo.endCursor ?? '')
+              }
+              variant="ghost"
+              size="small"
+            >
+              {`${formatMessage(m.fetchMore)} ${
+                data?.userNotifications?.data?.length ?? 0
+              }/${data?.userNotifications?.totalCount ?? 1}`}
+            </Button>
+          </Box>
         ) : undefined}
         <FootNote serviceProviderSlug={ISLANDIS_SLUG} />
       </Stack>

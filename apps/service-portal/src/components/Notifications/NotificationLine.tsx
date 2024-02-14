@@ -7,24 +7,21 @@ import { InformationPaths } from '@island.is/service-portal/information'
 import format from 'date-fns/format'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
+import { Notification } from '@island.is/api/schema'
 
 interface Props {
-  data: {
-    title: string
-    sender: string
-    unread: boolean
-    img?: string
-    date?: string
-  }
+  data: Omit<Notification, 'recipient'>
   onClickCallback: () => void
 }
 
 export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
-  const date = data.date ? format(new Date(data.date), dateFormat.is) : ''
+  const date = data.metadata?.created
+    ? format(new Date(data.metadata.created), dateFormat.is)
+    : ''
 
   const wrapperRef = useRef(null)
 
-  const unread = data.unread
+  const unread = data.metadata.status === 'Unread'
 
   return (
     <Box className={styles.lineWrapper}>
@@ -39,14 +36,14 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
           [styles.unread]: unread,
         })}
       >
-        {data.img ? (
+        {/* {data.img ? (
           <div ref={wrapperRef}>
             <AvatarImage
               img={data.img}
               background={data.unread ? 'white' : 'blue100'}
             />
           </div>
-        ) : undefined}
+        ) : undefined} */}
         <Box
           width="full"
           display="flex"
@@ -55,15 +52,9 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
           minWidth={0}
         >
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="small" truncate>
-              {data.sender}
-            </Text>
-            <Text variant="small">{date}</Text>
-          </Box>
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <LinkResolver
               className={styles.link}
-              href={InformationPaths.NotificationDetail.replace(':id', '123')}
+              href={data.message?.link?.uri ?? ''}
               callback={onClickCallback}
             >
               <Text
@@ -72,9 +63,18 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
                 color="blue400"
                 truncate
               >
-                {data.title}
+                {data.message.title}
               </Text>
             </LinkResolver>
+            <Text variant="small">{date}</Text>
+          </Box>
+          <Box
+            marginTop={1}
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+          >
+            <Text variant="small">{data.message.body}</Text>
           </Box>
         </Box>
       </Box>

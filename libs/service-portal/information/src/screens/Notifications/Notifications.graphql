@@ -1,28 +1,40 @@
+fragment NotificationMetadataFields on NotificationMetadata {
+  sent
+  updated
+  created
+  read
+  status
+}
+
+fragment NotificationSenderFields on NotificationSender {
+  name
+  logo
+}
+
+fragment NotificationMessageFields on NotificationMessage {
+  title
+  body
+  link {
+    uri
+  }
+}
+
 query GetUserNotifications($input: NotificationsInput!) {
   userNotifications(input: $input) {
     data {
       id
       notificationId
       metadata {
-        sent
-        updated
-        created
-        read
-        status
+        ...NotificationMetadataFields
       }
       sender {
-        name
-        logo
+        ...NotificationSenderFields
       }
       recipient {
         nationalId
       }
       message {
-        title
-        body
-        link {
-          uri
-        }
+        ...NotificationMessageFields
       }
     }
     pageInfo {
@@ -32,6 +44,25 @@ query GetUserNotifications($input: NotificationsInput!) {
       endCursor
     }
     unreadCount
+    totalCount
+  }
+}
+
+query GetUserNotificationsOverview($input: NotificationsInput!) {
+  userNotificationsOverview: userNotifications(input: $input) {
+    data {
+      id
+      notificationId
+      metadata {
+        ...NotificationMetadataFields
+      }
+      sender {
+        ...NotificationSenderFields
+      }
+      message {
+        ...NotificationMessageFields
+      }
+    }
     totalCount
   }
 }

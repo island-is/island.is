@@ -9,7 +9,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { LinkResolver } from '@island.is/service-portal/core'
-import { InformationPaths } from '@island.is/service-portal/information'
+import {
+  InformationPaths,
+  useGetUserNotificationsOverviewQuery,
+} from '@island.is/service-portal/information'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
@@ -32,6 +35,13 @@ const NotificationMenu = ({
   useNamespaces(['service.portal'])
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
+  const { data } = useGetUserNotificationsOverviewQuery({
+    variables: {
+      input: {
+        limit: 5,
+      },
+    },
+  })
 
   const isMobile = width < theme.breakpoints.md
 
@@ -86,7 +96,7 @@ const NotificationMenu = ({
               justifyContent="center"
               alignItems="center"
               className={styles.overviewIcon}
-              marginRight={2}
+              marginRight={1}
             >
               <Icon
                 icon="notifications"
@@ -98,36 +108,9 @@ const NotificationMenu = ({
             <Text variant="h4">{formatMessage(m.notifications)}</Text>
           </Box>
           <Box className={styles.navWrapper}>
-            {[
-              {
-                title: 'Mundu eftir að skrá kílómetrastöðu ',
-                sender: 'Samgöngustofa',
-                unread: true,
-                date: '2024-01-14T15:59:07.000Z',
-                img: 'https://images.ctfassets.net/8k0h54kbe6bj/3EumKpWqbPFygVWxWteoW/2961b0d9c162e8528e5771ab1707a368/Samgongustofa-stakt-400-400.png',
-              },
-              {
-                title: 'Vegabréfið þitt er að renna út.',
-                sender: 'Skírteini',
-                unread: true,
-                date: '2024-01-01T15:59:07.000Z',
-                img: 'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/9fc63716a739a008d064ebb50b4c964a/skjaldamerkid.svg',
-              },
-              {
-                title: 'Ný vara hefur bæst við Mínar síður.',
-                sender: 'Ísland.is',
-                date: '2023-12-24T15:59:07.000Z',
-                unread: false,
-              },
-              {
-                title: 'Gögn barna eru nú að finna á þeirra notanda',
-                sender: 'Mínar upplýsingar',
-                date: '2023-12-12T15:59:07.000Z',
-                unread: false,
-              },
-            ]?.map((item) => (
+            {(data?.userNotificationsOverview?.data ?? []).map((item, i) => (
               <NotificationLine
-                key={item.date}
+                key={item.metadata.created ?? i}
                 onClickCallback={onClose}
                 data={item}
               />
@@ -151,7 +134,7 @@ const NotificationMenu = ({
                   unfocusable
                   onClick={onClose}
                 >
-                  Sjá allar tilkynningar
+                  {formatMessage(m.notificationsViewAll)}
                 </Button>
               </LinkResolver>
             </Box>
