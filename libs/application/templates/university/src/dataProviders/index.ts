@@ -19,3 +19,9 @@ export const ProgramApi = defineTemplateApi({
   externalDataId: 'programs',
   namespace: 'University',
 })
+
+export const InnaApi = defineTemplateApi({
+  action: 'getInnaPeriods',
+  externalDataId: 'innaEducation',
+  namespace: 'EducationShared',
+})

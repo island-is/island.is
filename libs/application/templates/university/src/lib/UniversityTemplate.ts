@@ -25,6 +25,7 @@ import {
   NationalRegistryIndividualApi,
   UniversityApi,
   ProgramApi,
+  InnaApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -80,6 +81,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 UniversityApi,
                 ProgramApi,
+                InnaApi,
               ],
             },
           ],

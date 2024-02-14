@@ -13,6 +13,7 @@ import {
   review,
 } from '../../lib/messages'
 import {
+  InnaApi,
   NationalRegistryIndividualApi,
   ProgramApi,
   UniversityApi,
@@ -64,6 +65,11 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               title: externalData.universityProfile.title,
               subTitle: externalData.universityProfile.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: InnaApi,
+              title: 'INNA TODO TITLE',
+              subTitle: 'INNA TODO SUBTITLE',
             }),
             buildDataProviderItem({
               provider: UniversityApi,
