@@ -13,15 +13,13 @@ import { getSessionType } from '../../utils/utils'
 import * as styles from '../LogTable/LogTable.css'
 import Person from '../PersonIcon/PersonIcon'
 import { Client } from '../Client/Client'
-import { getCountryByCode, Country } from '@island.is/shared/utils'
+import { Country, getCountryByCode } from '@island.is/shared/utils'
 
 interface LogTableProps {
   data: SessionsSession[]
 }
 
-const LogTable: React.FC<React.PropsWithChildren<LogTableProps>> = ({
-  data,
-}) => {
+const LogTable = ({ data }: LogTableProps) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const { formatDate, formatTime } = useIntl()
@@ -37,7 +35,7 @@ const LogTable: React.FC<React.PropsWithChildren<LogTableProps>> = ({
               textAlign={'center'}
               columnGap={'smallGutter'}
             >
-              {formatMessage(m.geolocation)}{' '}
+              {formatMessage(m.geolocation)}
               <Tooltip
                 placement="right"
                 as="button"
