@@ -7,7 +7,7 @@ import {
   buildSection,
   coreMessages,
 } from '@island.is/application/core'
-import { FormText } from '@island.is/application/types'
+import { Application, FormText, StaticText } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { conclusion } from './messages'
 
@@ -21,7 +21,11 @@ type Props = Partial<{
   secondButtonMessage: MessageDescriptor
   expandableHeader: MessageDescriptor
   expandableIntro: MessageDescriptor
-  expandableDescription: FormText
+  expandableDescription:
+    | MessageDescriptor
+    | ((
+        application: Application,
+      ) => MessageDescriptor | StaticText | null | undefined)
   conclusionLinkS3FileKey: FormText
   conclusionLink: string
   conclusionLinkLabel: MessageDescriptor
