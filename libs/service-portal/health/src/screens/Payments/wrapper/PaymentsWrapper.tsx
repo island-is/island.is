@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import {
   IntroHeader,
+  LinkButton,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
@@ -39,6 +40,10 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
 
       <Box paddingY={4} background="white">
         {children}
+        <LinkButton
+          to={formatMessage(messages.readAboutPaymentParticipationSystemsLink)}
+          text={formatMessage(messages.readAboutPaymentParticipationSystems)}
+        />
       </Box>
     </Box>
   )

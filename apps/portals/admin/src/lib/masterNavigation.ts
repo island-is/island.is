@@ -41,7 +41,7 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
     petitionNavigation,
     // Þjónustuborð
     serviceDeskNavigation,
-    // Meðmælalistar
+    // Meðmælasöfnun
     signatureCollectionNavigation,
   ],
 }

@@ -111,8 +111,6 @@ const useDefendants = () => {
 
   const setAndSendDefendantToServer = useCallback(
     (
-      caseId: string,
-      defendantId: string,
       update: UpdateDefendantInput,
       setWorkingCase: React.Dispatch<SetStateAction<Case>>,
     ) => {

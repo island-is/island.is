@@ -4,7 +4,7 @@ import { FC } from 'react'
 import {
   ConnectedComponent,
   SignatureCollectionCandidate,
-  SignatureCollectionList,
+  SignatureCollectionListBase,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../utils'
 import {
@@ -34,7 +34,7 @@ export const SignatureLists: FC<
         <Stack space={4}>
           {/* if collection time is over yet there are still open lists, show them */}
           {new Date() > new Date(collection.endTime) && openLists?.length ? (
-            openLists?.map((list: SignatureCollectionList) => {
+            openLists?.map((list: SignatureCollectionListBase) => {
               return (
                 <ActionCard
                   eyebrow={

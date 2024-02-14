@@ -37,7 +37,7 @@ import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const PaymentOverview = () => {
-  const { formatMessage, formatDateFns } = useLocale()
+  const { formatMessage, formatDateFns, lang } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
     sub(new Date(), { years: 3 }),
@@ -141,6 +141,7 @@ export const PaymentOverview = () => {
                     handleChange={(date) => setStartDate(date)}
                     backgroundColor="blue"
                     selected={startDate}
+                    locale={lang}
                   />
                 </GridColumn>
                 <GridColumn span={'1/2'}>
@@ -151,6 +152,7 @@ export const PaymentOverview = () => {
                     handleChange={(date) => setEndDate(date)}
                     backgroundColor="blue"
                     selected={endDate}
+                    locale={lang}
                   />
                 </GridColumn>
               </GridRow>

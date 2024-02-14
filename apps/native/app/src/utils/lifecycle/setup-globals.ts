@@ -143,7 +143,6 @@ LogBox.ignoreLogs([
   /toggling bottomTabs visibility is deprecated on iOS/,
   /Require cycle:/,
   /new NativeEventEmitter/,
-  /ConfigCat/,
 ])
 
 // set default timezone

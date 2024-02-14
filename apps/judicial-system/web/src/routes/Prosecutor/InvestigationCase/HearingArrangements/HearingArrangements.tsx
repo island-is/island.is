@@ -22,7 +22,6 @@ import {
 import {
   CaseState,
   CaseTransition,
-  Institution,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -33,7 +32,6 @@ import {
 import {
   formatDateForServer,
   useCase,
-  useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -48,7 +46,6 @@ const HearingArrangements = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { districtCourts } = useInstitution()
   const { formatMessage } = useIntl()
   const {
     sendNotification,
@@ -97,25 +94,6 @@ const HearingArrangements = () => {
     [formatMessage, router, setWorkingCase, transitionCase, workingCase],
   )
 
-  const handleCourtChange = (court: Institution) => {
-    if (workingCase) {
-      setAndSendCaseToServer(
-        [
-          {
-            courtId: court.id,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      return true
-    }
-
-    return false
-  }
-
   const stepIsValid = isHearingArrangementsStepValidIC(workingCase)
 
   return (
@@ -132,7 +110,7 @@ const HearingArrangements = () => {
           titles.prosecutor.investigationCases.hearingArrangements,
         )}
       />
-      {user && districtCourts && (
+      {user && (
         <>
           <FormContentContainer>
             <Box marginBottom={7}>
@@ -143,11 +121,7 @@ const HearingArrangements = () => {
             <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
             <ProsecutorSectionHeightenedSecurity />
             <Box component="section" marginBottom={5}>
-              <SelectCourt
-                workingCase={workingCase}
-                courts={districtCourts}
-                onChange={handleCourtChange}
-              />
+              <SelectCourt />
             </Box>
             <Box component="section" marginBottom={5}>
               <RequestCourtDate

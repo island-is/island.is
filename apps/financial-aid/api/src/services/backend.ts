@@ -21,6 +21,9 @@ import {
   CreateStaff,
   CreateMunicipality,
   ApplicationPagination,
+  ApiKeysForMunicipality,
+  CreateMunicipalityApiUser,
+  UpdatedApiKeysForMunicipality,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -33,6 +36,7 @@ import {
   PersonalTaxReturnResponse,
 } from '../app/modules/personalTaxReturn/models'
 import { FilterApplicationsInput } from '../app/modules/application/dto'
+import { DeleteApiKeyResponse } from '../app/modules/apiKeys/models'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -69,6 +73,26 @@ class BackendAPI extends RESTDataSource {
 
   getMunicipalities(): Promise<Municipality[]> {
     return this.get(`municipality`)
+  }
+
+  getApiKeys(): Promise<ApiKeysForMunicipality[]> {
+    return this.get(`apiKeys`)
+  }
+
+  updateApiKey(
+    input: UpdatedApiKeysForMunicipality,
+  ): Promise<ApiKeysForMunicipality> {
+    return this.put(`apiKeys/${input.id}`, { name: input.name })
+  }
+
+  deleteApiKey(id: string): Promise<DeleteApiKeyResponse> {
+    return this.delete(`apiKeys/${id}`)
+  }
+
+  createApiKey(
+    createApiKey: CreateMunicipalityApiUser,
+  ): Promise<ApiKeysForMunicipality> {
+    return this.post('apiKeys', createApiKey)
   }
 
   createMunicipality(

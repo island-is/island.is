@@ -9,7 +9,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.age.summary',
-      defaultMessage: '35 ára aldursmark er ekki náð',
+      defaultMessage: '18 ára aldursmark er ekki náð',
       description: '',
     },
   }),
@@ -49,6 +49,18 @@ export const errorMessages = {
       description: '',
     },
   }),
+  invalidSignature: defineMessages({
+    title: {
+      id: 'sls.application:error.invalidSignature.title',
+      defaultMessage: 'Undirskrift til staðar í kerfi',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.acinvalidSignatureive.summary',
+      defaultMessage: 'Nánari upplýsingar á mínum síðum.',
+      description: '',
+    },
+  }),
   signer: defineMessages({
     title: {
       id: 'sls.application:error.signer.title',
@@ -76,7 +88,7 @@ export const errorMessages = {
   deniedByService: defineMessages({
     title: {
       id: 'sls.application:error.deniedByService.title',
-      defaultMessage: 'Etthvað fór úrskeiðis',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
       description: '',
     },
     summary: {

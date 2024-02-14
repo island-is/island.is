@@ -96,6 +96,8 @@ import { TransferOfVehicleOwnershipService } from './transport-authority/transfe
 
 import { EnergyFundsModule } from './energy-funds/energy-funds.module'
 import { EnergyFundsService } from './energy-funds/energy-funds.service'
+import { UniversityModule } from './university/university.module'
+import { UniversityService } from './university/university.service'
 
 import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
 import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
@@ -113,6 +115,8 @@ import { SignatureListCreationModule } from './signature-collection/signature-li
 import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
 import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
 import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
+import { HomeSupportModule } from './home-support/home-support.module'
+import { HomeSupportService } from './home-support/home-support.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -171,7 +175,9 @@ export const modules = [
   SignatureListCreationModule,
   SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
+  HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
+  UniversityModule,
   OfficialJournalOfIcelandModule,
 ]
 
@@ -232,6 +238,8 @@ export const services = [
   SignatureListCreationService,
   SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
+  HomeSupportService,
   ChangeMachineSupervisorTemplateService,
+  UniversityService,
   OfficialJournalOfIcelandService,
 ]

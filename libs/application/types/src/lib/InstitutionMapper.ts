@@ -243,6 +243,14 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.HOME_SUPPORT]: {
+    nationalId: InstitutionNationalIds.SAMBAND_SVEITARFELAGA,
+    slug: InstitutionTypes.SAMBAND_SVEITARFELAGA,
+  },
+  [ApplicationTypes.UNIVERSITY]: {
+    nationalId: InstitutionNationalIds.HASKOLARADUNEYTI,
+    slug: InstitutionTypes.HASKOLARADUNEYTI,
+  },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
     slug: InstitutionTypes.DOMSMALARADUNEYTID,
