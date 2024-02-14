@@ -149,6 +149,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: '',
   },
+  advocateNationalId: {
+    id: 'ir.application:advocateNationalId',
+    defaultMessage: 'Kennitala forsjáraðila',
+    description: '',
+  },
   errorNationalIdIncorrect: {
     id: 'ir.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
@@ -164,9 +169,23 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
+  advocatePhone: {
+    id: 'ir.application:advocatePhone',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
   email: {
     id: 'ir.application:email',
     defaultMessage: 'Netfang',
+    description: '',
+  },
+  relation: {
+    id: 'ir.application:relation',
+    defaultMessage: 'Tengsl umsækjanda við dánarbú',
+  },
+  advocateEmail: {
+    id: 'ir.application:advocateEmail',
+    defaultMessage: 'Netfang forsjáraðila',
     description: '',
   },
 
@@ -308,6 +327,11 @@ export const m = defineMessages({
   },
   propertyValuation: {
     id: 'ir.application:propertyValuation',
+    defaultMessage: 'Fasteignamat',
+    description: '',
+  },
+  propertyValuationOnDeath: {
+    id: 'ir.application:propertyValuationOnDeath',
     defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
   },
@@ -638,9 +662,14 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: '',
   },
+  realEstateEstimationOnDeath: {
+    id: 'ir.application:realEstateEstimationOnDeath',
+    defaultMessage: 'Fasteignamat samtals á dánardegi',
+    description: '',
+  },
   realEstateEstimation: {
     id: 'ir.application:realEstateEstimation',
-    defaultMessage: 'Fasteignamat samtals á dánardegi',
+    defaultMessage: 'Fasteignamat samtals',
     description: '',
   },
   marketValue: {
@@ -946,6 +975,100 @@ export const m = defineMessages({
     defaultMessage: 'Erfðafjárskattur',
     description: '',
   },
+  inheritanceAddMember: {
+    id: 'ir.application:inheritanceAddMember',
+    defaultMessage: 'Bæta við erfingja',
+    description: 'Inheritance step add member of estate',
+  },
+  inheritanceDisableMember: {
+    id: 'ir.application:inheritanceDisableMember',
+    defaultMessage: 'Afvirkja',
+    description: 'Inheritance step disable member of estate',
+  },
+  inheritanceEnableMember: {
+    id: 'ir.application:inheritanceEnableMember',
+    defaultMessage: 'Virkja',
+    description: 'Inheritance step enable member of estate',
+  },
+  inheritanceDeleteMember: {
+    id: 'ir.application:inheritanceDeleteMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step delete member of estate',
+  },
+  inheritanceKtLabel: {
+    id: 'ir.application:inheritanceKtLabel',
+    defaultMessage: 'Kennitala',
+    description: 'National id label',
+  },
+  inheritanceRelationLabel: {
+    id: 'ir.application:inheritanceRelationLabel',
+    defaultMessage: 'Tengsl',
+    description: 'Relation label',
+  },
+  inheritanceRelationWithApplicantLabel: {
+    id: 'ir.application:inheritanceRelationWithApplicantLabel',
+    defaultMessage: 'Tengsl við umsækjanda',
+    description: 'Relation label',
+  },
+  inheritanceRelationPlaceholder: {
+    id: 'ir.application:inheritanceRelationPlaceholder',
+    defaultMessage: 'Veldu tengsl',
+    description: 'Relation placeholder',
+  },
+  inheritanceNameLabel: {
+    id: 'ir.application:inheritanceNameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Name label',
+  },
+  inheritanceForeignCitizenshipLabel: {
+    id: 'ir.application:inheritanceForeignCitizenshipLabel',
+    defaultMessage: 'Aðili án íslenskrar kennitölu',
+    description: '',
+  },
+  inheritanceDayOfBirthLabel: {
+    id: 'ir.application:inheritanceDayOfBirthLabel',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Day of birth label',
+  },
+  inheritanceAdvocateLabel: {
+    id: 'ir.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
+    description: 'Custody label',
+  },
+  inheritanceUnder18Error: {
+    id: 'ir.application:inheritanceUnder18Error',
+    defaultMessage:
+      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceUnder18ErrorAdvocate: {
+    id: 'ir.application:inheritanceUnder18ErrorAdvocate',
+    defaultMessage:
+      'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceAgeValidation: {
+    id: 'ir.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
+    description: '',
+  },
+  heirAdvocateAgeValidation: {
+    id: 'ir.application:heirAdvocateAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
+    description: '',
+  },
+  advocate: {
+    id: 'ir.application:advocate',
+    defaultMessage: 'Forsjáraðili',
+    description: '',
+  },
+  advocateName: {
+    id: 'ir.application:advocateName',
+    defaultMessage: 'Nafn forsjáraðila',
+    description: '',
+  },
   addHeir: {
     id: 'ir.application:addHeir',
     defaultMessage: 'Bæta við erfingja',
@@ -954,6 +1077,16 @@ export const m = defineMessages({
   heir: {
     id: 'ir.application:heir',
     defaultMessage: 'Erfingi',
+    description: '',
+  },
+  representative: {
+    id: 'ir.application:representative',
+    defaultMessage: 'Umboðsmaður',
+    description: '',
+  },
+  exchangeManager: {
+    id: 'ir.application:exchangeManager',
+    defaultMessage: 'Skiptastjóri',
     description: '',
   },
   heirs: {
@@ -1050,6 +1183,11 @@ export const m = defineMessages({
     defaultMessage:
       'Sýslumaður hefur móttekið erfðafjárskýrslu. Hún verður nú yfirfarin. Ef sýslumaður staðfestir skýrsluna að þá fá erfingjar/umboðsmaður senda tilkynningu um álagningu erfðafjárskatts í pósthólf á Íslands.is. Ef sýslumaður hefur athugasemdir við innsenda skýrslu mun sýslumaður senda bréf í pósthólf erfingja inn á Ísland.is',
     description: '',
+  },
+  errorRelation: {
+    id: 'ir.application:error.errorRelation',
+    defaultMessage: 'Tengsl virðast ekki vera rétt',
+    description: 'Relation is invalid',
   },
 
   // Tax Free Limit

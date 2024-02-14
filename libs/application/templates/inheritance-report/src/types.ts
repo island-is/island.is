@@ -1,6 +1,5 @@
 import { FormValue } from '@island.is/application/types'
-import { EstateAsset } from '@island.is/clients/syslumenn'
-import e from 'express'
+import { Advocate, EstateAsset } from '@island.is/clients/syslumenn'
 
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
@@ -61,18 +60,6 @@ export interface ElectPersonType {
   electedPersonName?: string
   electedPersonNationalId?: string
   lookupError?: boolean
-}
-
-export interface EstateMember {
-  name: string
-  nationalId: string
-  relation: RelationEnum | string
-  initial?: boolean
-  dateOfBirth?: string
-  custodian?: string
-  foreignCitizenship?: ('yes' | 'no')[]
-  dummy: boolean
-  enabled?: boolean
 }
 
 export interface Property {
@@ -179,7 +166,8 @@ export interface RealEstateData {
 }
 
 export interface RealEstate {
-  data: RealEstateData[]
+  data?: RealEstateData[]
+  hasModified?: boolean
   total: number
 }
 
@@ -213,13 +201,8 @@ export interface AllDebts {
 }
 
 export interface ApplicationDebts {
-  publicCharges: PublicCharges
+  publicCharges: string
   domesticAndForeignDebts: DomesticAndForeignDebts
-}
-
-export interface PublicChargesData {
-  taxFreeInheritance: number
-  publicChargesAmount: string
 }
 
 interface DomesticAndForeignDebtsData {
@@ -229,13 +212,9 @@ interface DomesticAndForeignDebtsData {
   creditorName: string
   taxFreeInheritance: number
 }
+
 interface DomesticAndForeignDebts {
   data: DomesticAndForeignDebtsData[]
-  total: number
-}
-
-export interface PublicCharges {
-  data: PublicChargesData[]
   total: number
 }
 
@@ -265,3 +244,30 @@ export interface Buisness {
   businessDebts: BuisnessDebt
   businessTotal: number
 }
+
+// todo: do these value labels make sense?
+export enum RelationEnum {
+  REPRESENTATIVE = 'representative',
+  HEIR = 'heir',
+  EXCHANGEMANAGER = 'exchangeManager',
+}
+
+export interface EstateMember {
+  name: string
+  nationalId: string
+  relation: string
+  initial?: boolean
+  dateOfBirth?: string
+  foreignCitizenship?: ('yes' | 'no')[]
+  enabled?: boolean
+  phone?: string
+  email?: string
+  advocate?: Advocate
+  heirsPercentage?: string
+  inheritance?: string
+  inheritanceTax?: string
+  taxableInheritance?: string
+  taxFreeInheritance?: string
+}
+
+export const heirAgeValidation = 'heirAgeValidation'
