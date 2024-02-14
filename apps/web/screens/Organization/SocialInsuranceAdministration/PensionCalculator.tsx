@@ -319,7 +319,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
           months: -maxMonthPensionHurry,
         }),
         maxDate: add(add(new Date(birthdate), { years: defaultPensionAge }), {
-          months: maxMonthPensionDelay, // Perhaps reconsider this date here?
+          months: maxMonthPensionDelay,
         }),
       }
 

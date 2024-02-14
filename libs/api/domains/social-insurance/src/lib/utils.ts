@@ -134,6 +134,7 @@ export const groupPensionCalculationItems = (
     'Samtals ráðstöfunartekjur eftir skatt:',
   ]
 
+  // These values are used as keys in the frontend to display translations
   const groupNames = [
     'TR_PAYMENTS',
     '',
@@ -147,6 +148,7 @@ export const groupPensionCalculationItems = (
 
   if (calculation?.length > 0) {
     let calculationIndex = 0
+    // Group together items until we reach a cutoff value, then start forming the next group
     for (let i = 0; i < groupCutoffValues.length; i += 1) {
       const cutoffValue = groupCutoffValues[i]
       const items = []
