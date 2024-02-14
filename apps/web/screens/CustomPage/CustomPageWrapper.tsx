@@ -74,6 +74,7 @@ export function withCustomPageWrapper<Props>(
       customPageData,
       pageProps,
       customAlertBanner: customPageData?.alertBanner,
+      ...pageProps,
     }
   }
 

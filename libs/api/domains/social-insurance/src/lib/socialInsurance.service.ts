@@ -143,7 +143,9 @@ export class SocialInsuranceService {
     }
 
     return {
-      highlightedItem: response?.[6],
+      highlightedItem: response?.find(
+        (item) => item?.name === 'Samtals frá TR eftir skatt:',
+      ),
       groups,
     }
   }
