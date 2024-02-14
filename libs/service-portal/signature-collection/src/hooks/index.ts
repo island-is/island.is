@@ -14,6 +14,7 @@ import {
   SignatureCollectionList,
   SignatureCollectionSuccess,
   SignatureCollection,
+  SignatureCollectionSignedList,
 } from '@island.is/api/schema'
 
 export const useGetSignatureList = (listId: string) => {
@@ -32,7 +33,7 @@ export const useGetSignatureList = (listId: string) => {
     },
   )
   const listInfo =
-    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? {}
+    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? null
   return { listInfo, refetchSignatureList, loadingList }
 }
 
@@ -59,15 +60,15 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
 export const useGetSignedList = () => {
   const {
     data: getSignedList,
-    loading: loadingSignedList,
-    refetch: refetchSignedList,
-  } = useQuery<{ signatureCollectionSignedList?: SignatureCollectionListBase }>(
-    GetSignedList,
-  )
-  const signedList =
-    (getSignedList?.signatureCollectionSignedList as SignatureCollectionListBase) ??
+    loading: loadingSignedLists,
+    refetch: refetchSignedLists,
+  } = useQuery<{
+    signatureCollectionSignedList?: SignatureCollectionSignedList[]
+  }>(GetSignedList)
+  const signedLists =
+    (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList[]) ??
     null
-  return { signedList, loadingSignedList, refetchSignedList }
+  return { signedLists, loadingSignedLists, refetchSignedLists }
 }
 
 export const useGetListsForUser = () => {

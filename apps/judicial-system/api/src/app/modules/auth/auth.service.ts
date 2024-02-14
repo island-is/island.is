@@ -20,7 +20,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { DefenderService } from '../defender/defender.service'
+import { DefenderService } from '../defender'
 import { authModuleConfig } from './auth.config'
 
 @Injectable()

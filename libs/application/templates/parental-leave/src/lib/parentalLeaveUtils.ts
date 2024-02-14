@@ -660,13 +660,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
-  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
+  const useUnion = getValueViaPath(answers, 'payments.useUnion') as YesOrNo
 
   const union = getValueViaPath(answers, 'payments.union') as string
 
   const usePrivatePensionFund = getValueViaPath(
     answers,
-    'usePrivatePensionFund',
+    'payments.usePrivatePensionFund',
   ) as YesOrNo
 
   const privatePensionFund = getValueViaPath(
@@ -822,10 +822,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+
   const employerLastSixMonths = getValueViaPath(
     answers,
     'employerLastSixMonths',
   ) as YesOrNo
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -1006,6 +1011,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUsage,
     employers,
     employerLastSixMonths,
+    isNotStillEmployed,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -1464,13 +1470,6 @@ export const getRightsDescTitle = (application: Application) => {
     : parentalLeaveFormMessages.shared.rightsDescription
 }
 
-export const getPeriodImageTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
-  }
-  return parentalLeaveFormMessages.shared.periodsImageTitle
-}
-
 export const getEditOrAddInfoSectionTitle = (application: Application) => {
   if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
@@ -1925,4 +1924,21 @@ export const getChildrenOptions = (application: Application) => {
       subLabel,
     }
   })
+}
+
+// applicant that cannot apply for residence grant: secondary parents, adoption and foster care
+export const showResidenceGrant = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData)
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+  const childrenData = children as unknown as ChildInformation[]
+  if (
+    childrenData?.length &&
+    childrenData[0]?.parentalRelation?.match('primary') &&
+    noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
+    noChildrenFoundTypeOfApplication !== ADOPTION
+  )
+    return true
+  return false
 }

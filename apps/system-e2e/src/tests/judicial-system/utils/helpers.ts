@@ -24,23 +24,25 @@ async function createFakePdf(title: string) {
   return {
     name: title,
     mimeType: 'application/pdf',
-    buffer: Buffer.from(new ArrayBuffer(0)),
+    buffer: Buffer.from(
+      "%PDF-1.2 \n9 0 obj\n<<\n>>\nstream\nBT/ 32 Tf(  TESTING   )' ET\nendstream\nendobj\n4 0 obj\n<<\n/Type /Page\n/Parent 5 0 R\n/Contents 9 0 R\n>>\nendobj\n5 0 obj\n<<\n/Kids [4 0 R ]\n/Count 1\n/Type /Pages\n/MediaBox [ 0 0 175 50 ]\n>>\nendobj\n3 0 obj\n<<\n/Pages 5 0 R\n/Type /Catalog\n>>\nendobj\ntrailer\n<<\n/Root 3 0 R\n>>\n%%EOF",
+    ),
   }
 }
 
-export async function uploadDocument(
+export async function chooseDocument(
   page: Page,
   clickButton: () => Promise<void>,
   fileName: string,
-  isLimitedAccess = false,
 ) {
   const fileChooserPromise = page.waitForEvent('filechooser')
   await clickButton()
 
   const fileChooser = await fileChooserPromise
-  await page.waitForTimeout(1000)
   await fileChooser.setFiles(await createFakePdf(fileName))
+}
 
+export async function verifyUpload(page: Page, isLimitedAccess = false) {
   await Promise.all([
     verifyRequestCompletion(
       page,
@@ -54,5 +56,17 @@ export async function uploadDocument(
       '/api/graphql',
       isLimitedAccess ? 'LimitedAccessCreateFile' : 'CreateFile',
     ),
+  ])
+}
+
+export async function uploadDocument(
+  page: Page,
+  clickButton: () => Promise<void>,
+  fileName: string,
+  isLimitedAccess = false,
+) {
+  return Promise.all([
+    chooseDocument(page, clickButton, fileName),
+    verifyUpload(page, isLimitedAccess),
   ])
 }

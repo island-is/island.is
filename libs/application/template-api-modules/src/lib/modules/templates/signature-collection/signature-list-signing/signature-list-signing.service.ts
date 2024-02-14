@@ -59,6 +59,8 @@ export class SignatureListSigningService extends BaseTemplateApiService {
           return errorMessages.signer
         case ReasonKey.AlreadyOwner:
           return errorMessages.owner
+        case ReasonKey.noInvalidSignature:
+          return errorMessages.invalidSignature
         default:
           return errorMessages.deniedByService
       }
@@ -73,7 +75,8 @@ export class SignatureListSigningService extends BaseTemplateApiService {
     ).area?.id
 
     if (!areaId) {
-      throw new TemplateApiError(errorMessages.deniedByService, 400)
+      // If no area user will be stopped by can sign above
+      return null
     }
     const ownerId = application.answers.initialQuery as string
     // Check if user got correct ownerId, if not user has to pick list

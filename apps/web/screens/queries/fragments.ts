@@ -667,6 +667,7 @@ export const slices = gql`
     __typename
     id
     dropdownLabel
+    alphabeticallyOrdered
     slices {
       ...OneColumnTextFields
     }
@@ -825,11 +826,13 @@ export const slices = gql`
     }
     sourceData
     xAxisKey
+    xAxisFormat
     xAxisValueType
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {
     __typename
+    chartNumberBoxId: id
     title
     numberBoxDescription
     sourceDataKey

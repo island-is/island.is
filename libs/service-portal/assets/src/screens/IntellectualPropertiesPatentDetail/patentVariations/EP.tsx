@@ -43,6 +43,14 @@ const PatentEP = ({ data, loading }: Props) => {
         date: data.lifecycle.expiryDate ?? undefined,
         message: formatMessage(coreMessages.validTo),
       },
+      {
+        date: data.epLifecycle.translationSubmissionDate ?? undefined,
+        message: formatMessage(ipMessages.translationSubmitted),
+      },
+      {
+        date: data.epLifecycle.provisionDatePublishedInGazette ?? undefined,
+        message: formatMessage(ipMessages.provisionPublishedInGazette),
+      },
     ])
   }, [formatMessage, data.lifecycle, data.epLifecycle])
 
@@ -180,35 +188,28 @@ const PatentEP = ({ data, loading }: Props) => {
           },
         ]}
       />
-      <StackOrTableBlock
-        box={{ marginTop: [2, 2, 6] }}
-        entries={
-          data?.priorities?.map((p) => {
-            return {
-              number: p.number ?? '',
-              date: p.applicationDate
-                ? formatDate(new Date(p.applicationDate))
-                : undefined,
-              country: p.country.name ?? '',
-            }
-          }) ?? []
-        }
-        title={formatMessage(ipMessages.priority)}
-        columns={[
-          {
-            label: formatMessage(coreMessages.number),
-            key: 'number',
-          },
-          {
-            label: formatMessage(coreMessages.date),
-            key: 'date',
-          },
-          {
-            label: formatMessage(ipMessages.country),
-            key: 'country',
-          },
-        ]}
-      />
+      {data?.priorities && (
+        <StackOrTableBlock
+          box={{ marginTop: [2, 2, 6] }}
+          entries={data?.priorities}
+          title={formatMessage(ipMessages.priority)}
+          columns={[
+            {
+              label: formatMessage(coreMessages.number),
+              key: 'number',
+            },
+            {
+              label: formatMessage(coreMessages.date),
+              isDate: true,
+              key: 'applicationDate',
+            },
+            {
+              label: formatMessage(coreMessages.country),
+              key: 'countryName',
+            },
+          ]}
+        />
+      )}
       {data?.pct?.date && data?.pct?.number && (
         <StackOrTableBlock
           box={{ marginTop: [2, 2, 6] }}
@@ -222,6 +223,7 @@ const PatentEP = ({ data, loading }: Props) => {
             {
               label: formatMessage(ipMessages.pctDate),
               key: 'date',
+              isDate: true,
             },
           ]}
         />

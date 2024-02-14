@@ -51,6 +51,7 @@ export type Icon =
   | 'lockOpened'
   | 'logOut'
   | 'mail'
+  | 'mailOpen'
   | 'menu'
   | 'notifications'
   | 'open'
@@ -85,6 +86,8 @@ export type Icon =
   | 'listView'
   | 'gridView'
   | 'swapVertical'
+  | 'thumbsUp'
+  | 'thumbsDown'
 
 export default {
   filled: {
@@ -139,6 +142,7 @@ export default {
     lockOpened: 'LockOpened',
     logOut: 'LogOut',
     mail: 'Mail',
+    mailOpen: 'MailOpen',
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
@@ -173,6 +177,8 @@ export default {
     listView: 'ListView',
     gridView: 'GridView',
     swapVertical: 'SwapVertical',
+    thumbsUp: 'ThumbsUp',
+    thumbsDown: 'ThumbsDown',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -226,6 +232,7 @@ export default {
     lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',
+    mailOpen: 'MailOpenOutline',
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
@@ -260,5 +267,7 @@ export default {
     listView: 'ListView',
     gridView: 'GridView',
     swapVertical: 'SwapVertical',
+    thumbsUp: 'ThumbsUpOutline',
+    thumbsDown: 'ThumbsDownOutline',
   },
 }

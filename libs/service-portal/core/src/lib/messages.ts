@@ -111,6 +111,10 @@ export const m = defineMessages({
     id: 'service.portal:transactions',
     defaultMessage: 'Færslur',
   },
+  country: {
+    id: 'service.portal:country',
+    defaultMessage: 'Land',
+  },
   date: {
     id: 'service.portal:date',
     defaultMessage: 'Dagsetning',
@@ -473,7 +477,7 @@ export const m = defineMessages({
   },
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -1234,6 +1238,10 @@ export const m = defineMessages({
     id: 'service.portal:add-to-storage',
     defaultMessage: 'Setja í geymslu',
   },
+  markAsRead: {
+    id: 'service.portal:mark-as-read',
+    defaultMessage: 'Merkja sem lesið',
+  },
   removeFromStorage: {
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
@@ -1366,5 +1374,27 @@ export const m = defineMessages({
   icelandic: {
     id: 'service.portal:icelandic',
     defaultMessage: 'Íslenska',
+  },
+  noDataFoundVariable: {
+    id: 'sp.health:no-data-found',
+    defaultMessage: 'Engin {arg} skráð',
+  },
+  noDataFoundVariableMasculine: {
+    id: 'sp.health:no-data-found-masculine',
+    defaultMessage: 'Engir {arg} skráðir',
+  },
+  noDataFoundVariableFeminine: {
+    id: 'sp.health:no-data-found-feminine',
+    defaultMessage: 'Engar {arg} skráðar',
+  },
+  noDataFoundVariableDetail: {
+    id: 'sp.health:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariation: {
+    id: 'sp.health:no-data-found-detail-variation',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
 })

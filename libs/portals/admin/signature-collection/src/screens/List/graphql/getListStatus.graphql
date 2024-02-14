@@ -1,0 +1,5 @@
+query ListStatus($input: SignatureCollectionIdInput!) {
+  signatureCollectionAdminListStatus(input: $input) {
+    status
+  }
+}

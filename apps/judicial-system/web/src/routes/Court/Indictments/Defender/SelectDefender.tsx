@@ -52,12 +52,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
         defendantWaivesRightToCounsel,
       }
 
-      setAndSendDefendantToServer(
-        caseId,
-        defendant.id,
-        updateDefendantInput,
-        setWorkingCase,
-      )
+      setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
     },
     [setWorkingCase, setAndSendDefendantToServer],
   )

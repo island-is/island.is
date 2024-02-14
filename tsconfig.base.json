@@ -168,6 +168,9 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
+      "@island.is/api/domains/notifications": [
+        "libs/api/domains/notifications/src/index.ts"
+      ],
       "@island.is/api/domains/occupational-licenses": [
         "libs/api/domains/occupational-licenses/src/index.ts"
       ],
@@ -484,6 +487,9 @@
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
+      "@island.is/application/templates/university": [
+        "libs/application/templates/university/src/index.ts"
+      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
@@ -695,6 +701,9 @@
       ],
       "@island.is/clients/university-application/agricultural-university-of-iceland": [
         "libs/clients/university-application/agricultural-university-of-iceland/src/index.ts"
+      ],
+      "@island.is/clients/university-application/bifrost-university": [
+        "libs/clients/university-application/bifrost-university/src/index.ts"
       ],
       "@island.is/clients/university-application/holar-university": [
         "libs/clients/university-application/holar-university/src/index.ts"

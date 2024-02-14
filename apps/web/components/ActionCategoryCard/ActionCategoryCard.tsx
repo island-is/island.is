@@ -1,10 +1,7 @@
-import React, { ReactElement, ReactNode, forwardRef, ElementType } from 'react'
-import cn from 'classnames'
-import { ObjectFitProperty } from 'csstype'
+import React, { forwardRef, ReactElement } from 'react'
 import { useMeasure } from 'react-use'
 import { UseMeasureRef } from 'react-use/lib/useMeasure'
 
-import * as styles from './ActionCategoryCard.css'
 import {
   Box,
   Button,
@@ -19,6 +16,8 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
+
+import * as styles from './ActionCategoryCard.css'
 
 export const STACK_WIDTH = 280
 
@@ -59,6 +58,7 @@ export type ActionCategoryCardProps = {
   width?: number
   icon?: React.ReactElement
   heading: string
+  subHeading?: string
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
   text: string
@@ -106,6 +106,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
       width,
       stackWidth = STACK_WIDTH,
       heading,
+      subHeading,
       headingAs = 'h3',
       headingVariant = 'h3',
       icon,
@@ -214,18 +215,32 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                     {icon}
                   </Box>
                 )}
-                <Text
-                  as={headingAs}
-                  variant={headingVariant}
-                  color={textColor}
-                  truncate={truncateHeading}
-                  title={heading}
-                >
-                  {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
-                </Text>
+                <Box>
+                  <Text
+                    as={headingAs}
+                    variant={headingVariant}
+                    color={textColor}
+                    truncate={truncateHeading}
+                    title={heading}
+                  >
+                    {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+                  </Text>
+                  <Text
+                    variant="eyebrow"
+                    color="blue400"
+                    truncate={false}
+                    title={subHeading}
+                    paddingBottom={3}
+                    lineHeight="sm"
+                  >
+                    {subHeading}
+                  </Text>
+                </Box>
               </Box>
               <Text paddingTop={1}>
-                <Box className={styles.truncatedText}>{text}</Box>
+                <Box className={styles.truncatedText} component={'span'}>
+                  {text}
+                </Box>
               </Text>
             </FocusableBox>
             {/* You can only have tags or a custom component */}
@@ -269,6 +284,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                 sidePanelConfig.items.map((item) => {
                   return (
                     <Box
+                      key={item.title}
                       display="flex"
                       flexDirection="row"
                       width="full"

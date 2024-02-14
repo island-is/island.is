@@ -2,7 +2,12 @@ import React from 'react'
 
 function WomanWithLaptopIllustration() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 563">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="342"
+      height="355"
+      viewBox="0 0 432 445"
+    >
       <defs>
         <linearGradient
           id="linear-gradient"

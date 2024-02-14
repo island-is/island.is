@@ -14,7 +14,7 @@ import {
   CanSignInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import { List, mapList, mapListBase } from './types/list.dto'
+import { List, SignedList, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { Success, mapReasons } from './types/success.dto'
@@ -70,7 +70,7 @@ export class SignatureCollectionClientService {
     })
     return signatures
       .map((signature) => mapSignature(signature))
-      .filter((s) => s.active)
+      .filter((s) => s.valid)
   }
 
   async getAreas(collectionId?: string) {
@@ -87,15 +87,24 @@ export class SignatureCollectionClientService {
     }))
   }
 
-  async createLists({
-    collectionId,
-    owner,
-    areas,
-  }: CreateListInput): Promise<Slug> {
+  async createLists(
+    { collectionId, owner, areas }: CreateListInput,
+    auth: User,
+  ): Promise<Slug> {
     const { id, isActive } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
       throw new Error('Collection is not open')
+    }
+    // check if user is sending in their own nationalId
+    if (owner.nationalId !== auth.nationalId) {
+      throw new Error('NationalId does not match')
+    }
+    // check if user is already owner of lists
+
+    const { canCreate, isOwner, name } = await this.getSignee(auth)
+    if (!canCreate || isOwner) {
+      throw new Error('User is already owner of lists')
     }
 
     const collectionAreas = await this.getAreas(id)
@@ -105,7 +114,10 @@ export class SignatureCollectionClientService {
         )
       : collectionAreas
 
-    const lists = await this.listsApi.medmaelalistarAddListarPost({
+    const lists = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarAddListarPost({
       medmaelalistiRequestDTO: {
         sofnunID: parseInt(id),
         kennitala: owner.nationalId,
@@ -113,7 +125,7 @@ export class SignatureCollectionClientService {
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: area.id,
-          listiNafn: `${owner.name} - ${area.name}`,
+          listiNafn: `${name} - ${area.name}`,
         })),
       },
     })
@@ -125,25 +137,35 @@ export class SignatureCollectionClientService {
   }
 
   async signList(listId: string, auth: User): Promise<Signature> {
-    const signature = await this.getApiWithAuth(
+    const { signatures } = await this.getSignee(auth)
+    // If user has already signed list be sure to throw error
+    if (signatures && signatures?.length > 0) {
+      throw new Error('User has already signed a list')
+    }
+
+    const newSignature = await this.getApiWithAuth(
       this.listsApi,
       auth,
     ).medmaelalistarIDAddMedmaeliPost({
       kennitala: auth.nationalId,
       iD: parseInt(listId),
     })
-    return mapSignature(signature)
+
+    return mapSignature(newSignature)
   }
 
   async unsignList(listId: string, auth: User): Promise<Success> {
-    const { signature } = await this.getSignee(auth)
-    if (!signature || signature.listId !== listId || !signature.id) {
+    const { signatures } = await this.getSignee(auth)
+    const activeSignature = signatures?.find((signature) => signature.valid)
+    if (!signatures || !activeSignature || activeSignature.listId !== listId) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
-    const signatureRemoved =
-      await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
-        iD: parseInt(signature.id),
-      })
+    const signatureRemoved = await this.getApiWithAuth(
+      this.signatureApi,
+      auth,
+    ).medmaeliIDRemoveMedmaeliUserPost({
+      iD: parseInt(activeSignature.id),
+    })
     return { success: !!signatureRemoved }
   }
 
@@ -164,7 +186,10 @@ export class SignatureCollectionClientService {
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
     if (isPresidential) {
-      await this.candidateApi.frambodIDRemoveFrambodUserPost({
+      await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDRemoveFrambodUserPost({
         iD: parseInt(candidate.id),
       })
       return { success: true }
@@ -192,12 +217,29 @@ export class SignatureCollectionClientService {
     return { success: true }
   }
 
-  async getSignedList(auth: User): Promise<List | null> {
-    const { signature } = await this.getSignee(auth)
-    if (!signature) {
+  async getSignedList(auth: User): Promise<SignedList[] | null> {
+    const { signatures } = await this.getSignee(auth)
+    if (!signatures) {
       return null
     }
-    return this.getList(signature.listId, auth)
+    return await Promise.all(
+      signatures.map(async (signature) => {
+        // Get title for list
+        const list = await this.sharedService.getList(
+          signature.listId,
+          this.getApiWithAuth(this.listsApi, auth),
+          this.getApiWithAuth(this.candidateApi, auth),
+        )
+        return {
+          signedDate: signature.created,
+          isDigital: signature.isDigital,
+          pageNumber: signature.pageNumber,
+          isValid: signature.valid,
+          canUnsign: signature.isDigital && signature.valid,
+          ...list,
+        } as SignedList
+      }),
+    )
   }
 
   async canSign({
@@ -205,13 +247,23 @@ export class SignatureCollectionClientService {
     canSignInfo,
     isActive,
     activeSignature,
+    signatures,
   }: CanSignInput): Promise<Success> {
+    // User is not allowed to have more than one signature
+    // They are marked as invalid but count as participation
+    const noInvalidSignature = !signatures?.find((s) => !s.valid) ?? true
+
     const reasons = mapReasons({
       ...canSignInfo,
       active: isActive,
       notSigned: activeSignature === undefined,
+      noInvalidSignature,
     })
-    return { success: requirementsMet && isActive && !activeSignature, reasons }
+    return {
+      success:
+        requirementsMet && isActive && !activeSignature && noInvalidSignature,
+      reasons,
+    }
   }
 
   async canCreate({
@@ -242,6 +294,7 @@ export class SignatureCollectionClientService {
   async getSignee(auth: User, nationalId?: string): Promise<Signee> {
     const collection = await this.currentCollection()
     const { id, isPresidential, isActive } = collection
+
     const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
@@ -249,9 +302,12 @@ export class SignatureCollectionClientService {
       kennitala: nationalId ?? auth.nationalId,
       iD: parseInt(id),
     })
-    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
 
+    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
     const activeSignature = user.medmaeli?.find((signature) => signature.valid)
+    const signatures = user.medmaeli?.map((signature) =>
+      mapSignature(signature),
+    )
     const ownedLists =
       user.medmaelalistar && candidate
         ? user.medmaelalistar?.map((list) => mapListBase(list))
@@ -271,6 +327,7 @@ export class SignatureCollectionClientService {
       isActive,
       canSignInfo: user.maKjosaInfo,
       activeSignature,
+      signatures,
     })
     return {
       nationalId: user.kennitala ?? '',
@@ -284,7 +341,7 @@ export class SignatureCollectionClientService {
         id: user.svaedi?.id?.toString() ?? '',
         name: user.svaedi?.nafn?.toString() ?? '',
       },
-      signature: activeSignature ? mapSignature(activeSignature) : undefined,
+      signatures,
       ownedLists,
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
       candidate,

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -40,6 +40,7 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 interface LandingPageProps {
@@ -60,6 +61,7 @@ const LandingPage: Screen<LandingPageProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const [searchTerm, setSearchTerm] = useState('')
+  useSetZIndexOnHeader()
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -150,7 +152,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                 <Text variant="eyebrow" color="blueberry600">
                   {' '}
                   {/* TODO Translations */}
-                  Háskólar
+                  {n('universities', 'Háskólar')}
                 </Text>
                 {universities.map((university) => {
                   return (
@@ -180,74 +182,63 @@ const LandingPage: Screen<LandingPageProps> = ({
         </>
       }
       mainContent={
-        <Box paddingTop={0}>
+        <Box
+          paddingTop={0}
+          style={{ gap: '2.5rem' }}
+          display="flex"
+          flexDirection={'column'}
+        >
           {organizationPage?.slices?.map((slice, index) => {
             return (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                namespace={namespace}
-                slug={organizationPage.slug}
-                fullWidth={organizationPage.theme === 'landing_page'}
-                marginBottom={
-                  index === organizationPage.slices.length - 1 ? 5 : 0
-                }
-                paddingBottom={
-                  !organizationPage.description && index === 0 ? 0 : 6
-                }
-              />
+              <Box key={index}>
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  namespace={namespace}
+                  slug={organizationPage.slug}
+                  fullWidth={organizationPage.theme === 'landing_page'}
+                  marginBottom={
+                    index === organizationPage.slices.length - 1 ? 5 : 0
+                  }
+                  paddingBottom={
+                    !organizationPage.description && index === 0 ? 0 : 6
+                  }
+                />
+                {index === 0 && (
+                  <GridColumn
+                    span={['9/9', '9/9', '11/12']}
+                    offset={['0', '0', '1/12']}
+                  >
+                    <Input
+                      placeholder={n('searchPrograms', 'Leit í háskólanámi')}
+                      id="searchuniversity"
+                      name="filterInput"
+                      size="md"
+                      value={searchTerm}
+                      className={cn(styles.searchInput)}
+                      backgroundColor="blue"
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value)
+                      }}
+                      onKeyDown={(k) => {
+                        if (k.code === 'Enter') {
+                          routeToSearch()
+                        }
+                      }}
+                    />
+                    <button
+                      className={cn(styles.searchIcon)}
+                      onClick={() => routeToSearch()}
+                    >
+                      <Icon size="large" icon="search" color="blue400" />
+                    </button>
+                  </GridColumn>
+                )}
+              </Box>
             )
           })}
-          <GridColumn offset="1/9" span="7/9">
-            <Box marginY={4}>
-              <AlertMessage
-                type="warning"
-                message="ATH. Tímabundin BETA útgáfa"
-              />
-            </Box>
-          </GridColumn>
-          <GridColumn offset="1/9" span="7/9">
-            <Input
-              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
-              id="searchuniversity"
-              name="filterInput"
-              size="md"
-              value={searchTerm}
-              className={cn(styles.searchInput)}
-              backgroundColor="blue"
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
-              }}
-              onKeyDown={(k) => {
-                if (k.code === 'Enter') {
-                  routeToSearch()
-                }
-              }}
-            />
-            <button
-              className={cn(styles.searchIcon)}
-              onClick={() => routeToSearch()}
-            >
-              <Icon size="large" icon="search" color="blue400" />
-            </button>
-          </GridColumn>
-          <GridColumn offset="1/9" span="7/9">
-            <Box marginY={4}>
-              <ActionCard
-                heading={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
-                text={n(
-                  'straightToApplying',
-                  'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið.',
-                )}
-                cta={{
-                  label: n('applyToUniversity', 'Sækja um í háskóla'),
-                  onClick: routeToStudies, // TODO Route me!
-                }}
-              />
-            </Box>
-          </GridColumn>
         </Box>
       }
     >
@@ -268,11 +259,6 @@ const LandingPage: Screen<LandingPageProps> = ({
           }}
         />
       ))}
-      {organizationPage?.theme === 'landing_page' && (
-        <LandingPageFooter
-          footerItems={organizationPage.organization?.footerItems}
-        />
-      )}
     </OrganizationWrapper>
   )
 }
@@ -292,7 +278,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
@@ -301,7 +287,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
