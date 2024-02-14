@@ -3,10 +3,13 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
@@ -29,6 +32,7 @@ import {
   CaseAppealState,
   CaseListEntry,
   CaseTransition,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -47,6 +51,15 @@ interface Props {
   testid?: string
 }
 
+function shouldDisplayWithdrawAppealOption(
+  caseEntry: CaseListEntry,
+  user: User | undefined,
+) {
+  if (isProsecutionUser(user)) {
+    return caseEntry.appealState === CaseAppealState.APPEALED
+  }
+}
+
 const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, loading = false, testid } = props
   const { formatMessage } = useIntl()
@@ -57,7 +70,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
 
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionCase } = useCase()
 
   const pastCasesData = useMemo(
     () =>
@@ -192,24 +205,33 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   <ContextMenu
                     items={[
                       {
-                        title: 'Afturkalla kæru',
-                        onClick: async () => {
-                          const res = await transitionCase(
-                            column.id,
-                            CaseTransition.WITHDRAW_APPEAL,
-                          )
-                          if (res === true) {
-                            const transitionedCase = cases.find(
-                              (c) => c.id === column.id,
-                            )
-                            if (transitionedCase) {
-                              transitionedCase.appealState =
-                                CaseAppealState.WITHDRAWN
-                            }
-                          }
-                        },
-                        icon: 'trash',
+                        title: 'Opna mál í nýjum flipa',
+                        onClick: () => handleOpenCase(column.id, true),
+                        icon: 'open',
                       },
+                      ...(shouldDisplayWithdrawAppealOption(column, user)
+                        ? [
+                            {
+                              title: 'Afturkalla kæru',
+                              onClick: async () => {
+                                const res = await transitionCase(
+                                  column.id,
+                                  CaseTransition.WITHDRAW_APPEAL,
+                                )
+                                if (res === true) {
+                                  const transitionedCase = cases.find(
+                                    (c) => c.id === column.id,
+                                  )
+                                  if (transitionedCase) {
+                                    transitionedCase.appealState =
+                                      CaseAppealState.WITHDRAWN
+                                  }
+                                }
+                              },
+                              icon: 'trash' as IconMapIcon,
+                            },
+                          ]
+                        : []),
                     ]}
                     menuLabel="Opna valmöguleika á máli"
                     disclosure={
