@@ -32,11 +32,13 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
+  useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
+import { getIncidentDescription } from '../Indictment/IndictmentCount'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -110,6 +112,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
+  const { updateIndictmentCount, updateIndictmentCountState } =
+    useIndictmentCounts()
   const router = useRouter()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
@@ -221,6 +225,23 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       indictmentSubtypes,
       crimeScenes,
     }))
+
+    if (
+      workingCase.indictmentCounts &&
+      (update?.crimeScene?.date || update?.crimeScene?.place)
+    ) {
+      updateIndictmentCount(
+        workingCase.id,
+        workingCase.indictmentCounts[index || 0].id,
+        {
+          incidentDescription: getIncidentDescription(
+            formatMessage,
+            workingCase.indictmentCounts[index || 0],
+            workingCase.crimeScenes,
+          ),
+        },
+      )
+    }
   }
 
   const handleDeletePoliceCase = (index: number) => {
@@ -245,7 +266,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
-  const handleUpdatePoliceCase = (
+  const handleUpdatePoliceCase = async (
     index?: number,
     update?: {
       policeCaseNumber?: string
