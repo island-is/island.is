@@ -9,6 +9,7 @@ test.use({ baseURL: urls.judicialSystemBaseUrl })
 test.describe.serial('Travel ban tests', () => {
   let caseId = ''
   const today = getDaysFromNow()
+  const requestedCustodyEndDate = getDaysFromNow(3)
 
   test('prosecutor should be able to create a travel ban request', async ({
     prosecutorPage,
@@ -50,6 +51,7 @@ test.describe.serial('Travel ban tests', () => {
       caseId = createCaseResult.data.createCase.id
     })
 
+    await expect(page).toHaveURL(`/krafa/fyrirtaka/${caseId}`)
     await page.locator('input[id=arrestDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=arrestDate-time]').fill('12:12')
@@ -57,20 +59,26 @@ test.describe.serial('Travel ban tests', () => {
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqCourtDate-time]').fill('12:12')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-    await page.getByRole('button', { name: 'Halda áfram með kröfu' }).click()
+    await Promise.all([
+      page.getByRole('button', { name: 'Halda áfram með kröfu' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
-    await page.locator('input[id=reqValidToDate]').fill(today)
+    await expect(page).toHaveURL(
+      `/krafa/domkrofur-og-lagagrundvollur/${caseId}`,
+    )
+    await page.locator('input[id=reqValidToDate]').fill(requestedCustodyEndDate)
     await page.keyboard.press('Escape')
-    await page
-      .getByRole('textbox', {
-        name: 'Lagaákvæði sem ætluð brot kærða þykja varða við',
-      })
-      .fill('Lagaákvæðin g')
-    await page.getByLabel('a-lið 1. mgr. 95. gr. sml.').click()
+    await page.locator('textarea[name=lawsBroken]').click()
+    await page.keyboard.type('Einhver lög voru brotin')
+    await page.getByTestId('checkbox').first().click()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
 
-    await page.getByRole('textbox', { name: 'Málsatvik' }).fill('Málsatvik')
-    await page.getByRole('textbox', { name: 'Lagarök' }).fill('Lagarök')
+    await Promise.all([verifyRequestCompletion(page, '/api/graphql', 'Case')])
+    await page.locator('textarea[name=caseFacts]').click()
+    await page.keyboard.type('Málsatvik')
+    await page.getByRole('textbox', { name: 'Lagarök' }).click()
+    await page.keyboard.type('Lagarök')
 
     await page.getByRole('button', { name: 'Halda áfram' }).click()
 
