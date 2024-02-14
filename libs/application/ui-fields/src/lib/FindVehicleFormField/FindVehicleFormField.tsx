@@ -11,6 +11,7 @@ import {
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import {
+  BasicVehicleInformation,
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
@@ -34,36 +35,27 @@ interface Props extends FieldBaseProps {
   field: FindVehicleField
 }
 
-function isVehicleOwnerchangeChecksByPermno(
-  response: unknown,
-): response is VehicleOwnerchangeChecksByPermno {
-  return (
-    response !== null &&
-    typeof response === 'object' &&
-    '__typename' in response &&
-    response['__typename'] === 'VehicleOwnerchangeChecksByPermno'
-  )
+function extractCommonVehicleInfo(
+  basicInfo: BasicVehicleInformation | null | undefined,
+): VehicleDetails {
+  if (!basicInfo) {
+    throw new Error('Missing basic vehicle information')
+  }
+
+  return {
+    permno: basicInfo.permno || '',
+    make: basicInfo.make || '',
+    color: basicInfo.color || '',
+    requireMilage: basicInfo.requireMileage || false,
+  }
 }
 
-function isVehiclePlateOrderChecksByPermno(
-  response: unknown,
-): response is VehiclePlateOrderChecksByPermno {
+function isVehicleType<T>(response: unknown, typeName: string): response is T {
   return (
     response !== null &&
     typeof response === 'object' &&
     '__typename' in response &&
-    response['__typename'] === 'VehiclePlateOrderChecksByPermno'
-  )
-}
-
-function isVehicleOperatorChangeChecksByPermno(
-  response: unknown,
-): response is VehicleOperatorChangeChecksByPermno {
-  return (
-    response !== null &&
-    typeof response === 'object' &&
-    '__typename' in response &&
-    response['__typename'] === 'VehicleOperatorChangeChecksByPermno'
+    response['__typename'] === typeName
   )
 }
 
@@ -74,30 +66,36 @@ function extractVehicleDetails(
     | VehicleOperatorChangeChecksByPermno,
 ): VehicleDetails {
   // Use type guards to determine the response type and access properties safely
-  if (isVehicleOwnerchangeChecksByPermno(response)) {
+  if (
+    isVehicleType<VehicleOwnerchangeChecksByPermno>(
+      response,
+      'VehicleOwnerchangeChecksByPermno',
+    )
+  ) {
     return {
-      permno: response.basicVehicleInformation?.permno || '',
-      make: response.basicVehicleInformation?.make || '',
-      color: response.basicVehicleInformation?.color || '',
+      ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
       validationErrorMessages: response.validationErrorMessages ?? [],
-      requireMilage: response.basicVehicleInformation?.requireMileage || false,
     }
-  } else if (isVehiclePlateOrderChecksByPermno(response)) {
+  } else if (
+    isVehicleType<VehiclePlateOrderChecksByPermno>(
+      response,
+      'VehiclePlateOrderChecksByPermno',
+    )
+  ) {
     return {
-      permno: response.basicVehicleInformation?.permno || '',
-      make: response.basicVehicleInformation?.make || '',
-      color: response.basicVehicleInformation?.color || '',
-      requireMilage: response.basicVehicleInformation?.requireMileage || false,
+      ...extractCommonVehicleInfo(response.basicVehicleInformation),
     }
-  } else if (isVehicleOperatorChangeChecksByPermno(response)) {
+  } else if (
+    isVehicleType<VehicleOperatorChangeChecksByPermno>(
+      response,
+      'VehicleOperatorChangeChecksByPermno',
+    )
+  ) {
     return {
-      permno: response.basicVehicleInformation?.permno || '',
-      make: response.basicVehicleInformation?.make || '',
-      color: response.basicVehicleInformation?.color || '',
+      ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
       validationErrorMessages: response.validationErrorMessages ?? [],
-      requireMilage: response.basicVehicleInformation?.requireMileage || false,
     }
   } else {
     // Handle unexpected response types
@@ -137,10 +135,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const [vehicleDetails, setVehicleDetails] = useState<VehicleDetails | null>(
     null,
   )
+  const MAX_PLATE_LENGTH = 5
   const [submitButtonDisabledCalled, setSubmitButtonDisabledCalled] =
     useState(false)
   const updateInputState = (value: string) => {
-    setButtonDisabled(value.length !== 5)
+    setButtonDisabled(value.length !== MAX_PLATE_LENGTH)
     setPlate(value)
   }
   const findVehicleByPlate = async () => {
@@ -152,15 +151,24 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
 
       const response = await getVehicleDetails(plate.toUpperCase())
       const isVehicleFound =
-        isVehicleOperatorChangeChecksByPermno(response) ||
-        isVehicleOwnerchangeChecksByPermno(response) ||
-        isVehiclePlateOrderChecksByPermno(response)
+        isVehicleType<VehicleOperatorChangeChecksByPermno>(
+          response,
+          'VehicleOperatorChangeChecksByPermno',
+        ) ||
+        isVehicleType<VehicleOwnerchangeChecksByPermno>(
+          response,
+          'VehicleOwnerchangeChecksByPermno',
+        ) ||
+        isVehicleType<VehiclePlateOrderChecksByPermno>(
+          response,
+          'VehiclePlateOrderChecksByPermno',
+        )
       setVehicleNotFound(!isVehicleFound)
-
       if (isVehicleFound) {
         const vehicleDetails = extractVehicleDetails(response)
         setVehicleDetails(vehicleDetails)
         setPlate(plate)
+        setValue('findVehicle', true)
         setValue(`${field.id}.type`, vehicleDetails.make)
         setValue(`${field.id}.make`, vehicleDetails.make)
         setValue(`${field.id}.plate`, plate)
@@ -193,7 +201,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
       setSubmitButtonDisabledCalled(true)
     }
-    if (plate.length === 5) {
+    if (plate.length === MAX_PLATE_LENGTH) {
       setButtonDisabled(false)
     }
     setFieldLoadingState?.(isLoading)
@@ -204,8 +212,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       <Box display="flex" alignItems="center">
         <Box marginRight={2}>
           <InputController
-            id="findVehicle.plate"
-            name="findVehicle.plate"
+            id={`${field.id}.permno`}
+            name={`${field.id}.permno`}
             label={
               findPlatePlaceholder &&
               formatText(findPlatePlaceholder, application, formatMessage)
@@ -218,13 +226,13 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             rules={{
               required: true,
               validate: (value) => {
-                if (value.length !== 5) {
+                if (value.length !== MAX_PLATE_LENGTH) {
                   return false
                 }
                 return true
               },
             }}
-            maxLength={5}
+            maxLength={MAX_PLATE_LENGTH}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>
