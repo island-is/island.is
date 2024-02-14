@@ -83,7 +83,9 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
     )?.label ?? ''
   }`
 
-  const calculationIsPresent = calculation.groups?.length > 0
+  const calculationIsPresent =
+    typeof calculation.groups?.length === 'number' &&
+    calculation.groups.length > 0
 
   return (
     <PensionCalculatorWrapper
