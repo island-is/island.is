@@ -378,4 +378,46 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Reiknivél lífeyris',
     description: 'Aðal titill',
   },
+  resultDisclaimer: {
+    id: 'web.pensionCalculator:resultDisclaimer',
+    defaultMessage:
+      'Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur miðað við þær forsendur sem þú gefur upp. Líkanið er einungis til leiðbeiningar en veitir ekki bindandi upplýsingar um endanlega afgreiðslu máls eða greiðslufjárhæðir',
+    description: 'Fyrirvari á niðurstöðuskjá',
+  },
+  highlightedResultItemHeading: {
+    id: 'web.pensionCalculator:highlighedResultItemHeading',
+    defaultMessage: 'Samtals greiðslur frá TR eftir skatt',
+    description: 'H2, Samtals greiðslur frá TR eftir skatt',
+  },
+  changeAssumptions: {
+    id: 'web.pensionCalculator:changeAssumptions',
+    defaultMessage: 'Breyta forsendum',
+    description: 'Fara til baka og breyta forsendum',
+  },
+  resultDetailsLabel: {
+    id: 'web.pensionCalculator:resultDetailsLabel',
+    defaultMessage: 'Sundurliðun',
+    description: 'Sundurliðun',
+  },
+  print: {
+    id: 'web.pensionCalculator:print',
+    defaultMessage: 'Prenta',
+    description: 'Prenta',
+  },
+  noResultsCanBeShown: {
+    id: 'web.pensionCalculator:noResultsCanBeShown',
+    defaultMessage: 'Ekki tókst sækja útreikning miðað við gefnar forsendur',
+    description:
+      'Aðvörunarskilaboð ef vefþjónusta skilar ekki gögnum miðað við innslegnar forsendur',
+  },
+  perMonth: {
+    id: 'web.pensionCalculator:perMonth',
+    defaultMessage: 'Á mánuði',
+    description: 'Á mánuði',
+  },
+  perYear: {
+    id: 'web.pensionCalculator:perYear',
+    defaultMessage: 'Á ári',
+    description: 'Á ári',
+  },
 })

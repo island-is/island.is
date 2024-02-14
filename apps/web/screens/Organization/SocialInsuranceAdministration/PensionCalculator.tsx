@@ -291,7 +291,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         }),
       }
 
-  const title = `Reiknivél lífeyris ${
+  const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
       ?.label ?? dateOfCalculationsOptions[0].label
   }`

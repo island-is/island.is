@@ -1,4 +1,5 @@
 import { Fragment, useMemo } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   Accordion,
@@ -44,6 +45,7 @@ import {
 } from '../../queries'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
+import { translationStrings } from './translationStrings'
 import {
   convertQueryParametersToCalculationInput,
   convertToQueryParams,
@@ -69,6 +71,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   pageData,
   queryParamString,
 }) => {
+  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
   const dateOfCalculationsOptions = useMemo<Option<string>[]>(() => {
     return getDateOfCalculationsOptions(pageData)
@@ -76,9 +79,9 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
 
   const highlightedItem = calculation.highlightedItem
 
-  const perMonthText = 'á mánuði'
-  const perYearText = 'á ári'
-  const title = `Reiknivél lífeyris ${
+  const perMonthText = formatMessage(translationStrings.perMonth)
+  const perYearText = formatMessage(translationStrings.perYear)
+  const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find(
       (o) => o.value === calculationInput.dateOfCalculations,
     )?.label ?? ''
@@ -108,18 +111,16 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                   </Text>
                   <Box className={styles.textMaxWidth}>
                     <Text>
-                      Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur
-                      miðað við þær forsendur sem þú gefur upp. Líkanið er
-                      einungis til leiðbeiningar en veitir ekki bindandi
-                      upplýsingar um endanlega afgreiðslu máls eða
-                      greiðslufjárhæðir
+                      {formatMessage(translationStrings.resultDisclaimer)}
                     </Text>
                   </Box>
                 </Stack>
                 <Inline alignY="center" justifyContent="spaceBetween" space={5}>
                   {highlightedItem && (
                     <Text variant="h2" as="h2">
-                      Samtals greiðslur frá TR eftir skatt
+                      {formatMessage(
+                        translationStrings.highlightedResultItemHeading,
+                      )}
                     </Text>
                   )}
                   {!highlightedItem && <Box />}
@@ -129,7 +130,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                     }?${queryParamString}`}
                   >
                     <Button unfocusable={true} size="small">
-                      Breyta forsendum
+                      {formatMessage(translationStrings.changeAssumptions)}
                     </Button>
                   </LinkV2>
                 </Inline>
@@ -156,7 +157,9 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                 {!calculationIsPresent && (
                   <AlertMessage
                     type="warning"
-                    message="Ekki tókst sækja útreikning miðað við gefnar forsendur"
+                    message={formatMessage(
+                      translationStrings.noResultsCanBeShown,
+                    )}
                   />
                 )}
 
@@ -164,8 +167,10 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                   <Accordion dividerOnTop={false}>
                     <AccordionItem
                       startExpanded={!highlightedItem}
-                      id="sundurlidun"
-                      label="Sundurliðun"
+                      id="resultDetails"
+                      label={formatMessage(
+                        translationStrings.resultDetailsLabel,
+                      )}
                     >
                       <Box paddingBottom={3}>
                         <Stack space={3}>
@@ -177,7 +182,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                 window.print()
                               }}
                             >
-                              Prenta
+                              {formatMessage(translationStrings.print)}
                             </Button>
                           </Box>
                           <Table.Table>
