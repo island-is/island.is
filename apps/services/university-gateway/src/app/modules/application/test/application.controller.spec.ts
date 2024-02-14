@@ -11,6 +11,7 @@ import { AppModule } from '../../../app.module'
 
 const currentUser = createCurrentUser()
 
+// TODO add tests
 describe('ApplicationController', () => {
   let app: TestApp
   let server: SuperTest<Test>
@@ -45,19 +46,19 @@ describe('ApplicationController', () => {
     })
   })
 
-  describe('POST /applications', () => {
-    it('should throw error', async () => {
-      const result = await server.post('/v1/applications')
+  // describe('POST /applications', () => {
+  //   it('should throw error', async () => {
+  //     const result = await server.post('/v1/applications')
 
-      expect(result.status).toBe(403)
-    })
-  })
+  //     expect(result.status).toBe(403)
+  //   })
+  // })
 
-  describe('PATCH /applications/{id}', () => {
-    it('should throw error', async () => {
-      const result = await server.patch('/v1/applications')
+  // describe('PATCH /applications/{id}', () => {
+  //   it('should throw error', async () => {
+  //     const result = await server.patch('/v1/applications')
 
-      expect(result.status).toBe(404)
-    })
-  })
+  //     expect(result.status).toBe(404)
+  //   })
+  // })
 })

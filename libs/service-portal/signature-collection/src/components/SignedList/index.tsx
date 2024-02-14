@@ -24,7 +24,10 @@ const SignedList = () => {
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        id: signedLists.length === 1 ? signedLists[0].id : undefined,
+        id:
+          signedLists && signedLists.length === 1
+            ? signedLists[0].id
+            : undefined,
       },
     },
   })

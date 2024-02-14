@@ -1,4 +1,5 @@
 import { IProgramExtraApplicationField } from './programExtraApplicationField'
+import { IProgramUglaExtraApplicationSettings } from './programUglaExtraApplicationSettings'
 import { IProgramSpecialization } from './programSpecialization'
 import { Season } from '../types/season'
 import { DegreeType } from '../types/degreeType'
@@ -39,4 +40,5 @@ export interface IProgram {
   modeOfDelivery: ModeOfDelivery[]
   extraApplicationFields?: IProgramExtraApplicationField[]
   specializations?: IProgramSpecialization[]
+  extraApplicationSettings?: IProgramUglaExtraApplicationSettings
 }
