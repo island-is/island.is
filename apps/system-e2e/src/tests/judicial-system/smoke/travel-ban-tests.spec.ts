@@ -2,14 +2,15 @@ import { expect } from '@playwright/test'
 import { urls } from '../../../support/urls'
 import { test } from '../utils/judicialSystemTest'
 import { verifyRequestCompletion } from '../../../support/api-tools'
-import { getDaysFromNow } from '../utils/helpers'
+import { getDaysFromNow, randomCourtCaseNumber } from '../utils/helpers'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
 test.describe.serial('Travel ban tests', () => {
   let caseId = ''
   const today = getDaysFromNow()
-  const requestedCustodyEndDate = getDaysFromNow(3)
+  const requestedTravelBanEndDate = getDaysFromNow(3)
+  const travelBanEndDate = getDaysFromNow(2)
 
   test('prosecutor should be able to create a travel ban request', async ({
     prosecutorPage,
@@ -67,7 +68,9 @@ test.describe.serial('Travel ban tests', () => {
     await expect(page).toHaveURL(
       `/krafa/domkrofur-og-lagagrundvollur/${caseId}`,
     )
-    await page.locator('input[id=reqValidToDate]').fill(requestedCustodyEndDate)
+    await page
+      .locator('input[id=reqValidToDate]')
+      .fill(requestedTravelBanEndDate)
     await page.keyboard.press('Escape')
     await page.locator('textarea[name=lawsBroken]').click()
     await page.keyboard.type('Einhver lög voru brotin')
@@ -81,10 +84,82 @@ test.describe.serial('Travel ban tests', () => {
     await page.keyboard.type('Lagarök')
 
     await page.getByRole('button', { name: 'Halda áfram' }).click()
+    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${caseId}`)
 
     await page.getByRole('button', { name: 'Halda áfram' }).click()
 
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
+  })
+
+  test('court should submit decision on travel ban case', async ({
+    judgePage,
+  }) => {
+    const page = judgePage
+    await page.goto(`/domur/mottaka/${caseId}`)
+
+    // Reception and assignment
+    await expect(page).toHaveURL(`/domur/mottaka/${caseId}`)
+    await page.getByTestId('courtCaseNumber').fill(randomCourtCaseNumber())
+    await page.keyboard.press('Tab')
+    await page.getByText('Veldu dómara/aðstoðarmann').click()
+    await page
+      .getByTestId('select-judge')
+      .getByText('Test Dómari')
+      .last()
+      .click()
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Overview
+    await expect(page).toHaveURL(`/domur/krafa/${caseId}`)
+    await page.getByTestId('continueButton').isVisible()
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Hearing arrangements
+    await expect(page).toHaveURL(`/domur/fyrirtokutimi/${caseId}`)
+    await page.locator('input[id=courtDate]').fill(today)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=courtDate-time]').fill('09:00')
+    await page.keyboard.press('Tab')
+    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('modalSecondaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Ruling
+    await expect(page).toHaveURL(`/domur/urskurdur/${caseId}`)
+    await page.getByText('Krafa um farbann samþykkt').click()
+    await page.locator('input[id=validToDate]').fill(travelBanEndDate)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=validToDate-time]').fill('16:00')
+    await page.keyboard.press('Tab')
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Court record
+    await expect(page).toHaveURL(`/domur/thingbok/${caseId}`)
+    await page.getByText('Varnaraðili tekur sér lögboðinn frest').click()
+    await page.getByText('Sækjandi tekur sér lögboðinn frest').click()
+    await page.locator('input[id=courtEndTime]').fill(today)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=courtEndTime-time]').fill('10:00')
+    await page.keyboard.press('Tab')
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Confirmation
+    await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
+    await page.getByTestId('continueButton').click()
   })
 })
