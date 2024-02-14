@@ -23,7 +23,7 @@ const InputHOC = forwardRef(
   (
     props: Omit<InputComponentProps, 'size'>,
     ref: React.Ref<HTMLInputElement>,
-  ) => <input type="text" ref={ref} {...props} />,
+  ) => <input ref={ref} {...props} />,
 )
 const TextareaHOC = forwardRef(
   (props: InputComponentProps, ref: React.Ref<HTMLTextAreaElement>) => (
