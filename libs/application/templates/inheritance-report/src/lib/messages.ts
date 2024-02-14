@@ -327,6 +327,11 @@ export const m = defineMessages({
   },
   propertyValuation: {
     id: 'ir.application:propertyValuation',
+    defaultMessage: 'Fasteignamat',
+    description: '',
+  },
+  propertyValuationOnDeath: {
+    id: 'ir.application:propertyValuationOnDeath',
     defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
   },
@@ -463,6 +468,16 @@ export const m = defineMessages({
   bankAccount: {
     id: 'ir.application:bankAccount',
     defaultMessage: 'Bankareikningur',
+    description: '',
+  },
+  bankAccountForeign: {
+    id: 'ir.application:bankAccountForeign',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
+  bankAccountForeignLabel: {
+    id: 'ir.application:bankAccountForeignLabel',
+    defaultMessage: 'Erlendur bankareikningur',
     description: '',
   },
   bankAccountBalance: {
@@ -657,9 +672,14 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: '',
   },
+  realEstateEstimationOnDeath: {
+    id: 'ir.application:realEstateEstimationOnDeath',
+    defaultMessage: 'Fasteignamat samtals á dánardegi',
+    description: '',
+  },
   realEstateEstimation: {
     id: 'ir.application:realEstateEstimation',
-    defaultMessage: 'Fasteignamat samtals á dánardegi',
+    defaultMessage: 'Fasteignamat samtals',
     description: '',
   },
   marketValue: {
@@ -1184,6 +1204,18 @@ export const m = defineMessages({
   taxFreeLimit: {
     id: 'ir.application:taxFreeLimit',
     defaultMessage: '5757759',
+    description: '',
+  },
+
+  // general
+  yes: {
+    id: 'ir.application:yes',
+    defaultMessage: 'Já',
+    description: '',
+  },
+  no: {
+    id: 'ir.application:no',
+    defaultMessage: 'Nei',
     description: '',
   },
 })
