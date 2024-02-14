@@ -14,6 +14,7 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
+  getApplicationAnswers,
   getExpectedDateOfBirthOrAdoptionDate,
   isFosterCareAndAdoption,
   otherParentApprovalDescription,
@@ -28,7 +29,6 @@ import {
   States,
   YES,
 } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 import { showResidenceGrant } from '../../lib/answerValidationSections/utils'
 
@@ -118,7 +118,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     periods,
     employerLastSixMonths,
     employers,
-  } = useApplicationAnswers(application)
+  } = getApplicationAnswers(application.answers)
   const showResidenceGrantCard = showResidenceGrant(application)
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
   const isBeneficiaries = !oldApplication
