@@ -166,7 +166,8 @@ export interface RealEstateData {
 }
 
 export interface RealEstate {
-  data: RealEstateData[]
+  data?: RealEstateData[]
+  hasModified?: boolean
   total: number
 }
 
@@ -183,6 +184,7 @@ export interface OtherAssets {
 export interface BankAccountsData {
   balance: string
   accountNumber: string
+  foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
 }
 
