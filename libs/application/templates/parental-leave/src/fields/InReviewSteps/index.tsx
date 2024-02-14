@@ -13,7 +13,6 @@ import {
   getApplicationAnswers,
   getExpectedDateOfBirthOrAdoptionDate,
   isFosterCareAndAdoption,
-  getApplicationAnswers,
   showResidenceGrant,
 } from '../../lib/parentalLeaveUtils'
 import { States as ApplicationStates, States, YES } from '../../constants'
