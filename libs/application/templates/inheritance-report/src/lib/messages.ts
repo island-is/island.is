@@ -1206,4 +1206,16 @@ export const m = defineMessages({
     defaultMessage: '5757759',
     description: '',
   },
+
+  // general
+  yes: {
+    id: 'ir.application:yes',
+    defaultMessage: 'Já',
+    description: '',
+  },
+  no: {
+    id: 'ir.application:no',
+    defaultMessage: 'Nei',
+    description: '',
+  },
 })

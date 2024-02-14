@@ -6,7 +6,10 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
+import {
+  formatBankInfo,
+  formatCurrency,
+} from '@island.is/application/ui-components'
 import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../../lib/messages'
@@ -188,18 +191,26 @@ export const overviewAssets = [
       doesNotRequireAnswer: true,
     },
     {
-      cards: ({ answers }: Application) => {
-        const bankAccounts = (answers.assets as unknown as EstateAssets)
-          .bankAccounts.data
-        return (
-          bankAccounts.map((asset: any) => ({
-            title: asset.accountNumber,
+      cards: ({ answers }: Application) =>
+        (
+          (answers.assets as unknown as EstateAssets).bankAccounts.data ?? []
+        ).map((account) => {
+          const isForeign = account.foreignBankAccount?.length
+
+          return {
+            title: isForeign
+              ? account.accountNumber
+              : formatBankInfo(account.accountNumber ?? ''),
             description: [
-              asset.balance ? formatCurrency(asset.balance) : '0 kr.',
+              `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
+                account.balance ?? '0',
+              )}`,
+              `${m.bankAccountForeign.defaultMessage}: ${
+                isForeign ? m.yes.defaultMessage : m.no.defaultMessage
+              }`,
             ],
-          })) ?? []
-        )
-      },
+          }
+        }),
     },
   ),
   buildKeyValueField({
