@@ -10,25 +10,27 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import {
   SignatureCollectionList,
   SignatureCollectionListBase,
+  SignatureCollectionSignedList,
 } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { Audit } from '@island.is/nest/audit'
-import { NeedsOwnerGuard } from './guards/needsOwner.guard'
-import { NeedsOwner, OwnerAccess } from './decorators/needsOwner.decorator'
+import { UserAccessGuard } from './guards/userAccess.guard'
+import {
+  AccessRequirement,
+  OwnerAccess,
+  UserAccess,
+} from './decorators/acessRequirement.decorator'
 import { CollectionGuard } from './guards/collection.guard'
 import { CurrentCollection } from './decorators/current-collection.decorator'
 import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
-@UseGuards(IdsUserGuard, CollectionGuard, ScopesGuard, NeedsOwnerGuard)
+@UseGuards(IdsUserGuard, CollectionGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
 export class SignatureCollectionResolver {
@@ -46,26 +48,26 @@ export class SignatureCollectionResolver {
   @BypassAuth()
   @Query(() => SignatureCollection)
   async signatureCollectionCurrent(
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollection> {
-    return this.signatureCollectionService.current(collection.id)
+    return collection
   }
 
   @BypassAuth()
   @Query(() => [SignatureCollectionListBase])
   async signatureCollectionAllOpenLists(
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollectionListBase[]> {
     return this.signatureCollectionService.allOpenLists(collection)
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @NeedsOwner(OwnerAccess.AllowActor)
+  @AccessRequirement(OwnerAccess.AllowActor)
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForOwner(
     @CurrentSignee() signee: SignatureCollectionSignee,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.listsForOwner(
@@ -76,11 +78,12 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(UserAccess.RestrictActor)
   @Query(() => [SignatureCollectionListBase])
   @Audit()
   async signatureCollectionListsForUser(
     @CurrentSignee() signee: SignatureCollectionSignee,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionListBase[]> {
     return this.signatureCollectionService.listsForUser(
@@ -91,7 +94,7 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @NeedsOwner(OwnerAccess.AllowActor)
+  @AccessRequirement(OwnerAccess.AllowActor)
   @Query(() => SignatureCollectionList)
   @Audit()
   async signatureCollectionList(
@@ -102,16 +105,17 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @Query(() => SignatureCollectionList, { nullable: true })
+  @AccessRequirement(UserAccess.RestrictActor)
+  @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
     @CurrentUser() user: User,
-  ): Promise<SignatureCollectionList | null> {
+  ): Promise<SignatureCollectionSignedList[] | null> {
     return this.signatureCollectionService.signedList(user)
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @NeedsOwner(OwnerAccess.AllowActor)
+  @AccessRequirement(OwnerAccess.AllowActor)
   @Query(() => [SignatureCollectionSignature], { nullable: true })
   @Audit()
   async signatureCollectionSignatures(
@@ -123,6 +127,7 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   @Query(() => SignatureCollectionSignee)
+  @AccessRequirement(UserAccess.RestrictActor)
   @Audit()
   async signatureCollectionSignee(
     @CurrentSignee() signee: SignatureCollectionSignee,
@@ -131,6 +136,7 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
+  @AccessRequirement(UserAccess.RestrictActor)
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUnsign(
@@ -141,7 +147,7 @@ export class SignatureCollectionResolver {
   }
 
   @Scopes(ApiScope.signatureCollection)
-  @NeedsOwner(OwnerAccess.RestrictActor)
+  @AccessRequirement(OwnerAccess.RestrictActor)
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionCancel(

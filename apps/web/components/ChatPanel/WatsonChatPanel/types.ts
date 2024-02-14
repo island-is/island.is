@@ -1,7 +1,8 @@
-type WatsonInstanceEvent = {
+export type WatsonInstanceEvent = {
   type: string
   data: { message: { user_defined: Record<string, string> } }
   identityToken: string
+  reason?: string
 }
 
 export interface WatsonInstance {
@@ -18,7 +19,7 @@ export interface WatsonInstance {
   customPanels: {
     getPanel: () => {
       hostElement: HTMLElement
-      open: (props: { title: string; hideBackButton: boolean }) => void
+      open: (props: { title: string; hideBackButton?: boolean }) => void
       close: () => void
     }
   }

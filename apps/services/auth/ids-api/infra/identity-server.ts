@@ -84,9 +84,10 @@ export const serviceSetup = (services: {
         prod: 'https://cdn.contentful.com',
       },
       Application__AllowedRedirectUris: {
-        dev: 'https://beta.dev01.devland.is/minarsidur',
-        staging: 'https://beta.staging01.devland.is/minarsidur',
-        prod: 'https://island.is/minarsidur',
+        dev: 'https://beta.dev01.devland.is/minarsidur,https://beta.dev01.devland.is/umsoknir,http://localhost:4200/minarsidur,http://localhost:4242/umsoknir',
+        staging:
+          'https://beta.staging01.devland.is/minarsidur,https://beta.staging01.devland.is/umsoknir',
+        prod: 'https://island.is/minarsidur,https://island.is/umsoknir',
       },
     })
     .secrets({

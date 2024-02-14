@@ -1,7 +1,6 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
-import { List } from './types/list.dto'
-
-import { User } from '@island.is/auth-nest-tools'
+import { ListBase } from './types/list.dto'
+import { Signature } from './types/signature.dto'
 
 export enum ListState {
   Open = 'open',
@@ -11,7 +10,7 @@ export interface GetListInput {
   areaId?: string
   nationalId?: string
   candidateId?: string
-  collectionId?: number
+  collectionId?: string
   onlyActive?: boolean
 }
 
@@ -44,8 +43,8 @@ export interface CanCreateInput {
   requirementsMet?: boolean
   canCreateInfo?: EinstaklingurMaFrambodInfo
   isPresidential: boolean
-  isActive: boolean
-  ownedLists: List[]
+  isActive?: boolean
+  ownedLists: ListBase[]
 }
 
 export interface CanSignInput {
@@ -53,6 +52,7 @@ export interface CanSignInput {
   canSignInfo?: EinstaklingurMaFrambodInfo
   isActive: boolean
   activeSignature?: MedmaeliDTO
+  signatures?: Signature[]
 }
 
 export enum Requirement {
@@ -62,6 +62,7 @@ export enum Requirement {
   active = 'active',
   notOwner = 'notOwner',
   notSigned = 'notSigned',
+  noInvalidSignature = 'noInvalidSignature',
 }
 
 export enum ReasonKey {
@@ -76,4 +77,5 @@ export enum ReasonKey {
   AlreadyOwner = 'alreadyOwner',
   AlreadySigned = 'alreadySigned',
   NotOwner = 'notOwner',
+  noInvalidSignature = 'noInvalidSignature',
 }

@@ -33,6 +33,7 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { mileageDetailConstructor } from '../utils/helpers'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
@@ -59,11 +60,18 @@ export class VehiclesMileageResolver {
     nullable: true,
   })
   @Audit()
-  postVehicleMileageReading(
+  async postVehicleMileageReading(
     @Args('input') input: PostVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    return this.vehiclesService.postMileageReading(user, input)
+    const res = await this.vehiclesService.postMileageReading(user, {
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+    })
+
+    if (!res) return undefined
+
+    return mileageDetailConstructor(res)
   }
 
   @Mutation(() => VehicleMileagePutModel, {
@@ -71,11 +79,18 @@ export class VehiclesMileageResolver {
     nullable: true,
   })
   @Audit()
-  putVehicleMileageReading(
+  async putVehicleMileageReading(
     @Args('input') input: PutVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    return this.vehiclesService.putMileageReading(user, input)
+    const res = await this.vehiclesService.putMileageReading(user, {
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+    })
+
+    if (!res) return undefined
+
+    return mileageDetailConstructor(res)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {

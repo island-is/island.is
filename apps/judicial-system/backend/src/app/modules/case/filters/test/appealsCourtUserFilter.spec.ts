@@ -10,7 +10,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../..'
+import { Case } from '../../models/case.model'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
 describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {

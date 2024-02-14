@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const tables = defineMessages({
   caseNumber: {
-    id: 'judicial.system.core:tables.case_number',
-    defaultMessage: 'Málsnr.',
+    id: 'judicial.system.core:tables.case_number_v1',
+    defaultMessage: 'Málsnúmer',
     description: 'Notaður sem titill fyrir málsnúmer dálk í lista yfir mál.',
   },
   type: {

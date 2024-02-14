@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionManagerClientService } from '@island.is/clients/signature-collection'
 import { User } from '@island.is/auth-nest-tools'
+import {
+  SignatureCollectionListStatus,
+  SignatureCollectionStatus,
+} from './models/status.model'
 
 @Injectable()
 export class SignatureCollectionManagerService {
@@ -14,18 +15,8 @@ export class SignatureCollectionManagerService {
     private signatureCollectionClientService: SignatureCollectionManagerClientService,
   ) {}
 
-  async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
-    return await this.signatureCollectionClientService.currentCollectionInfo()
-  }
-
-  async current(collectionId: number): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.getCurrentCollection(
-      collectionId,
-    )
-  }
-
   async allLists(
-    collection: SignatureCollectionInfo,
+    collection: SignatureCollection,
     user: User,
   ): Promise<SignatureCollectionList[]> {
     return await this.signatureCollectionClientService.getLists(
@@ -48,5 +39,23 @@ export class SignatureCollectionManagerService {
       listId,
       user,
     )
+  }
+
+  async collectionStatus(user: User): Promise<SignatureCollectionStatus> {
+    const status = await this.signatureCollectionClientService.collectionStatus(
+      user,
+    )
+    return { status }
+  }
+
+  async listStatus(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionListStatus> {
+    const status = await this.signatureCollectionClientService.listStatus(
+      listId,
+      user,
+    )
+    return { status }
   }
 }

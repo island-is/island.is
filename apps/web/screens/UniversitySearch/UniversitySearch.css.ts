@@ -69,8 +69,21 @@ export const gridContainer = style({
   padding: `0`,
 })
 
+export const mainContentWrapper = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginLeft: '110px',
+    },
+  }),
+})
+
 export const filterWrapper = style({
-  width: '320px',
+  width: 'unset',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      width: '320px',
+    },
+  }),
 })
 
 export const tagActive = style({
@@ -158,4 +171,28 @@ export const courseTypeIcon = style({
       backgroundColor: `${theme.color.purple100}`,
     },
   },
+})
+
+export const courseListContainer = style({
+  display: 'flex',
+  padding: '2rem 0rem',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  backgroundColor: '#F6F6FD',
+  marginBottom: '24px',
+})
+
+export const courseListContentContainer = style({
+  display: 'flex',
+  padding: '0rem 2rem',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  gap: '1rem',
+})
+
+export const courseListItems = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1rem',
 })

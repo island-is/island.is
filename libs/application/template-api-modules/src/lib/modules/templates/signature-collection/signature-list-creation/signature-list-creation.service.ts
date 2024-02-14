@@ -29,7 +29,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     super(ApplicationTypes.SIGNATURE_LIST_CREATION)
   }
 
-  async createLists({ application }: TemplateApiModuleActionProps) {
+  async createLists({ auth, application }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
     const currentCollection: SignatureCollection = application.externalData
       .currentCollection?.data as SignatureCollection
@@ -40,10 +40,13 @@ export class SignatureListCreationService extends BaseTemplateApiService {
       nationalId: answers.applicant.nationalId.replace('-', ''),
     }
     // Pretend to be doing stuff for a short while
-    const slug = await this.signatureCollectionClientService.createLists({
-      collectionId,
-      owner,
-    })
+    const slug = await this.signatureCollectionClientService.createLists(
+      {
+        collectionId,
+        owner,
+      },
+      auth,
+    )
 
     try {
       // Use the shared service to send an email using a custom email generator
@@ -91,6 +94,6 @@ export class SignatureListCreationService extends BaseTemplateApiService {
   }
 
   async currentCollection() {
-    return await this.signatureCollectionClientService.getCurrentCollection()
+    return await this.signatureCollectionClientService.currentCollection()
   }
 }

@@ -6,13 +6,8 @@ import {
   BulkUploadInput,
   CanCreateInput,
 } from './signature-collection.types'
-import {
-  Collection,
-  mapCollectionInfo,
-  CollectionInfo,
-  mapCollection,
-} from './types/collection.dto'
-import { List, mapList, mapListBase } from './types/list.dto'
+import { Collection, CollectionStatus } from './types/collection.dto'
+import { List, ListStatus, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
 import { BulkUpload, mapBulkResponse } from './types/bulkUpload.dto'
@@ -20,9 +15,19 @@ import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { AdminCollectionApi, AdminListApi, AdminSignatureApi } from './apis'
+import {
+  AdminCandidateApi,
+  AdminCollectionApi,
+  AdminListApi,
+  AdminSignatureApi,
+} from './apis'
+import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 
-type Api = AdminListApi | AdminCollectionApi | AdminSignatureApi
+type Api =
+  | AdminListApi
+  | AdminCollectionApi
+  | AdminSignatureApi
+  | AdminCandidateApi
 
 @Injectable()
 export class SignatureCollectionAdminClientService {
@@ -30,69 +35,142 @@ export class SignatureCollectionAdminClientService {
     private listsApi: AdminListApi,
     private collectionsApi: AdminCollectionApi,
     private signatureApi: AdminSignatureApi,
+    private sharedService: SignatureCollectionSharedClientService,
+    private candidateApi: AdminCandidateApi,
   ) {}
 
   private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollectionInfo(): Promise<CollectionInfo> {
-    // includeInactive: false will return collections as active until electionday for collection has passed
-    const res = await this.collectionsApi.medmaelasofnunGet({
-      includeInactive: true,
-    })
-    const current = (
-      res
-        .map(mapCollectionInfo)
-        .filter(
-          (collection) => collection?.isSignatureCollection,
-        ) as CollectionInfo[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
-
-    if (!current) {
-      throw new Error('No current collection')
-    }
-    return current
+  async currentCollection(): Promise<Collection> {
+    return await this.sharedService.currentCollection(this.collectionsApi)
   }
 
-  async getCurrentCollection(collectionId?: number): Promise<Collection> {
-    if (!collectionId) {
-      const { id } = await this.currentCollectionInfo()
-
-      collectionId = id
+  async collectionStatus(auth: Auth): Promise<CollectionStatus> {
+    const collection = await this.currentCollection()
+    // Collection in inital opening time
+    if (collection.isActive) {
+      return CollectionStatus.InitialActive
     }
-
-    const currentCollection = await this.collectionsApi.medmaelasofnunIDGet({
-      iD: collectionId,
+    const allLists = await this.getLists({ collectionId: collection.id }, auth)
+    let hasActive,
+      hasExtended,
+      hasInReview = false
+    allLists.forEach((list) => {
+      if (list.active) {
+        hasActive = true
+      }
+      if (list.endTime > collection.endTime) {
+        hasExtended = true
+      }
+      if (!list.reviewed) {
+        hasInReview = true
+      }
     })
-    return mapCollection(currentCollection)
+    // Initial opening time passed not all lists reviewed
+    if (!hasActive && !collection.processed && hasInReview) {
+      return CollectionStatus.InInitialReview
+    }
+    // Initial opening time passed all lists reviewd
+    if (!hasActive && !collection.processed && !hasInReview) {
+      return CollectionStatus.Processing
+    }
+    // Initial opening time passed, collection has been manually processed
+    if (!hasActive && collection.processed && !hasInReview) {
+      return CollectionStatus.Processed
+    }
+    // Collection active if any lists have been extended
+    if (hasActive && collection.processed && hasExtended) {
+      return CollectionStatus.Active
+    }
+    // Collection had extended lists that have all expired
+    if (!hasActive && collection.processed && hasExtended) {
+      return CollectionStatus.InReview
+    }
+    return CollectionStatus.Inactive
   }
 
-  async getLists(
-    { collectionId, areaId, candidateId, onlyActive }: GetListInput,
-    auth: Auth,
-  ): Promise<List[]> {
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarGet({
-      sofnunID: collectionId,
-      svaediID: areaId ? parseInt(areaId) : undefined,
-      frambodID: candidateId ? parseInt(candidateId) : undefined,
-    })
+  async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
+    const collection = await this.currentCollection()
 
-    const listsMapped = lists.map((list) => mapList(list))
-    return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
+    const list = await this.getList(listId, auth)
+    // Collection is open and list is active
+    // List has been extended and is active
+    if (list.endTime > new Date()) {
+      return ListStatus.Active
+    }
+    const isExtended = list.endTime > collection.endTime
+
+    // Initial collection time has passed and list is not active and has not been manually reviewed
+    // Extended list has expired in review
+    if (!list.reviewed) {
+      return ListStatus.InReview
+    }
+
+    if (!isExtended) {
+      // Check if all lists have been reviewed and list is extendable
+      // If collection is processed or if collection is active and not list
+      const collectionStatus = await this.collectionStatus(auth)
+      if (
+        collectionStatus === CollectionStatus.Processed ||
+        collectionStatus === CollectionStatus.Active
+      ) {
+        return ListStatus.Extendable
+      }
+    }
+
+    // Initial collection time has passed and list is not active and has been manually reviewed
+    // Extended list has expired and has been manually reviewed
+    if (list.reviewed) {
+      return ListStatus.Reviewed
+    }
+    return ListStatus.Inactive
+  }
+
+  async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
+    const listStatus = await this.listStatus(listId, auth)
+    // Can only toggle list if it is in review or reviewed
+    if (
+      listStatus === ListStatus.InReview ||
+      listStatus === ListStatus.Reviewed
+    ) {
+      const list = await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      return { success: !!list }
+    }
+    return { success: false }
+  }
+
+  async processCollection(auth: Auth): Promise<Success> {
+    const collectionStatus = await this.collectionStatus(auth)
+    if (collectionStatus === CollectionStatus.Processing) {
+      const collection = await this.getApiWithAuth(
+        this.collectionsApi,
+        auth,
+      ).medmaelasofnunIDToggleSofnunPost({
+        iD: parseInt((await this.currentCollection()).id),
+      })
+      return { success: !!collection }
+    }
+    return { success: false }
+  }
+
+  async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    return await this.sharedService.getLists(
+      input,
+      this.getApiWithAuth(this.listsApi, auth),
+    )
   }
 
   async getList(listId: string, auth: Auth): Promise<List> {
-    const list = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarIDGet({
-      iD: parseInt(listId),
-    })
-    return mapList(list)
+    return await this.sharedService.getList(
+      listId,
+      this.getApiWithAuth(this.listsApi, auth),
+      this.getApiWithAuth(this.candidateApi, auth),
+    )
   }
 
   async getSignatures(listId: string, auth: Auth): Promise<Signature[]> {
@@ -104,16 +182,16 @@ export class SignatureCollectionAdminClientService {
     })
     return signatures
       .map((signature) => mapSignature(signature))
-      .filter((s) => s.active)
+      .filter((s) => s.valid)
   }
 
-  async getAreas(collectionId?: number) {
+  async getAreas(collectionId?: string) {
     if (!collectionId) {
-      const { id } = await this.currentCollectionInfo()
+      const { id } = await this.currentCollection()
       collectionId = id
     }
     const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
-      iD: collectionId,
+      iD: parseInt(collectionId),
     })
     return areas.map((area) => ({
       id: area.id ?? 0,
@@ -125,10 +203,10 @@ export class SignatureCollectionAdminClientService {
     { collectionId, owner, areas }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, isActive } = await this.currentCollectionInfo()
+    const { id } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
-      throw new Error('Collection is not open')
+    if (collectionId !== id) {
+      throw new Error('Collection id input wrong')
     }
 
     const collectionAreas = await this.getAreas(id)
@@ -143,7 +221,7 @@ export class SignatureCollectionAdminClientService {
       auth,
     ).medmaelalistarAddListarAdminPost({
       medmaelalistiRequestDTO: {
-        sofnunID: id,
+        sofnunID: parseInt(id),
         kennitala: owner.nationalId,
         simi: owner.phone,
         netfang: owner.email,
@@ -174,7 +252,6 @@ export class SignatureCollectionAdminClientService {
     requirementsMet = false,
     canCreateInfo,
     isPresidential,
-    isActive,
     ownedLists,
   }: CanCreateInput): Promise<Success> {
     // can create if requirements met and collection is active
@@ -185,11 +262,10 @@ export class SignatureCollectionAdminClientService {
           (areas) => areas.length === ownedLists.length,
         )
 
-    const canCreate = requirementsMet && isActive && !alreadyOwnsAllLists
+    const canCreate = requirementsMet && !alreadyOwnsAllLists
     const reasons =
       mapReasons({
         ...canCreateInfo,
-        active: isActive,
         notOwner: !alreadyOwnsAllLists,
       }) ?? []
     return { success: canCreate, reasons }
@@ -199,22 +275,20 @@ export class SignatureCollectionAdminClientService {
     nationalId: string,
     auth: Auth,
   ): Promise<CandidateLookup> {
-    const collection = await this.currentCollectionInfo()
-    const { id, isPresidential, isActive } = collection
+    const collection = await this.currentCollection()
+    const { id, isPresidential } = collection
     const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
-    ).medmaelasofnunIDEinsInfoKennitalaGet({
+    ).medmaelasofnunIDEinsInfoAdminKennitalaGet({
       kennitala: nationalId,
-      iD: id,
+      iD: parseInt(id),
     })
     const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
 
     const ownedLists =
       user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) =>
-            mapListBase(list, candidate, collection),
-          )
+        ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
     const { success: canCreate, reasons: canCreateInfo } = await this.canCreate(
@@ -223,7 +297,6 @@ export class SignatureCollectionAdminClientService {
         canCreateInfo: user.maFrambodInfo,
         ownedLists,
         isPresidential,
-        isActive,
       },
     )
 
@@ -248,7 +321,7 @@ export class SignatureCollectionAdminClientService {
       iD: parseInt(listId),
       requestBody: nationalIds,
     })
-    return signaturesFound.map(mapSignature).filter((s) => s.active)
+    return signaturesFound.map(mapSignature).filter((s) => s.valid)
   }
 
   async compareBulkSignaturesOnAllLists(
@@ -256,12 +329,14 @@ export class SignatureCollectionAdminClientService {
     auth: Auth,
   ): Promise<Signature[]> {
     // Takes a list of nationalIds and returns signatures found on any list in current collection
-    const { id } = await this.currentCollectionInfo()
-    const signaturesFound =
-      await this.collectionsApi.medmaelasofnunIDComparePost({
-        iD: id,
-        requestBody: nationalIds,
-      })
+    const { id } = await this.currentCollection()
+    const signaturesFound = await this.getApiWithAuth(
+      this.collectionsApi,
+      auth,
+    ).medmaelasofnunIDComparePost({
+      iD: parseInt(id),
+      requestBody: nationalIds,
+    })
     // Get listTitle for signatures
     const allLists = await this.getLists({ collectionId: id }, auth)
     const listNameIndexer: Record<string, string> = allLists.reduce(
@@ -270,7 +345,7 @@ export class SignatureCollectionAdminClientService {
     )
     const signaturesMapped = signaturesFound
       .map(mapSignature)
-      .filter((s) => s.active)
+      .filter((s) => s.valid)
     signaturesMapped.forEach((signature) => {
       signature.listTitle = listNameIndexer[signature.listId]
     })
@@ -290,10 +365,22 @@ export class SignatureCollectionAdminClientService {
       newEndDate: newEndDate,
     })
     const { dagsetningLokar } = list
+    const success = dagsetningLokar
+      ? newEndDate.getTime() === dagsetningLokar.getTime()
+      : false
+
+    if (success) {
+      const listStatus = await this.listStatus(listId, auth)
+      // Can only toggle list if it is in review or reviewed
+      if (listStatus === ListStatus.Reviewed) {
+        await this.getApiWithAuth(
+          this.listsApi,
+          auth,
+        ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+      }
+    }
     return {
-      success: dagsetningLokar
-        ? newEndDate.getTime() === dagsetningLokar.getTime()
-        : false,
+      success,
     }
   }
 

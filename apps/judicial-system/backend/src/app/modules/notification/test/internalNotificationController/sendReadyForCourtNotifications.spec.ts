@@ -14,7 +14,6 @@ import {
   CaseType,
   IndictmentSubtype,
   NotificationType,
-  Recipient,
   RequestSharedWithDefender,
   User,
 } from '@island.is/judicial-system/types'
@@ -26,7 +25,7 @@ import { Case } from '../../../case'
 import { Institution } from '../../../institution/institution.model'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
+import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {

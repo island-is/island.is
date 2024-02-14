@@ -237,6 +237,12 @@ export const defaultRenderNodeObject: RenderNode = {
         if (parentSlug) {
           href = `${parentSlug}/${entry?.fields.url?.split('/')?.pop() ?? ''}`
         }
+
+        // Make sure that the href starts with a slash
+        if (href && !href.startsWith('/')) {
+          href = `/${href}`
+        }
+
         return href ? <Hyperlink href={href}>{children}</Hyperlink> : null
       }
       case 'organizationPage': {

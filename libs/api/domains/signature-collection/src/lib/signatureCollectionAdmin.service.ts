@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import {
@@ -15,9 +12,13 @@ import { SignatureCollectionCandidateLookUp } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
 import { SignatureCollectionAdminClientService } from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
-import { Auth, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
+import {
+  SignatureCollectionListStatus,
+  SignatureCollectionStatus,
+} from './models/status.model'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -25,18 +26,8 @@ export class SignatureCollectionAdminService {
     private signatureCollectionClientService: SignatureCollectionAdminClientService,
   ) {}
 
-  async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
-    return await this.signatureCollectionClientService.currentCollectionInfo()
-  }
-
-  async current(collectionId: number): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.getCurrentCollection(
-      collectionId,
-    )
-  }
-
   async allLists(
-    collection: SignatureCollectionInfo,
+    collection: SignatureCollection,
     user: User,
   ): Promise<SignatureCollectionList[]> {
     return await this.signatureCollectionClientService.getLists(
@@ -85,10 +76,10 @@ export class SignatureCollectionAdminService {
   async create(
     user: User,
     input: SignatureCollectionListInput,
-    collectionId: number,
+    collectionId: string,
   ): Promise<SignatureCollectionSlug> {
     return await this.signatureCollectionClientService.createListsAdmin(
-      { ...input, collectionId: collectionId.toString() },
+      { ...input, collectionId: collectionId },
       user,
     )
   }
@@ -130,6 +121,38 @@ export class SignatureCollectionAdminService {
   ): Promise<SignatureCollectionSignature[]> {
     return await this.signatureCollectionClientService.compareBulkSignaturesOnAllLists(
       nationalIds,
+      user,
+    )
+  }
+
+  async collectionStatus(user: User): Promise<SignatureCollectionStatus> {
+    const status = await this.signatureCollectionClientService.collectionStatus(
+      user,
+    )
+    return { status }
+  }
+
+  async processCollection(user: User): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.processCollection(user)
+  }
+
+  async listStatus(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionListStatus> {
+    const status = await this.signatureCollectionClientService.listStatus(
+      listId,
+      user,
+    )
+    return { status }
+  }
+
+  async toggleListStatus(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.toggleListStatus(
+      listId,
       user,
     )
   }
