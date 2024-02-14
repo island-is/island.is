@@ -26,5 +26,6 @@ query allLists {
     slug
     numberOfSignatures
     maxReached
+    reviewed
   }
 }

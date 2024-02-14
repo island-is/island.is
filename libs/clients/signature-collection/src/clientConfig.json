@@ -911,6 +911,45 @@
         }
       }
     },
+    "/Medmaelasofnun/{ID}/EinsInfoAdmin/{Kennitala}": {
+      "get": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "Kennitala",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurKosningInfoDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Medmaelasofnun/{ID}/ToggleSofnun": {
       "post": {
         "tags": ["Medmaelasofnun"],
