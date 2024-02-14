@@ -1,3 +1,4 @@
+import { ComponentType } from 'react'
 import { IntlProvider } from 'react-intl'
 
 import {
@@ -10,13 +11,14 @@ import { useI18n } from '@island.is/web/i18n'
 import { GET_CUSTOM_PAGE_QUERY } from '@island.is/web/screens/queries/CustomPage'
 import { Screen, ScreenContext } from '@island.is/web/types'
 
-export type CustomScreen<Props> = Screen<Props> & {
-  customPageData?: CustomPage | null
-  getProps?: (
-    ctx: ScreenContext & {
-      customPageData: CustomPageWrapperProps['customPageData']
-    },
-  ) => Promise<Props>
+interface CustomScreenContext extends ScreenContext {
+  customPageData: CustomPageWrapperProps['customPageData']
+}
+
+export type CustomScreen<Props> = ComponentType<
+  Props & { customPageData: CustomPageWrapperProps['customPageData'] }
+> & {
+  getProps?: (ctx: CustomScreenContext) => Promise<Props>
 }
 
 interface CustomPageWrapperProps {
@@ -49,12 +51,10 @@ export function withCustomPageWrapper<Props>(
 
   CustomPageWrapper.getProps = async (context) => {
     const [
-      pageProps,
       {
         data: { getCustomPage: customPageData },
       },
     ] = await Promise.all([
-      Component?.getProps?.(context),
       context.apolloClient.query<Query, QueryGetCustomPageArgs>({
         query: GET_CUSTOM_PAGE_QUERY,
         variables: {
@@ -64,6 +64,10 @@ export function withCustomPageWrapper<Props>(
           },
         },
       }),
+    ])
+
+    const [pageProps] = await Promise.all([
+      Component?.getProps?.({ ...context, customPageData }),
     ])
 
     return {

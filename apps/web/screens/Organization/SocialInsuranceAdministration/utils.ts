@@ -168,3 +168,14 @@ export const getDateOfCalculationsOptions = (pageData?: CustomPage | null) => {
 
   return options
 }
+
+export const extractSlug = (
+  locale: string,
+  customPageData?: CustomPage | null,
+) => {
+  return locale === 'is'
+    ? (customPageData?.configJson?.icelandicSlug as string) ||
+        'tryggingastofnun'
+    : (customPageData?.configJson?.englishSlug as string) ||
+        'social-insurance-administration'
+}

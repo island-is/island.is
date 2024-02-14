@@ -56,6 +56,8 @@ import { translationStrings } from './translationStrings'
 import {
   convertQueryParametersToCalculationInput,
   convertToQueryParams,
+  extractSlug,
+  getDateOfCalculationsOptions,
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
@@ -64,7 +66,6 @@ interface PensionCalculatorProps {
   organization: Organization
   defaultValues: CalculationInput
   dateOfCalculationsOptions: Option<string>[]
-  customPageData?: CustomPage | null
 }
 
 const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
@@ -817,10 +818,13 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   )
 }
 
-PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
-  // TODO: these values could be fetched from the custom page
-  const slug =
-    locale === 'is' ? 'tryggingastofnun' : 'social-insurance-administration'
+PensionCalculator.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  customPageData,
+}) => {
+  const slug = extractSlug(locale, customPageData)
 
   const [
     {
@@ -882,8 +886,7 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
-    dateOfCalculationsOptions: [{ label: 'TEST', value: '123' }], // TODO
-    // dateOfCalculationsOptions: getDateOfCalculationsOptions(customPage),
+    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

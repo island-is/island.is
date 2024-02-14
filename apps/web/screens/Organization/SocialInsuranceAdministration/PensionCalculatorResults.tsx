@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react'
+import { Fragment } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -19,7 +19,6 @@ import {
 } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
-  CustomPage,
   CustomPageUniqueIdentifier as UniqueIdentifier,
   Organization,
   OrganizationPage,
@@ -49,6 +48,7 @@ import { translationStrings } from './translationStrings'
 import {
   convertQueryParametersToCalculationInput,
   convertToQueryParams,
+  extractSlug,
   getDateOfCalculationsOptions,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
@@ -57,10 +57,9 @@ interface PensionCalculatorResultsProps {
   organizationPage: OrganizationPage
   organization: Organization
   calculation: SocialInsurancePensionCalculationResponse
-  calculationYear?: number
   calculationInput: SocialInsurancePensionCalculationInput
   queryParamString: string
-  pageData?: CustomPage | null
+  dateOfCalculationsOptions: Option<string>[]
 }
 
 const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
@@ -68,14 +67,11 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   organization,
   calculation,
   calculationInput,
-  pageData,
   queryParamString,
+  dateOfCalculationsOptions,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
-  const dateOfCalculationsOptions = useMemo<Option<string>[]>(() => {
-    return getDateOfCalculationsOptions(pageData)
-  }, [pageData])
 
   const highlightedItem = calculation.highlightedItem
 
@@ -246,11 +242,14 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   )
 }
 
-PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
+PensionCalculatorResults.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  customPageData,
+}) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
-
-  const slug =
-    locale === 'is' ? 'tryggingastofnun' : 'social-insurance-administration'
+  const slug = extractSlug(locale, customPageData)
 
   const [
     {
@@ -310,6 +309,7 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
     organization: getOrganization,
     calculation: getPensionCalculation,
     calculationInput,
+    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
     queryParamString: queryParams.toString(),
     ...getThemeConfig(
       getOrganizationPage?.theme,
