@@ -184,6 +184,7 @@ export interface OtherAssets {
 export interface BankAccountsData {
   balance: string
   accountNumber: string
+  foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
 }
 

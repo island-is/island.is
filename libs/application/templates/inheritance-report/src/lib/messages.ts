@@ -470,6 +470,16 @@ export const m = defineMessages({
     defaultMessage: 'Bankareikningur',
     description: '',
   },
+  bankAccountForeign: {
+    id: 'ir.application:bankAccountForeign',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
+  bankAccountForeignLabel: {
+    id: 'ir.application:bankAccountForeignLabel',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
   bankAccountBalance: {
     id: 'ir.application:bankAccountBalance',
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
@@ -1194,6 +1204,18 @@ export const m = defineMessages({
   taxFreeLimit: {
     id: 'ir.application:taxFreeLimit',
     defaultMessage: '5757759',
+    description: '',
+  },
+
+  // general
+  yes: {
+    id: 'ir.application:yes',
+    defaultMessage: 'Já',
+    description: '',
+  },
+  no: {
+    id: 'ir.application:no',
+    defaultMessage: 'Nei',
     description: '',
   },
 })
