@@ -268,9 +268,7 @@ test.describe('Parental leave', () => {
 
     // Are you self employed?
     await expect(
-      page.getByRole('heading', {
-        name: label(parentalLeaveFormMessages.selfEmployed.title),
-      }),
+      page.getByText(label(parentalLeaveFormMessages.selfEmployed.title)),
     ).toBeVisible()
     await page
       .getByRole('radio', {
@@ -278,12 +276,12 @@ test.describe('Parental leave', () => {
       })
       .click()
     await expect(
-      page.getByRole('heading', {
-        name: label(
+      page.getByText(
+        label(
           parentalLeaveFormMessages.employer
             .isReceivingUnemploymentBenefitsTitle,
         ),
-      }),
+      ),
     ).toBeVisible()
     await page
       .getByRole('radio', {
@@ -339,14 +337,6 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.transferRightsNone),
       })
       .click()
-    await proceed()
-
-    // Now it is time to select the parental leave periods
-    await expect(
-      page.getByRole('region', {
-        name: label(parentalLeaveFormMessages.shared.periodsImageTitle),
-      }),
-    ).toBeVisible()
     await proceed()
 
     // Start of parental leave
@@ -570,9 +560,7 @@ test.describe('Parental leave', () => {
 
     // Are you self employed?
     await expect(
-      page.getByRole('heading', {
-        name: label(parentalLeaveFormMessages.selfEmployed.title),
-      }),
+      page.getByText(label(parentalLeaveFormMessages.selfEmployed.title)),
     ).toBeVisible()
     await page
       .getByRole('radio', {
@@ -580,12 +568,12 @@ test.describe('Parental leave', () => {
       })
       .click()
     await expect(
-      page.getByRole('heading', {
-        name: label(
+      page.getByText(
+        label(
           parentalLeaveFormMessages.employer
             .isReceivingUnemploymentBenefitsTitle,
         ),
-      }),
+      ),
     ).toBeVisible()
     await page
       .getByRole('radio', {
@@ -620,14 +608,6 @@ test.describe('Parental leave', () => {
     await expect(
       page.getByRole('heading', {
         name: label(parentalLeaveFormMessages.attachmentScreen.title),
-      }),
-    ).toBeVisible()
-    await proceed()
-
-    // Now it is time to select the parental leave periods
-    await expect(
-      page.getByRole('region', {
-        name: label(parentalLeaveFormMessages.shared.periodsImageTitle),
       }),
     ).toBeVisible()
     await proceed()

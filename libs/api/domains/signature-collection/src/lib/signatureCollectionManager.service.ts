@@ -4,6 +4,10 @@ import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionManagerClientService } from '@island.is/clients/signature-collection'
 import { User } from '@island.is/auth-nest-tools'
+import {
+  SignatureCollectionListStatus,
+  SignatureCollectionStatus,
+} from './models/status.model'
 
 @Injectable()
 export class SignatureCollectionManagerService {
@@ -35,5 +39,23 @@ export class SignatureCollectionManagerService {
       listId,
       user,
     )
+  }
+
+  async collectionStatus(user: User): Promise<SignatureCollectionStatus> {
+    const status = await this.signatureCollectionClientService.collectionStatus(
+      user,
+    )
+    return { status }
+  }
+
+  async listStatus(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionListStatus> {
+    const status = await this.signatureCollectionClientService.listStatus(
+      listId,
+      user,
+    )
+    return { status }
   }
 }
