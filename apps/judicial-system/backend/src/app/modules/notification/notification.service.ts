@@ -88,6 +88,10 @@ interface Attachment {
   content: string
   encoding?: string
 }
+interface RecipientInfo {
+  name?: string
+  email?: string
+}
 
 @Injectable()
 export class NotificationService {
@@ -2153,16 +2157,8 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
-    const hasBeenAssigned = await this.hasSentNotification(
-      theCase.id,
-      NotificationType.APPEAL_JUDGES_ASSIGNED,
-    )
-    const withdrawnByProsecution = isProsecutionUser(user)
-
     const promises: Promise<Recipient>[] = []
-    const notificationRecipients = [
-      { name: theCase.judge?.name, email: theCase.judge?.email },
-    ]
+    const wasWithdrawnByProsecution = isProsecutionUser(user)
 
     const subject = this.formatMessage(
       notifications.caseAppealWithdrawn.subject,
@@ -2171,68 +2167,98 @@ export class NotificationService {
       },
     )
     const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
-      withdrawnByProsecution: withdrawnByProsecution ?? false,
+      withdrawnByProsecution: wasWithdrawnByProsecution ?? false,
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    if (
-      isProsecutionUser(user) &&
-      theCase.defenderName &&
-      theCase.defenderEmail
-    ) {
-      notificationRecipients.push({
-        name: theCase.defenderName,
-        email: theCase.defenderEmail,
-      })
-    } else if (isDefenceUser(user)) {
-      notificationRecipients.push({
-        name: theCase.prosecutor?.name,
-        email: theCase.prosecutor?.email,
-      })
-    }
+    const sendTo = await this.getNotificationRecipients(
+      theCase,
+      user,
+      wasWithdrawnByProsecution,
+    )
 
-    if (theCase.appealReceivedByCourtDate) {
-      notificationRecipients.push({
-        name: this.formatMessage(notifications.emailNames.courtOfAppeals),
-        email: this.getCourtEmail(this.config.courtOfAppealsId),
-      })
-    }
-
-    if (hasBeenAssigned) {
-      notificationRecipients.push({
-        name: theCase.appealAssistant?.name,
-        email: theCase.appealAssistant?.email,
-      })
-
-      notificationRecipients.push({
-        name: theCase.appealJudge1?.name,
-        email: theCase.appealJudge1?.email,
-      })
-
-      notificationRecipients.push({
-        name: theCase.appealJudge2?.name,
-        email: theCase.appealJudge2?.email,
-      })
-
-      notificationRecipients.push({
-        name: theCase.appealJudge3?.name,
-        email: theCase.appealJudge3?.email,
-      })
-    }
-
-    notificationRecipients.forEach((recipient) => {
+    sendTo.forEach((recipient) => {
       promises.push(
         this.sendEmail(subject, html, recipient.name, recipient.email),
       )
     })
 
     const recipients = await Promise.all(promises)
-
     return this.recordNotification(
       theCase.id,
       NotificationType.APPEAL_WITHDRAWN,
       recipients,
     )
+  }
+
+  private async getNotificationRecipients(
+    theCase: Case,
+    user: User,
+    wasWithdrawnByProsecution: boolean,
+  ): Promise<RecipientInfo[]> {
+    const hasBeenAssigned = await this.hasSentNotification(
+      theCase.id,
+      NotificationType.APPEAL_JUDGES_ASSIGNED,
+    )
+
+    const recipients = [
+      {
+        name: theCase.judge?.name,
+        email: theCase.judge?.email,
+      } as RecipientInfo,
+    ]
+
+    if (
+      wasWithdrawnByProsecution &&
+      theCase.defenderName &&
+      theCase.defenderEmail
+    ) {
+      recipients.push({
+        name: theCase.defenderName,
+        email: theCase.defenderEmail,
+      })
+    } else if (isDefenceUser(user)) {
+      recipients.push({
+        name: theCase.prosecutor?.name,
+        email: theCase.prosecutor?.email,
+      })
+    }
+    recipients.push({
+      name: theCase.registrar?.name,
+      email: theCase.registrar?.email,
+    })
+    recipients.push({
+      name: theCase.court?.name,
+      email: this.getCourtEmail(theCase.court?.id),
+    })
+
+    if (theCase.appealReceivedByCourtDate) {
+      recipients.push({
+        name: this.formatMessage(notifications.emailNames.courtOfAppeals),
+        email: this.getCourtEmail(this.config.courtOfAppealsId),
+      })
+    }
+
+    if (hasBeenAssigned) {
+      recipients.push({
+        name: theCase.appealAssistant?.name,
+        email: theCase.appealAssistant?.email,
+      })
+      recipients.push({
+        name: theCase.appealJudge1?.name,
+        email: theCase.appealJudge1?.email,
+      })
+      recipients.push({
+        name: theCase.appealJudge2?.name,
+        email: theCase.appealJudge2?.email,
+      })
+      recipients.push({
+        name: theCase.appealJudge3?.name,
+        email: theCase.appealJudge3?.email,
+      })
+    }
+
+    return recipients
   }
 
   //#endregion

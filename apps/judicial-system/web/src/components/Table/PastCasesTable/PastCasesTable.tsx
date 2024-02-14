@@ -55,9 +55,10 @@ function shouldDisplayWithdrawAppealOption(
   caseEntry: CaseListEntry,
   user: User | undefined,
 ) {
-  if (isProsecutionUser(user)) {
-    return caseEntry.appealState === CaseAppealState.APPEALED
-  }
+  return (
+    caseEntry.appealState === CaseAppealState.APPEALED &&
+    isProsecutionUser(user)
+  )
 }
 
 const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
