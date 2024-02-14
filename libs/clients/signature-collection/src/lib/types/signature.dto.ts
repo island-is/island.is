@@ -12,7 +12,7 @@ export interface Signature {
   isDigital: boolean
   created: Date
   pageNumber?: number
-  active: boolean
+  valid: boolean
 }
 
 export const mapSignature = (signature: MedmaeliDTO): Signature => {
@@ -29,6 +29,6 @@ export const mapSignature = (signature: MedmaeliDTO): Signature => {
     created: signature.dagsetning ?? new Date(),
     pageNumber:
       !isDigital && signature.bladsidaNr ? signature.bladsidaNr : undefined,
-    active: signature.valid ?? true,
+    valid: signature.valid ?? true,
   }
 }
