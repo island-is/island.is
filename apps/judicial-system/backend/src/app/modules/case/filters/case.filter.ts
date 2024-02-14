@@ -139,6 +139,13 @@ function canAppealsCourtUserAccessCase(theCase: Case): boolean {
     return false
   }
 
+  if (
+    theCase.appealState === CaseAppealState.WITHDRAWN &&
+    !theCase.appealReceivedByCourtDate
+  ) {
+    return false
+  }
+
   return true
 }
 

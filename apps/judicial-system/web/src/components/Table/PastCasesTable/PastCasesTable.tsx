@@ -7,6 +7,7 @@ import { Box, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
+  isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -32,7 +33,6 @@ import {
   CaseAppealState,
   CaseListEntry,
   CaseTransition,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -51,13 +51,12 @@ interface Props {
   testid?: string
 }
 
-function shouldDisplayWithdrawAppealOption(
-  caseEntry: CaseListEntry,
-  user: User | undefined,
-) {
+function shouldDisplayWithdrawAppealOption(caseEntry: CaseListEntry) {
   return (
-    caseEntry.appealState === CaseAppealState.APPEALED &&
-    isProsecutionUser(user)
+    Boolean(
+      caseEntry.appealState === CaseAppealState.APPEALED ||
+        caseEntry.appealState === CaseAppealState.RECEIVED,
+    ) && caseEntry.prosecutorPostponedAppealDate
   )
 }
 
@@ -210,7 +209,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         onClick: () => handleOpenCase(column.id, true),
                         icon: 'open',
                       },
-                      ...(shouldDisplayWithdrawAppealOption(column, user)
+                      ...(shouldDisplayWithdrawAppealOption(column)
                         ? [
                             {
                               title: 'Afturkalla kæru',
