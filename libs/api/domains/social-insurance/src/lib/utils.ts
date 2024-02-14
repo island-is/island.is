@@ -1,4 +1,7 @@
-import { ApiProtectedV1PensionCalculatorPostRequest } from '@island.is/clients/social-insurance-administration'
+import {
+  ApiProtectedV1PensionCalculatorPostRequest,
+  TrWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorOutput,
+} from '@island.is/clients/social-insurance-administration'
 import {
   BasePensionType,
   LivingCondition,
@@ -9,6 +12,8 @@ import {
 import addYears from 'date-fns/addYears'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInYears from 'date-fns/differenceInYears'
+import { CustomPage } from '@island.is/cms'
+import { PensionCalculationResponse } from './models/pensionCalculation.model'
 
 const basePensionTypeMapping: Record<BasePensionType, number> = {
   [BasePensionType.Retirement]: 1, // Ellilífeyrir
@@ -111,4 +116,66 @@ export const mapPensionCalculationInput = (
       ? Math.abs(differenceInYears(new Date(input.birthdate), new Date()))
       : undefined,
   }
+}
+
+export const groupPensionCalculationItems = (
+  calculation: TrWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorOutput[],
+  pageData: CustomPage | null,
+) => {
+  // A list containing the value for the last name in a group
+  const groupCutoffValues = (pageData?.configJson?.[
+    'groupCutOffValues'
+  ] as string[]) ?? [
+    'Samtals frá TR fyrir skatt:',
+    'Samtals frá TR eftir skatt:',
+    'Samtals frá öðrum eftir skatt:',
+    'Samtals fjármagnstekjur eftir skatt:',
+    'Tekjur samtals:',
+    'Samtals ráðstöfunartekjur eftir skatt:',
+  ]
+
+  const groupNames = [
+    'TR_PAYMENTS',
+    '',
+    'INCOME_FROM_OTHERS',
+    'CAPITAL_INCOME',
+    'TOTAL_INCOME',
+    '',
+  ]
+
+  const groups: PensionCalculationResponse['groups'] = []
+
+  if (calculation?.length > 0) {
+    let calculationIndex = 0
+    for (let i = 0; i < groupCutoffValues.length; i += 1) {
+      const cutoffValue = groupCutoffValues[i]
+      const items = []
+      while (calculationIndex < calculation.length) {
+        const item = calculation[calculationIndex]
+        items.push(item)
+        calculationIndex += 1
+        if (item?.name === cutoffValue) {
+          break
+        }
+      }
+      groups.push({
+        name: groupNames[i],
+        items,
+      })
+    }
+  }
+
+  return groups
+}
+
+export const getPensionCalculationHighlightedItem = (
+  calculation: TrWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorOutput[],
+  pageData: CustomPage | null,
+) => {
+  return calculation?.find(
+    (item) =>
+      item?.name ===
+      (pageData?.configJson?.['highlightedItemName'] ??
+        'Samtals frá TR eftir skatt:'),
+  )
 }

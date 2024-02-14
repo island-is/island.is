@@ -1,22 +1,31 @@
 import { Inject, Injectable } from '@nestjs/common'
+import addYears from 'date-fns/addYears'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { User } from '@island.is/auth-nest-tools'
-import { PaymentPlan } from './models/paymentPlan.model'
 import { handle404 } from '@island.is/clients/middlewares'
-import { PaymentGroup } from './models/paymentGroup'
 import { isDefined } from '@island.is/shared/utils'
-import addYears from 'date-fns/addYears'
-import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import {
+  CmsElasticsearchService,
+  CustomPageUniqueIdentifier,
+} from '@island.is/cms'
 import { PensionCalculationInput } from './dtos/pensionCalculation.input'
-import { mapPensionCalculationInput } from './utils'
+import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PaymentPlan } from './models/paymentPlan.model'
+import { PaymentGroup } from './models/paymentGroup'
+import {
+  getPensionCalculationHighlightedItem,
+  groupPensionCalculationItems,
+  mapPensionCalculationInput,
+} from './utils'
 
 @Injectable()
 export class SocialInsuranceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly socialInsuranceApi: SocialInsuranceAdministrationClientService,
+    private readonly cmsElasticService: CmsElasticsearchService,
   ) {}
 
   async getPaymentPlan(
@@ -107,45 +116,23 @@ export class SocialInsuranceService {
     input: PensionCalculationInput,
   ): Promise<PensionCalculationResponse> {
     const mappedInput = mapPensionCalculationInput(input)
-    const response = await this.socialInsuranceApi.getPensionCalculation(
+    const calculation = await this.socialInsuranceApi.getPensionCalculation(
       mappedInput,
     )
 
-    const groups: PensionCalculationResponse['groups'] = []
-    if (response?.length > 0) {
-      groups.push({
-        name: 'Greiðslur frá Tryggingastofnun',
-        items: response.slice(0, 4),
-      })
+    const pageData = await this.cmsElasticService.getCustomPage({
+      lang: 'is',
+      uniqueIdentifier: CustomPageUniqueIdentifier.PensionCalculator,
+    })
 
-      groups.push({
-        items: response.slice(4, 7),
-      })
-
-      groups.push({
-        name: 'Tekjur frá öðrum',
-        items: response.slice(7, 17),
-      })
-
-      groups.push({
-        name: 'Fjármagnstekjur',
-        items: response.slice(17, 19),
-      })
-
-      groups.push({
-        name: 'Tekjur samtals',
-        items: response.slice(19, 23),
-      })
-
-      groups.push({
-        items: response.slice(23),
-      })
-    }
+    const groups = groupPensionCalculationItems(calculation, pageData)
+    const highlightedItem = getPensionCalculationHighlightedItem(
+      calculation,
+      pageData,
+    )
 
     return {
-      highlightedItem: response?.find(
-        (item) => item?.name === 'Samtals frá TR eftir skatt:',
-      ),
+      highlightedItem,
       groups,
     }
   }

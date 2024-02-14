@@ -645,10 +645,7 @@ export class CmsResolver {
   async getCustomPage(
     @Args('input') input: GetCustomPageInput,
   ): Promise<CustomPage | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webCustomPage', slug: input.uniqueIdentifier },
-    )
+    return this.cmsElasticsearchService.getCustomPage(input)
   }
 }
 

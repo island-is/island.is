@@ -23,7 +23,8 @@ export type CustomScreen<Props> = ComponentType<
 
 interface CustomPageWrapperProps {
   customPageData?: CustomPage | null
-  pageProps: any // TODO: find better type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pageProps: any
 }
 
 export function withCustomPageWrapper<Props>(
