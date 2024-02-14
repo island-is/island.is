@@ -42,7 +42,6 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   return (
     <Box
       marginTop={5}
-      marginBottom={7}
       display={'flex'}
       justifyContent={'center'}
     >
