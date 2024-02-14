@@ -16,6 +16,7 @@ import {
   MENNTAMALASTOFNUN_SLUG,
   m,
 } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {
@@ -84,6 +85,7 @@ type UseParams = {
 
 const StudentAssessmentTable = () => {
   const { familyIndex } = useParams() as UseParams
+  const { formatMessage } = useLocale()
   const { data, loading: queryLoading } = useQuery<Query>(
     EducationExamResultQuery,
     {
@@ -108,6 +110,7 @@ const StudentAssessmentTable = () => {
               'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
           }}
           serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+          serviceProviderTooltip={formatMessage(m.mmsTooltip)}
         />
       )}
       {data?.educationExamResult.grades.map((studentAssessment, index) => (
