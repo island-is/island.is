@@ -46,6 +46,9 @@ export class SignatureCollectionListBase {
 
   @Field()
   maxReached!: boolean
+
+  @Field()
+  reviewed!: boolean
 }
 
 @ObjectType()
