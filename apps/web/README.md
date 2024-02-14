@@ -88,6 +88,8 @@ This starts a server on `localhost:4200`
 yarn nx extract-strings web
 ```
 
+Currently, in this project, only the `Custom Page` content type utilizes the `Translation Namespace` content type for translations
+
 ## Further Documentation
 
 [Subpages](./docs/subpages.md) - Information on Layouts and Components used when
