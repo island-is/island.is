@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
@@ -261,6 +262,9 @@ export const assets = buildSection({
                   {
                     title: m.bankAccount.defaultMessage,
                     id: 'accountNumber',
+                    required: true,
+                    format: '####-##-######',
+                    placeholder: '0000-00-000000',
                   },
                   {
                     title: m.bankAccountBalance.defaultMessage,
@@ -268,7 +272,12 @@ export const assets = buildSection({
                     required: true,
                     currency: true,
                   },
+                  {
+                    title: m.bankAccountForeign.defaultMessage,
+                    id: 'foreignBankAccount',
+                  },
                 ],
+                skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
                 sumField: 'balance',
               },
