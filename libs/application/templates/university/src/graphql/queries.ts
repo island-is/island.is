@@ -19,3 +19,33 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = `
     }
   }
 `
+
+export const GET_INNA_PERIONDS = `
+query GetInnaPeriods {
+  innaPeriods {
+    items {
+      courses {
+        courseId
+        courseName
+        finalgrade
+        units
+        stage
+        status
+        date
+      }
+      division
+      divisionShort
+      organisation
+      organisationShort
+      periodFrom
+      periodName
+      periodShort
+      periodTo
+      studentId
+      periodId
+      diplomaId
+    }
+  }
+}
+
+`

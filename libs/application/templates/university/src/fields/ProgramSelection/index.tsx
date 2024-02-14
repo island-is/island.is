@@ -15,6 +15,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useLazyUniversityQuery } from '../../hooks/useGetUniversityInformation'
 import { UniversityGatewayUniversity } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
+import { useLazyInnaQuery } from '../../hooks/useGetInna'
 
 export const ProgramSelection: FC<FieldBaseProps> = ({
   application,
@@ -48,6 +49,11 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
   const [contentfulUniversities, setContentfulUniversities] = useState<
     Array<UniversityGatewayUniversity>
   >([])
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  // const { data: innaData } = useLazyInnaQuery()
+  // console.log('innaData', innaData)
 
   const getUniversities = useLazyUniversityQuery()
   const getUniversityInformationCallback = useCallback(async () => {

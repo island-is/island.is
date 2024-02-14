@@ -11,7 +11,16 @@ export class InnaService extends BaseTemplateApiService {
 
   async getInnaPeriods({
     auth,
-  }: TemplateApiModuleActionProps): Promise<InlineResponse2001 | null> {
-    return await this.innaService.getPeriods(auth)
+  }: TemplateApiModuleActionProps): Promise<
+    InlineResponse2001 | null | undefined
+  > {
+    console.log('auth', auth)
+    let results
+    try {
+      results = await this.innaService.getPeriods(auth)
+    } catch (e) {
+      console.log('errrrrrror', e)
+    }
+    return results
   }
 }
