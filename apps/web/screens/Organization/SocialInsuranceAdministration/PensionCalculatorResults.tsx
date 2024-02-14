@@ -184,7 +184,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                             </Button>
                           </Box>
                           <Table.Table>
-                            {calculation.groups.map((group, groupIndex) => (
+                            {calculation.groups?.map((group, groupIndex) => (
                               <Fragment key={groupIndex}>
                                 <Table.Body>
                                   {group.name && (
