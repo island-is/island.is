@@ -730,12 +730,13 @@ export const notifications = {
   caseAppealWithdrawn: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_appeal_withdrawn.subject',
-      defaultMessage: 'Kæra í máli {courtCaseNumber} afturkölluð',
+      defaultMessage: 'Afturköllun kæru í máli {courtCaseNumber}',
       description: 'Fyrirsögn í pósti til aðila máls þegar kæra er afturkölluð',
     },
     body: {
       id: 'judicial.system.backend:notifications.case_appeal_withdrawn.body',
-      defaultMessage: 'Kæra í máli {courtCaseNumber} hefur verið afturkölluð.',
+      defaultMessage:
+        '{withdrawnByProsecution, select, true {Sækjandi} other {Verjandi}} hefur afturkallað kæru í máli {courtCaseNumber}.',
       description: 'Texti í pósti til aðila máls þegar kæra er afturkölluð',
     },
   }),

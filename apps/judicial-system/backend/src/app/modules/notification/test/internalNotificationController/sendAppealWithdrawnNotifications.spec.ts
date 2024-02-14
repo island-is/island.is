@@ -2,11 +2,11 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  getStatementDeadline,
+  InstitutionType,
   NotificationType,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -20,7 +20,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = () => Promise<Then>
+type GivenWhenThen = (userRole: UserRole) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal withdrawn notifications', () => {
   const courtOfAppealsEmail = uuid()
@@ -52,7 +52,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     const mockFindAll = mockNotificationModel.findAll as jest.Mock
     mockFindAll.mockResolvedValue([])
 
-    givenWhenThen = async () => {
+    givenWhenThen = async (userRole) => {
       const then = {} as Then
 
       await internalNotificationController
@@ -76,7 +76,11 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             },
           } as Case,
           {
-            user: { id: userId } as User,
+            user: {
+              id: userId,
+              role: userRole,
+              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+            } as User,
             type: NotificationType.APPEAL_WITHDRAWN,
           },
         )
@@ -86,7 +90,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     }
   })
 
-  describe('appeal is withdrawn', () => {
+  describe('appeal is withdrawn by prosecutor', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -100,10 +104,10 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         } as Notification,
       ])
 
-      then = await givenWhenThen()
+      then = await givenWhenThen(UserRole.PROSECUTOR)
     })
 
-    it('should send notification to prosecutor and defender', () => {
+    it('should send notification to prosecutor and court of appeals', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
@@ -112,15 +116,73 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
               address: courtOfAppealsEmail,
             },
           ],
-          subject: `Kæra í máli ${courtCaseNumber} afturkölluð`,
-          html: `Kæra í máli ${courtCaseNumber} hefur verið afturkölluð. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: appealAssistantName, address: appealAssistantEmail }],
-          subject: `Kæra í máli ${courtCaseNumber} afturkölluð`,
-          html: `Kæra í máli ${courtCaseNumber} hefur verið afturkölluð. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+        }),
+      )
+
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defenderName, address: defenderEmail }],
+          subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+        }),
+      )
+
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('appeal is withdrawn by defender', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockNotificationModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({} as Notification)
+      const mockFindAll = mockNotificationModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValueOnce([
+        {
+          caseId,
+          type: NotificationType.APPEAL_JUDGES_ASSIGNED,
+        } as Notification,
+      ])
+
+      then = await givenWhenThen(UserRole.DEFENDER)
+    })
+
+    it('should send notification to prosecutor and court of appeals', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Landsréttur',
+              address: courtOfAppealsEmail,
+            },
+          ],
+          subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
+          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: appealAssistantName, address: appealAssistantEmail }],
+          subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
+          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+        }),
+      )
+
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
+          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
 

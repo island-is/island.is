@@ -40,8 +40,10 @@ import {
   CaseState,
   CaseType,
   getStatementDeadline,
+  isDefenceUser,
   isIndictmentCase,
   isInvestigationCase,
+  isProsecutionUser,
   isRestrictionCase,
   NotificationType,
   Recipient,
@@ -2150,6 +2152,7 @@ export class NotificationService {
   //#region APPEAL_WITHDRAWN notifications
   private async sendAppealWithdrawnNotifications(
     theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
     const hasBeenAssigned = await this.hasSentNotification(
       theCase.id,
@@ -2157,14 +2160,40 @@ export class NotificationService {
     )
 
     const promises = []
+    const withdrawnByProsecution = isProsecutionUser(user)
 
     promises.push(
       this.sendAppealWithdrawnNotification(
         theCase.courtCaseNumber,
         this.formatMessage(notifications.emailNames.courtOfAppeals),
         this.getCourtEmail(this.config.courtOfAppealsId),
+        withdrawnByProsecution,
       ),
     )
+
+    if (
+      isProsecutionUser(user) &&
+      theCase.defenderName &&
+      theCase.defenderEmail
+    ) {
+      promises.push(
+        this.sendAppealWithdrawnNotification(
+          theCase.courtCaseNumber,
+          theCase.defenderName,
+          theCase.defenderEmail,
+          withdrawnByProsecution,
+        ),
+      )
+    } else if (isDefenceUser(user)) {
+      promises.push(
+        this.sendAppealWithdrawnNotification(
+          theCase.courtCaseNumber,
+          theCase.prosecutor?.name,
+          theCase.prosecutor?.email,
+          withdrawnByProsecution,
+        ),
+      )
+    }
 
     if (hasBeenAssigned) {
       promises.push(
@@ -2172,21 +2201,25 @@ export class NotificationService {
           theCase.courtCaseNumber,
           theCase.appealAssistant?.name,
           theCase.appealAssistant?.email,
+          withdrawnByProsecution,
         ),
         this.sendAppealWithdrawnNotification(
           theCase.courtCaseNumber,
           theCase.appealJudge2?.name,
           theCase.appealJudge2?.email,
+          withdrawnByProsecution,
         ),
         this.sendAppealWithdrawnNotification(
           theCase.courtCaseNumber,
           theCase.appealJudge3?.name,
           theCase.appealJudge3?.email,
+          withdrawnByProsecution,
         ),
         this.sendAppealWithdrawnNotification(
           theCase.courtCaseNumber,
           theCase.appealJudge1?.name,
           theCase.appealJudge1?.email,
+          withdrawnByProsecution,
         ),
       )
     }
@@ -2204,6 +2237,7 @@ export class NotificationService {
     courtCaseNumber?: string,
     recipientName?: string,
     recipientEmail?: string,
+    withdrawnByProsecution?: boolean,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.caseAppealWithdrawn.subject,
@@ -2212,6 +2246,7 @@ export class NotificationService {
       },
     )
     const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
+      withdrawnByProsecution: withdrawnByProsecution ?? false,
       courtCaseNumber: courtCaseNumber,
     })
     return this.sendEmail(subject, html, recipientName, recipientEmail)
@@ -2301,7 +2336,7 @@ export class NotificationService {
       case NotificationType.APPEAL_CASE_FILES_UPDATED:
         return this.sendAppealCaseFilesUpdatedNotifications(theCase, user)
       case NotificationType.APPEAL_WITHDRAWN:
-        return this.sendAppealWithdrawnNotifications(theCase)
+        return this.sendAppealWithdrawnNotifications(theCase, user)
     }
   }
 
