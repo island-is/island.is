@@ -6,7 +6,12 @@ import {
   Season,
   mapStringToEnum,
 } from '@island.is/university-gateway'
-import { InlineResponse2002 } from '../../../gen/fetch'
+import {
+  InlineResponse2002,
+  InlineResponse2002Data,
+  InlineResponse2002ExtraApplicationFields,
+  InlineResponse2002Simenntunarstodvar,
+} from '../../../gen/fetch'
 
 export const mapUglaPrograms = (
   res: InlineResponse2002,
@@ -66,9 +71,12 @@ export const mapUglaPrograms = (
             descriptionIs: field.descriptionIs,
             descriptionEn: field.descriptionEn,
             required: field.required || false,
-            fieldType: field.fieldType as unknown as FieldType,
+            fieldType:
+              program.externalId == '730000_20246'
+                ? FieldType.TESTING_SITE
+                : (field.fieldType as unknown as FieldType),
             uploadAcceptedFileType: field.uploadAcceptedFileType,
-            options: undefined, //TODO missing in api
+            options: mapOptions(program, field), //TODO missing in api
           }),
         ),
         specializations: program.kjorsvid?.map((k) => ({
@@ -83,4 +91,30 @@ export const mapUglaPrograms = (
   }
 
   return mappedRes
+}
+
+const mapOptions = (
+  program: InlineResponse2002Data,
+  field: InlineResponse2002ExtraApplicationFields,
+): string | undefined => {
+  const type = field.fieldType as FieldType
+  switch (type) {
+    case FieldType.TESTING_SITE:
+      try {
+        console.log(
+          'simenntunarstodvar',
+          JSON.stringify(program?.simenntunarstodvar),
+        )
+      } catch (error) {
+        console.log('SIMENNTUNARSTODVAR !!!!!!! -=0---0-0--0-0-00-0', error)
+        throw error
+      }
+
+      return JSON.stringify(program?.simenntunarstodvar) || 'Testing_site'
+    case FieldType.UPLOAD:
+      return `UPLOAD ${JSON.stringify(program?.simenntunarstodvar)}`
+    default:
+      return JSON.stringify(program?.simenntunarstodvar)
+    //return undefined
+  }
 }
