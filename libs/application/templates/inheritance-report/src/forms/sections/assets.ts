@@ -45,7 +45,7 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.realEstate.data',
                 doesNotRequireAnswer: true,
-                component: 'ReportFieldsRepeater',
+                component: 'AssetsFieldsRepeater',
                 childInputIds: [
                   'assets.realEstate',
                   'assets.realEstate.hasModified',
@@ -60,6 +60,8 @@ export const assets = buildSection({
                   {
                     title: m.assetAddress.defaultMessage,
                     id: 'description',
+                    backgroundColor: 'white',
+                    readOnly: true,
                   },
                   {
                     title: m.propertyShare.defaultMessage,

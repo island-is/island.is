@@ -1,5 +1,6 @@
 export { DoneImage } from './DoneImage'
 export { ReportFieldsRepeater } from './ReportFieldsRepeater'
+export { AssetsFieldsRepeater } from './AssetsFieldsRepeater'
 export { HeirsAndPartitionRepeater } from './HeirsAndPartitionRepeater'
 export { PrintScreen } from './PrintScreen'
 export { LookupPerson } from './LookupPerson'
