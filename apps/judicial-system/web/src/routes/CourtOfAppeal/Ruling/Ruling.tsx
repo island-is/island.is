@@ -312,7 +312,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
                     'appealConclusion',
                     event.target.value,
                     ['empty'],
-                        setWorkingCase,
+                    setWorkingCase,
                     appealConclusionErrorMessage,
                     setAppealConclusionErrorMessage,
                   )
