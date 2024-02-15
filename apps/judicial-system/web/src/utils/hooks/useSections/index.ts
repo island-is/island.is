@@ -70,22 +70,20 @@ const useSections = (
   const { formatMessage } = useIntl()
   const router = useRouter()
 
+  /**
+   * We do .slice here because router.pathname is /something/[:id]
+   * and we want to remove the /[:id] part
+   */
+  const isActive = (pathname: string) => {
+    return router.pathname.replace(/\/\[\w+\]/g, '') === pathname
+  }
+
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
     const { type, id, parentCase } = workingCase
-    const routeIndex =
-      router.pathname.includes(constants.CREATE_RESTRICTION_CASE_ROUTE) ||
-      router.pathname.includes(constants.CREATE_TRAVEL_BAN_ROUTE)
-        ? 0
-        : prosecutorRestrictionCasesRoutes.findIndex(
-            /**
-             * We do .slice here because router.pathname is /something/[:id]
-             * and we want to remove the /[:id] part
-             */
-            (route) => route === router.pathname.slice(0, -5),
-          )
+
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
         caseType: type,
@@ -105,7 +103,10 @@ const useSections = (
                     suffix: 'i',
                   }),
                 ),
-                isActive: routeIndex === 0,
+                isActive:
+                  isActive(constants.RESTRICTION_CASE_DEFENDANT_ROUTE) ||
+                  isActive(constants.CREATE_RESTRICTION_CASE_ROUTE) ||
+                  isActive(constants.CREATE_TRAVEL_BAN_ROUTE),
                 href: `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
@@ -113,9 +114,13 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
                 href: `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
-                isActive: routeIndex === 1,
+                isActive: isActive(
+                  constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                ),
                 onClick:
-                  routeIndex !== 1 &&
+                  !isActive(
+                    constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                  ) &&
                   validateFormStepper(
                     isValid,
                     [
@@ -137,9 +142,11 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
                 href: `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
-                isActive: routeIndex === 2,
+                isActive: isActive(
+                  constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                ),
                 onClick:
-                  routeIndex !== 2 &&
+                  !isActive(constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE) &&
                   validateFormStepper(
                     isValid,
                     [
@@ -160,9 +167,11 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.policeReport,
                 ),
                 href: `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`,
-                isActive: routeIndex === 3,
+                isActive: isActive(
+                  constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+                ),
                 onClick:
-                  routeIndex !== 3 &&
+                  !isActive(constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE) &&
                   validateFormStepper(
                     isValid,
                     [
@@ -184,9 +193,9 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.caseFiles,
                 ),
                 href: `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`,
-                isActive: routeIndex === 4,
+                isActive: isActive(constants.RESTRICTION_CASE_CASE_FILES_ROUTE),
                 onClick:
-                  routeIndex !== 4 &&
+                  !isActive(constants.RESTRICTION_CASE_CASE_FILES_ROUTE) &&
                   validateFormStepper(
                     isValid,
                     [
@@ -209,9 +218,9 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.overview,
                 ),
                 href: `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
-                isActive: routeIndex === 5,
+                isActive: isActive(constants.RESTRICTION_CASE_OVERVIEW_ROUTE),
                 onClick:
-                  routeIndex !== 5 &&
+                  !isActive(constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE) &&
                   validateFormStepper(
                     isValid,
                     [
