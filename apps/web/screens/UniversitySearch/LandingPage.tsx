@@ -206,7 +206,7 @@ const LandingPage: Screen<LandingPageProps> = ({
             offset={['0', '0', '1/12']}
           >
             <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
               size="md"
