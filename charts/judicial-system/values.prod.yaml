@@ -177,7 +177,7 @@ judicial-system-backend:
       DB_USER: 'judicial_system_backend'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/judicial-system-backend/DB_PASSWORD'
+      DB_PASS: '/k8s/judicial-system-backend/readonly/DB_PASSWORD'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -206,7 +206,7 @@ judicial-system-backend:
     COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
     COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL'
-    DB_PASS: '/k8s/judicial-system-backend/DB_PASSWORD'
+    DB_PASS: '/k8s/judicial-system-backend/readonly/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN'
     EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/judicial-system/EMAIL_FROM_NAME'
