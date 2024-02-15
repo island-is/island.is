@@ -114,7 +114,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                             <Box style={{ width: '1.5rem', height: '1.5rem' }}>
                               <img
                                 src={university.contentfulLogoUrl?.toString()}
-                                alt={''}
+                                alt={`logo for ${university.contentfulTitle}`}
                               />
                             </Box>
                             <LinkV2
@@ -155,7 +155,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                       <Box style={{ width: '1.5rem', height: '1.5rem' }}>
                         <img
                           src={university.contentfulLogoUrl?.toString()}
-                          alt={''}
+                          alt={`logo for ${university.contentfulTitle}`}
                         />
                       </Box>
                       <LinkV2
@@ -236,7 +236,10 @@ const LandingPage: Screen<LandingPageProps> = ({
           >
             <NewsCard
               title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
-              readMoreText="Sækja um í Háskóla"
+              readMoreText={`${n(
+                'applyToUniversityProgram',
+                'Sækja um í Háskóla',
+              )}`}
               introduction={n(
                 'straightToApplying',
                 'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið',
