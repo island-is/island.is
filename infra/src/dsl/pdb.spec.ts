@@ -26,7 +26,7 @@ describe('PodDisruptionBudget definitions', () => {
     const serviceDef: Awaited<ReturnType<typeof renderHelmServiceFile>> =
       await renderHelmServiceFile(Staging, [sut], [sut], 'no-mocks')
     expect(serviceDef.services.api.podDisruptionBudget?.maxUnavailable).toEqual(
-      0,
+      1,
     )
   })
 

@@ -96,6 +96,8 @@ import { HealthcareLicenseCertificateService } from './healthcare-license-certif
 
 import { EnergyFundsModule } from './energy-funds/energy-funds.module'
 import { EnergyFundsService } from './energy-funds/energy-funds.service'
+import { UniversityModule } from './university/university.module'
+import { UniversityService } from './university/university.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
@@ -173,6 +175,7 @@ export const modules = [
   TransferOfMachineOwnershipTemplateModule,
   HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
+  UniversityModule,
 ]
 
 export const services = [
@@ -234,4 +237,5 @@ export const services = [
   TransferOfMachineOwnershipTemplateService,
   HomeSupportService,
   ChangeMachineSupervisorTemplateService,
+  UniversityService,
 ]
