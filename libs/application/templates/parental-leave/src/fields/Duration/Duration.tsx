@@ -105,7 +105,7 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     }
 
     init()
-  })
+  }, [])
 
   const isGrant = isParentalGrant(application)
   const rangeDates =
