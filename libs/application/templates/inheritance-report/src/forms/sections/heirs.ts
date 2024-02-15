@@ -12,6 +12,7 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
+import { valueToNumber } from '../../lib/utils/helpers'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -113,35 +114,13 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'ReportFieldsRepeater',
+                component: 'HeirsAndPartitionRepeater',
               },
               {
-                fields: [
-                  {
-                    sectionTitle: m.heirs.defaultMessage,
-                    sectionTitleVariant: 'h3',
-                    title: m.heirsNationalId.defaultMessage,
-                    id: 'nationalId',
-                    format: '######-####',
-                  },
-                  {
-                    title: m.heirsName.defaultMessage,
-                    id: 'heirsName',
-                  },
+                customFields: [
                   {
                     title: m.heirsRelation.defaultMessage,
                     id: 'relation',
-                    width: 'full',
-                  },
-                  {
-                    sectionTitle: m.heirContactInfo.defaultMessage,
-                    title: m.heirsEmail.defaultMessage,
-                    id: 'email',
-                  },
-                  {
-                    title: m.heirsPhone.defaultMessage,
-                    id: 'phone',
-                    format: '###-####',
                   },
                   {
                     sectionTitle: m.heirShare.defaultMessage,
@@ -304,11 +283,12 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 const total = (
                   answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.inheritance
-                }, 0)
+                )?.heirs?.data?.reduce(
+                  (sum, heir) => sum + valueToNumber(heir.inheritance),
+                  0,
+                )
 
-                return formatCurrency(String(total))
+                return total ? formatCurrency(String(total)) : ''
               },
             }),
             buildDescriptionField({
@@ -322,11 +302,12 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 const total = (
                   answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.taxFreeInheritance
-                }, 0)
+                )?.heirs?.data?.reduce(
+                  (sum, heir) => sum + valueToNumber(heir.taxFreeInheritance),
+                  0,
+                )
 
-                return formatCurrency(String(total))
+                return total ? formatCurrency(String(total)) : ''
               },
             }),
             buildDescriptionField({
@@ -340,11 +321,12 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 const total = (
                   answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.taxableInheritance
-                }, 0)
+                )?.heirs?.data?.reduce(
+                  (sum, heir) => sum + valueToNumber(heir.taxableInheritance),
+                  0,
+                )
 
-                return formatCurrency(String(total))
+                return total ? formatCurrency(String(total)) : ''
               },
             }),
             buildDescriptionField({
@@ -358,11 +340,12 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 const total = (
                   answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.inheritanceTax
-                }, 0)
+                )?.heirs?.data?.reduce(
+                  (sum, heir) => sum + valueToNumber(heir.inheritanceTax),
+                  0,
+                )
 
-                return formatCurrency(String(total))
+                return total ? formatCurrency(String(total)) : ''
               },
             }),
             buildDividerField({}),
