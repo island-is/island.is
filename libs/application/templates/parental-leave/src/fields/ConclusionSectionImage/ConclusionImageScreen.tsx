@@ -7,10 +7,9 @@ import {
 } from '@island.is/application/types'
 import { Box, Bullet, BulletList, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import {
+  getApplicationAnswers,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
@@ -34,7 +33,8 @@ const ConclusionSectionImage: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     isReceivingUnemploymentBenefits,
     employerLastSixMonths,
     employers,
-  } = useApplicationAnswers(application)
+  } = getApplicationAnswers(application.answers)
+
   const navigate = useNavigate()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
 

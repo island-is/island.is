@@ -142,7 +142,7 @@ const AppealCase = () => {
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
-        appealAssistantId: updatedCase?.appealAssistant,
+        appealAssistant: updatedCase?.appealAssistant,
       }))
     }
   }
