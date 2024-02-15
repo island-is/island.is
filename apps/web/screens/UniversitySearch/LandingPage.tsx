@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
 import {
   Accordion,
   AccordionItem,
-  ActionCard,
-  AlertMessage,
   Box,
   GridColumn,
   Hidden,
@@ -17,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   getThemeConfig,
+  NewsCard,
   OrganizationWrapper,
   SliceMachine,
 } from '@island.is/web/components'
@@ -33,14 +32,12 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../types'
-import { LandingPageFooter } from '../Organization/Home/LandingPage'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 interface LandingPageProps {
@@ -61,7 +58,6 @@ const LandingPage: Screen<LandingPageProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const [searchTerm, setSearchTerm] = useState('')
-  useSetZIndexOnHeader()
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -77,10 +73,6 @@ const LandingPage: Screen<LandingPageProps> = ({
     })) ?? []
   const routeToSearch = () => {
     router.push(`${linkResolver('universitysearch').href}?search=${searchTerm}`)
-  }
-
-  const routeToStudies = () => {
-    console.log('..')
   }
 
   return (
@@ -122,7 +114,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                             <Box style={{ width: '1.5rem', height: '1.5rem' }}>
                               <img
                                 src={university.contentfulLogoUrl?.toString()}
-                                alt={`logo`}
+                                alt={''}
                               />
                             </Box>
                             <LinkV2
@@ -163,7 +155,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                       <Box style={{ width: '1.5rem', height: '1.5rem' }}>
                         <img
                           src={university.contentfulLogoUrl?.toString()}
-                          alt={`logo`}
+                          alt={''}
                         />
                       </Box>
                       <LinkV2
@@ -206,39 +198,55 @@ const LandingPage: Screen<LandingPageProps> = ({
                     !organizationPage.description && index === 0 ? 0 : 6
                   }
                 />
-                {index === 0 && (
-                  <GridColumn
-                    span={['9/9', '9/9', '11/12']}
-                    offset={['0', '0', '1/12']}
-                  >
-                    <Input
-                      placeholder={n('searchPrograms', 'Leit í háskólanámi')}
-                      id="searchuniversity"
-                      name="filterInput"
-                      size="md"
-                      value={searchTerm}
-                      className={cn(styles.searchInput)}
-                      backgroundColor="blue"
-                      onChange={(e) => {
-                        setSearchTerm(e.target.value)
-                      }}
-                      onKeyDown={(k) => {
-                        if (k.code === 'Enter') {
-                          routeToSearch()
-                        }
-                      }}
-                    />
-                    <button
-                      className={cn(styles.searchIcon)}
-                      onClick={() => routeToSearch()}
-                    >
-                      <Icon size="large" icon="search" color="blue400" />
-                    </button>
-                  </GridColumn>
-                )}
               </Box>
             )
           })}
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <Input
+              label={n('searchPrograms', 'Leit í háskólanámi')}
+              id="searchuniversity"
+              name="filterInput"
+              size="md"
+              value={searchTerm}
+              className={cn(styles.searchInput)}
+              backgroundColor="blue"
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+              }}
+              onKeyDown={(k) => {
+                if (k.code === 'Enter') {
+                  routeToSearch()
+                }
+              }}
+            />
+            <button
+              aria-label="Search"
+              className={cn(styles.searchIcon)}
+              onClick={() => routeToSearch()}
+            >
+              <Icon size="large" icon="search" color="blue400" />
+            </button>
+          </GridColumn>
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <NewsCard
+              title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
+              readMoreText="Sækja um í Háskóla"
+              introduction={n(
+                'straightToApplying',
+                'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið',
+              )}
+              image={{
+                url: 'https://images.ctfassets.net/8k0h54kbe6bj/442DRqHvfQcYnuffRbnbHD/5d27a2e0a399aef064d5b3702821ff0b/woman_in_chair.png',
+              }}
+              href={''}
+            />
+          </GridColumn>
         </Box>
       }
     >
