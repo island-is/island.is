@@ -214,8 +214,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
       getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
-    setWorkingCase((theCase) => ({
-      ...theCase,
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
       policeCaseNumbers,
       indictmentSubtypes,
       crimeScenes,
@@ -353,14 +353,12 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const removeDefendantFromState = (defendant: TDefendant) => {
-    if (workingCase.defendants && workingCase.defendants?.length > 1) {
-      setWorkingCase({
-        ...workingCase,
-        defendants: [...workingCase.defendants].filter(
-          (d) => d.id !== defendant.id,
-        ),
-      })
-    }
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      defendants:
+        prevWorkingCase.defendants &&
+        [...prevWorkingCase.defendants].filter((d) => d.id !== defendant.id),
+    }))
   }
 
   const handleCreateDefendantClick = async () => {
@@ -383,22 +381,20 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const createEmptyDefendant = (defendantId?: string) => {
-    if (workingCase.defendants) {
-      setWorkingCase({
-        ...workingCase,
-        defendants: [
-          ...workingCase.defendants,
-          {
-            id: defendantId || uuid(),
-            gender: undefined,
-            name: '',
-            nationalId: '',
-            address: '',
-            citizenship: '',
-          } as TDefendant,
-        ],
-      })
-    }
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      defendants: prevWorkingCase.defendants && [
+        ...prevWorkingCase.defendants,
+        {
+          id: defendantId || uuid(),
+          gender: undefined,
+          name: '',
+          nationalId: '',
+          address: '',
+          citizenship: '',
+        } as TDefendant,
+      ],
+    }))
   }
 
   const stepIsValid = isDefendantStepValidIndictments(workingCase)

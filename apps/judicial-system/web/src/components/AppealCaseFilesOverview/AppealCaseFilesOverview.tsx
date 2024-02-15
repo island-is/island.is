@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import router from 'next/router'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -33,10 +33,9 @@ import {
 import IconButton from '../IconButton/IconButton'
 import { contextMenu } from '../ContextMenu/ContextMenu.strings'
 import { strings } from './AppealCaseFilesOverview.strings'
+import * as styles from './AppealCaseFilesOverview.css'
 
-const AppealCaseFilesOverview: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const AppealCaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -48,31 +47,11 @@ const AppealCaseFilesOverview: React.FC<
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
 
-  const fileDate = (file: CaseFile) => {
-    switch (file.category) {
-      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
-      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
-        return workingCase.appealedDate
-      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
-      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
-        return workingCase.prosecutorStatementDate
-
-      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
-      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
-        return workingCase.defendantStatementDate
-      default: {
-        return file.created
-      }
-    }
-  }
-
   useEffect(() => {
     if (workingCase.caseFiles) {
       setAllFiles(
-        workingCase.caseFiles.filter(
-          (caseFile) =>
+        workingCase.caseFiles.filter((caseFile) => {
+          return (
             caseFile.category &&
             ((workingCase.prosecutorPostponedAppealDate &&
               [
@@ -100,8 +79,9 @@ const AppealCaseFilesOverview: React.FC<
               ].includes(caseFile.category) ||
               ((workingCase.appealState === CaseAppealState.COMPLETED ||
                 isCourtOfAppealsUser(user)) &&
-                [CaseFileCategory.APPEAL_RULING].includes(caseFile.category))),
-        ),
+                [CaseFileCategory.APPEAL_RULING].includes(caseFile.category)))
+          )
+        }),
       )
     }
   }, [
@@ -114,63 +94,72 @@ const AppealCaseFilesOverview: React.FC<
     workingCase.prosecutorStatementDate,
   ])
 
-  return isCompletedCase(workingCase.state) &&
+  return (
+    isCompletedCase(workingCase.state) &&
     allFiles &&
-    allFiles.length > 0 ? (
-    <>
-      <Box marginBottom={5}>
-        <Text as="h3" variant="h3" marginBottom={1}>
-          {formatMessage(strings.title)}
-        </Text>
-        {allFiles.map((file) => {
-          const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
-          const isDisabled = !file.key
+    allFiles.length > 0 && (
+      <>
+        <Box marginBottom={[2, 5]}>
+          <Text as="h3" variant="h3" marginBottom={1}>
+            {formatMessage(strings.title)}
+          </Text>
+          {allFiles.map((file) => {
+            const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
+            const isDisabled = !file.key
+            const canDeleteFile =
+              file.category &&
+              [
+                CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+                CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+                CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+                CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+                CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+              ].includes(file.category) &&
+              ((prosecutorSubmitted && isProsecutionUser(user)) ||
+                (!prosecutorSubmitted && isDefenceUser(user)))
 
-          return (
-            <PdfButton
-              key={file.id}
-              renderAs="row"
-              caseId={workingCase.id}
-              title={file.name}
-              disabled={isDisabled}
-              handleClick={() => onOpen(file.id)}
-            >
-              {file.category &&
-                file.category !== CaseFileCategory.APPEAL_RULING && (
-                  <Box display="flex" alignItems="center">
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="flexEnd"
-                    >
-                      <Text whiteSpace="nowrap">
-                        {`${formatDate(
-                          fileDate(file),
-                          'dd.MM.y',
-                        )} kl. ${formatDate(
-                          fileDate(file),
-                          constants.TIME_FORMAT,
-                        )}`}
-                      </Text>
-                      <Text variant="small">
-                        {formatMessage(strings.submittedBy, {
-                          filesCategory: prosecutorSubmitted,
-                        })}
-                      </Text>
-                    </Box>
-                    {[
-                      CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-                      CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                      CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                      CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-                      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                      CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-                    ].includes(file.category) &&
-                      ((prosecutorSubmitted && isProsecutionUser(user)) ||
-                        (!prosecutorSubmitted && isDefenceUser(user))) && (
-                        <Box marginLeft={3}>
-                          <ContextMenu
-                            items={[
+            return (
+              <PdfButton
+                key={file.id}
+                renderAs="row"
+                caseId={workingCase.id}
+                title={file.name}
+                disabled={isDisabled}
+                handleClick={() => onOpen(file.id)}
+              >
+                <Box
+                  display="flex"
+                  alignItems={['flexEnd', 'flexEnd', 'center']}
+                  justifyContent={['spaceBetween', 'spaceBetween', 'center']}
+                >
+                  <Box className={styles.childContainer}>
+                    <Text whiteSpace="nowrap">
+                      {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
+                        file.created,
+                        constants.TIME_FORMAT,
+                      )}`}
+                    </Text>
+                    {file.category &&
+                      file.category !== CaseFileCategory.APPEAL_RULING && (
+                        <Text variant="small">
+                          {formatMessage(strings.submittedBy, {
+                            filesCategory: prosecutorSubmitted,
+                          })}
+                        </Text>
+                      )}
+                  </Box>
+                  <Box marginLeft={3}>
+                    <ContextMenu
+                      dataTestId="contextMenu"
+                      items={[
+                        {
+                          title: formatMessage(contextMenu.openFile),
+                          onClick: () => onOpen(file.id),
+                          icon: 'open' as IconMapIcon,
+                        },
+                        ...(canDeleteFile
+                          ? [
                               {
                                 title: formatMessage(contextMenu.deleteFile),
                                 onClick: () =>
@@ -179,52 +168,53 @@ const AppealCaseFilesOverview: React.FC<
                                       prev.filter((f) => f.id !== file.id),
                                     )
                                   }),
-                                icon: 'trash',
+                                icon: 'trash' as IconMapIcon,
                               },
-                            ]}
-                            menuLabel="Opna valmöguleika á skjali"
-                            disclosure={
-                              <IconButton
-                                icon="ellipsisVertical"
-                                colorScheme="transparent"
-                                onClick={(evt) => {
-                                  evt.stopPropagation()
-                                }}
-                                disabled={isDisabled}
-                              />
-                            }
-                          />
-                        </Box>
-                      )}
+                            ]
+                          : []),
+                      ]}
+                      menuLabel="Opna valmöguleika á skjali"
+                      disclosure={
+                        <IconButton
+                          icon="ellipsisVertical"
+                          colorScheme="transparent"
+                          onClick={(evt) => {
+                            evt.stopPropagation()
+                          }}
+                          disabled={isDisabled}
+                        />
+                      }
+                    />
                   </Box>
-                )}
-            </PdfButton>
-          )
-        })}
-      </Box>
-      {(isProsecutionUser(user) || isDefenceUser(user)) &&
-        workingCase.appealState &&
-        workingCase.appealState !== CaseAppealState.COMPLETED && (
-          <Box display="flex" justifyContent="flexEnd" marginTop={3}>
-            <Button
-              icon="add"
-              onClick={() => {
-                router.push(
-                  limitedAccess
-                    ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
-                    : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
-                )
-              }}
-            >
-              {formatMessage(strings.addFiles)}
-            </Button>
-          </Box>
-        )}
-      <AnimatePresence>
-        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
-      </AnimatePresence>
-    </>
-  ) : null
+                </Box>
+              </PdfButton>
+            )
+          })}
+        </Box>
+        {(isProsecutionUser(user) || isDefenceUser(user)) &&
+          workingCase.appealState &&
+          workingCase.appealState !== CaseAppealState.COMPLETED && (
+            <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+              <Button
+                icon="add"
+                onClick={() => {
+                  router.push(
+                    limitedAccess
+                      ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
+                      : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
+                  )
+                }}
+              >
+                {formatMessage(strings.addFiles)}
+              </Button>
+            </Box>
+          )}
+        <AnimatePresence>
+          {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
+        </AnimatePresence>
+      </>
+    )
+  )
 }
 
 export default AppealCaseFilesOverview

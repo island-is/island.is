@@ -48,6 +48,11 @@ export interface TUploadFile extends UploadFile {
   policeFileId?: string | null
 }
 
+export interface UploadFileState {
+  isUploading: boolean
+  error: boolean
+}
+
 const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   id: file.id,
   name: file.name ?? '',
@@ -270,7 +275,7 @@ const useS3Upload = (caseId: string) => {
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            updateFile({ ...file, percent })
+            updateFile({ ...file, percent, status: 'uploading' })
           })
 
           const newFileId = await addFileToCaseState({

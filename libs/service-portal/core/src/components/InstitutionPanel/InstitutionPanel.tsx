@@ -41,7 +41,13 @@ export const InstitutionPanel = ({
       width="full"
       position="relative"
     >
-      <Box width="full" height="full" display={imgContainerDisplay}>
+      <Box
+        width="full"
+        height="full"
+        alignItems="center"
+        justifyContent="center"
+        display={imgContainerDisplay}
+      >
         {loading ? (
           <SkeletonLoader
             display="block"

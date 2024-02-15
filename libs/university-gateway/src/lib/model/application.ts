@@ -2,6 +2,7 @@ import { Season } from '../types/season'
 import { ModeOfDelivery } from '../types/modeOfDelivery'
 
 export interface IApplication {
+  id: string
   programExternalId: string
   modeOfDelivery: ModeOfDelivery
   startingSemesterYear: number

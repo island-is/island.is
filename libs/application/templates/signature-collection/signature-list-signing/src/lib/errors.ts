@@ -49,6 +49,18 @@ export const errorMessages = {
       description: '',
     },
   }),
+  invalidSignature: defineMessages({
+    title: {
+      id: 'sls.application:error.invalidSignature.title',
+      defaultMessage: 'Undirskrift til staðar í kerfi',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.acinvalidSignatureive.summary',
+      defaultMessage: 'Nánari upplýsingar á mínum síðum.',
+      description: '',
+    },
+  }),
   signer: defineMessages({
     title: {
       id: 'sls.application:error.signer.title',
