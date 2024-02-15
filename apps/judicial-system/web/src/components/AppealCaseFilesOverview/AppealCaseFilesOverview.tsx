@@ -193,6 +193,7 @@ const AppealCaseFilesOverview = () => {
                     : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
                 )
               }}
+              disabled={workingCase.appealState === CaseAppealState.WITHDRAWN}
             >
               {formatMessage(strings.addFiles)}
             </Button>

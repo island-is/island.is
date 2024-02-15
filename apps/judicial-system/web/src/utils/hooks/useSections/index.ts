@@ -1270,7 +1270,6 @@ const useSections = (
                 },
               ]
             : []),
-
           ...(useAppealWithdrawnSections
             ? [
                 {
@@ -1376,11 +1375,12 @@ const useSections = (
             : workingCase.state,
         ),
         isActive:
-          !workingCase.parentCase &&
-          isCompletedCase(workingCase.state) &&
-          !workingCase.prosecutorPostponedAppealDate &&
-          !workingCase.accusedPostponedAppealDate &&
-          workingCase.appealState !== CaseAppealState.COMPLETED,
+          workingCase.appealState === CaseAppealState.WITHDRAWN ||
+          (!workingCase.parentCase &&
+            isCompletedCase(workingCase.state) &&
+            !workingCase.prosecutorPostponedAppealDate &&
+            !workingCase.accusedPostponedAppealDate &&
+            workingCase.appealState !== CaseAppealState.COMPLETED),
         children: [],
       },
       ...(workingCase.parentCase
@@ -1406,7 +1406,8 @@ const useSections = (
             },
           ]
         : []),
-      ...(!workingCase.appealState
+      ...(!workingCase.appealState ||
+      workingCase.appealState === CaseAppealState.WITHDRAWN
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]
