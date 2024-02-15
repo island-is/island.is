@@ -6,6 +6,7 @@ import { Candidate, mapCandidate } from './candidate.dto'
 export enum CollectionStatus {
   InitialActive = 'initialActive',
   Active = 'active',
+  InInitialReview = 'inInitialReview',
   InReview = 'inReview',
   Processing = 'processing',
   Processed = 'processed',

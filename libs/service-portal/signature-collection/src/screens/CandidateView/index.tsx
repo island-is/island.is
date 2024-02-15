@@ -72,7 +72,7 @@ const CandidateView = () => {
               <Button
                 onClick={() => {
                   const copied = copyToClipboard(
-                    `${document.location.origin}/umsoknir/maela-med-frambodi/?candidate=${listsForOwner[0].slug}`,
+                    `${document.location.origin}${listsForOwner[0].slug}`,
                   )
                   if (!copied) {
                     return toast.error(formatMessage(m.copyLinkError))

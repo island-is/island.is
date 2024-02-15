@@ -8,8 +8,8 @@ import { DataValue } from '@island.is/application/ui-components'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
 interface ScreenProps {
   application: Application
@@ -23,7 +23,7 @@ const EmployerApprovalExtraInformation: FC<
   const pensionFundOptions = usePensionFundOptions()
   const unionOptions = useUnionOptions()
   const { formatMessage } = useLocale()
-  const { pensionFund, union } = useApplicationAnswers(application)
+  const { pensionFund, union } = getApplicationAnswers(application.answers)
 
   return (
     <GridRow marginTop={2}>
