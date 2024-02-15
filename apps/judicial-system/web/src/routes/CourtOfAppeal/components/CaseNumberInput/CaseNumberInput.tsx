@@ -32,7 +32,6 @@ const CaseNumberInput = () => {
           'appealCaseNumber',
           event.target.value,
           ['empty', 'appeal-case-number-format'],
-          workingCase,
           setWorkingCase,
           appealCaseNumberErrorMessage,
           setAppealCaseNumberErrorMessage,
