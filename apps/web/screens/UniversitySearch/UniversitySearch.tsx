@@ -407,6 +407,42 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       })),
     })) ?? []
 
+  const handleRemoveTag = (key: keyof FilterProps, tag: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: prevFilters[key].filter((existingTag) => existingTag !== tag),
+    }))
+  }
+
+  const formatModeOfDelivery = (items: string[]): string => {
+    const length = items.length
+
+    if (length === 0) {
+      return ''
+    }
+
+    if (length === 1) {
+      return n(items[0], TranslationDefaults[items[0]])
+    }
+
+    if (length === 2) {
+      return `${n(items[0], TranslationDefaults[items[0]])} or ${n(
+        items[0],
+        TranslationDefaults[items[0]],
+      )}`
+    }
+
+    const formattedList = items.map((item, index) => {
+      if (index === length - 1) {
+        return `${n('or', 'eða')} ${n(item, TranslationDefaults[item])}`
+      } else {
+        return `${n(item, TranslationDefaults[item])}, `
+      }
+    })
+
+    return formattedList.join('')
+  }
+
   return (
     <Box>
       {organizationPage && (
@@ -632,6 +668,30 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setQuery(e.target.value)
               }}
             />
+            <Box paddingTop={1} display={'flex'} style={{ gap: '0.5rem' }}>
+              {Object.keys(filters).map((key) =>
+                filters[key as keyof FilterProps].map((tag) => (
+                  <Tag>
+                    <Box
+                      display={'flex'}
+                      justifyContent={'center'}
+                      alignItems={'center'}
+                      style={{ gap: '0.5rem' }}
+                    >
+                      {n(tag, TranslationDefaults[tag])}
+                      <button
+                        style={{ alignSelf: 'end' }}
+                        onClick={() =>
+                          handleRemoveTag(key as keyof FilterProps, tag)
+                        }
+                      >
+                        <Icon icon={'close'} size="small" />
+                      </button>
+                    </Box>
+                  </Tag>
+                )),
+              )}
+            </Box>
             <ContentBlock>
               <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
@@ -887,30 +947,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.modeOfDelivery.map(
-                                    (delivery: string, index: number) => {
-                                      const total =
-                                        dataItem.modeOfDelivery.length
-                                      //first item is always the same
-                                      if (index === 0) {
-                                        return `${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}`
-                                      }
-                                      //if there are more items than this one
-                                      else if (index > 0 && total > index + 1) {
-                                        return `, ${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}, `
-                                      }
-                                      return `${n('or', 'eða')} ${n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )}`
-                                    },
-                                  )}`,
+                                  title: formatModeOfDelivery(
+                                    dataItem.modeOfDelivery,
+                                  ),
                                 },
                                 {
                                   icon: (
@@ -1061,31 +1100,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.modeOfDelivery.map(
-                                    (delivery: string, index: number) => {
-                                      const total =
-                                        dataItem.modeOfDelivery.length
-                                      //first item is always the same
-                                      if (index === 0) {
-                                        return `${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}`
-                                      }
-                                      //if there are more items than this one
-                                      else if (index > 0 && total > index + 1) {
-                                        return `, ${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}, `
-                                      }
-                                      //else it's the last item and should have an "or" before the item
-                                      return `${n('or', 'eða')} ${n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )}`
-                                    },
-                                  )}`,
+                                  title: formatModeOfDelivery(
+                                    dataItem.modeOfDelivery,
+                                  ),
                                 },
                                 {
                                   icon: (
