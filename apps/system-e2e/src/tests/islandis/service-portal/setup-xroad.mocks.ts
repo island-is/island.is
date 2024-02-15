@@ -77,14 +77,14 @@ export async function setupXroadMocks() {
           thinglystirEigendur: [
             {
               nafn: 'Jón Jónsson',
-              kennitala: '1234567890',
+              kennitala: '2222222222',
               eignarhlutfall: 0.5,
               kaupdagur: new Date(),
               heimildBirting: 'A+',
             },
             {
               nafn: 'Jóna Jónasdóttir',
-              kennitala: '0987654321',
+              kennitala: '3333333333',
               eignarhlutfall: 0.5,
               kaupdagur: new Date(),
               heimildBirting: 'A+',
