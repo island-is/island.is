@@ -48,7 +48,6 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
       const accessibleCaseAppealStates = [
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
-        CaseAppealState.WITHDRAWN,
       ]
 
       describe.each(
