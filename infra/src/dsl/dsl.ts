@@ -437,7 +437,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   private postgresDefaults = (pg: PostgresInfo): PostgresInfo => {
-    pg = merge(pg, this.serviceDef.postgres)
+    const postgres = merge({}, this.serviceDef.postgres)
+    pg = merge(postgres, pg)
     return {
       host: pg.host ?? this.serviceDef.postgres?.host, // Allows missing host
       username: postgresIdentifier(
