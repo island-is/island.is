@@ -1,4 +1,5 @@
-import { style, globalStyle } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
+
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const imageContainerHidden = style({
@@ -19,6 +20,7 @@ export const icon = style({
   minWidth: 30,
   width: 40,
   height: 40,
+  alignSelf: 'flex-start',
   ...themeUtils.responsiveStyle({
     md: {
       minWidth: 40,

@@ -317,16 +317,6 @@ export const dataSchema = z.object({
     ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
-  employer: z.object({
-    selfEmployed: z.object({
-      file: z
-        .array(FileSchema)
-        .optional()
-        .refine((a) => a === undefined || a.length > 0, {
-          params: errorMessages.requiredAttachment,
-        }),
-    }),
-  }),
   fileUpload: z.object({
     selfEmployedFile: z
       .array(FileSchema)

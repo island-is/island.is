@@ -663,15 +663,6 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'tryggingastofnun':
-    case 'insurance-administration':
-      OrganizationFooterComponent = (
-        <TryggingastofnunFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
     case 'haskolanam':
       OrganizationFooterComponent = (
         <UniversityStudiesFooter organization={organization} />
