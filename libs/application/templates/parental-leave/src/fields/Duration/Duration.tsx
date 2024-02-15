@@ -105,7 +105,7 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     }
 
     init()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isGrant = isParentalGrant(application)
   const rangeDates =
