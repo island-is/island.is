@@ -268,10 +268,22 @@ export class ServiceBuilder<ServiceType extends string> {
     return name
   }
 
+  /**
+   * Merges the properties of the provided PostgresInfo objects, optionally creating a copy instead of modifying in-place.
+   * If `copy` is true, a copy of the target object is created and merged with the `postgres` object, if false, the target object is modified in-place.
+   * Additionally, defaults are applied to the output via `postgresDefoluts`.
+   * The `extensions` property of the resulting object is a concatenation of the `extensions` properties of the `target` and `postgres` objects.
+   * If the `extensions` property of the resulting object is an empty array, it is set to undefined.
+   *
+   * @param {PostgresInfo} [target] - The target object to be merged. If not provided, an empty object is used.
+   * @param {PostgresInfo} [postgres] - The object to merge with the target object. If not provided, an empty object is used.
+   * @param {boolean} [copy=false] - Whether to create a copy of the target object before merging. Defaults to false.
+   * @returns {PostgresInfo} - The resulting object after merging.
+   */
   private grantDB(
     target?: PostgresInfo,
     postgres?: PostgresInfo,
-    copy = false,
+    copy: boolean = false,
   ): PostgresInfo {
     if (copy) {
       const targetCopy = this.grantDB({}, target, false)
@@ -293,13 +305,20 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
-   * @param ic - InitContainers definitions
+   * Initializes a container with optional parameters and checks for unique container names.
+   * If the 'withDB' flag is set or if the 'postgres' property is present in the input object,
+   * it grants database access to the container.
+   * Maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
+   *
+   * @param ic - The initial container configuration.
+   * @param [withDB=false] - Optional flag indicating whether to grant database access to the container.
+   * @throws Throws an error if multiple init containers do not have unique names.
+   * @returns Returns the current instance for chaining.
    */
   initContainer(
     ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>,
-    withDB = false,
-  ) {
+    withDB: boolean = false,
+  ): this {
     // Combine current and new containers
     ic.containers = (this.serviceDef.initContainers?.containers ?? []).concat(
       ic.containers,
@@ -424,22 +443,23 @@ export class ServiceBuilder<ServiceType extends string> {
       username: postgresIdentifier(
         this.stripPostfix(
           pg.username ??
-            pg.name ??
-            this.serviceDef.postgres?.username ??
-            this.serviceDef.name,
+          pg.name ??
+          this.serviceDef.postgres?.username ??
+          this.serviceDef.name,
         ),
-      ),
+      ) + (pg.readOnly ? '_read' : ''),
       passwordSecret:
         pg.passwordSecret ??
         this.serviceDef.postgres?.passwordSecret ??
         `/k8s/${this.stripPostfix(
           pg.name ?? this.serviceDef.name,
-        )}/DB_PASSWORD`,
+        )}/readonly/DB_PASSWORD`,
       name: postgresIdentifier(
         this.stripPostfix(
           pg.name ?? this.serviceDef.postgres?.name ?? this.serviceDef.name,
         ),
       ),
+      readOnly: pg.readOnly ?? false,
       extensions: pg.extensions,
     }
   }
