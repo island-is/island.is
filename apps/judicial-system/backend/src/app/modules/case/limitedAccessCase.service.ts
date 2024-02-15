@@ -102,6 +102,7 @@ export interface LimitedAccessUpdateCase
     | 'appealState'
     | 'defendantStatementDate'
     | 'openedByDefender'
+    | 'appealRulingDecision'
   > {}
 
 export const include: Includeable[] = [
