@@ -27,15 +27,45 @@ export const inheritanceReportSchema = z.object({
           .object({
             assetNumber: z.string(),
             description: z.string(),
-            propertyValuation: z.string().refine((v) => v),
-            propertyShare: z.string().refine((v) => {
-              const num = parseInt(v, 10)
+            propertyValuation: z.string(),
+            share: z.string(),
+          })
+          .refine(
+            ({ propertyValuation }) => {
+              return propertyValuation !== ''
+            },
+            {
+              path: ['propertyValuation'],
+            },
+          )
+          .refine(
+            ({ assetNumber }) => {
+              return isValidString(assetNumber)
+            },
+            {
+              path: ['assetNumber'],
+            },
+          )
+          .refine(
+            ({ share }) => {
+              const num = parseInt(share, 10)
 
               const value = isNaN(num) ? 0 : num
 
               return value >= 0 && value <= 100
-            }),
-          })
+            },
+            {
+              path: ['share'],
+            },
+          )
+          .refine(
+            ({ description }) => {
+              return isValidString(description)
+            },
+            {
+              path: ['description'],
+            },
+          )
           .array()
           .optional(),
         hasModified: z.boolean().optional(),

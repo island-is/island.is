@@ -1,14 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  FC,
-  useState,
-  useEffect,
-  useCallback,
-  Fragment,
-  ReactNode,
-  ChangeEvent,
-} from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { FC, useState, useEffect, useCallback, ChangeEvent } from 'react'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
@@ -21,7 +13,6 @@ import {
   Button,
   Input,
   Text,
-  GridColumnProps,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
@@ -30,6 +21,7 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
+import { isValidRealEstate, valueToNumber } from '../../lib/utils/helpers'
 
 type RepeaterProps = {
   field: {
@@ -49,87 +41,42 @@ export const AssetsFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { externalData } = application
-
   const { id, props } = field
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
   })
-
-  const { setValue, getValues, watch, clearErrors } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [getProperty, { loading: queryLoading, error: _queryError }] =
-    useLazyQuery<Query, { input: SearchForPropertyInput }>(
-      SEARCH_FOR_PROPERTY_QUERY,
-      {
-        onCompleted: (data) => {
-          // clearErrors(addressField)
-          setValue(
-            addressField,
-            data.searchForProperty?.defaultAddress?.display ?? '',
-          )
-        },
-        fetchPolicy: 'network-only',
-      },
-    )
-
-  useEffect(() => {
-    // According to Skra.is:
-    // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
-    // The property number is a seven digit informationless sequence with prefix F
-    // The lot number is a six digit informationless sequence with prefix L
-    const propertyNumber = propertyNumberInput.trim().toUpperCase()
-
-    // setValue(addressField, '')
-    if (isValidRealEstate(propertyNumber)) {
-      // clearErrors(propertyNumberField)
-      getProperty({
-        variables: {
-          input: {
-            propertyNumber,
-          },
-        },
-      })
-    } else {
-      // setError(propertyNumberField, {
-      //   message: formatMessage(m.errorPropertyNumber),
-      //   type: 'validate',
-      // })
-    }
-  }, [getProperty, setValue])
-
-  /* ------ Total ------ */
+  const [loadingFieldName, setLoadingFieldName] = useState<string | null>(null)
   const [total, setTotal] = useState(0)
+
   const calculateTotal = useCallback(() => {
     const values = getValues(id)
+
     if (!values) {
       return
     }
 
     const total = values.reduce((acc: number, current: any) => {
-      const propertyValuationNumber = parseInt(current[props.sumField], 10)
-      const shareValueNumber = parseInt(current?.propertyShare, 10)
+      const propertyValuation = valueToNumber(current[props.sumField])
+      const shareValue = valueToNumber(current?.share)
 
-      const propertyValuation = isNaN(propertyValuationNumber)
-        ? 0
-        : propertyValuationNumber
-      const shareValue = isNaN(shareValueNumber) ? 0 : shareValueNumber / 100
-
-      // TODO: check how precise are these calculations need to be
       return (
         Number(acc) +
         (props?.calcWithShareValue
-          ? Math.floor(propertyValuation * shareValue)
+          ? Math.floor(propertyValuation * (shareValue / 100))
           : propertyValuation)
       )
     }, 0)
-    const addTotal = id.replace('data', 'total')
-    setValue(addTotal, total)
 
+    const addTotal = id.replace('data', 'total')
+
+    setValue(addTotal, total)
     setTotal(total)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getValues, id, props.sumField])
+  }, [id])
 
   useEffect(() => {
     calculateTotal()
@@ -144,6 +91,11 @@ export const AssetsFieldsRepeater: FC<
     const repeaterFields: Record<string, string> = values.reduce(
       (acc: Record<string, string>, elem: string) => {
         acc[elem] = ''
+
+        if (elem === 'share') {
+          acc[elem] = '100'
+        }
+
         return acc
       },
       {},
@@ -152,7 +104,6 @@ export const AssetsFieldsRepeater: FC<
     append(repeaterFields)
   }
 
-  /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
     const extData = (externalData.syslumennOnEntry?.data as any).estate[
       props.fromExternalData ? props.fromExternalData : ''
@@ -194,106 +145,30 @@ export const AssetsFieldsRepeater: FC<
                 const lastIndex = props.fields.length - 1
                 const pushRight = !even && index === lastIndex
 
-                const fieldId = `${fieldIndex}.${field.id}`
-                const err = errors && getErrorViaPath(errors, fieldId)
+                const fieldName = `${fieldIndex}.${field.id}`
+                const error = errors && getErrorViaPath(errors, fieldName)
 
-                const propertyNumberField = `${fieldIndex}.assetNumber`
-                const propertyNumberInput = watch(propertyNumberField, '')
-
-                return field?.sectionTitle ? (
-                  <GridColumn key={field.id} span="1/1">
-                    <Text
-                      variant={
-                        field.sectionTitleVariant
-                          ? field.sectionTitleVariant
-                          : 'h5'
-                      }
-                      marginBottom={2}
-                    >
-                      {field.sectionTitle}
-                    </Text>
-                  </GridColumn>
-                ) : (
-                  <DoubleColumnRow
-                    span={
-                      field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']
-                    }
+                return (
+                  <FieldComponent
+                    key={index}
+                    onAfterChange={calculateTotal}
+                    setLoadingFieldName={(v) => {
+                      setLoadingFieldName(v)
+                    }}
+                    loadingFieldName={loadingFieldName}
                     pushRight={pushRight}
-                    paddingBottom={2}
-                    key={field.id}
-                  >
-                    {field.id === 'propertyShare' ? (
-                      <InputController
-                        id={`${fieldIndex}.${field.id}`}
-                        label={formatMessage(m.propertyShare)}
-                        defaultValue="0"
-                        backgroundColor="blue"
-                        onChange={(
-                          e: ChangeEvent<
-                            HTMLInputElement | HTMLTextAreaElement
-                          >,
-                        ) => {
-                          const num = parseInt(e.target.value, 10)
-                          const value = isNaN(num) ? 0 : num
-
-                          if (value >= 0 && value <= 100) {
-                            calculateTotal()
-                          }
-                        }}
-                        error={err}
-                        type="number"
-                        suffix="%"
-                        required
-                      />
-                    ) : field.id === 'assetNumber' ? (
-                      <InputController
-                        id={propertyNumberField}
-                        name={propertyNumberField}
-                        label={formatMessage(m.propertyNumber)}
-                        backgroundColor="blue"
-                        defaultValue={field.assetNumber}
-                        error={
-                          error?.assetNumber
-                            ? formatMessage(m.errorPropertyNumber)
-                            : undefined
-                        }
-                        placeholder="F1234567"
-                        required
-                      />
-                    ) : (
-                      <InputController
-                        id={`${fieldIndex}.${field.id}`}
-                        name={`${fieldIndex}.${field.id}`}
-                        defaultValue={
-                          repeaterField[field.id] ? repeaterField[field.id] : ''
-                        }
-                        format={field.format}
-                        label={field.title}
-                        placeholder={field.placeholder}
-                        backgroundColor={field.color ? field.color : 'blue'}
-                        currency={field.currency}
-                        readOnly={field.readOnly}
-                        type={field.type}
-                        textarea={field.variant}
-                        rows={field.rows}
-                        required={field.required}
-                        error={err}
-                        onChange={(_) => {
-                          // const value = elem.target.value.replace(/\D/g, '')
-
-                          // if (props.sumField === field.id) {
-                          calculateTotal()
-                          // }
-                        }}
-                      />
-                    )}
-                  </DoubleColumnRow>
+                    fieldIndex={fieldIndex}
+                    field={field}
+                    fieldName={fieldName}
+                    error={error}
+                  />
                 )
               })}
             </GridRow>
           </Box>
         )
       })}
+
       <Box marginTop={3}>
         <Button
           variant="text"
@@ -313,12 +188,10 @@ export const AssetsFieldsRepeater: FC<
                 <Input
                   id={`${id}.total`}
                   name={`${id}.total`}
-                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
+                  value={formatCurrency(String(valueToNumber(total)))}
                   label={formatMessage(m.total)}
                   backgroundColor="white"
                   readOnly
-                  // hasError={error}
-                  errorMessage={formatMessage(m.totalPercentageError)}
                 />
               }
             />
@@ -330,3 +203,192 @@ export const AssetsFieldsRepeater: FC<
 }
 
 export default AssetsFieldsRepeater
+
+interface FieldComponentProps {
+  onAfterChange?: () => void
+  setLoadingFieldName?: (fieldName: string | null) => void
+  loadingFieldName?: string | null
+  pushRight?: boolean
+  field: Record<string, any>
+  fieldIndex: string
+  fieldName: string
+  error?: string
+}
+
+const FieldComponent = ({
+  onAfterChange,
+  setLoadingFieldName,
+  loadingFieldName,
+  pushRight,
+  field,
+  fieldIndex,
+  fieldName,
+  error,
+}: FieldComponentProps) => {
+  const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
+
+  let content = null
+
+  let defaultProps = {
+    id: fieldName,
+    name: fieldName,
+    format: field.format,
+    label: field.title,
+    defaultValue: '',
+    type: field.type,
+    placeholder: field.placeholder,
+    backgroundColor: field.color ? field.color : 'blue',
+    currency: field.currency,
+    readOnly: field.readOnly,
+    required: field.required,
+    loading: fieldName === loadingFieldName,
+    suffix: '',
+    onChange: () => onAfterChange?.(),
+    error: error,
+    ...field,
+  }
+
+  switch (field.id) {
+    case 'sectionTitle':
+      return (
+        <GridColumn key={fieldName} span="1/1">
+          <Text
+            variant={
+              field.sectionTitleVariant ? field.sectionTitleVariant : 'h5'
+            }
+            marginBottom={2}
+          >
+            {field.sectionTitle}
+          </Text>
+        </GridColumn>
+      )
+    case 'assetNumber':
+      content = (
+        <AsssetNumberField
+          field={field}
+          fieldName={fieldName}
+          fieldIndex={fieldIndex}
+          setLoadingFieldName={setLoadingFieldName}
+          {...defaultProps}
+        />
+      )
+
+      break
+    case 'share':
+      defaultProps = {
+        ...defaultProps,
+        label: formatMessage(m.propertyShare),
+      }
+
+      content = (
+        <InputController
+          {...defaultProps}
+          onChange={(
+            e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
+            const value = valueToNumber(e.target.value)
+
+            if (value >= 0 && value <= 100) {
+              onAfterChange?.()
+            }
+
+            if (value === 0) {
+              setValue(fieldName, '0%')
+            }
+          }}
+        />
+      )
+
+      break
+    default:
+      content = <InputController {...defaultProps} />
+
+      break
+  }
+
+  return (
+    <DoubleColumnRow
+      span={field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']}
+      pushRight={pushRight}
+      paddingBottom={2}
+      key={fieldName}
+    >
+      {content}
+    </DoubleColumnRow>
+  )
+}
+
+const AsssetNumberField = ({
+  fieldIndex,
+  fieldName,
+  error,
+  setLoadingFieldName,
+  ...props
+}: FieldComponentProps) => {
+  const { formatMessage } = useLocale()
+  const { setValue, clearErrors, setError } = useFormContext()
+
+  const addressFieldName = `${fieldIndex}.description`
+
+  const propertyNumberInput = useWatch({
+    name: fieldName,
+    defaultValue: '',
+  })
+
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: SearchForPropertyInput }>(
+      SEARCH_FOR_PROPERTY_QUERY,
+      {
+        onCompleted: (data) => {
+          clearErrors(addressFieldName)
+
+          setValue(
+            addressFieldName,
+            data.searchForProperty?.defaultAddress?.display ?? '',
+          )
+        },
+        fetchPolicy: 'network-only',
+      },
+    )
+
+  useEffect(() => {
+    setLoadingFieldName?.(queryLoading ? addressFieldName : null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryLoading])
+
+  useEffect(() => {
+    const propertyNumber = propertyNumberInput.trim().toUpperCase()
+
+    setValue(addressFieldName, '')
+
+    if (isValidRealEstate(propertyNumber)) {
+      clearErrors(fieldName)
+
+      getProperty({
+        variables: {
+          input: {
+            propertyNumber,
+          },
+        },
+      })
+    } else {
+      setError(fieldName, {
+        message: formatMessage(m.errorPropertyNumber),
+        type: 'validate',
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [propertyNumberInput])
+
+  return (
+    <InputController
+      id={fieldName}
+      name={fieldName}
+      label={formatMessage(m.propertyNumber)}
+      defaultValue={propertyNumberInput}
+      error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      {...props}
+    />
+  )
+}

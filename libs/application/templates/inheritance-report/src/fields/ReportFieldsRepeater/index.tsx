@@ -103,7 +103,7 @@ export const ReportFieldsRepeater: FC<
 
     const total = values.reduce((acc: number, current: any) => {
       const propertyValuationNumber = parseInt(current[props.sumField], 10)
-      const shareValueNumber = parseInt(current?.propertyShare, 10)
+      const shareValueNumber = parseInt(current?.share, 10)
 
       const propertyValuation = isNaN(propertyValuationNumber)
         ? 0
@@ -372,7 +372,7 @@ export const ReportFieldsRepeater: FC<
                         error={err}
                         required
                       />
-                    ) : field.id === 'propertyShare' ? (
+                    ) : field.id === 'share' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(m.propertyShare)}

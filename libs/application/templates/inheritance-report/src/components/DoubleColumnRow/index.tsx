@@ -64,4 +64,4 @@ export const DoubleColumnRow = ({
   )
 }
 
-export default DoubleColumRow
+export default DoubleColumnRow

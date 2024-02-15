@@ -56,6 +56,7 @@ export const assets = buildSection({
                   {
                     title: m.assetNumber.defaultMessage,
                     id: 'assetNumber',
+                    placeholder: 'F1234567',
                   },
                   {
                     title: m.assetAddress.defaultMessage,
@@ -65,7 +66,11 @@ export const assets = buildSection({
                   },
                   {
                     title: m.propertyShare.defaultMessage,
-                    id: 'propertyShare',
+                    id: 'share',
+                    type: 'number',
+                    defaultValue: '100',
+                    suffix: '%',
+                    required: true,
                   },
                   {
                     title: m.propertyValuation.defaultMessage,

@@ -158,7 +158,7 @@ export interface Inventory {
 }
 
 export interface RealEstateData {
-  share: number
+  share: string
   assetNumber: string
   description: string
   propertyValuation: string
