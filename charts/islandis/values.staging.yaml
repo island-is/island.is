@@ -161,7 +161,7 @@ air-discount-scheme-backend:
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/air-discount-scheme-backend/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -179,7 +179,7 @@ air-discount-scheme-backend:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/air-discount-scheme-backend/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
@@ -702,7 +702,7 @@ application-system-api:
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/application-system-api/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -729,7 +729,7 @@ application-system-api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
     DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
-    DB_PASS: '/k8s/application-system-api/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
@@ -846,7 +846,7 @@ application-system-api-worker:
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/application-system-api/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
     DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD'
@@ -1224,7 +1224,7 @@ endorsement-system-api:
       DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/services-endorsements-api/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -1244,7 +1244,7 @@ endorsement-system-api:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-endorsements-api/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/endorsement-system-api/IDS-shared-secret'
     SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
@@ -1336,7 +1336,7 @@ icelandic-names-registry-backend:
       DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/icelandic-names-registry-backend/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -1354,7 +1354,7 @@ icelandic-names-registry-backend:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/icelandic-names-registry-backend/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1656,7 +1656,7 @@ regulations-admin-backend:
       DB_USER: 'regulations_admin_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/regulations-admin-backend/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -1674,7 +1674,7 @@ regulations-admin-backend:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/regulations-admin-backend/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
@@ -1958,7 +1958,7 @@ service-portal-api:
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/service-portal-api/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -1978,7 +1978,7 @@ service-portal-api:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal-api/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2062,7 +2062,7 @@ service-portal-api-worker:
   schedule: '0 0 31 12 *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal-api/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2130,7 +2130,7 @@ services-documents:
       DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/services-documents/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -2148,7 +2148,7 @@ services-documents:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-documents/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2221,7 +2221,7 @@ services-sessions:
       memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
     GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2488,7 +2488,7 @@ services-university-gateway:
       DB_USER: 'services_university_gateway'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/services-university-gateway/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -2508,7 +2508,7 @@ services-university-gateway:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-university-gateway/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2590,7 +2590,7 @@ services-university-gateway-worker:
   schedule: '0 2 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-university-gateway/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2729,7 +2729,7 @@ skilavottord-ws:
       DB_USER: 'skilavottord'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/skilavottord/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -2747,7 +2747,7 @@ skilavottord-ws:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/skilavottord/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
     FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
     FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
@@ -2841,7 +2841,7 @@ user-notification:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
-    DB_PASS: '/k8s/user-notification/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
@@ -2913,7 +2913,7 @@ user-notification-cleanup-worker:
       DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/user-notification/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -2934,7 +2934,7 @@ user-notification-cleanup-worker:
   schedule: '@midnight'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/user-notification/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -3018,7 +3018,7 @@ user-notification-worker:
       DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/user-notification/readonly/DB_PASSWORD'
+      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 0
@@ -3039,7 +3039,7 @@ user-notification-worker:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
-    DB_PASS: '/k8s/user-notification/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
