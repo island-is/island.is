@@ -437,28 +437,25 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   private postgresDefaults = (pg: PostgresInfo): PostgresInfo => {
-    pg = merge(pg, this.serviceDef.postgres)
+    const postgres = merge({}, this.serviceDef.postgres)
+    merge(postgres, pg) // Merge arguments with defaults
+    const name = (
+      pg.name ??
+      pg.username ??
+      this.serviceDef.postgres?.username ??
+      this.serviceDef.name
+    ) + (pg.readOnly ? '/read' : '')
     return {
       host: pg.host ?? this.serviceDef.postgres?.host, // Allows missing host
-      username: postgresIdentifier(
-        this.stripPostfix(
-          pg.username ??
-          pg.name ??
-          this.serviceDef.postgres?.username ??
-          this.serviceDef.name,
-        ),
-      ) + (pg.readOnly ? '_read' : ''),
+      username: postgresIdentifier(this.stripPostfix(name),
+      ),
       passwordSecret:
         pg.passwordSecret ??
         this.serviceDef.postgres?.passwordSecret ??
         `/k8s/${this.stripPostfix(
-          pg.name ?? this.serviceDef.name,
-        )}${pg.readOnly ? '/readonly' : ''}/DB_PASSWORD`,
-      name: postgresIdentifier(
-        this.stripPostfix(
-          pg.name ?? this.serviceDef.postgres?.name ?? this.serviceDef.name,
-        ),
-      ),
+          name
+        )}/DB_PASSWORD`,
+      name: postgresIdentifier(this.stripPostfix(name)),
       readOnly: pg.readOnly ?? false,
       extensions: pg.extensions,
     }
