@@ -4,7 +4,10 @@ import has from 'lodash/has'
 import { Application, RecordObject, Field } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { ReviewGroup, DataValue } from '@island.is/application/ui-components'
-import { getSelectedChild } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getSelectedChild,
+} from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
@@ -21,7 +24,6 @@ import {
   Languages,
 } from '../../constants'
 import { SummaryRights } from '../Rights/SummaryRights'
-import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { OtherParent } from './review-groups/OtherParent'
 import { Payments } from './review-groups/Payments'
@@ -47,8 +49,8 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   errors,
 }) => {
   const editable = field.props?.editable ?? false
-  const [{ applicationType, otherParent, employerLastSixMonths, language }] =
-    useStatefulAnswers(application)
+  const { applicationType, otherParent, employerLastSixMonths, language } =
+    getApplicationAnswers(application.answers)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,

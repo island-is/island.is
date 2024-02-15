@@ -9,7 +9,7 @@ import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { NO, YES, PARENTAL_LEAVE } from '../../../constants'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import { EmployersTable } from '../../components/EmployersTable'
 
 export const Employment = ({
@@ -18,16 +18,14 @@ export const Employment = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [
-    {
-      isSelfEmployed,
-      isReceivingUnemploymentBenefits,
-      unemploymentBenefits,
-      employers,
-      employerLastSixMonths,
-      applicationType,
-    },
-  ] = useStatefulAnswers(application)
+  const {
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
+    unemploymentBenefits,
+    employers,
+    employerLastSixMonths,
+    applicationType,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup

@@ -100,7 +100,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(9),
-          progress: 0.25,
           onExit: defineTemplateApi({
             action: ApiModuleActions.setChildrenInformation,
             externalDataId: 'children',
@@ -159,7 +158,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.25,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             throwOnError: true,
@@ -222,7 +220,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignOtherParent,
             throwOnError: true,
@@ -302,7 +299,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
@@ -340,7 +336,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
@@ -390,7 +385,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -471,7 +465,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
@@ -538,7 +531,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.75,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
@@ -629,7 +621,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.75,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -686,7 +677,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -736,7 +726,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -794,7 +783,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             externalDataId: 'dateOfBirth',
             throwOnError: true,
           }),
-          progress: 1,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -863,7 +851,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 1,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             params: FileType.DOCUMENTPERIOD,
@@ -937,7 +924,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 1,
           onExit: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
@@ -988,7 +974,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.closedDescription,
           },
           lifecycle: EphemeralStateLifeCycle,
-          progress: 1,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1042,7 +1027,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.25,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             throwOnError: true,
@@ -1109,7 +1093,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
@@ -1165,7 +1148,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -1256,7 +1238,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
@@ -1331,7 +1312,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.75,
 
           onEntry: [
             defineTemplateApi({
@@ -1436,7 +1416,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.75,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1505,7 +1484,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.4,
           roles: [
             {
               id: Roles.APPLICANT,

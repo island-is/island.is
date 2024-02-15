@@ -2,7 +2,6 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
   DataValue,
-  Label,
   RadioValue,
   ReviewGroup,
   formatBankInfo,
@@ -16,22 +15,14 @@ import {
 } from '@island.is/shared/problem'
 import { ReviewGroupProps } from './props'
 import { useFormContext } from 'react-hook-form'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import {
-  NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   PARENTAL_LEAVE,
   YES,
 } from '../../../constants'
-import { coreErrorMessages } from '@island.is/application/core'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { YesOrNo } from '../../../types'
-import {
-  InputController,
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
 import { useUnion as useUnionOptions } from '../../../hooks/useUnion'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../../hooks/usePrivatePensionFund'
 import { usePensionFund as usePensionFundOptions } from '../../../hooks/usePensionFund'
@@ -40,25 +31,21 @@ import { getSelectOptionLabel } from '../../../lib/parentalLeaveClientUtils'
 export const Payments = ({
   application,
   editable,
-  groupHasNoErrors,
-  hasError,
+  goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, locale } = useLocale()
   const { getValues } = useFormContext()
 
-  const [
-    {
-      applicationType,
-      pensionFund,
-      useUnion,
-      union,
-      usePrivatePensionFund,
-      privatePensionFund,
-      privatePensionFundPercentage,
-      bank,
-    },
-    setStateful,
-  ] = useStatefulAnswers(application)
+  const {
+    applicationType,
+    pensionFund,
+    useUnion,
+    union,
+    usePrivatePensionFund,
+    privatePensionFund,
+    privatePensionFundPercentage,
+    bank,
+  } = getApplicationAnswers(application.answers)
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION, {
     onError: (e) => {
@@ -95,238 +82,11 @@ export const Payments = ({
     })
   }
 
-  const validateUnion = () => {
-    if (useUnion !== YES) return undefined
-
-    if (union === '') {
-      return formatMessage(coreErrorMessages.defaultError)
-    }
-
-    return undefined
-  }
-
-  const validatePrivatePensionFund = () => {
-    if (usePrivatePensionFund !== YES) return undefined
-
-    if (privatePensionFund === '') {
-      return formatMessage(coreErrorMessages.defaultError)
-    }
-
-    return undefined
-  }
-
-  const validatePrivatePensionFundPercentage = () => {
-    if (usePrivatePensionFund !== YES) return undefined
-
-    if (privatePensionFundPercentage === '0') {
-      return formatMessage(coreErrorMessages.defaultError)
-    }
-
-    return undefined
-  }
-
-  const checkPaymentErrors = (ids: string[]) => {
-    if (typeof validatePrivatePensionFund() === 'string') return false
-    else if (typeof validatePrivatePensionFundPercentage() === 'string')
-      return false
-    else if (typeof validateUnion() === 'string') return false
-
-    return groupHasNoErrors(ids)
-  }
-
   return (
     <ReviewGroup
       saveAction={saveApplication}
       isEditable={editable}
-      canCloseEdit={checkPaymentErrors([
-        'payments.bank',
-        'payments.pensionFund',
-        'payments.useUnion',
-        'payments.union',
-        'payments.usePrivatePensionFund',
-        'payments.privatePensionFund',
-        'payments.privatePensionFundPercentage',
-      ])}
-      editChildren={
-        <Stack space={3}>
-          <Label>
-            {formatMessage(
-              parentalLeaveFormMessages.shared.paymentInformationSubSection,
-            )}
-          </Label>
-
-          <InputController
-            id="payments.bank"
-            name="payments.bank"
-            format="####-##-######"
-            placeholder="0000-00-000000"
-            backgroundColor="blue"
-            defaultValue={bank}
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.paymentInformationBank,
-            )}
-            onChange={(e) =>
-              setStateful((prev) => ({ ...prev, bank: e.target.value }))
-            }
-            error={hasError('payments.bank')}
-          />
-          {applicationType === PARENTAL_LEAVE && (
-            <>
-              <SelectController
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.salaryLabelPensionFund,
-                )}
-                name="payments.pensionFund"
-                id="payments.pensionFund"
-                backgroundColor="blue"
-                options={pensionFundOptions}
-                defaultValue={pensionFund}
-                onSelect={(s) =>
-                  setStateful((prev) => ({
-                    ...prev,
-                    pensionFund: s.value as string,
-                  }))
-                }
-                error={hasError('payments.pensionFund')}
-              />
-              <Label>
-                {formatMessage(parentalLeaveFormMessages.shared.unionName)}
-              </Label>
-              <Stack space={1}>
-                <RadioController
-                  id="payments.useUnion"
-                  name="payments.useUnion"
-                  defaultValue={useUnion}
-                  split="1/2"
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                  onSelect={(s: string) => {
-                    setStateful((prev) => {
-                      return {
-                        ...prev,
-                        useUnion: s as YesOrNo,
-                      }
-                    })
-                  }}
-                  error={hasError('useUnion')}
-                />
-
-                {useUnion === YES && (
-                  <SelectController
-                    label={formatMessage(
-                      parentalLeaveFormMessages.shared.union,
-                    )}
-                    name="payments.union"
-                    id="payments.union"
-                    backgroundColor="blue"
-                    options={unionOptions}
-                    defaultValue={union}
-                    onSelect={(s) => {
-                      setStateful((prev) => ({
-                        ...prev,
-                        union: s.value as string,
-                      }))
-                    }}
-                    error={validateUnion()}
-                  />
-                )}
-              </Stack>
-              <Label>
-                {formatMessage(
-                  parentalLeaveFormMessages.shared.privatePensionFundName,
-                )}
-              </Label>
-              <Stack space={1}>
-                <RadioController
-                  id="payments.usePrivatePensionFund"
-                  name="payments.usePrivatePensionFund"
-                  defaultValue={usePrivatePensionFund}
-                  split="1/2"
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                  onSelect={(s: string) => {
-                    setStateful((prev) => {
-                      return {
-                        ...prev,
-                        usePrivatePensionFund: s as YesOrNo,
-                      }
-                    })
-                  }}
-                  error={hasError('payments.usePrivatePensionFund')}
-                />
-
-                {usePrivatePensionFund === YES && (
-                  <Stack space={2}>
-                    <SelectController
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.privatePensionFund,
-                      )}
-                      name="payments.privatePensionFund"
-                      id="payments.privatePensionFund"
-                      backgroundColor="blue"
-                      options={privatePensionFundOptions}
-                      defaultValue={privatePensionFund}
-                      onSelect={(s) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          privatePensionFund: s.value as string,
-                        }))
-                      }
-                      error={validatePrivatePensionFund()}
-                    />
-                    <SelectController
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared
-                          .privatePensionFundRatio,
-                      )}
-                      name="payments.privatePensionFundPercentage"
-                      id="payments.privatePensionFundPercentage"
-                      backgroundColor="blue"
-                      defaultValue={privatePensionFundPercentage}
-                      options={[
-                        { label: '2%', value: '2' },
-                        { label: '4%', value: '4' },
-                      ]}
-                      onSelect={(s) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          privatePensionFundPercentage: s.value as string,
-                        }))
-                      }
-                      error={validatePrivatePensionFundPercentage()}
-                    />
-                  </Stack>
-                )}
-              </Stack>
-            </>
-          )}
-        </Stack>
-      }
-      triggerValidation
+      editAction={() => goToScreen?.('payments')}
     >
       <Stack space={2}>
         <GridRow>

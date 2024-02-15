@@ -10,9 +10,9 @@ import { handleServerError } from '@island.is/application/ui-components'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
+  getApplicationAnswers,
   getExpectedDateOfBirthOrAdoptionDate,
   isFosterCareAndAdoption,
-  getApplicationAnswers,
   showResidenceGrant,
 } from '../../lib/parentalLeaveUtils'
 import { States as ApplicationStates, States, YES } from '../../constants'
