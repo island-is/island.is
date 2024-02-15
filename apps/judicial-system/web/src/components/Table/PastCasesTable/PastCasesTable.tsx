@@ -6,11 +6,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  isDefenceUser,
-  isDistrictCourtUser,
-  isProsecutionUser,
-} from '@island.is/judicial-system/types'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
