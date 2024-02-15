@@ -444,6 +444,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     return formattedList.join('')
   }
 
+<<<<<<< HEAD
   const formatFilterStrings = (tag: string, field: string) => {
     if (field === 'universityId') {
       return universities.filter((x) => x.id === tag)[0].contentfulTitle || ''
@@ -454,6 +455,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }
 
+=======
+>>>>>>> 9ab50e9c71 (Remove duplicate code and fixing formatting of mode of delivery)
   return (
     <Box>
       {organizationPage && (
@@ -669,6 +672,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setQuery(e.target.value)
               }}
             />
+<<<<<<< HEAD
             <Box
               paddingTop={2}
               display={'flex'}
@@ -713,6 +717,32 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Box>
 
+=======
+            <Box paddingTop={1} display={'flex'} style={{ gap: '0.5rem' }}>
+              {Object.keys(filters).map((key) =>
+                filters[key as keyof FilterProps].map((tag) => (
+                  <Tag>
+                    <Box
+                      display={'flex'}
+                      justifyContent={'center'}
+                      alignItems={'center'}
+                      style={{ gap: '0.5rem' }}
+                    >
+                      {n(tag, TranslationDefaults[tag])}
+                      <button
+                        style={{ alignSelf: 'end' }}
+                        onClick={() =>
+                          handleRemoveTag(key as keyof FilterProps, tag)
+                        }
+                      >
+                        <Icon icon={'close'} size="small" />
+                      </button>
+                    </Box>
+                  </Tag>
+                )),
+              )}
+            </Box>
+>>>>>>> 9ab50e9c71 (Remove duplicate code and fixing formatting of mode of delivery)
             <ContentBlock>
               <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
