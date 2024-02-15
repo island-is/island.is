@@ -48,6 +48,11 @@ export const caseFilesRecord = defineMessages({
     defaultMessage: 'Bls.',
     description: 'Notaður sem haus fyrir blaðsíðutöl í PDF skjalaskrá',
   },
+  date: {
+    id: 'judicial.system.backend:case_files_record.date',
+    defaultMessage: 'Dags.',
+    description: 'Notaður sem haus fyrir dags í PDF skjalaskrá',
+  },
   chapterName: {
     id: 'judicial.system.backend:case_files_record.chapter',
     defaultMessage:

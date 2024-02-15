@@ -70,6 +70,7 @@ export const FeatureFlagProvider: FC<
       {
         dataGovernance: configcat.DataGovernance.EuOnly,
         cache: new ConfigCatAsyncStorageCache(),
+        logger: configcat.createConsoleLogger(configcat.LogLevel.Off),
       },
     )
   }, [environment])

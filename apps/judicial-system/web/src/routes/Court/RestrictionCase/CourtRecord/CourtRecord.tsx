@@ -293,7 +293,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'courtLocation',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLocationErrorMessage,
                   setCourtLocationMessage,
@@ -347,7 +346,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'courtAttendees',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
               )
             }
@@ -388,7 +386,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'sessionBookings',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
                   setSessionBookingsErrorMessage,
@@ -451,7 +448,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'endOfSessionBookings',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }
