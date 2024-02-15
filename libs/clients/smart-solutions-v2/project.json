@@ -28,16 +28,20 @@
     "update-openapi-document": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "graphql-codegen --config libs/clients/smart-solutions-v2/fetchGraphql.yml"
+        "commands": [
+          "graphql-codegen --config libs/clients/smart-solutions-v2/fetchGraphql.yml"
+        ]
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "graphql-codegen --config libs/clients/smart-solutions-v2/codegen.yml"
-      },
-      "outputs": ["{projectRoot}/gen/schema.ts"]
+        "output": "libs/clients/smart-solutions-v2/src/**/*.generated.ts",
+        "commands": [
+          "graphql-codegen --config libs/clients/smart-solutions-v2/codegen.yml"
+        ]
+      }
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }

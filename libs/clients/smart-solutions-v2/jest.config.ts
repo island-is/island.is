@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-smart-solutions',
+  displayName: 'clients-smart-solutions-v2',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
