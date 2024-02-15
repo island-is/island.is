@@ -1,9 +1,13 @@
-import { addXroadMock, resetMocks, wildcard } from '../../../support/wire-mocks'
+import {
+  addXroadMock,
+  resetMocks,
+  wildcard,
+} from '../../../../support/wire-mocks'
 import { Response } from '@anev/ts-mountebank'
-import { Properties, Base } from '../../../../../../infra/src/dsl/xroad'
-import { env } from '../../../support/urls'
-import { getEnvVariables } from '../../../../../../infra/src/dsl/service-to-environment/pre-process-service'
-import { EnvironmentConfig } from '../../../../../../infra/src/dsl/types/charts'
+import { Properties, Base } from '../../../../../../../infra/src/dsl/xroad'
+import { env } from '../../../../support/urls'
+import { getEnvVariables } from '../../../../../../../infra/src/dsl/service-to-environment/pre-process-service'
+import { EnvironmentConfig } from '../../../../../../../infra/src/dsl/types/charts'
 
 export async function setupXroadMocks() {
   await resetMocks()

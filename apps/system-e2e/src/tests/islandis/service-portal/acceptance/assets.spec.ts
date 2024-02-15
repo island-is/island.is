@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { setupXroadMocks } from '../setup-xroad.mocks'
+import { setupXroadMocks } from './setup-xroad.mocks'
 
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
