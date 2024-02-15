@@ -39,6 +39,7 @@ import {
 
 import IconButton from '../../IconButton/IconButton'
 import MobilePastCase from './MobilePastCase'
+import { contextMenu } from '../../ContextMenu/ContextMenu.strings'
 import * as styles from '../Table.css'
 
 interface Props {
@@ -201,23 +202,25 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   <ContextMenu
                     items={[
                       {
-                        title: 'Opna mál í nýjum flipa',
+                        title: formatMessage(contextMenu.openInNewTab),
                         onClick: () => handleOpenCase(column.id, true),
                         icon: 'open',
                       },
                       ...(shouldDisplayWithdrawAppealOption(column)
                         ? [
                             {
-                              title: 'Afturkalla kæru',
+                              title: formatMessage(contextMenu.withdrawAppeal),
                               onClick: async () => {
-                                const res = await transitionCase(
+                                const transitionSuccess = await transitionCase(
                                   column.id,
                                   CaseTransition.WITHDRAW_APPEAL,
                                 )
-                                if (res === true) {
+
+                                if (transitionSuccess === true) {
                                   const transitionedCase = cases.find(
                                     (c) => c.id === column.id,
                                   )
+
                                   if (transitionedCase) {
                                     transitionedCase.appealState =
                                       CaseAppealState.WITHDRAWN
