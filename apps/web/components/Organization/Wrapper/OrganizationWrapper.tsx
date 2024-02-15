@@ -673,6 +673,7 @@ export const OrganizationFooter: React.FC<
       )
       break
     case 'haskolanam':
+    case 'university-studies':
       OrganizationFooterComponent = (
         <UniversityStudiesFooter organization={organization} />
       )
