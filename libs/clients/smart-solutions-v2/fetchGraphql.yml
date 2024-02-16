@@ -6,4 +6,3 @@ generates:
 hooks:
   afterAllFileWrite:
     - prettier --write
-
