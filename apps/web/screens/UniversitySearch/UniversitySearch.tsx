@@ -179,8 +179,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       : 'CLOSED'
   }
 
+<<<<<<< HEAD
   // TODO Create proper types here
   const [originalSortedResults, setOriginalSortedList] = useState<any>(
+=======
+  const [originalSortedResults, setOriginalSortedList] = useState(
+>>>>>>> 7590ff0841 (Updating search ordering code)
     [...data]
       // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
       .sort(() => Math.random() - 0.5)
@@ -244,7 +248,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseOptions = {
     threshold: 0.4,
     findAllMatches: true,
+<<<<<<< HEAD
     ignoreLocation: true,
+=======
+>>>>>>> 7590ff0841 (Updating search ordering code)
     keys: [
       `name${locale === 'is' ? 'Is' : 'En'}`,
       `specializationName${locale === 'is' ? 'Is' : 'En'}`,
