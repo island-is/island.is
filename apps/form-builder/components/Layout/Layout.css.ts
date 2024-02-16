@@ -18,4 +18,12 @@ export const contentWrapper = style({
   //maxWidth: '1140px',
   width: '100%',
   padding: '1rem 1rem',
+
+})
+
+export const headerWrapper = style({
+  width: "fit-content",
+  ":hover": {
+    cursor: "pointer",
+  }
 })

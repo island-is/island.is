@@ -22,9 +22,10 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  closestCenter
 } from '@dnd-kit/core'
 import ListItem from './components/ListItem'
-import { SortableContext } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { createPortal } from 'react-dom'
 import FormBuilderContext from '../../../../context/FormBuilderContext'
 import { updateItem } from '../../../../services/apiService'
@@ -87,11 +88,12 @@ export default function ListBuilder({ setInListBuilder }: Props) {
           <DndContext
             id={'listDnd'}
             sensors={sensors}
-            onDragStart={onDragStart}
-            onDragOver={onDragOver}
-            onDragEnd={onDragEnd}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+            collisionDetection={closestCenter}
           >
-            <SortableContext items={listItemIds}>
+            <SortableContext items={listItemIds} strategy={verticalListSortingStrategy}>
               {listItems &&
                 listItems.map((l, i) => {
                   return (
@@ -111,7 +113,7 @@ export default function ListBuilder({ setInListBuilder }: Props) {
               createPortal(
                 <DragOverlay
                   dropAnimation={{
-                    duration: 500,
+                    duration: 100,
                     easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
                   }}
                 >
@@ -162,8 +164,8 @@ export default function ListBuilder({ setInListBuilder }: Props) {
     setConnecting((prev) => [...prev, false])
   }
 
-  function onDragStart(event: DragStartEvent) {
-    console.log('DRAG START', event.active.data.current.listItem)
+  function handleDragStart(event: DragStartEvent) {
+    // console.log('DRAG START', event.active.data.current.listItem)
     listsDispatch({
       type: 'setActiveListItem',
       payload: {
@@ -172,12 +174,12 @@ export default function ListBuilder({ setInListBuilder }: Props) {
     })
   }
 
-  function onDragOver(event: DragOverEvent) {
+  function handleDragOver(event: DragOverEvent) {
     const { active, over } = event
 
     if (!over) return
-    console.log('Active: ', active.data.current.listItem.text.is)
-    console.log('Over: ', over.data.current.listItem.text.is)
+    // console.log('Active: ', active.data.current.listItem.text.is)
+    // console.log('Over: ', over.data.current.listItem.text.is)
     const activeId = active.id
     const overId = over.id
     listsDispatch({
@@ -190,7 +192,7 @@ export default function ListBuilder({ setInListBuilder }: Props) {
   }
 
   // Update activeItem and set activeListItem to null
-  function onDragEnd() {
+  function handleDragEnd() {
     listsDispatch({
       type: 'setActiveListItem',
       payload: {

@@ -5,4 +5,9 @@ export const header = style({
   padding: '10px 0 10px 0',
   backgroundColor: theme.color.blue100,
   borderBottom: `1px solid ${theme.border.color.blue200}`,
+  selectors: {
+    "&:nth-child(1n)": {
+      paddingLeft: "5px"
+    }
+  }
 })
