@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/occupational-licenses-v2": [
+        "libs/api/domains/occupational-licenses-v2/src/index.ts"
+      ],
       "@island.is/api/domains/administration-of-occupational-safety-and-health": [
         "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
       ],
@@ -513,9 +516,6 @@
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
-      "@island.is/clients/district-commissioners-licenses": [
-        "libs/clients/district-commissioners-licenses/src/index.ts"
-      ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
@@ -570,6 +570,9 @@
       ],
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"
+      ],
+      "@island.is/clients/district-commissioners-licenses": [
+        "libs/clients/district-commissioners-licenses/src/index.ts"
       ],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
