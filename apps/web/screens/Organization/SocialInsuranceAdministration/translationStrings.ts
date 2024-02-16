@@ -420,6 +420,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Á ári',
     description: 'Á ári',
   },
+  startOfPaymentsHeading: {
+    id: 'web.pensionCalculator:startOfPaymentsHeading',
+    defaultMessage: 'Upphaf greiðslna',
+    description: 'H2, Upphaf greiðslna',
+  },
   TR_PAYMENTS: {
     id: 'web.pensionCalculator:TR_PAYMENTS',
     defaultMessage: 'Greiðslur frá Tryggingastofnun',

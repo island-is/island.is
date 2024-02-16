@@ -452,7 +452,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                       </Box>
 
                       <Text variant="h2" as="h2">
-                        Upphaf greiðslna
+                        {formatMessage(
+                          translationStrings.startOfPaymentsHeading,
+                        )}
                       </Text>
                       <Box className={styles.inputContainer}>
                         <DatePickerController
