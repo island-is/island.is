@@ -2,7 +2,6 @@ import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
 
-import { PREDEFINED_LINE_DASH_PATTERNS } from '../constants'
 import {
   ChartComponentType,
   ChartComponentWithRenderProps,
@@ -31,11 +30,10 @@ export const renderChartComponent = ({
     return (
       <Bar
         {...commonProps}
-        fill={component.fill}
+        fill={component.patternId ?? component.color}
         radius={component.shouldRenderBorderRadius ? [6, 6, 0, 0] : undefined}
         barSize={25}
         stackId={component.stackId?.toString()}
-        stroke={component.color}
         color={component.color}
       />
     )
@@ -45,15 +43,19 @@ export const renderChartComponent = ({
         {...commonProps}
         stroke={component.color}
         strokeWidth={3}
-        strokeDasharray={
-          component.renderIndex === 0
-            ? undefined // First line is solid
-            : PREDEFINED_LINE_DASH_PATTERNS[component.renderIndex - 1] // The rest gets a pattern
-        }
+        strokeDasharray={component.pattern}
       />
     )
   } else if (component.type === ChartComponentType.area) {
-    return <Area {...commonProps} fill={component.fill} fillOpacity={1} />
+    return (
+      <Area
+        {...commonProps}
+        fill={component.patternId ?? component.color}
+        fillOpacity={1}
+        stroke="rgba(0,0,0,0)"
+        color={component.color}
+      />
+    )
   }
 
   return null
@@ -84,7 +86,7 @@ const renderCustomizedLabel = ({
   percent,
   activeLocale,
 }: CustomLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 1.7
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.8
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
@@ -92,7 +94,7 @@ const renderCustomizedLabel = ({
 
   return (
     <g>
-      <text x={x} y={y} fill="#00003C" textAnchor="middle" fontSize="12px">
+      <text x={x} y={y} fill="#00003C" textAnchor="middle" fontSize="14px">
         <tspan x={x} dy="0" fontWeight={500}>{`${
           percent
             ? formatPercentageForPresentation(percent)
@@ -101,7 +103,7 @@ const renderCustomizedLabel = ({
             : ''
         }`}</tspan>
         <tspan x={x} dy="1.2em">
-          {payload?.name?.toLowerCase()}
+          {payload?.name}
         </tspan>
       </text>
     </g>
@@ -127,7 +129,7 @@ export const renderPieChartComponents = (
       cx="50%"
       cy="50%"
       innerRadius="30%"
-      outerRadius="65%"
+      outerRadius="60%"
       label={(props) =>
         renderCustomizedLabel({
           ...props,
@@ -142,7 +144,7 @@ export const renderPieChartComponents = (
       {components.map((c, i) => (
         <Cell
           key={i}
-          fill={c.fill}
+          fill={c.patternId ?? c.color}
           name={c.label}
           stroke="white"
           strokeWidth={3}

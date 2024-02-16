@@ -5,7 +5,6 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'air-discount-scheme-api'> => {
   return service('air-discount-scheme-api')
     .namespace('air-discount-scheme')
-    .podDisruption({ minAvailable: 1 })
     .serviceAccount()
     .env({
       AUTH_AUDIENCE: {

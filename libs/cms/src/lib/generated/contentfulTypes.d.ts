@@ -565,11 +565,17 @@ export interface IChartFields {
   /** Source Data */
   sourceData?: Record<string, any> | undefined
 
+  /** Flip Axis */
+  flipAxis?: boolean | undefined
+
   /** X Axis Key */
   xAxisKey?: string | undefined
 
   /** X Axis Value Type */
   xAxisValueType?: 'date' | 'number' | 'string' | undefined
+
+  /** X Axis Format */
+  xAxisFormat?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */

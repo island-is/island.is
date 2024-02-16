@@ -129,6 +129,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:title',
     defaultMessage: 'Vinnuvélar',
   },
+  workMachineSingular: {
+    id: 'sp.work-machines:work-machine-singular',
+    defaultMessage: 'Vinnuvél',
+  },
   workMachinesDescription: {
     id: 'sp.work-machines:description',
     defaultMessage:
@@ -188,6 +192,10 @@ export const vehicleMessage = defineMessages({
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
     defaultMessage: 'Hreinsa síu',
+  },
+  vehiclesRequireMileageRegistration: {
+    id: 'sp.vehicles:vehicles-require-mileage-registration',
+    defaultMessage: 'Skráningarskyld ökutæki',
   },
   notFound: {
     id: 'sp.vehicles:not-found',
@@ -874,10 +882,6 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:description',
     defaultMessage: 'Lýsing',
   },
-  country: {
-    id: 'sp.intellectual-property:country',
-    defaultMessage: 'Land',
-  },
   baseInfo: {
     id: 'sp.intellectual-property:base-info',
     defaultMessage: 'Grunnupplýsingar',
@@ -937,6 +941,14 @@ export const ipMessages = defineMessages({
   publishDate: {
     id: 'sp.intellectual-property:publish-date',
     defaultMessage: 'Birtingardagur',
+  },
+  translationSubmitted: {
+    id: 'sp.intellectual-property:translation-submitted',
+    defaultMessage: 'Þýðing lögð inn',
+  },
+  provisionPublishedInGazette: {
+    id: 'sp.intellectual-property:provision-published-in-gazette',
+    defaultMessage: 'Veiting birt',
   },
   registration: {
     id: 'sp.intellectual-property:registration',
@@ -1124,6 +1136,10 @@ export const ipMessages = defineMessages({
   },
   marketingAuthorizationNumber: {
     id: 'sp.intellectual-property:marketing-authorization-number',
+    defaultMessage: 'Númer íslensks markaðsleyfis',
+  },
+  foreignMarketingAuthorizationNumber: {
+    id: 'sp.intellectual-property:foreign-marketing-authorization-number',
     defaultMessage: 'Númer erlends markaðsleyfis',
   },
   epoInfoLink: {

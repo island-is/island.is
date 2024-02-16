@@ -1,15 +1,221 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import cn from 'classnames'
+import { useMutation, useQuery } from '@apollo/client'
 
-import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import {
+  Box,
+  Button,
+  Icon,
+  Inline,
+  Input,
+  Stack,
+  Text,
+  toast,
+  ToastContainer,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
+import {
+  Mutation,
+  MutationWatsonAssistantChatSubmitFeedbackArgs,
+  Query,
+  QueryGetNamespaceArgs,
+  WatsonAssistantChatSubmitFeedbackThumbStatus as ThumbStatus,
+} from '@island.is/web/graphql/schema'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK } from '@island.is/web/screens/queries/WatsonAssistantChat'
 
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
-import type { WatsonInstance } from './types'
+import type { WatsonInstance, WatsonInstanceEvent } from './types'
 import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
+import * as styles from './WatsonChatPanel.css'
+
+const chatLog: WatsonInstanceEvent[] = []
+
+interface ChatFeedbackPanelProps {
+  onClose: () => void
+  submitText: string
+  heading: string
+  successText: string
+  errorText: string
+  inputPlaceholder?: string
+  pushUp?: boolean
+}
+
+const ChatFeedbackPanel = ({
+  onClose,
+  submitText,
+  heading,
+  successText,
+  errorText,
+  inputPlaceholder = '',
+  pushUp = false,
+}: ChatFeedbackPanelProps) => {
+  const { activeLocale } = useI18n()
+
+  const [thumbStatus, setThumbStatus] = useState<ThumbStatus>(
+    ThumbStatus.NoChoice,
+  )
+  const [feedbackText, setFeedbackText] = useState('')
+
+  const updateThumbStatus = (newThumbStatus: ThumbStatus) => {
+    setThumbStatus((previousThumbStatus) => {
+      if (previousThumbStatus === newThumbStatus) {
+        return ThumbStatus.NoChoice
+      }
+      return newThumbStatus
+    })
+  }
+
+  const resetState = () => {
+    setFeedbackText('')
+    setThumbStatus(ThumbStatus.NoChoice)
+  }
+
+  const [submitFeedback, { loading }] = useMutation<
+    Mutation,
+    MutationWatsonAssistantChatSubmitFeedbackArgs
+  >(SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK, {
+    onCompleted() {
+      toast.success(successText)
+      resetState()
+      onClose()
+    },
+    onError() {
+      toast.error(errorText)
+      resetState()
+      onClose()
+    },
+  })
+
+  return (
+    <Box
+      className={cn(styles.feedbackPanelContainer, { [styles.pushUp]: pushUp })}
+      borderRadius="large"
+      padding="gutter"
+      background="white"
+    >
+      <Stack space={2}>
+        <Box display="flex" justifyContent="flexEnd">
+          <Box
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter' || ev.key === ' ') {
+                onClose()
+                ev.preventDefault()
+              }
+            }}
+            onClick={onClose}
+            cursor="pointer"
+            tabIndex={0}
+            userSelect="none"
+          >
+            <VisuallyHidden>
+              {activeLocale === 'is' ? 'Loka' : 'Close'}
+            </VisuallyHidden>
+            <Icon icon="close" />
+          </Box>
+        </Box>
+
+        <Box display="flex" justifyContent="center">
+          <Text fontWeight="regular">{heading}</Text>
+        </Box>
+
+        <Box display="flex" justifyContent="center">
+          <Inline space={2} alignY="center">
+            <Box
+              tabIndex={0}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                  updateThumbStatus(ThumbStatus.Up)
+                  ev.preventDefault()
+                }
+              }}
+              onClick={() => {
+                updateThumbStatus(ThumbStatus.Up)
+              }}
+              cursor="pointer"
+              userSelect="none"
+            >
+              <VisuallyHidden>
+                {activeLocale === 'is' ? 'Þumall upp' : 'Thumbs up'}
+              </VisuallyHidden>
+              <Icon
+                color="blue400"
+                icon="thumbsUp"
+                type={thumbStatus === ThumbStatus.Up ? 'filled' : 'outline'}
+              />
+            </Box>
+            <Box
+              tabIndex={0}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                  updateThumbStatus(ThumbStatus.Down)
+                  ev.preventDefault()
+                }
+              }}
+              onClick={() => {
+                updateThumbStatus(ThumbStatus.Down)
+              }}
+              cursor="pointer"
+              userSelect="none"
+            >
+              <VisuallyHidden>
+                {activeLocale === 'is' ? 'Þumall niður' : 'Thumbs down'}
+              </VisuallyHidden>
+              <Icon
+                color="blue400"
+                icon="thumbsDown"
+                type={thumbStatus === ThumbStatus.Down ? 'filled' : 'outline'}
+              />
+            </Box>
+          </Inline>
+        </Box>
+
+        <Input
+          autoExpand={{ on: true, maxHeight: 300 }}
+          textarea
+          rows={3}
+          size="xs"
+          name="webchat-feedback-input"
+          value={feedbackText}
+          placeholder={inputPlaceholder}
+          onChange={(ev) => {
+            setFeedbackText(ev.target.value)
+          }}
+        />
+
+        <Box display="flex" justifyContent="flexEnd">
+          <Button
+            disabled={
+              !(feedbackText.length > 0 || thumbStatus !== ThumbStatus.NoChoice)
+            }
+            size="small"
+            loading={loading}
+            onClick={() => {
+              const chatLogCopy = [...chatLog]
+              submitFeedback({
+                variables: {
+                  input: {
+                    assistantChatLog: chatLogCopy,
+                    thumbStatus,
+                    feedback: feedbackText,
+                    url: window.location.href,
+                  },
+                },
+              })
+              // Clear the chat log when submitting feedback
+              chatLog.length = 0
+            }}
+          >
+            {submitText}
+          </Button>
+        </Box>
+      </Stack>
+    </Box>
+  )
+}
 
 declare global {
   interface Window {
@@ -47,6 +253,8 @@ const loadScript = (
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const { activeLocale } = useI18n()
   const [loading, setLoading] = useState(false)
+  const [shouldDisplayFeedbackPanel, setShouldDisplayFeedbackPanel] =
+    useState(false)
 
   const {
     version = 'latest',
@@ -66,7 +274,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   })
 
   const namespace = useMemo(
-    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    () => JSON.parse(data?.getNamespace?.fields || '{}'),
     [data?.getNamespace?.fields],
   )
 
@@ -116,6 +324,49 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             if (Object.keys(languagePack).length > 0) {
               instance.updateLanguagePack(languagePack)
             }
+
+            if (
+              // Útlendingastofnun
+              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
+              // Samgöngustofa
+              props.integrationID !== 'fe12e960-329c-46d5-9ae1-8bd8b8219f43' &&
+              // Samgöngustofa - english
+              props.integrationID !== '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+            ) {
+              // Keep the chat log in memory
+              instance.on({
+                type: 'receive',
+                handler: (event) => {
+                  chatLog.push(event)
+                },
+              })
+              instance.on({
+                type: 'send',
+                handler: (event) => {
+                  chatLog.push(event)
+                },
+              })
+
+              instance.on({
+                type: 'view:change',
+                handler: (event) => {
+                  const atLeastOneMessageReceived = chatLog.some(
+                    (log) => log.type === 'receive',
+                  )
+                  const atLeastOneMessageSent = chatLog.some(
+                    (log) => log.type === 'send',
+                  )
+                  if (
+                    event.reason === 'mainWindowClosedAndRestarted' &&
+                    atLeastOneMessageReceived &&
+                    atLeastOneMessageSent
+                  ) {
+                    setShouldDisplayFeedbackPanel(true)
+                  }
+                },
+              })
+            }
+
             if (
               // Askur - Útlendingastofnun
               props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
@@ -160,16 +411,51 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   if (showLauncher) return null
 
   return (
-    <ChatBubble
-      text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-      isVisible={true}
-      onClick={() => {
-        watsonInstance.current?.openWindow()
-        setHasButtonBeenClicked(true)
-      }}
-      pushUp={pushUp}
-      loading={loading}
-    />
+    <>
+      {shouldDisplayFeedbackPanel && (
+        <ChatFeedbackPanel
+          pushUp={pushUp}
+          onClose={() => {
+            setShouldDisplayFeedbackPanel(false)
+          }}
+          submitText={n(
+            'chatFeedbackSubmitText',
+            activeLocale === 'is' ? 'Senda' : 'Submit',
+          )}
+          heading={n(
+            'chatFeedbackHeadingText',
+            activeLocale === 'is'
+              ? 'Hvernig fannst þér samtalið ganga?'
+              : 'How did the conversation go?',
+          )}
+          inputPlaceholder={n(
+            'chatFeedbackInputPlaceholderText',
+            activeLocale === 'is' ? 'Athugasemd...' : 'Comment...',
+          )}
+          successText={n(
+            'chatFeedbackSubmitSuccessText',
+            activeLocale === 'is' ? 'Sending tókst' : 'Submission succeeded',
+          )}
+          errorText={n(
+            'chatFeedbackSubmitErrorText',
+            activeLocale === 'is' ? 'Ekki tókst að senda' : 'Submission failed',
+          )}
+        />
+      )}
+      {!shouldDisplayFeedbackPanel && (
+        <ChatBubble
+          text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
+          isVisible={true}
+          onClick={() => {
+            watsonInstance.current?.openWindow()
+            setHasButtonBeenClicked(true)
+          }}
+          pushUp={pushUp}
+          loading={loading}
+        />
+      )}
+      <ToastContainer />
+    </>
   )
 }
 
