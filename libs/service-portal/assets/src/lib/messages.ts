@@ -1197,6 +1197,10 @@ export const urls = defineMessages({
     id: 'sp.vehicles:url-hide-private-name',
     defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
   },
+  recycleCar: {
+    id: 'sp.vehicles:url-recycle-car',
+    defaultMessage: 'http://island.is/umsokn/skilavottord',
+  },
   instructorApplication: {
     id: 'sp.vehicles:url-instructor-application',
     defaultMessage: 'https://island.is/umsoknir/okunam-okukennari',
