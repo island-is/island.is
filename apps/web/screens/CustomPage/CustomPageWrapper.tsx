@@ -27,14 +27,14 @@ interface CustomPageWrapperProps {
   pageProps: any
 }
 
-export function withCustomPageWrapper<Props>(
+export const withCustomPageWrapper = <Props,>(
   uniqueIdentifier: CustomPageUniqueIdentifier,
   Component: CustomScreen<
     Props & {
       customPageData?: CustomPageWrapperProps['customPageData']
     }
   >,
-) {
+) => {
   const CustomPageWrapper: Screen<CustomPageWrapperProps> = ({
     customPageData,
     pageProps,

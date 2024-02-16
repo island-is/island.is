@@ -559,26 +559,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         </Box>
                       )}
 
-                      {new Date(dateOfCalculations).getFullYear() <= 2020 &&
-                        new Date(dateOfCalculations).getFullYear() > 2015 && (
-                          <Box className={styles.inputContainer}>
-                            <InputController
-                              id={
-                                'livingConditionRatio' as keyof CalculationInput
-                              }
-                              name={
-                                'livingConditionRatio' as keyof CalculationInput
-                              }
-                              label={formatMessage(
-                                translationStrings.livingConditionRatioLabel,
-                              )}
-                              placeholder="%"
-                              type="number"
-                              suffix="%"
-                            />
-                          </Box>
-                        )}
-
                       {(basePensionType === BasePensionType.Disability ||
                         basePensionType === BasePensionType.Rehabilitation) && (
                         <Box className={styles.inputContainer}>

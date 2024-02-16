@@ -119,34 +119,6 @@ export const getDateOfCalculationsOptions = (pageData?: CustomPage | null) => {
       label: '2022 (jan-maí)',
       value: new Date(2022, 2, 1).toISOString(),
     },
-    {
-      label: '2021',
-      value: new Date(2021, 2, 1).toISOString(),
-    },
-    {
-      label: '2020',
-      value: new Date(2020, 2, 1).toISOString(),
-    },
-    {
-      label: '2019',
-      value: new Date(2019, 2, 1).toISOString(),
-    },
-    {
-      label: '2018',
-      value: new Date(2018, 2, 1).toISOString(),
-    },
-    {
-      label: '2017',
-      value: new Date(2017, 2, 1).toISOString(),
-    },
-    {
-      label: '2016',
-      value: new Date(2016, 2, 1).toISOString(),
-    },
-    {
-      label: '2015',
-      value: new Date(2015, 2, 1).toISOString(),
-    },
   ]
 
   const missingYearOptions: Option<string>[] = []
