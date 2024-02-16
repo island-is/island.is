@@ -35,6 +35,7 @@ const periodIncomeTypeMapping: Record<PeriodIncomeType, number> = {
 
 export const mapPensionCalculationInput = (
   input: PensionCalculationInput,
+  pageData?: CustomPage | null,
 ): ApiProtectedV1PensionCalculatorPostRequest['trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput'] => {
   // Make sure all null values undefined since TR backend can't parse values if they are null
   for (const key in input) {
@@ -50,7 +51,8 @@ export const mapPensionCalculationInput = (
   if (input.birthdate) {
     const birthdate = new Date(input.birthdate)
 
-    const defaultPensionAge = 67 // TODO: hardcoding 67 is not ideal
+    const defaultPensionAge =
+      (pageData?.configJson?.['defaultPensionAge'] as number) ?? 67
     const defaultPensionDate = addYears(birthdate, defaultPensionAge)
 
     const startDate = input.startDate
@@ -96,7 +98,7 @@ export const mapPensionCalculationInput = (
     // Fields that are calculated or mapped
     hurryPension,
     delayPension,
-    start: startPension, // TODO: perhaps this is wrong?
+    start: startPension,
     startPension,
     typeOfBasePension: input.typeOfBasePension
       ? basePensionTypeMapping[input.typeOfBasePension]

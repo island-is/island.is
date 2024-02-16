@@ -115,15 +115,15 @@ export class SocialInsuranceService {
   async getPensionCalculation(
     input: PensionCalculationInput,
   ): Promise<PensionCalculationResponse> {
-    const mappedInput = mapPensionCalculationInput(input)
-    const calculation = await this.socialInsuranceApi.getPensionCalculation(
-      mappedInput,
-    )
-
     const pageData = await this.cmsElasticService.getCustomPage({
       lang: 'is',
       uniqueIdentifier: CustomPageUniqueIdentifier.PensionCalculator,
     })
+
+    const mappedInput = mapPensionCalculationInput(input, pageData)
+    const calculation = await this.socialInsuranceApi.getPensionCalculation(
+      mappedInput,
+    )
 
     const groups = groupPensionCalculationItems(calculation, pageData)
     const highlightedItem = getPensionCalculationHighlightedItem(

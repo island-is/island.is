@@ -1,4 +1,4 @@
-import { InputType, Field, registerEnumType } from '@nestjs/graphql'
+import { InputType, Field, registerEnumType, Int } from '@nestjs/graphql'
 
 export enum BasePensionType {
   Retirement = 'Retirement',
@@ -56,52 +56,52 @@ export class PensionCalculationInput {
   @Field(() => String, { nullable: true })
   startDate?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   childCount?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   childSupportCount?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   ageOfFirst75DisabilityAssessment?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   livingConditionRatio?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   livingConditionAbroadInYears?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   taxCard?: number
 
   @Field(() => PeriodIncomeType, { nullable: true })
   typeOfPeriodIncome?: PeriodIncomeType
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   income?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   pensionPayments?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   privatePensionPayments?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   otherIncome?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   capitalIncome?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   benefitsFromMunicipality?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   premium?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   installmentClaims?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   foreignBasicPension?: number
 
   @Field(() => String, { nullable: true })
