@@ -42,7 +42,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
     const buffer = await generateComplaintPdf(application)
     const pdf: DocumentInfo = {
       content: buffer.toString('base64'),
-      fileName: 'kvörtun',
+      fileName: 'kvörtun.pdf',
       type: 'Kvörtun',
       subject: 'Kvörtun',
     }

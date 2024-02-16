@@ -35,3 +35,8 @@ export const logo = style({
 export const fitContent = style({
   width: 'fit-content',
 })
+
+export const tableContainer = style({
+  marginLeft: -theme.grid.gutter.desktop,
+  marginRight: -theme.grid.gutter.desktop,
+})
