@@ -45,17 +45,20 @@ const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
           <Box display="flex" justifyContent="center">
             <Box
               className={styles.contentWrapper}
-              onClick={() => route.push('/Forms')}
             >
-              <Header
-                info={{
-                  title: info.organization,
-                  description: info.applicationName,
-                }}
-                logoutText="Logout"
-                userName="Hyo-sam Nandkisore"
-                userAsDropdown
-              />
+              <Box 
+                className={styles.headerWrapper}
+                onClick={() => route.push('/')}>
+                <Header
+                  info={{
+                    title: info.organization,
+                    description: info.applicationName,
+                  }}
+                  logoutText="Logout"
+                  userName="Hyo-sam Nandkisore"
+                  userAsDropdown
+                />
+              </Box>
             </Box>
           </Box>
           <Box style={{ padding: '0 0 1px 0' }}>

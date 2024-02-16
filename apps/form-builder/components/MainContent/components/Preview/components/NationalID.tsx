@@ -5,7 +5,7 @@ import {
   GridColumn as Column,
 } from '@island.is/island-ui/core'
 
-export default function Ssn() {
+export default function NationalID() {
   return (
     <Box>
       <Stack space={2}>

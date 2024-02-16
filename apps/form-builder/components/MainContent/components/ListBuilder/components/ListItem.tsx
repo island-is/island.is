@@ -11,6 +11,9 @@ import { useSortable } from '@dnd-kit/sortable'
 import FormBuilderContext from '../../../../../context/FormBuilderContext'
 import { IListItem, NavbarSelectStatus } from '../../../../../types/interfaces'
 import { translationStation } from '../../../../../services/translationStation'
+import {CSS} from '@dnd-kit/utilities';
+import cn from "classnames";
+import * as styles from "./ListItem.css"
 
 type Props = {
   listItem: IListItem
@@ -19,6 +22,7 @@ type Props = {
   index: number
   setConnecting: Dispatch<SetStateAction<boolean[]>>
 }
+
 export default function ListItem({
   listItem,
   isRadio,
@@ -27,14 +31,24 @@ export default function ListItem({
   index,
 }: Props) {
   const [connect, setConnect] = useState(false)
-  const { listsDispatch, setSelectStatus, setActiveListItem, onFocus, blur } =
-    useContext(FormBuilderContext)
-  const { setNodeRef, attributes, listeners, isDragging } = useSortable({
+  const { listsDispatch, setSelectStatus, setActiveListItem, onFocus, blur } = useContext(FormBuilderContext)
+  const { setNodeRef, attributes, listeners, isDragging, transform, transition } = useSortable({
     id: listItem.guid,
     data: {
       listItem,
     },
+    // transition: {
+    //   duration: 150,
+    //   easing: "cubic-bezier(0.25, 1 0.5, 1)" 
+    // }
   })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+
   if (isDragging) {
     return (
       <Box
@@ -79,8 +93,8 @@ export default function ListItem({
             >
               <Icon icon="trash" color="blue400" />
             </Box>
-            <Box style={{ cursor: 'grab' }}>
-              <Icon icon="menu" />
+            <Box {...listeners} {...attributes} style={{ cursor: "grab" }}>
+              <Icon icon="swapVertical" />
             </Box>
           </Box>
         </Box>
@@ -115,9 +129,7 @@ export default function ListItem({
   return (
     <Box
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      style={{ cursor: 'grab' }}
+      style={{ ...style }}
       border="standard"
       padding={2}
       marginTop={1}
@@ -179,14 +191,10 @@ export default function ListItem({
               })
             }
           >
-            <Icon icon="trash" color="blue400" />
+            <Icon icon="trash" color="blue400" className={cn(styles.trashIcon)} />
           </Box>
-          <Box
-          // {...listeners}
-          // {...attributes}
-          // style={{ cursor: 'grab' }}
-          >
-            <Icon icon="menu" />
+          <Box {...listeners} {...attributes} style={{ cursor: "grab" }}>
+            <Icon icon="swapVertical" />
           </Box>
         </Box>
       </Box>

@@ -16,9 +16,10 @@ import PhoneInput from './components/PhoneInput'
 import NumberInput from './components/NumberInput'
 import List from './components/List'
 import { IInputSettings, IInput } from '../../../../types/interfaces'
-import Ssn from './components/Ssn'
+import NationalID from './components/NationalID'
 import Radio from './components/Radio'
 import UtilizationSummary from './components/UtilizationSummary/UtilizationSummary'
+import TimePicker from './components/TimePicker'
 import PropertyNumber from './components/PropertyNumber/PropertyNumber'
 
 type Props = {
@@ -59,7 +60,7 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
           </Box>
         )}
         {/* Kennitala */}
-        {data.type === 'Kennitala' && <Ssn />}
+        {data.type === 'Kennitala' && <NationalID />}
         {/* Hakbox */}
         {data.type === 'Hakbox' && <Checkbox label={data.name.is} />}
         {/* Textalinubox */}
@@ -78,6 +79,7 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
         {data.type === 'Klukkuinnsláttur' && (
           <Column span="10/10">
             <TimeSelect />
+            <TimePicker/>
           </Column>
         )}
         {data.type === 'Krónutölubox' && (
