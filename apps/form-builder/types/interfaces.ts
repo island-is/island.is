@@ -50,6 +50,8 @@ export interface IInputSettings {
   listi?: IListItem[]
   type?: string
   name?: ILanguage
+  erListi?: boolean
+  erInnslattur?: boolean
   [key: string]: any
 }
 
@@ -73,7 +75,7 @@ export interface IForm {
   applicationsDaysToRemove: number
   invalidationDate?: Date
   isTranslated: boolean
-  documentTypes: string[]
+  documentTypes: ICertificate[]
   formApplicantTypes: IFormApplicantType[]
 }
 
@@ -156,6 +158,7 @@ export interface IListItem {
 }
 
 export interface ICertificate {
+  id: number
   type: string
   name: ILanguage
   description: ILanguage
@@ -176,6 +179,11 @@ export type IFormApplicantType = {
   applicantTypeId: number
   name: ILanguage
   type: EFormApplicantTypes
+}
+
+export interface IFormDocumentType {
+  formId: number
+  documentTypeId: number
 }
 
 export interface IInputTypes {

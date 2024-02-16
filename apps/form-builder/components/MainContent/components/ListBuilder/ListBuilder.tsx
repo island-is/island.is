@@ -46,13 +46,14 @@ export default function ListBuilder({ setInListBuilder }: Props) {
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
   const listItems = currentItem.inputSettings.listi
-  const listItemIds = useMemo(() => listItems.map((li) => li.guid), [listItems])
+  const listItemIds = useMemo(() => listItems.map((li) => li.guid as string), [listItems])
   const [connecting, setConnecting] = useState<boolean[]>([false])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 10,
+        tolerance: 5
       },
     }),
   )

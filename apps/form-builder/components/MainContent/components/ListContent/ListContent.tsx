@@ -36,22 +36,32 @@ const predeterminedLists = [
 ]
 
 export default function ListContent({ setInListBuilder }: Props) {
-  const [radio, setRadio] = useState([true, false, false])
+  const [radio, setRadio] = useState([true, false])
   const { lists, listsDispatch } = useContext(FormBuilderContext)
   const { activeItem } = lists
   return (
     <Stack space={2}>
       <Row>
         <Column>
-          <Box onClick={() => radioHandler(0)}>
-            <RadioButton label="Nýr fellilisti" checked={radio[0]} />
+          <Box>
+            <RadioButton
+              label="Nýr fellilisti"
+              checked={radio[0]}
+              name="newList"
+              onChange={() => radioHandler(0)}
+            />
           </Box>
         </Column>
       </Row>
       <Row>
         <Column>
-          <Box onClick={() => radioHandler(1)}>
-            <RadioButton label="Tilbúnir fellilistar" checked={radio[1]} />
+          <Box>
+            <RadioButton
+              label="Tilbúnir fellilistar"
+              checked={radio[1]}
+              name="predeterminedLists"
+              onChange={() => radioHandler(1)}
+            />
           </Box>
         </Column>
       </Row>
@@ -70,7 +80,6 @@ export default function ListContent({ setInListBuilder }: Props) {
             backgroundColor="blue"
             onChange={async (e: { label: string; value: string }) => {
               const newList = await getList(e.value)
-              console.log(newList)
               listsDispatch({
                 type: 'setInputSettings',
                 payload: {
@@ -94,5 +103,16 @@ export default function ListContent({ setInListBuilder }: Props) {
           return index === i
         }),
       )
+    if (index === 0) { // Must ensure that the list in inputSettings is empty
+      listsDispatch({
+        type: 'setInputSettings',
+        payload: {
+          inputSettings: {
+            ...(activeItem.data as IInput).inputSettings,
+            listi: []
+          }
+        }
+      })
+    }
   }
 }

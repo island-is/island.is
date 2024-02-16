@@ -20,6 +20,7 @@ import NationalID from './components/NationalID'
 import Radio from './components/Radio'
 import UtilizationSummary from './components/UtilizationSummary/UtilizationSummary'
 import TimePicker from './components/TimePicker'
+import PropertyNumber from './components/PropertyNumber/PropertyNumber'
 
 type Props = {
   data?: IInput
@@ -89,7 +90,7 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
             </Column>
           </Box>
         )}
-        {data.type === 'Heimagistingarnúmer' && (
+        {data.type === 'Heimagistingaryfirlit' && (
           <Box>
             <UtilizationSummary />
           </Box>
@@ -107,6 +108,9 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
         )}
         {data.type === 'Fellilisti' && <List currentItem={data as IInput} />}
         {data.type === 'Valhnappar' && <Radio />}
+        {data.type === 'Fasteignanúmer' && (
+          <PropertyNumber currentItem={data as IInput} />
+        )}
       </Box>
     </>
   )

@@ -2,18 +2,11 @@ import { Box, Icon } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import FormBuilderContext from '../../../../../context/FormBuilderContext'
+import { addGroup, addInput, deleteItem } from '../../../../../services/apiService'
+import { ItemType } from '../../../../../types/interfaces'
 
-type Props = {
-  add(type: 'Step' | 'Group', parentId: number): void
-  remove(
-    type: 'Step' | 'Group' | 'Input',
-    guid: UniqueIdentifier,
-    id: number,
-  ): void
-}
-
-export default function NavButtons({ add, remove }: Props) {
-  const { lists } = useContext(FormBuilderContext)
+export default function NavButtons() {
+  const { lists, listsDispatch } = useContext(FormBuilderContext)
   const { activeItem } = lists
   return (
     <Box display="flex" flexDirection="row">
@@ -43,4 +36,37 @@ export default function NavButtons({ add, remove }: Props) {
       </Box>
     </Box>
   )
+
+  async function add(parentType: 'Step' | 'Group' | null, parentId: number) {
+    try {
+      let data
+
+      if (parentType === 'Step') {
+        data = await addGroup(lists.groups.length, parentId)
+        listsDispatch({ type: 'addGroup', payload: { data: data } })
+      }
+
+      if (parentType === 'Group') {
+        data = await addInput(lists.inputs.length, parentId)
+        listsDispatch({ type: 'addInput', payload: { data: data } })
+      }
+    } catch (error) {
+      console.error('Error adding item:', error)
+    }
+  }
+
+  function remove(type: ItemType, guid: UniqueIdentifier, id: number) {
+    const actionTypes: { [key: string]: string } = {
+      Step: 'removeStep',
+      Group: 'removeGroup',
+      Input: 'removeInput',
+    }
+    listsDispatch({
+      type: actionTypes[type],
+      payload: {
+        guid: guid,
+      },
+    })
+    deleteItem(type, id)
+  }
 }

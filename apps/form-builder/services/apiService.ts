@@ -12,9 +12,10 @@ import {
 
 const BASEURL = 'https://profun.island.is/umsoknarkerfi/api'
 
-export async function getForm(id: number) {
+export async function getForm(id: unknown) {
   try {
     const response = await axios.get(`${BASEURL}/Forms/${id}`)
+    //console.log('getForm response: ', response.data)
     return response.data
   } catch (error) {
     console.error(error)
@@ -106,7 +107,6 @@ export async function getAllFormsFromOrganisation(
     const response = await axios.get(
       `${BASEURL}/Forms/Organization/${organisationId}`,
     )
-    console.log('allForms api: ', response.data)
     return response.data
   } catch (error) {
     console.error('Error in getAllFormsFromOrganisation: ', error)

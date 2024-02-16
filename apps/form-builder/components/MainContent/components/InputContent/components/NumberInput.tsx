@@ -1,9 +1,4 @@
-import {
-  GridRow as Row,
-  GridColumn as Column,
-  Input,
-  Stack,
-} from '@island.is/island-ui/core'
+import { GridRow as Row, GridColumn as Column, Input, Stack } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import FormBuilderContext from '../../../../../context/FormBuilderContext'
 import { IInput } from '../../../../../types/interfaces'
@@ -13,6 +8,16 @@ export default function NumberInput() {
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
   const { inputSettings } = currentItem
+
+  const handleInputChange = (property: string, value: string) => {
+    listsDispatch({
+      type: 'setNumberInputSettings',
+      payload: {
+        property,
+        value,
+      },
+    })
+  }
 
   return (
     <Stack space={2}>
@@ -26,15 +31,7 @@ export default function NumberInput() {
             value={inputSettings.lagmarkslengd}
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
-            onChange={(e) =>
-              listsDispatch({
-                type: 'setNumberInputSettings',
-                payload: {
-                  property: 'lagmarkslengd',
-                  value: e.target.value,
-                },
-              })
-            }
+            onChange={(e) => handleInputChange('lagmarkslengd', e.target.value)}
           />
         </Column>
         <Column span="5/10">
@@ -46,15 +43,7 @@ export default function NumberInput() {
             value={inputSettings.hamarkslengd}
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
-            onChange={(e) =>
-              listsDispatch({
-                type: 'setNumberInputSettings',
-                payload: {
-                  property: 'hamarkslengd',
-                  value: e.target.value,
-                },
-              })
-            }
+            onChange={(e) => handleInputChange('hamarkslengd', e.target.value)}
           />
         </Column>
       </Row>
@@ -68,15 +57,7 @@ export default function NumberInput() {
             value={inputSettings.laggildi}
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
-            onChange={(e) =>
-              listsDispatch({
-                type: 'setNumberInputSettings',
-                payload: {
-                  property: 'laggildi',
-                  value: e.target.value,
-                },
-              })
-            }
+            onChange={(e) => handleInputChange('laggildi', e.target.value)}
           />
         </Column>
         <Column span="5/10">
@@ -88,15 +69,7 @@ export default function NumberInput() {
             value={inputSettings.hagildi}
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
-            onChange={(e) =>
-              listsDispatch({
-                type: 'setNumberInputSettings',
-                payload: {
-                  property: 'hagildi',
-                  value: e.target.value,
-                },
-              })
-            }
+            onChange={(e) => handleInputChange('hagildi', e.target.value)}
           />
         </Column>
       </Row>

@@ -20,7 +20,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       notFound: true,
     }
   }
-  const form: IFormBuilder = await getForm(formId as number)
+  const form: IFormBuilder = await getForm(formId)
   return {
     props: {
       form: form,

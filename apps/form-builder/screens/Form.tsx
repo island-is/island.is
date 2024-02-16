@@ -57,28 +57,26 @@ export default function Form({ form }: Props) {
     groups: form.form.groupsList,
     inputs: form.form.inputsList,
   }
+
   const [formBuilder, formDispatch] = useReducer(formReducer, form)
   const [lists, listsDispatch] = useReducer(listsReducer, initialNavbar)
   const { activeItem } = lists
+  console.log('FORM: ', form)
 
-  const isMounted = useRef(false)
   useEffect(() => {
-    if (isMounted.current) {
-      if (!isTyping) {
-        //formUpdate()
-      }
-    } else {
-      isMounted.current = true
-      infoDispatch({
-        type: 'changeOrganization',
-        data: formBuilder?.form?.organization.name.is,
-      })
-      infoDispatch({
-        type: 'changeApplicationName',
-        data: formBuilder.form.name.is,
-      })
-    }
-  }, [formBuilder, infoDispatch, isTyping])
+    infoDispatch({
+      type: 'changeOrganization',
+      payload: {
+        value: formBuilder?.form?.organization.name.is,
+      },
+    })
+    infoDispatch({
+      type: 'changeApplicationName',
+      payload: {
+        value: formBuilder.form.name.is,
+      },
+    })
+  }, [formBuilder, infoDispatch])
 
   const context: IFormBuilderContext = {
     formBuilder: formBuilder,

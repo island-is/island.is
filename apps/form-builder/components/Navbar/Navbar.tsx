@@ -16,10 +16,7 @@ import FormBuilderContext from '../../context/FormBuilderContext'
 import { baseSettingsStep } from '../../utils/getBaseSettingsStep'
 import { IFormBuilderContext, ItemType } from '../../types/interfaces'
 import {
-  addGroup,
-  addInput,
   addStep,
-  deleteItem,
 } from '../../services/apiService'
 import NavbarTab from './components/NavbarTab/NavbarTab'
 import NavComponent from './components/NavComponent/NavComponent'
@@ -54,8 +51,6 @@ export default function Navbar() {
         </Box>
         <Box>
           <NavComponent
-            add={addItem}
-            remove={removeItem}
             type="Step"
             data={baseSettingsStep}
             active={activeItem.data?.guid === baseSettingsStep.guid}
@@ -67,8 +62,6 @@ export default function Navbar() {
           .map((s) => (
             <Box key={s.guid}>
               <NavComponent
-                add={addItem}
-                remove={removeItem}
                 type="Step"
                 data={s}
                 active={activeItem.data?.guid === s.guid}
@@ -120,8 +113,6 @@ export default function Navbar() {
               .map((s, i) => (
                 <Box key={s.guid}>
                   <NavComponent
-                    add={addItem}
-                    remove={removeItem}
                     type="Step"
                     data={s}
                     active={activeItem.data?.guid === s.guid}
@@ -134,8 +125,6 @@ export default function Navbar() {
                       .map((g) => (
                         <Box key={g.guid}>
                           <NavComponent
-                            add={addItem}
-                            remove={removeItem}
                             type="Group"
                             data={g}
                             active={activeItem.data?.guid === g.guid}
@@ -147,8 +136,6 @@ export default function Navbar() {
                               ?.filter((i) => i.groupGuid === g.guid)
                               .map((i) => (
                                 <NavComponent
-                                  add={addItem}
-                                  remove={removeItem}
                                   key={i.guid}
                                   type="Input"
                                   data={i}
@@ -179,8 +166,6 @@ export default function Navbar() {
                     data={activeItem.data}
                     active={activeItem.data?.guid === activeItem.data?.guid}
                     focusComponent={focusComponent}
-                    add={addItem}
-                    remove={removeItem}
                   />
                 )}
               </DragOverlay>,
@@ -217,39 +202,6 @@ export default function Navbar() {
     }
   }
 
-  async function addItem(parentType: 'Step' | 'Group', parentId: number) {
-    try {
-      let data
-
-      if (parentType === 'Step') {
-        data = await addGroup(lists.groups.length, parentId)
-        listsDispatch({ type: 'addGroup', payload: { data: data } })
-      }
-
-      if (parentType === 'Group') {
-        data = await addInput(lists.inputs.length, parentId)
-        listsDispatch({ type: 'addInput', payload: { data: data } })
-      }
-    } catch (error) {
-      console.error('Error adding item:', error)
-    }
-  }
-
-  function removeItem(type: ItemType, guid: UniqueIdentifier, id: number) {
-    const actionTypes: { [key: string]: string } = {
-      Step: 'removeStep',
-      Group: 'removeGroup',
-      Input: 'removeInput',
-    }
-    listsDispatch({
-      type: actionTypes[type],
-      payload: {
-        guid: guid,
-      },
-    })
-    deleteItem(type, id)
-  }
-
   function focusComponent(type: ItemType, id: UniqueIdentifier) {
     const dataTypes = {
       Step: lists.steps,
@@ -259,23 +211,13 @@ export default function Navbar() {
 
     const data = dataTypes[type]?.find((item) => item.guid === id)
     console.log('focusComponent data: ', data)
-    if (id === baseSettingsStep.guid) {
-      listsDispatch({
-        type: 'setActiveItem',
-        payload: {
-          type: 'Step',
-          data: baseSettingsStep,
-        },
-      })
-    } else {
-      listsDispatch({
-        type: 'setActiveItem',
-        payload: {
-          type: type,
-          data: data,
-        },
-      })
-    }
+    listsDispatch({
+      type: 'setActiveItem',
+      payload: {
+        type: id === baseSettingsStep.guid ? 'Step' : type,
+        data: id === baseSettingsStep.guid ? baseSettingsStep : data,
+      }
+    })
   }
 
   function onDragStart(event: DragStartEvent) {
