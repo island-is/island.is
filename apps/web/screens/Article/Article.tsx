@@ -293,7 +293,9 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
         <InstitutionPanel
           img={article.organization[0].logo?.url}
           institutionTitle={n('organization')}
-          institution={article.organization[0].title}
+          institution={
+            article.organization[0].shortTitle || article.organization[0].title
+          }
           locale={activeLocale}
           linkProps={{
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
