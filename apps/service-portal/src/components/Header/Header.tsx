@@ -16,7 +16,6 @@ import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useListDocuments } from '@island.is/service-portal/graphql'
-import cn from 'classnames'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
@@ -37,8 +36,6 @@ export const Header = ({ position }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
   const { userInfo: user } = useAuth()
-  const badgeActive: keyof typeof styles.badge =
-    unreadCounter > 0 ? 'active' : 'inactive'
 
   return (
     <div className={styles.placeholder}>
@@ -97,10 +94,6 @@ export const Header = ({ position }: Props) => {
                               {formatMessage(m.documents)}
                             </span>
                           </Link>
-                          <Box
-                            borderRadius="circle"
-                            className={cn(styles.badge[badgeActive])}
-                          />
                         </Box>
                       </Hidden>
 

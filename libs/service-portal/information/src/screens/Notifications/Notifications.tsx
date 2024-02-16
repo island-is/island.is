@@ -6,6 +6,7 @@ import {
   IntroHeader,
   m,
   ISLANDIS_SLUG,
+  LinkButton,
 } from '@island.is/service-portal/core'
 
 import { useGetUserNotificationsQuery } from './Notifications.generated'
@@ -13,6 +14,7 @@ import { useGetUserNotificationsQuery } from './Notifications.generated'
 import { spmm } from '../../lib/messages'
 import { ActionCard, CardLoader } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { InformationPaths } from '../../lib/paths'
 
 const DEFAULT_PAGE_SIZE = 5
 
@@ -67,6 +69,15 @@ const UserNotifications = () => {
         serviceProviderSlug={ISLANDIS_SLUG}
         serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
+
+      <Box display="flex" marginBottom={3}>
+        <LinkButton
+          variant="button"
+          icon="settings"
+          to={InformationPaths.Settings}
+          text={formatMessage(m.mySettings)}
+        />
+      </Box>
 
       <Stack space={2}>
         {loading && (

@@ -39,23 +39,3 @@ export const closeButton = style({
     backgroundColor: theme.color.blue200,
   },
 })
-
-export const badge = styleVariants({
-  active: {
-    position: 'absolute',
-    top: 10,
-    right: 13,
-    height: theme.spacing[1],
-    width: theme.spacing[1],
-    borderRadius: '50%',
-    backgroundColor: theme.color.red400,
-    ...themeUtils.responsiveStyle({
-      md: {
-        top: 14,
-      },
-    }),
-  },
-  inactive: {
-    display: 'none',
-  },
-})

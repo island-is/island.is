@@ -10,8 +10,8 @@ import {
 } from '@island.is/island-ui/core'
 import { LinkResolver } from '@island.is/service-portal/core'
 import {
+  GetUserNotificationsOverviewQuery,
   InformationPaths,
-  useGetUserNotificationsOverviewQuery,
 } from '@island.is/service-portal/information'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -26,22 +26,17 @@ interface Props {
   closeNotificationMenu: () => void
   sideMenuOpen: boolean
   rightPosition?: number
+  data?: GetUserNotificationsOverviewQuery
 }
 const NotificationMenu = ({
   closeNotificationMenu,
   sideMenuOpen,
   rightPosition,
+  data,
 }: Props): ReactElement | null => {
   useNamespaces(['service.portal'])
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-  const { data } = useGetUserNotificationsOverviewQuery({
-    variables: {
-      input: {
-        limit: 5,
-      },
-    },
-  })
 
   const isMobile = width < theme.breakpoints.md
 

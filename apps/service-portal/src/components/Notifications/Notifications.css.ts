@@ -1,5 +1,5 @@
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
-import { style, globalStyle } from '@vanilla-extract/css'
+import { style, globalStyle, styleVariants } from '@vanilla-extract/css'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const navWrapper = style({
@@ -107,6 +107,21 @@ export const link = style({
 
 globalStyle(`${link} > span`, {
   boxShadow: 'none',
+})
+
+export const badge = style({
+  position: 'absolute',
+  top: 11,
+  right: 16,
+  height: theme.spacing[1],
+  width: theme.spacing[1],
+  borderRadius: '50%',
+  backgroundColor: theme.color.red400,
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: 14,
+    },
+  }),
 })
 
 // Line
