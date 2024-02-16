@@ -13,6 +13,7 @@ import {
   buildSubSection,
   buildSubmitField,
   buildTextField,
+  formatText,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import {
@@ -30,10 +31,16 @@ import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   getAllPeriodDates,
   getApplicationAnswers,
+  getConclusionScreenSteps,
+  getEditOrAddInfoSectionDescription,
+  getEditOrAddInfoSectionTitle,
   getLeavePlanTitle,
   getMinimumStartDate,
   getPeriodSectionTitle,
 } from '../lib/parentalLeaveUtils'
+
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { useLocale } from '@island.is/localization'
 
 export const EditOrAddEmployersAndPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddEmployersAndPeriods',
@@ -356,12 +363,28 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: parentalLeaveFormMessages.finalScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertType: 'success',
+      expandableHeader: parentalLeaveFormMessages.finalScreen.title,
+      expandableDescription: (application: Application) => {
+        const nextSteps = getConclusionScreenSteps(application)
+
+        // Create a markdown from the steps translations strings
+        let markdown = ''
+
+        nextSteps.forEach((step) => {
+          const translation = formatText(
+            step,
+            application,
+            useLocale().formatMessage,
+          )
+          markdown += `* ${translation} \n`
+        })
+
+        return markdown
+      },
     }),
   ],
 })
