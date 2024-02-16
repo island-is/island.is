@@ -21,6 +21,7 @@ import {
   Result,
 } from '../../licenseClient.type'
 import { FlattenedAdrDto } from './adrLicenseClient.type'
+import { SmartSolutionsService } from '@island.is/clients/smart-solutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -30,7 +31,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
-    private smartApi: SmartSolutionsApi,
+    private smartApi: SmartSolutionsService,
   ) {}
 
   clientSupportsPkPass = true
@@ -193,7 +194,9 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
       }
     }
 
-    return this.smartApi.generatePkPass(payload)
+    const pass = await this.smartApi.generatePkPass(payload)
+
+    if (!pass)
   }
 
   async getPkPassQRCode(user: User): Promise<Result<string>> {
