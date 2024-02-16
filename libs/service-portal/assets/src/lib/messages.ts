@@ -1199,7 +1199,7 @@ export const urls = defineMessages({
   },
   recycleCar: {
     id: 'sp.vehicles:url-recycle-car',
-    defaultMessage: 'http://island.is/umsokn/skilavottord',
+    defaultMessage: 'http://island.is/umsoknir/skilavottord',
   },
   instructorApplication: {
     id: 'sp.vehicles:url-instructor-application',
