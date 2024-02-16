@@ -76,7 +76,6 @@ export const ListViewCard = ({
             variant="h4"
             color="blue400"
             truncate={false}
-            title={heading}
             paddingBottom={subHeading ? 0 : 3}
             lineHeight="sm"
           >

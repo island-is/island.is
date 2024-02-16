@@ -74,7 +74,7 @@ export const mapOrganizationPage = ({
 }: IOrganizationPage): OrganizationPage => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  slug: (fields.slug || fields.organization?.fields?.slug) ?? '',
   description: fields.description ?? '',
   theme: fields.theme ?? 'default',
   themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),

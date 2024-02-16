@@ -825,6 +825,7 @@ export const slices = gql`
       stackId
     }
     sourceData
+    flipAxis
     xAxisKey
     xAxisFormat
     xAxisValueType

@@ -565,6 +565,9 @@ export interface IChartFields {
   /** Source Data */
   sourceData?: Record<string, any> | undefined
 
+  /** Flip Axis */
+  flipAxis?: boolean | undefined
+
   /** X Axis Key */
   xAxisKey?: string | undefined
 
