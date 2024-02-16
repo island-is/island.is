@@ -71,4 +71,8 @@ export const m = defineMessages({
     id: 'portals-my-pages.session-history:status',
     defaultMessage: 'Staða',
   },
+  device: {
+    id: 'portals-my-pages.session-history:device',
+    defaultMessage: 'Tæki',
+  },
 })

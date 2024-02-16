@@ -86,8 +86,8 @@ const LogTableMobile = ({ sessions }: LogTableProps) => {
                   <T.Table>
                     <T.Head>
                       <T.Row>
-                        <T.HeadData>{formatMessage(m.user)}</T.HeadData>
-                        <T.HeadData>{formatMessage(m.status)}</T.HeadData>
+                        <T.HeadData>{formatMessage(m.device)}</T.HeadData>
+                        <T.HeadData>{formatMessage(m.person)}</T.HeadData>
                       </T.Row>
                     </T.Head>
                     <T.Body>
