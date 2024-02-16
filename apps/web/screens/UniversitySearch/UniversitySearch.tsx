@@ -175,21 +175,23 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       : 'CLOSED'
   }
 
-  const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    data &&
-      [...data]
-        .sort((x, y) => {
-          if (x.nameIs > y.nameIs) return 1
-          return -1
-        })
-        .map((item: UniversityGatewayProgram, index: number) => {
-          const itemWithStatus = {
-            ...item,
-            applicationStatus: getApplicationStatus(item),
-          }
-          return { item: itemWithStatus, refIndex: index, score: 1 }
-        }),
+  const [originalSortedResults, setOriginalSortedList] = useState(
+    [...data]
+      // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
+      .sort(() => Math.random() - 0.5)
+      .map((item: UniversityGatewayProgram, index: number) => {
+        const itemWithStatus = {
+          ...item,
+          applicationStatus: getApplicationStatus(item),
+        }
+        return { item: itemWithStatus, refIndex: index, score: 1 }
+      }),
   )
+
+  const [filteredResults, setFilteredResults] = useState<Array<any>>(
+    originalSortedResults,
+  )
+
   const { linkResolver } = useLinkResolver()
 
   //creating a deep copy to avoid original being affected by changes to filters
@@ -235,7 +237,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [])
 
   const fuseOptions = {
-    threshold: 0.2,
+    threshold: 0.4,
+    findAllMatches: true,
     keys: [
       'nameIs',
       'departmentNameIs',
@@ -280,16 +283,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [filters, query])
 
   const resetFilteredList = () => {
-    const resultProducts: Array<any> = data.map(
-      (item: UniversityGatewayProgram, index: number) => {
-        return {
-          item: { ...item, applicationStatus: getApplicationStatus(item) },
-          refIndex: index,
-          score: 1,
-        }
-      },
-    )
-    setFilteredResults(resultProducts)
+    setFilteredResults(originalSortedResults)
   }
 
   const createPrimaryCTA = (item: UniversityGatewayProgramWithStatus) => {
