@@ -41,11 +41,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               image: WomanWithLaptopIllustration,
               imageWidth: 'auto',
             }),
-            buildCustomField({
-              id: 'uploadAdditionalFilesInfoScreen',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
-              component: 'UploadAdditionalFilesInfoScreen',
-            }),
           ],
         }),
         buildMultiField({

@@ -815,16 +815,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Tilhögun fæðingarstyrks',
       description: 'Grant periods',
     },
-    periodsImageTitle: {
-      id: 'pl.application:periods.image.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarorlofsins',
-      description: 'Now it is time to select the parental leave periods',
-    },
-    periodsImageGrantTitle: {
-      id: 'pl.application:periods.image.grant.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarstyrksins',
-      description: 'Now it is time to select the parental grant period',
-    },
     firstPeriodName: {
       id: 'pl.application:first.period.name',
       defaultMessage: 'Fyrsta tímabil orlofsins',
@@ -1802,11 +1792,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Skoða forrit',
       description: 'View application',
     },
-    buttonsViewProgress: {
-      id: 'pl.application:review.buttonsViewProgress',
-      defaultMessage: 'Skoða framfarir',
-      description: 'View progress',
-    },
     buttonsEdit: {
       id: 'pl.application:review.buttonsEdit',
       defaultMessage: 'Breyta / bæta við tímabilum',
@@ -2091,7 +2076,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Congratulations, below are the next steps',
     },
     description: {
-      id: 'pl.application:finalscreen.description',
+      id: 'pl.application:finalscreen.description#markdown',
       defaultMessage: `Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á
         hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf
         vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum
