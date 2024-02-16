@@ -2,8 +2,12 @@
 import { FC, useState, useEffect, useCallback, ChangeEvent } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
-import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
-import { Query, SearchForPropertyInput } from '@island.is/api/schema'
+import { GET_VEHICLE_QUERY, SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
+import {
+  GetVehicleInput,
+  Query,
+  SearchForPropertyInput,
+} from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -16,7 +20,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -43,7 +47,7 @@ export const AssetsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { externalData } = application
   const { id, props } = field
-  const { calcWithShareValue, assetKey } = props
+  const { calcWithShareValue, assetKey, fromExternalData } = props
 
   if (typeof calcWithShareValue !== 'boolean' || !assetKey) {
     throw new Error('calcWithShareValue and assetKey are required')
@@ -111,12 +115,11 @@ export const AssetsRepeater: FC<
   }
 
   useEffect(() => {
-    const extData = (externalData.syslumennOnEntry?.data as any).estate[
-      props.fromExternalData ? props.fromExternalData : ''
-    ]
+    const extData = getValueViaPath(
+      (externalData.syslumennOnEntry?.data as any).estate,
+      fromExternalData ?? '',
+    ) as Record<string, unknown>[]
 
-    console.log('check', externalData.syslumennOnEntry?.data)
-    console.log(fields.length, extData.length, assetKey, 'extData', extData)
     if (
       !(application?.answers as any)?.assets?.[assetKey]?.hasModified &&
       fields.length === 0 &&
@@ -159,6 +162,7 @@ export const AssetsRepeater: FC<
                 return (
                   <FieldComponent
                     key={index}
+                    assetKey={assetKey}
                     onAfterChange={calculateTotal}
                     setLoadingFieldName={(v) => {
                       setLoadingFieldName(v)
@@ -213,6 +217,7 @@ export const AssetsRepeater: FC<
 export default AssetsRepeater
 
 interface FieldComponentProps {
+  assetKey?: string
   onAfterChange?: () => void
   setLoadingFieldName?: (fieldName: string | null) => void
   loadingFieldName?: string | null
@@ -224,6 +229,7 @@ interface FieldComponentProps {
 }
 
 const FieldComponent = ({
+  assetKey,
   onAfterChange,
   setLoadingFieldName,
   loadingFieldName,
@@ -272,15 +278,27 @@ const FieldComponent = ({
         </GridColumn>
       )
     case 'assetNumber':
-      content = (
-        <AsssetNumberField
-          field={field}
-          fieldName={fieldName}
-          fieldIndex={fieldIndex}
-          setLoadingFieldName={setLoadingFieldName}
-          {...defaultProps}
-        />
-      )
+      if (assetKey === 'realEstate') {
+        content = (
+          <RealEstateNumberField
+            field={field}
+            fieldName={fieldName}
+            fieldIndex={fieldIndex}
+            setLoadingFieldName={setLoadingFieldName}
+            {...defaultProps}
+          />
+        )
+      } else if (assetKey === 'vehicles') {
+        content = (
+          <VehicleNumberField
+            field={field}
+            fieldName={fieldName}
+            fieldIndex={fieldIndex}
+            setLoadingFieldName={setLoadingFieldName}
+            {...defaultProps}
+          />
+        )
+      }
 
       break
     case 'share':
@@ -327,7 +345,7 @@ const FieldComponent = ({
   )
 }
 
-const AsssetNumberField = ({
+const RealEstateNumberField = ({
   fieldIndex,
   fieldName,
   error,
@@ -398,5 +416,78 @@ const AsssetNumberField = ({
       error={error ? formatMessage(m.errorPropertyNumber) : undefined}
       {...props}
     />
+  )
+}
+
+const VehicleNumberField = ({
+  fieldIndex,
+  fieldName,
+  error,
+  setLoadingFieldName,
+  ...props
+}: FieldComponentProps) => {
+  const { formatMessage } = useLocale()
+  const { setValue, clearErrors } = useFormContext()
+
+  const descriptionFieldName = `${fieldIndex}.description`
+
+  const assetNumberInput = useWatch({
+    name: fieldName,
+    defaultValue: '',
+  })
+
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: GetVehicleInput }>(GET_VEHICLE_QUERY, {
+      onError: (_e) => {
+        setValue(descriptionFieldName, '')
+      },
+      onCompleted: (data) => {
+        const carName =
+          `${data?.syslumennGetVehicle?.manufacturer} ${data.syslumennGetVehicle?.modelName}`.trim()
+        if (
+          carName.length === 0 ||
+          carName.startsWith('null') ||
+          carName.endsWith('null')
+        ) {
+          setValue(descriptionFieldName, '')
+          return
+        }
+        clearErrors(descriptionFieldName)
+        setValue(descriptionFieldName, carName)
+      },
+      fetchPolicy: 'network-only',
+    })
+
+  useEffect(() => {
+    setLoadingFieldName?.(queryLoading ? descriptionFieldName : null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryLoading])
+
+  useEffect(() => {
+    if (assetNumberInput.trim().length > 0) {
+      getProperty({
+        variables: {
+          input: {
+            vehicleId: assetNumberInput.trim().toUpperCase(),
+          },
+        },
+      })
+    } else {
+      setValue(descriptionFieldName, '')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetNumberInput])
+
+  return (
+    <span className={styles.uppercase}>
+      <InputController
+        id={fieldName}
+        name={fieldName}
+        label={formatMessage(m.propertyNumber)}
+        defaultValue={assetNumberInput}
+        error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+        {...props}
+      />
+    </span>
   )
 }

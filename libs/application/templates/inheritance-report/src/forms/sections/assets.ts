@@ -161,6 +161,7 @@ export const assets = buildSection({
                     title: m.vehicleNumberLabel.defaultMessage,
                     id: 'assetNumber',
                     placeholder: 'ABC12',
+                    required: true,
                   },
                   {
                     title: m.vehicleType.defaultMessage,
@@ -177,7 +178,7 @@ export const assets = buildSection({
                 ],
                 assetKey: 'vehicles',
                 repeaterButtonText: m.addVehicle.defaultMessage,
-                fromExternalData: 'vehicles',
+                fromExternalData: 'vehicles.data',
                 sumField: 'propertyValuation',
                 calcWithShareValue: false,
               },
