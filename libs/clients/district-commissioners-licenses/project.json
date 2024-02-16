@@ -26,7 +26,25 @@
           "codeCoverage": true
         }
       }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://api.syslumenn.is/staging/swagger/v1/swagger.json > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/district-commissioners-licenses"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/district-commissioners-licenses/gen/fetch -i libs/clients/district-commissioners-licenses/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }

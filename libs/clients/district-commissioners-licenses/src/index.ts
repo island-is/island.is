@@ -1,1 +1,1 @@
-export * from './lib/clients-district-commissioners-licenses.module'
+export * from './lib/districtCommissionersLicenses.module'
