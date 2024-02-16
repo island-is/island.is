@@ -62,6 +62,7 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
     },
     vehicles: {
       data: vehicles,
+      hasModified: false,
     },
     guns: {
       data: guns,
@@ -163,6 +164,7 @@ export const expandAnswers = (
             propertyValuation: vehicle.propertyValuation ?? '',
           }
         }),
+        hasModified: answers.assets.vehicles?.hasModified ?? false,
         total: answers.assets.vehicles?.total ?? 0,
       },
     },

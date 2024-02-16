@@ -33,15 +33,21 @@ type RepeaterProps = {
       sumField: string
       fromExternalData?: string
       calcWithShareValue?: boolean
+      assetKey?: string
     }
   }
 }
 
-export const AssetsFieldsRepeater: FC<
+export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { externalData } = application
   const { id, props } = field
+  const { calcWithShareValue, assetKey } = props
+
+  if (typeof calcWithShareValue !== 'boolean' || !assetKey) {
+    throw new Error('calcWithShareValue and assetKey are required')
+  }
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
@@ -65,7 +71,7 @@ export const AssetsFieldsRepeater: FC<
 
       return (
         Number(acc) +
-        (props?.calcWithShareValue
+        (calcWithShareValue
           ? Math.floor(propertyValuation * (shareValue / 100))
           : propertyValuation)
       )
@@ -109,16 +115,18 @@ export const AssetsFieldsRepeater: FC<
       props.fromExternalData ? props.fromExternalData : ''
     ]
 
+    console.log('check', externalData.syslumennOnEntry?.data)
+    console.log(fields.length, extData.length, assetKey, 'extData', extData)
     if (
-      !(application?.answers as any)?.assets?.realEstate?.hasModified &&
+      !(application?.answers as any)?.assets?.[assetKey]?.hasModified &&
       fields.length === 0 &&
       extData.length
     ) {
       replace(extData)
-      setValue('assets.realEstate.hasModified', true)
+      setValue(`assets.${assetKey}.hasModified`, true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [assetKey])
 
   return (
     <Box>
@@ -202,7 +210,7 @@ export const AssetsFieldsRepeater: FC<
   )
 }
 
-export default AssetsFieldsRepeater
+export default AssetsRepeater
 
 interface FieldComponentProps {
   onAfterChange?: () => void
@@ -329,7 +337,7 @@ const AsssetNumberField = ({
   const { formatMessage } = useLocale()
   const { setValue, clearErrors, setError } = useFormContext()
 
-  const addressFieldName = `${fieldIndex}.description`
+  const descriptionFieldName = `${fieldIndex}.description`
 
   const propertyNumberInput = useWatch({
     name: fieldName,
@@ -341,10 +349,10 @@ const AsssetNumberField = ({
       SEARCH_FOR_PROPERTY_QUERY,
       {
         onCompleted: (data) => {
-          clearErrors(addressFieldName)
+          clearErrors(descriptionFieldName)
 
           setValue(
-            addressFieldName,
+            descriptionFieldName,
             data.searchForProperty?.defaultAddress?.display ?? '',
           )
         },
@@ -353,14 +361,14 @@ const AsssetNumberField = ({
     )
 
   useEffect(() => {
-    setLoadingFieldName?.(queryLoading ? addressFieldName : null)
+    setLoadingFieldName?.(queryLoading ? descriptionFieldName : null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryLoading])
 
   useEffect(() => {
     const propertyNumber = propertyNumberInput.trim().toUpperCase()
 
-    setValue(addressFieldName, '')
+    setValue(descriptionFieldName, '')
 
     if (isValidRealEstate(propertyNumber)) {
       clearErrors(fieldName)

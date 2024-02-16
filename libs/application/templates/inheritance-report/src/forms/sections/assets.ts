@@ -45,11 +45,7 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.realEstate.data',
                 doesNotRequireAnswer: true,
-                component: 'AssetsFieldsRepeater',
-                childInputIds: [
-                  'assets.realEstate',
-                  'assets.realEstate.hasModified',
-                ],
+                component: 'AssetsRepeater',
               },
               {
                 fields: [
@@ -79,6 +75,7 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
+                assetKey: 'realEstate',
                 calcWithShareValue: true,
                 repeaterButtonText: m.addRealEstate.defaultMessage,
                 fromExternalData: 'assets',
@@ -147,22 +144,29 @@ export const assets = buildSection({
               id: 'assets.vehicles.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'assets.vehicles.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
                 id: 'assets.vehicles.data',
                 doesNotRequireAnswer: true,
-                component: 'ReportFieldsRepeater',
+                component: 'AssetsRepeater',
               },
               {
                 fields: [
                   {
                     title: m.vehicleNumberLabel.defaultMessage,
                     id: 'assetNumber',
+                    placeholder: 'ABC12',
                   },
                   {
                     title: m.vehicleType.defaultMessage,
                     id: 'description',
+                    backgroundColor: 'white',
+                    readOnly: true,
                   },
                   {
                     title: m.vehicleValuation.defaultMessage,
@@ -171,9 +175,11 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
+                assetKey: 'vehicles',
                 repeaterButtonText: m.addVehicle.defaultMessage,
                 fromExternalData: 'vehicles',
                 sumField: 'propertyValuation',
+                calcWithShareValue: false,
               },
             ),
           ],

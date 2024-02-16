@@ -82,6 +82,7 @@ export const inheritanceReportSchema = z.object({
           })
           .array()
           .optional(),
+        hasModified: z.boolean().optional(),
         total: z.number().optional(),
       })
       .optional(),

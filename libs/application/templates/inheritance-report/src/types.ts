@@ -149,6 +149,7 @@ export interface VehiclesData {
 
 export interface Vehicles {
   data: VehiclesData[]
+  hasModified?: boolean
   total: number
 }
 
