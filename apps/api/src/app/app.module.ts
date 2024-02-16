@@ -33,6 +33,7 @@ import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
+import { OccupationalLicensesV2Module } from '@island.is/api/domains/occupational-licenses-v2'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
@@ -251,6 +252,7 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
+    OccupationalLicensesV2Module,
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     DisabilityLicenseModule,

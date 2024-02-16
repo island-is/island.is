@@ -1,1 +1,1 @@
-export * from './lib/api-domains-occupational-licenses-v2.module'
+export * from './lib/occupationalLicensesV2.module'

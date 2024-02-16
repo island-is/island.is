@@ -6,4 +6,4 @@ import { RettindiFyrirIslandIsApi } from '../../gen/fetch'
   providers: [DistrictCommissionerLicensesApiProvider],
   exports: [RettindiFyrirIslandIsApi],
 })
-export class ClientsDistrictCommissionersLicensesModule {}
+export class DistrictCommissionersLicensesClientModule {}
