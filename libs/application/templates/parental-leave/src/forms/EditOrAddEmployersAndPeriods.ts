@@ -32,8 +32,6 @@ import {
   getAllPeriodDates,
   getApplicationAnswers,
   getConclusionScreenSteps,
-  getEditOrAddInfoSectionDescription,
-  getEditOrAddInfoSectionTitle,
   getLeavePlanTitle,
   getMinimumStartDate,
   getPeriodSectionTitle,
