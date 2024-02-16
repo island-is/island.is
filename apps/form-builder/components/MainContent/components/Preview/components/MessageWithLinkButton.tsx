@@ -16,16 +16,26 @@ export function MessageWithLinkButton({ settings, data }: Props) {
   const { lists } = useContext(FormBuilderContext)
   const { activeItem } = lists
   console.log(activeItem)
+
+  const formatUrl = (url: string): string => {
+    if (url.startsWith('http://')) {
+      url = url.replace('http://', 'https://')
+    } else if (!url.startsWith('https://')) {
+      url = 'https://' + url
+    }
+    return url
+  }
+
   return (
     <Box
-      flexDirection="row"
+      // flexDirection="row"
       display="flex"
       padding={4}
       background="white"
       alignItems="center"
     >
       <Box display="flex" flexDirection="column">
-        <Box paddingBottom={1}>
+        <Box paddingBottom={1} width="full" flexWrap="nowrap" display="flex" overflow='auto'>
           <Text variant="h4">{data.name.is}</Text>
         </Box>
         <Box overflow="initial">
@@ -52,13 +62,4 @@ export function MessageWithLinkButton({ settings, data }: Props) {
       )}
     </Box>
   )
-
-  function formatUrl(url: string): string {
-    if (url.startsWith('http://')) {
-      url = url.replace('http://', 'https://')
-    } else if (!url.startsWith('https://')) {
-      url = 'https://' + url
-    }
-    return url
-  }
 }

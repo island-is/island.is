@@ -23,8 +23,8 @@ export default function BaseInput() {
   } = useContext(FormBuilderContext)
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
-  console.log('formBuilder.inputTypes', formBuilder.inputTypes)
   const options = formBuilder.inputTypes
+    .filter((it) => it.type !== 'TBD')
     .map((it) => {
       return {
         label: it.type,

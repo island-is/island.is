@@ -43,7 +43,7 @@ export default function InputContent() {
   }
   return (
     <Stack space={2}>
-      <BaseInput />
+      {currentItem.type !== 'TBD' && <BaseInput />}
 
       {/* Additional settings depending on chosen input type  */}
       {['Hakbox'].includes(currentItem.type) && (

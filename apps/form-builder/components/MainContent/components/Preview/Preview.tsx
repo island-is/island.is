@@ -88,7 +88,7 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
             </Column>
           </Box>
         )}
-        {data.type === 'Heimagistingarnúmer' && (
+        {data.type === 'Heimagistingaryfirlit' && (
           <Box>
             <UtilizationSummary />
           </Box>

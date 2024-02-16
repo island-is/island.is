@@ -14,12 +14,6 @@ type Props = {
   active: boolean
   index?: number
   focusComponent(type: ItemType, id: UniqueIdentifier): void
-  add(type: 'Step' | 'Group', parentId: number): void
-  remove(
-    type: 'Step' | 'Group' | 'Input',
-    guid: UniqueIdentifier,
-    id: number,
-  ): void
 }
 
 export default function NavComponent({
@@ -28,8 +22,6 @@ export default function NavComponent({
   active,
   index,
   focusComponent,
-  add,
-  remove,
 }: Props) {
   const [editMode] = useState(false)
 
@@ -84,8 +76,6 @@ export default function NavComponent({
           }}
         >
           <Box
-            //display="flex"
-            //flexShrink={0}
             className={cn({
               [styles.navBackgroundActive.step]: type === 'Step',
               [styles.navBackgroundActive.group]: type === 'Group',
@@ -110,7 +100,7 @@ export default function NavComponent({
             }}
           >
             {!(type === 'Step' && (data as IStep).type !== 'Innsláttur') && (
-              <NavButtons add={add} remove={remove} />
+              <NavButtons />
             )}
           </Box>
         </Box>

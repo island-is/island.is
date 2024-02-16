@@ -25,7 +25,6 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Box,
-  Button,
 } from '@island.is/island-ui/core'
 import Navbar from '../components/Navbar/Navbar'
 import NavbarSelect from '../components/NavbarSelect/NavbarSelect'
@@ -49,22 +48,22 @@ export default function Form({ form }: Props) {
     activeItem: inSettings
       ? { type: 'Step', data: baseSettingsStep }
       : {
-          type: 'Step',
-          data:
-            form.form.stepsList.find((s) => s.type === 'Innsláttur') ||
-            defaultStep,
-        },
+        type: 'Step',
+        data:
+          form.form.stepsList.find((s) => s.type === 'Innsláttur') ||
+          defaultStep,
+      },
     steps: form.form.stepsList,
     groups: form.form.groupsList,
     inputs: form.form.inputsList,
   }
+
   const [formBuilder, formDispatch] = useReducer(formReducer, form)
   const [lists, listsDispatch] = useReducer(listsReducer, initialNavbar)
   const { activeItem } = lists
   console.log('FORM: ', form)
-  const isMounted = useRef(false)
+
   useEffect(() => {
-    isMounted.current = true
     infoDispatch({
       type: 'changeOrganization',
       payload: {

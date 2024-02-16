@@ -23,7 +23,7 @@ export default function List({ currentItem }: Props) {
   }, [currentItem.inputSettings.listi])
   return (
     <>
-      <Select name="list" label={currentItem.name.is} options={listItems} />
+      <Select name="list" label={currentItem.name.is} options={listItems} placeholder={listItems[0]?.label ? listItems[0].label : ''} />
     </>
   )
 }
