@@ -54,9 +54,11 @@ export class SignatureCollectionAdminClientService {
       return CollectionStatus.InitialActive
     }
     const allLists = await this.getLists({ collectionId: collection.id }, auth)
+
     let hasActive,
       hasExtended,
       hasInReview = false
+
     allLists.forEach((list) => {
       if (list.active) {
         hasActive = true
@@ -369,15 +371,13 @@ export class SignatureCollectionAdminClientService {
       ? newEndDate.getTime() === dagsetningLokar.getTime()
       : false
 
-    if (success) {
-      const listStatus = await this.listStatus(listId, auth)
-      // Can only toggle list if it is in review or reviewed
-      if (listStatus === ListStatus.Reviewed) {
-        await this.getApiWithAuth(
-          this.listsApi,
-          auth,
-        ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
-      }
+    // const listStatus = await this.listStatus(listId, auth)
+    // Can only toggle list if it is in review or reviewed
+    if (success && list.lokadHandvirkt) {
+      await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
     }
     return {
       success,
