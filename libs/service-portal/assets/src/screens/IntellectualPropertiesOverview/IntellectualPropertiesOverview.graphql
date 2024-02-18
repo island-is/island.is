@@ -1,8 +1,9 @@
 query GetIntellectualProperties {
   intellectualProperties {
+    __typename
     totalCount
     items {
-      ... on IntellectualPropertiesPatent {
+      ... on IntellectualPropertiesPatentIS {
         __typename
         applicationNumber
         name
@@ -11,6 +12,25 @@ query GetIntellectualProperties {
           applicationDate
         }
       }
+      ... on IntellectualPropertiesPatentEP {
+        __typename
+        applicationNumber
+        name
+        statusText
+        lifecycle {
+          applicationDate
+        }
+      }
+      ... on IntellectualPropertiesSPC {
+        __typename
+        applicationNumber
+        name
+        statusText
+        lifecycle {
+          applicationDate
+        }
+      }
+
       ... on IntellectualPropertiesTrademark {
         __typename
         text
