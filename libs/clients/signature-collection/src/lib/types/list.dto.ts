@@ -46,11 +46,11 @@ export interface SignedList extends List {
   canUnsign: boolean
 }
 
-export function getSlug(id: number | string): string {
+export const getSlug = (id: number | string): string => {
   return `/umsoknir/maela-med-frambodi/?candidate=${id}`
 }
 
-export function mapListBase(list: MedmaelalistiBaseDTO): ListBase {
+export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
   const { id: id, svaedi: areas } = list
   if (!id || !areas) {
     logger.warn(
@@ -67,10 +67,10 @@ export function mapListBase(list: MedmaelalistiBaseDTO): ListBase {
   }
 }
 
-export function mapList(
+export const mapList = (
   list: MedmaelalistiDTO,
   collectors?: UmbodBaseDTO[],
-): List {
+): List => {
   const {
     id: id,
     medmaelasofnun: collection,
