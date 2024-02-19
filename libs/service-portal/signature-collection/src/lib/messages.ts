@@ -63,6 +63,11 @@ export const m = defineMessages({
     defaultMessage: 'Skrifað undir:',
     description: '',
   },
+  uploadedTime: {
+    id: 'sp.signatureCollection:uploadedTime',
+    defaultMessage: 'Lesið inn:',
+    description: '',
+  },
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',
@@ -81,6 +86,11 @@ export const m = defineMessages({
   paperUploadedSignature: {
     id: 'sp.signatureCollection:paperUploadedSignature',
     defaultMessage: 'Meðmæli lesin inn',
+    description: '',
+  },
+  signatureIsInvalid: {
+    id: 'sp.signatureCollection:signatureIsInvalid',
+    defaultMessage: 'Ógilt meðmæli',
     description: '',
   },
 
@@ -123,6 +133,16 @@ export const m = defineMessages({
   unSignError: {
     id: 'sp.signatureCollection:unSignError',
     defaultMessage: 'Tókst ekki að draga meðmæli til baka',
+    description: '',
+  },
+  actorNoAccessTitle: {
+    id: 'sp.signatureCollection:actorNoAccessTitle',
+    defaultMessage: 'Ekki réttindi',
+    description: '',
+  },
+  actorNoAccessDescription: {
+    id: 'sp.signatureCollection:actorNoAccessDescription',
+    defaultMessage: 'Þú hefur ekki réttindi til að sjá þessar upplýsingar.',
     description: '',
   },
 

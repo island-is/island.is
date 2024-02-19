@@ -47,14 +47,6 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
-      GEODATADIR: geoDataDir,
-    })
-    .secrets({
-      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
-    })
-    .volumes({
-      ...geoipSetup().serviceDef.volumes[0],
-      useExisting: true,
     })
     .readiness('/liveness')
     .liveness('/liveness')
@@ -98,7 +90,11 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       extensions: workerPostgresInfo.extensions,
       readOnly: false,
     })
-    .migrations(workerPostgresInfo)
+    .migrations()
+    .volumes({
+      ...geoipSetup().serviceDef.volumes[0],
+      useExisting: true,
+    })
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({
@@ -118,6 +114,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+      GEODATADIR: geoDataDir,
     })
 
 export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>

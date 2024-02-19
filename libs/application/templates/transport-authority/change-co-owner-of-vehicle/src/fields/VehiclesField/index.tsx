@@ -1,13 +1,20 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC, useCallback, useEffect } from 'react'
-import { VehiclesCurrentVehicle } from '../../shared'
-import { VehicleSelectField } from './VehicleSelectField'
+import { CurrentVehiclesAndRecords } from '../../shared'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
+import { ApolloQueryResult, useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
+import { FindVehicleFormField } from '@island.is/application/ui-fields'
+import { applicationCheck, error, information } from '../../lib/messages'
+import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
+import { VehicleSelectField } from './VehicleSelectField'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -17,7 +24,7 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { application } = props
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const currentVehicleList = application.externalData.currentVehicleList
-    .data as VehiclesCurrentVehicle[]
+    .data as CurrentVehiclesAndRecords
 
   const updateData = useCallback(async () => {
     await updateApplication({
@@ -32,7 +39,18 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
       },
     })
   }, [])
-
+  const getVehicleDetails = useLazyVehicleDetails()
+  const createGetVehicleDetailsWrapper = (
+    getVehicleDetailsFunction: (variables: {
+      permno: string
+    }) => Promise<ApolloQueryResult<any>>,
+  ) => {
+    return async (plate: string) => {
+      const variables = { permno: plate }
+      const result = await getVehicleDetailsFunction(variables)
+      return result.data.vehicleOwnerchangeChecksByPermno // Adjust based on your query
+    }
+  }
   useEffect(() => {
     setValue('ownerCoOwners', [])
     updateData()
@@ -40,13 +58,45 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.length > 5 ? (
+      {currentVehicleList.totalRecords > 20 ? (
+        <FindVehicleFormField
+          application={application}
+          setFieldLoadingState={props.setFieldLoadingState}
+          setSubmitButtonDisabled={props.setSubmitButtonDisabled}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            description: information.labels.pickVehicle.description,
+            type: FieldTypes.FIND_VEHICLE,
+            component: FieldComponents.FIND_VEHICLE,
+            children: undefined,
+            getVehicleDetails:
+              createGetVehicleDetailsWrapper(getVehicleDetails),
+            validationErrors: applicationCheck.validation,
+            additionalErrors: true,
+            fallbackErrorMessage:
+              applicationCheck.validation.fallbackErrorMessage,
+            isNotDebtLessTag: information.labels.pickVehicle.isNotDebtLessTag,
+            findPlatePlaceholder:
+              information.labels.pickVehicle.findPlatePlaceholder,
+            findVehicleButtonText: information.labels.pickVehicle.findButton,
+            hasErrorTitle: information.labels.pickVehicle.hasErrorTitle,
+            notFoundErrorMessage:
+              information.labels.pickVehicle.notFoundMessage,
+            notFoundErrorTitle: information.labels.pickVehicle.notFoundTitle,
+            requiredValidVehicleErrorMessage: error.requiredValidVehicle,
+          }}
+        />
+      ) : currentVehicleList.totalRecords > 5 ? (
         <VehicleSelectField
-          currentVehicleList={currentVehicleList}
+          currentVehicleList={currentVehicleList.vehicles}
           {...props}
         />
       ) : (
-        <VehicleRadioField currentVehicleList={currentVehicleList} {...props} />
+        <VehicleRadioField
+          currentVehicleList={currentVehicleList?.vehicles}
+          {...props}
+        />
       )}
     </Box>
   )

@@ -1,0 +1,1 @@
+export const USER_AGENT_MAX_LENGTH = 1024

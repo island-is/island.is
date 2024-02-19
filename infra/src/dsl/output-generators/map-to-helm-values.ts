@@ -64,7 +64,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
-      maxUnavailable: 0,
+      maxUnavailable: 1,
     },
     healthCheck: {
       port: serviceDef.healthPort,
