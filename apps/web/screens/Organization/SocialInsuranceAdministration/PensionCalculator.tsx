@@ -20,7 +20,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  DatePickerController,
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
@@ -76,10 +75,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 }) => {
   const { formatMessage } = useIntl()
   const defaultPensionAge = customPageData?.configJson?.defaultPensionAge ?? 67
-
   const methods = useForm<CalculationInput>({
     defaultValues,
   })
+
   const maxMonthPensionDelay =
     customPageData?.configJson?.maxMonthPensionDelay ?? 156
 
@@ -89,18 +88,18 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ? true
       : false,
   )
-  const [birthdate, setBirthdate] = useState(defaultValues.birthdate)
-  const [startDate, setStartDate] = useState(defaultValues.startDate)
-  const [basePensionType, setBasePensionType] = useState<BasePensionType>(
-    defaultValues.typeOfBasePension || BasePensionType.Retirement,
-  )
-  const [childCount, setChildCount] = useState<number | undefined | null>(
-    methods.formState.defaultValues?.childCount,
-  )
+
+  const typeOfBasePension = methods.watch('typeOfBasePension')
+  const childCount = methods.watch('childCount')
+  const birthMonth = methods.watch('birthMonth')
+  const birthYear = methods.watch('birthYear')
+  const startMonth = methods.watch('startMonth')
+  const startYear = methods.watch('startYear')
 
   const maxMonthPensionHurry =
-    customPageData?.configJson?.maxMonthPensionHurry?.[basePensionType] ??
-    basePensionType === BasePensionType.FishermanRetirement
+    customPageData?.configJson?.maxMonthPensionHurry?.[
+      typeOfBasePension ?? BasePensionType.Retirement
+    ] ?? typeOfBasePension === BasePensionType.FishermanRetirement
       ? 12 * 7
       : 12 * 2
 
@@ -272,7 +271,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       return options.slice(0, childCount + 1)
     }
     return []
-  }, [childCount, formatMessage])
+  }, [formatMessage, childCount])
 
   const [dateOfCalculations, setDateOfCalculations] = useQueryState(
     'dateOfCalculations',
@@ -299,45 +298,118 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     router.push(`${baseUrl}?${queryParams.toString()}`)
   }
 
-  const { activeLocale } = useI18n()
+  const monthOptions = useMemo<Option<number>[]>(() => {
+    return [
+      {
+        label: formatMessage(translationStrings.january),
+        value: 0,
+      },
+      {
+        label: formatMessage(translationStrings.february),
+        value: 1,
+      },
+      {
+        label: formatMessage(translationStrings.march),
+        value: 2,
+      },
+      {
+        label: formatMessage(translationStrings.april),
+        value: 3,
+      },
+      {
+        label: formatMessage(translationStrings.may),
+        value: 4,
+      },
+      {
+        label: formatMessage(translationStrings.june),
+        value: 5,
+      },
+      {
+        label: formatMessage(translationStrings.july),
+        value: 6,
+      },
+      {
+        label: formatMessage(translationStrings.august),
+        value: 7,
+      },
+      {
+        label: formatMessage(translationStrings.september),
+        value: 8,
+      },
+      {
+        label: formatMessage(translationStrings.october),
+        value: 9,
+      },
+      {
+        label: formatMessage(translationStrings.november),
+        value: 10,
+      },
+      {
+        label: formatMessage(translationStrings.december),
+        value: 11,
+      },
+    ]
+  }, [formatMessage])
 
-  const today = new Date()
+  const birthYearOptions = useMemo<Option<number>[]>(() => {
+    const today = new Date()
+    const options: Option<number>[] = []
 
-  const birthdateRange = {
-    minDate: add(today, {
-      years: customPageData?.configJson?.minYearOffset ?? -130,
-    }),
-    maxDate: add(today, {
-      years: customPageData?.configJson?.maxYearOffset ?? 0,
-    }),
-  }
+    const minYear = add(today, {
+      years: customPageData?.configJson?.minYearOffset ?? -100,
+    }).getFullYear()
+    const maxYear = today.getFullYear()
 
-  const startDateRange = !birthdate
-    ? birthdateRange
-    : {
-        minDate: add(add(new Date(birthdate), { years: defaultPensionAge }), {
-          months: -maxMonthPensionHurry,
-        }),
-        maxDate: add(add(new Date(birthdate), { years: defaultPensionAge }), {
-          months: maxMonthPensionDelay,
-        }),
+    for (let i = minYear; i <= maxYear; i += 1) {
+      options.push({
+        label: String(i),
+        value: i,
+      })
+    }
+
+    return options
+  }, [customPageData?.configJson?.minYearOffset])
+
+  const defaultPensionDate =
+    typeof birthMonth === 'number' && typeof birthYear === 'number'
+      ? add(new Date(birthYear, birthMonth), {
+          years: defaultPensionAge,
+        })
+      : null
+
+  const monthOffset =
+    defaultPensionDate &&
+    typeof startMonth === 'number' &&
+    typeof startYear === 'number'
+      ? differenceInMonths(new Date(startYear, startMonth), defaultPensionDate)
+      : undefined
+
+  const startYearOptions = useMemo<Option<number>[]>(() => {
+    const options: Option<number>[] = []
+
+    if (defaultPensionDate) {
+      const minYear = add(defaultPensionDate, {
+        months: -maxMonthPensionHurry,
+      }).getFullYear()
+      const maxYear = add(defaultPensionDate, {
+        months: maxMonthPensionDelay,
+      }).getFullYear()
+
+      for (let i = minYear; i <= maxYear; i += 1) {
+        options.push({
+          label: String(i),
+          value: i,
+        })
       }
+    }
+
+    return options
+  }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
 
   const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
       ?.label ?? dateOfCalculationsOptions[0].label
   }`
-
-  const defaultPensionDate = birthdate
-    ? add(new Date(birthdate), {
-        years: defaultPensionAge,
-      })
-    : null
-
-  const monthOffset =
-    defaultPensionDate && startDate
-      ? differenceInMonths(new Date(startDate), defaultPensionDate)
-      : undefined
 
   return (
     <PensionCalculatorWrapper
@@ -408,11 +480,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           translationStrings.typeOfBasePensionLabel,
                         )}
                         options={basePensionTypeOptions}
-                        onSelect={(option) => {
-                          if (option) {
-                            setBasePensionType(option.value)
-                          }
-                        }}
                       />
                     </Box>
                   </Stack>
@@ -425,59 +492,100 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                 <GridRow>
                   <GridColumn offset={['0', '0', '0', '1/9']}>
                     <Stack space={3}>
-                      <Box className={styles.inputContainer}>
-                        <DatePickerController
-                          id={'birthdate' as keyof CalculationInput}
-                          name={'birthdate' as keyof CalculationInput}
-                          label={formatMessage(
-                            translationStrings.birthdateLabel,
-                          )}
-                          placeholder={formatMessage(
-                            translationStrings.birthdatePlaceholder,
-                          )}
-                          locale={activeLocale}
-                          minDate={birthdateRange.minDate}
-                          maxDate={birthdateRange.maxDate}
-                          minYear={birthdateRange.minDate.getFullYear()}
-                          maxYear={birthdateRange.maxDate.getFullYear()}
-                          onChange={(date) => {
-                            setBirthdate(date)
-                            const newStartDate = add(new Date(date), {
-                              years: defaultPensionAge,
-                            }).toISOString()
-                            methods.setValue('startDate', newStartDate)
-                            setStartDate(newStartDate)
-                          }}
-                        />
-                      </Box>
+                      <Stack space={1}>
+                        <Text variant="h4">
+                          {formatMessage(translationStrings.birthdateLabel)}
+                        </Text>
+                        <GridRow rowGap={3}>
+                          <GridColumn span="1/2">
+                            <SelectController
+                              id={'birthMonth' as keyof CalculationInput}
+                              name={'birthMonth' as keyof CalculationInput}
+                              options={monthOptions}
+                              size="sm"
+                              label={formatMessage(
+                                translationStrings.birthMonthLabel,
+                              )}
+                              placeholder={formatMessage(
+                                translationStrings.birthMonthPlaceholder,
+                              )}
+                              onSelect={(option) => {
+                                methods.setValue('startMonth', option.value)
+                              }}
+                            />
+                          </GridColumn>
+                          <GridColumn span="1/2">
+                            <SelectController
+                              id={'birthYear' as keyof CalculationInput}
+                              name={'birthYear' as keyof CalculationInput}
+                              options={birthYearOptions}
+                              size="sm"
+                              label={formatMessage(
+                                translationStrings.birthYearLabel,
+                              )}
+                              placeholder={formatMessage(
+                                translationStrings.birthYearPlaceholder,
+                              )}
+                              onSelect={(option) => {
+                                methods.setValue(
+                                  'startYear',
+                                  option.value + defaultPensionAge,
+                                )
+                              }}
+                            />
+                          </GridColumn>
+                        </GridRow>
+                      </Stack>
 
                       <Text variant="h2" as="h2">
                         {formatMessage(
                           translationStrings.startOfPaymentsHeading,
                         )}
                       </Text>
-                      <Box className={styles.inputContainer}>
-                        <DatePickerController
-                          id={'startDate' as keyof CalculationInput}
-                          name={'startDate' as keyof CalculationInput}
-                          label={formatMessage(
-                            translationStrings.startDateLabel,
-                          )}
-                          placeholder={formatMessage(
-                            translationStrings.startDatePlaceholder,
-                          )}
-                          locale={activeLocale}
-                          minDate={startDateRange.minDate}
-                          maxDate={startDateRange.maxDate}
-                          minYear={startDateRange.minDate.getFullYear()}
-                          maxYear={startDateRange.maxDate.getFullYear()}
-                          disabled={
-                            !birthdate &&
-                            !methods.formState.defaultValues?.birthdate
-                          }
-                          onChange={setStartDate}
-                        />
-                      </Box>
+
+                      <Stack space={1}>
+                        <Text variant="h4">
+                          {formatMessage(translationStrings.startDateLabel)}
+                        </Text>
+                        <GridRow rowGap={3}>
+                          <GridColumn span="1/2">
+                            <SelectController
+                              id={'startMonth' as keyof CalculationInput}
+                              name={'startMonth' as keyof CalculationInput}
+                              disabled={
+                                typeof birthMonth !== 'number' ||
+                                typeof birthYear !== 'number'
+                              }
+                              options={monthOptions}
+                              size="sm"
+                              label={formatMessage(
+                                translationStrings.startMonthLabel,
+                              )}
+                              placeholder={formatMessage(
+                                translationStrings.startMonthPlaceholder,
+                              )}
+                            />
+                          </GridColumn>
+                          <GridColumn span="1/2">
+                            <SelectController
+                              id={'startYear' as keyof CalculationInput}
+                              name={'startYear' as keyof CalculationInput}
+                              disabled={
+                                typeof birthMonth !== 'number' ||
+                                typeof birthYear !== 'number'
+                              }
+                              options={startYearOptions}
+                              size="sm"
+                              label={formatMessage(
+                                translationStrings.startYearLabel,
+                              )}
+                              placeholder={formatMessage(
+                                translationStrings.startYearPlaceholder,
+                              )}
+                            />
+                          </GridColumn>
+                        </GridRow>
+                      </Stack>
 
                       {typeof monthOffset === 'number' && (
                         <Text>
@@ -538,7 +646,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           options={childCountOptions}
                           onSelect={(option) => {
                             if (option) {
-                              setChildCount(option.value)
                               methods.setValue('childSupportCount', 0)
                             }
                           }}
@@ -561,8 +668,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         </Box>
                       )}
 
-                      {(basePensionType === BasePensionType.Disability ||
-                        basePensionType === BasePensionType.Rehabilitation) && (
+                      {(typeOfBasePension === BasePensionType.Disability ||
+                        typeOfBasePension ===
+                          BasePensionType.Rehabilitation) && (
                         <Box className={styles.inputContainer}>
                           <InputController
                             id={
