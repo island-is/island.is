@@ -10,7 +10,6 @@ import {
   InlineResponse2002,
   InlineResponse2002Data,
   InlineResponse2002ExtraApplicationFields,
-  InlineResponse2002Simenntunarstodvar,
 } from '../../../gen/fetch'
 
 export const mapUglaPrograms = (
@@ -71,12 +70,9 @@ export const mapUglaPrograms = (
             descriptionIs: field.descriptionIs,
             descriptionEn: field.descriptionEn,
             required: field.required || false,
-            fieldType:
-              program.externalId == '730000_20246'
-                ? FieldType.TESTING_SITE
-                : (field.fieldType as unknown as FieldType),
+            fieldType: field.fieldType as unknown as FieldType,
             uploadAcceptedFileType: field.uploadAcceptedFileType,
-            options: mapOptions(program, field), //TODO missing in api
+            options: mapOptions(program, field),
           }),
         ),
         specializations: program.kjorsvid?.map((k) => ({
@@ -98,23 +94,11 @@ const mapOptions = (
   field: InlineResponse2002ExtraApplicationFields,
 ): string | undefined => {
   const type = field.fieldType as FieldType
+  // More fields can be added here
   switch (type) {
     case FieldType.TESTING_SITE:
-      try {
-        console.log(
-          'simenntunarstodvar',
-          JSON.stringify(program?.simenntunarstodvar),
-        )
-      } catch (error) {
-        console.log('SIMENNTUNARSTODVAR !!!!!!! -=0---0-0--0-0-00-0', error)
-        throw error
-      }
-
-      return JSON.stringify(program?.simenntunarstodvar) || 'Testing_site'
-    case FieldType.UPLOAD:
-      return `UPLOAD ${JSON.stringify(program?.simenntunarstodvar)}`
+      return JSON.stringify(program?.simenntunarstodvar) || undefined
     default:
-      return JSON.stringify(program?.simenntunarstodvar)
-    //return undefined
+      return undefined
   }
 }
