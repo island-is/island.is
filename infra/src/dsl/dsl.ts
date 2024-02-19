@@ -262,6 +262,7 @@ export class ServiceBuilder<ServiceType extends string> {
   private stripPostfix(name?: string, opts?: { postfixes?: string[]; extraPostfixes?: string[] }): string | undefined
   private stripPostfix(name?: string, { postfixes = ['-worker', '-job'], extraPostfixes = [] } = {}) {
     if (!name) return
+    // console.log(`Stripping postfixes from ${name} with:`, { postfixes, extraPostfixes })
     postfixes.push(...extraPostfixes)
     // Strip postfixes from database name
     for (const postfix of postfixes) {
@@ -353,9 +354,9 @@ export class ServiceBuilder<ServiceType extends string> {
     if (withDB) {
       this.serviceDef.postgres = ic.postgres
     }
-    console.log(`Created initcontainer for ${this.serviceDef.name}:`, {
-      ic: this.serviceDef.initContainers,
-    })
+    // console.log(`Created initcontainer for ${this.serviceDef.name}:`, {
+    //   ic: this.serviceDef.initContainers,
+    // })
     return this
   }
 
@@ -364,9 +365,9 @@ export class ServiceBuilder<ServiceType extends string> {
   db(postgres?: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
     this.serviceDef.postgres = this.grantDB(this.serviceDef.postgres, postgres)
-    console.log(`Setting DB config for ${this.serviceDef.name} to:`, {
-      postgres: this.serviceDef.postgres,
-    })
+    // console.log(`Setting DB config for ${this.serviceDef.name} to:`, {
+    //   postgres: this.serviceDef.postgres,
+    // })
     return this
   }
 
@@ -475,7 +476,7 @@ export class ServiceBuilder<ServiceType extends string> {
         ))
     })
 
-    console.log(`Setting DB config for ${this.serviceDef.name} to:`, postgres)
+    // console.log(`Set default DB config for ${this.serviceDef.name} to:`, postgres)
 
     return postgres
   }
