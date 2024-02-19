@@ -37,7 +37,6 @@ import {
   SocialInsurancePensionCalculationPeriodIncomeType as PeriodIncomeType,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
