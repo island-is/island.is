@@ -371,7 +371,6 @@ export class SignatureCollectionAdminClientService {
       ? newEndDate.getTime() === dagsetningLokar.getTime()
       : false
 
-    // const listStatus = await this.listStatus(listId, auth)
     // Can only toggle list if it is in review or reviewed
     if (success && list.lokadHandvirkt) {
       await this.getApiWithAuth(
