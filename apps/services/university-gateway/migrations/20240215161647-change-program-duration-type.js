@@ -18,7 +18,7 @@ module.exports = {
 
   //Down will most likely result in loss of data as we are casting from FLOAT to INTEGER
   down(queryInterface, Sequelize) {
-    return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
       queryInterface.changeColumn(
         'program',
         'duration_in_years',
@@ -29,6 +29,6 @@ module.exports = {
           transaction: t,
         },
       ),
-    ])
+    )
   },
 }
