@@ -307,20 +307,21 @@ export class ServiceBuilder<ServiceType extends string> {
     } = {}
   ): PostgresInfo {
     if (copy) {
-      const targetCopy = this.grantDB({}, target, { copy: false })
+      const targetCopy = merge({}, target)
       return this.grantDB(targetCopy, postgres, { copy: false })
     }
     if (!target) {
       target = {}
     }
-    const dbExtensions = (target.extensions ?? []).concat(
-      postgres?.extensions ?? [],
-    )
+    const dbExtensions = new Set([
+      ...target.extensions ?? [],
+      ...postgres?.extensions ?? [],
+    ])
 
     merge(target, postgres)
     merge(target, this.postgresDefaults(postgres ?? {}))
-    if (dbExtensions) target.extensions = dbExtensions
-    if (target.extensions?.length === 0) target.extensions = undefined
+    if (dbExtensions.size > 0) target.extensions = [...dbExtensions.keys()]
+    if (target.extensions?.length === 0) delete target.extensions
 
     return target
   }
