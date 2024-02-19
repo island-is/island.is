@@ -2,13 +2,12 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  EmptyState,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 import { Box } from '@island.is/island-ui/core'
-import { ipMessages, ipMessages as messages } from '../../lib/messages'
+import { ipMessages } from '../../lib/messages'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
@@ -106,8 +105,8 @@ const IntellectualPropertiesOverview = () => {
                   ),
                   ip.status,
                 )
-              case 'IntellectualPropertiesPatentIS':
               case 'IntellectualPropertiesPatentEP':
+              case 'IntellectualPropertiesPatentIS':
               case 'IntellectualPropertiesSPC':
                 return generateActionCard(
                   index,

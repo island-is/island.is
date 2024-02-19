@@ -119,8 +119,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
 
     setDriversLicenseSuspensionRequest(indictmentCounts)
 
-    setWorkingCase((theCase) => ({
-      ...theCase,
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
       indictmentCounts,
     }))
   }, [
@@ -182,8 +182,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
 
         setDriversLicenseSuspensionRequest(indictmentCounts)
 
-        setWorkingCase((theCase) => ({
-          ...theCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           indictmentCounts,
         }))
       }
@@ -281,7 +281,6 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'indictmentIntroduction',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 indictmentIntroductionErrorMessage,
                 setIndictmentIntroductionErrorMessage,
@@ -385,7 +384,6 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'demands',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   demandsErrorMessage,
                   setDemandsErrorMessage,

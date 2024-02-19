@@ -385,6 +385,11 @@ export const m = defineMessages({
     defaultMessage: 'Markaðsverðmæti á dánardegi',
     description: '',
   },
+  propertyNumber: {
+    id: 'es.application:propertyNumber',
+    defaultMessage: 'Fastanúmer',
+    description: 'Property number label',
+  },
   propertyShare: {
     id: 'ir.application:propertyShare',
     defaultMessage: 'Eignarhluti',
@@ -468,6 +473,16 @@ export const m = defineMessages({
   bankAccount: {
     id: 'ir.application:bankAccount',
     defaultMessage: 'Bankareikningur',
+    description: '',
+  },
+  bankAccountForeign: {
+    id: 'ir.application:bankAccountForeign',
+    defaultMessage: 'Erlendur bankareikningur',
+    description: '',
+  },
+  bankAccountForeignLabel: {
+    id: 'ir.application:bankAccountForeignLabel',
+    defaultMessage: 'Erlendur bankareikningur',
     description: '',
   },
   bankAccountBalance: {
@@ -1195,5 +1210,23 @@ export const m = defineMessages({
     id: 'ir.application:taxFreeLimit',
     defaultMessage: '5757759',
     description: '',
+  },
+
+  // general
+  yes: {
+    id: 'ir.application:yes',
+    defaultMessage: 'Já',
+    description: '',
+  },
+  no: {
+    id: 'ir.application:no',
+    defaultMessage: 'Nei',
+    description: '',
+  },
+  // Error messages
+  errorPropertyNumber: {
+    id: 'es.application:error.errorPropertyNumber',
+    defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
+    description: 'Property number is invalid',
   },
 })

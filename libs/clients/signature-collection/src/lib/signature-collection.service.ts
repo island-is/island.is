@@ -235,7 +235,7 @@ export class SignatureCollectionClientService {
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
-          canUnsign: signature.isDigital && signature.valid,
+          canUnsign: signature.isDigital && signature.valid && list.active,
           ...list,
         } as SignedList
       }),
@@ -245,7 +245,6 @@ export class SignatureCollectionClientService {
   async canSign({
     requirementsMet = false,
     canSignInfo,
-    isActive,
     activeSignature,
     signatures,
   }: CanSignInput): Promise<Success> {
@@ -255,13 +254,11 @@ export class SignatureCollectionClientService {
 
     const reasons = mapReasons({
       ...canSignInfo,
-      active: isActive,
       notSigned: activeSignature === undefined,
       noInvalidSignature,
     })
     return {
-      success:
-        requirementsMet && isActive && !activeSignature && noInvalidSignature,
+      success: requirementsMet && !activeSignature && noInvalidSignature,
       reasons,
     }
   }
@@ -324,11 +321,11 @@ export class SignatureCollectionClientService {
     )
     const { success: canSign, reasons: canSignInfo } = await this.canSign({
       requirementsMet: user.maKjosa,
-      isActive,
       canSignInfo: user.maKjosaInfo,
       activeSignature,
       signatures,
     })
+
     return {
       nationalId: user.kennitala ?? '',
       name: user.nafn ?? '',

@@ -58,7 +58,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   previousOmbudsmanComplaint: z
     .object({
       Answer: z.enum([YES, NO]),
-      moreInfo: z.string(),
+      moreInfo: z.string().optional(),
     })
     .refine(
       (val) => {

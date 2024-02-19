@@ -35,7 +35,6 @@ const RulingInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
           'ruling',
           event.target.value,
           [],
-          workingCase,
           setWorkingCase,
         )
       }
