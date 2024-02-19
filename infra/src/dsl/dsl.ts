@@ -263,6 +263,8 @@ export class ServiceBuilder<ServiceType extends string> {
     for (const postfix of ['-worker', '-job']) {
       if (name.endsWith(postfix)) {
         name = name.replace(postfix, '')
+        // Recurse to strip multiple postfixes
+        return this.stripPostfix(name)
       }
     }
     return name
