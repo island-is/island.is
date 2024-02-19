@@ -6,12 +6,10 @@ export interface Area {
   max: number
 }
 
-export function mapArea(area: SvaediDTO): Area {
-  return {
-    id: area?.id?.toString() ?? '',
-    name: area?.nafn?.toString() ?? '',
-    min: area?.fjoldi ?? 0,
-    // TODO: update when max is available
-    max: area?.fjoldiMax ?? 0,
-  }
-}
+export const mapArea = (area: SvaediDTO): Area => ({
+  id: area?.id?.toString() ?? '',
+  name: area?.nafn?.toString() ?? '',
+  min: area?.fjoldi ?? 0,
+  // TODO: update when max is available
+  max: area?.fjoldiMax ?? 0,
+})
