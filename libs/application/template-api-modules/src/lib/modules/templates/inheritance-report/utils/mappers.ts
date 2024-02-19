@@ -15,7 +15,7 @@ const initialMapper = <T>(element: T) => {
     initial: true,
     enabled: true,
     propertyValuation: '0',
-    propertyShare: '0',
+    share: '0',
   }
 }
 
@@ -62,6 +62,7 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
     },
     vehicles: {
       data: vehicles,
+      hasModified: false,
     },
     guns: {
       data: guns,
@@ -137,7 +138,7 @@ export const expandAnswers = (
             assetNumber: realEstate.assetNumber ?? '',
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
-            propertyShare: realEstate.propertyShare ?? '0',
+            share: realEstate.share ?? '0',
           }
         }),
         hasModified: answers.assets.realEstate?.hasModified ?? false,
@@ -163,6 +164,7 @@ export const expandAnswers = (
             propertyValuation: vehicle.propertyValuation ?? '',
           }
         }),
+        hasModified: answers.assets.vehicles?.hasModified ?? false,
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
