@@ -472,7 +472,7 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 }
 
-const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
+const postgresIdentifier = (id?: string) => id?.replace(/[\W\s]/gi, '_')
 
 export const ref = (renderer: (env: Context) => string) => {
   return renderer
