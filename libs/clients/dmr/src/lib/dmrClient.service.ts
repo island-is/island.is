@@ -1,4 +1,6 @@
-import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+
 import { Injectable } from '@nestjs/common'
 import {
   DefaultApi as DmrApi,
@@ -34,31 +36,22 @@ export class DmrClientService {
 
   public async departments(
     auth: User,
-    params?: JournalControllerDepartmentsRequest,
+    params: JournalControllerDepartmentsRequest,
   ): Promise<JournalAdvertDepartmentsResponse> {
-    let query = ''
-    if (params) {
-      query = `?${Object.keys(params)
-        .map((key) => `${key}=${params[key as keyof typeof params]}`)
-        .join('&')}`
-    }
-    return await fetch(`${BASE_PATH}/departments${query}`).then((res) =>
-      res.json(),
-    )
+    const res = await this.dmrApi.journalControllerDepartments(params ?? {})
+
+    console.log(res)
+
+    return Promise.resolve(res)
   }
 
   public async types(
     auth: User,
-    params?: JournalControllerTypesRequest,
+    params: JournalControllerTypesRequest,
   ): Promise<JournalAdvertTypesResponse> {
-    let query = ''
-    if (params) {
-      query = `?${Object.keys(params)
-        .map((key) => `${key}=${params[key as keyof typeof params]}`)
-        .join('&')}`
-    }
+    const res = await this.dmrApi.journalControllerTypes(params)
 
-    return await fetch(`${BASE_PATH}/types${query}`).then((res) => res.json())
+    return Promise.resolve(res)
   }
 
   public async categories(

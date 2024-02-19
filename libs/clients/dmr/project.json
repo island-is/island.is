@@ -29,7 +29,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl http://localhost:3000/swagger-json > src/clientConfig.json",
+          "curl https://api.official-journal.dev.dmr-dev.cloud/swagger-json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
