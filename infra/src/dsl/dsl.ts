@@ -256,11 +256,20 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   private stripPostfix(name: string): string
-  private stripPostfix(name: string, opts?: { postfixes?: string[]; extraPostfixes?: string[] }): string
+  private stripPostfix(
+    name: string,
+    opts?: { postfixes?: string[]; extraPostfixes?: string[] },
+  ): string
   private stripPostfix(name: undefined): undefined
   private stripPostfix(name?: string): string | undefined
-  private stripPostfix(name?: string, opts?: { postfixes?: string[]; extraPostfixes?: string[] }): string | undefined
-  private stripPostfix(name?: string, { postfixes = ['-worker', '-job'], extraPostfixes = [] } = {}) {
+  private stripPostfix(
+    name?: string,
+    opts?: { postfixes?: string[]; extraPostfixes?: string[] },
+  ): string | undefined
+  private stripPostfix(
+    name?: string,
+    { postfixes = ['-worker', '-job'], extraPostfixes = [] } = {},
+  ) {
     if (!name) return
     // console.log(`Stripping postfixes from ${name} with:`, { postfixes, extraPostfixes })
     postfixes.push(...extraPostfixes)
@@ -452,14 +461,16 @@ export class ServiceBuilder<ServiceType extends string> {
 
     // Apply sane defaults, templated by `name` etc.
     merge(postgres, {
-      username: postgres.username ?? postgresIdentifier(
-        this.stripPostfix(
-          defaultName,
-        )
-        + (postgres.readOnly ? '/read' : '')),
-      passwordSecret: postgres.passwordSecret ?? `/k8s/${this.stripPostfix(
-        defaultName,
-      )}${postgres.readOnly ? '/readonly' : ''}/DB_PASSWORD`,
+      username:
+        postgres.username ??
+        postgresIdentifier(
+          this.stripPostfix(defaultName) + (postgres.readOnly ? '/read' : ''),
+        ),
+      passwordSecret:
+        postgres.passwordSecret ??
+        `/k8s/${this.stripPostfix(defaultName)}${
+          postgres.readOnly ? '/readonly' : ''
+        }/DB_PASSWORD`,
       // These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
       // readOnly: postgres.readOnly,
@@ -470,10 +481,7 @@ export class ServiceBuilder<ServiceType extends string> {
     merge(postgres, pg) // Set overrides
     merge(postgres, {
       // `name` is the DB name, which is a postgres identifier
-      name: postgresIdentifier(
-        this.stripPostfix(
-          defaultName,
-        ))
+      name: postgresIdentifier(this.stripPostfix(defaultName)),
     })
 
     // console.log(`Set default DB config for ${this.serviceDef.name} to:`, postgres)
