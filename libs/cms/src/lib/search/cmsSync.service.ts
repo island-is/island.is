@@ -33,6 +33,7 @@ import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
 import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
+import { CustomPageSyncService } from './importers/customPage.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -78,6 +79,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly eventSyncService: EventSyncService,
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
+    private readonly customPageSyncService: CustomPageSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -101,6 +103,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.eventSyncService,
       this.manualSyncService,
       this.manualChapterItemSyncService,
+      this.customPageSyncService,
     ]
   }
 
