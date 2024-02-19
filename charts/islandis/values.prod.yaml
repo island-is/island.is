@@ -140,6 +140,7 @@ air-discount-scheme-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -154,7 +155,7 @@ air-discount-scheme-backend:
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+      DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -172,7 +173,7 @@ air-discount-scheme-backend:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
@@ -679,6 +680,7 @@ application-system-api:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -693,7 +695,7 @@ application-system-api:
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+      DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -720,7 +722,7 @@ application-system-api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
     DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
@@ -837,7 +839,7 @@ application-system-api-worker:
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
     DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD'
@@ -1376,7 +1378,7 @@ icelandic-names-registry-backend:
           - 'db:seed:all'
         command:
           - 'npx'
-        name: 'seeds'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
@@ -1697,6 +1699,7 @@ regulations-admin-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2000,6 +2003,7 @@ service-portal-api:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2014,7 +2018,7 @@ service-portal-api:
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+      DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2034,7 +2038,7 @@ service-portal-api:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2118,7 +2122,7 @@ service-portal-api-worker:
   schedule: '0 0 31 12 *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2171,6 +2175,7 @@ services-documents:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2355,7 +2360,6 @@ services-sessions-worker:
     - 'node'
   enabled: true
   env:
-    DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2397,6 +2401,7 @@ services-sessions-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2405,7 +2410,6 @@ services-sessions-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2773,6 +2777,7 @@ skilavottord-ws:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2956,6 +2961,7 @@ user-notification-cleanup-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -3060,6 +3066,7 @@ user-notification-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
