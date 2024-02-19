@@ -346,8 +346,8 @@ export class ServiceBuilder<ServiceType extends string> {
     )
     if (withDB || ic.postgres) {
       ic.postgres = this.grantDB(
-        ic.postgres,
         this.serviceDef.initContainers?.postgres,
+        ic.postgres,
       )
       withDB = true
     }
