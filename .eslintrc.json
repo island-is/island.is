@@ -217,6 +217,8 @@
             "skipTemplates": true
           }
         ],
+        "prefer-arrow-callback": "warn",
+        "func-style": ["warn", "expression"],
         "local-rules/require-reduce-defaults": "error",
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
