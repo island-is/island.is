@@ -294,17 +294,19 @@ export class ServiceBuilder<ServiceType extends string> {
    * @param {PostgresInfo} [target] - The target object to be merged. If not provided, an empty object is used.
    * @param {PostgresInfo} [postgres] - The object to merge with the target object. If not provided, an empty object is used.
    * @param {Object} [opts]  - Optional flag indicating whether to create a copy of the target object before merging.
-  * @param {boolean} [opts.copy=false] - Optional flag indicating whether to create a copy of the target object before merging.
+   * @param {boolean} [opts.copy=false] - Optional flag indicating whether to create a copy of the target object before merging.
    * @returns {PostgresInfo} target - The resulting object after merging.
    */
-  private grantDB(target?: PostgresInfo, postgres?: PostgresInfo, opts?: { copy: boolean }): PostgresInfo
+  private grantDB(
+    target?: PostgresInfo,
+    postgres?: PostgresInfo,
+    opts?: { copy: boolean },
+  ): PostgresInfo
   private grantDB(target?: PostgresInfo, postgres?: PostgresInfo): PostgresInfo
   private grantDB(
     target?: PostgresInfo,
     postgres?: PostgresInfo,
-    {
-      copy = false,
-    } = {}
+    { copy = false } = {},
   ): PostgresInfo {
     if (copy) {
       const targetCopy = merge({}, target)
@@ -314,8 +316,8 @@ export class ServiceBuilder<ServiceType extends string> {
       target = {}
     }
     const dbExtensions = new Set([
-      ...target.extensions ?? [],
-      ...postgres?.extensions ?? [],
+      ...(target.extensions ?? []),
+      ...(postgres?.extensions ?? []),
     ])
 
     merge(target, postgres)
@@ -379,7 +381,11 @@ export class ServiceBuilder<ServiceType extends string> {
   db(postgres: PostgresInfo): this
   db(postgres?: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
-    if (postgres) { console.log(`Configuring custom DB for ${this.serviceDef.name} with:`, { postgres }) }
+    if (postgres) {
+      console.log(`Configuring custom DB for ${this.serviceDef.name} with:`, {
+        postgres,
+      })
+    }
     this.serviceDef.postgres = this.grantDB(this.serviceDef.postgres, postgres)
     // console.log(`Setting DB config for ${this.serviceDef.name} to:`, {
     //   postgres: this.serviceDef.postgres,
@@ -400,7 +406,12 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   migrations(postgres?: PostgresInfo): this {
-    if (postgres) { console.log(`Configuring custom migrations for ${this.serviceDef.name} with:`, { postgres }) }
+    if (postgres) {
+      console.log(
+        `Configuring custom migrations for ${this.serviceDef.name} with:`,
+        { postgres },
+      )
+    }
     postgres = this.grantDB(this.serviceDef.initContainers?.postgres, postgres)
     return this.initContainer({
       containers: [
@@ -414,7 +425,11 @@ export class ServiceBuilder<ServiceType extends string> {
     })
   }
   seed(postgres?: PostgresInfo): this {
-    if (postgres) { console.log(`Configuring custom seed for ${this.serviceDef.name} with:`, { postgres }) }
+    if (postgres) {
+      console.log(`Configuring custom seed for ${this.serviceDef.name} with:`, {
+        postgres,
+      })
+    }
     postgres = this.grantDB(this.serviceDef.initContainers?.postgres, postgres)
     return this.initContainer({
       containers: [
@@ -496,7 +511,10 @@ export class ServiceBuilder<ServiceType extends string> {
     // console.log(`Set default DB config for ${this.serviceDef.name} to:`, postgres)
 
     if (Object.keys(pg).length > 0) {
-      console.log(`Configured custom DB for ${this.serviceDef.name} with:`, { input: pg, output: postgres, })
+      console.log(`Configured custom DB for ${this.serviceDef.name} with:`, {
+        input: pg,
+        output: postgres,
+      })
     }
 
     return postgres
