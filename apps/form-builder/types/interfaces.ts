@@ -147,6 +147,14 @@ export interface IFormBuilder {
   documentTypes: ICertificate[]
   inputTypes: IInputTypes[]
   applicantTypes: IApplicantType[]
+  listTypes: IListType[]
+}
+
+export interface IListType {
+  id: number
+  name: ILanguage
+  description: ILanguage
+  type: string
 }
 
 export interface IListItem {

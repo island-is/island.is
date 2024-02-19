@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import FormBuilderContext from '../../../../../context/FormBuilderContext'
 import { addGroup, addInput, deleteItem } from '../../../../../services/apiService'
-import { ItemType } from '../../../../../types/interfaces'
+import { IGroup, IInput, ItemType } from '../../../../../types/interfaces'
 
 export default function NavButtons() {
   const { lists, listsDispatch } = useContext(FormBuilderContext)
@@ -55,7 +55,8 @@ export default function NavButtons() {
     }
   }
 
-  function remove(type: ItemType, guid: UniqueIdentifier, id: number) {
+  async function remove(type: ItemType, guid: UniqueIdentifier, id: number) {
+    await deleteItem(type, id)
     const actionTypes: { [key: string]: string } = {
       Step: 'removeStep',
       Group: 'removeGroup',
@@ -67,6 +68,6 @@ export default function NavButtons() {
         guid: guid,
       },
     })
-    deleteItem(type, id)
+    console.log('currentActiveItem', activeItem)
   }
 }

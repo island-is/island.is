@@ -18,29 +18,29 @@ export type ILang = 'is' | 'en'
 
 type DndAction =
   | {
-      type: 'stepOverStep'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'stepOverStep'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'groupOverStep'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'groupOverStep'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'groupOverGroup'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'groupOverGroup'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'inputOverGroup'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'inputOverGroup'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'inputOverInput'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'inputOverInput'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'listItemOverListItem'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'listItemOverListItem'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
 
 type AddRemoveAction =
   | { type: 'addStep'; payload: { data: IStep } }
@@ -52,90 +52,90 @@ type AddRemoveAction =
   | { type: 'addListItem' }
   | { type: 'removeListItem'; payload: { guid: UniqueIdentifier } }
   | {
-      type: 'addInputRelevantParty'
-      payload: { data: IInput; type: string; name: ILanguage }
-    }
+    type: 'addInputRelevantParty'
+    payload: { data: IInput; type: string; name: ILanguage }
+  }
 
 type ChangeAction =
   | {
-      type: 'changeName'
-      payload: {
-        activeType: ItemType
-        index: number
-        lang: ILang
-        newValue: string
-      }
+    type: 'changeName'
+    payload: {
+      activeType: ItemType
+      index: number
+      lang: ILang
+      newValue: string
     }
+  }
   | {
-      type: 'changeInputType'
-      payload: {
-        index: number
-        newValue: string | number
-        inputSettings: unknown
-      }
+    type: 'changeInputType'
+    payload: {
+      index: number
+      newValue: string | number
+      inputSettings: unknown
     }
+  }
   | {
-      type: 'setIsRequired'
-      payload: { guid: UniqueIdentifier; isRequired: boolean }
-    }
+    type: 'setIsRequired'
+    payload: { guid: UniqueIdentifier; isRequired: boolean }
+  }
   | { type: 'setDescription'; payload: { lang: ILang; newValue: string } }
   | {
-      type: 'changeInputName'
-      payload: { guid: UniqueIdentifier; lang: ILang; newValue: string }
-    }
+    type: 'changeInputName'
+    payload: { guid: UniqueIdentifier; lang: ILang; newValue: string }
+  }
 
 type ControlAction =
   | {
-      type: 'setActiveItem'
-      payload: { type: ItemType; data: IStep | IGroup | IInput }
-    }
+    type: 'setActiveItem'
+    payload: { type: ItemType; data: IStep | IGroup | IInput }
+  }
   | { type: 'setActiveListItem'; payload: { listItem: IListItem } }
 
 type InputSettingsAction =
   | { type: 'timeInterval'; payload: { data: number } }
   | { type: 'setInputSettings'; payload: { inputSettings: IInputSettings } }
   | {
-      type: 'setMessageWithLinkSettings'
-      payload: {
-        property: 'hnapptexti' | 'url' | 'erHlekkur'
-        value?: string
-        checked?: boolean
-        lang: ILang
-      }
+    type: 'setMessageWithLinkSettings'
+    payload: {
+      property: 'hnapptexti' | 'url' | 'erHlekkur'
+      value?: string
+      checked?: boolean
+      lang: ILang
     }
+  }
   | {
-      type: 'setFileUploadSettings'
-      payload: {
-        property: 'erFjolval' | 'fjoldi' | 'hamarksstaerd' | 'tegundir'
-        checked?: boolean
-        value: number | string
-      }
+    type: 'setFileUploadSettings'
+    payload: {
+      property: 'erFjolval' | 'fjoldi' | 'hamarksstaerd' | 'tegundir'
+      checked?: boolean
+      value: number | string
     }
+  }
   | {
-      type: 'setNumberInputSettings'
-      payload: {
-        property: 'lagmarkslengd' | 'hamarkslengd' | 'laggildi' | 'hagildi'
-        value: number
-      }
+    type: 'setNumberInputSettings'
+    payload: {
+      property: 'lagmarkslengd' | 'hamarkslengd' | 'laggildi' | 'hagildi'
+      value: number
     }
+  }
   | {
-      type: 'setListItemSelected'
-      payload: { guid: UniqueIdentifier; checked: boolean }
-    }
+    type: 'setListItemSelected'
+    payload: { guid: UniqueIdentifier; checked: boolean }
+  }
   | {
-      type: 'setListItem'
-      payload: {
-        property: 'text' | 'description'
-        lang: ILang
-        value: string
-        listItemGuid: UniqueIdentifier
-      }
+    type: 'setListItem'
+    payload: {
+      property: 'text' | 'description'
+      lang: ILang
+      value: string
+      listItemGuid: UniqueIdentifier
     }
+  }
   | { type: 'setMultiSet'; payload: { checked: boolean } }
   | {
-      type: 'setRelevantPartiesSettings'
-      payload: { property: 'type' | 'name'; lang?: ILang; type: string }
-    }
+    type: 'setRelevantPartiesSettings'
+    payload: { property: 'type' | 'name'; lang?: ILang; type: string }
+  }
 
 export type Action =
   | DndAction
@@ -338,21 +338,40 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
     //Add - end
     // Remove
     case 'removeStep': {
+      const currentIndex = steps.findIndex((s) => s.guid === activeItem.data.guid)
+      const hasAnotherInputStep = steps[currentIndex - 1].type === 'Innsláttur'
+      const newActiveItem: ActiveItem = {
+        type: 'Step',
+        data: hasAnotherInputStep ? steps[currentIndex - 1] : null,
+      }
       return {
         ...lists,
         steps: steps.filter((s) => s.guid !== action.payload.guid),
+        activeItem: newActiveItem
       }
     }
     case 'removeGroup': {
+      const newActiveItem: ActiveItem = {
+        type: 'Step',
+        data: steps.find((s) => s.guid === (activeItem.data as IGroup).stepGuid)
+      }
       return {
         ...lists,
         groups: groups.filter((g) => g.guid !== action.payload.guid),
+        activeItem: newActiveItem
       }
     }
     case 'removeInput': {
+      const newActiveItem: ActiveItem = {
+        type: 'Group',
+        data: groups.find((g) => g.guid === (activeItem.data as IInput).groupGuid),
+      }
+      console.log('activeItem', activeItem)
+      console.log('newActiveItem', newActiveItem)
       return {
         ...lists,
         inputs: inputs.filter((i) => i.guid !== action.payload.guid),
+        activeItem: newActiveItem
       }
     }
     // Remove - end

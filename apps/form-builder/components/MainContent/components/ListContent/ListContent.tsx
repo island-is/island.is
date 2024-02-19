@@ -37,8 +37,13 @@ const predeterminedLists = [
 
 export default function ListContent({ setInListBuilder }: Props) {
   const [radio, setRadio] = useState([true, false])
-  const { lists, listsDispatch } = useContext(FormBuilderContext)
+  const { lists, listsDispatch, formBuilder } = useContext(FormBuilderContext)
   const { activeItem } = lists
+  console.log(formBuilder.listTypes)
+  const listTypes = formBuilder.listTypes.map(l => {
+    return { label: l.name.is, value: l.type }
+  })
+  console.log('listTypes', listTypes)
   return (
     <Stack space={2}>
       <Row>
@@ -76,7 +81,7 @@ export default function ListContent({ setInListBuilder }: Props) {
             placeholder="Veldu lista tegund"
             name="predeterminedLists"
             label="Tilbúnir fellilistar"
-            options={predeterminedLists}
+            options={listTypes}
             backgroundColor="blue"
             onChange={async (e: { label: string; value: string }) => {
               const newList = await getList(e.value)
