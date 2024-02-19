@@ -97,7 +97,7 @@ const mapOptions = (
   // More fields can be added here
   switch (type) {
     case FieldType.TESTING_SITE:
-      return JSON.stringify(program?.simenntunarstodvar) || undefined
+      return JSON.stringify(program?.simenntunarstodvar) ?? undefined
     default:
       return undefined
   }
