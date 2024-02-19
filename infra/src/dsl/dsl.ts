@@ -256,11 +256,15 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   private stripPostfix(name: string): string
+  private stripPostfix(name: string, opts?: { postfixes?: string[]; extraPostfixes?: string[] }): string
   private stripPostfix(name: undefined): undefined
-  private stripPostfix(name?: string) {
+  private stripPostfix(name?: string): string | undefined
+  private stripPostfix(name?: string, opts?: { postfixes?: string[]; extraPostfixes?: string[] }): string | undefined
+  private stripPostfix(name?: string, { postfixes = ['-worker', '-job'], extraPostfixes = [] } = {}) {
     if (!name) return
-    // Strip -worker and -job postfixes from database name
-    for (const postfix of ['-worker', '-job']) {
+    postfixes.push(...extraPostfixes)
+    // Strip postfixes from database name
+    for (const postfix of postfixes) {
       if (name.endsWith(postfix)) {
         name = name.replace(postfix, '')
         // Recurse to strip multiple postfixes
