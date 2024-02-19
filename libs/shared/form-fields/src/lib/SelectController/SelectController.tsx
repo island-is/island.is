@@ -23,7 +23,7 @@ interface SelectControllerProps<Value> {
   isSearchable?: boolean
   required?: boolean
   rules?: RegisterOptions
-  size?: SelectProps<Value>['size']
+  size?: 'xs' | 'sm' | 'md'
   internalKey?: string
 }
 
@@ -40,9 +40,9 @@ export const SelectController = <Value,>({
   backgroundColor,
   isSearchable,
   dataTestId,
-  size,
   required = false,
   rules,
+  size,
   internalKey,
 }: SelectControllerProps<Value> & TestSupport) => {
   const { clearErrors } = useFormContext()
