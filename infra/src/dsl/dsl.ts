@@ -368,9 +368,6 @@ export class ServiceBuilder<ServiceType extends string> {
       features: {},
       ...ic,
     }
-    if (withDB) {
-      this.serviceDef.postgres = ic.postgres
-    }
     // console.log(`Created initcontainer for ${this.serviceDef.name}:`, {
     //   ic: this.serviceDef.initContainers,
     // })
