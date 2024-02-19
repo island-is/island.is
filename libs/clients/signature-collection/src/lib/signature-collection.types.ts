@@ -50,7 +50,6 @@ export interface CanCreateInput {
 export interface CanSignInput {
   requirementsMet?: boolean
   canSignInfo?: EinstaklingurMaFrambodInfo
-  isActive: boolean
   activeSignature?: MedmaeliDTO
   signatures?: Signature[]
 }
