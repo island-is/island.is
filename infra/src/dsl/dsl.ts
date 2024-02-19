@@ -378,6 +378,7 @@ export class ServiceBuilder<ServiceType extends string> {
   db(postgres: PostgresInfo): this
   db(postgres?: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
+    if (postgres) { console.log(`Configuring custom DB for ${this.serviceDef.name} with:`, { postgres }) }
     this.serviceDef.postgres = this.grantDB(this.serviceDef.postgres, postgres)
     // console.log(`Setting DB config for ${this.serviceDef.name} to:`, {
     //   postgres: this.serviceDef.postgres,
@@ -398,6 +399,7 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   migrations(postgres?: PostgresInfo): this {
+    if (postgres) { console.log(`Configuring custom migrations for ${this.serviceDef.name} with:`, { postgres }) }
     postgres = this.grantDB(this.serviceDef.initContainers?.postgres, postgres)
     return this.initContainer({
       containers: [
@@ -411,6 +413,7 @@ export class ServiceBuilder<ServiceType extends string> {
     })
   }
   seed(postgres?: PostgresInfo): this {
+    if (postgres) { console.log(`Configuring custom seed for ${this.serviceDef.name} with:`, { postgres }) }
     postgres = this.grantDB(this.serviceDef.initContainers?.postgres, postgres)
     return this.initContainer({
       containers: [
@@ -490,6 +493,10 @@ export class ServiceBuilder<ServiceType extends string> {
     })
 
     // console.log(`Set default DB config for ${this.serviceDef.name} to:`, postgres)
+
+    if (Object.keys(pg).length > 0) {
+      console.log(`Configured custom DB for ${this.serviceDef.name} with:`, { input: pg, output: postgres, })
+    }
 
     return postgres
   }
