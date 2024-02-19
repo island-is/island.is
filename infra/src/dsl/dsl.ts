@@ -293,17 +293,22 @@ export class ServiceBuilder<ServiceType extends string> {
    *
    * @param {PostgresInfo} [target] - The target object to be merged. If not provided, an empty object is used.
    * @param {PostgresInfo} [postgres] - The object to merge with the target object. If not provided, an empty object is used.
-   * @param {boolean} [copy=false] - Whether to create a copy of the target object before merging. Defaults to false.
-   * @returns {PostgresInfo} - The resulting object after merging.
+   * @param {Object} [opts]  - Optional flag indicating whether to create a copy of the target object before merging.
+  * @param {boolean} [opts.copy=false] - Optional flag indicating whether to create a copy of the target object before merging.
+   * @returns {PostgresInfo} target - The resulting object after merging.
    */
+  private grantDB(target?: PostgresInfo, postgres?: PostgresInfo, opts?: { copy: boolean }): PostgresInfo
+  private grantDB(target?: PostgresInfo, postgres?: PostgresInfo): PostgresInfo
   private grantDB(
     target?: PostgresInfo,
     postgres?: PostgresInfo,
-    copy: boolean = false,
+    {
+      copy = false,
+    } = {}
   ): PostgresInfo {
     if (copy) {
-      const targetCopy = this.grantDB({}, target, false)
-      return this.grantDB(targetCopy, postgres, false)
+      const targetCopy = this.grantDB({}, target, { copy: false })
+      return this.grantDB(targetCopy, postgres, { copy: false })
     }
     if (!target) {
       target = {}
