@@ -17,6 +17,24 @@ export type Filters = {
   input: string
 }
 
+export enum ListStatus {
+  Active = 'Active',
+  InReview = 'InReview',
+  Reviewed = 'Reviewed',
+  Extendable = 'Extendable',
+  Inactive = 'Inactive',
+}
+
+export enum CollectionStatus {
+  InitialActive = 'InitialActive',
+  Active = 'Active',
+  InInitialReview = 'InInitialReview',
+  InReview = 'InReview',
+  Processing = 'Processing',
+  Processed = 'Processed',
+  Inactive = 'Inactive',
+}
+
 export const downloadFile = () => {
   const name = 'meðmæli.xlsx'
   const sheetData = [['Kennitala', 'Bls'], []]
