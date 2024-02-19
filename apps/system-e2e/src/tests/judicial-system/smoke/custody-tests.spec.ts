@@ -220,7 +220,10 @@ test.describe.serial('Custody tests', () => {
 
     // Confirmation
     await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
-    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      await page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
+    ])
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {
