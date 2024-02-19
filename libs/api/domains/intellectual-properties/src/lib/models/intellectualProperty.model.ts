@@ -3,8 +3,29 @@ import { Specification } from './specification.model'
 import { ApplicationLifecycle } from './applicationLifecycle.model'
 import { Classification } from './classification.model'
 import { ObjectType, Field, Int, InterfaceType } from '@nestjs/graphql'
+import { Design } from './design.model'
+import { Trademark } from './trademark.model'
+import { PatentEP } from './patentEP.model'
+import { SPC } from './spc.model'
+import { PatentIS } from './patentIS.model'
 
-@InterfaceType('IntellectualProperty')
+@InterfaceType('IntellectualProperty', {
+  resolveType(res) {
+    if (res.vmId) {
+      return Trademark
+    }
+    if (res.hId) {
+      return Design
+    }
+    if (res.epApplicationNumber) {
+      return PatentEP
+    }
+    if (res.medicine) {
+      return SPC
+    }
+    return PatentIS
+  },
+})
 export abstract class IntellectualProperty {
   @Field()
   id!: string

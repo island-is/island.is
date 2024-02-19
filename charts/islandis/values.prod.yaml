@@ -49,7 +49,7 @@ air-discount-scheme-api:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -157,7 +157,7 @@ air-discount-scheme-backend:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -230,7 +230,7 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -419,7 +419,7 @@ api:
             - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -696,7 +696,7 @@ application-system-api:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -819,7 +819,7 @@ application-system-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -909,7 +909,7 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -978,7 +978,7 @@ consultation-portal:
             - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1036,7 +1036,7 @@ contentful-apps:
             - '/'
   namespace: 'contentful-apps'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1099,7 +1099,7 @@ contentful-translation-extension:
             - '/'
   namespace: 'contentful-translation-extension'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1175,7 +1175,7 @@ download-service:
             - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1283,7 +1283,7 @@ endorsement-system-api:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1395,7 +1395,7 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1452,7 +1452,7 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1520,7 +1520,7 @@ license-api:
             - '/'
   namespace: 'license-api'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1627,7 +1627,7 @@ portals-admin:
             - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1715,7 +1715,7 @@ regulations-admin-backend:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1841,7 +1841,7 @@ search-indexer-service:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -1922,7 +1922,7 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -2018,7 +2018,7 @@ service-portal-api:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2103,7 +2103,7 @@ service-portal-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2189,7 +2189,7 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2215,7 +2215,6 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions_read'
-    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -2256,14 +2255,8 @@ services-sessions:
             - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 0
-  pvcs:
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/geoip-lite/data'
-      name: 'sessions-geoip-db'
-      size: '1Gi'
-      storageClass: 'efs-csi'
-      useExisting: true
+    maxUnavailable: 1
+  pvcs: []
   replicaCount:
     default: 1
     max: 10
@@ -2278,7 +2271,6 @@ services-sessions:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
-    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2323,7 +2315,7 @@ services-sessions-geoip-job:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -2369,6 +2361,7 @@ services-sessions-worker:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
+    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -2423,10 +2416,16 @@ services-sessions-worker:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/geoip-lite/data'
+      name: 'sessions-geoip-db'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: true
   replicaCount:
     default: 3
     max: 10
@@ -2546,7 +2545,7 @@ services-university-gateway:
       DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2627,7 +2626,7 @@ services-university-gateway-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2700,7 +2699,7 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2792,7 +2791,7 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2883,7 +2882,7 @@ user-notification:
             - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2975,7 +2974,7 @@ user-notification-cleanup-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3079,7 +3078,7 @@ user-notification-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3164,7 +3163,7 @@ web:
             - '/'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -3224,7 +3223,7 @@ xroad-collector:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []

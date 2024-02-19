@@ -100,7 +100,6 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
             'courtRoom',
             event.target.value,
             [],
-            workingCase,
             setWorkingCase,
           )
         }

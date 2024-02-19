@@ -1,15 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  FC,
-  useState,
-  useEffect,
-  useCallback,
-  Fragment,
-  ReactNode,
-  ChangeEvent,
-} from 'react'
+import { FC, useState, useEffect, useCallback, ChangeEvent } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import {
+  CheckboxController,
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
@@ -21,7 +14,6 @@ import {
   Button,
   Input,
   Text,
-  GridColumnProps,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
@@ -29,6 +21,8 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { YES } from '../../lib/constants'
+import DoubleColumnRow from '../../components/DoubleColumnRow'
 
 type RepeaterProps = {
   field: {
@@ -40,6 +34,7 @@ type RepeaterProps = {
       sumField: string
       fromExternalData?: string
       calcWithShareValue?: boolean
+      skipPushRight?: boolean
     }
   }
 }
@@ -81,6 +76,11 @@ export const ReportFieldsRepeater: FC<
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
   )
 
+  /* ------ Bank accounts and balances ------ */
+  const [foreignBankAccountIndexes, setForeignBankAccountIndexes] = useState<
+    number[]
+  >([])
+
   /* ------ Stocks ------ */
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
@@ -103,7 +103,7 @@ export const ReportFieldsRepeater: FC<
 
     const total = values.reduce((acc: number, current: any) => {
       const propertyValuationNumber = parseInt(current[props.sumField], 10)
-      const shareValueNumber = parseInt(current?.propertyShare, 10)
+      const shareValueNumber = parseInt(current?.share, 10)
 
       const propertyValuation = isNaN(propertyValuationNumber)
         ? 0
@@ -270,10 +270,29 @@ export const ReportFieldsRepeater: FC<
       : ''
   }
 
+  useEffect(() => {
+    const indexes = fields.reduce<number[]>((acc, _, index) => {
+      const fieldData: { foreignBankAccount?: string[] }[] | undefined =
+        getValueViaPath(answers, id)
+
+      const isForeignBankAccount =
+        fieldData?.[index]?.foreignBankAccount?.includes(YES)
+
+      if (isForeignBankAccount) {
+        acc.push(index)
+      }
+
+      return acc
+    }, [])
+
+    setForeignBankAccountIndexes(indexes)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Box>
-      {fields.map((repeaterField: any, index) => {
-        const fieldIndex = `${id}[${index}]`
+      {fields.map((repeaterField: any, mainIndex) => {
+        const fieldIndex = `${id}[${mainIndex}]`
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
@@ -284,7 +303,7 @@ export const ReportFieldsRepeater: FC<
                 circle
                 icon="remove"
                 onClick={() => {
-                  remove(index)
+                  remove(mainIndex)
                   calculateTotal()
                 }}
               />
@@ -293,7 +312,9 @@ export const ReportFieldsRepeater: FC<
               {props.fields.map((field: any, index) => {
                 const even = props.fields.length % 2 === 0
                 const lastIndex = props.fields.length - 1
-                const pushRight = !even && index === lastIndex
+
+                const skipPushRight = props?.skipPushRight === true
+                const pushRight = !skipPushRight && !even && index === lastIndex
 
                 const fieldId = `${fieldIndex}.${field.id}`
                 const err = errors && getErrorViaPath(errors, fieldId)
@@ -320,7 +341,38 @@ export const ReportFieldsRepeater: FC<
                     paddingBottom={2}
                     key={field.id}
                   >
-                    {field.id === 'propertyShare' ? (
+                    {field.id === 'foreignBankAccount' ? (
+                      <CheckboxController
+                        id={`${fieldIndex}.${field.id}`}
+                        options={[
+                          {
+                            label: formatMessage(m.bankAccountForeignLabel),
+                            value: YES,
+                          },
+                        ]}
+                        onSelect={(val) => {
+                          setForeignBankAccountIndexes(
+                            val.length
+                              ? [...foreignBankAccountIndexes, mainIndex]
+                              : foreignBankAccountIndexes.filter(
+                                  (i) => i !== mainIndex,
+                                ),
+                          )
+                        }}
+                      />
+                    ) : field.id === 'accountNumber' ? (
+                      <InputController
+                        id={`${fieldIndex}.${field.id}`}
+                        label={formatMessage(m.propertyShare)}
+                        backgroundColor="blue"
+                        {...(!foreignBankAccountIndexes.includes(mainIndex) && {
+                          format: '####-##-######',
+                          placeholder: '0000-00-000000',
+                        })}
+                        error={err}
+                        required
+                      />
+                    ) : field.id === 'share' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(m.propertyShare)}
@@ -447,66 +499,3 @@ export const ReportFieldsRepeater: FC<
 }
 
 export default ReportFieldsRepeater
-
-const DoubleColumnRow = ({
-  left,
-  right,
-  pushRight,
-  span = ['1/1', '1/2'],
-  bypass,
-  children,
-  ...props
-}: {
-  left?: ReactNode
-  right?: ReactNode
-  pushRight?: boolean
-  bypass?: boolean
-  children?: ReactNode
-} & GridColumnProps) => {
-  const onlyLeft = left && !right
-  const onlyRight = right && !left
-
-  if (children && pushRight) {
-    return (
-      <Fragment>
-        <GridColumn hiddenBelow="sm" span={span} {...props} />
-        <GridColumn span={span} {...props}>
-          {children}
-        </GridColumn>
-      </Fragment>
-    )
-  }
-
-  if (!left && !right && children) {
-    return (
-      <GridColumn span={span} {...props}>
-        {children}
-      </GridColumn>
-    )
-  }
-
-  return onlyLeft ? (
-    <Fragment>
-      <GridColumn span={span} {...props}>
-        {left}
-      </GridColumn>
-      <GridColumn hiddenBelow="sm" span={span} {...props} />
-    </Fragment>
-  ) : onlyRight ? (
-    <Fragment>
-      <GridColumn hiddenBelow="sm" span={span} {...props} />
-      <GridColumn span={span} {...props}>
-        {right}
-      </GridColumn>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <GridColumn span={span} {...props}>
-        {left}
-      </GridColumn>
-      <GridColumn span={span} {...props}>
-        {right}
-      </GridColumn>
-    </Fragment>
-  )
-}

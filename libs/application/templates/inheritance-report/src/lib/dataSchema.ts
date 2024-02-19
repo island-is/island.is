@@ -9,6 +9,66 @@ import {
 } from './utils/helpers'
 import { m } from './messages'
 
+const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
+  z
+    .object({
+      data: z
+        .object({
+          assetNumber: z.string(),
+          description: z.string(),
+          propertyValuation: z.string(),
+          ...(withShare ? { share: z.string() } : {}),
+        })
+        .refine(
+          ({ propertyValuation }) => {
+            return propertyValuation !== ''
+          },
+          {
+            path: ['propertyValuation'],
+          },
+        )
+        .refine(
+          ({ assetNumber }) => {
+            return isValidString(assetNumber)
+          },
+          {
+            path: ['assetNumber'],
+          },
+        )
+        .refine(
+          ({ share = undefined }) => {
+            if (withShare && typeof share === 'string') {
+              const num = parseInt(share, 10)
+
+              const value = isNaN(num) ? 0 : num
+
+              return value >= 0 && value <= 100
+            }
+
+            return true
+          },
+          {
+            path: ['share'],
+          },
+        )
+        .refine(
+          ({ description }) => {
+            return isValidString(description)
+          },
+          {
+            path: ['description'],
+          },
+        )
+        .array()
+        .optional(),
+      hasModified: z.boolean().optional(),
+      total: z.number().optional(),
+    })
+    .optional()
+
+const asset = assetSchema()
+const assetWithShare = assetSchema({ withShare: true })
+
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
@@ -21,53 +81,9 @@ export const inheritanceReportSchema = z.object({
 
   /* assets */
   assets: z.object({
-    realEstate: z
-      .object({
-        data: z
-          .object({
-            assetNumber: z.string(),
-            description: z.string(),
-            propertyValuation: z.string().refine((v) => v),
-            propertyShare: z.string().refine((v) => {
-              const num = parseInt(v, 10)
-
-              const value = isNaN(num) ? 0 : num
-
-              return value >= 0 && value <= 100
-            }),
-          })
-          .array()
-          .optional(),
-        hasModified: z.boolean().optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
-    vehicles: z
-      .object({
-        data: z
-          .object({
-            assetNumber: z.string(),
-            description: z.string(),
-            propertyValuation: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
-    guns: z
-      .object({
-        data: z
-          .object({
-            assetNumber: z.string(),
-            description: z.string(),
-            propertyValuation: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
+    realEstate: assetWithShare,
+    vehicles: asset,
+    guns: asset,
     inventory: z
       .object({
         info: z.string().optional(),
@@ -78,6 +94,7 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
+            foreignBankAccount: z.array(z.enum([YES])).optional(),
             accountNumber: z.string(),
             balance: z.string().refine((v) => v),
           })
