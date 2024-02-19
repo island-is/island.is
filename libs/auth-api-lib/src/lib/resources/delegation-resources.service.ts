@@ -321,7 +321,7 @@ export class DelegationResourcesService {
       delegationOr.push({ [col(prefix, 'grantToProcuringHolders')]: true })
     }
     if (user.delegationType.includes(AuthDelegationType.Custom)) {
-      const scopeNames = await this.findCustomDelegationScopes(user)
+      const scopeNames = await this.findActorCustomDelegationScopes(user)
       delegationOr.push({
         [col(prefix, 'name')]: scopeNames,
       })
@@ -362,7 +362,7 @@ export class DelegationResourcesService {
     return false
   }
 
-  private async findCustomDelegationScopes(user: User): Promise<string[]> {
+  private async findActorCustomDelegationScopes(user: User): Promise<string[]> {
     if (!user.actor) {
       return []
     }
