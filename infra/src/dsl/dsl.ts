@@ -443,32 +443,36 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   private postgresDefaults = (pg: PostgresInfo): PostgresInfo => {
-    const postgres = merge({}, this.serviceDef.postgres)
-    pg = merge(postgres, pg)
-    return {
-      host: pg.host ?? this.serviceDef.postgres?.host, // Allows missing host
-      username: postgresIdentifier(
+    const postgres = merge({}, this.serviceDef.postgres) // Copy current config
+    merge(postgres, pg) // Copy custom config for templating defaults
+
+    // Set a sane `name` if missing
+    merge(postgres, {
+      name: postgres.name ?? this.serviceDef.name,
+    })
+
+    // Apply sane defaults, templated by `name` etc.
+    merge(postgres, {
+      username: postgres.username ?? postgresIdentifier(
         this.stripPostfix(
-          pg.username ??
-          pg.name ??
-          this.serviceDef.postgres?.username ??
-          this.serviceDef.name,
-        ),
-      ) + (pg.readOnly ? '_read' : ''),
-      passwordSecret:
-        pg.passwordSecret ??
-        this.serviceDef.postgres?.passwordSecret ??
-        `/k8s/${this.stripPostfix(
-          pg.name ?? this.serviceDef.name,
-        )}${pg.readOnly ? '/readonly' : ''}/DB_PASSWORD`,
-      name: postgresIdentifier(
-        this.stripPostfix(
-          pg.name ?? this.serviceDef.postgres?.name ?? this.serviceDef.name,
-        ),
-      ),
-      readOnly: pg.readOnly ?? false,
-      extensions: pg.extensions,
-    }
+          postgres.name,
+        )
+        + (postgres.readOnly ? '/read' : '')),
+      passwordSecret: postgres.passwordSecret ?? `/k8s/${this.stripPostfix(
+        postgres.name,
+      )}${postgres.readOnly ? '/readonly' : ''}/DB_PASSWORD`,
+      // These are already covered by the merge above
+      // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
+      // readOnly: postgres.readOnly,
+      // extensions: postgres.extensions,
+      // name: postgres.name,
+    })
+
+    merge(postgres, pg) // Set overrides
+
+    console.log(`Setting DB config for ${this.serviceDef.name} to:`, postgres)
+
+    return postgres
   }
 }
 
