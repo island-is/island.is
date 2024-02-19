@@ -268,7 +268,7 @@ export class ServiceBuilder<ServiceType extends string> {
       if (name.endsWith(postfix)) {
         name = name.replace(postfix, '')
         // Recurse to strip multiple postfixes
-        return this.stripPostfix(name)
+        return this.stripPostfix(name, { postfixes, extraPostfixes })
       }
     }
     return name
@@ -446,29 +446,34 @@ export class ServiceBuilder<ServiceType extends string> {
     const postgres = merge({}, this.serviceDef.postgres) // Copy current config
     merge(postgres, pg) // Copy custom config for templating defaults
 
+    const defaultName = postgres.name ?? this.serviceDef.name
     // Set a sane `name` if missing
-    merge(postgres, {
-      name: postgres.name ?? this.serviceDef.name,
-    })
 
     // Apply sane defaults, templated by `name` etc.
     merge(postgres, {
       username: postgres.username ?? postgresIdentifier(
         this.stripPostfix(
-          postgres.name,
+          defaultName,
         )
         + (postgres.readOnly ? '/read' : '')),
       passwordSecret: postgres.passwordSecret ?? `/k8s/${this.stripPostfix(
-        postgres.name,
+        defaultName,
       )}${postgres.readOnly ? '/readonly' : ''}/DB_PASSWORD`,
       // These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
       // readOnly: postgres.readOnly,
       // extensions: postgres.extensions,
-      // name: postgres.name,
+      // name: defaultName,
     })
 
     merge(postgres, pg) // Set overrides
+    merge(postgres, {
+      // `name` is the DB name, which is a postgres identifier
+      name: postgresIdentifier(
+        this.stripPostfix(
+          defaultName,
+        ))
+    })
 
     console.log(`Setting DB config for ${this.serviceDef.name} to:`, postgres)
 
