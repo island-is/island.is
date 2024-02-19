@@ -221,7 +221,6 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                     variant={headingVariant}
                     color={textColor}
                     truncate={truncateHeading}
-                    title={heading}
                   >
                     {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
                   </Text>

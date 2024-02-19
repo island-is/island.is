@@ -5,7 +5,7 @@ export default defineConfig({
   load: (env) => ({
     errorReportUrl: env.required('ERROR_EVENT_URL', ''),
     backend: {
-      url: 'http://localhost:3344',
+      url: env.required('BACKEND_URL', 'http://localhost:3344'),
     },
   }),
 })
