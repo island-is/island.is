@@ -87,3 +87,10 @@ export const valueToNumber = (value?: unknown): number => {
 
   return 0
 }
+
+export const isValidRealEstate = (value: string) => {
+  const lotRegex = /^[Ll]\d{6}$/
+  const houseRegex = /^[Ff]\d{7}$/
+
+  return lotRegex.test(value) || houseRegex.test(value)
+}
