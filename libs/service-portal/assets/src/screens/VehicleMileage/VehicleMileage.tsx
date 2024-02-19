@@ -74,7 +74,7 @@ const VehicleMileage = () => {
             input: {
               internalId: parseInt(details[0].internalId),
               permno: id,
-              mileageNumber: submitData.odometerStatus,
+              mileageNumber: Number(submitData.odometerStatus),
             },
           },
         })
@@ -87,7 +87,7 @@ const VehicleMileage = () => {
           input: {
             permno: id,
             originCode: ORIGIN_CODE,
-            mileageNumber: submitData.odometerStatus,
+            mileageNumber: Number(submitData.odometerStatus),
           },
         },
       })

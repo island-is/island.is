@@ -129,6 +129,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:title',
     defaultMessage: 'Vinnuvélar',
   },
+  workMachineSingular: {
+    id: 'sp.work-machines:work-machine-singular',
+    defaultMessage: 'Vinnuvél',
+  },
   workMachinesDescription: {
     id: 'sp.work-machines:description',
     defaultMessage:
@@ -1192,6 +1196,10 @@ export const urls = defineMessages({
   hideName: {
     id: 'sp.vehicles:url-hide-private-name',
     defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
+  },
+  recycleCar: {
+    id: 'sp.vehicles:url-recycle-car',
+    defaultMessage: 'http://island.is/umsoknir/skilavottord',
   },
   instructorApplication: {
     id: 'sp.vehicles:url-instructor-application',
