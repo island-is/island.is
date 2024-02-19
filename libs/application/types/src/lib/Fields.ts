@@ -232,6 +232,7 @@ export interface DateField extends BaseField {
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
   required?: boolean
+  readOnly?: boolean
 }
 
 export interface DescriptionField extends BaseField {
@@ -392,7 +393,7 @@ export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText?: StaticText
-  description: StaticText
+  description: FormText
   startExpanded?: boolean
 }
 

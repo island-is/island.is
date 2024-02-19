@@ -14,6 +14,10 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { YES, NO, SEND_HOME, PICK_UP } from '../../lib/constants'
 import { Photo, Delivery } from '../../types'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -62,7 +66,8 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.applicantsPhoneNumber,
           width: 'half',
-          value: ({ answers: { phone } }) => phone as string,
+          value: ({ answers: { phone } }) =>
+            formatPhoneNumber(removeCountryCode(phone as string)),
         }),
         buildDividerField({}),
         buildKeyValueField({
@@ -71,7 +76,7 @@ export const sectionOverview = buildSection({
           value: ({ externalData: { doctorsNote } }) =>
             format(
               new Date((doctorsNote.data as any).expirationDate),
-              'dd/MM/yyyy',
+              'dd.MM.yyyy',
               { locale: is },
             ),
         }),

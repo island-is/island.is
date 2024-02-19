@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildTextField,
   buildDateField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -26,7 +27,7 @@ export const sectionInformation = buildSection({
           title: m.applicantsName,
           width: 'half',
           backgroundColor: 'white',
-          disabled: true,
+          readOnly: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
               .data as NationalRegistryIndividual
@@ -38,7 +39,7 @@ export const sectionInformation = buildSection({
           title: m.applicantsNationalId,
           width: 'half',
           backgroundColor: 'white',
-          disabled: true,
+          readOnly: true,
           defaultValue: (application: Application) =>
             formatNationalId(application.applicant),
         }),
@@ -47,7 +48,7 @@ export const sectionInformation = buildSection({
           title: m.applicantsAddress,
           width: 'half',
           backgroundColor: 'white',
-          disabled: true,
+          readOnly: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
               .data as NationalRegistryIndividual
@@ -59,7 +60,7 @@ export const sectionInformation = buildSection({
           title: m.applicantsCity,
           width: 'half',
           backgroundColor: 'white',
-          disabled: true,
+          readOnly: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
               .data as NationalRegistryIndividual
@@ -82,10 +83,9 @@ export const sectionInformation = buildSection({
             return data.email
           },
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'phone',
           title: m.applicantsPhoneNumber,
-          variant: 'tel',
           width: 'half',
           backgroundColor: 'blue',
           defaultValue: (application: Application) => {
@@ -99,7 +99,7 @@ export const sectionInformation = buildSection({
           title: m.cardValidityPeriod,
           width: 'half',
           backgroundColor: 'white',
-          disabled: true,
+          readOnly: true,
           defaultValue: (application: Application) => {
             const data = application.externalData.doctorsNote.data as any
             return data?.expirationDate
