@@ -26,20 +26,15 @@ const geoipVolume: PersistentVolumeClaim[] = [
   },
 ]
 
-const workerPostgresInfo = {
-  // Worker has write permissions
-  // username: 'services_sessions',
-  // name: dbName,
-  // passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
-  extensions: ['uuid-ossp'],
-}
-
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
     .image(imageName)
     .redis()
-    .db({ readOnly: true })
+    .db({
+      readOnly: true,
+      extensions: ['uuid-ossp'],
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -87,7 +82,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .command('node')
     .args('main.js', '--job=worker')
     .db({
-      extensions: workerPostgresInfo.extensions,
+      extensions: ['uuid-ossp'],
       readOnly: false,
     })
     .migrations()
