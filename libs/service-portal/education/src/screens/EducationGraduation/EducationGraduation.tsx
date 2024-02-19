@@ -5,8 +5,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  EmptyState,
-  ErrorScreen,
   IntroHeader,
   UNI_HI_SLUG,
   m,
@@ -16,6 +14,7 @@ import { gql, useQuery } from '@apollo/client'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 const GetStudentInfoQuery = gql`
   query universityOfIcelandStudentInfo(
@@ -55,21 +54,8 @@ export const EducationGraduation = () => {
     },
   })
   const organizations = orgData?.getOrganizations?.items || {}
-
   const studentInfo = data?.universityOfIcelandStudentInfo.transcripts || []
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.education).toLowerCase(),
-        })}
-      />
-    )
-  }
+  const noData = !studentInfo.length && !loading && !error
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -85,16 +71,6 @@ export const EducationGraduation = () => {
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       {loading && !error && <CardLoader />}
-      {!loading && !error && studentInfo.length === 0 && (
-        <Box marginTop={8}>
-          <EmptyState
-            title={defineMessage({
-              id: 'sp.education-graduation:education-no-data',
-              defaultMessage: 'Engin gögn fundust',
-            })}
-          />
-        </Box>
-      )}
       <Stack space={2}>
         {studentInfo.length > 0 &&
           studentInfo.map((item, index) => {
@@ -132,6 +108,15 @@ export const EducationGraduation = () => {
               />
             )
           })}
+
+        {error && <Problem noBorder={false} error={error} />}
+        {noData && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            imgSrc="./assets/images/empty.svg"
+          />
+        )}
       </Stack>
     </Box>
   )

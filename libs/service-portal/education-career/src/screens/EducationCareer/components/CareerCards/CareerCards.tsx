@@ -3,11 +3,10 @@ import { gql, useQuery } from '@apollo/client'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
-import { EmptyState } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionCard } from '@island.is/service-portal/core'
 import { EducationStudentAssessmentPaths } from '@island.is/service-portal/education-student-assessment'
+import { Problem } from '@island.is/react-spa/shared'
 
 const EducationExamFamilyOverviewsQuery = gql`
   query EducationExamFamilyOverviewsQuery {
@@ -25,10 +24,14 @@ const EducationExamFamilyOverviewsQuery = gql`
 
 const CareerCards = () => {
   useNamespaces('sp.education-career')
-  const { data, loading } = useQuery<Query>(EducationExamFamilyOverviewsQuery)
+  const { data, loading, error } = useQuery<Query>(
+    EducationExamFamilyOverviewsQuery,
+  )
   const { formatMessage } = useLocale()
 
   const educationExamFamilyOverviews = data?.educationExamFamilyOverviews || []
+
+  const noData = !educationExamFamilyOverviews.length && !loading && !error
   if (loading) {
     return <LoadingTemplate />
   }
@@ -67,15 +70,13 @@ const CareerCards = () => {
           />
         </Box>
       ))}
-      {educationExamFamilyOverviews.length === 0 && (
-        <Box marginTop={[0, 8]}>
-          <EmptyState
-            title={defineMessage({
-              id: 'sp.education-career:education-no-data',
-              defaultMessage: 'Engin gögn fundust',
-            })}
-          />
-        </Box>
+      {error && <Problem noBorder={false} error={error} />}
+      {noData && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          imgSrc="./assets/images/empty.svg"
+        />
       )}
     </>
   )
