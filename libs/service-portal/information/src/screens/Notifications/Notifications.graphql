@@ -19,22 +19,26 @@ fragment NotificationMessageFields on NotificationMessage {
   }
 }
 
+fragment NotificationDataFields on Notification {
+  id
+  notificationId
+  metadata {
+    ...NotificationMetadataFields
+  }
+  sender {
+    ...NotificationSenderFields
+  }
+  message {
+    ...NotificationMessageFields
+  }
+}
+
 query GetUserNotifications($input: NotificationsInput!) {
   userNotifications(input: $input) {
     data {
-      id
-      notificationId
-      metadata {
-        ...NotificationMetadataFields
-      }
-      sender {
-        ...NotificationSenderFields
-      }
+      ...NotificationDataFields
       recipient {
         nationalId
-      }
-      message {
-        ...NotificationMessageFields
       }
     }
     pageInfo {
@@ -51,18 +55,16 @@ query GetUserNotifications($input: NotificationsInput!) {
 query GetUserNotificationsOverview($input: NotificationsInput!) {
   userNotificationsOverview: userNotifications(input: $input) {
     data {
-      id
-      notificationId
-      metadata {
-        ...NotificationMetadataFields
-      }
-      sender {
-        ...NotificationSenderFields
-      }
-      message {
-        ...NotificationMessageFields
-      }
+      ...NotificationDataFields
     }
     totalCount
+  }
+}
+
+mutation MarkUserNotificationAsRead($id: Float!) {
+  markNotificationAsRead(id: $id) {
+    data {
+      ...NotificationDataFields
+    }
   }
 }

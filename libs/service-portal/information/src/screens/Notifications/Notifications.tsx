@@ -9,7 +9,10 @@ import {
   LinkButton,
 } from '@island.is/service-portal/core'
 
-import { useGetUserNotificationsQuery } from './Notifications.generated'
+import {
+  useGetUserNotificationsQuery,
+  useMarkUserNotificationAsReadMutation,
+} from './Notifications.generated'
 
 import { spmm } from '../../lib/messages'
 import { ActionCard, CardLoader } from '@island.is/service-portal/core'
@@ -22,6 +25,9 @@ const UserNotifications = () => {
   useNamespaces('sp.notifications')
   const { formatMessage } = useLocale()
   const [loadingMore, setLoadingMore] = useState(false)
+
+  const [postMarkAsRead, { loading: mutationLoading, error: mutationError }] =
+    useMarkUserNotificationAsReadMutation()
 
   const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
     variables: {
@@ -108,6 +114,12 @@ const UserNotifications = () => {
                 variant: 'text',
                 url: item.message.link.uri ?? undefined,
                 hide: !item.message.link.uri,
+                callback: () =>
+                  postMarkAsRead({
+                    variables: {
+                      id: item.id,
+                    },
+                  }),
               }}
               // image={{
               //   type: 'image',

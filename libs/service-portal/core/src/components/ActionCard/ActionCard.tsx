@@ -43,6 +43,7 @@ type ActionCardProps = {
     disabled?: boolean
     centered?: boolean
     hide?: boolean
+    callback?: () => void
   }
   secondaryCta?: {
     label: string
@@ -251,7 +252,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {!cta.hide && (
             <Box dataTestId="action-card-cta" marginLeft={[0, 3]}>
               {cta.url ? (
-                <LinkResolver href={cta.url}>
+                <LinkResolver callback={cta.callback} href={cta.url}>
                   <Button
                     icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                     colorScheme="default"
@@ -259,6 +260,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     size="small"
                     type="span"
                     unfocusable
+                    as="span"
                     variant="text"
                   >
                     {cta.label}

@@ -34,13 +34,19 @@ export const LinkResolver = ({
           [`${className}`]: className,
         })}
         onClick={
-          skipOutboundTrack
-            ? undefined
-            : () =>
-                servicePortalOutboundLink({
-                  url: formatPlausiblePathToParams(pathname, routePaths).url,
-                  outboundUrl: href,
-                })
+          !skipOutboundTrack || callback
+            ? () => {
+                if (!skipOutboundTrack) {
+                  servicePortalOutboundLink({
+                    url: formatPlausiblePathToParams(pathname, routePaths).url,
+                    outboundUrl: href,
+                  })
+                }
+                if (callback) {
+                  callback()
+                }
+              }
+            : undefined
         }
       >
         {children}
