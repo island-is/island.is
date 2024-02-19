@@ -60,7 +60,6 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 
-import UniversityStudiesFooter from '../../components/Organization/Wrapper/Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import {
   GET_NAMESPACE_QUERY,
@@ -403,7 +402,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
       href: primaryLink?.url,
-      active: primaryLink?.url === router.pathname, // TODO This fails because of the contentful url (/haskolanam-temp)
+      active: primaryLink?.url === router.pathname,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -748,12 +747,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
               <Box display="flex">
-                <Text variant="intro" fontWeight="semiBold">
+                <Text variant="intro" fontWeight="semiBold" as="h2">
                   {`${filteredResults.length}`}{' '}
                 </Text>
                 <Box paddingLeft={1}>
                   {' '}
-                  <Text variant="intro">{`${n(
+                  <Text variant="intro" as="h2">{`${n(
                     'visiblePrograms',
                     'námsleiðir sýnilegar',
                   )}`}</Text>
@@ -812,8 +811,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               ? 'Field of study: '
                               : 'Kjörsvið: ') + specializedName
                           : undefined
-                      console.log(dataItem)
-
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard
@@ -1146,6 +1143,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
+                    aria-label={selectedPage < page ? 'Next' : 'Previous'}
                     onClick={() => {
                       setSelectedPage(page)
                     }}

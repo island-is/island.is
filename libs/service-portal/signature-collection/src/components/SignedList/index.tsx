@@ -24,7 +24,10 @@ const SignedList = () => {
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        id: signedLists.length === 1 ? signedLists[0].id : undefined,
+        id:
+          signedLists && signedLists?.length === 1
+            ? signedLists[0].id
+            : undefined,
       },
     },
   })
@@ -53,7 +56,7 @@ const SignedList = () => {
 
   return (
     <Box>
-      {!loadingSignedLists && !!signedLists.length && (
+      {!loadingSignedLists && !!signedLists?.length && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
           {signedLists.map((list: SignatureCollectionSignedList) => {

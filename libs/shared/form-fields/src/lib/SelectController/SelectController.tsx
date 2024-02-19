@@ -18,6 +18,7 @@ interface SelectControllerProps<Value> {
   isSearchable?: boolean
   required?: boolean
   rules?: RegisterOptions
+  size?: 'xs' | 'sm' | 'md'
 }
 
 export const SelectController = <Value,>({
@@ -35,6 +36,7 @@ export const SelectController = <Value,>({
   dataTestId,
   required = false,
   rules,
+  size,
 }: SelectControllerProps<Value> & TestSupport) => {
   const { clearErrors } = useFormContext()
   return (
@@ -57,6 +59,7 @@ export const SelectController = <Value,>({
           placeholder={placeholder}
           value={options.find((option) => option.value === value)}
           isSearchable={isSearchable}
+          size={size}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
           onChange={(newVal) => {

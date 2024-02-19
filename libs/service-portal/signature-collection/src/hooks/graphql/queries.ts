@@ -104,7 +104,7 @@ export const GetListsForUser = gql`
 `
 
 export const GetListsForOwner = gql`
-  query listsForUser {
+  query listsForOwner {
     signatureCollectionListsForOwner {
       id
       title
