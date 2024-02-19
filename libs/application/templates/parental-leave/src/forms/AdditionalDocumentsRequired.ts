@@ -42,7 +42,7 @@ export const AdditionalDocumentsRequired: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
-              uploadMultiple: true, 
+              uploadMultiple: true,
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',
