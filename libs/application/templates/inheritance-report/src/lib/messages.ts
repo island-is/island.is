@@ -737,17 +737,78 @@ export const m = defineMessages({
   },
   funeralCostTitle: {
     id: 'ir.application:funeralCostTitle',
-    defaultMessage: 'Útfarakostnaður',
+    defaultMessage: 'Útfararkostnaður',
     description: '',
   },
   funeralCostDescription: {
     id: 'ir.application:funeralCostDescription',
-    defaultMessage: 'Útfarakostnaður samkvæmt yfirlit um útfarakostnað.',
+    defaultMessage: 'Útfararkostnaður samkvæmt yfirlit um útfararkostnað.',
     description: '',
   },
   amount: {
     id: 'ir.application:funeralCostAmount',
     defaultMessage: 'Fjárhæð',
+    description: '',
+  },
+  buildCost: {
+    id: 'ir.application:funeralBuildCost',
+    defualtMessage: 'Smíði kistu og umbúnaður',
+    description: '',
+  },
+  cremationCost: {
+    id: 'ir.application:cremationCost',
+    defualtMessage: 'Líkbrennsla',
+    description: '',
+  },
+  printCost: {
+    id: 'ir.application:printCost',
+    defualtMessage: 'Prentun',
+    description: '',
+  },
+  flowerCost: {
+    id: 'ir.application:flowerCost',
+    defualtMessage: 'Blóm',
+    description: '',
+  },
+  musicCost: {
+    id: 'ir.application:musicCost',
+    defualtMessage: 'Tónlistarflutningur',
+    description: '',
+  },
+  rentCost: {
+    id: 'ir.application:rentCost',
+    defualtMessage: 'Leiga á sal',
+    description: '',
+  },
+  foodAndDrinkCost: {
+    id: 'ir.application:foodAndDrinkCost',
+    defualtMessage: 'Erfidrykkja',
+    description: '',
+  },
+  tombstoneCost: {
+    id: 'ir.application:tombstoneCost',
+    defualtMessage: 'Legsteinn (áætlaður kostnaður)',
+    description: '',
+  },
+  otherCostQuestion: {
+    id: 'ir.application:otherCostQuestion',
+    defualtMessage: 'Annar kostnaður?',
+    description: '',
+  },
+  otherCost: {
+    id: 'ir.application:otherCost',
+    defualtMessage: 'Annar kostnaður',
+    description: '',
+  },
+  otherCostDetails: {
+    id: 'ir.application:otherCostDetails',
+    defualtMessage:
+      'Vinsamlegast tilgreinið með nánari hætti hvað felst í öðrum kostnaði',
+    description: '',
+  },
+  totalCost: {
+    id: 'ir.application:totalCost',
+    defualtMessage: 'Heildarkostnaður',
     description: '',
   },
   debtsTitle: {

@@ -26,3 +26,6 @@ export enum ApiActions {
 }
 
 export type ErrorValue = { [key: string]: any }
+
+// TODO: this value should be fetched from the API at some point
+export const untaxableAmount = 6203409

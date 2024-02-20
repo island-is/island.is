@@ -358,10 +358,9 @@ export const HeirsAndPartitionRepeater: FC<
                             name={`${fieldIndex}.${customField.id}`}
                             disabled={!member.enabled}
                             label={customField.title}
-                            defaultValue={defaultValue ? defaultValue : '0'}
+                            defaultValue={defaultValue ? defaultValue : 1}
                             type="number"
                             suffix="%"
-                            maxLength={3}
                             onChange={(
                               event: React.ChangeEvent<
                                 HTMLInputElement | HTMLTextAreaElement

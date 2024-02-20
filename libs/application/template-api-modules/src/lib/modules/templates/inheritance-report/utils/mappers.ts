@@ -209,7 +209,20 @@ export const expandAnswers = (
       },
       publicCharges: (answers.debts.publicCharges ?? 0).toString(),
     },
-    funeralCostAmount: answers.funeralCostAmount ?? '',
+    funeralCost: {
+      buildCost: answers?.funeralCost?.buildCost ?? '',
+      cremationCost: answers?.funeralCost?.cremationCost ?? '',
+      printCost: answers?.funeralCost?.printCost ?? '',
+      flowerCost: answers?.funeralCost?.flowerCost ?? '',
+      musicCost: answers?.funeralCost?.musicCost ?? '',
+      rentCost: answers?.funeralCost?.rentCost ?? '',
+      foodAndDrinkCost: answers?.funeralCost?.foodAndDrinkCost ?? '',
+      tombstoneCost: answers?.funeralCost?.tombstoneCost ?? '',
+      otherCostQuestion: answers?.funeralCost?.otherCostQuestion ?? '',
+      otherCost: answers?.funeralCost?.otherCost ?? '',
+      otherCostDetails: answers?.funeralCost?.otherCostDetails ?? '',
+      funeralCostAmount: answers?.funeralCost?.funeralCostAmount ?? '',
+    },
     heirs: {
       data: (answers.heirs?.data ?? []).map((heir) => {
         return {
