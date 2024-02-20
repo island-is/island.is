@@ -87,7 +87,7 @@ const WithdrawnAppealCase = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={previousUrl}
+          previousUrl={`${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => {
             router.push(
               `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,

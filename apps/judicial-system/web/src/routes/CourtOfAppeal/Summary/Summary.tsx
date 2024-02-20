@@ -29,7 +29,10 @@ import {
   getAppealDecision,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  hasSentNotification,
+  shouldUseAppealWithdrawnRoutes,
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { strings } from './Summary.strings'
@@ -118,7 +121,11 @@ const Summary: React.FC = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={`${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`}
+            previousUrl={
+              shouldUseAppealWithdrawnRoutes(workingCase)
+                ? `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`
+                : `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`
+            }
             nextButtonIcon="checkmark"
             nextButtonText={formatMessage(strings.nextButtonFooter)}
             onNextButtonClick={async () => await handleNextButtonClick()}
@@ -151,7 +158,11 @@ const Summary: React.FC = () => {
             text={formatMessage(strings.appealDiscontinuedModalText)}
             secondaryButtonText={formatMessage(core.closeModal)}
             onClose={() => setVisibleModal('none')}
-            onSecondaryButtonClick={() => setVisibleModal('none')}
+            onSecondaryButtonClick={() => {
+              router.push(
+                `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+              )
+            }}
           />
         )}
       </PageLayout>
