@@ -19,13 +19,9 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { GET_SPECIFIC_HOUSING_BENEFIT_SUPPORT_CALCULATION } from '@island.is/web/screens/queries/HousingBenefitCalculator'
+import { formatCurrency } from '@island.is/web/utils/currency'
 
 const MAX_LENGTH = 15
-
-export const formatCurrency = (answer: number | null | undefined) => {
-  if (typeof answer !== 'number') return answer
-  return String(answer).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-}
 
 interface InputState {
   housingCost: string

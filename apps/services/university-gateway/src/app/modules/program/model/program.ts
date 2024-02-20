@@ -261,7 +261,7 @@ export class ProgramBase extends Model<
     example: 3,
   })
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.FLOAT,
     allowNull: false,
   })
   durationInYears!: number
