@@ -87,7 +87,6 @@ const convertOrganizationSubpageToLink = (
 ) => {
   const prefix = getOrganizationPrefix(locale)
   return {
-    //...organizationSubpage,
     sys: {
       ...organizationSubpage.sys,
       contentType: {
