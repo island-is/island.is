@@ -156,7 +156,10 @@ test.describe.serial('Custody tests', () => {
 
   test('court should submit decision in case', async ({ judgePage }) => {
     const page = judgePage
-    await page.goto(`/domur/mottaka/${caseId}`)
+    await Promise.all([
+      page.goto(`/domur/mottaka/${caseId}`),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Reception and assignment
     await expect(page).toHaveURL(`/domur/mottaka/${caseId}`)
@@ -238,7 +241,10 @@ test.describe.serial('Custody tests', () => {
     defenderPage,
   }) => {
     const page = defenderPage
-    await page.goto(`/verjandi/krafa/${caseId}`)
+    await Promise.all([
+      page.goto(`/verjandi/krafa/${caseId}`),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
     await expect(page).toHaveURL(`/verjandi/krafa/${caseId}`)
     await expect(page.getByText('TestKaerugognSaekjanda.pdf')).toHaveCount(0)
     await expect(
@@ -285,7 +291,10 @@ test.describe.serial('Custody tests', () => {
 
   test('prosecutor asks for extension', async ({ prosecutorPage }) => {
     const page = prosecutorPage
-    await page.goto(`/krafa/yfirlit/${caseId}`)
+    await Promise.all([
+      page.goto(`/krafa/yfirlit/${caseId}`),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
     await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
     await Promise.all([
       page.getByTestId('continueButton').click(),
