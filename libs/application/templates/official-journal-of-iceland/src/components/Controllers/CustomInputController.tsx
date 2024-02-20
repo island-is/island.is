@@ -142,6 +142,19 @@ export const CustomInputController = ({
     ],
   )
 
+  const handleChange = (value: string) => {
+    if (!localIsDirty) {
+      setLocalIsDirty(true)
+    }
+    if (localError) {
+      setLocalError(false)
+      clearErrors(name)
+    }
+
+    setLocalValue(value)
+    return value
+  }
+
   useEffect(() => {
     const current = inputRef.current
     const interval = setInterval(() => {
@@ -170,18 +183,10 @@ export const CustomInputController = ({
     }
   })
 
-  const onChange = (value: string) => {
-    if (!localIsDirty) {
-      setLocalIsDirty(true)
-    }
-    if (localError) {
-      setLocalError(false)
-      clearErrors(name)
-    }
-
-    setLocalValue(value)
-    return value
-  }
+  useEffect(() => {
+    handleUpdate(lazyValue)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lazyValue])
 
   useDebounce(
     () => {
@@ -195,7 +200,7 @@ export const CustomInputController = ({
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ field: { onChange: onControllerChange, value, ref } }) => (
+      render={({ field: { onChange, value, ref } }) => (
         <Input
           required={required}
           ref={(e) => {
@@ -213,7 +218,7 @@ export const CustomInputController = ({
           hasError={Boolean(error)}
           errorMessage={error?.message}
           textarea={textarea}
-          onChange={(e) => onControllerChange(onChange(e.target.value))}
+          onChange={(e) => onChange(handleChange(e.target.value))}
           onBlur={(e) => handleUpdate(e.target.value)}
           rows={textarea ? 4 : undefined}
         />
