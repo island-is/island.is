@@ -35,7 +35,7 @@ interface Props extends FieldBaseProps {
   field: FindVehicleField
 }
 
-function extractCommonVehicleInfo(
+const extractCommonVehicleInfo = function (
   basicInfo: BasicVehicleInformation | null | undefined,
 ): VehicleDetails {
   if (!basicInfo) {
@@ -50,7 +50,10 @@ function extractCommonVehicleInfo(
   }
 }
 
-function isVehicleType<T>(response: unknown, typeName: string): response is T {
+const isVehicleType = function <T>(
+  response: unknown,
+  typeName: string,
+): response is T {
   return (
     response !== null &&
     typeof response === 'object' &&
@@ -59,7 +62,7 @@ function isVehicleType<T>(response: unknown, typeName: string): response is T {
   )
 }
 
-function extractVehicleDetails(
+const extractVehicleDetails = function (
   response:
     | VehicleOwnerchangeChecksByPermno
     | VehiclePlateOrderChecksByPermno
@@ -123,7 +126,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     isNotDebtLessTag,
     requiredValidVehicleErrorMessage,
     isMachine,
-    isVehicle,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -140,8 +142,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const MAX_LENGTH = isMachine ? 6 : 5
   const [submitButtonDisabledCalled, setSubmitButtonDisabledCalled] =
     useState(false)
-  const updateInputState = (value: string) => {
-    setButtonDisabled(value.length !== validPlateRegLength)
   const updateInputState = (value: string) => {
     setButtonDisabled(value.length !== MAX_LENGTH)
     setPlate(value)
@@ -193,7 +193,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     } finally {
       setIsLoading(false)
     }
-  
+  }
+
   const isDisabled =
     additionalErrors &&
     vehicleDetails &&

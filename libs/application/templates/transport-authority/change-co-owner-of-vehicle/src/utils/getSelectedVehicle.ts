@@ -11,11 +11,6 @@ export const getSelectedVehicle = (
       answers,
       'pickVehicle',
     ) as VehiclesCurrentVehicle
-<<<<<<< HEAD
-    vehicle.permno = getValueViaPath(answers, 'findVehicle.plate', '') as string
-=======
-
->>>>>>> main
     return vehicle
   }
   const currentVehicleList =
