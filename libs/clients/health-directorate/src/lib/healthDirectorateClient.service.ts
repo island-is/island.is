@@ -1,22 +1,25 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { StarfsleyfiAMinumSidumApi, VottordApi } from '../../gen/fetch'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import {
-  MinarSidur,
-  StarfsleyfiAMinumSidumApi,
-  VottordApi,
-} from '../../gen/fetch'
-import { Injectable } from '@nestjs/common'
-import {
+  HealthDirectorateLicenseStatus,
+  HealthDirectorateLicenseToPractice,
   HealthcareLicense,
   HealthcareLicenseCertificate,
   HealthcareLicenseCertificateRequest,
 } from './healthDirectorateClient.types'
+import { isDefined } from '@island.is/shared/utils'
 import format from 'date-fns/format'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class HealthDirectorateClientService {
   constructor(
     private readonly starfsleyfiAMinumSidumApi: StarfsleyfiAMinumSidumApi,
     private readonly vottordApi: VottordApi,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   private starfsleyfiAMinumSidumApiWithAuth(auth: Auth) {
@@ -29,12 +32,65 @@ export class HealthDirectorateClientService {
     return this.vottordApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async getHealthDirectorateLicense(
+  public async getHealthDirectorateLicenseToPractice(
     auth: User,
-  ): Promise<Array<MinarSidur> | null> {
-    return this.starfsleyfiAMinumSidumApiWithAuth(
-      auth,
-    ).starfsleyfiAMinumSidumGet()
+  ): Promise<Array<HealthDirectorateLicenseToPractice> | null> {
+    const licenses = await this.starfsleyfiAMinumSidumApiWithAuth(auth)
+      .starfsleyfiAMinumSidumGet()
+      .catch(handle404)
+
+    throw new Error('Not found')
+
+    if (!licenses) {
+      return null
+    }
+
+    const mappedLicenses: Array<HealthDirectorateLicenseToPractice> =
+      licenses
+        ?.map((l) => {
+          if (
+            !l.id ||
+            !l.logadiliID ||
+            !l.kennitala ||
+            !l.nafn ||
+            !l.starfsstett ||
+            !l.leyfi ||
+            !l.leyfisnumer ||
+            !l.gildirFra
+          ) {
+            return null
+          }
+
+          let status: HealthDirectorateLicenseStatus
+          switch (l.stada) {
+            case 'Í gildi':
+              status = 'VALID'
+              break
+            case 'Í gildi - Takmörkun':
+              status = 'LIMITED'
+              break
+            case 'Ógilt':
+              status = 'INVALID'
+              break
+            default:
+              status = 'UNKNOWN'
+          }
+
+          return {
+            id: l.id,
+            legalEntityId: l.logadiliID,
+            licenseHolderNationalId: l.kennitala,
+            licenseHolderName: l.nafn,
+            profession: l.starfsstett,
+            practice: l.leyfi,
+            licenseNumber: l.leyfisnumer,
+            validFrom: l.gildirFra,
+            validTo: l.gildirTIl ?? undefined,
+            status,
+          }
+        })
+        .filter(isDefined) ?? []
+    return mappedLicenses
   }
 
   async getMyHealthcareLicenses(auth: Auth): Promise<HealthcareLicense[]> {

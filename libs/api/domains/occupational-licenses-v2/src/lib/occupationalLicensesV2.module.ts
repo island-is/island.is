@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common'
-import { OccupationalLicensesV2Resolver } from './occupationalLicenses.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { DistrictCommissionersLicensesClientModule } from '@island.is/clients/district-commissioners-licenses'
+import { OccupationalLicensesV2Resolver } from './occupationalLicensesV2.resolver'
+import { HealthDirectorateClientModule } from '@island.is/clients/health-directorate'
+import { MMSClientModule } from '@island.is/clients/mms'
+import { OccupationalLicensesV2Service } from './occupationalLicensesV2.service'
 
 @Module({
-  imports: [DistrictCommissionersLicensesClientModule, FeatureFlagModule],
-  providers: [OccupationalLicensesV2Resolver],
+  imports: [
+    DistrictCommissionersLicensesClientModule,
+    HealthDirectorateClientModule,
+    MMSClientModule,
+    FeatureFlagModule,
+  ],
+  providers: [OccupationalLicensesV2Resolver, OccupationalLicensesV2Service],
 })
 export class OccupationalLicensesV2Module {}

@@ -1,27 +1,53 @@
 import {
   ObjectType,
   Field,
-  ID,
-  InterfaceType,
   registerEnumType,
   GraphQLISODateTime,
+  InterfaceType,
 } from '@nestjs/graphql'
-import { nullable } from 'zod'
 
-@ObjectType('OccupationalLicenseV2')
-export class OccupationalLicenseV2 {
+export enum OccupationalLicenseStatusV2 {
+  VALID = 'valid',
+  ERROR = 'error',
+  LIMITED = 'limited',
+}
+
+registerEnumType(OccupationalLicenseStatusV2, {
+  name: 'OccupationalLicenseStatusV2',
+})
+
+export enum OccupationalLicenseStatus {
+  VALID = 'valid',
+  ERROR = 'error',
+  LIMITED = 'limited',
+}
+
+@InterfaceType('OccupationalLicenseV2')
+export abstract class OccupationalLicenseV2 {
   @Field()
-  id!: string
+  licenseId!: string
+
+  @Field()
+  issuer!: string
+
+  @Field()
+  profession!: string
+
+  @Field()
+  type!: string
 
   @Field({ nullable: true })
-  title?: string
+  licenseHolderName?: string
 
   @Field({ nullable: true })
-  status?: string
+  licenseHolderNationalId?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  validFrom?: Date
+  dateOfBirth?: Date
 
-  @Field({ nullable: true })
-  issuer?: string
+  @Field(() => GraphQLISODateTime)
+  validFrom!: Date
+
+  @Field(() => OccupationalLicenseStatusV2)
+  status!: OccupationalLicenseStatusV2
 }
