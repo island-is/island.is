@@ -5,7 +5,6 @@ import { useFormatMessage } from '../../hooks'
 import { prerequisites } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { Controller } from 'react-hook-form'
-import { useEffect, useState } from 'react'
 import { getErrorViaPath } from '@island.is/application/core'
 
 export const Prerequisites = ({ application, errors }: OJOIFieldBaseProps) => {

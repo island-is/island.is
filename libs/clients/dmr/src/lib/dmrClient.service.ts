@@ -1,25 +1,21 @@
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 
 import { Injectable } from '@nestjs/common'
 import {
   DefaultApi as DmrApi,
   JournalControllerAdvertsRequest,
+  JournalControllerApplicationRequest,
   JournalControllerCategoriesRequest,
   JournalControllerDepartmentsRequest,
   JournalControllerTypesRequest,
 } from '../../gen/fetch/apis'
 import {
-  JournalAdvert,
   JournalAdvertCategoriesResponse,
   JournalAdvertDepartmentsResponse,
   JournalAdvertTypesResponse,
   JournalAdvertsResponse,
-  JournalPostApplicationBody,
   JournalPostApplicationResponse,
 } from '../../gen/fetch'
-
-const BASE_PATH = 'http://localhost:3000/api/v1'
 
 @Injectable()
 export class DmrClientService {
@@ -29,56 +25,44 @@ export class DmrClientService {
     auth: User,
     input: JournalControllerAdvertsRequest,
   ): Promise<JournalAdvertsResponse> {
-    return await fetch(`${BASE_PATH}/adverts?search=${input.search}`).then(
-      (res) => res.json() as Promise<JournalAdvertsResponse>,
-    )
+    return await this.dmrApi
+      .withMiddleware(new AuthMiddleware(auth as User))
+      .journalControllerAdverts(input)
   }
 
   public async departments(
     auth: User,
     params: JournalControllerDepartmentsRequest,
   ): Promise<JournalAdvertDepartmentsResponse> {
-    const res = await this.dmrApi.journalControllerDepartments(params ?? {})
-
-    console.log(res)
-
-    return Promise.resolve(res)
+    return await this.dmrApi
+      .withMiddleware(new AuthMiddleware(auth as User))
+      .journalControllerDepartments(params ?? {})
   }
 
-  public async types(
+  public types(
     auth: User,
     params: JournalControllerTypesRequest,
   ): Promise<JournalAdvertTypesResponse> {
-    const res = await this.dmrApi.journalControllerTypes(params)
-
-    return Promise.resolve(res)
+    return this.dmrApi
+      .withMiddleware(new AuthMiddleware(auth as User))
+      .journalControllerTypes(params)
   }
 
   public async categories(
     auth: User,
     params: JournalControllerCategoriesRequest,
   ): Promise<JournalAdvertCategoriesResponse> {
-    let query = ''
-    if (params) {
-      query = `?${Object.keys(params)
-        .map((key) => `${key}=${params[key as keyof typeof params]}`)
-        .join('&')}`
-    }
-    return await fetch(`${BASE_PATH}/categories${query}`).then((res) =>
-      res.json(),
-    )
+    return await this.dmrApi
+      .withMiddleware(new AuthMiddleware(auth as User))
+      .journalControllerCategories(params)
   }
 
   public async submitApplication(
     auth: User,
-    params: JournalPostApplicationBody,
+    params: JournalControllerApplicationRequest,
   ): Promise<JournalPostApplicationResponse> {
-    return await fetch(`${BASE_PATH}/application`, {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then((res) => res.json())
+    return await this.dmrApi
+      .withMiddleware(new AuthMiddleware(auth as User))
+      .journalControllerApplication(params)
   }
 }

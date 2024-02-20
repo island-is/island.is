@@ -10,12 +10,13 @@ export const VERDSKRA_LINK =
 export enum Routes {
   PREREQUISITES = 'prerequisites',
   ADVERT = 'advert',
+  SIGNATURE = 'signature',
   ADDITIONS_AND_DOCUMENTS = 'additionsAndDocuments',
   PREVIEW = 'preview',
   ORIGINAL_DATA = 'originalData',
   PUBLISHING_PREFERENCES = 'publishingPreferences',
   SUMMARY = 'summary',
-  COMPLETE = '/complete',
+  COMPLETE = 'complete',
 }
 
 // this will be replaced with correct values once the api is ready
@@ -29,3 +30,61 @@ export enum TypeIds {
 
 export const MEMBER_INDEX = '{memberIndex}'
 export const INSTITUTION_INDEX = '{institutionIndex}'
+
+export const INITAL_ANSWERS = {
+  [Routes.PREREQUISITES]: {
+    approveExternalData: false,
+  },
+  [Routes.ADVERT]: {
+    department: '',
+    type: '',
+    subType: '',
+    title: '',
+    template: '',
+    documentContents: '',
+    signatureType: '',
+    signatureContents: '',
+    signature: {
+      regular: {
+        institution: '',
+        date: '',
+        members: [
+          {
+            textAbove: '',
+            name: '',
+            textBelow: '',
+            textAfter: '',
+          },
+        ],
+      },
+      committee: {
+        institution: '',
+        date: '',
+        chairman: {
+          textAbove: '',
+          name: '',
+          textAfter: '',
+          textBelow: '',
+        },
+        members: [
+          {
+            name: '',
+            textBelow: '',
+          },
+        ],
+      },
+      additonalSignature: '',
+    },
+  },
+  [Routes.ADDITIONS_AND_DOCUMENTS]: {
+    files: [],
+    fileNames: [],
+  },
+  [Routes.PUBLISHING_PREFERENCES]: {
+    date: '',
+    fastTrack: false,
+    contentCategories: [],
+    communicationChannels: [],
+    message: '',
+  },
+}

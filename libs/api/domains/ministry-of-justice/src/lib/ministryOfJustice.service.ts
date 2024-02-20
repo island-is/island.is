@@ -64,6 +64,8 @@ export class MinistryOfJusticeService {
   }
 
   async submitApplication(auth: User, input: SubmitApplicationInput) {
-    return await this.dmrService.submitApplication(auth, input)
+    return await this.dmrService.submitApplication(auth, {
+      journalPostApplicationBody: input,
+    })
   }
 }

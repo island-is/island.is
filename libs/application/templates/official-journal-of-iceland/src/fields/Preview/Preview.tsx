@@ -25,7 +25,8 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
 
   const { answers } = application
 
-  const { documentContents, title, type, signatureType } = answers.advert
+  const { documentContents, title, type: advertType } = answers.advert
+  const { type: signatureType } = answers.signature
 
   return (
     <Box>
@@ -65,20 +66,18 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
           readOnly={true}
           hideWarnings={true}
           value={advertisementTemplate({
-            category: mapIdToType(type),
+            category: mapIdToType(advertType),
             content: documentContents,
             title: title,
             signature:
               signatureType === 'regular'
                 ? regularSignatureTemplate({
-                    signatureGroups: answers.advert.signature.regular,
-                    additionalSignature:
-                      answers.advert.signature.additionalSignature,
+                    signatureGroups: answers.signature.regular,
+                    additionalSignature: answers.signature.additionalSignature,
                   })
                 : committeeSignatureTemplate({
-                    signature: answers.advert.signature.committee,
-                    additionalSignature:
-                      answers.advert.signature.additionalSignature,
+                    signature: answers.signature.committee,
+                    additionalSignature: answers.signature.additionalSignature,
                   }),
             readonly: true,
           })}

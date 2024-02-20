@@ -56,17 +56,17 @@ export const SignatureSection = ({
 
   const [regularSignatures, setRegularSignatures] =
     useState<RegularSignatureState>(
-      answers?.advert?.signature?.regular ?? [{ ...emptyRegularSignature }],
+      answers?.signature?.regular ?? [{ ...emptyRegularSignature }],
     )
 
   const [committeeSignatures, setCommitteeSignatures] =
     useState<CommitteeSignatureState>({
-      institution: answers?.advert?.signature?.committee.institution ?? '',
-      date: answers?.advert?.signature?.committee.date ?? '',
-      chairman: answers?.advert?.signature?.committee.chairman ?? {
+      institution: answers?.signature?.committee.institution ?? '',
+      date: answers?.signature?.committee.date ?? '',
+      chairman: answers?.signature?.committee.chairman ?? {
         ...emptyChairman,
       },
-      members: answers?.advert?.signature?.committee.members ?? [
+      members: answers?.signature?.committee.members ?? [
         { ...emptyCommitteeMember },
         { ...emptyCommitteeMember },
       ],
@@ -81,7 +81,7 @@ export const SignatureSection = ({
   }, [committeeSignatures, setValue])
 
   const [additonalSignature, setAdditionalSignature] = useState(
-    answers?.advert?.signature.additionalSignature ?? '',
+    answers?.signature?.additionalSignature ?? '',
   )
 
   return (
@@ -123,10 +123,9 @@ export const SignatureSection = ({
           }
           config={signatureConfig}
           readOnly={true}
-          name={InputFields.advert.signatureContents}
+          name={InputFields.signature.contents}
           error={
-            errors &&
-            getErrorViaPath(errors, InputFields.advert.signatureContents)
+            errors && getErrorViaPath(errors, InputFields.signature.contents)
           }
         />
       </Box>

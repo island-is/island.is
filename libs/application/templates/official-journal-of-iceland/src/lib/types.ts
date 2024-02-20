@@ -1,6 +1,6 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
-import { dataSchema, type answerSchemas } from './dataSchema'
-import { INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
+import { type answerSchemas } from './dataSchema'
+import { INSTITUTION_INDEX, MEMBER_INDEX, Routes } from './constants'
 import {
   MinistryOfJusticeAdvert,
   MinistryOfJusticeAdvertEntity,
@@ -8,51 +8,51 @@ import {
 } from '@island.is/api/schema'
 
 export const InputFields = {
-  prerequisites: {
+  [Routes.PREREQUISITES]: {
     approveExternalData: 'prerequisites.approveExternalData',
   },
-  advert: {
+  [Routes.ADVERT]: {
     department: 'advert.department',
     type: 'advert.type',
     subType: 'advert.subType',
     title: 'advert.title',
     template: 'advert.template',
     documentContents: 'advert.documentContents',
-    signatureType: 'advert.signatureType',
-    signatureContents: 'advert.signatureContents',
-    signature: {
-      regular: {
-        institution: `advert.signature.regular-${INSTITUTION_INDEX}.institution`,
-        date: `advert.signature.regular-${INSTITUTION_INDEX}.date`,
-        members: {
-          textAbove: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAbove`,
-          name: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
-          textBelow: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textBelow`,
-          textAfter: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAfter`,
-        },
-      },
-      committee: {
-        institution: 'advert.signature.committee.institution',
-        date: 'advert.signature.committee.date',
-        chairman: {
-          textAbove: 'advert.signature.committee.chairman.textAbove',
-          name: 'advert.signature.committee.chairman.name',
-          textAfter: 'advert.signature.committee.chairman.textAfter',
-          textBelow: 'advert.signature.committee.chairman.textBelow',
-        },
-        members: {
-          name: `advert.signature.committee.members-${MEMBER_INDEX}.name`,
-          textBelow: `advert.signature.committee.members-${MEMBER_INDEX}.textBelow`,
-        },
-      },
-      additonalSignature: 'advert.signature.additonalSignature',
-    },
   },
-  additionsAndDocuments: {
+  [Routes.SIGNATURE]: {
+    type: 'signature.type',
+    contents: 'signature.contents',
+    regular: {
+      institution: `signature.regular-${INSTITUTION_INDEX}.institution`,
+      date: `signature.regular-${INSTITUTION_INDEX}.date`,
+      members: {
+        textAbove: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAbove`,
+        name: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
+        textBelow: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textBelow`,
+        textAfter: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAfter`,
+      },
+    },
+    committee: {
+      institution: 'signature.committee.institution',
+      date: 'signature.committee.date',
+      chairman: {
+        textAbove: 'signature.committee.chairman.textAbove',
+        name: 'signature.committee.chairman.name',
+        textAfter: 'signature.committee.chairman.textAfter',
+        textBelow: 'signature.committee.chairman.textBelow',
+      },
+      members: {
+        name: `signature.committee.members-${MEMBER_INDEX}.name`,
+        textBelow: `signature.committee.members-${MEMBER_INDEX}.textBelow`,
+      },
+    },
+    additonalSignature: 'signature.additonalSignature',
+  },
+  [Routes.ADDITIONS_AND_DOCUMENTS]: {
     files: 'additionsAndDocuments.files',
     fileNames: 'additionsAndDocuments.fileNames',
   },
-  publishingPreferences: {
+  [Routes.PUBLISHING_PREFERENCES]: {
     date: 'publishingPreferences.date',
     fastTrack: 'publishingPreferences.fastTrack',
     contentCategories: 'publishingPreferences.contentCategories',
@@ -67,17 +67,13 @@ type Option = {
   slug: string
 }
 
-type AdvertPaging = {}
-
 export type AdvertOption<Key extends string> = {
   [key in Key]: Array<Option>
 }
 
 export type SignatureType = 'regular' | 'committee'
-export type RegularSignatureState =
-  answerSchemas['advert']['signature']['regular']
-export type CommitteeSignatureState =
-  answerSchemas['advert']['signature']['committee']
+export type RegularSignatureState = answerSchemas['signature']['regular']
+export type CommitteeSignatureState = answerSchemas['signature']['committee']
 
 export enum TemplateApiActions {
   departments = 'departments',

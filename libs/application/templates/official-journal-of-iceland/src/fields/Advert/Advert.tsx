@@ -20,6 +20,7 @@ import { TypeIds } from '../../lib/constants'
 import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
 import { useLazyQuery } from '@apollo/client'
 import { TYPES_QUERY } from '../../graphql/queries'
+import { CustomInputController } from '../../components/Controllers/CustomInputController'
 
 type AvertTypeResponse = {
   ministryOfJusticeTypes: AdvertOption<'types'>
@@ -214,17 +215,14 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
           </Box>
         )} */}
         <Box width="full">
-          <InputController
-            id={InputFields.advert.title}
+          <CustomInputController
+            application={application}
             name={InputFields.advert.title}
             label={f(advert.inputs.title.label)}
             placeholder={f(advert.inputs.title.placeholder)}
-            defaultValue={state.title}
-            backgroundColor="blue"
-            textarea
-            rows={4}
-            onChange={(e) => setState({ ...state, title: e.target.value })}
+            defaultValue={answers?.advert?.title ?? ''}
             error={errors && getErrorViaPath(errors, InputFields.advert.title)}
+            textarea
           />
         </Box>
       </FormGroup>

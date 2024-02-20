@@ -8,6 +8,9 @@ const FileSchema = z.object({
   key: z.string(),
   url: z.string().optional(),
 })
+
+const getPath = (path: string) => path.split('.').slice(1)
+
 export const dataSchema = z.object({
   prerequisites: z
     .object({
@@ -15,75 +18,77 @@ export const dataSchema = z.object({
     })
     .refine((schema) => schema.approveExternalData === AnswerOption.YES, {
       params: error.dataGathering,
-      path: InputFields.prerequisites.approveExternalData.split('.').slice(1),
+      path: getPath(InputFields.prerequisites.approveExternalData),
     }),
   advert: z
     .object({
-      department: z.string().refine((v) => v && v.length > 0, {
-        params: error.emptyFieldError,
-      }),
-      type: z.string().refine((v) => v && v.length > 0, {
-        params: error.emptyFieldError,
-      }),
+      department: z.string().optional(),
+      type: z.string().optional(),
       subType: z.string().optional(),
-      title: z.string().refine((v) => v && v.length > 0, {
-        params: error.emptyFieldError,
-      }),
+      title: z.string().optional(),
       template: z.string().optional(),
-      documentContents: z.string().refine((v) => v && v.length > 0, {
-        params: error.emptyFieldError,
-      }),
-      signatureType: z.string().refine((v) => v && v.length > 0, {
-        params: error.emptyFieldError,
-      }),
-      signatureContents: z.string().optional(),
-      signature: z.object({
-        regular: z.array(
-          z.object({
-            institution: z.string(),
-            date: z.string(),
-            members: z
-              .array(
-                z.object({
-                  textAbove: z.string().optional(),
-                  name: z.string(),
-                  textBelow: z.string().optional(),
-                  textAfter: z.string().optional(),
-                }),
-              )
-              .optional(),
-          }),
-        ),
-        committee: z.object({
+      documentContents: z.string().optional(),
+    })
+    .superRefine((advert, ctx) => {
+      if (advert.type === TypeIds.REGLUGERDIR) {
+        if (!advert.subType) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: error.emptyFieldError,
+            path: getPath(InputFields.advert.subType),
+          })
+        }
+      }
+    }),
+  signature: z
+    .object({
+      type: z.string().optional(),
+      contents: z.string().optional(),
+      regular: z.array(
+        z.object({
           institution: z.string(),
-          date: z.string().optional(),
-          chairman: z.object({
-            textAbove: z.string().optional(),
-            name: z.string(),
-            textBelow: z.string().optional(),
-            textAfter: z.string().optional(),
-          }),
+          date: z.string(),
           members: z
             .array(
               z.object({
+                textAbove: z.string().optional(),
                 name: z.string(),
                 textBelow: z.string().optional(),
+                textAfter: z.string().optional(),
               }),
             )
             .optional(),
         }),
-        additionalSignature: z.string().optional(),
+      ),
+      committee: z.object({
+        institution: z.string(),
+        date: z.string().optional(),
+        chairman: z.object({
+          textAbove: z.string().optional(),
+          name: z.string(),
+          textBelow: z.string().optional(),
+          textAfter: z.string().optional(),
+        }),
+        members: z
+          .array(
+            z.object({
+              name: z.string(),
+              textBelow: z.string().optional(),
+            }),
+          )
+          .optional(),
       }),
+      additionalSignature: z.string().optional(),
     })
-    .superRefine((advert, ctx) => {
-      if (advert.signatureType === 'regular') {
+    .superRefine((signature, ctx) => {
+      if (signature.type === 'regular') {
         // required fields are institution and members name
-        advert.signature.regular?.forEach((signature, institutionIndex) => {
+        signature.regular?.forEach((signature, institutionIndex) => {
           if (!signature.institution) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               params: error.emptyFieldError,
-              path: InputFields.advert.signature.regular.institution
+              path: InputFields.signature.regular.institution
                 .replace(INSTITUTION_INDEX, `${institutionIndex}`)
                 .split('.')
                 .slice(1),
@@ -95,7 +100,7 @@ export const dataSchema = z.object({
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: error.emptyFieldError,
-                path: InputFields.advert.signature.regular.members.name
+                path: InputFields.signature.regular.members.name
                   .replace(INSTITUTION_INDEX, `${institutionIndex}`)
                   .replace(MEMBER_INDEX, `${memberIndex}`)
                   .split('.')
@@ -106,22 +111,22 @@ export const dataSchema = z.object({
         })
       } else {
         // required fields are institution and chairman name and members name
-        if (!advert.signature.committee.institution) {
+        if (!signature.committee.institution) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: error.emptyFieldError,
-            path: InputFields.advert.signature.committee.institution
+            path: InputFields.signature.committee.institution
               .split('.')
               .slice(1),
           })
 
           // check name of members
-          advert.signature.committee.members?.forEach((member, index) => {
+          signature.committee.members?.forEach((member, index) => {
             if (!member.name) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: error.emptyFieldError,
-                path: InputFields.advert.signature.committee.members.name
+                path: InputFields.signature.committee.members.name
                   .replace(MEMBER_INDEX, `${index}`)
                   .split('.')
                   .slice(1),
@@ -130,22 +135,22 @@ export const dataSchema = z.object({
           })
         }
 
-        if (!advert.signature.committee.chairman.name) {
+        if (!signature.committee.chairman.name) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: error.emptyFieldError,
-            path: InputFields.advert.signature.committee.chairman.name
+            path: InputFields.signature.committee.chairman.name
               .split('.')
               .slice(1),
           })
         }
 
-        advert.signature.committee.members?.forEach((member, index) => {
+        signature.committee.members?.forEach((member, index) => {
           if (!member.name) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               params: error.emptyFieldError,
-              path: InputFields.advert.signature.committee.members.name
+              path: InputFields.signature.committee.members.name
                 .replace(MEMBER_INDEX, `${index}`)
                 .split('.')
                 .slice(1),
@@ -153,48 +158,28 @@ export const dataSchema = z.object({
           }
         })
       }
-
-      if (advert.type === TypeIds.REGLUGERDIR) {
-        if (!advert.subType) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: error.emptyFieldError,
-            path: InputFields.advert.subType.split('.').slice(1),
-          })
-        }
-      }
     }),
   additionsAndDocuments: z.object({
     files: z.array(FileSchema),
     fileNames: z.enum(['additions', 'documents']),
   }),
-  publishingPreferences: z
-    .object({
-      date: z.string(),
-      fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]),
-      contentCategories: z.array(
-        z.object({
-          label: z.string(),
-          value: z.string(),
-        }),
-      ),
-      communicationChannels: z.array(
-        z.object({
-          email: z.string(),
-          phone: z.string(),
-        }),
-      ),
-      message: z.string().optional(),
-    })
-    .superRefine((schema, ctx) => {
-      if (!schema.date) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          params: error.emptyFieldError,
-          path: InputFields.publishingPreferences.date.split('.').slice(1),
-        })
-      }
-    }),
+  publishingPreferences: z.object({
+    date: z.string(),
+    fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]),
+    contentCategories: z.array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+      }),
+    ),
+    communicationChannels: z.array(
+      z.object({
+        email: z.string(),
+        phone: z.string(),
+      }),
+    ),
+    message: z.string().optional(),
+  }),
 })
 
 export type answerSchemas = z.infer<typeof dataSchema>

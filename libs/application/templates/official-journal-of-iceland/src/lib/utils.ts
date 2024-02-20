@@ -127,3 +127,22 @@ export const mapIdToType = (id?: TypeIds | string) => {
       return ''
   }
 }
+
+export const dotToObj = (dotString: string, obj = {}, value = '') => {
+  const keys = dotString.split('.').filter(Boolean)
+  const lastIndex = keys.length - 1
+  const result: Record<string, any> = { ...obj }
+
+  keys.reduce((acc, key, index) => {
+    if (index === lastIndex) {
+      acc[key] = value
+    } else {
+      if (!acc[key]) {
+        acc[key] = {}
+      }
+    }
+    return acc[key]
+  }, result)
+
+  return result
+}

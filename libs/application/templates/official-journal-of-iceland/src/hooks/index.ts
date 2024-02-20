@@ -1,1 +1,1 @@
-export { useFormatMessage } from './formatMessage'
+export * from './useFormatMessage'

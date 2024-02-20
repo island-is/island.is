@@ -32,22 +32,22 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
   async submitApplication({ application, auth }: Props) {
     const { answers } = application
 
-    const res = await this.ministryOfJusticeService.submitApplication(auth, {
-      applicationId: application.id,
-      categories: answers.publishingPreferences.contentCategories.map(
-        (c) => c.value,
-      ),
-      department: answers.advert.department,
-      document: answers.advert.documentContents,
-      requestedPublicationDate: answers.publishingPreferences.date,
-      subject: answers.advert.title,
-      type: answers.advert.type,
-    })
+    // const res = await this.ministryOfJusticeService.submitApplication(auth, {
+    //   applicationId: application.id,
+    //   categories: answers.publishingPreferences.contentCategories.map(
+    //     (c) => c.value,
+    //   ),
+    //   department: answers.advert.department,
+    //   document: answers.advert.documentContents,
+    //   requestedPublicationDate: answers.publishingPreferences.date,
+    //   subject: answers.advert.title,
+    //   type: answers.advert.type,
+    // })
 
-    if (!res.advert) {
-      throw new Error('Could not submit application')
-    }
+    // if (!res.advert) {
+    //   throw new Error('Could not submit application')
+    // }
 
-    return res
+    // return res
   }
 }
