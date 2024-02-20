@@ -38,5 +38,4 @@ export const strings = defineMessages(
     },
   },
 
-  // Add more strings here
 )
