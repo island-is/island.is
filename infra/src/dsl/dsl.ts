@@ -18,14 +18,7 @@ import {
   XroadConfig,
   PodDisruptionBudget,
 } from './types/input-types'
-
-const logger = {
-  ...console,
-  info: console.log,
-}
-if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV !== 'production') {
-  logger.info = () => {} // Disable logging
-}
+import { logger } from '../logging'
 
 /**
  * Allows you to make some properties of a type optional.
@@ -279,7 +272,7 @@ export class ServiceBuilder<ServiceType extends string> {
     { postfixes = ['-worker', '-job'], extraPostfixes = [] } = {},
   ) {
     if (!name) return
-    // logger.info(`Stripping postfixes from ${name} with:`, { postfixes, extraPostfixes })
+    logger.debug(`Stripping postfixes from ${name} with:`, { postfixes, extraPostfixes })
     postfixes.push(...extraPostfixes)
     // Strip postfixes from database name
     for (const postfix of postfixes) {
@@ -376,9 +369,9 @@ export class ServiceBuilder<ServiceType extends string> {
       features: {},
       ...ic,
     }
-    // logger.info(`Created initcontainer for ${this.serviceDef.name}:`, {
-    //   ic: this.serviceDef.initContainers,
-    // })
+    logger.debug(`Created initcontainer for ${this.serviceDef.name}:`, {
+      ic: this.serviceDef.initContainers,
+    })
     return this
   }
 
@@ -396,14 +389,14 @@ export class ServiceBuilder<ServiceType extends string> {
       )
     }
     if (postgres) {
-      logger.info(`Configuring custom DB for ${this.serviceDef.name} with:`, {
+      logger.debug(`Configuring custom DB for ${this.serviceDef.name} with:`, {
         postgres,
       })
     }
     this.serviceDef.postgres = this.grantDB(this.serviceDef.postgres, postgres)
-    // logger.info(`Setting DB config for ${this.serviceDef.name} to:`, {
-    //   postgres: this.serviceDef.postgres,
-    // })
+    logger.debug(`Setting DB config for ${this.serviceDef.name} to:`, {
+      postgres: this.serviceDef.postgres,
+    })
     return this
   }
 
@@ -421,7 +414,7 @@ export class ServiceBuilder<ServiceType extends string> {
 
   migrations(postgres?: PostgresInfo): this {
     if (postgres) {
-      logger.info(
+      logger.debug(
         `Configuring custom migrations for ${this.serviceDef.name} with:`,
         { postgres },
       )
@@ -440,7 +433,7 @@ export class ServiceBuilder<ServiceType extends string> {
   }
   seed(postgres?: PostgresInfo): this {
     if (postgres) {
-      logger.info(`Configuring custom seed for ${this.serviceDef.name} with:`, {
+      logger.debug(`Configuring custom seed for ${this.serviceDef.name} with:`, {
         postgres,
       })
     }
@@ -506,8 +499,7 @@ export class ServiceBuilder<ServiceType extends string> {
         ),
       passwordSecret:
         postgres.passwordSecret ??
-        `/k8s/${this.stripPostfix(defaultName)}${
-          postgres.readOnly ? '/readonly' : ''
+        `/k8s/${this.stripPostfix(defaultName)}${postgres.readOnly ? '/readonly' : ''
         }/DB_PASSWORD`,
       //These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
@@ -522,10 +514,10 @@ export class ServiceBuilder<ServiceType extends string> {
       name: postgresIdentifier(this.stripPostfix(defaultName)),
     })
 
-    // logger.info(`Set default DB config for ${ this.serviceDef.name } to: `, postgres)
+    logger.debug(`Set default DB config for ${this.serviceDef.name} to: `, postgres)
 
     if (Object.keys(pg).length > 0) {
-      logger.info(`Configured custom DB for ${this.serviceDef.name} with: `, {
+      logger.debug(`Configured custom DB for ${this.serviceDef.name} with: `, {
         input: pg,
         output: postgres,
       })
