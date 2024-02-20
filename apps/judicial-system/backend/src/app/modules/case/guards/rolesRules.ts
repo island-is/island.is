@@ -195,6 +195,14 @@ export const prosecutorTransitionRule: RolesRule = {
       return false
     }
 
+    // Deny transition if prosecutor did not appeal the case
+    if (
+      request.body.transition === CaseTransition.WITHDRAW_APPEAL &&
+      !theCase.prosecutorPostponedAppealDate
+    ) {
+      return false
+    }
+
     return true
   },
 }
@@ -228,6 +236,14 @@ export const defenderTransitionRule: RolesRule = {
 
     // Deny transitions on indictment cases
     if (isIndictmentCase(theCase.type)) {
+      return false
+    }
+
+    // Deny withdrawal if defender did not appeal the case
+    if (
+      request.body.transition === CaseTransition.WITHDRAW_APPEAL &&
+      !theCase.accusedPostponedAppealDate
+    ) {
       return false
     }
 
