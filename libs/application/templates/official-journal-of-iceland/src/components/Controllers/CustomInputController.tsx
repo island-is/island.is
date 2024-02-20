@@ -77,8 +77,6 @@ export const CustomInputController = ({
 
   const error = getLocalError(errors, name)
 
-  console.log(error?.message)
-
   const [localValue, setLocalValue] = useState(defaultValue)
   const [lazyValue, setLazyValue] = useState(defaultValue)
 
@@ -116,29 +114,31 @@ export const CustomInputController = ({
 
       setValue(name, value)
 
-      // await updateApplication({
-      //   variables: {
-      //     locale,
-      //     input: {
-      //       id: application.id,
-      //       answers: {
-      //         advert: {
-      //           title: 'test',
-      //         },
-      //       },
-      //     },
-      //   },
-      // })
+      await updateApplication({
+        variables: {
+          locale,
+          input: {
+            id: application.id,
+            skipValidation: true,
+            answers: {
+              ...answers,
+            },
+          },
+        },
+      })
     },
     [
       application.answers,
+      application.id,
       errorMessage,
       f,
       isOptional,
       localIsDirty,
+      locale,
       name,
       setError,
       setValue,
+      updateApplication,
     ],
   )
 
