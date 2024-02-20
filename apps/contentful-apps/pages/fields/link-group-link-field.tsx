@@ -160,7 +160,11 @@ const LinkGroupLinkField = () => {
         renderCustomActions={(props) => (
           <CombinedLinkActions
             {...props}
-            contentTypes={getContentTypes(contentType, organizationSubpageContentType, projectSubpageContentType)}
+            contentTypes={getContentTypes(
+              contentType,
+              organizationSubpageContentType,
+              projectSubpageContentType,
+            )}
             onLinkExisting={() => handleLinkExisting(props)}
             onCreate={(contentTypeId) =>
               handleCreateEntry(contentTypeId, props)
@@ -186,7 +190,11 @@ const LinkGroupLinkField = () => {
       renderCustomActions={(props) => (
         <CombinedLinkActions
           {...props}
-          contentTypes={getContentTypes(contentType, organizationSubpageContentType, projectSubpageContentType)}
+          contentTypes={getContentTypes(
+            contentType,
+            organizationSubpageContentType,
+            projectSubpageContentType,
+          )}
           onLinkExisting={() => handleLinkExisting(props)}
           onCreate={(contentTypeId) => handleCreateEntry(contentTypeId, props)}
         />
