@@ -74,10 +74,10 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
       ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY',
     })
-    .migrations()
     .liveness('/liveness')
     .readiness('/liveness')
     .db({ name: 'judicial-system' })
+    .migrations()
     .resources({
       requests: { cpu: '100m', memory: '512Mi' },
       limits: { cpu: '400m', memory: '1024Mi' },
