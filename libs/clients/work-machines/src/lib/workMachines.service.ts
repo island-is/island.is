@@ -24,6 +24,7 @@ import {
   confirmChangeToApiRequest,
 } from './workMachines.utils'
 import { CustomMachineApi } from './providers'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class WorkMachinesClientService {
@@ -56,18 +57,22 @@ export class WorkMachinesClientService {
     )
   }
 
-  getWorkMachines = (
+  getWorkMachines = async (
     user: User,
     input: ApiMachinesGetRequest,
-  ): Promise<MachinesFriendlyHateaosDto> =>
-    this.machinesApiWithAuth(user).apiMachinesGet(input)
-
-  getWorkMachineById = (
+  ): Promise<MachinesFriendlyHateaosDto | null> => {
+    return await this.machinesApiWithAuth(user)
+      .apiMachinesGet(input)
+      .catch(handle404)
+  }
+  getWorkMachineById = async (
     user: User,
     input: GetMachineRequest,
-  ): Promise<MachineHateoasDto> =>
-    this.machinesApiWithAuth(user).getMachine(input)
-
+  ): Promise<MachineHateoasDto | null> => {
+    return await this.machineApiWithAuth(user)
+      .getMachine(input)
+      .catch(handle404)
+  }
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 

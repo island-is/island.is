@@ -85,28 +85,6 @@ export const EducationGraduationDetail = () => {
             ).replace(':id', id),
           }}
         />
-        {/* <Divider />
-
-        <UserInfoLine
-          label="Einingum lokið"
-          content="203"
-          editLink={{
-            external: false,
-            title: {
-              id: 'sp.education:view-education-career',
-              defaultMessage: 'Skoða námsferil',
-            },
-            url: EducationPaths.EducationFramhskoliGraduationDetail.replace(
-              ':detail',
-              'nanar',
-            ).replace(':id', 'menntaskolinn-vid-hamrahlid'),
-          }}
-        /> */}
-        {/* <Divider />
-        <UserInfoLine
-          label="Gráða"
-          content={graduationItem.diplomaName ?? ''}
-        /> */}
         <Divider />
         <UserInfoLine
           label={formatMessage(edMessage.graduationPath)}

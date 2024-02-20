@@ -108,7 +108,7 @@ const AppealCase = () => {
       hasSentNotification(
         NotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
-      ) ||
+      ).hasSent ||
       isReopenedCOACase(workingCase.appealState, workingCase.notifications)
     ) {
       router.push(`${destination}/${id}`)
@@ -146,7 +146,7 @@ const AppealCase = () => {
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
-        appealAssistantId: updatedCase?.appealAssistant,
+        appealAssistant: updatedCase?.appealAssistant,
       }))
     }
   }
@@ -179,7 +179,6 @@ const AppealCase = () => {
                   'appealCaseNumber',
                   event.target.value,
                   ['empty', 'appeal-case-number-format'],
-                  workingCase,
                   setWorkingCase,
                   appealCaseNumberErrorMessage,
                   setAppealCaseNumberErrorMessage,

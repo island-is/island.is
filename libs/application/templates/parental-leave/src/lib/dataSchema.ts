@@ -50,6 +50,12 @@ const PersonalAllowance = z
     },
   )
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 /**
  * Both periods and employers objects had been removed from here, and the logic has
  * been moved to the answerValidators because it needs to be more advanced than
@@ -311,6 +317,68 @@ export const dataSchema = z.object({
     ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
+  fileUpload: z.object({
+    selfEmployedFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    studentFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    singleParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    parentWithoutBirthParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    permanentFosterCare: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    adoption: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    employmentTerminationCertificateFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    benefitsFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    residenceGrant: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    additionalDocuments: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

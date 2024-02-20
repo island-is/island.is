@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UseGuards,
+  Delete,
 } from '@nestjs/common'
 
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -18,12 +19,13 @@ import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApiUserService } from './user.service'
-import { ApiUserModel } from './user.model'
+import { ApiUserModel } from './models/user.model'
 import { CurrentStaff } from '../../decorators/staff.decorator'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 import { CreateApiKeyDto } from './dto'
+import { DeleteApiKeyResponse } from './models/deleteFile.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard, StaffGuard)
 @Controller(`${apiBasePath}/apiKeys`)
@@ -35,7 +37,6 @@ export class ApiUserController {
     private readonly apiUserService: ApiUserService,
   ) {}
 
-  @StaffRolesRules(StaffRole.ADMIN)
   @Scopes(MunicipalitiesFinancialAidScope.employee)
   @Get('')
   @ApiOkResponse({
@@ -45,7 +46,11 @@ export class ApiUserController {
   async getApiKeysByMunicipalityCodes(
     @CurrentStaff() staff: Staff,
   ): Promise<ApiUserModel[]> {
-    return this.apiUserService.findByMunicipalityCode(staff.municipalityIds)
+    if (staff.roles.includes(StaffRole.ADMIN)) {
+      return this.apiUserService.findByMunicipalityCode(staff.municipalityIds)
+    } else {
+      return []
+    }
   }
 
   @StaffRolesRules(StaffRole.ADMIN)
@@ -58,6 +63,7 @@ export class ApiUserController {
   create(@Body() input: CreateApiKeyDto): Promise<ApiUserModel> {
     return this.apiUserService.create(input)
   }
+
   @StaffRolesRules(StaffRole.ADMIN)
   @Scopes(MunicipalitiesFinancialAidScope.write)
   @Put('/:id')
@@ -74,5 +80,17 @@ export class ApiUserController {
   ): Promise<ApiUserModel> {
     this.logger.debug(`Api key controller: Updating api key with id ${id}`)
     return this.apiUserService.updateApiKey(id, input.name)
+  }
+
+  @StaffRolesRules(StaffRole.ADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.write)
+  @Delete('/:id')
+  @ApiOkResponse({
+    type: DeleteApiKeyResponse,
+    description: 'Deletes an existing api key',
+  })
+  async delete(@Param('id') id: string): Promise<DeleteApiKeyResponse> {
+    this.logger.debug(`Api key controller: delete api key with id ${id}`)
+    return this.apiUserService.delete(id)
   }
 }

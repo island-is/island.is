@@ -247,4 +247,8 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SAMBAND_SVEITARFELAGA,
     slug: InstitutionTypes.SAMBAND_SVEITARFELAGA,
   },
+  [ApplicationTypes.UNIVERSITY]: {
+    nationalId: InstitutionNationalIds.HASKOLARADUNEYTI,
+    slug: InstitutionTypes.HASKOLARADUNEYTI,
+  },
 }

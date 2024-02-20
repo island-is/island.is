@@ -215,7 +215,7 @@ describe('Parental Leave Application Template', () => {
           type: DefaultEvents.APPROVE,
         })
       expect(hasChangedAgain).toBe(true)
-      expect(finalState).toBe('employerWaitingToAssign')
+      expect(finalState).toBe(ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN)
       expect(finalApplication.assignees).toEqual([])
     })
 

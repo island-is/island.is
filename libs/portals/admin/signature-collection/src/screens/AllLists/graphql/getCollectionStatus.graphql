@@ -1,0 +1,5 @@
+query collectionStatus {
+  signatureCollectionAdminStatus {
+    status
+  }
+}

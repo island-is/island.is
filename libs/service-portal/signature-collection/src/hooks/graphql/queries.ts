@@ -43,7 +43,7 @@ export const GetListSignatures = gql`
         address
       }
       isDigital
-      active
+      valid
       created
     }
   }
@@ -62,19 +62,13 @@ export const GetSignedList = gql`
       }
       endTime
       startTime
-      candidate {
-        id
-        nationalId
-        name
-        phone
-        email
-      }
-      collectors {
-        nationalId
-        name
-      }
+      isDigital
+      pageNumber
+      signedDate
       active
+      isValid
       collectionId
+      canUnsign
       slug
     }
   }
@@ -110,7 +104,7 @@ export const GetListsForUser = gql`
 `
 
 export const GetListsForOwner = gql`
-  query listsForUser {
+  query listsForOwner {
     signatureCollectionListsForOwner {
       id
       title

@@ -14,6 +14,7 @@ import { m } from '../../../../lib/messages'
 import { useState } from 'react'
 import { format as formatNationalId } from 'kennitala'
 import {
+  ListStatus,
   createFileList,
   downloadFile,
   getFileData,
@@ -21,7 +22,13 @@ import {
 import { useBulkUploadMutation } from './paperUpload.generated'
 import { useRevalidator } from 'react-router-dom'
 
-const PaperUpload = ({ listId }: { listId: string }) => {
+const PaperUpload = ({
+  listId,
+  listStatus,
+}: {
+  listId: string
+  listStatus: string
+}) => {
   const { formatMessage } = useLocale()
   const [withPaperUpload, setWithPaperUpload] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
@@ -57,8 +64,8 @@ const PaperUpload = ({ listId }: { listId: string }) => {
 
     data = data.map((d: { Kennitala: any; Bls: number }) => {
       return {
-        nationalId: String(d.Kennitala),
-        pageNumber: d.Bls,
+        nationalId: String(d.Kennitala).replace('-', ''),
+        pageNumber: d.Bls ?? 0,
       }
     })
 
@@ -85,6 +92,7 @@ const PaperUpload = ({ listId }: { listId: string }) => {
                 label={formatMessage(m.uploadFile)}
                 checked={withPaperUpload}
                 onChange={() => setWithPaperUpload(!withPaperUpload)}
+                disabled={listStatus !== ListStatus.InReview}
               />
             </Box>
             {withPaperUpload && (
