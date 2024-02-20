@@ -770,7 +770,7 @@ export const ArborgWorkpoint = new XroadConf({
     WORKPOINT_ARBORG_SERVICE_PATH: {
       dev: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1',
       staging: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1',
-      prod: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1',
+      prod: 'IS/MUN/6505982029/Arborg-Protected/tengill-application-v1',
     },
   },
 })
