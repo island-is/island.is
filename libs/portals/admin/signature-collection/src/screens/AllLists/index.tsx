@@ -130,6 +130,8 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 collectionStatus === CollectionStatus.InInitialReview
                   ? m.signatureCollectionInInitialReview
                   : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessing
+                  : collectionStatus === CollectionStatus.Processed
                   ? m.signatureCollectionProcessed
                   : collectionStatus === CollectionStatus.Active
                   ? m.signatureCollectionActive
