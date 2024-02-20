@@ -236,15 +236,6 @@ export const courtIndictmentRoutes = [
   INDICTMENTS_COURT_RECORD_ROUTE,
 ]
 
-export const courtOfAppealRoutes = (isWithdrawnAppeal: boolean) => [
-  COURT_OF_APPEAL_OVERVIEW_ROUTE,
-  ...(!isWithdrawnAppeal ? [COURT_OF_APPEAL_CASE_ROUTE] : []),
-  ...(!isWithdrawnAppeal ? [COURT_OF_APPEAL_RULING_ROUTE] : []),
-  ...(isWithdrawnAppeal ? [COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE] : []),
-  COURT_OF_APPEAL_SUMMARY_ROUTE,
-  COURT_OF_APPEAL_RESULT_ROUTE,
-]
-
 // Feedback
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
