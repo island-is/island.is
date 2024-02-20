@@ -24,7 +24,7 @@ const logger = {
   info: console.log,
 }
 if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV !== 'production') {
-  logger.info = () => { } // Disable logging
+  logger.info = () => {} // Disable logging
 }
 
 /**
@@ -386,7 +386,10 @@ export class ServiceBuilder<ServiceType extends string> {
   db(postgres: PostgresInfo): this
   db(postgres?: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
-    if ((this.serviceDef.initContainers?.containers ?? []).length > 0 && this.serviceDef.postgres) {
+    if (
+      (this.serviceDef.initContainers?.containers ?? []).length > 0 &&
+      this.serviceDef.postgres
+    ) {
       // Require initContainers which need DB to be used _after_ DB config
       throw new Error(
         "DB config must be set before initContainers, i.e. `service('my-service').db().initContainer()`",
@@ -503,7 +506,9 @@ export class ServiceBuilder<ServiceType extends string> {
         ),
       passwordSecret:
         postgres.passwordSecret ??
-        `/k8s/${this.stripPostfix(defaultName)}${postgres.readOnly ? '/readonly' : ''}/DB_PASSWORD`,
+        `/k8s/${this.stripPostfix(defaultName)}${
+          postgres.readOnly ? '/readonly' : ''
+        }/DB_PASSWORD`,
       //These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
       // readOnly: postgres.readOnly,
