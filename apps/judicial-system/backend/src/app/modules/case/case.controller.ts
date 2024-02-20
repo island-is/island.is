@@ -361,8 +361,10 @@ export class CaseController {
         }
         break
       case CaseTransition.WITHDRAW_APPEAL:
-        // if the case has not been received by the court of appeals, the appeal is withdrawn
-        // without a ruling decision
+        // We only want to set the appeal ruling decision if the
+        // case has already been received.
+        // Otherwise the court of appeals never knew of the appeal in
+        // the first place so it remains withdrawn without a decision.
         if (
           !theCase.appealRulingDecision &&
           theCase.appealState === CaseAppealState.RECEIVED

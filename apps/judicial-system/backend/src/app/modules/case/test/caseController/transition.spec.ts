@@ -4,6 +4,7 @@ import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
@@ -294,6 +295,9 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
       ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
       ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${CaseAppealState.COMPLETED} | ${CaseAppealState.RECEIVED}
+      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.WITHDRAWN}
+     
+
     `.describe(
     '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
     ({ transition, caseState, currentAppealState, newAppealState }) => {
@@ -368,6 +372,11 @@ describe('CaseController - Transition', () => {
                   transition === CaseTransition.RECEIVE_APPEAL
                     ? date
                     : undefined,
+                appealRulingDecision:
+                  transition === CaseTransition.WITHDRAW_APPEAL &&
+                  currentAppealState === CaseAppealState.RECEIVED
+                    ? CaseAppealRulingDecision.DISCONTINUED
+                    : undefined,
               },
               { where: { id: caseId }, transaction },
             )
@@ -439,6 +448,20 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_APPEAL_TO_POLICE,
                   user: defaultUser,
                   caseId: theCase.id,
+                },
+              ])
+            }
+          })
+
+          it('should send notifications to queue when appeal is withdrawn', () => {
+            if (transition === CaseTransition.WITHDRAW_APPEAL) {
+              expect(
+                mockMessageService.sendMessagesToQueue,
+              ).toHaveBeenCalledWith([
+                {
+                  type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
                 },
               ])
             }
