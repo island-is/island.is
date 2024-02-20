@@ -48,6 +48,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
       const accessibleCaseAppealStates = [
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
       ]
 
       describe.each(
@@ -63,7 +64,12 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
       describe.each(accessibleCaseAppealStates)(
         'accessible case appeal state %s',
         (appealState) => {
-          const theCase = { type, state, appealState } as Case
+          const theCase = {
+            type,
+            state,
+            appealState,
+            appealReceivedByCourtDate: new Date(),
+          } as Case
 
           verifyFullAccess(theCase, user)
         },
