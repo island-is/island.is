@@ -494,110 +494,115 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                     className={styles.fullWidth}
                   >
                     <Stack space={3}>
-                      <Stack space={1}>
-                        <Text variant="h4">
-                          {formatMessage(translationStrings.birthdateLabel)}
-                        </Text>
+                      {(typeOfBasePension === BasePensionType.Retirement ||
+                        typeOfBasePension === BasePensionType.HalfRetirement ||
+                        typeOfBasePension ===
+                          BasePensionType.FishermanRetirement) && (
+                        <Stack space={3}>
+                          <Text variant="h2" as="h2">
+                            {formatMessage(
+                              translationStrings.startOfPaymentsHeading,
+                            )}
+                          </Text>
+                          <Stack space={1}>
+                            <Text variant="h4">
+                              {formatMessage(translationStrings.birthdateLabel)}
+                            </Text>
 
-                        <Inline space={3} collapseBelow="sm">
-                          <Box className={styles.monthSelectContainer}>
-                            <SelectController
-                              id={'birthMonth' as keyof CalculationInput}
-                              name={'birthMonth' as keyof CalculationInput}
-                              options={monthOptions}
-                              label={formatMessage(
-                                translationStrings.birthMonthLabel,
-                              )}
-                              placeholder={formatMessage(
-                                translationStrings.birthMonthPlaceholder,
-                              )}
-                              onSelect={(option) => {
-                                methods.setValue('startMonth', option.value)
-                              }}
-                            />
-                          </Box>
-                          <Box className={styles.yearSelectContainer}>
-                            <SelectController
-                              id={'birthYear' as keyof CalculationInput}
-                              name={'birthYear' as keyof CalculationInput}
-                              options={birthYearOptions}
-                              label={formatMessage(
-                                translationStrings.birthYearLabel,
-                              )}
-                              placeholder={formatMessage(
-                                translationStrings.birthYearPlaceholder,
-                              )}
-                              onSelect={(option) => {
-                                methods.setValue(
-                                  'startYear',
-                                  option.value + defaultPensionAge,
-                                )
-                              }}
-                            />
-                          </Box>
-                        </Inline>
-                      </Stack>
+                            <Inline space={3} collapseBelow="sm">
+                              <Box className={styles.monthSelectContainer}>
+                                <SelectController
+                                  id={'birthMonth' as keyof CalculationInput}
+                                  name={'birthMonth' as keyof CalculationInput}
+                                  options={monthOptions}
+                                  label={formatMessage(
+                                    translationStrings.birthMonthLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.birthMonthPlaceholder,
+                                  )}
+                                  onSelect={(option) => {
+                                    methods.setValue('startMonth', option.value)
+                                  }}
+                                />
+                              </Box>
+                              <Box className={styles.yearSelectContainer}>
+                                <SelectController
+                                  id={'birthYear' as keyof CalculationInput}
+                                  name={'birthYear' as keyof CalculationInput}
+                                  options={birthYearOptions}
+                                  label={formatMessage(
+                                    translationStrings.birthYearLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.birthYearPlaceholder,
+                                  )}
+                                  onSelect={(option) => {
+                                    methods.setValue(
+                                      'startYear',
+                                      option.value + defaultPensionAge,
+                                    )
+                                  }}
+                                />
+                              </Box>
+                            </Inline>
+                          </Stack>
 
-                      <Text variant="h2" as="h2">
-                        {formatMessage(
-                          translationStrings.startOfPaymentsHeading,
-                        )}
-                      </Text>
+                          <Stack space={1}>
+                            <Text variant="h4">
+                              {formatMessage(translationStrings.startDateLabel)}
+                            </Text>
+                            <Inline space={3} collapseBelow="sm">
+                              <Box className={styles.monthSelectContainer}>
+                                <SelectController
+                                  id={'startMonth' as keyof CalculationInput}
+                                  name={'startMonth' as keyof CalculationInput}
+                                  disabled={
+                                    typeof birthMonth !== 'number' ||
+                                    typeof birthYear !== 'number'
+                                  }
+                                  options={monthOptions}
+                                  label={formatMessage(
+                                    translationStrings.startMonthLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.startMonthPlaceholder,
+                                  )}
+                                />
+                              </Box>
+                              <Box className={styles.yearSelectContainer}>
+                                <SelectController
+                                  id={'startYear' as keyof CalculationInput}
+                                  name={'startYear' as keyof CalculationInput}
+                                  disabled={
+                                    typeof birthMonth !== 'number' ||
+                                    typeof birthYear !== 'number'
+                                  }
+                                  options={startYearOptions}
+                                  label={formatMessage(
+                                    translationStrings.startYearLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.startYearPlaceholder,
+                                  )}
+                                />
+                              </Box>
+                            </Inline>
+                          </Stack>
 
-                      <Stack space={1}>
-                        <Text variant="h4">
-                          {formatMessage(translationStrings.startDateLabel)}
-                        </Text>
-                        <Inline space={3} collapseBelow="sm">
-                          <Box className={styles.monthSelectContainer}>
-                            <SelectController
-                              id={'startMonth' as keyof CalculationInput}
-                              name={'startMonth' as keyof CalculationInput}
-                              disabled={
-                                typeof birthMonth !== 'number' ||
-                                typeof birthYear !== 'number'
-                              }
-                              options={monthOptions}
-                              label={formatMessage(
-                                translationStrings.startMonthLabel,
+                          {typeof monthOffset === 'number' && (
+                            <Text>
+                              {formatMessage(
+                                monthOffset === 0
+                                  ? translationStrings.pensionStartIsDefault
+                                  : monthOffset > 0
+                                  ? translationStrings.pensionStartIsDelayed
+                                  : translationStrings.pensionStartIsHurried,
                               )}
-                              placeholder={formatMessage(
-                                translationStrings.startMonthPlaceholder,
-                              )}
-                            />
-                          </Box>
-                          <Box className={styles.yearSelectContainer}>
-                            <SelectController
-                              id={'startYear' as keyof CalculationInput}
-                              name={'startYear' as keyof CalculationInput}
-                              disabled={
-                                typeof birthMonth !== 'number' ||
-                                typeof birthYear !== 'number'
-                              }
-                              options={startYearOptions}
-                              label={formatMessage(
-                                translationStrings.startYearLabel,
-                              )}
-                              placeholder={formatMessage(
-                                translationStrings.startYearPlaceholder,
-                              )}
-                            />
-                          </Box>
-                        </Inline>
-                      </Stack>
-
-                      {typeof monthOffset === 'number' && (
-                        <Text>
-                          {formatMessage(
-                            monthOffset === 0
-                              ? translationStrings.pensionStartIsDefault
-                              : monthOffset > 0
-                              ? translationStrings.pensionStartIsDelayed
-                              : translationStrings.pensionStartIsHurried,
+                            </Text>
                           )}
-                        </Text>
+                        </Stack>
                       )}
-
                       <Text variant="h2" as="h2">
                         {formatMessage(
                           translationStrings.yourCircumstancesHeading,
@@ -678,7 +683,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             name={
                               'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
                             }
-                            label="Fyrsta 75% örorkumat"
+                            label={formatMessage(
+                              typeOfBasePension === BasePensionType.Disability
+                                ? translationStrings.ageOfFirst75DisabilityAssessment
+                                : translationStrings.ageOfFirst75RehabilitationAssessment,
+                            )}
                             suffix={formatMessage(
                               translationStrings.yearsSuffix,
                             )}
@@ -686,45 +695,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           />
                         </Box>
                       )}
-
-                      <Stack space={2}>
-                        <Text>
-                          {formatMessage(
-                            translationStrings.mobilityImpairmentLabel,
-                          )}
-                        </Text>
-                        <Box className={styles.inputContainer}>
-                          <Controller
-                            name={
-                              'mobilityImpairment' as keyof CalculationInput
-                            }
-                            render={({ field: { value, onChange } }) => (
-                              <Inline space={3}>
-                                <RadioButton
-                                  id="mobilityImpairmentNo"
-                                  checked={value === false}
-                                  onChange={() => {
-                                    onChange(false)
-                                  }}
-                                  label={formatMessage(
-                                    translationStrings.mobilityImpairmentNo,
-                                  )}
-                                />
-                                <RadioButton
-                                  id="mobilityImpairmentYes"
-                                  checked={value === true}
-                                  onChange={() => {
-                                    onChange(true)
-                                  }}
-                                  label={formatMessage(
-                                    translationStrings.mobilityImpairmentYes,
-                                  )}
-                                />
-                              </Inline>
-                            )}
-                          />
-                        </Box>
-                      </Stack>
 
                       <Stack space={2}>
                         <Text>

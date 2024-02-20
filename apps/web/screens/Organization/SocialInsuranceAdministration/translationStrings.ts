@@ -262,25 +262,15 @@ export const translationStrings = defineMessages({
     defaultMessage: '0 ár',
     description: '0 ár',
   },
-  mobilityImpairmentLabel: {
-    id: 'web.pensionCalculator:mobilityImpairmentLabel',
-    defaultMessage: 'Með hreyfihömlunarmat',
-    description: 'Með hreyfihömlunarmat',
-  },
-  mobilityImpairmentNo: {
-    id: 'web.pensionCalculator:mobilityImpairmentNo',
-    defaultMessage: 'Nei',
-    description: 'Með hreyfihömlunarmat, Nei',
-  },
-  mobilityImpairmentYes: {
-    id: 'web.pensionCalculator:mobilityImpairmentYes',
-    defaultMessage: 'Já',
-    description: 'Með hreyfihömlunarmat, Já',
-  },
   ageOfFirst75DisabilityAssessment: {
     id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessment',
-    defaultMessage: 'Fyrsta 75% örorkumat',
+    defaultMessage: 'Fyrsta örorkumat',
     description: 'Fyrsta 75% örorkumat',
+  },
+  ageOfFirst75RehabilitationAssessment: {
+    id: 'web.pensionCalculator:ageOfFirst75RehabilitationAssessment',
+    defaultMessage: 'Fyrsta endurhæfingarmat',
+    description: 'Fyrsta 75% endurhæfingarmat',
   },
   livingConditionRatioLabel: {
     id: 'web.pensionCalculator:livingConditionRatioLabel',
@@ -359,7 +349,7 @@ export const translationStrings = defineMessages({
   },
   dateOfCalculationsLabel: {
     id: 'web.pensionCalculator:dateOfCalculationsLabel',
-    defaultMessage: 'Reiknivélar síðustu ára',
+    defaultMessage: 'Allar reiknivélar',
     description: 'Val á milli ára',
   },
   dateOfCalculationsPlaceholder: {
