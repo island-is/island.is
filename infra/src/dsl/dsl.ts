@@ -378,6 +378,10 @@ export class ServiceBuilder<ServiceType extends string> {
   db(postgres: PostgresInfo): this
   db(postgres?: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
+    if (this.serviceDef.initContainers?.postgres) {
+      // Require initContainers which need DB to be used _after_ DB config
+      throw new Error("DB config must be set before initContainers, i.e. `service('my-service').db().initContainer()`")
+    }
     if (postgres) {
       console.log(`Configuring custom DB for ${this.serviceDef.name} with:`, {
         postgres,
@@ -489,10 +493,9 @@ export class ServiceBuilder<ServiceType extends string> {
         ),
       passwordSecret:
         postgres.passwordSecret ??
-        `/k8s/${this.stripPostfix(defaultName)}${
-          postgres.readOnly ? '/readonly' : ''
-        }/DB_PASSWORD`,
-      // These are already covered by the merge above
+        `/k8s/${this.stripPostfix(defaultName)}${postgres.readOnly ? '/readonly' : ''}
+        DB_PASSWORD`,
+      //These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
       // readOnly: postgres.readOnly,
       // extensions: postgres.extensions,
@@ -505,10 +508,10 @@ export class ServiceBuilder<ServiceType extends string> {
       name: postgresIdentifier(this.stripPostfix(defaultName)),
     })
 
-    // console.log(`Set default DB config for ${this.serviceDef.name} to:`, postgres)
+    // console.log(`Set default DB config for ${ this.serviceDef.name } to: `, postgres)
 
     if (Object.keys(pg).length > 0) {
-      console.log(`Configured custom DB for ${this.serviceDef.name} with:`, {
+      console.log(`Configured custom DB for ${this.serviceDef.name} with: `, {
         input: pg,
         output: postgres,
       })
