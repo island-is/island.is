@@ -221,7 +221,7 @@ test.describe.serial('Custody tests', () => {
     // Confirmation
     await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
     await Promise.all([
-      await page.getByTestId('continueButton').click(),
+      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
     ])
   })
