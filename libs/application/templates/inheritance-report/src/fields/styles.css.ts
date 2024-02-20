@@ -1,6 +1,10 @@
 import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
+export const uppercase = style({
+  textTransform: 'uppercase',
+})
+
 export const removeFieldButton = style({
   top: theme.spacing['8'],
   right: -theme.spacing['6'],

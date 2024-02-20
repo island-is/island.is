@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
@@ -55,7 +55,6 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { TranslationDefaults } from './TranslationDefaults'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -86,7 +85,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     false,
     false,
   ])
-  useSetZIndexOnHeader()
 
   const toggleIsOpen = (index: number) => {
     const newIsOpen = isOpen.map((x, i) => {
@@ -208,6 +206,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       })),
     })) ?? []
 
+  const universityData = useMemo(() => {
+    return universities.filter((x) => x.id === data.universityId)[0] || {}
+  }, [universities, data.universityId])
+
   return (
     <>
       {organizationPage && (
@@ -233,17 +235,11 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               }}
             />
             <IconTitleCard
-              heading={
-                universities.filter((x) => x.id === data.universityId)[0]
-                  .contentfulTitle || ''
-              }
+              heading={universityData.contentfulTitle || ''}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
-              href="/"
-              imgSrc={
-                universities.filter((x) => x.id === data.universityId)[0]
-                  .contentfulLogoUrl || ''
-              }
+              href={universityData.contentfulLink || ''}
+              imgSrc={universityData.contentfulLogoUrl || ''}
               alt="University infomation"
             />
             <Box width="full">
@@ -273,7 +269,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 </Button>
               </LinkV2>
             </Hidden>
-            <Text variant="h1" as="h1">
+            <Text variant="h1" as="h2">
               {locale === 'en' ? data.nameEn : data.nameIs}
             </Text>
             <Box
@@ -285,7 +281,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               style={{ backgroundColor: '#F2F7FF' }}
               padding={3}
             >
-              <Text variant={'h3'} color={'blue600'}>
+              <Text variant={'h3'} as="h3" color={'blue600'}>
                 {n('applyForProgram', 'Umsókn í háskólanám')}
               </Text>
 

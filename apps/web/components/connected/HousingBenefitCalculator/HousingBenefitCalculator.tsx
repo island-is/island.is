@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
-import {
-  ConnectedComponent,
-  GetHousingBenefitCalculationQuery,
-  GetHousingBenefitCalculationQueryVariables,
-} from '@island.is/web/graphql/schema'
+
 import {
   AlertMessage,
   Box,
@@ -16,15 +12,16 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { GET_HOUSING_BENEFIT_CALCULATION } from '@island.is/web/screens/queries/HousingBenefitCalculator'
+import {
+  ConnectedComponent,
+  GetHousingBenefitCalculationQuery,
+  GetHousingBenefitCalculationQueryVariables,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { GET_HOUSING_BENEFIT_CALCULATION } from '@island.is/web/screens/queries/HousingBenefitCalculator'
+import { formatCurrency } from '@island.is/web/utils/currency'
 
 const MAX_LENGTH = 15
-
-export const formatCurrency = (answer: number | null | undefined) => {
-  if (typeof answer !== 'number') return answer
-  return String(answer).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-}
 
 interface InputState {
   income: string
