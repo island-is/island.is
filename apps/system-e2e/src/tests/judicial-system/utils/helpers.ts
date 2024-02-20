@@ -30,18 +30,19 @@ async function createFakePdf(title: string) {
   }
 }
 
-export async function uploadDocument(
+export async function chooseDocument(
   page: Page,
   clickButton: () => Promise<void>,
   fileName: string,
-  isLimitedAccess = false,
 ) {
   const fileChooserPromise = page.waitForEvent('filechooser')
   await clickButton()
 
   const fileChooser = await fileChooserPromise
   await fileChooser.setFiles(await createFakePdf(fileName))
+}
 
+export async function verifyUpload(page: Page, isLimitedAccess = false) {
   await Promise.all([
     verifyRequestCompletion(
       page,
@@ -55,5 +56,17 @@ export async function uploadDocument(
       '/api/graphql',
       isLimitedAccess ? 'LimitedAccessCreateFile' : 'CreateFile',
     ),
+  ])
+}
+
+export async function uploadDocument(
+  page: Page,
+  clickButton: () => Promise<void>,
+  fileName: string,
+  isLimitedAccess = false,
+) {
+  return Promise.all([
+    chooseDocument(page, clickButton, fileName),
+    verifyUpload(page, isLimitedAccess),
   ])
 }

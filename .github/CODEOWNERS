@@ -141,7 +141,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
 /libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
-/libs/api/domains/social-insurance                                                                       @island-is/hugsmidjan
+/libs/api/domains/social-insurance                                                                       @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
@@ -258,7 +258,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration         @island-is/deloitte
 /libs/application/templates/social-insurance-administration/                                             @island-is/deloitte
-/libs/clients/social-insurance-administration/                                                           @island-is/deloitte
+/libs/clients/social-insurance-administration/                                                           @island-is/deloitte @island-is/stefna
 /libs/application/templates/car-recycling/                                                               @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                          @island-is/deloitte
 /libs/clients/car-recycling/                                                                             @island-is/deloitte
@@ -270,6 +270,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/services/sessions/                                                                                 @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                                    @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                      @island-is/fuglar @island-is/aranja
+/libs/auth-api-lib/seeders/                                                                              @island-is/fuglar @island-is/aranja @island-is/origo-auth
 /libs/auth-nest-tools/                                                                                   @island-is/fuglar @island-is/aranja
 /libs/application/templates/european-health-insurance-card/                                              @island-is/fuglar
 /libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/         @island-is/fuglar

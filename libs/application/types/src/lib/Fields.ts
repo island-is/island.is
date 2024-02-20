@@ -395,7 +395,7 @@ export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText?: StaticText
-  description: StaticText
+  description: FormText
   startExpanded?: boolean
 }
 
@@ -515,7 +515,6 @@ export interface FindVehicleField extends BaseField {
   isNotDebtLessTag?: FormText
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
-  isVehicle?: boolean
   isMachine?: boolean
 }
 
