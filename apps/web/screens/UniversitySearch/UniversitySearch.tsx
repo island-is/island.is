@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
 import getConfig from 'next/config'
 import NextLink from 'next/link'
@@ -60,7 +60,6 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 
-import UniversityStudiesFooter from '../../components/Organization/Wrapper/Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import {
   GET_NAMESPACE_QUERY,
@@ -156,7 +155,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
-
   const n = useNamespace(namespace)
 
   const isMobileScreenWidth = width < theme.breakpoints.lg
@@ -402,7 +400,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
       href: primaryLink?.url,
-      active: primaryLink?.url === router.pathname, // TODO This fails because of the contentful url (/haskolanam-temp)
+      active: primaryLink?.url === router.pathname,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -419,7 +417,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           paddingTop={[2, 2, 9]}
           paddingBottom={[4, 4, 4]}
           isSticky={false}
-          fullWidthContent={false}
+          fullWidthContent={true}
           sidebarContent={
             <Box>
               <Navigation
@@ -612,7 +610,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Box>
           )}
-          <Box minWidth={0}>
+          <Box minWidth={0} className={styles.mainContentWrapper}>
             <Text
               marginTop={0}
               marginBottom={2}
@@ -670,7 +668,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Inline>
               </Box>
             </ContentBlock>
-
             <Hidden above="md">
               <Box width="full" marginTop={2}>
                 <Filter
@@ -740,7 +737,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Filter>
               </Box>
             </Hidden>
-
             <Box
               display="flex"
               flexDirection="row"
@@ -749,12 +745,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
               <Box display="flex">
-                <Text variant="intro" fontWeight="semiBold">
+                <Text variant="intro" fontWeight="semiBold" as="h2">
                   {`${filteredResults.length}`}{' '}
                 </Text>
                 <Box paddingLeft={1}>
                   {' '}
-                  <Text variant="intro">{`${n(
+                  <Text variant="intro" as="h2">{`${n(
                     'visiblePrograms',
                     'námsleiðir sýnilegar',
                   )}`}</Text>
@@ -792,7 +788,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Box>
               </Hidden>
             </Box>
-
             {!gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
               <Box>
                 {filteredResults &&
@@ -804,6 +799,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     .map((item, index) => {
                       const dataItem =
                         item.item as UniversityGatewayProgramWithStatus
+                      const specializedName =
+                        locale === 'en'
+                          ? dataItem.specializationNameEn ?? undefined
+                          : dataItem.specializationNameIs ?? undefined
+                      const subHeading =
+                        specializedName !== undefined
+                          ? (locale === 'en'
+                              ? 'Field of study: '
+                              : 'Kjörsvið: ') + specializedName
+                          : undefined
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard
@@ -818,6 +823,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 ? dataItem.nameEn
                                 : dataItem.nameIs
                             }
+                            subHeading={subHeading}
                             text={
                               locale === 'en'
                                 ? stripHtml(dataItem.descriptionEn)
@@ -960,6 +966,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       .map((item, index) => {
                         const dataItem =
                           item.item as UniversityGatewayProgramWithStatus
+                        const specializedName =
+                          locale === 'en'
+                            ? dataItem.specializationNameEn ?? undefined
+                            : dataItem.specializationNameIs ?? undefined
+                        const subHeading =
+                          specializedName !== undefined
+                            ? (locale === 'en'
+                                ? 'Field of study: '
+                                : 'Kjörsvið: ') + specializedName
+                            : undefined
                         return (
                           <GridColumn
                             span={
@@ -982,6 +998,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   ? dataItem.nameEn
                                   : dataItem.nameIs
                               }
+                              subHeading={subHeading}
                               icon={
                                 <img
                                   src={
@@ -1112,7 +1129,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </GridRow>
               </GridContainer>
             )}
-
             <Box
               marginTop={2}
               marginBottom={selectedComparison.length > 0 ? 4 : 0}
@@ -1125,6 +1141,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
+                    aria-label={selectedPage < page ? 'Next' : 'Previous'}
                     onClick={() => {
                       setSelectedPage(page)
                     }}
@@ -1284,7 +1301,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           )}
         {/* <Box marginBottom={8} marginTop={5}>
         </Box> */}
-
         <ToastContainer></ToastContainer>
       </GridContainer>
       <Box className="rs_read">

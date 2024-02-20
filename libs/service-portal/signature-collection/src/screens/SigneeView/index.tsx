@@ -1,4 +1,11 @@
-import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  AlertMessage,
+  Box,
+  Button,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/service-portal/core'
@@ -6,11 +13,14 @@ import { useGetListsForUser, useGetSignedList } from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import SignedList from '../../components/SignedList'
+import { useAuth } from '@island.is/auth/react'
 
 const SigneeView = () => {
   useNamespaces('sp.signatureCollection')
+  const { userInfo: user } = useAuth()
+
   const { formatMessage } = useLocale()
-  const { signedList, loadingSignedList } = useGetSignedList()
+  const { signedLists, loadingSignedLists } = useGetSignedList()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
 
   return (
@@ -19,7 +29,7 @@ const SigneeView = () => {
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescriptionSignee)}
       />
-      {!loadingSignedList && !loadingUserLists ? (
+      {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
           <Button
             icon="open"
@@ -65,7 +75,7 @@ const SigneeView = () => {
                               label: formatMessage(m.signList),
                               variant: 'text',
                               icon: 'arrowForward',
-                              disabled: signedList !== null,
+                              disabled: !!signedLists.length,
                               onClick: () => {
                                 window.open(
                                   `${document.location.origin}${list.slug}`,
@@ -96,6 +106,12 @@ const SigneeView = () => {
             </Box>
           </Box>
         </Box>
+      ) : user?.profile.actor ? (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(m.actorNoAccessTitle)}
+          message={m.actorNoAccessDescription.defaultMessage}
+        />
       ) : (
         <Skeleton />
       )}

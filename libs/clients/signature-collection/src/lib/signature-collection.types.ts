@@ -1,5 +1,6 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
 import { ListBase } from './types/list.dto'
+import { Signature } from './types/signature.dto'
 
 export enum ListState {
   Open = 'open',
@@ -49,8 +50,8 @@ export interface CanCreateInput {
 export interface CanSignInput {
   requirementsMet?: boolean
   canSignInfo?: EinstaklingurMaFrambodInfo
-  isActive: boolean
   activeSignature?: MedmaeliDTO
+  signatures?: Signature[]
 }
 
 export enum Requirement {
@@ -60,6 +61,7 @@ export enum Requirement {
   active = 'active',
   notOwner = 'notOwner',
   notSigned = 'notSigned',
+  noInvalidSignature = 'noInvalidSignature',
 }
 
 export enum ReasonKey {
@@ -74,4 +76,5 @@ export enum ReasonKey {
   AlreadyOwner = 'alreadyOwner',
   AlreadySigned = 'alreadySigned',
   NotOwner = 'notOwner',
+  noInvalidSignature = 'noInvalidSignature',
 }
