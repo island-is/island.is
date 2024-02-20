@@ -124,9 +124,17 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          {collectionStatus === CollectionStatus.InReview && (
+          {collectionStatus !== CollectionStatus.InitialActive && (
             <ListInfo
-              message={formatMessage(m.signatureCollectionProcessingComplete)}
+              message={formatMessage(
+                collectionStatus === CollectionStatus.InInitialReview
+                  ? m.signatureCollectionInInitialReview
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessed
+                  : collectionStatus === CollectionStatus.Active
+                  ? m.signatureCollectionActive
+                  : m.signatureCollectionInReview,
+              )}
             />
           )}
           <GridRow marginBottom={5}>
