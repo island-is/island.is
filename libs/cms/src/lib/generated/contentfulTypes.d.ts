@@ -144,7 +144,7 @@ export interface IAnchorPageFields {
   pageType?:
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
-        | undefined
+    | undefined
 
   /** featured image */
   featuredImage?: Asset | undefined
@@ -2738,7 +2738,7 @@ export interface IOrganizationPageFields {
   slices?:
     | (
         | IAccordionSlice
-                | IBigBulletList
+        | IBigBulletList
         | IDistricts
         | IEmailSignup
         | IEventSlice
@@ -2755,7 +2755,7 @@ export interface IOrganizationPageFields {
         | ITwoColumnText
         | ISectionWithVideo
         | IAnchorPageList
-| ISectionWithImage
+        | ISectionWithImage
       )[]
     | undefined
 
@@ -2881,7 +2881,7 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
-                | IBigBulletList
+        | IBigBulletList
         | IContactUs
         | IDistricts
         | IEmailSignup
@@ -4768,7 +4768,7 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
-| 'featuredEvents'
+  | 'featuredEvents'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'
@@ -4787,7 +4787,7 @@ export type CONTENT_TYPE =
   | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
-    | 'link'
+  | 'link'
   | 'linkedPage'
   | 'linkGroup'
   | 'linkList'
