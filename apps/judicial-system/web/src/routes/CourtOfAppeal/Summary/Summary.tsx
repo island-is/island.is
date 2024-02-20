@@ -137,7 +137,6 @@ const Summary: React.FC = () => {
             title={formatMessage(strings.appealCompletedModalTitle)}
             text={formatMessage(strings.appealCompletedModalText)}
             secondaryButtonText={formatMessage(core.closeModal)}
-            onClose={() => setVisibleModal('none')}
             onSecondaryButtonClick={() => {
               router.push(
                 `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
@@ -157,7 +156,6 @@ const Summary: React.FC = () => {
             title={formatMessage(strings.appealDiscontinuedModalTitle)}
             text={formatMessage(strings.appealDiscontinuedModalText)}
             secondaryButtonText={formatMessage(core.closeModal)}
-            onClose={() => setVisibleModal('none')}
             onSecondaryButtonClick={() => {
               router.push(
                 `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
