@@ -181,6 +181,7 @@ export enum FieldTypes {
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
+  FIND_VEHICLE = 'FIND_VEHICLE',
 }
 
 export enum FieldComponents {
@@ -209,6 +210,7 @@ export enum FieldComponents {
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
+  FIND_VEHICLE = 'FindVehicleFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -500,6 +502,23 @@ export type TableRepeaterField = BaseField & {
     format?: Record<string, (value: string) => string>
   }
 }
+export interface FindVehicleField extends BaseField {
+  readonly type: FieldTypes.FIND_VEHICLE
+  component: FieldComponents.FIND_VEHICLE
+  disabled?: boolean
+  required?: boolean
+  additionalErrors: boolean
+  getVehicleDetails?: (plate: string) => Promise<unknown>
+  findVehicleButtonText?: FormText
+  findPlatePlaceholder?: FormText
+  notFoundErrorMessage?: FormText
+  notFoundErrorTitle?: FormText
+  fallbackErrorMessage?: FormText
+  hasErrorTitle?: FormText
+  isNotDebtLessTag?: FormText
+  validationErrors?: Record<string, FormText>
+  requiredValidVehicleErrorMessage?: FormText
+}
 
 export type Field =
   | CheckboxField
@@ -528,3 +547,4 @@ export type Field =
   | NationalIdWithNameField
   | ActionCardListField
   | TableRepeaterField
+  | FindVehicleField
