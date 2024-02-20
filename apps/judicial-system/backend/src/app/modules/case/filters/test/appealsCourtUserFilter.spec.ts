@@ -10,6 +10,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../../../factories'
 import { Case } from '../../models/case.model'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
@@ -68,7 +69,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
             type,
             state,
             appealState,
-            appealReceivedByCourtDate: new Date(),
+            appealReceivedByCourtDate: nowFactory(),
           } as Case
 
           verifyFullAccess(theCase, user)
