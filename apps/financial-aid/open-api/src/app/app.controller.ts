@@ -8,7 +8,7 @@ import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
 import { ApplicationModel } from './models'
 
-@Controller('api/v1')
+@Controller('api/open/v1')
 export class AppController {
   constructor(
     private readonly appService: AppService,
