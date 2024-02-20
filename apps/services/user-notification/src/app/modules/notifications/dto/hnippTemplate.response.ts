@@ -24,4 +24,7 @@ export class HnippTemplate {
 
   @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]
+
+  @ApiProperty({ example: 'Þjóðskrá' })
+  sender!: string
 }

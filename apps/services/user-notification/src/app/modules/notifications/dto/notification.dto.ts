@@ -81,6 +81,10 @@ export class RenderedNotificationDto {
   @IsUUID()
   messageId!: string
 
+  @ApiProperty({ example: 'Þjóðskrá' })
+  @IsString()
+  sender!: string
+
   @ApiProperty({ example: 'Catchy notification title' })
   @IsString()
   title!: string
@@ -163,4 +167,10 @@ export class UpdateNotificationDto {
   @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.READ })
   @IsEnum(NotificationStatus)
   status!: NotificationStatus
+}
+
+export class UnreadNotificationsCountDto {
+  @ApiProperty({ example: 42 })
+  @IsInt()
+  unreadCount!: number;
 }

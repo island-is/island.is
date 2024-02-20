@@ -15,7 +15,7 @@ import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 
-import { Notification } from './notification.model'
+import { Notification, NotificationStatus } from './notification.model'
 import axios from 'axios'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
@@ -74,10 +74,13 @@ export class NotificationsService {
         template,
       )
 
+      const sender = formattedTemplate.sender
+
       // Map to RenderedNotificationDto
       return {
         id: notification.id,
         messageId: notification.messageId,
+        sender: sender,
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
@@ -117,6 +120,9 @@ export class NotificationsService {
       query: ` {
       hnippTemplateCollection(locale: "${mappedLocale}") {
         items {
+          organization{
+            slug
+          }
           templateId
           notificationTitle
           notificationBody
@@ -152,6 +158,15 @@ export class NotificationsService {
           throw new BadRequestException('Bad Request')
         }
       })
+    // mix it here to save headaches
+    // loop items and add property sender with value organization.slug and remove organization
+    for (const item of res.data.hnippTemplateCollection.items) {
+      item.sender = item.organization.slug
+      delete item.organization
+      if (item.templateId === 'HNIPP.POSTHOLF.NEW_DOCUMENT' ) {
+        item.sender = 'will-be-inherited-from args.organization-sluggified'
+      }
+    }
     return res.data.hnippTemplateCollection.items
   }
 
@@ -239,7 +254,13 @@ export class NotificationsService {
           if (value && ARG_REPLACE_REGEX.test(value)) {
             for (const arg of args) {
               const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
+              console.log(arg, 'regexTarget', regexTarget)
               const newValue = value.replace(regexTarget, arg.value)
+              // if templates are used by multiple organizations, sender should be set to organization.slug
+              if(arg.key == "organization") {
+                console.log("organization found in args, setting sender to organization.slug")
+                template.sender = arg.value
+              }
 
               if (newValue !== value) {
                 // finds {{key}} in string and replace with value
@@ -341,4 +362,24 @@ export class NotificationsService {
       )
     }
   }
+
+  async getUnreadNotificationsCount(user:User): Promise<number> {
+    const count = await this.notificationModel.count({
+      where: {
+        recipient: user.nationalId,
+        status: "unread", 
+      },
+    });
+
+    return count;
+  }
+
+  // async markAllAsRead(user: User): Promise<void> {
+  //   console.log('markAllAsRead');
+  //   const res = await this.notificationModel.update(
+  //     { status: NotificationStatus.READ },
+  //     { where: { recipient: user.nationalId, status: NotificationStatus.UNREAD } }
+  //   );
+  //   console.log(res);
+  // }
 }

@@ -6,6 +6,7 @@ import {
   UseGuards,
   Patch,
   Controller,
+  HttpStatus,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -24,6 +25,7 @@ import {
   PaginatedNotificationDto,
   RenderedNotificationDto,
   ExtendedPaginationDto,
+  UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -41,7 +43,7 @@ export class MeNotificationsController {
   @Get()
   @Documentation({
     summary: 'Returns a paginated list of user notifications',
-    response: { status: 200, type: PaginatedNotificationDto },
+    response: { status: HttpStatus.OK, type: PaginatedNotificationDto },
   })
   findMany(
     @CurrentUser() user: User,
@@ -50,10 +52,25 @@ export class MeNotificationsController {
     return this.notificationService.findMany(user, query)
   }
 
+  @Get("/unread-count")
+  @Documentation({
+    summary: 'Returns a count of unread notifications for the user',
+    response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
+  })
+  async getUnreadNotificationsCount(
+    @CurrentUser() user: User
+  ): Promise<{ unreadCount: number }> {
+    const unreadCount = await this.notificationService.getUnreadNotificationsCount(user);
+    return { unreadCount };
+  }
+
+
+  
+
   @Get(':id')
   @Documentation({
     summary: 'Returns a specific user notification',
-    response: { status: 200, type: RenderedNotificationDto },
+    response: { status: HttpStatus.OK, type: RenderedNotificationDto },
   })
   findOne(
     @CurrentUser() user: User,
@@ -65,7 +82,7 @@ export class MeNotificationsController {
 
   @Documentation({
     summary: 'Updates a specific user notification',
-    response: { status: 200, type: RenderedNotificationDto },
+    response: { status: HttpStatus.OK, type: RenderedNotificationDto },
   })
   @Patch(':id')
   @Scopes(NotificationsScope.write)
@@ -83,4 +100,14 @@ export class MeNotificationsController {
       locale,
     )
   }
+
+  // @Patch('/mark-all-as-read')
+  // @Scopes(NotificationsScope.write)
+  // @ApiSecurity('oauth2', [NotificationsScope.write])
+  // @Documentation({
+  //   summary: 'Updates all user notifications as read',
+  //   response: { status: HttpStatus.NO_CONTENT },
+  // })  async markAllAsRead(@CurrentUser() user: User): Promise<void> {
+  //   await this.notificationService.markAllAsRead(user);
+  // }
 }
