@@ -7,7 +7,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useDebounce } from 'react-use'
 import { OJOIApplication } from '../../lib/types'
 import { dotToObj } from '../../lib/utils'
-import { INITAL_ANSWERS } from '../../lib/constants'
+import { INITAL_ANSWERS, Routes } from '../../lib/constants'
 
 type Props = {
   application: OJOIApplication
@@ -15,12 +15,31 @@ type Props = {
   defaultValue?: string
   label?: string
   placeholder?: string
-  error?: string
+  errorMessage?: string
   textarea?: boolean
+  required?: boolean
+  isOptional?: boolean
 }
 
-const INTERVAL_TIMER = 2500
+const INTERVAL_TIMER = 10000
 const DEBOUNCE_TIMER = 500
+
+const keyMapper = (key: string) => {
+  switch (key) {
+    case Routes.ADVERT:
+      return Routes.ADVERT
+    case Routes.SIGNATURE:
+      return Routes.SIGNATURE
+    case Routes.ADDITIONS_AND_DOCUMENTS:
+      return Routes.ADDITIONS_AND_DOCUMENTS
+    case Routes.PUBLISHING_PREFERENCES:
+      return Routes.PUBLISHING_PREFERENCES
+    case Routes.PREREQUISITES:
+      return Routes.PREREQUISITES
+    default:
+      return null
+  }
+}
 
 export const CustomInputController = ({
   application,
@@ -28,58 +47,72 @@ export const CustomInputController = ({
   defaultValue = '',
   label,
   placeholder,
-  error,
+  errorMessage,
   textarea,
+  required = false,
+  isOptional = false,
 }: Props) => {
   const { locale } = useLocale()
 
   const [updateApplication, { loading: isSaving }] =
     useMutation(UPDATE_APPLICATION)
 
-  const { trigger } = useFormContext()
-
   const [localValue, setLocalValue] = useState(defaultValue)
   const [lazyValue, setLazyValue] = useState(defaultValue)
 
-  const [mounted, setMounted] = useState(false)
+  const [localError, setLocalError] = useState(false)
+  const [localIsDirty, setLocalIsDirty] = useState(false)
 
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null)
 
   const handleUpdate = useCallback(
     async (value: string) => {
-      const key = name.split('.')[0]
-      const isFieldValid = await trigger(name)
-      const obj = application.answers[name as keyof typeof application.answers]
-      const defaultValue = obj
-        ? obj
-        : {
-            ...INITAL_ANSWERS[key as keyof typeof INITAL_ANSWERS],
-            ...application.answers[key as keyof typeof application.answers],
-          }
+      const key = keyMapper(name.split('.')[0])
 
-      console.log(dotToObj(name, { ...defaultValue }, value))
+      if (!key) {
+        return
+      }
 
-      if (!isFieldValid || !key) return
+      if (localIsDirty && !isOptional && value.length === 0) {
+        setLocalError(true)
+      }
+
+      const defaultValue = {
+        [key]: {
+          ...INITAL_ANSWERS[key],
+          ...application.answers[key],
+        },
+      }
+
+      const answers = dotToObj(name, { ...defaultValue }, value)
 
       await updateApplication({
         variables: {
           locale,
           input: {
             id: application.id,
-            answers: dotToObj(name, { ...defaultValue }, value),
+            answers: { ...answers },
           },
         },
       })
     },
-    [application, locale, name, trigger, updateApplication],
+    [
+      application.answers,
+      application.id,
+      isOptional,
+      localIsDirty,
+      locale,
+      name,
+      updateApplication,
+    ],
   )
 
   useEffect(() => {
     const current = inputRef.current
     const interval = setInterval(() => {
-      if (current && mounted) {
+      if (current) {
         if (current === document.activeElement) {
-          handleUpdate(localValue)
+          handleUpdate(current.value)
         }
       }
     }, INTERVAL_TIMER)
@@ -88,20 +121,28 @@ export const CustomInputController = ({
       clearInterval(interval)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputRef, mounted])
+  }, [inputRef, handleUpdate])
 
   useEffect(() => {
-    if (!mounted) return
-    handleUpdate(lazyValue)
-  }, [handleUpdate, lazyValue, mounted])
-
-  useEffect(() => {
-    if (!mounted) {
-      setMounted(true)
+    const handler = () => {
+      handleUpdate(localValue)
     }
-  }, [mounted])
+
+    window.addEventListener('beforeunload', handler)
+
+    return () => {
+      window.removeEventListener('beforeunload', handler)
+    }
+  })
 
   const onChange = (value: string) => {
+    if (!localIsDirty) {
+      setLocalIsDirty(true)
+    }
+    if (localError) {
+      setLocalError(false)
+    }
+
     setLocalValue(value)
     return value
   }
@@ -120,6 +161,7 @@ export const CustomInputController = ({
       defaultValue={defaultValue}
       render={({ field: { onChange: onControllerChange, value, ref } }) => (
         <Input
+          required={required}
           ref={(e) => {
             ref(e)
             inputRef.current = e
@@ -132,8 +174,8 @@ export const CustomInputController = ({
           size="sm"
           loading={isSaving}
           value={value}
-          hasError={Boolean(error)}
-          errorMessage={error}
+          hasError={localError}
+          errorMessage={errorMessage}
           textarea={textarea}
           onChange={(e) => onControllerChange(onChange(e.target.value))}
           onBlur={(e) => handleUpdate(e.target.value)}

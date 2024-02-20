@@ -42,6 +42,8 @@ export const INITAL_ANSWERS = {
     title: '',
     template: '',
     documentContents: '',
+  },
+  [Routes.SIGNATURE]: {
     signatureType: '',
     signatureContents: '',
     signature: {

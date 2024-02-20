@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { advert } from '../../lib/messages'
+import { advert, error } from '../../lib/messages'
 import { AdvertOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { useFormContext } from 'react-hook-form'
 import { TemplateModal } from './TemplateModal'
@@ -221,7 +221,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             label={f(advert.inputs.title.label)}
             placeholder={f(advert.inputs.title.placeholder)}
             defaultValue={answers?.advert?.title ?? ''}
-            error={errors && getErrorViaPath(errors, InputFields.advert.title)}
+            errorMessage={f(error.emptyFieldError)}
             textarea
           />
         </Box>

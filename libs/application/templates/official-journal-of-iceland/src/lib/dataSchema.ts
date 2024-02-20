@@ -25,7 +25,7 @@ export const dataSchema = z.object({
       department: z.string().optional(),
       type: z.string().optional(),
       subType: z.string().optional(),
-      title: z.string().optional(),
+      title: z.string(),
       template: z.string().optional(),
       documentContents: z.string().optional(),
     })
