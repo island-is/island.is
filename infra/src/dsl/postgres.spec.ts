@@ -69,4 +69,21 @@ describe('Postgres', () => {
       ])
     })
   })
+  describe('strip postfixes', () => {
+    const myService = service('my-service-worker-job').db()
+    let result: SerializeSuccess<HelmService>
+    beforeEach(async () => {
+      result = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: myService,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeSuccess<HelmService>
+    })
+    it('service name (-worker, -job) postfixes should be stripped', () => {
+      expect(result.serviceDef[0]?.env).toMatchObject({
+        'DB_USER': 'my_service',
+      })
+    })
+  })
 })
