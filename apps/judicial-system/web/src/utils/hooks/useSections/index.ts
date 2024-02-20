@@ -68,7 +68,7 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { type, id, parentCase } = workingCase
+    const { type, id, parentCase, state } = workingCase
 
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
@@ -77,7 +77,7 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
-        !isCompletedCase(workingCase.state) &&
+        !isCompletedCase(state) &&
         !parentCase,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
@@ -110,7 +110,7 @@ const useSections = (
                   validateFormStepper(
                     isValid,
                     [
-                      workingCase.type === CaseType.CUSTODY
+                      type === CaseType.CUSTODY
                         ? constants.RESTRICTION_CASE_DEFENDANT_ROUTE
                         : constants.CREATE_TRAVEL_BAN_ROUTE,
                     ],
@@ -233,14 +233,14 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, type, parentCase } = workingCase
+    const { id, type, parentCase, state } = workingCase
 
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
-        !isCompletedCase(workingCase.state) &&
+        !isCompletedCase(state) &&
         !parentCase,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
@@ -398,8 +398,8 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, type } = workingCase
-    const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+    const { id, type, state } = workingCase
+    const caseHasBeenReceivedByCourt = state === CaseState.RECEIVED
     const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
@@ -408,7 +408,7 @@ const useSections = (
         (user?.role === UserRole.PROSECUTOR ||
           user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) &&
         isIndictmentCase(type) &&
-        !isCompletedCase(workingCase.state),
+        !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
         ? []
@@ -593,14 +593,12 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, parentCase } = workingCase
+    const { id, parentCase, state } = workingCase
 
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
-        isDistrictCourtUser(user) &&
-        !isCompletedCase(workingCase.state) &&
-        !parentCase,
+        isDistrictCourtUser(user) && !isCompletedCase(state) && !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
@@ -740,14 +738,12 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, parentCase } = workingCase
+    const { id, parentCase, state } = workingCase
 
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       isActive:
-        isDistrictCourtUser(user) &&
-        !isCompletedCase(workingCase.state) &&
-        !parentCase,
+        isDistrictCourtUser(user) && !isCompletedCase(state) && !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
@@ -894,12 +890,11 @@ const useSections = (
   }
 
   const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
-    const { id } = workingCase
+    const { id, state } = workingCase
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
-      isActive:
-        isDistrictCourtUser(user) && !isCompletedCase(workingCase.state),
+      isActive: isDistrictCourtUser(user) && !isCompletedCase(state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
@@ -915,7 +910,7 @@ const useSections = (
           isActive: isActive(
             constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
           ),
-          href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
+          href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
           onClick:
             !isActive(constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE) &&
             validateFormStepper(isValid, [], workingCase) &&
@@ -929,7 +924,7 @@ const useSections = (
         {
           name: formatMessage(sections.indictmentsCourtSection.subpoena),
           isActive: isActive(constants.INDICTMENTS_SUBPOENA_ROUTE),
-          href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`,
+          href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`,
           onClick:
             !isActive(constants.INDICTMENTS_SUBPOENA_ROUTE) &&
             validateFormStepper(
@@ -948,7 +943,7 @@ const useSections = (
         {
           name: formatMessage(sections.indictmentsCourtSection.defender),
           isActive: isActive(constants.INDICTMENTS_DEFENDER_ROUTE),
-          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
+          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${id}`,
           onClick:
             !isActive(constants.INDICTMENTS_DEFENDER_ROUTE) &&
             validateFormStepper(
@@ -968,7 +963,7 @@ const useSections = (
         {
           name: formatMessage(sections.indictmentsCourtSection.courtRecord),
           isActive: isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE),
-          href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
+          href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${id}`,
           onClick:
             !isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE) &&
             validateFormStepper(
@@ -995,7 +990,7 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const section = getRestrictionCaseProsecutorSection(workingCase, user)
-    const { id, type, parentCase } = workingCase
+    const { id, type, parentCase, state } = workingCase
 
     return {
       name: formatMessage(sections.extensionSection.title),
@@ -1003,7 +998,7 @@ const useSections = (
         user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
         Boolean(parentCase) &&
-        !isCompletedCase(workingCase.state),
+        !isCompletedCase(state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE ||
         section.children.length === 0
@@ -1085,7 +1080,7 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const section = getInvestigationCaseProsecutorSection(workingCase, user)
-    const { id, type, parentCase } = workingCase
+    const { id, type, parentCase, state } = workingCase
 
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
@@ -1093,7 +1088,7 @@ const useSections = (
         user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
         Boolean(parentCase) &&
-        !isCompletedCase(workingCase.state),
+        !isCompletedCase(state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
