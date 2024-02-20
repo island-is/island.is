@@ -111,7 +111,7 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engin meðmælasöfnun',
+    defaultMessage: 'Engin meðmælasöfnun í gangi',
     description: '',
   },
   noListsFoundBySearch: {

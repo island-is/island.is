@@ -272,25 +272,30 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           ) : (
             <Text>{formatMessage(m.noLists)}</Text>
           )}
-          <Box marginTop={5}>
-            <Pagination
-              totalItems={lists.length}
-              itemsPerPage={pageSize}
-              page={page}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => setPage(page)}
-                  component="button"
-                >
-                  {children}
-                </Box>
-              )}
-            />
-          </Box>
-          {allowedToProcess &&
-            collectionStatus === CollectionStatus.Processing && (
+          {lists.length > 0 && (
+            <Box marginTop={5}>
+              <Pagination
+                totalItems={lists.length}
+                itemsPerPage={pageSize}
+                page={page}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                    component="button"
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
+          )}
+          {lists.length > 0 &&
+            allowedToProcess &&
+            (collectionStatus === CollectionStatus.Processing ||
+              collectionStatus === CollectionStatus.InInitialReview ||
+              collectionStatus === CollectionStatus.InReview) && (
               <>
                 <CompareLists />
                 <ActionCompleteCollectionProcessing />

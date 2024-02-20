@@ -54,7 +54,7 @@ export const SignatureLists: FC<
                     size: 'small',
                     onClick: () =>
                       window.open(
-                        `${window.location.origin}/${list.slug}`,
+                        `${window.location.origin}${list.slug}`,
                         '_blank',
                       ),
                   }}
