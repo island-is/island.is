@@ -31,3 +31,20 @@ describe('logging same level', () => {
     expect(console.log).toHaveBeenCalledWith('silly: test message')
   })
 })
+
+describe('logging different level', () => {
+  let logger;
+  beforeEach(() => {
+    console.log = jest.fn();
+  });
+  it('should log error messages on info', () => {
+    logger = getLogger('info');
+    logger.error('test message');
+    expect(console.log).toHaveBeenCalledWith('error: test message');
+  });
+  it('should not log info messages on warn', () => {
+    logger = getLogger('warn');
+    logger.info('test message');
+    expect(console.log).not.toHaveBeenCalled();
+  });
+})
