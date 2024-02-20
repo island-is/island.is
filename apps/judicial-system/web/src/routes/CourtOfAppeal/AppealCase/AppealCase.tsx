@@ -250,7 +250,6 @@ const AppealCase = () => {
             )}
             primaryButtonText={formatMessage(strings.modalPrimaryButton)}
             onPrimaryButtonClick={() => router.push(`${navigateTo}/${id}`)}
-            onClose={() => setModalVisible(false)}
             onSecondaryButtonClick={() => {
               sendNotifications()
             }}
