@@ -2,7 +2,6 @@ import {
   Application,
   ApplicationConfigurations,
   ApplicationContext,
-  ApplicationFormTypes,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
@@ -10,7 +9,7 @@ import {
 import { Injectable } from '@nestjs/common'
 import { EventObject } from 'xstate'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { TemplateMapper } from '@island.is/application/server-templates'
+import { getApplicationBySubTypeId } from '@island.is/application/server-templates'
 
 @Injectable()
 export class TemplateService {
@@ -20,27 +19,41 @@ export class TemplateService {
     TEvents extends EventObject,
   >(
     templateId: ApplicationTypes,
+    subTypeId?: string,
   ): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
+    console.log('getApplicationTemplate -------------------')
+    console.log('templateId', templateId)
+    console.log('subTypeId', subTypeId)
     const config = ApplicationConfigurations[templateId]
 
-    if (config.formType === ApplicationFormTypes.DYNAMIC) {
-      const template = TemplateMapper[templateId]
+    if (subTypeId) {
+      console.log('getting a sub type')
+      const template = getApplicationBySubTypeId(subTypeId)
       if (!template) {
         throw new Error(
           `Template for ${templateId} not found in TemplateMapper`,
         )
       }
-
-      return template as ApplicationTemplate<TContext, TStateSchema, TEvents>
+      console.log('template Name', template.name)
+      console.log('end found -------------------')
+      return template as unknown as ApplicationTemplate<
+        TContext,
+        TStateSchema,
+        TEvents
+      >
     }
 
+    console.log('end NOT found! -------------------')
     return getApplicationTemplateByTypeId(templateId)
   }
-
   async getApplicationTranslationNamespaces(
     application: Application,
   ): Promise<string[]> {
-    const template = await this.getApplicationTemplate(application.typeId)
+    console.log('getApplicationTranslationNamespaces')
+    const template = await this.getApplicationTemplate(
+      application.typeId,
+      application.subTypeId,
+    )
 
     // We load the core namespace for the application system + the ones defined in the application template
     return ['application.system', ...(template?.translationNamespaces ?? [])]

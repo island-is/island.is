@@ -106,8 +106,10 @@ export class ApplicationAccessService {
     nationalId: string,
   ): Promise<RoleInState<EventObject> | undefined> {
     const templateId = application.typeId as ApplicationTypes
+    console.log('get role in state')
     const template = await this.templateService.getApplicationTemplate(
       templateId,
+      application.subTypeId,
     )
     const helper = new ApplicationTemplateHelper(application, template)
     const currentUserRole =

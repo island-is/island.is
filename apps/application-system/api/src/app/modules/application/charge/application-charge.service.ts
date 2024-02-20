@@ -18,7 +18,7 @@ export class ApplicationChargeService {
   }
 
   async deleteCharge(
-    application: Pick<Application, 'id' | 'typeId' | 'state'>,
+    application: Pick<Application, 'id' | 'typeId' | 'subTypeId' | 'state'>,
   ) {
     try {
       const payment = await this.paymentService.findPaymentByApplicationId(
@@ -32,8 +32,10 @@ export class ApplicationChargeService {
 
       // No need to delete charge if already paid (and should not be refunded)
       if (payment.fulfilled) {
+        console.log('Payment already fulfilled, not deleting charge')
         const template = await this.templateService.getApplicationTemplate(
           application.typeId,
+          application.subTypeId,
         )
 
         const stateConfig =

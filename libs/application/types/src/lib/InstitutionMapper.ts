@@ -11,6 +11,10 @@ export const institutionMapper: Record<
   Partial<ApplicationTypes>,
   Institution
 > = {
+  [ApplicationTypes.CERTIFICATES]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+  },
   [ApplicationTypes.CARAMEL]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,

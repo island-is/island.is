@@ -7,6 +7,10 @@ class FiltersInput {
   @IsOptional()
   typeId?: string[]
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  subTypeId?: string
+
   @Field(() => [String], { nullable: true })
   @IsOptional()
   status?: string[]

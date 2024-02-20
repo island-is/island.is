@@ -1,6 +1,9 @@
 import { ApplicationTypes } from '@island.is/application/types'
 
-const templates: Record<ApplicationTypes, () => Promise<unknown> | void> = {
+const templates: Record<
+  Partial<ApplicationTypes>,
+  () => Promise<unknown> | void
+> = {
   [ApplicationTypes.EXAMPLE]: () =>
     import('@island.is/application/templates/reference-template'),
   [ApplicationTypes.ESTATE]: () =>
@@ -124,6 +127,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown> | void> = {
     return
   },
   [ApplicationTypes.CARAMEL]: () => {
+    return
+  },
+  [ApplicationTypes.CERTIFICATES]: () => {
     return
   },
   [ApplicationTypes.OLD_AGE_PENSION]: () =>

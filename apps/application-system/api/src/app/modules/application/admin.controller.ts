@@ -82,6 +82,7 @@ export class AdminController {
   async findAllAdmin(
     @Param('nationalId') nationalId: string,
     @Query('typeId') typeId?: string,
+    @Query('subTypeId') subTypeId?: string,
     @Query('status') status?: string,
   ) {
     this.logger.debug(`Getting applications with status ${status}`)
@@ -89,6 +90,7 @@ export class AdminController {
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
+      subTypeId,
       status,
       nationalId,
       true, // Show pruned applications

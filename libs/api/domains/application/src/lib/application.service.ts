@@ -72,6 +72,7 @@ export class ApplicationService {
       typeId: input?.typeId?.join(','),
       status: input?.status?.join(','),
       scopeCheck: input?.scopeCheck,
+      subTypeId: input?.subTypeId ?? '', //TODO; fix when schemas update correctly
     })
   }
 
@@ -85,6 +86,7 @@ export class ApplicationService {
       locale,
       typeId: input.typeId?.join(','),
       status: input.status?.join(','),
+      subTypeId: input?.subTypeId ?? '', //TODO; fix when schemas update correctly
     })
   }
 
@@ -107,8 +109,13 @@ export class ApplicationService {
     })
   }
   async create(input: CreateApplicationInput, auth: Auth) {
+    const { initialQuery, typeId, subTypeId } = input
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
-      createApplicationDto: input,
+      createApplicationDto: {
+        initialQuery,
+        typeId,
+        subTypeId: subTypeId ?? '',
+      },
     })
   }
 

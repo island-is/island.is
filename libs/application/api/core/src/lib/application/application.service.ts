@@ -167,16 +167,19 @@ export class ApplicationService {
   async findAllByNationalIdAndFilters(
     nationalId: string,
     typeId?: string,
+    subTypeId?: string,
     status?: string,
     actor?: string,
     showPruned?: boolean,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
+    const subTypeIds = subTypeId?.split(',')
     const statuses = status?.split(',')
 
     return this.applicationModel.findAll({
       where: {
         ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
+        ...(subTypeIds ? { subTypeId: { [Op.in]: subTypeIds } } : {}),
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
           {
@@ -255,6 +258,7 @@ export class ApplicationService {
         | 'state'
         | 'status'
         | 'typeId'
+        | 'subTypeId'
       >
     >,
   ): Promise<Application> {

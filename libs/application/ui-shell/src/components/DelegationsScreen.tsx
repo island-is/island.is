@@ -26,6 +26,7 @@ import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useNavigate } from 'react-router-dom'
 import * as kennitala from 'kennitala'
 import * as styles from './DelegationsScreen.css'
+import { ApplicationTypes } from '@island.is/application/types'
 
 enum DelegationType {
   LegalGuardian = 'LegalGuardian',
@@ -37,11 +38,11 @@ enum DelegationType {
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
   checkDelegation: Dispatch<SetStateAction<boolean>>
-  slug: string
+  type: ApplicationTypes
 }
 
 export const DelegationsScreen = ({
-  slug,
+  type,
   alternativeSubjects,
   checkDelegation,
 }: DelegationsScreenProps) => {
@@ -49,7 +50,7 @@ export const DelegationsScreen = ({
     screenType: ScreenType.LOADING,
   })
   const { formatMessage } = useLocale()
-  const type = getTypeFromSlug(slug)
+
   const { switchUser, userInfo: user } = useAuth()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const navigate = useNavigate()
@@ -62,6 +63,8 @@ export const DelegationsScreen = ({
   // if error with fetching delegations set handle like application that does not support delegations
   useEffect(() => {
     if (error) {
+      console.log('Error fetching delegations', error)
+
       checkDelegation(true)
     }
   }, [error, checkDelegation])
@@ -69,12 +72,14 @@ export const DelegationsScreen = ({
   // Check whether application supports delegations
   useEffect(() => {
     async function applicationSupportsDelegations() {
+      console.log('Checking if application supports delegations')
+      console.log('Type:', type)
       if (type) {
         const template = {
           allowedDelegations: [
             { featureFlag: 'delegations', type: 'LegalGuardian' },
           ],
-        } //await getApplicationTemplateByTypeId(type)
+        } //await getApplicationTemplateByTypeId(type) //TODO: Fix this
         const featureFlagEnabled = await featureFlagClient.getValue(
           Features.applicationSystemDelegations,
           false,
@@ -94,12 +99,15 @@ export const DelegationsScreen = ({
         }
 
         if (allowedDelegations.length > 0 && featureFlagEnabled) {
+          console.log('Application supports delegations')
           setScreenData((prev) => ({
             ...prev,
             allowedDelegations: allowedDelegations,
           }))
         } else {
+          console.log('Application does not support delegations')
           if (user?.profile.actor) {
+            console.log('User has actor profile')
             setScreenData({
               screenType: ScreenType.NOT_SUPPORTED,
               authDelegations: [
@@ -113,6 +121,7 @@ export const DelegationsScreen = ({
               ],
             })
           } else {
+            console.log('User has no actor profile')
             checkDelegation(true)
           }
         }

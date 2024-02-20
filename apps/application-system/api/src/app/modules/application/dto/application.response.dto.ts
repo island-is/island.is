@@ -150,6 +150,11 @@ export class BaseApplicationResponseDto {
   @IsEnum(ApplicationTypes)
   typeId!: ApplicationTypes
 
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  subTypeId?: string
+
   @ApiProperty()
   @Expose()
   @IsObject()

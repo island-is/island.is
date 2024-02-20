@@ -6,11 +6,7 @@ import { HistoryService } from '@island.is/application/api/history'
 import { IntlService } from '@island.is/cms-translations'
 import { Injectable } from '@nestjs/common'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
-import type { Unwrap, Locale } from '@island.is/shared/types'
-import {
-  getApplicationTemplateByTypeId,
-  getApplicationTranslationNamespaces,
-} from '@island.is/application/template-loader'
+import type { Locale } from '@island.is/shared/types'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
 import { ApplicationTemplateHelper } from '@island.is/application/core'

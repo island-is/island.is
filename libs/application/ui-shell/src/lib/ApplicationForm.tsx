@@ -73,10 +73,10 @@ const ApplicationLoader: FC<
   }
 
   const currentTypeId: ApplicationTypes = application?.typeId
-
+  /*
   if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
     return <ErrorShell errorType="idNotFound" />
-  }
+  }*/
 
   if (!applicationId || error) {
     const foundError = findProblemInApolloError(error, [
@@ -89,7 +89,7 @@ const ApplicationLoader: FC<
     ) {
       return (
         <DelegationsScreen
-          slug={slug}
+          type={type}
           alternativeSubjects={foundError.alternativeSubjects}
           checkDelegation={setDelegationsChecked}
         />

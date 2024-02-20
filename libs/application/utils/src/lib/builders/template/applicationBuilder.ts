@@ -15,7 +15,6 @@ import {
 } from '@island.is/application/types'
 import {
   ApplicationBlueprint,
-  Events,
   StateBlueprint,
   Transition,
 } from './templateTypes'

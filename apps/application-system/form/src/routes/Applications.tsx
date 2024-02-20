@@ -28,24 +28,37 @@ import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
   Application,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTemplate,
+  ApplicationTypes,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
+import { ApplicationProps } from '../lib/routes'
 
 type UseParams = {
   slug: string
 }
 
-export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
+export const Applications: FC<React.PropsWithChildren<ApplicationProps>> = ({
+  applicationCategory,
+}) => {
   const { slug } = useParams() as UseParams
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
-  const type = getTypeFromSlug(slug)
+  let type = getTypeFromSlug(slug)
+  let subType: string | null = null
+
+  if (applicationCategory === 'vottord') {
+    type = ApplicationTypes.CERTIFICATES
+    subType = slug
+  }
+
+  console.log('slug', slug)
+  console.log('type', type)
+  console.log('subType', subType)
 
   const { search } = useLocation()
 
@@ -76,7 +89,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     refetch,
   } = useLocalizedQuery(APPLICATION_APPLICATIONS, {
     variables: {
-      input: { typeId: type },
+      input: { typeId: type, subTypeId: subType },
     },
     skip: !type && !delegationsChecked,
     fetchPolicy: 'cache-and-network',
@@ -98,6 +111,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       variables: {
         input: {
           typeId: type,
+          subTypeId: subType,
           initialQuery: queryParam,
         },
       },
@@ -118,12 +132,17 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   }, [type, template])
 */
   useEffect(() => {
+    console.log('effect type', type)
+    console.log('effect data', data)
+    console.log('effect delegationsChecked', delegationsChecked)
+    console.log('what is in this ? : ', query.get('delegationChecked'))
     if (
       type &&
       data &&
       isEmpty(data.applicationApplications) &&
       delegationsChecked
     ) {
+      console.log('createApplication')
       createApplication()
     }
   }, [type, data, delegationsChecked])
@@ -146,7 +165,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     if (slug && isBadSubject && type && !delegationsChecked) {
       return (
         <DelegationsScreen
-          slug={slug}
+          type={type}
           alternativeSubjects={foundError.alternativeSubjects}
           checkDelegation={setDelegationsChecked}
         />
@@ -172,7 +191,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
 
   if (!delegationsChecked && type && slug) {
     return (
-      <DelegationsScreen checkDelegation={setDelegationsChecked} slug={slug} />
+      <DelegationsScreen checkDelegation={setDelegationsChecked} type={type} />
     )
   }
 

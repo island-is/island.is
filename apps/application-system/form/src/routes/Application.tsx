@@ -6,13 +6,16 @@ import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 import { slugMapper } from '../routes/slugMapper'
+import { ApplicationProps } from '../lib/routes'
 
 type UseParams = {
   slug: string
   id: string
 }
 
-export const Application = () => {
+export const Application: React.FC<ApplicationProps> = ({
+  applicationCategory,
+}) => {
   const { slug, id } = useParams() as UseParams
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()

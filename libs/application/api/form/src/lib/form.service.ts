@@ -25,8 +25,10 @@ export class FormService {
     application: BaseApplication,
     formatMessage: FormatMessage,
   ): Promise<FormDto | undefined> {
+    console.log('getFormByApplicationId')
     const template = await this.templateService.getApplicationTemplate(
       application.typeId,
+      application.subTypeId,
     )
     this.contextService.setContext(application, formatMessage)
     //TODO: Refactor template functions

@@ -194,16 +194,28 @@ export class ApplicationController<
     @Param('nationalId') nationalId: string,
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
+    @Query('subTypeId') subTypeId?: string,
     @Query('status') status?: string,
     @Query('scopeCheck') scopeCheck?: boolean,
   ): Promise<ApplicationResponseDto[]> {
+    console.log('Find all applications')
+
+    //log all the parameters
+    console.log('nationalId', nationalId)
+    //console.log('user', user)
+    console.log('typeId', typeId)
+    console.log('subTypeId', subTypeId)
+    console.log('status', status)
     this.verifyUserAccess(nationalId, user)
+    console.log('verified user access done ')
     const applications = await this.fetchApplications(
       nationalId,
       typeId,
+      subTypeId,
       status,
       user.actor?.nationalId,
     )
+    console.log('applications fetched')
     return this.filterApplicationsByAccess(
       applications,
       user,
@@ -221,6 +233,7 @@ export class ApplicationController<
   private async fetchApplications(
     nationalId: string,
     typeId?: string,
+    subTypeId?: string,
     status?: string,
     actorNationalId?: string,
   ): Promise<Application[]> {
@@ -228,6 +241,7 @@ export class ApplicationController<
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
+      subTypeId,
       status,
       actorNationalId,
     )
@@ -253,10 +267,13 @@ export class ApplicationController<
     const filteredApplications: Application[] = []
 
     for (const application of applications) {
+      console.log('start filtering applications')
       const template = await this.getOrFetchTemplate(
         application.typeId,
         templates,
+        application.subTypeId,
       )
+      console.log('template fetched')
       const hasAccess = await this.hasUserAccessToApplication(
         application as BaseApplication,
         template,
@@ -264,7 +281,7 @@ export class ApplicationController<
         scopeCheck,
         hasAccessCache,
       )
-
+      console.log('has access')
       if (
         hasAccess &&
         this.applicationAccessService.evaluateIfRoleShouldBeListed(
@@ -273,10 +290,11 @@ export class ApplicationController<
           template,
         )
       ) {
+        console.log('has access and role should be listed push to list')
         filteredApplications.push(application)
       }
     }
-
+    console.log('filtered applications finished')
     return filteredApplications
   }
 
@@ -290,6 +308,7 @@ export class ApplicationController<
         EventObject
       >
     >,
+    subTypeId?: string,
   ): Promise<
     ApplicationTemplate<
       ApplicationContext,
@@ -297,10 +316,18 @@ export class ApplicationController<
       EventObject
     >
   > {
-    if (!cache[typeId]) {
+    console.log(
+      'Get or fetch template- ----------------- ' + typeId + ' - ' + subTypeId,
+    )
+    const cacheKey = subTypeId ? `${typeId}-${subTypeId}` : typeId
+    if (!cache[cacheKey]) {
       try {
-        cache[typeId] = await this.templateService.getApplicationTemplate(
+        console.log(
+          'Cache miss ----------------- ' + typeId + ' - ' + subTypeId,
+        )
+        cache[cacheKey] = await this.templateService.getApplicationTemplate(
           typeId,
+          subTypeId,
         )
       } catch (e) {
         this.logger.info(
@@ -309,7 +336,9 @@ export class ApplicationController<
         )
       }
     }
-    return cache[typeId]
+
+    console.log('Cache hit ----------------- ' + typeId + ' - ' + subTypeId)
+    return cache[cacheKey]
   }
 
   private async hasUserAccessToApplication(
@@ -348,8 +377,12 @@ export class ApplicationController<
     user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const { typeId, initialQuery } = application
-    const template = await this.templateService.getApplicationTemplate(typeId)
+    console.log('Create application')
+    const { typeId, initialQuery, subTypeId } = application
+    const template = await this.templateService.getApplicationTemplate(
+      typeId,
+      subTypeId,
+    )
 
     if (template === null) {
       throw new BadRequestException(
@@ -378,6 +411,7 @@ export class ApplicationController<
       | 'state'
       | 'status'
       | 'typeId'
+      | 'subTypeId'
     > = {
       answers:
         template.initialQueryParameter && initialQuery ? { initialQuery } : {},
@@ -388,6 +422,7 @@ export class ApplicationController<
       state: initialState,
       status: ApplicationStatus.DRAFT,
       typeId: application.typeId,
+      subTypeId: subTypeId,
     }
 
     const createdApplication = await this.applicationService.create(
@@ -512,8 +547,10 @@ export class ApplicationController<
     }
 
     const templateId = existingApplication.typeId as ApplicationTypes
+    console.log('assign application')
     const template = await this.templateService.getApplicationTemplate(
       templateId,
+      existingApplication.subTypeId,
     )
 
     // TODO
@@ -651,8 +688,10 @@ export class ApplicationController<
       await this.applicationAccessService.findOneByIdAndNationalId(id, user)
 
     const templateId = existingApplication.typeId as ApplicationTypes
+    console.log('update external data')
     const template = await this.templateService.getApplicationTemplate(
       templateId,
+      existingApplication.subTypeId,
     )
 
     const helper = new ApplicationTemplateHelper(
@@ -745,6 +784,7 @@ export class ApplicationController<
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await this.templateService.getApplicationTemplate(
       templateId,
+      existingApplication.subTypeId,
     )
 
     // TODO

@@ -81,6 +81,13 @@ export class Application extends Model {
   typeId!: ApplicationTypes
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  subTypeId?: string
+
+  @Column({
     type: DataType.JSONB,
     defaultValue: {},
     allowNull: false,

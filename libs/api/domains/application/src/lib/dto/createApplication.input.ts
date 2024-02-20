@@ -13,6 +13,10 @@ export class CreateApplicationInput {
   typeId!: CreateApplicationDtoTypeIdEnum
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
+  subTypeId?: string
+
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   initialQuery?: string

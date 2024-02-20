@@ -49,8 +49,12 @@ export class ApplicationValidationService {
     application: Application,
     user: User,
   ): Promise<void> {
+    console.log('validateThatApplicationIsReady')
     const applicationTemplate =
-      await this.templateService.getApplicationTemplate(application.typeId)
+      await this.templateService.getApplicationTemplate(
+        application.typeId,
+        application.subTypeId,
+      )
 
     if (!applicationTemplate) {
       throw new BadRequestException(
@@ -106,13 +110,17 @@ export class ApplicationValidationService {
   }
 
   async validateApplicationSchema(
-    application: Pick<Application, 'typeId'>,
+    application: Pick<Application, 'typeId' | 'subTypeId'>,
     newAnswers: FormValue,
     formatMessage: FormatMessage,
     user: User,
   ): Promise<void> {
+    console.log('validateApplicationSchema')
     const applicationTemplate =
-      await this.templateService.getApplicationTemplate(application.typeId)
+      await this.templateService.getApplicationTemplate(
+        application.typeId,
+        application.subTypeId,
+      )
 
     if (applicationTemplate === null) {
       throw new BadRequestException(
@@ -145,9 +153,10 @@ export class ApplicationValidationService {
     if (!newAnswers) {
       return {}
     }
-
+    console.log('validateIncomingAnswers')
     const template = await this.templateService.getApplicationTemplate(
       application.typeId,
+      application.subTypeId,
     )
     const role = template.mapUserToRole(nationalId, application)
 
@@ -219,8 +228,10 @@ export class ApplicationValidationService {
     if (!templateApis) {
       return
     }
+    console.log('validateIncomingExternalDataProviders')
     const template = await this.templateService.getApplicationTemplate(
       application.typeId,
+      application.subTypeId,
     )
     const role = template.mapUserToRole(nationalId, application)
     if (!role) {

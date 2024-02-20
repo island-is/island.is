@@ -94,8 +94,10 @@ export class ApplicationSerializer
     showHistory = true,
   ) {
     const application = model.toJSON() as BaseApplication
+    console.log('serailize application')
     const template = await this.templateService.getApplicationTemplate(
       application.typeId as ApplicationTypes,
+      application.subTypeId,
     )
     const helper = new ApplicationTemplateHelper(application, template)
     const actionCardMeta = helper.getApplicationActionCardMeta()

@@ -70,6 +70,7 @@ export interface Application<TAnswers = FormValue> {
   status: ApplicationStatus
   draftTotalSteps?: number
   draftFinishedSteps?: number
+  subTypeId?: string
   form?: IForm
 }
 

@@ -10,6 +10,11 @@ export class CreateApplicationDto {
 
   @IsOptional()
   @IsString()
+  @ApiProperty()
+  readonly subTypeId?: string
+
+  @IsOptional()
+  @IsString()
   @ApiPropertyOptional()
   readonly initialQuery?: string
 }

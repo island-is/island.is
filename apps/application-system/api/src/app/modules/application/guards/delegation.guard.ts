@@ -25,7 +25,7 @@ export class DelegationGuard implements CanActivate {
   async getTypeIdFromApplicationId(
     id: string,
     user: User,
-  ): Promise<string | null> {
+  ): Promise<{ typeId?: string | null; subTypeId?: string | null } | null> {
     if (!id) {
       return null
     }
@@ -34,13 +34,19 @@ export class DelegationGuard implements CanActivate {
         id,
         user.nationalId,
       )
-      return application?.typeId || null
+      return {
+        typeId: application?.typeId || null,
+        subTypeId: application?.subTypeId || null,
+      }
     } catch {
       return null
     }
   }
 
-  async getTypeIdFromToken(token: string, user: User): Promise<string | null> {
+  async getTypeIdFromToken(
+    token: string,
+    user: User,
+  ): Promise<{ typeId?: string | null; subTypeId?: string | null } | null> {
     const decodedToken = verifyToken<DecodedAssignmentToken>(token)
     if (!decodedToken) {
       return null
@@ -67,16 +73,23 @@ export class DelegationGuard implements CanActivate {
       // Directly accessible in request params or body
       // If the request has the application id in params or the body contains a coded token from the assign application function
       // then we get the application to get its typeId
-      const typeId =
-        request.query.typeId ||
-        request.body.typeId ||
+      const { typeId, subTypeId } =
+        request.query.typeId || {
+          typeId: request.query.typeId,
+          subTypeId: request.query.subTypeId,
+        } ||
+        request.body.typeId || {
+          typeId: request.body.typeId,
+          subTypeId: request.body.subTypeId,
+        } ||
         (await this.getTypeIdFromApplicationId(request.params.id, user)) ||
         (await this.getTypeIdFromToken(request.body.token, user))
 
       // Get the delegation types the application type supports
       if (typeId) {
+        console.log('can activeate get type ')
         const applicationTemplate =
-          await this.templateService.getApplicationTemplate(typeId)
+          await this.templateService.getApplicationTemplate(typeId, subTypeId)
         const delegations = applicationTemplate.allowedDelegations || []
         // Prepare an array of promises that will be resolved in parallel.
         // Each promise represents a permission check.

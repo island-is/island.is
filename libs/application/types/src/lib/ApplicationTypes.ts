@@ -61,6 +61,7 @@ export enum ApplicationTypes {
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  CERTIFICATES = 'Certificates',
 }
 
 export enum ApplicationFormTypes {
@@ -78,6 +79,11 @@ export const ApplicationConfigurations: Record<
   ApplicationTypes,
   ApplicationConfiguration
 > = {
+  [ApplicationTypes.CERTIFICATES]: {
+    slug: 'vottord',
+    translation: 'vottord.application',
+    formType: ApplicationFormTypes.DYNAMIC,
+  },
   [ApplicationTypes.CARAMEL]: {
     slug: 'caramel',
     translation: 'caramel.application',
