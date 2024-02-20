@@ -82,7 +82,7 @@ describe('Postgres', () => {
     })
     it('service name (-worker, -job) postfixes should be stripped', () => {
       expect(result.serviceDef[0]?.env).toMatchObject({
-        'DB_USER': 'my_service',
+        DB_USER: 'my_service',
       })
     })
   })
