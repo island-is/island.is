@@ -272,7 +272,10 @@ export class ServiceBuilder<ServiceType extends string> {
     { postfixes = ['-worker', '-job'], extraPostfixes = [] } = {},
   ) {
     if (!name) return
-    logger.debug(`Stripping postfixes from ${name} with:`, { postfixes, extraPostfixes })
+    logger.debug(`Stripping postfixes from ${name} with:`, {
+      postfixes,
+      extraPostfixes,
+    })
     postfixes.push(...extraPostfixes)
     // Strip postfixes from database name
     for (const postfix of postfixes) {
@@ -433,9 +436,12 @@ export class ServiceBuilder<ServiceType extends string> {
   }
   seed(postgres?: PostgresInfo): this {
     if (postgres) {
-      logger.debug(`Configuring custom seed for ${this.serviceDef.name} with:`, {
-        postgres,
-      })
+      logger.debug(
+        `Configuring custom seed for ${this.serviceDef.name} with:`,
+        {
+          postgres,
+        },
+      )
     }
     postgres = this.grantDB(this.serviceDef.initContainers?.postgres, postgres)
     return this.initContainer({
@@ -499,7 +505,8 @@ export class ServiceBuilder<ServiceType extends string> {
         ),
       passwordSecret:
         postgres.passwordSecret ??
-        `/k8s/${this.stripPostfix(defaultName)}${postgres.readOnly ? '/readonly' : ''
+        `/k8s/${this.stripPostfix(defaultName)}${
+          postgres.readOnly ? '/readonly' : ''
         }/DB_PASSWORD`,
       //These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
@@ -514,7 +521,10 @@ export class ServiceBuilder<ServiceType extends string> {
       name: postgresIdentifier(this.stripPostfix(defaultName)),
     })
 
-    logger.debug(`Set default DB config for ${this.serviceDef.name} to: `, postgres)
+    logger.debug(
+      `Set default DB config for ${this.serviceDef.name} to: `,
+      postgres,
+    )
 
     if (Object.keys(pg).length > 0) {
       logger.debug(`Configured custom DB for ${this.serviceDef.name} with: `, {
