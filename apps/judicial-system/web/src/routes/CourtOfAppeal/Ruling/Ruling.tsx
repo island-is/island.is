@@ -93,18 +93,16 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [appealConclusionErrorMessage, setAppealConclusionErrorMessage] =
     useState<string>('')
 
-  const isStepValid = () => {
-    return workingCase.appealRulingDecision ===
-      CaseAppealRulingDecision.DISCONTINUED
+  const isStepValid =
+    workingCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
       ? allFilesUploaded
       : uploadFiles.some(
           (file) =>
             file.category === CaseFileCategory.APPEAL_RULING &&
             file.status === 'done',
         ) &&
-          allFilesUploaded &&
-          isCourtOfAppealRulingStepValid(workingCase)
-  }
+        allFilesUploaded &&
+        isCourtOfAppealRulingStepValid(workingCase)
 
   const handleRulingDecisionChange = (
     appealRulingDecision: CaseAppealRulingDecision,
