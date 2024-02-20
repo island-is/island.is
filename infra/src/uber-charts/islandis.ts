@@ -259,9 +259,10 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
-  userNotificationService,
-  userNotificationWorkerService,
-  userNotificationCleanupWorkerService,
+  // REMEMBER TO UNCOMMENT THESE LINES BEFORE MERGING ON MAIN
+  // userNotificationService,
+  // userNotificationWorkerService,
+  // userNotificationCleanupWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
