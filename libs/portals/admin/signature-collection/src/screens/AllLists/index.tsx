@@ -201,7 +201,8 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     }
                   />
                 </Filter>
-                {allowedToProcess &&
+                {lists?.length > 0 &&
+                  allowedToProcess &&
                   (collectionStatus === CollectionStatus.InInitialReview ||
                     collectionStatus === CollectionStatus.Processing) && (
                     <CreateCollection />
