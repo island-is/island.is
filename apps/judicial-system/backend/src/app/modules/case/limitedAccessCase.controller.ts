@@ -167,13 +167,12 @@ export class LimitedAccessCaseController {
       update.accusedPostponedAppealDate = nowFactory()
     }
 
-    if (transition.transition === CaseTransition.WITHDRAW_APPEAL) {
-      if (
-        !theCase.appealRulingDecision &&
-        theCase.appealState === CaseAppealState.RECEIVED
-      ) {
-        update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
-      }
+    if (
+      transition.transition === CaseTransition.WITHDRAW_APPEAL &&
+      !theCase.appealRulingDecision &&
+      theCase.appealState === CaseAppealState.RECEIVED
+    ) {
+      update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
     }
 
     const updatedCase = await this.limitedAccessCaseService.update(

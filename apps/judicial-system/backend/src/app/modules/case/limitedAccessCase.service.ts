@@ -265,6 +265,14 @@ export class LimitedAccessCaseService {
       })
     }
 
+    if (update.appealState === CaseAppealState.WITHDRAWN) {
+      messages.push({
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
     // Return limited access case
     const updatedCase = await this.findById(theCase.id)
 
