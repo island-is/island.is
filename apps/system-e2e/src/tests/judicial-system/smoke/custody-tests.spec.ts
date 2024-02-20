@@ -243,7 +243,7 @@ test.describe.serial('Custody tests', () => {
     const page = defenderPage
     await Promise.all([
       page.goto(`/verjandi/krafa/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      verifyRequestCompletion(page, '/api/graphql', 'LimitedAccessCase'),
     ])
     await expect(page).toHaveURL(`/verjandi/krafa/${caseId}`)
     await expect(page.getByText('TestKaerugognSaekjanda.pdf')).toHaveCount(0)

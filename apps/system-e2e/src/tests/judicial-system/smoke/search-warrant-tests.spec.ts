@@ -183,7 +183,10 @@ test.describe.serial('Search warrant tests', () => {
     ])
 
     await expect(page).toHaveURL(`/domur/rannsoknarheimild/stadfesta/${caseId}`)
-    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
+    ])
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {

@@ -78,21 +78,31 @@ test.describe.serial('Travel ban tests', () => {
     await page.locator('textarea[name=lawsBroken]').click()
     await page.keyboard.type('Einhver lög voru brotin')
     await page.getByTestId('checkbox').first().click()
-    await page.getByRole('button', { name: 'Halda áfram' }).click()
+    await Promise.all([
+      page.getByRole('button', { name: 'Halda áfram' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
-    await Promise.all([verifyRequestCompletion(page, '/api/graphql', 'Case')])
+    await expect(page).toHaveURL(`/krafa/greinargerd/${caseId}`)
     await page.locator('textarea[name=caseFacts]').click()
     await page.keyboard.type('Málsatvik')
     await page.getByRole('textbox', { name: 'Lagarök' }).click()
     await page.keyboard.type('Lagarök')
+    await Promise.all([
+      page.getByRole('button', { name: 'Halda áfram' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
-    await page.getByRole('button', { name: 'Halda áfram' }).click()
     await expect(page).toHaveURL(`/krafa/rannsoknargogn/${caseId}`)
+    await Promise.all([
+      page.getByRole('button', { name: 'Halda áfram' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
-    await page.getByRole('button', { name: 'Halda áfram' }).click()
-
+    await expect(page).toHaveURL(`/krafa/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
+    await expect(page).toHaveURL('/krofur')
   })
 
   test('court should submit decision on travel ban case', async ({
@@ -166,7 +176,10 @@ test.describe.serial('Travel ban tests', () => {
 
     // Confirmation
     await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
-    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
+    ])
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {
