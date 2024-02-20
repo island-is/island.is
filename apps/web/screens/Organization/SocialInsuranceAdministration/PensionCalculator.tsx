@@ -450,7 +450,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           </Text>
                         </Box>
                       </Stack>
-                      <Box className={styles.yearSelectContainer}>
+                      <Box className={styles.dateOfCalculationsSelect}>
                         <SelectController
                           id={'dateOfCalculations' as keyof CalculationInput}
                           name={'dateOfCalculations' as keyof CalculationInput}
@@ -489,19 +489,22 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
             <Box paddingY={5} background="blue100">
               <GridContainer>
                 <GridRow>
-                  <GridColumn offset={['0', '0', '0', '1/9']}>
+                  <GridColumn
+                    offset={['0', '0', '0', '1/9']}
+                    className={styles.fullWidth}
+                  >
                     <Stack space={3}>
                       <Stack space={1}>
                         <Text variant="h4">
                           {formatMessage(translationStrings.birthdateLabel)}
                         </Text>
-                        <GridRow rowGap={3}>
-                          <GridColumn span="1/2">
+
+                        <Inline space={3} collapseBelow="sm">
+                          <Box className={styles.monthSelectContainer}>
                             <SelectController
                               id={'birthMonth' as keyof CalculationInput}
                               name={'birthMonth' as keyof CalculationInput}
                               options={monthOptions}
-                              size="sm"
                               label={formatMessage(
                                 translationStrings.birthMonthLabel,
                               )}
@@ -512,13 +515,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 methods.setValue('startMonth', option.value)
                               }}
                             />
-                          </GridColumn>
-                          <GridColumn span="1/2">
+                          </Box>
+                          <Box className={styles.yearSelectContainer}>
                             <SelectController
                               id={'birthYear' as keyof CalculationInput}
                               name={'birthYear' as keyof CalculationInput}
                               options={birthYearOptions}
-                              size="sm"
                               label={formatMessage(
                                 translationStrings.birthYearLabel,
                               )}
@@ -532,8 +534,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 )
                               }}
                             />
-                          </GridColumn>
-                        </GridRow>
+                          </Box>
+                        </Inline>
                       </Stack>
 
                       <Text variant="h2" as="h2">
@@ -546,8 +548,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                         <Text variant="h4">
                           {formatMessage(translationStrings.startDateLabel)}
                         </Text>
-                        <GridRow rowGap={3}>
-                          <GridColumn span="1/2">
+                        <Inline space={3} collapseBelow="sm">
+                          <Box className={styles.monthSelectContainer}>
                             <SelectController
                               id={'startMonth' as keyof CalculationInput}
                               name={'startMonth' as keyof CalculationInput}
@@ -556,7 +558,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 typeof birthYear !== 'number'
                               }
                               options={monthOptions}
-                              size="sm"
                               label={formatMessage(
                                 translationStrings.startMonthLabel,
                               )}
@@ -564,8 +565,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 translationStrings.startMonthPlaceholder,
                               )}
                             />
-                          </GridColumn>
-                          <GridColumn span="1/2">
+                          </Box>
+                          <Box className={styles.yearSelectContainer}>
                             <SelectController
                               id={'startYear' as keyof CalculationInput}
                               name={'startYear' as keyof CalculationInput}
@@ -574,7 +575,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 typeof birthYear !== 'number'
                               }
                               options={startYearOptions}
-                              size="sm"
                               label={formatMessage(
                                 translationStrings.startYearLabel,
                               )}
@@ -582,8 +582,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 translationStrings.startYearPlaceholder,
                               )}
                             />
-                          </GridColumn>
-                        </GridRow>
+                          </Box>
+                        </Inline>
                       </Stack>
 
                       {typeof monthOffset === 'number' && (

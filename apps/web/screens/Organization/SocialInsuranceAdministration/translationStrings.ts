@@ -507,22 +507,22 @@ export const translationStrings = defineMessages({
   },
   birthMonthLabel: {
     id: 'web.pensionCalculator:birthMonthLabel',
-    defaultMessage: 'Fæðingarmánuður',
+    defaultMessage: 'Mánuður',
     description: 'Birth month',
   },
   birthMonthPlaceholder: {
     id: 'web.pensionCalculator:birthMonthPlaceholder',
-    defaultMessage: 'Veldu mánuð',
+    defaultMessage: 'Mánuður',
     description: 'Birth month, placeholder',
   },
   birthYearLabel: {
     id: 'web.pensionCalculator:birthYearLabel',
-    defaultMessage: 'Fæðingarár',
+    defaultMessage: 'Ár',
     description: 'Birth year',
   },
   birthYearPlaceholder: {
     id: 'web.pensionCalculator:birthYearPlaceholder',
-    defaultMessage: 'Veldu ár',
+    defaultMessage: 'Ár',
     description: 'Birth year, placeholder',
   },
   startMonthLabel: {
@@ -532,7 +532,7 @@ export const translationStrings = defineMessages({
   },
   startMonthPlaceholder: {
     id: 'web.pensionCalculator:startMonthPlaceholder',
-    defaultMessage: 'Veldu mánuð',
+    defaultMessage: 'Mánuður',
     description: 'Mánuður sem notandi hefur töku á lífeyri, placeholder',
   },
   startYearLabel: {
@@ -542,7 +542,7 @@ export const translationStrings = defineMessages({
   },
   startYearPlaceholder: {
     id: 'web.pensionCalculator:startYearPlaceholder',
-    defaultMessage: 'Veldu ár',
+    defaultMessage: 'Ár',
     description: 'Ár sem notandi hefur töku á lífeyri, placeholder',
   },
 })
