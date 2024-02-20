@@ -119,7 +119,10 @@ test.describe.serial('Search warrant tests', () => {
     const page = judgePage
 
     // Reception and assignment
-    await page.goto(`domur/rannsoknarheimild/mottaka/${caseId}`)
+    await Promise.all([
+      page.goto(`domur/rannsoknarheimild/mottaka/${caseId}`),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
     await page.getByTestId('courtCaseNumber').click()
     await page.getByTestId('courtCaseNumber').fill(randomCourtCaseNumber())
     await page

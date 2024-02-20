@@ -99,7 +99,10 @@ test.describe.serial('Travel ban tests', () => {
     judgePage,
   }) => {
     const page = judgePage
-    await page.goto(`/domur/mottaka/${caseId}`)
+    await Promise.all([
+      page.goto(`/domur/mottaka/${caseId}`),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Reception and assignment
     await expect(page).toHaveURL(`/domur/mottaka/${caseId}`)
