@@ -22,12 +22,12 @@ export const dataSchema = z.object({
     }),
   advert: z
     .object({
-      department: z.string().optional(),
-      type: z.string().optional(),
-      subType: z.string().optional(),
-      title: z.string(),
-      template: z.string().optional(),
-      documentContents: z.string().optional(),
+      department: z.string().refine((v) => v && v.length),
+      type: z.string().refine((v) => v && v.length),
+      subType: z.string().refine((v) => v && v.length),
+      title: z.string().refine((v) => v && v.length),
+      template: z.string().refine((v) => v && v.length),
+      documentContents: z.string().refine((v) => v && v.length),
     })
     .superRefine((advert, ctx) => {
       if (advert.type === TypeIds.REGLUGERDIR) {

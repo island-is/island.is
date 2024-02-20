@@ -8,6 +8,9 @@ import { useDebounce } from 'react-use'
 import { OJOIApplication } from '../../lib/types'
 import { dotToObj } from '../../lib/utils'
 import { INITAL_ANSWERS, Routes } from '../../lib/constants'
+import { error as errorMessages } from '../../lib/messages'
+import get from 'lodash/get'
+import { RecordObject } from '@island.is/shared/types'
 
 type Props = {
   application: OJOIApplication
@@ -21,7 +24,7 @@ type Props = {
   isOptional?: boolean
 }
 
-const INTERVAL_TIMER = 10000
+const INTERVAL_TIMER = 3000
 const DEBOUNCE_TIMER = 500
 
 const keyMapper = (key: string) => {
@@ -41,6 +44,14 @@ const keyMapper = (key: string) => {
   }
 }
 
+type LocalError = {
+  type: string
+  message: string
+}
+
+const getLocalError = (obj: RecordObject, path: string) => {
+  return get(obj, path) as LocalError | undefined
+}
 export const CustomInputController = ({
   application,
   name,
@@ -52,10 +63,21 @@ export const CustomInputController = ({
   required = false,
   isOptional = false,
 }: Props) => {
-  const { locale } = useLocale()
+  const { locale, formatMessage: f } = useLocale()
 
   const [updateApplication, { loading: isSaving }] =
     useMutation(UPDATE_APPLICATION)
+
+  const {
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext()
+
+  const error = getLocalError(errors, name)
+
+  console.log(error?.message)
 
   const [localValue, setLocalValue] = useState(defaultValue)
   const [lazyValue, setLazyValue] = useState(defaultValue)
@@ -75,6 +97,12 @@ export const CustomInputController = ({
 
       if (localIsDirty && !isOptional && value.length === 0) {
         setLocalError(true)
+        setError(name, {
+          type: 'required',
+          message: errorMessage
+            ? errorMessage
+            : f(errorMessages.emptyFieldError),
+        })
       }
 
       const defaultValue = {
@@ -86,24 +114,31 @@ export const CustomInputController = ({
 
       const answers = dotToObj(name, { ...defaultValue }, value)
 
-      await updateApplication({
-        variables: {
-          locale,
-          input: {
-            id: application.id,
-            answers: { ...answers },
-          },
-        },
-      })
+      setValue(name, value)
+
+      // await updateApplication({
+      //   variables: {
+      //     locale,
+      //     input: {
+      //       id: application.id,
+      //       answers: {
+      //         advert: {
+      //           title: 'test',
+      //         },
+      //       },
+      //     },
+      //   },
+      // })
     },
     [
       application.answers,
-      application.id,
+      errorMessage,
+      f,
       isOptional,
       localIsDirty,
-      locale,
       name,
-      updateApplication,
+      setError,
+      setValue,
     ],
   )
 
@@ -141,6 +176,7 @@ export const CustomInputController = ({
     }
     if (localError) {
       setLocalError(false)
+      clearErrors(name)
     }
 
     setLocalValue(value)
@@ -174,8 +210,8 @@ export const CustomInputController = ({
           size="sm"
           loading={isSaving}
           value={value}
-          hasError={localError}
-          errorMessage={errorMessage}
+          hasError={Boolean(error)}
+          errorMessage={error?.message}
           textarea={textarea}
           onChange={(e) => onControllerChange(onChange(e.target.value))}
           onBlur={(e) => handleUpdate(e.target.value)}

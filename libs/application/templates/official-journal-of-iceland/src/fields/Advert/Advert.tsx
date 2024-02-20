@@ -221,7 +221,6 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             label={f(advert.inputs.title.label)}
             placeholder={f(advert.inputs.title.placeholder)}
             defaultValue={answers?.advert?.title ?? ''}
-            errorMessage={f(error.emptyFieldError)}
             textarea
           />
         </Box>
