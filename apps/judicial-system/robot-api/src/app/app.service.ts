@@ -13,12 +13,12 @@ export class AppService {
   constructor(
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
-    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly auditTrailService: AuditTrailService,
   ) {}
 
   private async test(): Promise<string> {
-    return 'ok'
+    return 'OK'
   }
 
   async testConnection(): Promise<string> {
