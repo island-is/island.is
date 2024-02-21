@@ -66,6 +66,8 @@ export const getAppealDecision = (
       return formatMessage(appealRuling.decisionDismissedFromCourt)
     case CaseAppealRulingDecision.REMAND:
       return formatMessage(appealRuling.decisionRemand)
+    case CaseAppealRulingDecision.DISCONTINUED:
+      return formatMessage(appealRuling.decisionDiscontinued)
     default:
       return undefined
   }
@@ -115,8 +117,16 @@ const useAppealAlertBanner = (
     workingCase.notifications,
   ).date
 
+  // WITHDRAWN APPEAL BANNER IS HANDLED HERE:
+  if (appealState === CaseAppealState.WITHDRAWN) {
+    title = formatMessage(strings.statementTitle)
+    description = formatMessage(strings.appealWithdrawnDescription, {
+      appealWithdrawnDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
+    })
+  }
+
   // COURT OF APPEALS AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
-  if (
+  else if (
     user?.institution?.type === InstitutionType.COURT_OF_APPEALS ||
     isSharedWithProsecutor
   ) {
@@ -133,6 +143,7 @@ const useAppealAlertBanner = (
       })
     }
   }
+
   // DEFENDER, PROSECUTOR AND DISTRICT COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
   else if (appealState === CaseAppealState.RECEIVED) {
