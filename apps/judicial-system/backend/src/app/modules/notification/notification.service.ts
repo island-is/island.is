@@ -2223,14 +2223,17 @@ export class NotificationService {
         email: theCase.prosecutor?.email,
       })
     }
-    recipients.push({
-      name: theCase.registrar?.name,
-      email: theCase.registrar?.email,
-    })
-    recipients.push({
-      name: theCase.court?.name,
-      email: this.getCourtEmail(theCase.court?.id),
-    })
+
+    recipients.push(
+      {
+        name: theCase.registrar?.name,
+        email: theCase.registrar?.email,
+      },
+      {
+        name: theCase.court?.name,
+        email: this.getCourtEmail(theCase.court?.id),
+      },
+    )
 
     if (theCase.appealReceivedByCourtDate) {
       recipients.push({
@@ -2240,22 +2243,24 @@ export class NotificationService {
     }
 
     if (hasBeenAssigned) {
-      recipients.push({
-        name: theCase.appealAssistant?.name,
-        email: theCase.appealAssistant?.email,
-      })
-      recipients.push({
-        name: theCase.appealJudge1?.name,
-        email: theCase.appealJudge1?.email,
-      })
-      recipients.push({
-        name: theCase.appealJudge2?.name,
-        email: theCase.appealJudge2?.email,
-      })
-      recipients.push({
-        name: theCase.appealJudge3?.name,
-        email: theCase.appealJudge3?.email,
-      })
+      recipients.push(
+        {
+          name: theCase.appealAssistant?.name,
+          email: theCase.appealAssistant?.email,
+        },
+        {
+          name: theCase.appealJudge1?.name,
+          email: theCase.appealJudge1?.email,
+        },
+        {
+          name: theCase.appealJudge2?.name,
+          email: theCase.appealJudge2?.email,
+        },
+        {
+          name: theCase.appealJudge3?.name,
+          email: theCase.appealJudge3?.email,
+        },
+      )
     }
 
     return recipients
