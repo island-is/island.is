@@ -57,7 +57,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
     const list = data?.signatureCollectionAdminList ?? {}
     const allSignees = signeesData?.signatureCollectionAdminSignatures ?? []
     const listStatus =
-      listStatusData?.signatureCollectionAdminListStatus.status ?? ''
+      listStatusData?.signatureCollectionAdminListStatus?.status ?? ''
 
     return { list, allSignees, listStatus }
   }

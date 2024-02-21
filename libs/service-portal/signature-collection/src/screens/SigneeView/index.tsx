@@ -9,7 +9,11 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/service-portal/core'
-import { useGetListsForUser, useGetSignedList } from '../../hooks'
+import {
+  useGetCurrentCollection,
+  useGetListsForUser,
+  useGetSignedList,
+} from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import SignedList from '../../components/SignedList'
@@ -20,6 +24,7 @@ const SigneeView = () => {
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
+  const { currentCollection } = useGetCurrentCollection()
   const { signedLists, loadingSignedLists } = useGetSignedList()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
 
@@ -31,18 +36,20 @@ const SigneeView = () => {
       />
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
-          <Button
-            icon="open"
-            iconType="outline"
-            onClick={() =>
-              window.open(
-                `${document.location.origin}/umsoknir/medmaelasofnun/`,
-              )
-            }
-            size="small"
-          >
-            {formatMessage(m.createListButton)}
-          </Button>
+          {currentCollection?.isActive && (
+            <Button
+              icon="open"
+              iconType="outline"
+              onClick={() =>
+                window.open(
+                  `${document.location.origin}/umsoknir/medmaelasofnun/`,
+                )
+              }
+              size="small"
+            >
+              {formatMessage(m.createListButton)}
+            </Button>
+          )}
 
           <Box marginTop={[2, 7]}>
             {/* Signed list */}
