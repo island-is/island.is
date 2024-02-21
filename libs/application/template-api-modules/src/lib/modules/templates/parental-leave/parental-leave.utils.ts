@@ -10,7 +10,7 @@ import {
   Attachment,
   Employer,
 } from '@island.is/clients/vmst'
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationWithAttachments } from '@island.is/application/types'
 import {
   getSelectedChild,
   getApplicationAnswers,
@@ -29,6 +29,7 @@ import {
   PERMANENT_FOSTER_CARE,
   ChildInformation,
   ADOPTION,
+  FileType,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -481,4 +482,54 @@ export const isDateInTheFuture = (date: string) => {
   const now = new Date().toISOString()
   if (date > now) return true
   return false
+}
+
+export const isParamsActionName = (params: any) => {
+  typeof params === 'string' &&
+  (params === 'period' ||
+    params === 'document' ||
+    params === 'documentPeriod' ||
+    params === 'empper' ||
+    params === 'employer')
+    ? (params as FileType)
+    : undefined
+  return params
+}
+
+export const checkActionName = (
+  application: ApplicationWithAttachments,
+  params: FileType | undefined = undefined,
+) => {
+  const { actionName } = getApplicationAnswers(application.answers)
+  if (params) {
+    params === 'document' ||
+      params === 'documentPeriod' ||
+      params === 'period' ||
+      params === 'empper' ||
+      params === 'employer'
+    return params
+  }
+  if (
+    actionName === 'document' ||
+    actionName === 'documentPeriod' ||
+    actionName === 'period' ||
+    actionName === 'empper' ||
+    actionName === 'employer'
+  ) {
+    return actionName
+  }
+  return undefined
+}
+
+export const getFromDate = (
+  isFirstPeriod: boolean,
+  isActualDateOfBirth: boolean,
+  useLength: string,
+  period: AnswerPeriod,
+) => {
+  return isFirstPeriod && isActualDateOfBirth && useLength === YES
+    ? apiConstants.actualDateOfBirthMonths
+    : isFirstPeriod && isActualDateOfBirth
+    ? apiConstants.actualDateOfBirth
+    : period.startDate
 }
