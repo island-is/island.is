@@ -20,7 +20,7 @@ SECRETS=$(
   for secret in "${secrets[@]}"; do
     from="${secret%%:*}"
     to="${secret##*:}"
-    echo -n "/k8s/${from}/DB_PASS:/k8s/${to}/DB_PASS "
+    echo -n "/k8s/${from}/DB_PASS:/k8s/${to}/DB_PASSWORD "
   done
 )
 
