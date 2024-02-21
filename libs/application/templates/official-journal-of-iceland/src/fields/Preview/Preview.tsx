@@ -1,15 +1,15 @@
 import { Box, Button } from '@island.is/island-ui/core'
-import { FormIntro } from '../../components/FormIntro/FormIntro'
+import { FormIntro } from '../../components/form/FormIntro'
 import { useFormatMessage } from '../../hooks'
 import { preview } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
-import { HTMLEditor } from '../../components/HTMLEditor/HTMLEditor'
-import { advertisementTemplate } from '../../components/HTMLEditor/templates/content'
-import { signatureConfig } from '../../components/HTMLEditor/config/signatureConfig'
+import { HTMLEditor } from '../../components/htmlEditor/HTMLEditor'
+import { advertisementTemplate } from '../../components/htmlEditor/templates/content'
+import { signatureConfig } from '../../components/htmlEditor/config/signatureConfig'
 import {
   committeeSignatureTemplate,
   regularSignatureTemplate,
-} from '../../components/HTMLEditor/templates/signatures'
+} from '../../components/htmlEditor/templates/signatures'
 import { mapIdToType } from '../../lib/utils'
 
 export const Preview = ({ application }: OJOIFieldBaseProps) => {

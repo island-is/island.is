@@ -1,10 +1,10 @@
 import { Box, Checkbox, Icon, Select, Tag } from '@island.is/island-ui/core'
-import { FormGroup } from '../../components/FromGroup/FormGroup'
+import { FormGroup } from '../../components/form/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { publishing } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { getWeekendDates } from '../../lib/utils'
-import { FormIntro } from '../../components/FormIntro/FormIntro'
+import { FormIntro } from '../../components/form/FormIntro'
 import {
   DatePickerController,
   InputController,
@@ -12,7 +12,7 @@ import {
 } from '@island.is/shared/form-fields'
 import addYears from 'date-fns/addYears'
 import { Controller, useFormContext } from 'react-hook-form'
-import { CommunicationChannels } from '../../components/CommunicationChannels/CommunicationChannels'
+import { CommunicationChannels } from '../../components/communicationChannels/CommunicationChannels'
 import { getErrorViaPath } from '@island.is/application/core'
 import { useLazyQuery } from '@apollo/client'
 import { CATEGORIES_QUERY } from '../../graphql/queries'

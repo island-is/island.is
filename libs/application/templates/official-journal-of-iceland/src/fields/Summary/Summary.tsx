@@ -1,7 +1,7 @@
 import { useUserInfo } from '@island.is/auth/react'
 import { Box, Stack } from '@island.is/island-ui/core'
-import { FormIntro } from '../../components/FormIntro/FormIntro'
-import { Property } from '../../components/Property/Property'
+import { FormIntro } from '../../components/form/FormIntro'
+import { Property } from '../../components/property/Property'
 import { useFormatMessage } from '../../hooks'
 import { general, summary } from '../../lib/messages'
 import {

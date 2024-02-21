@@ -1,6 +1,6 @@
 import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
 import { CompleteImage } from '../../assets/CompleteImage'
-import { FormIntro } from '../../components/FormIntro/FormIntro'
+import { FormIntro } from '../../components/form/FormIntro'
 import { useFormatMessage } from '../../hooks'
 import { complete } from '../../lib/messages/complete'
 import { OJOIFieldBaseProps } from '../../lib/types'

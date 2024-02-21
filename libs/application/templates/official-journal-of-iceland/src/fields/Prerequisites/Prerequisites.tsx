@@ -1,6 +1,6 @@
 import { Box, Checkbox } from '@island.is/island-ui/core'
 
-import { FormIntro } from '../../components/FormIntro/FormIntro'
+import { FormIntro } from '../../components/form/FormIntro'
 import { useFormatMessage } from '../../hooks'
 import { requirements } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'

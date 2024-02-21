@@ -1,6 +1,6 @@
 import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
-import { FormIntro } from '../../components/FormIntro/FormIntro'
-import { FormGroup } from '../../components/FromGroup/FormGroup'
+import { FormIntro } from '../../components/form/FormIntro'
+import { FormGroup } from '../../components/form/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 import { original } from '../../lib/messages'

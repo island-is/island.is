@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import {
   committeeSignatureTemplate,
   regularSignatureTemplate,
-} from '../../components/HTMLEditor/templates/signatures'
+} from '../../components/htmlEditor/templates/signatures'
 import { getErrorViaPath } from '@island.is/application/core'
 import { Box, StringOption } from '@island.is/island-ui/core'
-import { FormGroup } from '../../components/FromGroup/FormGroup'
-import { HTMLEditor } from '../../components/HTMLEditor/HTMLEditor'
-import { signatureConfig } from '../../components/HTMLEditor/config/signatureConfig'
+import { FormGroup } from '../../components/form/FormGroup'
+import { HTMLEditor } from '../../components/htmlEditor/HTMLEditor'
+import { signatureConfig } from '../../components/htmlEditor/config/signatureConfig'
 import { advert } from '../../lib/messages'
 import {
   CommitteeSignatureState,
@@ -17,8 +17,8 @@ import {
   SignatureType,
 } from '../../lib/types'
 import { useFormatMessage } from '../../hooks'
-import { Signatures } from '../../components/Signatures/Signatures'
-import { AdditionalSignature } from '../../components/Signatures/Additional'
+import { Signatures } from '../../components/signatures/Signatures'
+import { AdditionalSignature } from '../../components/signatures/Additional'
 import { useFormContext } from 'react-hook-form'
 type Props = Pick<
   OJOIFieldBaseProps,
