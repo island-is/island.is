@@ -18,16 +18,13 @@ import {
   DEFAULT_EDITABLE_ENTRY_TYPE_IDS,
   DEFAULT_READ_ONLY_ENTRY_IDS,
 } from '../../constants'
+import { useCheckboxState } from '../../hooks/useCheckboxState'
 import * as styles from './RoleCard.css'
 
 interface RoleCardProps {
   role: RoleProps
-  isEditable: boolean
-  toggleEditable: () => void
   tagExists: boolean
   contentTypes: ContentTypeProps[]
-  readOnlyState: Record<string, boolean>
-  editableState: Record<string, boolean>
   canReadAllAssets: boolean
 }
 
@@ -36,28 +33,33 @@ const emptyFunction = () => {
 }
 
 export const RoleCard = ({
-  isEditable,
-  toggleEditable,
   role,
   tagExists,
   contentTypes,
-  readOnlyState,
-  editableState,
   canReadAllAssets,
 }: RoleCardProps) => {
+  const [readOnlyState, setReadOnlyState] = useCheckboxState(
+    'readonly',
+    role,
+    contentTypes,
+  )
+  const [editableState, setEditableState] = useCheckboxState(
+    'edit',
+    role,
+    contentTypes,
+  )
+
   return (
     <Box
       border="standard"
       borderWidth="standard"
       borderRadius="standard"
       padding={3}
-      style={{ opacity: isEditable ? '1' : '0.6' }}
     >
       <Stack space={2}>
         <Inline justifyContent="spaceBetween" space={2}>
           <Box marginBottom={2}>
             <Inline alignY="top">
-              <Checkbox checked={isEditable} onChange={toggleEditable} />
               <Stack space={0}>
                 <Text truncate variant="h4" as="label" marginBottom={0}>
                   {role.name}
@@ -76,11 +78,10 @@ export const RoleCard = ({
               </Stack>
             </Inline>
           </Box>
-          {isEditable && (
-            <Box display="flex" flexDirection="row" justifyContent="flexEnd">
-              <Button size="small">Save</Button>
-            </Box>
-          )}
+
+          <Box display="flex" flexDirection="row" justifyContent="flexEnd">
+            <Button size="small">Save</Button>
+          </Box>
         </Inline>
 
         <Inline space={5}>
@@ -96,14 +97,10 @@ export const RoleCard = ({
                     const checked = readOnlyState[contentType.name]
 
                     const toggleCheckbox = () => {
-                      // setReadonlyCheckboxState((prevState) => ({
-                      //   ...prevState,
-                      //   [role.name]: {
-                      //     ...prevState[role.name],
-                      //     [contentType.name]:
-                      //       !prevState[role.name][contentType.name],
-                      //   },
-                      // }))
+                      setReadOnlyState((prevState) => ({
+                        ...prevState,
+                        [contentType.name]: !prevState[contentType.name],
+                      }))
                     }
 
                     return (
@@ -135,7 +132,6 @@ export const RoleCard = ({
                           <Hyphen>{contentType.name}</Hyphen>
                         </Text>
                         <ToggleSwitchButton
-                          disabled={!isEditable}
                           checked={checked}
                           label=""
                           hiddenLabel={true}
@@ -149,29 +145,20 @@ export const RoleCard = ({
 
               <Stack space={1}>
                 <Button
-                  disabled={!isEditable}
                   variant="text"
                   size="small"
                   onClick={() => {
-                    // setReadonlyCheckboxState((prevState) => {
-                    //   const newState = JSON.parse(JSON.stringify(prevState))
-                    //   for (const roleName in prevState) {
-                    //     for (const contentTypeName in prevState[roleName]) {
-                    //       if (
-                    //         DEFAULT_READ_ONLY_ENTRY_IDS.includes(
-                    //           contentTypes.find(
-                    //             (type) => type.name === contentTypeName,
-                    //           )?.sys?.id,
-                    //         )
-                    //       ) {
-                    //         newState[roleName][contentTypeName] = true
-                    //       } else {
-                    //         newState[roleName][contentTypeName] = false
-                    //       }
-                    //     }
-                    //   }
-                    //   return newState
-                    // })
+                    setReadOnlyState((prevState) => {
+                      const newState = { ...prevState }
+                      for (const contentTypeName in newState) {
+                        const contentTypeSysId = contentTypes.find(
+                          (type) => type.name === contentTypeName,
+                        )?.sys?.id
+                        newState[contentTypeName] =
+                          DEFAULT_READ_ONLY_ENTRY_IDS.includes(contentTypeSysId)
+                      }
+                      return newState
+                    })
                   }}
                 >
                   Set to default
@@ -190,38 +177,32 @@ export const RoleCard = ({
                 </Button>
 
                 <Button
-                  disabled={!isEditable}
                   variant="text"
                   size="small"
                   onClick={() => {
-                    // setReadonlyCheckboxState((prevState) => {
-                    //   const newState = JSON.parse(JSON.stringify(prevState))
-                    //   for (const roleName in prevState) {
-                    //     for (const contentTypeName in prevState[roleName]) {
-                    //       newState[roleName][contentTypeName] = true
-                    //     }
-                    //   }
-                    //   return newState
-                    // })
+                    setReadOnlyState((prevState) => {
+                      const newState = { ...prevState }
+                      for (const key in newState) {
+                        newState[key] = true
+                      }
+                      return newState
+                    })
                   }}
                 >
                   Set all
                 </Button>
 
                 <Button
-                  disabled={!isEditable}
                   variant="text"
                   size="small"
                   onClick={() => {
-                    // setReadonlyCheckboxState((prevState) => {
-                    //   const newState = JSON.parse(JSON.stringify(prevState))
-                    //   for (const roleName in prevState) {
-                    //     for (const contentTypeName in prevState[roleName]) {
-                    //       newState[roleName][contentTypeName] = false
-                    //     }
-                    //   }
-                    //   return newState
-                    // })
+                    setReadOnlyState((prevState) => {
+                      const newState = { ...prevState }
+                      for (const key in newState) {
+                        newState[key] = false
+                      }
+                      return newState
+                    })
                   }}
                 >
                   Clear
@@ -241,14 +222,10 @@ export const RoleCard = ({
                     const checked = editableState[contentType.name]
 
                     const toggleCheckbox = () => {
-                      // setCheckboxState((prevState) => ({
-                      //   ...prevState,
-                      //   [role.name]: {
-                      //     ...prevState[role.name],
-                      //     [contentType.name]:
-                      //       !prevState[role.name][contentType.name],
-                      //   },
-                      // }))
+                      setEditableState((prevState) => ({
+                        ...prevState,
+                        [contentType.name]: !prevState[contentType.name],
+                      }))
                     }
 
                     return (
@@ -280,7 +257,6 @@ export const RoleCard = ({
                           <Hyphen>{contentType.name}</Hyphen>
                         </Text>
                         <ToggleSwitchButton
-                          disabled={!isEditable}
                           checked={checked}
                           label=""
                           hiddenLabel={true}
@@ -294,29 +270,22 @@ export const RoleCard = ({
 
               <Stack space={1}>
                 <Button
-                  disabled={!isEditable}
                   variant="text"
                   size="small"
                   onClick={() => {
-                    // setCheckboxState((prevState) => {
-                    //   const newState = JSON.parse(JSON.stringify(prevState))
-                    //   for (const roleName in prevState) {
-                    //     for (const contentTypeName in prevState[roleName]) {
-                    //       if (
-                    //         DEFAULT_EDITABLE_ENTRY_TYPE_IDS.includes(
-                    //           contentTypes.find(
-                    //             (type) => type.name === contentTypeName,
-                    //           )?.sys?.id,
-                    //         )
-                    //       ) {
-                    //         newState[roleName][contentTypeName] = true
-                    //       } else {
-                    //         newState[roleName][contentTypeName] = false
-                    //       }
-                    //     }
-                    //   }
-                    //   return newState
-                    // })
+                    setEditableState((prevState) => {
+                      const newState = { ...prevState }
+                      for (const contentTypeName in newState) {
+                        const contentTypeSysId = contentTypes.find(
+                          (type) => type.name === contentTypeName,
+                        )?.sys?.id
+                        newState[contentTypeName] =
+                          DEFAULT_EDITABLE_ENTRY_TYPE_IDS.includes(
+                            contentTypeSysId,
+                          )
+                      }
+                      return newState
+                    })
                   }}
                 >
                   Set to default
@@ -334,37 +303,31 @@ export const RoleCard = ({
                   />
                 </Button>
                 <Button
-                  disabled={!isEditable}
                   variant="text"
                   size="small"
                   onClick={() => {
-                    // setCheckboxState((prevState) => {
-                    //   const newState = JSON.parse(JSON.stringify(prevState))
-                    //   for (const roleName in prevState) {
-                    //     for (const contentTypeName in prevState[roleName]) {
-                    //       newState[roleName][contentTypeName] = true
-                    //     }
-                    //   }
-                    //   return newState
-                    // })
+                    setEditableState((prevState) => {
+                      const newState = { ...prevState }
+                      for (const key in newState) {
+                        newState[key] = true
+                      }
+                      return newState
+                    })
                   }}
                 >
                   Set all
                 </Button>
                 <Button
-                  disabled={!isEditable}
                   variant="text"
                   size="small"
                   onClick={() => {
-                    // setCheckboxState((prevState) => {
-                    //   const newState = JSON.parse(JSON.stringify(prevState))
-                    //   for (const roleName in prevState) {
-                    //     for (const contentTypeName in prevState[roleName]) {
-                    //       newState[roleName][contentTypeName] = false
-                    //     }
-                    //   }
-                    //   return newState
-                    // })
+                    setEditableState((prevState) => {
+                      const newState = { ...prevState }
+                      for (const key in newState) {
+                        newState[key] = false
+                      }
+                      return newState
+                    })
                   }}
                 >
                   Clear
@@ -375,7 +338,6 @@ export const RoleCard = ({
           <Box marginTop={1}>
             <Inline alignY="center">
               <Checkbox
-                disabled={!isEditable}
                 checked={canReadAllAssets}
                 label="Can read all assets"
                 // onChange={() =>
