@@ -9,6 +9,7 @@ import {
   GridRow,
   Text,
   Table as T,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -104,6 +105,11 @@ const PaperScreen = () => {
                 </T.Table>
               </Box>
             ) : undefined}
+            {loading && (
+              <Box width="full">
+                <SkeletonLoader repeat={3} height={40} space={2} />
+              </Box>
+            )}
             {!loading && !error && !paperMailArray.length && (
               <Problem type="no_data" noBorder={false} />
             )}
