@@ -52,20 +52,18 @@ export class MeNotificationsController {
     return this.notificationService.findMany(user, query)
   }
 
-  @Get("/unread-count")
+  @Get('/unread-count')
   @Documentation({
     summary: 'Returns a count of unread notifications for the user',
     response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
   })
   async getUnreadNotificationsCount(
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<{ unreadCount: number }> {
-    const unreadCount = await this.notificationService.getUnreadNotificationsCount(user);
-    return { unreadCount };
+    const unreadCount =
+      await this.notificationService.getUnreadNotificationsCount(user)
+    return { unreadCount }
   }
-
-
-  
 
   @Get(':id')
   @Documentation({

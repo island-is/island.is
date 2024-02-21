@@ -163,7 +163,7 @@ export class NotificationsService {
     for (const item of res.data.hnippTemplateCollection.items) {
       item.sender = item.organization.slug
       delete item.organization
-      if (item.templateId === 'HNIPP.POSTHOLF.NEW_DOCUMENT' ) {
+      if (item.templateId === 'HNIPP.POSTHOLF.NEW_DOCUMENT') {
         item.sender = 'will-be-inherited-from args.organization-sluggified'
       }
     }
@@ -257,8 +257,10 @@ export class NotificationsService {
               console.log(arg, 'regexTarget', regexTarget)
               const newValue = value.replace(regexTarget, arg.value)
               // if templates are used by multiple organizations, sender should be set to organization.slug
-              if(arg.key == "organization") {
-                console.log("organization found in args, setting sender to organization.slug")
+              if (arg.key == 'organization') {
+                console.log(
+                  'organization found in args, setting sender to organization.slug',
+                )
                 template.sender = arg.value
               }
 
@@ -363,15 +365,15 @@ export class NotificationsService {
     }
   }
 
-  async getUnreadNotificationsCount(user:User): Promise<number> {
+  async getUnreadNotificationsCount(user: User): Promise<number> {
     const count = await this.notificationModel.count({
       where: {
         recipient: user.nationalId,
-        status: "unread", 
+        status: 'unread',
       },
-    });
+    })
 
-    return count;
+    return count
   }
 
   // async markAllAsRead(user: User): Promise<void> {

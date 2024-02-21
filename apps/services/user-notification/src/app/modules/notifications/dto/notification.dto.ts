@@ -172,5 +172,5 @@ export class UpdateNotificationDto {
 export class UnreadNotificationsCountDto {
   @ApiProperty({ example: 42 })
   @IsInt()
-  unreadCount!: number;
+  unreadCount!: number
 }
