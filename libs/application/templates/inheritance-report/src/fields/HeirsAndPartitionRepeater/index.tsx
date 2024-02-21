@@ -23,6 +23,7 @@ import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
 import { TAX_FREE_LIMIT } from '../../lib/constants'
+import DoubleColumnRow from '../../components/DoubleColumnRow'
 
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<
@@ -341,7 +342,7 @@ export const HeirsAndPartitionRepeater: FC<
                       ) : null}
 
                       {customField.id === 'relation' ? (
-                        <GridColumn span="1/1" paddingBottom={2}>
+                        <GridColumn span="1/2" paddingBottom={2}>
                           <InputController
                             id={`${fieldIndex}.${customField.id}`}
                             name={`${fieldIndex}.${customField.id}`}
@@ -353,7 +354,7 @@ export const HeirsAndPartitionRepeater: FC<
                           />
                         </GridColumn>
                       ) : customField.id === 'heirsPercentage' ? (
-                        <GridColumn span={['1/2']} paddingBottom={2}>
+                        <GridColumn span="1/2" paddingBottom={2}>
                           <InputController
                             id={`${fieldIndex}.${customField.id}`}
                             name={`${fieldIndex}.${customField.id}`}
@@ -362,6 +363,7 @@ export const HeirsAndPartitionRepeater: FC<
                             defaultValue={defaultValue ? defaultValue : 1}
                             type="number"
                             suffix="%"
+                            backgroundColor="blue"
                             onChange={(
                               event: React.ChangeEvent<
                                 HTMLInputElement | HTMLTextAreaElement
@@ -528,9 +530,9 @@ export const HeirsAndPartitionRepeater: FC<
         </Box>
       ) : null}
       {!!fields.length && props.sumField && (
-        <Box marginTop={5}>
-          <GridRow>
-            <GridColumn span={['1/1', '1/2']}>
+        <GridRow>
+          <DoubleColumnRow pushRight span={['1/1', '1/2']}>
+            <Box marginTop={5}>
               <Input
                 id={`${id}.total`}
                 name={`${id}.total`}
@@ -554,9 +556,9 @@ export const HeirsAndPartitionRepeater: FC<
                 }
                 errorMessage={formatMessage(m.totalPercentageError)}
               />
-            </GridColumn>
-          </GridRow>
-        </Box>
+            </Box>
+          </DoubleColumnRow>
+        </GridRow>
       )}
     </Box>
   )
