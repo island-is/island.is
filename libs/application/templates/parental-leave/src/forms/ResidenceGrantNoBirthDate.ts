@@ -1,14 +1,12 @@
 import {
   buildDescriptionField,
   buildForm,
-  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
 
-import WomanWithLaptopIllustration from '../assets/Images/WomanWithLaptopIllustration'
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { getApplicationExternalData } from '../lib/parentalLeaveUtils'
@@ -22,7 +20,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
     buildSection({
       id: 'residenceGrantApplicationNoBirthDate.section',
       title: '',
-
       children: [
         buildMultiField({
           title: (application) => {
@@ -72,12 +69,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
                   },
                 },
               ],
-            }),
-            buildImageField({
-              id: 'residenceGrantApplicationNoBirthDate.image',
-              title: '',
-              image: WomanWithLaptopIllustration,
-              imageWidth: 'auto',
             }),
           ],
         }),

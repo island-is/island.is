@@ -31,6 +31,7 @@ import { minPeriodDays } from '../config'
 import {
   ADOPTION,
   FILE_SIZE_LIMIT,
+  Languages,
   MANUAL,
   NO,
   NO_PRIVATE_PENSION_FUND,
@@ -151,14 +152,15 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'applicant.language',
                   title: parentalLeaveFormMessages.applicant.languageTitle,
                   width: 'half',
+                  required: true,
                   space: 3,
                   options: [
                     {
-                      value: '',
+                      value: Languages.IS,
                       label: parentalLeaveFormMessages.applicant.icelandic,
                     },
                     {
-                      value: 'EN',
+                      value: Languages.EN,
                       label: parentalLeaveFormMessages.applicant.english,
                     },
                   ],
