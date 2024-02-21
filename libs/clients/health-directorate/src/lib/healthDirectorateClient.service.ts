@@ -39,8 +39,6 @@ export class HealthDirectorateClientService {
       .starfsleyfiAMinumSidumGet()
       .catch(handle404)
 
-    throw new Error('Not found')
-
     if (!licenses) {
       return null
     }

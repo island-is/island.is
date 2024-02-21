@@ -8,12 +8,8 @@ const OccupationalLicensesOverviewScreen = lazy(() =>
   import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
 )
 
-const EducationalDetailScreen = lazy(() =>
-  import('./screens/EducationalDetail/EducationalDetail'),
-)
-
-const HealthDirectorateDetailScreen = lazy(() =>
-  import('./screens/HealthDirectorateDetail/HealthDirectorateDetail'),
+const OccupationalLicensesDetailScreen = lazy(() =>
+  import('./screens/OccupationalLicensesDetail/OccupationalLicensesDetail'),
 )
 
 export const occupationalLicensesModule: PortalModule = {
@@ -29,17 +25,10 @@ export const occupationalLicensesModule: PortalModule = {
     },
     {
       name: ol.singleHealthLicense,
-      path: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
+      path: OccupationalLicensesPaths.OccupationalLicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
-      element: <HealthDirectorateDetailScreen />,
-    },
-    {
-      name: ol.singleEducationLicense,
-      path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-
-      element: <EducationalDetailScreen />,
+      element: <OccupationalLicensesDetailScreen />,
     },
   ],
 }

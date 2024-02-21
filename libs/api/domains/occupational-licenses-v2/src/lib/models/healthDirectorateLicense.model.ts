@@ -1,10 +1,10 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
-import { OccupationalLicenseV2 } from './occupationalLicense.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { License } from './license.model'
 
 @ObjectType('OccupationalLicensesV2HealthDirectorateLicense', {
-  implements: () => OccupationalLicenseV2,
+  implements: () => License,
 })
-export class HealthDirectorateLicense extends OccupationalLicenseV2 {
+export class HealthDirectorateLicense extends License {
   @Field()
   legalEntityId?: string
 

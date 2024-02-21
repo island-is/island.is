@@ -3,18 +3,18 @@ import type { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
 import { RettindiFyrirIslandIsApi } from '@island.is/clients/district-commissioners-licenses'
 import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
-import { OccupationalLicenseV2 } from './models/occupationalLicense.model'
 import { OrganizationSlugType } from '@island.is/shared/constants'
-import { OccupationalLicenseStatusV2 } from './models/occupationalLicense.model'
+import { OccupationalLicenseStatusV2 } from './models/license.model'
 import { isDefined } from '@island.is/shared/utils'
 import { MMSApi } from '@island.is/clients/mms'
 import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
 import { info } from 'kennitala'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { EducationLicense } from './models/educationLicense.model'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 import { handle404 } from '@island.is/clients/middlewares'
+import { DistrictCommissionersLicense } from './models/districtCommissionersLicense.model'
+import { addLicenseTypePrefix } from './utils'
 
 export class OccupationalLicensesV2Service {
   constructor(
@@ -23,44 +23,10 @@ export class OccupationalLicensesV2Service {
     private readonly mmsApi: MMSApi,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  async getAllLicenses(
-    user: User,
-  ): Promise<Array<OccupationalLicenseV2> | null> {
-    const promises = [
-      this.getDistrictCommissionerLicenses(user),
-      this.getEducationLicenses(user),
-      this.getHealthDirectorateLicenses(user),
-    ]
-
-    let data: Array<OccupationalLicenseV2> = []
-    const errors: Array<Error> = []
-
-    //We want the errors but we also want to execute the promises in parallel
-    await Promise.all(
-      promises.map((p) =>
-        p
-          .then((p) => {
-            this.logger.debug('p', p)
-            if (p) {
-              data = data.concat(p)
-            }
-          })
-          .catch((e: Error) => errors.push(e)),
-      ),
-    )
-
-    this.logger.debug('data', data)
-    this.logger.debug('errors', errors)
-
-    return data
-  }
-
   async getDistrictCommissionerLicenses(
-    @CurrentUser() user: User,
-  ): Promise<OccupationalLicenseV2[] | null> {
+    user: User,
+  ): Promise<DistrictCommissionersLicense[] | null> {
     const licenses = await this.dcApi
       .withMiddleware(new AuthMiddleware(user))
       .rettindiFyrirIslandIsGet({
@@ -74,26 +40,75 @@ export class OccupationalLicensesV2Service {
 
     const issuer: OrganizationSlugType = 'syslumenn'
 
-    const data: Array<OccupationalLicenseV2> =
+    const data: Array<DistrictCommissionersLicense> =
       licenses?.leyfi
         ?.map((l) => {
           if (!l || !l.audkenni || !l.stada || !l.stada.titill || !l.titill)
             return
 
           return {
-            licenseId: l.audkenni,
+            licenseId: addLicenseTypePrefix(
+              l.audkenni,
+              'DistrictCommissioners',
+            ),
+            licenseNumber: l.audkenni,
             issuer,
             profession: l.stada.titill,
             type: l.titill,
             dateOfBirth: info(user.nationalId).birthday,
             validFrom: l.utgafudagur,
             status: OccupationalLicenseStatusV2.VALID,
+            title: l.titill,
           }
         })
         .filter(isDefined) ?? []
 
     return data
   }
+  async getDistrictCommissionerLicenseById(
+    user: User,
+    id: string,
+  ): Promise<DistrictCommissionersLicense | null> {
+    const res = await this.dcApi
+      .withMiddleware(new AuthMiddleware(user))
+      .rettindiFyrirIslandIsGet2({
+        audkenni: id,
+      })
+      .catch(handle404)
+
+    if (!res || !res.leyfi) {
+      return null
+    }
+
+    const license = res.leyfi
+
+    if (
+      !license.audkenni ||
+      !license.stada ||
+      !license.stada.titill ||
+      !license.titill
+    ) {
+      return null
+    }
+
+    const issuer: OrganizationSlugType = 'syslumenn'
+
+    return {
+      licenseId: addLicenseTypePrefix(
+        license.audkenni,
+        'DistrictCommissioners',
+      ),
+      licenseNumber: license.audkenni,
+      issuer,
+      profession: license.stada.titill,
+      type: license.titill,
+      dateOfBirth: info(user.nationalId).birthday,
+      validFrom: license.utgafudagur,
+      status: OccupationalLicenseStatusV2.VALID,
+      title: license.titill,
+    }
+  }
+
   async getHealthDirectorateLicenses(
     @CurrentUser() user: User,
   ): Promise<Array<HealthDirectorateLicense> | null> {
@@ -119,10 +134,11 @@ export class OccupationalLicensesV2Service {
           }
           return {
             ...l,
-            number: l.licenseNumber,
+            licenseId: addLicenseTypePrefix(l.licenseNumber, 'Health'),
             issuer,
             type: l.practice,
-            licenseId: l.licenseNumber,
+            licenseNumber: l.licenseNumber,
+            title: l.profession,
             id: l.id,
             dateOfBirth: info(l.licenseHolderNationalId).birthday,
             status,
@@ -130,6 +146,15 @@ export class OccupationalLicensesV2Service {
         })
         .filter(isDefined) ?? []
     )
+  }
+
+  async getHealthDirectorateLicenseById(
+    @CurrentUser() user: User,
+    id: string,
+  ): Promise<HealthDirectorateLicense | null> {
+    const licenses = await this.getHealthDirectorateLicenses(user)
+
+    return licenses?.find((l) => l.licenseNumber === id) ?? null
   }
 
   async getEducationLicenses(
@@ -143,12 +168,14 @@ export class OccupationalLicensesV2Service {
       licenses
         .map((l) => {
           return {
-            licenseId: l.id,
+            licenseId: addLicenseTypePrefix(l.id, 'Education'),
+            licenseNumber: l.id,
             issuer,
             profession: l.type,
             type: l.issuer,
             licenseHolderName: l.fullName,
             licenseHolderNationalId: l.nationalId,
+            titel: `${l.type} - ${l.issuer}`,
             dateOfBirth: info(l.nationalId).birthday,
             downloadUrl: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${l.id}`,
             validFrom: new Date(l.issued),
@@ -161,5 +188,14 @@ export class OccupationalLicensesV2Service {
         .filter(isDefined) ?? []
 
     return data
+  }
+
+  async getEducationLicenseById(
+    @CurrentUser() user: User,
+    id: string,
+  ): Promise<EducationLicense | null> {
+    const licenses = await this.getEducationLicenses(user)
+
+    return licenses?.find((l) => l.licenseNumber === id) ?? null
   }
 }

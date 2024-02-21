@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { OccupationalLicenseV2 } from './occupationalLicense.model'
+import { License } from './license.model'
 
 @ObjectType('OccupationalLicensesV2EducationLicense', {
-  implements: () => OccupationalLicenseV2,
+  implements: () => License,
 })
-export class EducationLicense extends OccupationalLicenseV2 {
+export class EducationLicense extends License {
   @Field({ nullable: true })
   downloadURI?: string
 }

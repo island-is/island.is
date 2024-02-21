@@ -3,14 +3,14 @@ import { HealthDirectorateLicense } from './healthDirectorateLicense.model'
 import { EducationLicense } from './educationLicense.model'
 import { DistrictCommissionersLicense } from './districtCommissionersLicense.model'
 
-@ObjectType('OccupationalLicensesV2Response')
-export class LicensesV2Response {
-  @Field(() => [HealthDirectorateLicense])
+@ObjectType('OccupationalLicensesV2Collection')
+export class LicensesCollection {
+  @Field(() => [HealthDirectorateLicense], { nullable: true })
   health?: Array<HealthDirectorateLicense>
 
-  @Field(() => [EducationLicense])
+  @Field(() => [EducationLicense], { nullable: true })
   education?: Array<EducationLicense>
 
-  @Field(() => [DistrictCommissionersLicense])
+  @Field(() => [DistrictCommissionersLicense], { nullable: true })
   districtCommissioners?: Array<DistrictCommissionersLicense>
 }

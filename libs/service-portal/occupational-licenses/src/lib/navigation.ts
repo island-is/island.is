@@ -18,12 +18,7 @@ export const occupationalLicensesNavigation: PortalNavigationItem = {
     {
       name: 'type',
       navHide: true,
-      path: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
-    },
-    {
-      name: 'type',
-      navHide: true,
-      path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
+      path: OccupationalLicensesPaths.OccupationalLicensesDetail,
     },
   ],
 }

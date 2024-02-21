@@ -1,34 +1,26 @@
-query getOccupationalLicenses {
-  getOrganizations {
-    items {
-      id
-      title
-      slug
-      logo {
-        id
-        url
-        title
-      }
-    }
-  }
-  occupationalLicenses {
-    count
-    items {
-      id
-      institution
-      type
-      profession
-      validFrom
-      status
+fragment OccupationalLicense on OccupationalLicenseV2 {
+  licenseId
+  issuer
+  profession
+  type
+  validFrom
+  status
+  title
+}
 
-      ... on OccupationalLicensesHealthDirectorateLicense {
-        legalEntityId
-      }
+query getOccupationalLicenses {
+  occupationalLicensesV2 {
+    districtCommissioners {
+      __typename
+      ...OccupationalLicense
     }
-    errors {
-      message
-      status
-      institution
+    education {
+      __typename
+      ...OccupationalLicense
+    }
+    health {
+      __typename
+      ...OccupationalLicense
     }
   }
 }

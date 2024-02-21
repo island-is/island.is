@@ -1,5 +1,4 @@
 import {
-  ObjectType,
   Field,
   registerEnumType,
   GraphQLISODateTime,
@@ -22,10 +21,23 @@ export enum OccupationalLicenseStatus {
   LIMITED = 'limited',
 }
 
-@InterfaceType('OccupationalLicenseV2')
-export abstract class OccupationalLicenseV2 {
+@InterfaceType('OccupationalLicenseV2', {
+  resolveType(license) {
+    if (license.downloadURI) {
+      return 'OccupationalLicensesV2EducationLicense'
+    }
+    if (license.legalEntityId) {
+      return 'OccupationalLicensesV2HealthDirectorateLicense'
+    }
+    return 'OccupationalLicensesV2DistrictCommissionersLicense'
+  },
+})
+export abstract class License {
   @Field()
   licenseId!: string
+
+  @Field()
+  licenseNumber!: string
 
   @Field()
   issuer!: string
@@ -47,6 +59,9 @@ export abstract class OccupationalLicenseV2 {
 
   @Field(() => GraphQLISODateTime)
   validFrom!: Date
+
+  @Field({ nullable: true })
+  title?: string
 
   @Field(() => OccupationalLicenseStatusV2)
   status!: OccupationalLicenseStatusV2
