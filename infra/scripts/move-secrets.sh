@@ -45,17 +45,33 @@ fi
 for secret in ${SECRETS}; do
   from="${secret%%:*}"
   to="${secret##*:}"
-  echo "Moving secret '$from' --> '$to'"
-  secretValue="$(aws ssm get-parameters \
-    --name="$from" --with-decryption)"
-  if [ -z "$secretValue" ]; then
+  echo "Copying secret '$from' --> '$to'"
+
+  # Get value to copy
+  value_from="$(aws ssm get-parameters \
+    --name="$from" --with-decryption | jq -r '.Parameters[0].Value')" 2>/dev/null ||
+    echo "Parsing value failed for secret '$from'" &&
+    continue
+  if [ -z "$value_from" ]; then
     echo "Secret '$from' does not exist, skipping"
     continue
   fi
-  value="$(jq -r '.Parameters[0].Value' <<<"$secretValue")" &&
-    aws ssm put-parameter \
-      --name="$to" \
-      --type="SecureString" \
-      --value="$value"
+
+  # Get old value (if exists)
+  value_to="$(aws ssm get-parameters \
+    --name="$to" --with-decryption | jq -r '.Parameters[0].Value')" 2>/dev/null ||
+    echo "Parsing value failed for secret '$from', probably doesn't exist"
+
+  # Don't re-do copy
+  if [ "$value_from" = "$value_to" ]; then
+    echo "Value for secret '$from' is the same as for secret '$to', skipping"
+    continue
+  fi
+
+  # Copy the secret
+  aws ssm put-parameter \
+    --name="$to" \
+    --type="SecureString" \
+    --value="$value_from"
 done
-echo "Successfully moved secrets$(dry && echo " (dry-run)"): $SECRETS"
+echo "Successfully copied secrets$(dry && echo " (dry-run)"): $SECRETS"
