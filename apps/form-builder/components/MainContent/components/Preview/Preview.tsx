@@ -63,16 +63,14 @@ export default function Preview({ data, isLarge }: Props) {
         {/* Hakbox */}
         {data.type === 'Hakbox' && <Checkbox label={data.name.is} />}
         {/* Textalinubox */}
-        {
-          data.type === 'Textalínubox' && (
-            <Input
-              label={data.name.is}
-              name="text"
-              size={inputSettings.size}
-              textarea={isLarge}
-            />
-          )
-        }
+        {data.type === 'Textalínubox' && (
+          <Input
+            label={data.name.is}
+            name="text"
+            size={inputSettings.size}
+            textarea={isLarge}
+          />
+        )}
         {data.type === 'Klukkuinnsláttur' && (
           <Column span="10/10">
             <TimeSelect />

@@ -11,8 +11,7 @@ import { IInput } from '../../../../../types/interfaces'
 import { translationStation } from '../../../../../services/translationStation'
 
 export default function MessageWithLink() {
-  const { lists, listsDispatch, onFocus, blur } =
-    useContext(FormBuilderContext)
+  const { lists, listsDispatch, onFocus, blur } = useContext(FormBuilderContext)
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
   const { inputSettings } = currentItem

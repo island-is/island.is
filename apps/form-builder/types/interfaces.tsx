@@ -1,4 +1,3 @@
-
 import { Dispatch, SetStateAction, FocusEvent } from 'react'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { EFormApplicantTypes } from './enums'

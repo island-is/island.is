@@ -59,9 +59,9 @@ type FormSettingsPayload =
   | { property: 'stopProgressOnValidatingStep'; value: boolean }
   | { property: 'applicationsDaysToRemove'; value: number }
   | {
-    property: 'formDocumentTypes'
-    value: { formId: number; documentTypeId: number }[]
-  }
+      property: 'formDocumentTypes'
+      value: { formId: number; documentTypeId: number }[]
+    }
   | { property: 'adilar'; value: string[] }
   | { property: 'completedMessage'; value: ILanguage }
   | { property: 'isTranslated'; value: boolean }
@@ -196,4 +196,3 @@ export function formReducer(formBuilder: IFormBuilder, action: FormAction) {
       return formBuilder
   }
 }
-

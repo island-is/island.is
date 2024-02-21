@@ -45,16 +45,18 @@ export default function Premises() {
       (f) => f?.id === documentTypeId,
     )
       ? formDocumentTypes.filter((f) => f?.id !== documentTypeId)
-      : [
-        ...formDocumentTypes,
-        documentTypes.find((d) => d?.id === documentTypeId),
-      ].filter((d) => d !== undefined) as ICertificate[]
+      : ([
+          ...formDocumentTypes,
+          documentTypes.find((d) => d?.id === documentTypeId),
+        ].filter((d) => d !== undefined) as ICertificate[])
 
     setFormDocumentTypes(newDocumentTypes)
     formDispatch({
       type: 'updateDocuments',
       payload: {
-        documents: newDocumentTypes.filter((d) => d !== undefined) as ICertificate[],
+        documents: newDocumentTypes.filter(
+          (d) => d !== undefined,
+        ) as ICertificate[],
       },
     })
   }

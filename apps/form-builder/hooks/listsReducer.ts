@@ -18,29 +18,29 @@ export type ILang = 'is' | 'en'
 
 type DndAction =
   | {
-    type: 'stepOverStep'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'stepOverStep'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'groupOverStep'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'groupOverStep'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'groupOverGroup'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'groupOverGroup'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'inputOverGroup'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'inputOverGroup'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'inputOverInput'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'inputOverInput'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'listItemOverListItem'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'listItemOverListItem'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
 
 type AddRemoveAction =
   | { type: 'addStep'; payload: { data: IStep } }
@@ -52,88 +52,88 @@ type AddRemoveAction =
   | { type: 'addListItem' }
   | { type: 'removeListItem'; payload: { guid: UniqueIdentifier } }
   | {
-    type: 'addInputRelevantParty'
-    payload: { data: IInput; type: string; name: ILanguage }
-  }
+      type: 'addInputRelevantParty'
+      payload: { data: IInput; type: string; name: ILanguage }
+    }
 
 type ChangeAction =
   | {
-    type: 'changeName'
-    payload: {
-      lang: ILang
-      newValue: string
+      type: 'changeName'
+      payload: {
+        lang: ILang
+        newValue: string
+      }
     }
-  }
   | {
-    type: 'changeInputType'
-    payload: {
-      index: number
-      newValue: string | number
-      inputSettings: IInputSettings
+      type: 'changeInputType'
+      payload: {
+        index: number
+        newValue: string | number
+        inputSettings: IInputSettings
+      }
     }
-  }
   | {
-    type: 'setIsRequired'
-    payload: { guid: UniqueIdentifier; isRequired: boolean }
-  }
+      type: 'setIsRequired'
+      payload: { guid: UniqueIdentifier; isRequired: boolean }
+    }
   | { type: 'setDescription'; payload: { lang: ILang; newValue: string } }
   | {
-    type: 'changeInputName'
-    payload: { guid: UniqueIdentifier; lang: ILang; newValue: string }
-  }
+      type: 'changeInputName'
+      payload: { guid: UniqueIdentifier; lang: ILang; newValue: string }
+    }
 
 type ControlAction =
   | {
-    type: 'setActiveItem'
-    payload: { type: ItemType; data: IStep | IGroup | IInput }
-  }
+      type: 'setActiveItem'
+      payload: { type: ItemType; data: IStep | IGroup | IInput }
+    }
   | { type: 'setActiveListItem'; payload: { listItem: IListItem | null } }
 
 type InputSettingsAction =
   | { type: 'timeInterval'; payload: { data: string } }
   | { type: 'setInputSettings'; payload: { inputSettings: IInputSettings } }
   | {
-    type: 'setMessageWithLinkSettings'
-    payload: {
-      property: 'hnapptexti' | 'url' | 'erHlekkur'
-      value?: string
-      checked?: boolean
-      lang?: ILang
+      type: 'setMessageWithLinkSettings'
+      payload: {
+        property: 'hnapptexti' | 'url' | 'erHlekkur'
+        value?: string
+        checked?: boolean
+        lang?: ILang
+      }
     }
-  }
   | {
-    type: 'setFileUploadSettings'
-    payload: {
-      property: 'erFjolval' | 'fjoldi' | 'hamarksstaerd' | 'tegundir'
-      checked?: boolean
-      value?: number | string
+      type: 'setFileUploadSettings'
+      payload: {
+        property: 'erFjolval' | 'fjoldi' | 'hamarksstaerd' | 'tegundir'
+        checked?: boolean
+        value?: number | string
+      }
     }
-  }
   | {
-    type: 'setNumberInputSettings'
-    payload: {
-      property: 'lagmarkslengd' | 'hamarkslengd' | 'laggildi' | 'hagildi'
-      value: number
+      type: 'setNumberInputSettings'
+      payload: {
+        property: 'lagmarkslengd' | 'hamarkslengd' | 'laggildi' | 'hagildi'
+        value: number
+      }
     }
-  }
   | {
-    type: 'setListItemSelected'
-    payload: { guid: UniqueIdentifier; checked: boolean }
-  }
-  | {
-    type: 'setListItem'
-    payload: {
-      property: 'label' | 'description'
-      lang: ILang
-      value: string
-      listItemGuid: UniqueIdentifier
+      type: 'setListItemSelected'
+      payload: { guid: UniqueIdentifier; checked: boolean }
     }
-  }
+  | {
+      type: 'setListItem'
+      payload: {
+        property: 'label' | 'description'
+        lang: ILang
+        value: string
+        listItemGuid: UniqueIdentifier
+      }
+    }
   | { type: 'setMultiSet'; payload: { checked: boolean } }
   | {
-    type: 'setRelevantPartiesSettings'
-    payload: { property: 'type' | 'name'; lang?: ILang; type: string }
-  }
+      type: 'setRelevantPartiesSettings'
+      payload: { property: 'type' | 'name'; lang?: ILang; type: string }
+    }
 
 export type Action =
   | DndAction
@@ -372,8 +372,7 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
           activeItem: newActive,
           stepsList: newSteps,
         }
-      }
-      else if (newActive.type === 'Group') {
+      } else if (newActive.type === 'Group') {
         const newGroups = groups.map((g) =>
           g.guid === newActive.data.guid ? newActive.data : g,
         )
@@ -382,8 +381,7 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
           activeItem: newActive,
           groupsList: newGroups,
         }
-      }
-      else {
+      } else {
         const newInputs = inputs.map((i) =>
           i.guid === newActive.data.guid ? newActive.data : i,
         )
@@ -393,10 +391,11 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
           inputsList: newInputs,
         }
       }
-
     }
     case 'changeInputType': {
-      const activeIndex = (lists[types[activeItem.type]] as Array<{ guid: UniqueIdentifier }>).findIndex(
+      const activeIndex = (
+        lists[types[activeItem.type]] as Array<{ guid: UniqueIdentifier }>
+      ).findIndex(
         (e: { guid: UniqueIdentifier }) => e.guid === activeItem.data.guid,
       )
       const newInputs = [...inputs]

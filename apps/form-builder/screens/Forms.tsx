@@ -29,12 +29,10 @@ export default function Forms({ formBuilder }: Props) {
           </Inline>
         </Box>
 
-        <Box marginTop={5}>
-        </Box>
+        <Box marginTop={5}></Box>
 
         <Box marginTop={5}>
-          <Box width={'half'}>
-          </Box>
+          <Box width={'half'}></Box>
           <Box></Box>
         </Box>
         <TableRow isHeader={true} />

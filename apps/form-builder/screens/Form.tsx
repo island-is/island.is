@@ -48,11 +48,11 @@ export default function Form({ form }: Props) {
     activeItem: inSettings
       ? { type: 'Step', data: baseSettingsStep }
       : {
-        type: 'Step',
-        data:
-          form.form.stepsList.find((s) => s.type === 'Innsláttur') ||
-          defaultStep,
-      },
+          type: 'Step',
+          data:
+            form.form.stepsList.find((s) => s.type === 'Innsláttur') ||
+            defaultStep,
+        },
     steps: form.form.stepsList,
     groups: form.form.groupsList,
     inputs: form.form.inputsList,
@@ -135,9 +135,9 @@ export default function Form({ form }: Props) {
           index: index,
           newValue: e.value,
           inputSettings:
-            formBuilder?.inputTypes?.find(
+            (formBuilder?.inputTypes?.find(
               (inputType) => inputType?.type === e.value,
-            )?.inputSettings as IInputSettings ?? {},
+            )?.inputSettings as IInputSettings) ?? {},
         },
       })
     }

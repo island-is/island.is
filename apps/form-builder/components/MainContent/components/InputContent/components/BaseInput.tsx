@@ -61,13 +61,15 @@ export default function BaseInput() {
             name="name"
             value={currentItem.name.is}
             backgroundColor="blue"
-            onChange={(e) => listsDispatch({
-              type: 'changeName',
-              payload: {
-                lang: 'is',
-                newValue: e.target.value,
-              }
-            })}
+            onChange={(e) =>
+              listsDispatch({
+                type: 'changeName',
+                payload: {
+                  lang: 'is',
+                  newValue: e.target.value,
+                },
+              })
+            }
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
           />
@@ -81,13 +83,15 @@ export default function BaseInput() {
             name="nameEn"
             value={currentItem.name.en}
             backgroundColor="blue"
-            onChange={(e) => listsDispatch({
-              type: 'changeName',
-              payload: {
-                lang: 'en',
-                newValue: e.target.value,
-              }
-            })}
+            onChange={(e) =>
+              listsDispatch({
+                type: 'changeName',
+                payload: {
+                  lang: 'en',
+                  newValue: e.target.value,
+                },
+              })
+            }
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
             buttons={[
