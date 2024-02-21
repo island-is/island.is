@@ -20,7 +20,6 @@ import {
   Icon,
   Inline,
   Input,
-  LinkV2,
   Navigation,
   NavigationItem,
   Pagination,
@@ -34,7 +33,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   ActionCategoryCard,
-  BackgroundImage,
   CTAProps,
   ListViewCard,
   OrganizationFooter,
@@ -252,9 +250,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     findAllMatches: true,
     ignoreLocation: true,
     keys: [
-      'nameIs',
-      'specializationNameIs',
-      'descriptionIs',
+      `name${locale === 'is' ? 'Is' : 'En'}`,
+      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+      `description${locale === 'is' ? 'Is' : 'En'}`,
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
@@ -287,6 +285,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         fuseInstance,
         query,
         activeFilters: activeFiltersFound,
+        locale,
       })
 
       setFilteredResults(results)
@@ -920,7 +919,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${dataItem.credits} ${n(
                                     'units',
                                     'einingar',
-                                  )}, ${dataItem.durationInYears} ${
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
