@@ -38,6 +38,10 @@ for secret in ${SECRETS}; do
   echo "Moving secret '$from' --> '$to'"
   secretValue="$(aws ssm get-parameters \
     --name="$from" --with-decryption)"
+  if [ -z "$secretValue" ]; then
+    echo "Secret '$from' does not exist, skipping"
+    continue
+  fi
   value="$(jq -r '.Parameters[0].Value' <<<"$secretValue")" &&
     aws ssm put-parameter \
       --name="$to" \
