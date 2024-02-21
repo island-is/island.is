@@ -38,7 +38,7 @@ const CandidateView = () => {
       />
       {!loadingOwnerLists && !loadingCurrentCollection ? (
         <Box>
-          {listsForOwner?.length === 0 && (
+          {listsForOwner?.length === 0 && currentCollection.isActive && (
             <Button
               icon="open"
               iconType="outline"

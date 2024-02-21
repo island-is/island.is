@@ -23,10 +23,34 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
-  signatureCollectionProcessingComplete: {
-    id: 'admin-portal.signature-collection:signatureCollectionProcessingComplete',
+  signatureCollectionInInitialReview: {
+    id: 'admin-portal.signature-collection:signatureCollectionInInitialReview',
     defaultMessage:
-      'Úrvinnslu safnanna fyrir upphaflegan söfnunartíma hefur verið lokið.',
+      'Tímabili söfnunnar hefur verið lokið. Opið er fyrir úrvinnslu.',
+    description: '',
+  },
+  signatureCollectionProcessing: {
+    id: 'admin-portal.signature-collection:signatureCollectionProcessing',
+    defaultMessage:
+      'Úrvinnslu hefur verið lokið á öllum listum. Hægt er að ljúka úrvinnslu á söfnuninni allri.',
+    description: '',
+  },
+  signatureCollectionProcessed: {
+    id: 'admin-portal.signature-collection:signatureCollectionProcessed',
+    defaultMessage:
+      'Úrvinnslu safnanna fyrir upphaflegan söfnunartíma hefur verið lokið. Hægt er að framlengja lista.',
+    description: '',
+  },
+  signatureCollectionActive: {
+    id: 'admin-portal.signature-collection:signatureCollectionActive',
+    defaultMessage:
+      'Söfnunin er opin. Til staðar eru listar sem hafa verið framlengdir. Einnig er hægt að framlengja fleiri lista.',
+    description: '',
+  },
+  signatureCollectionInReview: {
+    id: 'admin-portal.signature-collection:signatureCollectionInReview',
+    defaultMessage:
+      'Söfnunartíma lokið á þeim listum sem hafa verið framlengdir. Opið er fyrir úrvinnslu.',
     description: '',
   },
   filter: {
@@ -111,7 +135,7 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engin meðmælasöfnun',
+    defaultMessage: 'Engin meðmælasöfnun í gangi',
     description: '',
   },
   noListsFoundBySearch: {
