@@ -93,6 +93,9 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
+
   const searchResultsItems = (searchResults.items as Array<SupportQna>)
     .filter(
       (item) => item.organization?.slug && item.category?.slug && item.slug,
@@ -113,14 +116,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       labels: [item.category?.title],
     }))
 
-  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
-
-  const institutionSlugBelongsToMannaudstorg =
-    institutionSlug.includes('mannaudstorg')
+  const pageTitle = `${n('search', 'Leit')} `
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
@@ -142,10 +141,6 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={o(
-        'serviceWebHeaderTitle',
-        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-      )}
       institutionSlug={institutionSlug}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
