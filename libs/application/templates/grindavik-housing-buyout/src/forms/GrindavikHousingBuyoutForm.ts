@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildTableRepeaterField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
@@ -11,6 +12,7 @@ import {
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
+import { formatCurrency } from '@island.is/application/ui-components'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -23,7 +25,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
       children: [applicantInformationMultiField()],
     }),
     buildSection({
-      id: 'propertyInformation',
+      id: 'propertyInformationSection',
       title: m.application.propertyInformation.sectionTitle,
       children: [
         buildMultiField({
@@ -41,7 +43,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'loanStatus',
+      id: 'loanStatusSection',
       title: m.application.loanStatus.sectionTitle,
       children: [
         buildMultiField({
@@ -49,10 +51,27 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           title: m.application.loanStatus.sectionTitle,
           description: m.application.loanStatus.sectionDescription,
           children: [
-            buildDescriptionField({
-              id: 'test2',
-              title: '',
-              description: 'Here be dragons',
+            buildTableRepeaterField({
+              id: 'loans',
+              title: m.application.loanStatus.sectionTitle,
+              addItemButtonText: m.application.loanStatus.addNewLoan,
+              saveItemButtonText: m.application.loanStatus.saveNewLoan,
+              fields: {
+                status: {
+                  component: 'input',
+                  label: m.application.loanStatus.statusOfLoan,
+                  currency: true,
+                },
+                provider: {
+                  component: 'input',
+                  label: m.application.loanStatus.loanProvider,
+                },
+              },
+              table: {
+                format: {
+                  status: (v) => formatCurrency(v),
+                },
+              },
             }),
           ],
         }),
