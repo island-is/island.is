@@ -48,12 +48,11 @@ interface Props {
   testid?: string
 }
 
-function shouldDisplayWithdrawAppealOption(caseEntry: CaseListEntry) {
-  return (
-    Boolean(
-      caseEntry.appealState === CaseAppealState.APPEALED ||
-        caseEntry.appealState === CaseAppealState.RECEIVED,
-    ) && caseEntry.prosecutorPostponedAppealDate
+const shouldDisplayWithdrawAppealOption = (caseEntry: CaseListEntry) => {
+  return Boolean(
+    (caseEntry.appealState === CaseAppealState.APPEALED ||
+      caseEntry.appealState === CaseAppealState.RECEIVED) &&
+      caseEntry.prosecutorPostponedAppealDate,
   )
 }
 

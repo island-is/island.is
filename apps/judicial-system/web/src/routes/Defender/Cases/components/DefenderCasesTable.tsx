@@ -43,7 +43,7 @@ interface Props {
   loading?: boolean
 }
 
-function shouldDisplayWithdrawAppealOption(caseEntry: CaseListEntry) {
+const shouldDisplayWithdrawAppealOption = (caseEntry: CaseListEntry) => {
   return Boolean(
     (caseEntry.appealState === CaseAppealState.APPEALED ||
       caseEntry.appealState === CaseAppealState.RECEIVED) &&
