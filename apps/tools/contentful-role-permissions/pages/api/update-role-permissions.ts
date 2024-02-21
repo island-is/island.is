@@ -1,4 +1,3 @@
-import slugify from '@sindresorhus/slugify'
 import {
   ContentTypeProps,
   Role,
@@ -6,6 +5,8 @@ import {
   TagProps,
 } from 'contentful-management'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import slugify from '@sindresorhus/slugify'
+
 import type { CheckboxState } from '../../types'
 import {
   applyAssetPolicies,
@@ -25,6 +26,10 @@ interface RequestBody {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const data = JSON.parse(req.body) as RequestBody
+
+  console.log(data)
+
+  return res.status(200).json(data)
 
   const client = getContentfulManagementApiClient()
 
