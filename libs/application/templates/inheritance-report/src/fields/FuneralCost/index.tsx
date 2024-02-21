@@ -15,7 +15,7 @@ import {
   CheckboxController,
   InputController,
 } from '@island.is/shared/form-fields'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { valueToNumber } from '../../lib/utils/helpers'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { m } from '../../lib/messages'
@@ -35,15 +35,17 @@ type FieldProps = {
   }
 }
 
+const MARGIN_BOTTOM = 2
+
 export const FuneralCost: FC<
   PropsWithChildren<FieldBaseProps<Answers> & FieldProps>
-> = ({ field }) => {
+> = ({ field, errors }) => {
   const { id, props } = field
 
   const totalField = `${id}.total`
 
   const { formatMessage } = useLocale()
-  const { getValues, setValue } = useFormContext()
+  const { getValues, setValue, clearErrors } = useFormContext()
 
   const getUpdatedValues = useCallback(() => getValues(id), [getValues, id])
 
@@ -51,8 +53,16 @@ export const FuneralCost: FC<
     getUpdatedValues()?.hasOther?.length > 0,
   )
 
+  const getError = (field: string): string | undefined => {
+    return (
+      (errors as { funeralCost: Record<string, string> })?.funeralCost?.[
+        field
+      ] ?? undefined
+    )
+  }
+
   const calculateTotal = useCallback(() => {
-    console.log('calculateTotal hasOther', hasOther)
+    clearErrors()
 
     const values = getUpdatedValues()
 
@@ -80,7 +90,7 @@ export const FuneralCost: FC<
     }
 
     setValue(totalField, String(total ?? '0'))
-  }, [getUpdatedValues, hasOther, setValue, totalField])
+  }, [clearErrors, getUpdatedValues, hasOther, setValue, totalField])
 
   useEffect(() => {
     if (!hasOther) {
@@ -91,8 +101,6 @@ export const FuneralCost: FC<
     calculateTotal()
   }, [calculateTotal, hasOther, id, setValue])
 
-  console.log(getUpdatedValues()?.total)
-
   return (
     <GridRow>
       {(props?.fields ?? []).map((currentField, index) => {
@@ -100,16 +108,20 @@ export const FuneralCost: FC<
 
         return (
           <GridColumn key={index} span={['1/1', '1/2']}>
-            <InputController
-              id={fieldName}
-              name={fieldName}
-              label={formatMessage(currentField.title)}
-              backgroundColor="blue"
-              onChange={() => {
-                calculateTotal()
-              }}
-              currency
-            />
+            <Box marginBottom={MARGIN_BOTTOM}>
+              <InputController
+                id={fieldName}
+                name={fieldName}
+                label={formatMessage(currentField.title)}
+                error={getError(currentField.id)}
+                backgroundColor="blue"
+                onChange={() => {
+                  calculateTotal()
+                }}
+                required
+                currency
+              />
+            </Box>
           </GridColumn>
         )
       })}
@@ -131,28 +143,34 @@ export const FuneralCost: FC<
       {hasOther && (
         <Fragment>
           <GridColumn span="1/1">
-            <InputController
-              id={`${id}.other`}
-              name={`${id}.other`}
-              label={formatMessage(m.funeralOtherCost)}
-              backgroundColor="blue"
-              onChange={() => {
-                calculateTotal()
-              }}
-              required
-              currency
-            />
+            <Box marginBottom={MARGIN_BOTTOM}>
+              <InputController
+                id={`${id}.other`}
+                name={`${id}.other`}
+                label={formatMessage(m.funeralOtherCost)}
+                error={getError('other')}
+                backgroundColor="blue"
+                onChange={() => {
+                  calculateTotal()
+                }}
+                required
+                currency
+              />
+            </Box>
           </GridColumn>
           <GridColumn span="1/1">
-            <InputController
-              id={`${id}.otherDetails`}
-              name={`${id}.otherDetails`}
-              rows={4}
-              label={formatMessage(m.funeralOtherCostDetails)}
-              backgroundColor="blue"
-              required
-              textarea
-            />
+            <Box marginBottom={MARGIN_BOTTOM}>
+              <InputController
+                id={`${id}.otherDetails`}
+                name={`${id}.otherDetails`}
+                rows={4}
+                label={formatMessage(m.funeralOtherCostDetails)}
+                error={getError('otherDetails')}
+                backgroundColor="blue"
+                required
+                textarea
+              />
+            </Box>
           </GridColumn>
         </Fragment>
       )}

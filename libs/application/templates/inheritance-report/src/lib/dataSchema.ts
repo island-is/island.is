@@ -230,17 +230,34 @@ export const inheritanceReportSchema = z.object({
       food: z.string().refine((v) => v),
       tombstone: z.string().refine((v) => v),
       hasOther: z.array(z.enum([YES])).optional(),
-      other: z.string().optional(),
-      otherDetails: z.string().optional(),
+      other: z.string(),
+      otherDetails: z.string(),
       total: z.string().refine((v) => v),
     })
-    .refine(({ hasOther, other, otherDetails }) => {
-      if (hasOther && hasOther.length > 0) {
-        if (!other || !otherDetails) return false
-      }
+    .refine(
+      ({ hasOther, other }) => {
+        if (hasOther && hasOther.length > 0) {
+          return !!other
+        }
 
-      return true
-    })
+        return true
+      },
+      {
+        path: ['other'],
+      },
+    )
+    .refine(
+      ({ hasOther, otherDetails }) => {
+        if (hasOther && hasOther.length > 0) {
+          return !!otherDetails
+        }
+
+        return true
+      },
+      {
+        path: ['otherDetails'],
+      },
+    )
     .optional(),
 
   /* business */

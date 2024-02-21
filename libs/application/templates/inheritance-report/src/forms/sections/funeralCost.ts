@@ -38,6 +38,10 @@ export const funeralCost = buildSection({
                 id: 'funeralCost',
                 doesNotRequireAnswer: false,
                 component: 'FuneralCost',
+                childInputIds: [
+                  'funeralCost.other',
+                  'funeralCost.otherDetails',
+                ],
               },
               {
                 fields: [
