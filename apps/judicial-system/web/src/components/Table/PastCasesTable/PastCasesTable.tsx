@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, IconMapIcon, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
@@ -25,18 +25,14 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseAppealState,
-  CaseListEntry,
-  CaseTransition,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
   useCaseList,
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useContextMenu } from '../../ContextMenu/ContextMenu'
 import IconButton from '../../IconButton/IconButton'
 import MobilePastCase from './MobilePastCase'
 import { contextMenu } from '../../ContextMenu/ContextMenu.strings'
@@ -46,14 +42,6 @@ interface Props {
   cases: CaseListEntry[]
   loading?: boolean
   testid?: string
-}
-
-const shouldDisplayWithdrawAppealOption = (caseEntry: CaseListEntry) => {
-  return Boolean(
-    (caseEntry.appealState === CaseAppealState.APPEALED ||
-      caseEntry.appealState === CaseAppealState.RECEIVED) &&
-      caseEntry.prosecutorPostponedAppealDate,
-  )
 }
 
 const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -66,7 +54,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
 
-  const { transitionCase } = useCase()
+  const { withdrawAppealMenuOption, shouldDisplayWithdrawAppealOption } =
+    useContextMenu()
 
   const pastCasesData = useMemo(
     () =>
@@ -206,29 +195,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         icon: 'open',
                       },
                       ...(shouldDisplayWithdrawAppealOption(column)
-                        ? [
-                            {
-                              title: formatMessage(contextMenu.withdrawAppeal),
-                              onClick: async () => {
-                                const transitionSuccess = await transitionCase(
-                                  column.id,
-                                  CaseTransition.WITHDRAW_APPEAL,
-                                )
-
-                                if (transitionSuccess === true) {
-                                  const transitionedCase = cases.find(
-                                    (c) => c.id === column.id,
-                                  )
-
-                                  if (transitionedCase) {
-                                    transitionedCase.appealState =
-                                      CaseAppealState.WITHDRAWN
-                                  }
-                                }
-                              },
-                              icon: 'trash' as IconMapIcon,
-                            },
-                          ]
+                        ? [withdrawAppealMenuOption(column.id, cases)]
                         : []),
                     ]}
                     menuLabel="Opna valmöguleika á máli"

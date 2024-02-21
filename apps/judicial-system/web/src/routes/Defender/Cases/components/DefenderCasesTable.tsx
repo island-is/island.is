@@ -6,7 +6,7 @@ import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, IconMapIcon, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -14,6 +14,8 @@ import {
   TagAppealState,
   TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
+import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
@@ -24,13 +26,8 @@ import {
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseAppealState,
-  CaseListEntry,
-  CaseTransition,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
   useCaseList,
   useSortCases,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -43,14 +40,6 @@ interface Props {
   loading?: boolean
 }
 
-const shouldDisplayWithdrawAppealOption = (caseEntry: CaseListEntry) => {
-  return Boolean(
-    (caseEntry.appealState === CaseAppealState.APPEALED ||
-      caseEntry.appealState === CaseAppealState.RECEIVED) &&
-      caseEntry.accusedPostponedAppealDate,
-  )
-}
-
 export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
   props,
 ) => {
@@ -61,7 +50,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
   const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
     useCaseList()
 
-  const { transitionCase } = useCase()
+  const { withdrawAppealMenuOption, shouldDisplayWithdrawAppealOption } =
+    useContextMenu()
 
   return (
     <Box marginBottom={7}>
@@ -211,32 +201,12 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                         <ContextMenu
                           items={[
                             {
-                              title: 'Opna mál í nýjum flipa',
+                              title: formatMessage(contextMenu.openInNewTab),
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
                             ...(shouldDisplayWithdrawAppealOption(c)
-                              ? [
-                                  {
-                                    title: 'Afturkalla kæru',
-                                    onClick: async () => {
-                                      const res = await transitionCase(
-                                        c.id,
-                                        CaseTransition.WITHDRAW_APPEAL,
-                                      )
-                                      if (res === true) {
-                                        const transitionedCase = cases.find(
-                                          (tc) => c.id === tc.id,
-                                        )
-                                        if (transitionedCase) {
-                                          transitionedCase.appealState =
-                                            CaseAppealState.WITHDRAWN
-                                        }
-                                      }
-                                    },
-                                    icon: 'trash' as IconMapIcon,
-                                  },
-                                ]
+                              ? [withdrawAppealMenuOption(c.id, cases)]
                               : []),
                           ]}
                           menuLabel="Opna valmöguleika á máli"
