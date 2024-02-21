@@ -1467,22 +1467,6 @@ export const getRightsDescTitle = (application: Application) => {
     : parentalLeaveFormMessages.shared.rightsDescription
 }
 
-export const getEditOrAddInfoSectionTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
-  }
-  return parentalLeaveFormMessages.shared.editOrAddInfoSectionTitle
-}
-
-export const getEditOrAddInfoSectionDescription = (
-  application: Application,
-) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionDescription
-  }
-  return parentalLeaveFormMessages.shared.editOrAddInfoSectionDescription
-}
-
 export const getFirstPeriodTitle = (application: Application) => {
   if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.firstPeriodStart.grantTitle

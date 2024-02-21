@@ -85,7 +85,7 @@ air-discount-scheme-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'air_discount_scheme_backend'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
@@ -156,7 +156,7 @@ air-discount-scheme-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'air_discount_scheme_backend'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -561,7 +561,7 @@ application-system-api:
     DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'application_system_api'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
@@ -699,7 +699,7 @@ application-system-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -784,7 +784,7 @@ application-system-api-worker:
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'application_system_api'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
@@ -1287,7 +1287,7 @@ endorsement-system-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_endorsements_api'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
@@ -1346,7 +1346,7 @@ endorsement-system-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_endorsements_api'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1529,7 +1529,7 @@ icelandic-names-registry-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -1587,7 +1587,7 @@ icelandic-names-registry-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'icelandic_names_registry_backend'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1853,7 +1853,7 @@ regulations-admin-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'regulations_admin_backend'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'regulations_admin_backend'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -1908,7 +1908,7 @@ regulations-admin-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'regulations_admin_backend'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'regulations_admin_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -2145,7 +2145,7 @@ service-portal-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -2208,7 +2208,7 @@ service-portal-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -2260,7 +2260,7 @@ service-portal-api-worker:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -2334,7 +2334,7 @@ services-documents:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -2379,7 +2379,7 @@ services-documents:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -2410,7 +2410,7 @@ services-sessions:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_sessions_read'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
@@ -2556,7 +2556,7 @@ services-sessions-worker:
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_sessions'
     GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -2606,7 +2606,7 @@ services-sessions-worker:
       DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_sessions'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'services_sessions'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -2654,7 +2654,7 @@ services-university-gateway:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_university_gateway'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_university_gateway'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -2735,7 +2735,7 @@ services-university-gateway:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_university_gateway'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'services_university_gateway'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -2780,7 +2780,7 @@ services-university-gateway-worker:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_university_gateway'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_university_gateway'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -2922,7 +2922,7 @@ skilavottord-ws:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -2975,7 +2975,7 @@ skilavottord-ws:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'skilavottord'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -3021,7 +3021,7 @@ user-notification:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -3115,7 +3115,7 @@ user-notification-cleanup-worker:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
@@ -3158,7 +3158,7 @@ user-notification-cleanup-worker:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'user_notification'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -3204,7 +3204,7 @@ user-notification-worker:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_REGION: 'eu-west-1'
@@ -3262,7 +3262,7 @@ user-notification-worker:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'user_notification'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:

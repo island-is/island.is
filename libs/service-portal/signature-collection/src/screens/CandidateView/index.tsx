@@ -38,7 +38,7 @@ const CandidateView = () => {
       />
       {!loadingOwnerLists && !loadingCurrentCollection ? (
         <Box>
-          {listsForOwner.length === 0 && (
+          {listsForOwner?.length === 0 && currentCollection.isActive && (
             <Button
               icon="open"
               iconType="outline"
@@ -142,7 +142,7 @@ const CandidateView = () => {
               })}
             </Stack>
           </Box>
-          {listsForOwner.length > 0 &&
+          {listsForOwner?.length > 0 &&
             !user?.profile.actor &&
             currentCollection.isActive && (
               <CancelCollection collectionId={collectionId} />
