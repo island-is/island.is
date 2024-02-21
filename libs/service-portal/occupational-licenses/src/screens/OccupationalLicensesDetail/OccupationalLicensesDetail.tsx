@@ -25,8 +25,6 @@ type UseParams = {
 const OccupationalLicenseDetail = () => {
   const { id } = useParams() as UseParams
   useNamespaces('sp.occupational-licenses')
-  const user = useUserInfo()
-  const birthday = user.profile.dateOfBirth
   const { formatDateFns, formatMessage } = useLocale()
 
   const { data, loading, error } = useGetOccupationalLicenseByIdQuery({
