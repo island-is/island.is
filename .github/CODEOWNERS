@@ -144,6 +144,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
 /libs/api/domains/social-insurance                                                                       @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
+/libs/api/domains/occupational-licenses-v2/                                                              @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
@@ -158,6 +159,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                      @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
+/libs/clients/district-commissioners-licenses/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/vehicles-mileage/                                                                          @island-is/hugsmidjan
