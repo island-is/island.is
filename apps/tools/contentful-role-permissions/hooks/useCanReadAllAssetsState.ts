@@ -12,5 +12,15 @@ export const useCanReadAllAssetsState = (role: RoleProps, tags: TagProps[]) => {
   const initialRoleNamesThatCanReadAllAssets =
     extractInitialRoleNamesThatCanReadAllAssetsFromRoles([role], tagsMap)
 
-  return useState(initialRoleNamesThatCanReadAllAssets.includes(role.name))
+  const [initialState, setInitialState] = useState(
+    initialRoleNamesThatCanReadAllAssets.includes(role.name),
+  )
+  const [currentState, setCurrentState] = useState(initialState)
+
+  return {
+    initialState,
+    setInitialState,
+    currentState,
+    setCurrentState,
+  }
 }

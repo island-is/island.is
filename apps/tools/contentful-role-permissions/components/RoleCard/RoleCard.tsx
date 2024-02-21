@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { ContentTypeProps, RoleProps, TagProps } from 'contentful-management'
 import isEqual from 'lodash/isEqual'
 import slugify from '@sindresorhus/slugify'
@@ -38,24 +38,31 @@ const emptyFunction = () => {
 export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
   const {
     initialState: initialReadOnlyState,
+    setInitialState: setInitialReadOnlyState,
     currentState: readOnlyState,
     setCurrentState: setReadOnlyState,
   } = useCheckboxState('readonly', role, contentTypes)
   const {
     initialState: initialEditableState,
+    setInitialState: setInitialEditableState,
     currentState: editableState,
     setCurrentState: setEditableState,
   } = useCheckboxState('edit', role, contentTypes)
-  const [canReadAllAssets, setCanReadAllAssets] = useCanReadAllAssetsState(
-    role,
-    tags,
-  )
+  const {
+    currentState: canReadAllAssets,
+    setCurrentState: setCanReadAllAssets,
+    initialState: initialCanReadAllAssets,
+    setInitialState: setInitialCanReadAllAssets,
+  } = useCanReadAllAssetsState(role, tags)
+  const [isSaving, setIsSaving] = useState(false)
 
   const canSave =
     !isEqual(initialReadOnlyState, readOnlyState) ||
-    !isEqual(initialEditableState, editableState)
+    !isEqual(initialEditableState, editableState) ||
+    initialCanReadAllAssets !== canReadAllAssets
 
   const onSave = async () => {
+    setIsSaving(true)
     try {
       const response = await fetch('/api/update-role-permissions', {
         method: 'PUT',
@@ -63,7 +70,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
           checkboxState: {
             [role.name]: editableState,
           },
-          readOnlyState: {
+          readOnlyCheckboxState: {
             [role.name]: readOnlyState,
           },
           tags,
@@ -73,11 +80,17 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
 
       if (response.ok) {
         toast.success('Saved successfully')
+
+        // Reset initial state so that the save button gets disabled
+        setInitialReadOnlyState(readOnlyState)
+        setInitialEditableState(editableState)
+        setInitialCanReadAllAssets(canReadAllAssets)
       }
     } catch (err) {
       console.error(err)
       toast.error('Error occured during save')
     }
+    setIsSaving(false)
   }
 
   const tagExists = useMemo(() => {
@@ -115,7 +128,12 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
           </Box>
 
           <Box display="flex" flexDirection="row" justifyContent="flexEnd">
-            <Button disabled={!canSave} size="small" onClick={onSave}>
+            <Button
+              disabled={!canSave}
+              size="small"
+              onClick={onSave}
+              loading={isSaving}
+            >
               Save changes
             </Button>
           </Box>
@@ -170,6 +188,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                           <Hyphen>{contentType.name}</Hyphen>
                         </Text>
                         <ToggleSwitchButton
+                          disabled={isSaving}
                           checked={checked}
                           label=""
                           hiddenLabel={true}
@@ -183,6 +202,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
 
               <Stack space={1}>
                 <Button
+                  disabled={isSaving}
                   variant="text"
                   size="small"
                   onClick={() => {
@@ -215,6 +235,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                 </Button>
 
                 <Button
+                  disabled={isSaving}
                   variant="text"
                   size="small"
                   onClick={() => {
@@ -231,6 +252,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                 </Button>
 
                 <Button
+                  disabled={isSaving}
                   variant="text"
                   size="small"
                   onClick={() => {
@@ -296,6 +318,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                           <Hyphen>{contentType.name}</Hyphen>
                         </Text>
                         <ToggleSwitchButton
+                          disabled={isSaving}
                           checked={checked}
                           label=""
                           hiddenLabel={true}
@@ -309,6 +332,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
 
               <Stack space={1}>
                 <Button
+                  disabled={isSaving}
                   variant="text"
                   size="small"
                   onClick={() => {
@@ -342,6 +366,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                   />
                 </Button>
                 <Button
+                  disabled={isSaving}
                   variant="text"
                   size="small"
                   onClick={() => {
@@ -357,6 +382,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                   Set all
                 </Button>
                 <Button
+                  disabled={isSaving}
                   variant="text"
                   size="small"
                   onClick={() => {
@@ -377,6 +403,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
           <Box marginTop={1}>
             <Inline alignY="center">
               <Checkbox
+                disabled={isSaving}
                 checked={canReadAllAssets}
                 label="Can read all assets"
                 onChange={() => {
