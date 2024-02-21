@@ -20,7 +20,6 @@ export const serviceSetup = (services: {
       DD_TRACE_DEBUG: 'true',
       Datadog__Metrics__Port: '5003',
       AudkenniSettings__Retries: '24',
-
       AWS__SystemsManager__ParameterStore__DataProtectionPrefix: {
         dev: '/k8s/identity-server/DataProtectionSecret',
         staging: '/k8s/identity-server/DataProtectionSecret',
