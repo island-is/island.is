@@ -138,7 +138,7 @@ export class ClientsService {
     return client
   }
 
-  /** Find clients by searh string and returns with paging */
+  /** Find clients by search string and returns with paging */
   async findClients(
     searchString: string,
     page: number,

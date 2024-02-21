@@ -59,11 +59,11 @@ export class DelegationsOutgoingService {
         },
         domainName ? { domainName } : {},
         getDelegationNoActorWhereClause(user),
-        ...this.delegationResourceService.apiScopeFilter({
+        ...(await this.delegationResourceService.apiScopeFilter({
           user,
           prefix: 'delegationScopes->apiScope',
           direction: DelegationDirection.OUTGOING,
-        }),
+        })),
       ),
       include: [
         {
