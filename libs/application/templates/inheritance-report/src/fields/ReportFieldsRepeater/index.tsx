@@ -21,7 +21,7 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { TAX_FREE_LIMIT, YES } from '../../lib/constants'
+import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 
 type RepeaterProps = {
@@ -39,17 +39,6 @@ type RepeaterProps = {
   }
 }
 
-function setIfValueIsNotNan(
-  setValue: (id: string, value: string | number) => void,
-  fieldId: string,
-  value: string | number,
-) {
-  if (typeof value === 'number' && isNaN(value)) {
-    return
-  }
-  setValue(fieldId, value)
-}
-
 const valueKeys = ['rateOfExchange', 'faceValue']
 
 export const ReportFieldsRepeater: FC<
@@ -58,13 +47,6 @@ export const ReportFieldsRepeater: FC<
   const { answers, externalData } = application
 
   const { id, props } = field
-  const splitId = id.split('.')
-
-  const error =
-    errors && errors[splitId[0]]
-      ? (errors[splitId[0]] as any)[splitId[1]]?.data ||
-        (errors[splitId[0]] as any)?.total
-      : undefined
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
@@ -82,13 +64,6 @@ export const ReportFieldsRepeater: FC<
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
   const [index, setIndex] = useState('0')
-
-  /* ------ Heirs ------ */
-  const [percentage, setPercentage] = useState(0)
-  const [taxFreeInheritance, setTaxFreeInheritance] = useState(0)
-  const [inheritance, setInheritance] = useState(0)
-  const [taxableInheritance, setTaxableInheritance] = useState(0)
-  const [inheritanceTax, setInheritanceTax] = useState(0)
 
   /* ------ Total ------ */
   const [total, setTotal] = useState(0)
@@ -144,8 +119,13 @@ export const ReportFieldsRepeater: FC<
     })
 
     const repeaterFields: Record<string, string> = values.reduce(
-      (acc: Record<string, string>, elem: string) => {
-        acc[elem] = ''
+      (acc: Record<string, unknown>, elem: string) => {
+        if (elem === 'foreignBankAccount') {
+          acc[elem] = []
+        } else {
+          acc[elem] = ''
+        }
+
         return acc
       },
       {},
@@ -195,49 +175,6 @@ export const ReportFieldsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [faceValue, index, rateOfExchange, setValue])
 
-  /* ------ Set heirs calculations ------ */
-  useEffect(() => {
-    setTaxFreeInheritance(Math.round(TAX_FREE_LIMIT * percentage))
-    setInheritance(
-      Math.round(
-        (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-          Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-          Number(getValueViaPath(answers, 'business.businessTotal')) -
-          Number(getValueViaPath(answers, 'totalDeduction'))) *
-          percentage,
-      ),
-    )
-    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
-    setInheritanceTax(Math.round(taxableInheritance * 0.1))
-
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.taxFreeInheritance`,
-      taxFreeInheritance,
-    )
-    setIfValueIsNotNan(setValue, `${index}.inheritance`, inheritance)
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.inheritanceTax`,
-      Math.round(taxableInheritance * 0.01),
-    )
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.taxableInheritance`,
-      taxableInheritance,
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    index,
-    percentage,
-    taxFreeInheritance,
-    inheritance,
-    taxableInheritance,
-    inheritanceTax,
-    setValue,
-    answers,
-  ])
-
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
     const extData = (externalData.syslumennOnEntry?.data as any).estate[
@@ -254,18 +191,6 @@ export const ReportFieldsRepeater: FC<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const getDefaults = (fieldId: string) => {
-    return fieldId === 'taxFreeInheritance'
-      ? taxFreeInheritance
-      : fieldId === 'inheritance'
-      ? inheritance
-      : fieldId === 'taxableInheritance'
-      ? taxableInheritance
-      : fieldId === 'inheritanceTax'
-      ? inheritanceTax
-      : ''
-  }
 
   useEffect(() => {
     const indexes = fields.reduce<number[]>((acc, _, index) => {
@@ -286,6 +211,8 @@ export const ReportFieldsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  console.log('answers', answers)
+  console.log('values', getValues())
   return (
     <Box>
       {fields.map((repeaterField: any, mainIndex) => {
@@ -341,6 +268,8 @@ export const ReportFieldsRepeater: FC<
                     {field.id === 'foreignBankAccount' ? (
                       <CheckboxController
                         id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        defaultValue={[]}
                         options={[
                           {
                             label: formatMessage(m.bankAccountForeignLabel),
@@ -348,6 +277,9 @@ export const ReportFieldsRepeater: FC<
                           },
                         ]}
                         onSelect={(val) => {
+                          console.log('val', val)
+                          setValue(`${fieldIndex}.${field.id}`, val)
+
                           setForeignBankAccountIndexes(
                             val.length
                               ? [...foreignBankAccountIndexes, mainIndex]
@@ -360,7 +292,7 @@ export const ReportFieldsRepeater: FC<
                     ) : field.id === 'accountNumber' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
-                        label={formatMessage(m.propertyShare)}
+                        label={formatMessage(m.bankAccount)}
                         backgroundColor="blue"
                         {...(!foreignBankAccountIndexes.includes(mainIndex) && {
                           format: '####-##-######',
@@ -405,9 +337,7 @@ export const ReportFieldsRepeater: FC<
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
                         defaultValue={
-                          repeaterField[field.id]
-                            ? repeaterField[field.id]
-                            : getDefaults(field.id)
+                          repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
                         label={field.title}
@@ -420,14 +350,7 @@ export const ReportFieldsRepeater: FC<
                         rows={field.rows}
                         required={field.required}
                         error={err}
-                        onChange={(elem) => {
-                          const value = elem.target.value.replace(/\D/g, '')
-
-                          // heirs
-                          if (field.id === 'heirsPercentage') {
-                            setPercentage(Number(value) / 100)
-                          }
-
+                        onChange={() => {
                           if (valueKeys.includes(field.id)) {
                             updateValue(fieldIndex)
                           }
@@ -466,25 +389,10 @@ export const ReportFieldsRepeater: FC<
                 <Input
                   id={`${id}.total`}
                   name={`${id}.total`}
-                  value={
-                    props.sumField === 'heirsPercentage'
-                      ? String(total) + ' / 100%'
-                      : formatCurrency(String(isNaN(total) ? 0 : total))
-                  }
-                  label={
-                    props.sumField === 'heirsPercentage'
-                      ? formatMessage(m.totalPercentage)
-                      : formatMessage(m.total)
-                  }
+                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
+                  label={formatMessage(m.total)}
                   backgroundColor="white"
                   readOnly
-                  hasError={
-                    (props.sumField === 'heirsPercentage' &&
-                      error &&
-                      total !== 100) ??
-                    false
-                  }
-                  errorMessage={formatMessage(m.totalPercentageError)}
                 />
               }
             />

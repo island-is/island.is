@@ -95,7 +95,7 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             foreignBankAccount: z.array(z.enum([YES])).optional(),
-            accountNumber: z.string(),
+            accountNumber: z.string().refine((v) => v),
             balance: z.string().refine((v) => v),
           })
           .array()

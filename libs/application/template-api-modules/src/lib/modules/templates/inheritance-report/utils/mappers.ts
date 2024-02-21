@@ -96,6 +96,7 @@ export const expandAnswers = (
           return {
             accountNumber: account.accountNumber ?? '',
             balance: account.balance ?? '',
+            foreignBankAccount: account?.foreignBankAccount ?? [],
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -218,7 +219,7 @@ export const expandAnswers = (
       rent: answers?.funeralCost?.rent ?? '',
       food: answers?.funeralCost?.food ?? '',
       tombstone: answers?.funeralCost?.tombstone ?? '',
-      hasOther: answers?.funeralCost?.hasOther,
+      hasOther: answers?.funeralCost?.hasOther ?? [],
       other: answers?.funeralCost?.other ?? '',
       otherDetails: answers?.funeralCost?.otherDetails ?? '',
       total: answers?.funeralCost?.total ?? '',
