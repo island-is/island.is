@@ -23,13 +23,17 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
+  CaseAppealState,
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
+import {
+  isTrafficViolationCase,
+  shouldUseAppealWithdrawnRoutes,
+} from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -89,16 +93,10 @@ const useCaseList = () => {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        if (
-          findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
-          constants.courtOfAppealRoutes[1]
-        ) {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
-          routeTo = findFirstInvalidStep(
-            constants.courtOfAppealRoutes,
-            caseToOpen,
-          )
+          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
         }
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
