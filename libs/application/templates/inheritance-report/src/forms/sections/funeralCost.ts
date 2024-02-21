@@ -1,14 +1,16 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubSection,
-  buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
+import { YES } from '../../lib/constants'
 
 export const funeralCost = buildSection({
   id: 'funeralCost',
@@ -30,84 +32,50 @@ export const funeralCost = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
-            buildTextField({
-              id: 'buildCost',
-              title: m.buildCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'cremationCost',
-              title: m.cremationCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'printCost',
-              title: m.printCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'flowerCost',
-              title: m.flowerCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'musicCost',
-              title: m.musicCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'rentCost',
-              title: m.rentCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'foodAndDrinkCost',
-              title: m.foodAndDrinkCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'tombstoneCost',
-              title: m.tombstoneCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'otherCostQuestion',
-              title: m.otherCostQuestion,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'otherCost',
-              title: m.otherCost,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'otherCostDetails',
-              title: m.otherCostDetails,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'totalAmount',
-              title: m.totalAmount,
-              width: 'half',
-              variant: 'currency',
-            }),
-            buildTextField({
-              id: 'funeralCostAmount',
-              title: m.amount,
-              width: 'half',
-              variant: 'currency',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'funeralCost',
+                doesNotRequireAnswer: false,
+                component: 'FuneralCost',
+              },
+              {
+                fields: [
+                  {
+                    id: 'build',
+                    title: m.funeralBuildCost,
+                  },
+                  {
+                    id: 'cremation',
+                    title: m.funeralCremationCost,
+                  },
+                  {
+                    id: 'print',
+                    title: m.funeralPrintCost,
+                  },
+                  {
+                    id: 'flowers',
+                    title: m.funeralFlowersCost,
+                  },
+                  {
+                    id: 'music',
+                    title: m.funeralMusicCost,
+                  },
+                  {
+                    id: 'rent',
+                    title: m.funeralRentCost,
+                  },
+                  {
+                    id: 'food',
+                    title: m.funeralFoodAndDrinkCost,
+                  },
+                  {
+                    id: 'tombstone',
+                    title: m.funeralTombstoneCost,
+                  },
+                ],
+              },
+            ),
           ],
         }),
       ],
@@ -121,93 +89,134 @@ export const funeralCost = buildSection({
           title: m.overview,
           description: m.overviewDescription,
           children: [
+            buildDescriptionField({
+              id: 'overviewFuneralCost',
+              title: m.funeralCostTitle,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.funeralBuildCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.build') ?? '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralCremationCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.cremation') ??
+                    '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralPrintCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.print') ?? '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralFlowersCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.flowers') ??
+                    '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralMusicCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.music') ?? '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralRentCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.rent') ?? '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralFoodAndDrinkCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.food') ?? '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralTombstoneCost,
+              display: 'flex',
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.tombstone') ??
+                    '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralOtherCostQuestion,
+              display: 'flex',
+              condition: (answers) =>
+                !getValueViaPath<string[]>(
+                  answers,
+                  'funeralCost.hasOther',
+                )?.includes(YES),
+              value: ({ answers }) =>
+                getValueViaPath<string[]>(
+                  answers,
+                  'funeralCost.hasOther',
+                )?.includes(YES)
+                  ? m.yes
+                  : m.no,
+            }),
+            buildKeyValueField({
+              label: m.funeralOtherCost,
+              display: 'flex',
+              condition: (answers) =>
+                !!getValueViaPath<string[]>(
+                  answers,
+                  'funeralCost.hasOther',
+                )?.includes(YES),
+              value: ({ answers }) =>
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.other') ?? '0',
+                ),
+            }),
+            buildKeyValueField({
+              label: m.funeralOtherCostDetailsOverview,
+              display: 'block',
+              condition: (answers) =>
+                !!getValueViaPath<string[]>(
+                  answers,
+                  'funeralCost.hasOther',
+                )?.includes(YES),
+              value: ({ answers }) => {
+                return (
+                  getValueViaPath<string>(
+                    answers,
+                    'funeralCost.otherDetails',
+                  ) ?? ''
+                )
+              },
+            }),
             buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewFuneralCost',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overviewFuneralCost',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.buildCost,
-              display: 'flex',
-              value: ({ answers }) => formatCurrency(String(answers.buildCost)),
-            }),
-            buildKeyValueField({
-              label: m.cremationCost,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(answers.cremationCost)),
-            }),
-            buildKeyValueField({
-              label: m.printCost,
-              display: 'flex',
-              value: ({ answers }) => formatCurrency(String(answers.printCost)),
-            }),
-            buildKeyValueField({
-              label: m.flowerCost,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(answers.flowerCost)),
-            }),
-            buildKeyValueField({
-              label: m.musicCost,
-              display: 'flex',
-              value: ({ answers }) => formatCurrency(String(answers.musicCost)),
-            }),
-            buildKeyValueField({
-              label: m.rentCost,
-              display: 'flex',
-              value: ({ answers }) => formatCurrency(String(answers.rentCost)),
-            }),
-            buildKeyValueField({
-              label: m.foodAndDrinkCost,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(answers.foodAndDrinkCost)),
-            }),
-            buildKeyValueField({
-              label: m.tombstoneCost,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(answers.tombstoneCost)),
-            }),
-            buildKeyValueField({
-              label: m.otherCostQuestion,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(answers.otherCostQuestion)),
-            }),
-            buildKeyValueField({
-              label: m.otherCost,
-              display: 'flex',
-              value: ({ answers }) => formatCurrency(String(answers.otherCost)),
-            }),
-            buildKeyValueField({
-              label: m.otherCostDetails,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(answers.otherCostDetails)),
-            }),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',
               value: ({ answers }) =>
-                formatCurrency(String(answers.funeralCostAmount)),
-            }),
-            buildKeyValueField({
-              label: m.totalAmount,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(answers.funeralCostAmount)),
+                formatCurrency(
+                  getValueViaPath<string>(answers, 'funeralCost.total') ?? '0',
+                ),
             }),
           ],
         }),

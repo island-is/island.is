@@ -221,18 +221,25 @@ export const inheritanceReportSchema = z.object({
 
   funeralCost: z
     .object({
-      buildCost: z.string().refine((v) => v),
-      cremationCost: z.string().refine((v) => v),
-      printCost: z.string().refine((v) => v),
-      flowerCost: z.string().refine((v) => v),
-      musicCost: z.string().refine((v) => v),
-      rentCost: z.string().refine((v) => v),
-      foodAndDrinkCost: z.string().refine((v) => v),
-      tombstoneCost: z.string().refine((v) => v),
-      otherCostQuestion: z.string().refine((v) => v),
-      otherCost: z.string().refine((v) => v),
-      otherCostDetails: z.string().refine((v) => v),
-      funeralCostAmount: z.string().refine((v) => v),
+      build: z.string().refine((v) => v),
+      cremation: z.string().refine((v) => v),
+      print: z.string().refine((v) => v),
+      flowers: z.string().refine((v) => v),
+      music: z.string().refine((v) => v),
+      rent: z.string().refine((v) => v),
+      food: z.string().refine((v) => v),
+      tombstone: z.string().refine((v) => v),
+      hasOther: z.array(z.enum([YES])).optional(),
+      other: z.string().optional(),
+      otherDetails: z.string().optional(),
+      total: z.string().refine((v) => v),
+    })
+    .refine(({ hasOther, other, otherDetails }) => {
+      if (hasOther && hasOther.length > 0) {
+        if (!other || !otherDetails) return false
+      }
+
+      return true
     })
     .optional(),
 

@@ -746,69 +746,79 @@ export const m = defineMessages({
     description: '',
   },
   amount: {
+    id: 'ir.application:amount',
+    defaultMessage: 'Fjárhæð',
+    description: '',
+  },
+  funeralCostAmount: {
     id: 'ir.application:funeralCostAmount',
     defaultMessage: 'Fjárhæð',
     description: '',
   },
-  buildCost: {
+  funeralBuildCost: {
     id: 'ir.application:funeralBuildCost',
-    defualtMessage: 'Smíði kistu og umbúnaður',
+    defaultMessage: 'Smíði kistu og umbúnaður',
     description: '',
   },
-  cremationCost: {
-    id: 'ir.application:cremationCost',
-    defualtMessage: 'Líkbrennsla',
+  funeralCremationCost: {
+    id: 'ir.application:funeralCremationCost',
+    defaultMessage: 'Líkbrennsla',
     description: '',
   },
-  printCost: {
-    id: 'ir.application:printCost',
-    defualtMessage: 'Prentun',
+  funeralPrintCost: {
+    id: 'ir.application:funeralPrintCost',
+    defaultMessage: 'Prentun',
     description: '',
   },
-  flowerCost: {
-    id: 'ir.application:flowerCost',
-    defualtMessage: 'Blóm',
+  funeralFlowersCost: {
+    id: 'ir.application:funeralFlowersCost',
+    defaultMessage: 'Blóm',
     description: '',
   },
-  musicCost: {
-    id: 'ir.application:musicCost',
-    defualtMessage: 'Tónlistarflutningur',
+  funeralMusicCost: {
+    id: 'ir.application:funeralMusicCost',
+    defaultMessage: 'Tónlistarflutningur',
     description: '',
   },
-  rentCost: {
-    id: 'ir.application:rentCost',
-    defualtMessage: 'Leiga á sal',
+  funeralRentCost: {
+    id: 'ir.application:funeralRentCost',
+    defaultMessage: 'Leiga á sal',
     description: '',
   },
-  foodAndDrinkCost: {
-    id: 'ir.application:foodAndDrinkCost',
-    defualtMessage: 'Erfidrykkja',
+  funeralFoodAndDrinkCost: {
+    id: 'ir.application:funeralFoodAndDrinkCost',
+    defaultMessage: 'Erfidrykkja',
     description: '',
   },
-  tombstoneCost: {
-    id: 'ir.application:tombstoneCost',
-    defualtMessage: 'Legsteinn (áætlaður kostnaður)',
+  funeralTombstoneCost: {
+    id: 'ir.application:funeralTombstoneCost',
+    defaultMessage: 'Legsteinn (áætlaður kostnaður)',
     description: '',
   },
-  otherCostQuestion: {
-    id: 'ir.application:otherCostQuestion',
-    defualtMessage: 'Annar kostnaður?',
+  funeralOtherCostQuestion: {
+    id: 'ir.application:funeralOtherCostQuestion',
+    defaultMessage: 'Annar kostnaður?',
     description: '',
   },
-  otherCost: {
-    id: 'ir.application:otherCost',
-    defualtMessage: 'Annar kostnaður',
+  funeralOtherCost: {
+    id: 'ir.application:funeralOtherCost',
+    defaultMessage: 'Annar kostnaður',
     description: '',
   },
-  otherCostDetails: {
-    id: 'ir.application:otherCostDetails',
-    defualtMessage:
+  funeralOtherCostDetails: {
+    id: 'ir.application:funeralOtherCostDetails',
+    defaultMessage:
       'Vinsamlegast tilgreinið með nánari hætti hvað felst í öðrum kostnaði',
+    description: '',
+  },
+  funeralOtherCostDetailsOverview: {
+    id: 'ir.application:funeralOtherCostDetailsOverview',
+    defaultMessage: 'Hvað felst í öðrum kostnaði',
     description: '',
   },
   totalCost: {
     id: 'ir.application:totalCost',
-    defualtMessage: 'Heildarkostnaður',
+    defaultMessage: 'Heildarkostnaður',
     description: '',
   },
   debtsTitle: {
