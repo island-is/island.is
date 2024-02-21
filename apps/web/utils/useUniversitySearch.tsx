@@ -25,7 +25,7 @@ export const SearchProducts = ({
     queryMaker.$and.push({
       $or: [
         { nameIs: query },
-        { departmentNameIs: query },
+        { specializationNameIs: query },
         { descriptionIs: query },
       ],
     })
