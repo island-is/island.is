@@ -45,6 +45,26 @@ export const application = {
         'Hér getur þú bætt við upplýsingum um stöðu á láni fasteignar.',
       description: 'Loan status section description',
     },
+    statusOfLoan: {
+      id: 'ghb.application.loanStatus:statusOfLoan',
+      defaultMessage: 'Staða á láni',
+      description: 'Status of loan',
+    },
+    loanProvider: {
+      id: 'ghb.application.loanStatus:loanProvider',
+      defaultMessage: 'Lánveitandi',
+      description: 'Loan provider',
+    },
+    addNewLoan: {
+      id: 'ghb.application.loanStatus:addNewLoan',
+      defaultMessage: 'Bæta við nýju láni',
+      description: 'Add new loan',
+    },
+    saveNewLoan: {
+      id: 'ghb.application.loanStatus:saveNewLoan',
+      defaultMessage: 'Vista lán',
+      description: 'Save new loan',
+    },
   }),
   overview: defineMessages({
     sectionTitle: {
