@@ -87,7 +87,13 @@ const PaperUpload = ({
           borderRadius="large"
         >
           <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-            <Box onClick={() => setWithPaperUpload(!withPaperUpload)}>
+            <Box
+              onClick={() =>
+                listStatus === ListStatus.InReview
+                  ? setWithPaperUpload(!withPaperUpload)
+                  : undefined
+              }
+            >
               <Checkbox
                 label={formatMessage(m.uploadFile)}
                 checked={withPaperUpload}

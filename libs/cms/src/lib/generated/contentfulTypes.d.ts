@@ -2020,10 +2020,10 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink
+  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
 
   /** Children Links */
-  childrenLinks?: ILink[] | undefined
+  childrenLinks?: (ILink | IOrganizationSubpage | IProjectSubpage)[] | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {

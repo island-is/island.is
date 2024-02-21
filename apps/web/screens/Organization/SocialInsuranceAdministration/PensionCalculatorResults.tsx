@@ -269,7 +269,6 @@ PensionCalculatorResults.getProps = async ({
 }) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
   const slug = extractSlug(locale, customPageData)
-
   const [
     {
       data: { getOrganizationPage },

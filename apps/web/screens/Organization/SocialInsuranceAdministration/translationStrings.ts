@@ -445,4 +445,104 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Tekjur samtals',
     description: 'Tekjur samtals',
   },
+  january: {
+    id: 'web.pensionCalculator:january',
+    defaultMessage: 'Janúar',
+    description: 'January',
+  },
+  february: {
+    id: 'web.pensionCalculator:february',
+    defaultMessage: 'Febrúar',
+    description: 'February',
+  },
+  march: {
+    id: 'web.pensionCalculator:march',
+    defaultMessage: 'Mars',
+    description: 'March',
+  },
+  april: {
+    id: 'web.pensionCalculator:april',
+    defaultMessage: 'Apríl',
+    description: 'April',
+  },
+  may: {
+    id: 'web.pensionCalculator:may',
+    defaultMessage: 'Maí',
+    description: 'May',
+  },
+  june: {
+    id: 'web.pensionCalculator:june',
+    defaultMessage: 'Júní',
+    description: 'June',
+  },
+  july: {
+    id: 'web.pensionCalculator:july',
+    defaultMessage: 'Júlí',
+    description: 'July',
+  },
+  august: {
+    id: 'web.pensionCalculator:august',
+    defaultMessage: 'Ágúst',
+    description: 'August',
+  },
+  september: {
+    id: 'web.pensionCalculator:september',
+    defaultMessage: 'September',
+    description: 'September',
+  },
+  october: {
+    id: 'web.pensionCalculator:october',
+    defaultMessage: 'Október',
+    description: 'October',
+  },
+  november: {
+    id: 'web.pensionCalculator:november',
+    defaultMessage: 'Nóvember',
+    description: 'November',
+  },
+  december: {
+    id: 'web.pensionCalculator:desember',
+    defaultMessage: 'Desember',
+    description: 'December',
+  },
+  birthMonthLabel: {
+    id: 'web.pensionCalculator:birthMonthLabel',
+    defaultMessage: 'Mánuður',
+    description: 'Birth month',
+  },
+  birthMonthPlaceholder: {
+    id: 'web.pensionCalculator:birthMonthPlaceholder',
+    defaultMessage: 'Mánuður',
+    description: 'Birth month, placeholder',
+  },
+  birthYearLabel: {
+    id: 'web.pensionCalculator:birthYearLabel',
+    defaultMessage: 'Ár',
+    description: 'Birth year',
+  },
+  birthYearPlaceholder: {
+    id: 'web.pensionCalculator:birthYearPlaceholder',
+    defaultMessage: 'Ár',
+    description: 'Birth year, placeholder',
+  },
+  startMonthLabel: {
+    id: 'web.pensionCalculator:startMonthLabel',
+    defaultMessage: 'Mánuður',
+    description: 'Mánuður sem notandi hefur töku á lífeyri',
+  },
+  startMonthPlaceholder: {
+    id: 'web.pensionCalculator:startMonthPlaceholder',
+    defaultMessage: 'Mánuður',
+    description: 'Mánuður sem notandi hefur töku á lífeyri, placeholder',
+  },
+  startYearLabel: {
+    id: 'web.pensionCalculator:startYearLabel',
+    defaultMessage: 'Ár',
+    description: 'Ár sem notandi hefur töku á lífeyri',
+  },
+  startYearPlaceholder: {
+    id: 'web.pensionCalculator:startYearPlaceholder',
+    defaultMessage: 'Ár',
+    description: 'Ár sem notandi hefur töku á lífeyri, placeholder',
+  },
 })
