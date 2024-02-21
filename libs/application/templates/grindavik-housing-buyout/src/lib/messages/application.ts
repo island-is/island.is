@@ -14,10 +14,49 @@ export const application = {
     },
   }),
   applicant: defineMessages({
-    infoSectionTitle: {
-      id: 'ghb.applicant.information:section.title',
+    sectionTitle: {
+      id: 'ghb.application.applicant:section.title',
       defaultMessage: 'Upplýsingar um þig',
       description: 'Applicant information section title',
+    },
+  }),
+  propertyInformation: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application.propertyInformation:section.title',
+      defaultMessage: 'Upplýsingar um eign',
+      description: 'Property information section title',
+    },
+    sectionDescription: {
+      id: 'ghb.application.propertyInformation:section.description',
+      defaultMessage:
+        'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+      description: 'Property information section description',
+    },
+  }),
+  loanStatus: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application.loanStatus:section.title',
+      defaultMessage: 'Staða á láni',
+      description: 'Loan status section title',
+    },
+    sectionDescription: {
+      id: 'ghb.application.loanStatus:section.description',
+      defaultMessage:
+        'Hér getur þú bætt við upplýsingum um stöðu á láni fasteignar.',
+      description: 'Loan status section description',
+    },
+  }),
+  overview: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application.overview:section.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview section title',
+    },
+    sectionDescription: {
+      id: 'ghb.application.overview:section.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Overview section description',
     },
   }),
 }
