@@ -5,6 +5,13 @@ export const GET_VEHICLE_PLATE_ORDER_CHECKS_BY_PERMNO = `
         errorNo
         defaultMessage
       }
+      basicVehicleInformation {
+        permno
+        make
+        color
+        role
+        requireMileage
+      }
     }
   } 
 `
