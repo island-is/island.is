@@ -16,15 +16,13 @@ export default function BaseInput() {
     formBuilder,
     lists,
     listsDispatch,
-    changeHandler,
     changeSelectHandler,
     onFocus,
     blur,
   } = useContext(FormBuilderContext)
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
-  console.log('formBuilder.inputTypes', formBuilder.inputTypes)
-  const options = formBuilder.inputTypes
+  const createAndSortOptions = formBuilder.inputTypes
     .map((it) => {
       return {
         label: it.type,
@@ -36,7 +34,7 @@ export default function BaseInput() {
   const defaultOption =
     currentItem.type === ''
       ? null
-      : options.find((o) => o.value === currentItem.type)
+      : createAndSortOptions.find((o) => o.value === currentItem.type)
 
   return (
     <Stack space={2}>
@@ -45,7 +43,7 @@ export default function BaseInput() {
           <Select
             label="Tegund"
             name="inputTypeSelect"
-            options={options}
+            options={createAndSortOptions}
             placeholder="Veldu tegund"
             backgroundColor="blue"
             isSearchable
@@ -63,7 +61,13 @@ export default function BaseInput() {
             name="name"
             value={currentItem.name.is}
             backgroundColor="blue"
-            onChange={(e) => changeHandler(e, 'name')}
+            onChange={(e) => listsDispatch({
+              type: 'changeName',
+              payload: {
+                lang: 'is',
+                newValue: e.target.value,
+              }
+            })}
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
           />
@@ -77,7 +81,13 @@ export default function BaseInput() {
             name="nameEn"
             value={currentItem.name.en}
             backgroundColor="blue"
-            onChange={(e) => changeHandler(e, 'nameEn')}
+            onChange={(e) => listsDispatch({
+              type: 'changeName',
+              payload: {
+                lang: 'en',
+                newValue: e.target.value,
+              }
+            })}
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
             buttons={[

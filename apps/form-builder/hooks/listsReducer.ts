@@ -18,29 +18,29 @@ export type ILang = 'is' | 'en'
 
 type DndAction =
   | {
-      type: 'stepOverStep'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'stepOverStep'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'groupOverStep'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'groupOverStep'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'groupOverGroup'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'groupOverGroup'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'inputOverGroup'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'inputOverGroup'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'inputOverInput'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'inputOverInput'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
   | {
-      type: 'listItemOverListItem'
-      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-    }
+    type: 'listItemOverListItem'
+    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+  }
 
 type AddRemoveAction =
   | { type: 'addStep'; payload: { data: IStep } }
@@ -52,90 +52,88 @@ type AddRemoveAction =
   | { type: 'addListItem' }
   | { type: 'removeListItem'; payload: { guid: UniqueIdentifier } }
   | {
-      type: 'addInputRelevantParty'
-      payload: { data: IInput; type: string; name: ILanguage }
-    }
+    type: 'addInputRelevantParty'
+    payload: { data: IInput; type: string; name: ILanguage }
+  }
 
 type ChangeAction =
   | {
-      type: 'changeName'
-      payload: {
-        activeType: ItemType
-        index: number
-        lang: ILang
-        newValue: string
-      }
+    type: 'changeName'
+    payload: {
+      lang: ILang
+      newValue: string
     }
+  }
   | {
-      type: 'changeInputType'
-      payload: {
-        index: number
-        newValue: string | number
-        inputSettings: unknown
-      }
+    type: 'changeInputType'
+    payload: {
+      index: number
+      newValue: string | number
+      inputSettings: IInputSettings
     }
+  }
   | {
-      type: 'setIsRequired'
-      payload: { guid: UniqueIdentifier; isRequired: boolean }
-    }
+    type: 'setIsRequired'
+    payload: { guid: UniqueIdentifier; isRequired: boolean }
+  }
   | { type: 'setDescription'; payload: { lang: ILang; newValue: string } }
   | {
-      type: 'changeInputName'
-      payload: { guid: UniqueIdentifier; lang: ILang; newValue: string }
-    }
+    type: 'changeInputName'
+    payload: { guid: UniqueIdentifier; lang: ILang; newValue: string }
+  }
 
 type ControlAction =
   | {
-      type: 'setActiveItem'
-      payload: { type: ItemType; data: IStep | IGroup | IInput }
-    }
-  | { type: 'setActiveListItem'; payload: { listItem: IListItem } }
+    type: 'setActiveItem'
+    payload: { type: ItemType; data: IStep | IGroup | IInput }
+  }
+  | { type: 'setActiveListItem'; payload: { listItem: IListItem | null } }
 
 type InputSettingsAction =
-  | { type: 'timeInterval'; payload: { data: number } }
+  | { type: 'timeInterval'; payload: { data: string } }
   | { type: 'setInputSettings'; payload: { inputSettings: IInputSettings } }
   | {
-      type: 'setMessageWithLinkSettings'
-      payload: {
-        property: 'hnapptexti' | 'url' | 'erHlekkur'
-        value?: string
-        checked?: boolean
-        lang: ILang
-      }
+    type: 'setMessageWithLinkSettings'
+    payload: {
+      property: 'hnapptexti' | 'url' | 'erHlekkur'
+      value?: string
+      checked?: boolean
+      lang?: ILang
     }
+  }
   | {
-      type: 'setFileUploadSettings'
-      payload: {
-        property: 'erFjolval' | 'fjoldi' | 'hamarksstaerd' | 'tegundir'
-        checked?: boolean
-        value: number | string
-      }
+    type: 'setFileUploadSettings'
+    payload: {
+      property: 'erFjolval' | 'fjoldi' | 'hamarksstaerd' | 'tegundir'
+      checked?: boolean
+      value?: number | string
     }
+  }
   | {
-      type: 'setNumberInputSettings'
-      payload: {
-        property: 'lagmarkslengd' | 'hamarkslengd' | 'laggildi' | 'hagildi'
-        value: number
-      }
+    type: 'setNumberInputSettings'
+    payload: {
+      property: 'lagmarkslengd' | 'hamarkslengd' | 'laggildi' | 'hagildi'
+      value: number
     }
+  }
   | {
-      type: 'setListItemSelected'
-      payload: { guid: UniqueIdentifier; checked: boolean }
-    }
+    type: 'setListItemSelected'
+    payload: { guid: UniqueIdentifier; checked: boolean }
+  }
   | {
-      type: 'setListItem'
-      payload: {
-        property: 'text' | 'description'
-        lang: ILang
-        value: string
-        listItemGuid: UniqueIdentifier
-      }
+    type: 'setListItem'
+    payload: {
+      property: 'label' | 'description'
+      lang: ILang
+      value: string
+      listItemGuid: UniqueIdentifier
     }
+  }
   | { type: 'setMultiSet'; payload: { checked: boolean } }
   | {
-      type: 'setRelevantPartiesSettings'
-      payload: { property: 'type' | 'name'; lang?: ILang; type: string }
-    }
+    type: 'setRelevantPartiesSettings'
+    payload: { property: 'type' | 'name'; lang?: ILang; type: string }
+  }
 
 export type Action =
   | DndAction
@@ -151,7 +149,6 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
     Input: 'inputs',
   }
   const { activeItem, steps, groups, inputs } = lists
-  //const activeIndex = lists[types[activeItem.type]].findIndex((e) => e.guid === activeItem.data.guid)
 
   const addNewInput = (newInput: IInput, toSave: boolean) => {
     toSave && updateItem('Input', newInput)
@@ -168,10 +165,6 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
   }
 
   switch (action.type) {
-    // case actions.initialize: {
-    //   return action.payload
-    // }
-
     // DnD control
     case 'stepOverStep': {
       const activeIndex = steps.findIndex(
@@ -359,30 +352,51 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
 
     // ChangeHandlers
     case 'changeName': {
-      const updatedList = [...lists[types[activeItem.type]]]
-      const activeIndex = lists[types[activeItem.type]].findIndex(
-        (e: { guid: UniqueIdentifier }) => e.guid === activeItem.data.guid,
-      )
-      updatedList[activeIndex] = {
-        ...lists[types[activeItem.type]][activeIndex],
-        name: {
-          ...lists[types[activeItem.type]][activeIndex].name,
-          [action.payload.lang]: action.payload.newValue,
+      const { lang, newValue } = action.payload
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...activeItem.data,
+          name: {
+            ...activeItem.data.name,
+            [lang]: newValue,
+          },
         },
       }
+      if (newActive.type === 'Step') {
+        const newSteps = steps.map((s) =>
+          s.guid === newActive.data.guid ? newActive.data : s,
+        )
+        return {
+          ...lists,
+          activeItem: newActive,
+          stepsList: newSteps,
+        }
+      }
+      else if (newActive.type === 'Group') {
+        const newGroups = groups.map((g) =>
+          g.guid === newActive.data.guid ? newActive.data : g,
+        )
+        return {
+          ...lists,
+          activeItem: newActive,
+          groupsList: newGroups,
+        }
+      }
+      else {
+        const newInputs = inputs.map((i) =>
+          i.guid === newActive.data.guid ? newActive.data : i,
+        )
+        return {
+          ...lists,
+          activeItem: newActive,
+          inputsList: newInputs,
+        }
+      }
 
-      const newActive = {
-        type: activeItem.type,
-        data: updatedList[activeIndex],
-      }
-      return {
-        ...lists,
-        activeItem: newActive,
-        [types[activeItem.type]]: updatedList,
-      }
     }
     case 'changeInputType': {
-      const activeIndex = lists[types[activeItem.type]].findIndex(
+      const activeIndex = (lists[types[activeItem.type]] as Array<{ guid: UniqueIdentifier }>).findIndex(
         (e: { guid: UniqueIdentifier }) => e.guid === activeItem.data.guid,
       )
       const newInputs = [...inputs]
@@ -431,7 +445,7 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
     }
     case 'changeInputName': {
       const { guid, lang, newValue } = action.payload
-      const currentInput = inputs.find((i) => i.guid === guid)
+      const currentInput = activeItem.data as IInput
       const newInput = {
         ...currentInput,
         name: {
@@ -499,7 +513,7 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
           },
           inputs: inputs.map((i) => {
             if (i.guid === activeItem.data.guid) {
-              const newInput = {
+              const newInput: IInput = {
                 ...i,
                 inputSettings: {
                   ...i.inputSettings,
@@ -520,19 +534,16 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
 
       const { payload } = action
       if ('property' in payload) {
-        // dont know why but typescript was inferring payload : {data: number;}
         const { property, lang, value, checked } = payload
 
         const updateMessageLink = (
           property: string,
           value: string | undefined,
         ) => {
+          if (lang === undefined || value === undefined) return
           return {
-            ...input.inputSettings,
-            [property]: {
-              ...input.inputSettings[property],
-              [lang]: value,
-            },
+            ...(input.inputSettings[property] as IInputSettings),
+            [lang]: value,
           }
         }
 
@@ -563,26 +574,9 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
       break
     }
 
-    // "inputSettings": {
-    //   "$type": "skjal",
-    //   "tegundir": [],
-    //   "hamarksstaerd": 10,
-    //   "erFjolval": false,
-    //   "fjoldi": 20
-    // }
     case 'setFileUploadSettings': {
       const input = activeItem.data as IInput
       const { payload } = action
-
-      // if (
-      //   !payload ||
-      //   !('property' in payload) ||
-      //   !('checked' in payload) ||
-      //   !('value' in payload)
-      // ) {
-      //   throw new Error('Invalid payload')
-      // }
-
       const { property, checked, value } = payload
 
       const updateFileTypesArray = () => {
@@ -715,7 +709,6 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
           }),
         },
       }
-      console.log('newInput', newInput)
       return addNewInput(newInput, false)
     }
 
@@ -726,7 +719,6 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
       }
     }
 
-    // MultiSet boolean??
     case 'setMultiSet': {
       const group = activeItem.data as IGroup
       const newGroup = {
@@ -769,4 +761,5 @@ export const listsReducer = (lists: ILists, action: Action): ILists => {
     default:
       return lists
   }
+  return lists
 }

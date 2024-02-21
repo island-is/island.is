@@ -12,7 +12,7 @@ export default function TimeInput() {
     <Row>
       <Column span="5/10">
         <Select
-          label="Tímabil" // ??
+          label="Tímabil"
           name="interval"
           size="sm"
           backgroundColor="blue"
@@ -23,10 +23,10 @@ export default function TimeInput() {
             { label: 'Hálftíma fresti', value: '2' },
             { label: 'Korter fresti', value: '3' },
           ]}
-          onChange={(e: { label: string; value: string }) => {
+          onChange={(e) => {
             listsDispatch({
               type: 'timeInterval',
-              data: e.value,
+              payload: { data: e ? e.value : '0' }
             })
           }}
         />

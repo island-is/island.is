@@ -15,6 +15,7 @@ import { updateForm, updateItem } from '../services/apiService'
 import {
   IFormBuilder,
   IFormBuilderContext,
+  IInputSettings,
   IListItem,
   ILists,
   NavbarSelectStatus,
@@ -25,7 +26,6 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Box,
-  Button,
 } from '@island.is/island-ui/core'
 import Navbar from '../components/Navbar/Navbar'
 import NavbarSelect from '../components/NavbarSelect/NavbarSelect'
@@ -36,8 +36,7 @@ type Props = {
 }
 
 export default function Form({ form }: Props) {
-  const [isTyping, setIsTyping] = useState(false)
-  const [focus, setOnFocus] = useState(null)
+  const [focus, setOnFocus] = useState<string>('')
   const [inSettings, setInSettings] = useState(form.form.name.is === '')
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
     NavbarSelectStatus.OFF,
@@ -49,11 +48,11 @@ export default function Form({ form }: Props) {
     activeItem: inSettings
       ? { type: 'Step', data: baseSettingsStep }
       : {
-          type: 'Step',
-          data:
-            form.form.stepsList.find((s) => s.type === 'Innsláttur') ||
-            defaultStep,
-        },
+        type: 'Step',
+        data:
+          form.form.stepsList.find((s) => s.type === 'Innsláttur') ||
+          defaultStep,
+      },
     steps: form.form.stepsList,
     groups: form.form.groupsList,
     inputs: form.form.inputsList,
@@ -61,7 +60,7 @@ export default function Form({ form }: Props) {
   const [formBuilder, formDispatch] = useReducer(formReducer, form)
   const [lists, listsDispatch] = useReducer(listsReducer, initialNavbar)
   const { activeItem } = lists
-  console.log('FORM: ', form)
+
   const isMounted = useRef(false)
   useEffect(() => {
     isMounted.current = true
@@ -85,14 +84,12 @@ export default function Form({ form }: Props) {
     lists: lists,
     listsDispatch: listsDispatch,
     formUpdate: formUpdate,
-    setIsTyping: setIsTyping,
     inSettings: inSettings,
     setInSettings: setInSettings,
     setSelectStatus: setSelectStatus,
     selectStatus: selectStatus,
     activeListItem: activeListItem,
     setActiveListItem: setActiveListItem,
-    changeHandler: changeHandler,
     changeSelectHandler: changeSelectHandler,
     blur: blur,
     onFocus: onFocus,
@@ -129,27 +126,7 @@ export default function Form({ form }: Props) {
     updateForm(formBuilder.form, lists.steps, lists.groups, lists.inputs)
   }
 
-  function changeHandler(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    propertyName: string,
-  ) {
-    if (!isTyping) setIsTyping(true)
-    if (propertyName === 'name' || propertyName === 'nameEn') {
-      const lang = propertyName === 'name' ? 'is' : 'en'
-      const index = getIndex()
-      listsDispatch({
-        type: 'changeName',
-        payload: {
-          activeType: activeItem.type,
-          index: index,
-          lang: lang,
-          newValue: e.target.value,
-        },
-      })
-    }
-  }
-
-  function changeSelectHandler(e) {
+  function changeSelectHandler(e: { value: string }) {
     if ('value' in e) {
       const index = getIndex()
       listsDispatch({
@@ -160,24 +137,20 @@ export default function Form({ form }: Props) {
           inputSettings:
             formBuilder?.inputTypes?.find(
               (inputType) => inputType?.type === e.value,
-            )?.inputSettings ?? null,
+            )?.inputSettings as IInputSettings ?? {},
         },
       })
     }
-    //updateItem(activeItem.type, activeItem.data)
   }
 
   function blur(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    // Check whether value has changed
     if (e.target.value !== focus) {
-      setOnFocus(null)
+      setOnFocus('')
       updateItem(activeItem.type, activeItem.data)
     }
-    setIsTyping(false)
   }
 
   function onFocus(value: string) {
-    setIsTyping(true)
     setOnFocus(value)
   }
 

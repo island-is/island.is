@@ -1,20 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeEvent, Dispatch, SetStateAction, FocusEvent } from 'react'
+
+import { Dispatch, SetStateAction, FocusEvent } from 'react'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { EFormApplicantTypes } from './enums'
+import { Action as ListsAction } from '../hooks/listsReducer'
+import { FormAction } from '../hooks/formReducer'
+import { FormHeaderAction } from '../hooks/headerInfoReducer'
 
 export interface IFormBuilderContext {
   formBuilder: IFormBuilder
-  formDispatch: Dispatch<any>
+  formDispatch: Dispatch<FormAction>
   lists: {
     activeItem: ActiveItem
     steps: IStep[]
     groups: IGroup[]
     inputs: IInput[]
   }
-  listsDispatch: Dispatch<any>
+  listsDispatch: Dispatch<ListsAction>
   formUpdate: () => Promise<void>
-  setIsTyping: Dispatch<SetStateAction<boolean>>
   inSettings: boolean
   setInSettings: Dispatch<SetStateAction<boolean>>
   setSelectStatus: Dispatch<SetStateAction<NavbarSelectStatus>>
@@ -22,10 +24,6 @@ export interface IFormBuilderContext {
   activeListItem?: IListItem | null
   setActiveListItem: Dispatch<SetStateAction<IListItem | null>>
   changeSelectHandler(e: unknown): void
-  changeHandler(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    propertyName: string,
-  ): void
   blur(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void
   onFocus(e: string): void
 }
@@ -34,7 +32,7 @@ export interface IInputSettings {
   $type?: string
   isLarge?: boolean
   size?: Sizes
-  interval?: number
+  interval?: string
   erHlekkur?: boolean
   url?: string
   hnapptexti?: ILanguage
@@ -52,7 +50,7 @@ export interface IInputSettings {
   name?: ILanguage
   erListi?: boolean
   erInnslattur?: boolean
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface IForm {
@@ -124,7 +122,7 @@ export type ILists = {
   steps: IStep[]
   groups: IGroup[]
   inputs: IInput[]
-  [key: string]: any // index signature for reducer
+  [key: string]: unknown
 }
 
 export interface ActiveItem {
@@ -175,7 +173,7 @@ export interface IApplicantType {
 }
 
 export type IFormApplicantType = {
-  formId: number //formID
+  formId: number
   applicantTypeId: number
   name: ILanguage
   type: EFormApplicantTypes
@@ -199,10 +197,10 @@ export interface IInputTypes {
 
 export interface ILayoutContext {
   info: {
-    organization: any
+    organization: string
     applicationName: string
   }
-  infoDispatch: React.Dispatch<any>
+  infoDispatch: React.Dispatch<FormHeaderAction>
 }
 
 export interface ILicenseProvider {

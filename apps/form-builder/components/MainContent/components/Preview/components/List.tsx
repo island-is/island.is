@@ -14,8 +14,9 @@ type ListItem = {
 export default function List({ currentItem }: Props) {
   const [listItems, setListItems] = useState<ListItem[]>([])
   useEffect(() => {
+    const currentList = currentItem.inputSettings.listi ?? []
     setListItems(
-      currentItem.inputSettings.listi.map((l) => ({
+      currentList.map((l) => ({
         label: l.label.is,
         value: l.label.is,
       })),

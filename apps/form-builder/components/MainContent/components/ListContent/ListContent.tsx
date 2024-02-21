@@ -6,11 +6,13 @@ import {
   Box,
   Button,
   RadioButton,
+  Option,
 } from '@island.is/island-ui/core'
 import { Dispatch, SetStateAction, useContext, useState } from 'react'
 import FormBuilderContext from '../../../../context/FormBuilderContext'
 import { getList } from '../../../../services/apiService'
 import { IInput } from '../../../../types/interfaces'
+import { SingleValue } from 'react-select'
 
 type Props = {
   setInListBuilder: Dispatch<SetStateAction<boolean>>
@@ -68,9 +70,8 @@ export default function ListContent({ setInListBuilder }: Props) {
             label="Tilbúnir fellilistar"
             options={predeterminedLists}
             backgroundColor="blue"
-            onChange={async (e: { label: string; value: string }) => {
-              const newList = await getList(e.value)
-              console.log(newList)
+            onChange={async (e: SingleValue<Option<string>>) => {
+              const newList = e && (await getList(e.value))
               listsDispatch({
                 type: 'setInputSettings',
                 payload: {

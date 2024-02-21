@@ -6,6 +6,7 @@ import {
   Box,
   Select,
   Text,
+  Option,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import FormBuilderContext from '../../../../../../context/FormBuilderContext'
@@ -24,13 +25,18 @@ export default function FileUpload() {
     value: size.value,
   }))
 
-  const fileAmountOptions = () => {
-    const arr = []
-    for (let i = 1; i < 11; i++) {
-      arr.push({ label: i, value: i })
-    }
-    return arr
-  }
+  const fileAmountOptions: Option<number>[] = [
+    { label: '1', value: 1 },
+    { label: '2', value: 2 },
+    { label: '3', value: 3 },
+    { label: '4', value: 4 },
+    { label: '5', value: 5 },
+    { label: '6', value: 6 },
+    { label: '7', value: 7 },
+    { label: '8', value: 8 },
+    { label: '9', value: 9 },
+    { label: '10', value: 10 },
+  ]
 
   return (
     <Stack space={2}>
@@ -45,7 +51,7 @@ export default function FileUpload() {
                 type: 'setFileUploadSettings',
                 payload: {
                   property: 'erFjolval',
-                  value: e.target.checked,
+                  checked: e.target.checked,
                 },
               })
             }
@@ -63,12 +69,12 @@ export default function FileUpload() {
               (f) => f.value === inputSettings.hamarksstaerd,
             )}
             options={fileSizeOptions}
-            onChange={(e: { label; value }) => {
+            onChange={(e) => {
               listsDispatch({
                 type: 'setFileUploadSettings',
                 payload: {
                   property: 'hamarksstaerd',
-                  value: e.value,
+                  value: e?.value ?? undefined,
                 },
               })
             }}
@@ -81,16 +87,16 @@ export default function FileUpload() {
               name="maxAmount"
               placeholder="Veldu hámarksfjolda"
               backgroundColor="blue"
-              value={fileAmountOptions().find(
+              value={fileAmountOptions.find(
                 (f) => f.value === inputSettings.fjoldi,
               )}
-              options={fileAmountOptions()}
-              onChange={(e: { label; value }) => {
+              options={fileAmountOptions}
+              onChange={(e) => {
                 listsDispatch({
                   type: 'setFileUploadSettings',
                   payload: {
                     property: 'fjoldi',
-                    value: e.value,
+                    value: e?.value ?? undefined,
                   },
                 })
               }}
@@ -110,7 +116,7 @@ export default function FileUpload() {
               <Checkbox
                 label={key}
                 value={value}
-                checked={inputSettings.tegundir.includes(key)}
+                checked={inputSettings.tegundir?.includes(key)}
                 onChange={(e) =>
                   listsDispatch({
                     type: 'setFileUploadSettings',

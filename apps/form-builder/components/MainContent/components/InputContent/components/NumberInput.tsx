@@ -31,7 +31,7 @@ export default function NumberInput() {
                 type: 'setNumberInputSettings',
                 payload: {
                   property: 'lagmarkslengd',
-                  value: e.target.value,
+                  value: e.target.value as unknown as number,
                 },
               })
             }
@@ -51,7 +51,7 @@ export default function NumberInput() {
                 type: 'setNumberInputSettings',
                 payload: {
                   property: 'hamarkslengd',
-                  value: e.target.value,
+                  value: e.target.value as unknown as number,
                 },
               })
             }
@@ -73,7 +73,7 @@ export default function NumberInput() {
                 type: 'setNumberInputSettings',
                 payload: {
                   property: 'laggildi',
-                  value: e.target.value,
+                  value: e.target.value as unknown as number,
                 },
               })
             }
@@ -93,7 +93,7 @@ export default function NumberInput() {
                 type: 'setNumberInputSettings',
                 payload: {
                   property: 'hagildi',
-                  value: e.target.value,
+                  value: e.target.value as unknown as number,
                 },
               })
             }

@@ -1,7 +1,7 @@
 import { RadioButton, Text, Box } from '@island.is/island-ui/core'
 import FormBuilderContext from '../../../../../context/FormBuilderContext'
 import { useContext, useEffect, useState } from 'react'
-import { IInput } from '../../../../../types/interfaces'
+import { IInput, IListItem } from '../../../../../types/interfaces'
 
 export default function Radio() {
   const { lists } = useContext(FormBuilderContext)
@@ -11,10 +11,10 @@ export default function Radio() {
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
 
   useEffect(() => {
-    setRadioChecked(radioButtons.map(() => false))
+    setRadioChecked(radioButtons?.map(() => false) ?? [])
   }, [radioButtons])
 
-  const radioButton = (rb, index) => (
+  const radioButton = (rb: IListItem, index: number) => (
     <Box
       width="half"
       padding={1}
@@ -50,7 +50,7 @@ export default function Radio() {
         flexDirection={'row'}
         flexWrap={'wrap'}
       >
-        {radioButtons.map((rb, index) => radioButton(rb, index))}
+        {radioButtons?.map((rb, index) => radioButton(rb, index))}
       </Box>
     </>
   )

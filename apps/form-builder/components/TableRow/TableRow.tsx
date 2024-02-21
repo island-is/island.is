@@ -74,7 +74,6 @@ const TableRow = ({
         <Column span="1/12">
           <Box
             display="flex"
-            //justifyContent="center"
           >
             <TranslationTag translated={translated ? translated : false} />
           </Box>
@@ -91,7 +90,7 @@ const TableRow = ({
               menuLabel={`Aðgerðir ${name}`}
               disclosure={
                 <Button
-                  // icon="ellipsisVertical"
+
                   icon="menu"
                   circle
                   colorScheme="negative"
@@ -109,43 +108,25 @@ const TableRow = ({
                 },
                 {
                   title: 'Afrita',
-                  onClick: () => {
-                    console.log('Afrita')
-                  },
                 },
                 {
                   title: 'Þýðing enska',
-                  onClick: () => {
-                    console.log('Þýðing enska')
-                  },
                 },
                 {
                   title: 'Sækja slóð',
-                  onClick: () => {
-                    console.log('Sækja slóð')
-                  },
                 },
                 {
                   title: 'Export',
-                  onClick: () => {
-                    console.log('Export')
-                  },
                 },
                 {
                   title: 'Sækja json',
-                  onClick: () => {
-                    console.log('Sækja json')
-                  },
                 },
               ]}
             />
           </Box>
         </Column>
       </Row>
-      <Box
-      // marginTop={1}
-      // marginBottom={5}
-      >
+      <Box>
         {isOpen === true ? (
           <motion.div
             key={id}

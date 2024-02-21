@@ -64,12 +64,10 @@ export default function TimeSelect() {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const inputValue = e.target.value
-    console.log(inputValue)
 
     const isValidTime =
       /^(?:[01]?[0-9]|2[0-3]):[0-5]?[0-9](?::[0-5]?[0-9])?$/.test(inputValue)
     setTimeInput(inputValue)
-    console.log(isValidTime)
     if (isValidTime || inputValue === '') {
       setTimeInput(inputValue)
     }

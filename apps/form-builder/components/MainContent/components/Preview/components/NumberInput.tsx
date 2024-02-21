@@ -8,15 +8,15 @@ type Props = {
 
 export default function NumberInput({ currentItem }: Props) {
   const {
-    lagmarkslengd: minLength,
-    hamarkslengd: maxLength,
-    laggildi: min,
-    hagildi: max,
+    lagmarkslengd: minLength = 0,
+    hamarkslengd: maxLength = 0,
+    laggildi: min = 0,
+    hagildi: max = 0,
   } = currentItem.inputSettings
   // need to implement saving into listsDispatch
 
-  const [value] = useState<number | null>(null)
-  const [error, setError] = useState<string>(null)
+  const [value] = useState<string>('')
+  const [error, setError] = useState<string | undefined>(undefined)
 
   const changeHandler = (num: number) => {
     if (num.toString().length < minLength) {
@@ -28,7 +28,7 @@ export default function NumberInput({ currentItem }: Props) {
     } else if (num > max) {
       setError(`Hágildi er ${max}`)
     } else {
-      setError(null)
+      setError(undefined)
     }
   }
 

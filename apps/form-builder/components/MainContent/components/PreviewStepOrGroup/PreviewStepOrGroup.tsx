@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { Dispatch, SetStateAction, useContext } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import Preview from '../Preview/Preview'
 import MultiSet from './MultiSet/MultiSet'
@@ -19,21 +13,6 @@ export default function PreviewStepOrGroup({ setOpenPreview }: Props) {
   const { lists, setSelectStatus } = useContext(FormBuilderContext)
   const { activeItem, groups, inputs } = lists
   const { type } = activeItem
-  const [groups2DArr, setGroups2DArr] = useState<IGroup[][]>([])
-
-  useEffect(() => {
-    setSelectStatus(NavbarSelectStatus.ON_WITHOUT_SELECT)
-    groups.forEach((g) => {
-      if (g.multiSet !== 0) {
-        setGroups2DArr((prev) => [...prev, [g]])
-      }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    console.log(groups2DArr)
-  }, [groups2DArr])
 
   return (
     <Box

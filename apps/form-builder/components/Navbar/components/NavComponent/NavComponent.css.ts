@@ -47,7 +47,6 @@ export const navComponent = styleVariants({
 const baseBackground = style({
   width: '25px',
   height: '44px',
-  /* top-left | top-right | bottom-right | bottom-left */
   borderRadius: `${theme.border.radius.standard} 0 0 ${theme.border.radius.standard}`,
   textAlign: 'center',
 })
@@ -58,7 +57,6 @@ export const navBackgroundActive = styleVariants({
     {
       backgroundColor: theme.color.blue600,
       lineHeight: '45px',
-      //textAlign: 'center',
       color: theme.color.white,
     },
   ],
@@ -81,7 +79,6 @@ export const navBackgroundDefault = styleVariants({
     baseBackground,
     {
       lineHeight: '45px',
-      //textAlign: 'center',
     },
   ],
   group: [baseBackground, {}],

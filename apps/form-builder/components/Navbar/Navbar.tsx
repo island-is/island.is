@@ -7,6 +7,7 @@ import {
   UniqueIdentifier,
   DragStartEvent,
   DragOverEvent,
+  DataRef,
 } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
 import { useContext, useMemo } from 'react'
@@ -15,12 +16,7 @@ import { Box, Button } from '@island.is/island-ui/core'
 import FormBuilderContext from '../../context/FormBuilderContext'
 import { baseSettingsStep } from '../../utils/getBaseSettingsStep'
 import { IFormBuilderContext, ItemType } from '../../types/interfaces'
-import {
-  addGroup,
-  addInput,
-  addStep,
-  deleteItem,
-} from '../../services/apiService'
+import { addStep, deleteItem } from '../../services/apiService'
 import NavbarTab from './components/NavbarTab/NavbarTab'
 import NavComponent from './components/NavComponent/NavComponent'
 
@@ -54,7 +50,6 @@ export default function Navbar() {
         </Box>
         <Box>
           <NavComponent
-            add={addItem}
             remove={removeItem}
             type="Step"
             data={baseSettingsStep}
@@ -67,7 +62,6 @@ export default function Navbar() {
           .map((s) => (
             <Box key={s.guid}>
               <NavComponent
-                add={addItem}
                 remove={removeItem}
                 type="Step"
                 data={s}
@@ -81,14 +75,17 @@ export default function Navbar() {
             variant="ghost"
             size="small"
             onClick={() => {
-              setInSettings(false)
-              listsDispatch({
-                type: 'setActiveItem',
-                payload: {
-                  type: 'Step',
-                  item: lists.steps.find((s) => s.type === 'Innsláttur'),
-                },
-              })
+              setInSettings(false);
+              const step = lists.steps.find((s) => s.type === 'Innsláttur');
+              if (step) {
+                listsDispatch({
+                  type: 'setActiveItem',
+                  payload: {
+                    type: 'Step',
+                    data: step,
+                  },
+                });
+              }
             }}
           >
             Vista og halda áfram
@@ -120,7 +117,6 @@ export default function Navbar() {
               .map((s, i) => (
                 <Box key={s.guid}>
                   <NavComponent
-                    add={addItem}
                     remove={removeItem}
                     type="Step"
                     data={s}
@@ -134,7 +130,6 @@ export default function Navbar() {
                       .map((g) => (
                         <Box key={g.guid}>
                           <NavComponent
-                            add={addItem}
                             remove={removeItem}
                             type="Group"
                             data={g}
@@ -147,7 +142,6 @@ export default function Navbar() {
                               ?.filter((i) => i.groupGuid === g.guid)
                               .map((i) => (
                                 <NavComponent
-                                  add={addItem}
                                   remove={removeItem}
                                   key={i.guid}
                                   type="Input"
@@ -179,7 +173,6 @@ export default function Navbar() {
                     data={activeItem.data}
                     active={activeItem.data?.guid === activeItem.data?.guid}
                     focusComponent={focusComponent}
-                    add={addItem}
                     remove={removeItem}
                   />
                 )}
@@ -208,43 +201,27 @@ export default function Navbar() {
         false,
       )
 
-      if (data !== undefined) {
+      if (data !== undefined && data !== null) {
         listsDispatch({ type: 'addStep', payload: { data: data } })
       }
     } catch (error) {
       console.error('Error adding new step:', error)
-      // Handle error as needed
     }
   }
 
-  async function addItem(parentType: 'Step' | 'Group', parentId: number) {
-    try {
-      let data
-
-      if (parentType === 'Step') {
-        data = await addGroup(lists.groups.length, parentId)
-        listsDispatch({ type: 'addGroup', payload: { data: data } })
-      }
-
-      if (parentType === 'Group') {
-        data = await addInput(lists.inputs.length, parentId)
-        listsDispatch({ type: 'addInput', payload: { data: data } })
-      }
-    } catch (error) {
-      console.error('Error adding item:', error)
-    }
-  }
+  type ActionType = 'removeStep' | 'removeGroup' | 'removeInput';
 
   function removeItem(type: ItemType, guid: UniqueIdentifier, id: number) {
-    const actionTypes: { [key: string]: string } = {
+    const actionTypes: Record<ItemType, ActionType> = {
       Step: 'removeStep',
       Group: 'removeGroup',
       Input: 'removeInput',
     }
+
     listsDispatch({
       type: actionTypes[type],
       payload: {
-        guid: guid,
+        guid: guid
       },
     })
     deleteItem(type, id)
@@ -258,7 +235,6 @@ export default function Navbar() {
     }
 
     const data = dataTypes[type]?.find((item) => item.guid === id)
-    console.log('focusComponent data: ', data)
     if (id === baseSettingsStep.guid) {
       listsDispatch({
         type: 'setActiveItem',
@@ -267,7 +243,7 @@ export default function Navbar() {
           data: baseSettingsStep,
         },
       })
-    } else {
+    } else if (data) {
       listsDispatch({
         type: 'setActiveItem',
         payload: {
@@ -292,6 +268,8 @@ export default function Navbar() {
     formUpdate()
   }
 
+  type DndAction = 'stepOverStep' | 'groupOverStep' | 'groupOverGroup' | 'inputOverGroup' | 'inputOverInput';
+
   function onDragOver(event: DragOverEvent) {
     const { active, over } = event
 
@@ -302,7 +280,10 @@ export default function Navbar() {
 
     if (activeId === overId) return
 
-    const getType = (data, targetType) => data?.current?.type === targetType
+    const getType = (
+      data: DataRef<{ [x: string]: unknown }>,
+      targetType: ItemType,
+    ) => data?.current?.type === targetType
 
     const activeStep = getType(active.data, 'Step')
     const activeGroup = getType(active.data, 'Group')
@@ -311,8 +292,8 @@ export default function Navbar() {
     const overGroup = getType(over.data, 'Group')
     const overInput = getType(over.data, 'Input')
 
-    const dispatchDragAction = (type: string) =>
-      listsDispatch({ type, payload: { activeId, overId } })
+    const dispatchDragAction = (type: DndAction) =>
+      listsDispatch({ type, payload: { activeId: activeId, overId: overId } })
 
     // Dragging step
     if (activeStep && overStep) {

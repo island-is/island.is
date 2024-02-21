@@ -30,7 +30,7 @@ export default function SelectNavComponent({
   const { form } = formBuilder
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
-      ? activeListItem?.guid
+      ? activeListItem?.guid ?? ''
       : activeItem.data.guid
   const connected =
     form.dependencies[activeGuid]?.includes(data.guid as string) ||
@@ -106,12 +106,12 @@ export default function SelectNavComponent({
     </Box>
   )
 
-  function truncateText(text, maxLength) {
+  function truncateText(text: string, maxLength: number) {
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
   }
 
-  function truncateName(name) {
-    let maxLength
+  function truncateName(name: string) {
+    let maxLength: number
 
     if (active) {
       switch (type) {

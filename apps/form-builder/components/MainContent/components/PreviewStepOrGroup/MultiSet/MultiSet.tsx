@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { Box, Icon } from '@island.is/island-ui/core'
 import Preview from '../../Preview/Preview'
 import FormBuilderContext from '../../../../../context/FormBuilderContext'
@@ -8,15 +8,12 @@ interface Props {
   group: IGroup
 }
 export default function MultiSet({ group }: Props) {
-  const [multiInput, setMultiInput] = useState<IInput[][]>([])
   const { lists } = useContext(FormBuilderContext)
   const { inputs } = lists
   const originalInput = inputs.filter((i) => i.groupGuid === group.guid)
-  console.log('inMultiSet')
-  useEffect(() => {
-    setMultiInput([originalInput])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const [multiInput, setMultiInput] = useState<IInput[][]>([
+    inputs.filter((i) => i.groupGuid === group.guid),
+  ])
 
   return (
     <Box>

@@ -6,9 +6,6 @@ export const selected = style({
   fontWeight: 'bolder',
   textDecoration: 'underline',
   color: theme.color.blue400,
-  // border: `1px solid ${theme.color.blue400}`,
-  // padding: '10px',
-  // borderRadius: '9px'
 })
 
 export const notSelected = style({

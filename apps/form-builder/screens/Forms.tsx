@@ -30,20 +30,10 @@ export default function Forms({ formBuilder }: Props) {
         </Box>
 
         <Box marginTop={5}>
-          {/* Warning: Did not expect server HTML to contain a <span> in <div>. */}
-          {/* <LicenseProviderDropdown
-            licenseProviders={licenseProviders}
-            setSelectProvider={setProvider}
-          /> */}
         </Box>
 
         <Box marginTop={5}>
           <Box width={'half'}>
-            {/* <Tabs
-              selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
-              allTemp={allApplicationTemplates}
-            /> */}
           </Box>
           <Box></Box>
         </Box>
@@ -51,13 +41,6 @@ export default function Forms({ formBuilder }: Props) {
         {formBuilder.forms &&
           formBuilder.forms?.map((f) => {
             return (
-              // <motion.div
-              //   key={f.id}
-              //   initial={{ opacity: 0 }}
-              //   animate={{ opacity: 1 }}
-              //   exit={{ opacity: 0 }}
-              //   transition={{ duration: 0.5, delay: i * 0.1 }}
-              // >
               <TableRow
                 key={f.id}
                 id={f.id}
@@ -68,7 +51,6 @@ export default function Forms({ formBuilder }: Props) {
                 isHeader={false}
                 translated={f.isTranslated}
               />
-              // </motion.div>
             )
           })}
       </Box>

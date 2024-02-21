@@ -61,13 +61,13 @@ export default function ListItem({
               label="Tengja"
               checked={connect}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
+              onChange={() => { }}
             />
             <ToggleSwitchCheckbox
               label="Sjálfvalið"
               checked={listItem.isSelected}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </Box>
           <Box display="flex" flexDirection="row" alignItems="center">
@@ -75,7 +75,7 @@ export default function ListItem({
               marginRight={2}
               style={{ cursor: 'pointer' }}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onClick={() => {}}
+              onClick={() => { }}
             >
               <Icon icon="trash" color="blue400" />
             </Box>
@@ -93,7 +93,7 @@ export default function ListItem({
               size="sm"
               value={listItem.label.is}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </Column>
           <Column span="5/10">
@@ -104,7 +104,7 @@ export default function ListItem({
               size="sm"
               value={listItem.label.en}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </Column>
         </Row>
@@ -181,11 +181,7 @@ export default function ListItem({
           >
             <Icon icon="trash" color="blue400" />
           </Box>
-          <Box
-          // {...listeners}
-          // {...attributes}
-          // style={{ cursor: 'grab' }}
-          >
+          <Box>
             <Icon icon="menu" />
           </Box>
         </Box>
@@ -250,7 +246,7 @@ export default function ListItem({
                     payload: {
                       property: 'label',
                       lang: 'en',
-                      value: translation,
+                      value: translation.translations[0].translatedText,
                       listItemGuid: listItem.guid,
                     },
                   })
@@ -322,7 +318,7 @@ export default function ListItem({
                       payload: {
                         property: 'description',
                         lang: 'en',
-                        value: translation,
+                        value: translation.translations[0].translatedText,
                         listItemGuid: listItem.guid,
                       },
                     })
@@ -333,11 +329,6 @@ export default function ListItem({
           </Column>
         </Row>
       )}
-      {/* <Row marginTop={5}>
-        <Column span="10/10">
-          <Divider weight="regular" />
-        </Column>
-      </Row> */}
     </Box>
   )
 }

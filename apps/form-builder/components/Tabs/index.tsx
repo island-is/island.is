@@ -5,7 +5,6 @@ import * as styles from './tabs.css'
 interface Props {
   selectedTab: number
   setSelectedTab: Dispatch<SetStateAction<number>>
-  // allTemp: IApplicationTemplate[]
 }
 
 export default function Tabs({ selectedTab, setSelectedTab }: Props) {
@@ -20,7 +19,6 @@ export default function Tabs({ selectedTab, setSelectedTab }: Props) {
           }
           onClick={() => setSelectedTab(0)}
         >
-          {/* {`Óútgefið (${allTemp.filter(t => t.status == 0).length})`} */}
           Óútgefið
         </FocusableBox>
         <FocusableBox
@@ -31,7 +29,6 @@ export default function Tabs({ selectedTab, setSelectedTab }: Props) {
           }
           onClick={() => setSelectedTab(1)}
         >
-          {/* {`Útgefið í breytingu (${allTemp.filter(t => t.status == 1).length})`} */}
           Útgefið
         </FocusableBox>
         <FocusableBox
@@ -42,7 +39,6 @@ export default function Tabs({ selectedTab, setSelectedTab }: Props) {
           }
           onClick={() => setSelectedTab(2)}
         >
-          {/* {`Útgefið (${allTemp.filter(t => t.status == 2).length})`} */}
           Útgefið
         </FocusableBox>
       </Inline>

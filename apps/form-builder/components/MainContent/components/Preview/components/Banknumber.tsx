@@ -6,38 +6,44 @@ import {
 import { useRef, useState } from 'react'
 
 export default function Banknumber() {
-  const [banki, setBanki] = useState<number>()
-  const [hb, setHb] = useState<number>()
-  const [reikningur, setReikningur] = useState<number>()
+  const [banki, setBanki] = useState<string>()
+  const [hb, setHb] = useState<string>()
+  const [reikningur, setReikningur] = useState<string>()
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
   ]
 
-  const handleChange = (index: number, value) => {
+  const handleChange = (index: number, value: string) => {
     if (index === 0) {
       setBanki(value)
       if (value.length === 4) {
-        inputRefs[1]?.current.focus()
+        if (inputRefs[1]?.current) {
+          inputRefs[1]?.current.focus()
+        }
       }
     } else if (index === 1) {
       setHb(value)
       if (value.length === 2) {
-        inputRefs[2]?.current.focus()
+        if (inputRefs[2]?.current) {
+          inputRefs[2]?.current.focus()
+        }
       }
     } else if (index === 2) {
       if (value.length <= 6) {
         setReikningur(value)
       }
       if (value.length === 6) {
-        inputRefs[2]?.current.blur()
+        if (inputRefs[2]?.current) {
+          inputRefs[2]?.current.blur()
+        }
       }
     }
   }
 
-  const addLeadingZeros = (originalNumber, total) => {
-    const zerosToAdd = total - originalNumber.length
+  const addLeadingZeros = (originalNumber: string, max: number) => {
+    const zerosToAdd = max - originalNumber.length
     if (zerosToAdd <= 0) {
       return originalNumber
     }
@@ -52,19 +58,27 @@ export default function Banknumber() {
     <Row marginTop={2}>
       <Column span="4/12">
         <Input
-          ref={inputRefs[0]}
+          ref={
+            inputRefs[0] as React.RefObject<
+              HTMLInputElement | HTMLTextAreaElement
+            >
+          }
           label="Banki"
           type="number"
           value={banki}
           maxLength={4}
           name=""
-          onChange={(e) => handleChange(0, e.target.value)}
+          onChange={(e) => console.log(typeof e.target.value)} //handleChange(0, e.target.value)}
           onBlur={(e) => setBanki(addLeadingZeros(e.target.value, 4))}
         />
       </Column>
       <Column span="2/12">
         <Input
-          ref={inputRefs[1]}
+          ref={
+            inputRefs[1] as React.RefObject<
+              HTMLInputElement | HTMLTextAreaElement
+            >
+          }
           label="Hb"
           maxLength={2}
           type="number"
@@ -76,7 +90,11 @@ export default function Banknumber() {
       </Column>
       <Column span="4/12">
         <Input
-          ref={inputRefs[2]}
+          ref={
+            inputRefs[2] as React.RefObject<
+              HTMLInputElement | HTMLTextAreaElement
+            >
+          }
           label="Reikningsnúmer"
           type="number"
           value={reikningur}

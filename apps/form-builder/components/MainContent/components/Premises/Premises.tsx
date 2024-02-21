@@ -42,18 +42,19 @@ export default function Premises() {
 
   function handleCheckboxChange(documentTypeId: number) {
     const newDocumentTypes = formDocumentTypes.some(
-      (f) => f.id === documentTypeId,
+      (f) => f?.id === documentTypeId,
     )
-      ? formDocumentTypes.filter((f) => f.id !== documentTypeId)
+      ? formDocumentTypes.filter((f) => f?.id !== documentTypeId)
       : [
-          ...formDocumentTypes,
-          documentTypes.find((d) => d.id === documentTypeId),
-        ]
+        ...formDocumentTypes,
+        documentTypes.find((d) => d?.id === documentTypeId),
+      ].filter((d) => d !== undefined) as ICertificate[]
+
     setFormDocumentTypes(newDocumentTypes)
     formDispatch({
       type: 'updateDocuments',
       payload: {
-        documents: newDocumentTypes,
+        documents: newDocumentTypes.filter((d) => d !== undefined) as ICertificate[],
       },
     })
   }

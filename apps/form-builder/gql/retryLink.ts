@@ -1,9 +1,11 @@
 import { ServerError } from '@apollo/client'
-import { RetryLink } from '@apollo/client/link/retry'
+import { RetryLink as retryLink } from '@apollo/client/link/retry'
 
-export default new RetryLink({
+const RetryLink = new retryLink({
   attempts: {
     max: 2,
     retryIf: (error: ServerError) => error && true,
   },
 })
+
+export default RetryLink

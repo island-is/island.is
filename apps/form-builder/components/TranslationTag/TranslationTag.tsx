@@ -4,9 +4,9 @@ interface Props {
 }
 
 export default function TranslationTag({ translated }: Props) {
-  if (translated) {
-    return <Tag variant="mint">Þýdd </Tag>
-  } else {
-    return <Tag variant="red">Óþýdd</Tag>
-  }
+  return translated ? (
+    <Tag variant="mint">Þýdd </Tag>
+  ) : (
+    <Tag variant="red">Óþýdd</Tag>
+  )
 }

@@ -7,7 +7,6 @@ import { NavbarSelectStatus } from '../../types/interfaces'
 export default function NavbarSelect() {
   const { lists, selectStatus } = useContext(FormBuilderContext)
   const { activeItem, steps, groups, inputs } = lists
-  //const [selectable, setSelectable] = useState(false)
   let selectable = false
   return (
     <Box>

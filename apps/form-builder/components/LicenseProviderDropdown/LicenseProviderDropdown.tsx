@@ -20,8 +20,8 @@ export default function LicenseProviderDropdown({
   licenseProviders,
   setSelectProvider,
 }: LicenseProviderDropdownProps) {
-  const handleChange = (e: { value: number }) => {
-    setSelectProvider(e.value)
+  const handleChange = (e: { label: string; value: number }) => {
+    setSelectProvider(e.value as number)
   }
   return (
     <Box style={{ width: '30%' }}>
@@ -32,7 +32,7 @@ export default function LicenseProviderDropdown({
         noOptionsMessage="Veldu stofnun"
         placeholder="Veldu stofnun"
         options={mappedProviders(licenseProviders)}
-        onChange={handleChange}
+        onChange={(e) => e && handleChange(e)}
         size={'sm'}
       />
     </Box>

@@ -107,7 +107,7 @@ export function FormApplicantType({
                 isOther ? other : { label: name.is, value: name.en }
               }
               options={getOptions()}
-              onChange={handleSelectChange}
+              onChange={() => handleSelectChange}
             />
           </Column>
         </Row>

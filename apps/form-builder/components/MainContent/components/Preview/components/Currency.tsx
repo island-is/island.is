@@ -3,11 +3,17 @@ import {
   GridColumn as Column,
   Input,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 
-export default function Currency({ label }) {
+interface Props {
+  label: string
+}
+
+export default function Currency({ label }: Props) {
   const [currency, setCurrency] = useState('')
-  const handleCurrencyChange = (e) => {
+  const handleCurrencyChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     // Remove any non-digit characters from the input value
     const inputValue = e.target.value.replace(/\D/g, '')
 

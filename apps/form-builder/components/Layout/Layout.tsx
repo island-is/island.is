@@ -18,8 +18,6 @@ type LayoutProps = {
 
 const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
   const route = useRouter()
-  //useContext(LayoutContext)
-
   const initialInfo = {
     organization: '',
     applicationName: '',

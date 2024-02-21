@@ -12,10 +12,10 @@ import LayoutContext from '../../../../context/LayoutContext'
 import { saveFormSettings } from '../../../../services/apiService'
 
 export default function BaseSettings() {
-  const { formBuilder, formDispatch, setIsTyping } =
+  const { formBuilder, formDispatch } =
     useContext(FormBuilderContext)
   const { infoDispatch } = useContext(LayoutContext)
-  const [focus, setFocus] = useState(null)
+  const [focus, setFocus] = useState('')
   const {
     id,
     name,
@@ -36,7 +36,6 @@ export default function BaseSettings() {
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => blur(e)}
             onChange={(e) => {
-              setIsTyping(true)
               formDispatch({
                 type: 'changeName',
                 payload: {
@@ -46,7 +45,9 @@ export default function BaseSettings() {
               })
               infoDispatch({
                 type: 'changeApplicationName',
-                data: e.target.value,
+                payload: {
+                  value: e.target.value
+                }
               })
             }}
           />
@@ -61,7 +62,6 @@ export default function BaseSettings() {
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => blur(e)}
             onChange={(e) => {
-              setIsTyping(true)
               formDispatch({
                 type: 'changeName',
                 payload: {
@@ -89,10 +89,9 @@ export default function BaseSettings() {
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => blur(e)}
             onChange={(e) => {
-              setIsTyping(true)
               formDispatch({
                 type: 'applicationsDaysToRemove',
-                payload: { value: e.target.value },
+                payload: { value: e.target.value as unknown as number },
               })
             }}
           />
@@ -100,32 +99,18 @@ export default function BaseSettings() {
       </Row>
       <Row>
         <Column span="5/10">
-          {formBuilder.form.invalidationDate ? (
-            <DatePicker
-              label="Umsóknarfrestur"
-              placeholderText="Veldu dagsetningu"
-              backgroundColor="blue"
-              selected={new Date(formBuilder.form.invalidationDate)}
-              handleChange={(e) => {
-                formDispatch({
-                  type: 'invalidationDate',
-                  payload: { value: e.toJSON() },
-                })
-              }}
-            />
-          ) : (
-            <DatePicker
-              label="Umsóknarfrestur"
-              placeholderText="Veldu dagsetningu"
-              backgroundColor="blue"
-              handleChange={(e) => {
-                formDispatch({
-                  type: 'invalidationDate',
-                  payload: { value: e.toJSON() },
-                })
-              }}
-            />
-          )}
+          <DatePicker
+            label="Umsóknarfrestur"
+            placeholderText="Veldu dagsetningu"
+            backgroundColor="blue"
+            selected={formBuilder.form.invalidationDate ? new Date(formBuilder.form.invalidationDate) : null}
+            handleChange={(e) => {
+              formDispatch({
+                type: 'invalidationDate',
+                payload: { value: e },
+              })
+            }}
+          />
         </Column>
       </Row>
       <Row>
@@ -147,7 +132,7 @@ export default function BaseSettings() {
 
   function blur(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
     if (focus !== e.target.value) {
-      setFocus(null)
+      setFocus('')
       const toSave = {
         id: id,
         name: name,
@@ -157,6 +142,5 @@ export default function BaseSettings() {
       }
       saveFormSettings(id, toSave)
     }
-    setIsTyping(false)
   }
 }

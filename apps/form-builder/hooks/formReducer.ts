@@ -7,10 +7,12 @@ import {
 } from '../types/interfaces'
 import { saveFormSettings } from '../services/apiService'
 
+type ILang = 'is' | 'en'
+
 type ChangeNameAction = {
   type: 'changeName'
   payload: {
-    lang: string
+    lang: ILang
     newName: string
   }
 }
@@ -57,9 +59,9 @@ type FormSettingsPayload =
   | { property: 'stopProgressOnValidatingStep'; value: boolean }
   | { property: 'applicationsDaysToRemove'; value: number }
   | {
-      property: 'formDocumentTypes'
-      value: { formId: number; documentTypeId: number }[]
-    }
+    property: 'formDocumentTypes'
+    value: { formId: number; documentTypeId: number }[]
+  }
   | { property: 'adilar'; value: string[] }
   | { property: 'completedMessage'; value: ILanguage }
   | { property: 'isTranslated'; value: boolean }
@@ -69,7 +71,7 @@ type FormSettingsAction = {
   payload: FormSettingsPayload
 }
 
-type Action =
+export type FormAction =
   | ChangeNameAction
   | ApplicationsDaysToRemoveAction
   | InvalidationDateAction
@@ -78,7 +80,7 @@ type Action =
   | FormSettingsAction
   | UpdateDocuments
 
-export function formReducer(formBuilder: IFormBuilder, action: Action) {
+export function formReducer(formBuilder: IFormBuilder, action: FormAction) {
   switch (action.type) {
     case 'changeName': {
       const { lang, newName } = action.payload
@@ -195,6 +197,3 @@ export function formReducer(formBuilder: IFormBuilder, action: Action) {
   }
 }
 
-// function saveSettings(form: IFormBuilder, property: string, value: unknown) {
-
-// }

@@ -11,7 +11,7 @@ import { IInput } from '../../../../../types/interfaces'
 import { translationStation } from '../../../../../services/translationStation'
 
 export default function MessageWithLink() {
-  const { lists, listsDispatch, setIsTyping, onFocus, blur } =
+  const { lists, listsDispatch, onFocus, blur } =
     useContext(FormBuilderContext)
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
@@ -46,7 +46,6 @@ export default function MessageWithLink() {
                   backgroundColor="blue"
                   value={inputSettings.hnapptexti?.is}
                   onChange={(e) => {
-                    setIsTyping(true)
                     listsDispatch({
                       type: 'setMessageWithLinkSettings',
                       payload: {
@@ -67,7 +66,6 @@ export default function MessageWithLink() {
                   backgroundColor="blue"
                   value={inputSettings.hnapptexti?.en}
                   onChange={(e) => {
-                    setIsTyping(true)
                     listsDispatch({
                       type: 'setMessageWithLinkSettings',
                       payload: {
@@ -85,7 +83,7 @@ export default function MessageWithLink() {
                       name: 'reader',
                       onClick: async () => {
                         const translation = await translationStation(
-                          inputSettings?.hnapptexti?.is,
+                          inputSettings.hnapptexti?.is ?? '',
                         )
                         listsDispatch({
                           type: 'setMessageWithLinkSettings',

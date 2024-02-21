@@ -1,6 +1,4 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useContext } from 'react'
-import FormBuilderContext from '../../../../../context/FormBuilderContext'
 import { ILanguage, IInput } from '../../../../../types/interfaces'
 
 interface Props {
@@ -13,9 +11,6 @@ interface Props {
 }
 
 export function MessageWithLinkButton({ settings, data }: Props) {
-  const { lists } = useContext(FormBuilderContext)
-  const { activeItem } = lists
-  console.log(activeItem)
   return (
     <Box
       flexDirection="row"
@@ -40,7 +35,7 @@ export function MessageWithLinkButton({ settings, data }: Props) {
         >
           <Button
             onClick={() => {
-              window.open(formatUrl(settings?.url), '_blank')
+              window.open(formatUrl(settings?.url ?? ''), '_blank')
             }}
             size="small"
             icon="open"

@@ -16,23 +16,23 @@ import PhoneInput from './components/PhoneInput'
 import NumberInput from './components/NumberInput'
 import List from './components/List'
 import { IInputSettings, IInput } from '../../../../types/interfaces'
-import Ssn from './components/Ssn'
+import NationalId from './components/NationalId'
 import Radio from './components/Radio'
 import UtilizationSummary from './components/UtilizationSummary/UtilizationSummary'
 import PropertyNumber from './components/PropertyNumber/PropertyNumber'
 
 type Props = {
-  data?: IInput
+  data: IInput
   isLarge?: boolean
   inputSettings?: IInputSettings
 }
 
-export default function Preview({ data, isLarge, inputSettings }: Props) {
-  const title = (title) => <Text variant="h5">{title}</Text>
+export default function Preview({ data, isLarge }: Props) {
+  const { inputSettings } = data
+  const title = (title: string) => <Text variant="h5">{title}</Text>
   return (
     <>
       <Box
-        //marginTop={5}
         padding={2}
         style={{
           width: '100%',
@@ -59,13 +59,12 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
           </Box>
         )}
         {/* Kennitala */}
-        {data.type === 'Kennitala' && <Ssn />}
+        {data.type === 'Kennitala' && <NationalId />}
         {/* Hakbox */}
         {data.type === 'Hakbox' && <Checkbox label={data.name.is} />}
         {/* Textalinubox */}
         {
           data.type === 'Textalínubox' && (
-            // <Column span="10/10">
             <Input
               label={data.name.is}
               name="text"
@@ -73,7 +72,6 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
               textarea={isLarge}
             />
           )
-          // </Column>
         }
         {data.type === 'Klukkuinnsláttur' && (
           <Column span="10/10">
@@ -82,7 +80,6 @@ export default function Preview({ data, isLarge, inputSettings }: Props) {
         )}
         {data.type === 'Krónutölubox' && (
           <Box>
-            {/* {title(data.name.is)} */}
             <Column span="10/10">
               <Currency label={data.name.is} />
             </Column>

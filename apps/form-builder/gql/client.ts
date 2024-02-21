@@ -11,6 +11,7 @@ const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function create(initialState?: any) {
   const link = ApolloLink.from([retryLink, httpLink]) // Add retry, error, auth and httpLink here
 
@@ -29,6 +30,7 @@ function create(initialState?: any) {
   })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function initApollo(initialState?: any) {
   if (!isBrowser) {
     return create(initialState)

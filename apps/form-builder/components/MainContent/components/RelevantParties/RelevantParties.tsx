@@ -34,7 +34,6 @@ export default function RelevantParties() {
     IFormApplicantType[]
   >(formBuilder.form.formApplicantTypes)
   const { id: formId } = formBuilder.form
-  console.log('applicantTypeTemplates: ', applicantTypeTemplates)
   const [focus, setOnFocus] = useState('')
 
   const createFormApplicantType = (
@@ -77,10 +76,12 @@ export default function RelevantParties() {
         const template = applicantTypeTemplates.find(
           (at) => at.type === applicantTypes[index],
         )
-        const newFormApplicantType: IFormApplicantType =
-          createFormApplicantType(EFormApplicantTypes.einstaklingur, template)
-        saveApplicantTypes(formId, [newFormApplicantType])
-        setFormApplicantTypes([...formApplicantTypes, newFormApplicantType])
+        if (template !== undefined) {
+          const newFormApplicantType: IFormApplicantType =
+            createFormApplicantType(EFormApplicantTypes.einstaklingur, template)
+          saveApplicantTypes(formId, [newFormApplicantType])
+          setFormApplicantTypes([...formApplicantTypes, newFormApplicantType])
+        }
       } else if (index === 1) {
         const delegatorTemplate = applicantTypeTemplates.find(
           (at) => at.id === 2,
@@ -88,6 +89,12 @@ export default function RelevantParties() {
         const delegateeTemplate = applicantTypeTemplates.find(
           (at) => at.id === 5,
         )
+        if (
+          delegatorTemplate === undefined ||
+          delegateeTemplate === undefined
+        ) {
+          return
+        }
         const newFormApplicantTypes: IFormApplicantType[] = [
           createFormApplicantType(
             EFormApplicantTypes.einstaklingurMedUmbodAnnarsEinstaklings,
@@ -106,6 +113,12 @@ export default function RelevantParties() {
         const delegateeTemplate = applicantTypeTemplates.find(
           (at) => at.id === 3,
         )
+        if (
+          delegatorTemplate === undefined ||
+          delegateeTemplate === undefined
+        ) {
+          return
+        }
         const newFormApplicantTypes: IFormApplicantType[] = [
           createFormApplicantType(
             EFormApplicantTypes.einstaklingurMedUmbodLogadila,
@@ -122,6 +135,10 @@ export default function RelevantParties() {
           (at) => at.id === 4,
         )
         const legalEntity = applicantTypeTemplates.find((at) => at.id === 6)
+        if (procurationHolder === undefined || legalEntity === undefined) {
+          return
+        }
+
         const newFormApplicantTypes: IFormApplicantType[] = [
           createFormApplicantType(
             EFormApplicantTypes.einstaklingurMedProkuru,
@@ -204,9 +221,11 @@ export default function RelevantParties() {
           key={i}
           title={applicantTypeLabel[applicantTypes.indexOf(f.type)]}
           name={f.name}
-          nameSuggestions={applicantTypeTemplates
-            .find((at) => at.id === f.applicantTypeId)
-            .nameSuggestions.map((ns) => ns.nameSuggestion)}
+          nameSuggestions={
+            applicantTypeTemplates
+              .find((at) => at.id === f.applicantTypeId)
+              ?.nameSuggestions.map((ns) => ns.nameSuggestion) ?? []
+          }
           formApplicantType={f}
           index={i}
           handleSelect={handleSelect}
@@ -223,6 +242,9 @@ export default function RelevantParties() {
     const template = applicantTypeTemplates.find(
       (at) => at.id === applicant.applicantTypeId,
     )
+    if (!template) {
+      return true
+    }
     if (
       template.nameSuggestions.some(
         (ns) => ns.nameSuggestion.is === applicant.name.is,
@@ -233,7 +255,7 @@ export default function RelevantParties() {
     return true
   }
 
-  function handleSelect(e: { label: string; value: string }, index) {
+  function handleSelect(e: { label: string; value: string }, index: number) {
     const newApplicantTypes = formApplicantTypes.map((f, i) => {
       if (i === index) {
         return {

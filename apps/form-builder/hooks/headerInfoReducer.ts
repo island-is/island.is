@@ -1,4 +1,4 @@
-type Action =
+export type FormHeaderAction =
   | { type: 'changeOrganization'; payload: { value: string } }
   | { type: 'changeApplicationName'; payload: { value: string } }
 
@@ -7,7 +7,7 @@ export function headerInfoReducer(
     organization: string
     applicationName: string
   },
-  action: Action,
+  action: FormHeaderAction,
 ) {
   switch (action.type) {
     case 'changeOrganization': {
