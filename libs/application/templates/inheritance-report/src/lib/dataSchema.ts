@@ -221,18 +221,18 @@ export const inheritanceReportSchema = z.object({
 
   funeralCost: z
     .object({
-      build: z.string().refine((v) => v),
-      cremation: z.string().refine((v) => v),
-      print: z.string().refine((v) => v),
-      flowers: z.string().refine((v) => v),
-      music: z.string().refine((v) => v),
-      rent: z.string().refine((v) => v),
-      food: z.string().refine((v) => v),
-      tombstone: z.string().refine((v) => v),
+      build: z.string().optional(),
+      cremation: z.string().optional(),
+      print: z.string().optional(),
+      flowers: z.string().optional(),
+      music: z.string().optional(),
+      rent: z.string().optional(),
+      food: z.string().optional(),
+      tombstone: z.string().optional(),
       hasOther: z.array(z.enum([YES])).optional(),
-      other: z.string(),
-      otherDetails: z.string(),
-      total: z.string().refine((v) => v),
+      other: z.string().optional(),
+      otherDetails: z.string().optional(),
+      total: z.string().optional(),
     })
     .refine(
       ({ hasOther, other }) => {

@@ -7,6 +7,7 @@ import {
   PropsWithChildren,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -42,8 +43,11 @@ export const FuneralCost: FC<
 > = ({ field, errors }) => {
   const { id, props } = field
 
+  const otherField = `${id}.other`
+  const otherDetailsField = `${id}.otherDetails`
   const totalField = `${id}.total`
 
+  const refs = useRef<Array<HTMLInputElement | HTMLTextAreaElement | null>>([])
   const { formatMessage } = useLocale()
   const { getValues, setValue, clearErrors } = useFormContext()
 
@@ -94,12 +98,39 @@ export const FuneralCost: FC<
 
   useEffect(() => {
     if (!hasOther) {
-      setValue(`${id}.other`, '')
-      setValue(`${id}.otherDetails`, '')
+      setValue(otherField, '')
+      setValue(otherDetailsField, '')
     }
 
     calculateTotal()
-  }, [calculateTotal, hasOther, id, setValue])
+  }, [calculateTotal, hasOther, id, otherDetailsField, otherField, setValue])
+
+  useEffect(() => {
+    const items = refs?.current ?? []
+
+    const setItemValue = (e: Event, field: string, value: string) => {
+      const target = e.target as HTMLInputElement
+      const targetValue = valueToNumber(target?.value)
+
+      if (!targetValue) {
+        setValue(field, value)
+      }
+    }
+
+    items.forEach((item, index) => {
+      const field = `${id}.${props?.fields[index].id}`
+      item?.addEventListener('blur', (e) => setItemValue(e, field, '0'))
+      item?.addEventListener('focus', (e) => setItemValue(e, field, ''))
+    })
+
+    return () => {
+      items.forEach((item, index) => {
+        const field = `${id}.${props?.fields[index].id}`
+        item?.removeEventListener('blur', (e) => setItemValue(e, field, '0'))
+        item?.removeEventListener('focus', (e) => setItemValue(e, field, ''))
+      })
+    }
+  }, [id, props?.fields, setValue])
 
   return (
     <GridRow>
@@ -112,13 +143,20 @@ export const FuneralCost: FC<
               <InputController
                 id={fieldName}
                 name={fieldName}
+                defaultValue="0"
                 label={formatMessage(currentField.title)}
                 error={getError(currentField.id)}
+                ref={(ref) => {
+                  refs.current[index] = ref
+                }}
                 backgroundColor="blue"
-                onChange={() => {
+                onChange={(e) => {
+                  if (!e.target.value) {
+                    setValue(fieldName, '0')
+                  }
+
                   calculateTotal()
                 }}
-                required
                 currency
               />
             </Box>
@@ -145,12 +183,17 @@ export const FuneralCost: FC<
           <GridColumn span="1/1">
             <Box marginBottom={MARGIN_BOTTOM}>
               <InputController
-                id={`${id}.other`}
-                name={`${id}.other`}
+                id={otherField}
+                name={otherField}
+                defaultValue="0"
                 label={formatMessage(m.funeralOtherCost)}
                 error={getError('other')}
                 backgroundColor="blue"
-                onChange={() => {
+                onChange={(e) => {
+                  if (!e.target.value) {
+                    setValue(otherField, '0')
+                  }
+
                   calculateTotal()
                 }}
                 required
@@ -161,8 +204,9 @@ export const FuneralCost: FC<
           <GridColumn span="1/1">
             <Box marginBottom={MARGIN_BOTTOM}>
               <InputController
-                id={`${id}.otherDetails`}
-                name={`${id}.otherDetails`}
+                id={otherDetailsField}
+                name={otherDetailsField}
+                defaultValue=""
                 rows={4}
                 label={formatMessage(m.funeralOtherCostDetails)}
                 error={getError('otherDetails')}

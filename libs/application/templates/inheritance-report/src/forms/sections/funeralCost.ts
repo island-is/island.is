@@ -105,7 +105,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.build') ?? '0',
+                  getValueViaPath<string>(answers, 'funeralCost.build') || '0',
                 ),
             }),
             buildKeyValueField({
@@ -113,7 +113,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.cremation') ??
+                  getValueViaPath<string>(answers, 'funeralCost.cremation') ||
                     '0',
                 ),
             }),
@@ -122,7 +122,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.print') ?? '0',
+                  getValueViaPath<string>(answers, 'funeralCost.print') || '0',
                 ),
             }),
             buildKeyValueField({
@@ -130,7 +130,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.flowers') ??
+                  getValueViaPath<string>(answers, 'funeralCost.flowers') ||
                     '0',
                 ),
             }),
@@ -139,7 +139,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.music') ?? '0',
+                  getValueViaPath<string>(answers, 'funeralCost.music') || '0',
                 ),
             }),
             buildKeyValueField({
@@ -147,7 +147,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.rent') ?? '0',
+                  getValueViaPath<string>(answers, 'funeralCost.rent') || '0',
                 ),
             }),
             buildKeyValueField({
@@ -155,7 +155,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.food') ?? '0',
+                  getValueViaPath<string>(answers, 'funeralCost.food') || '0',
                 ),
             }),
             buildKeyValueField({
@@ -163,7 +163,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.tombstone') ??
+                  getValueViaPath<string>(answers, 'funeralCost.tombstone') ||
                     '0',
                 ),
             }),
@@ -193,7 +193,7 @@ export const funeralCost = buildSection({
                 )?.includes(YES),
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.other') ?? '0',
+                  getValueViaPath<string>(answers, 'funeralCost.other') || '0',
                 ),
             }),
             buildKeyValueField({
@@ -209,7 +209,7 @@ export const funeralCost = buildSection({
                   getValueViaPath<string>(
                     answers,
                     'funeralCost.otherDetails',
-                  ) ?? ''
+                  ) || ''
                 )
               },
             }),
@@ -219,7 +219,7 @@ export const funeralCost = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  getValueViaPath<string>(answers, 'funeralCost.total') ?? '0',
+                  getValueViaPath<string>(answers, 'funeralCost.total') || '0',
                 ),
             }),
           ],
