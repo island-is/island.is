@@ -5,8 +5,8 @@ export default {
   roots: [__dirname],
   globals: {},
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '<rootDir>/coverage/apps/judicial-system/xrd-robot-api',
-  displayName: 'judicial-system-xrd-robot-api',
+  coverageDirectory: '<rootDir>/coverage/apps/judicial-system/robot-api',
+  displayName: 'judicial-system-robot-api',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': [

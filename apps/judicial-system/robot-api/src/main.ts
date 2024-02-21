@@ -5,7 +5,7 @@ import { openApi } from './openApi'
 
 bootstrap({
   appModule: AppModule,
-  name: 'judicial-system-xrd-robot-api',
+  name: 'judicial-system-robot-api',
   port: 3356,
   swaggerPath: 'api/swagger',
   openApi,

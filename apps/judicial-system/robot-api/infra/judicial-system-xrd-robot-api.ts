@@ -2,10 +2,10 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   backend: ServiceBuilder<'judicial-system-backend'>
-}): ServiceBuilder<'judicial-system-xrd-robot-api'> =>
-  service('judicial-system-xrd-robot-api')
+}): ServiceBuilder<'judicial-system-robot-api'> =>
+  service('judicial-system-robot-api')
     .namespace('judicial-system')
-    .serviceAccount('judicial-system-xrd-robot-api')
+    .serviceAccount('judicial-system-robot-api')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
@@ -21,9 +21,9 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'judicial-system-xrd-robot-api',
-          staging: 'judicial-system-xrd-robot-api',
-          prod: 'judicial-system-xrd-robot-api',
+          dev: 'judicial-system-robot-api',
+          staging: 'judicial-system-robot-api',
+          prod: 'judicial-system-robot-api',
         },
         paths: ['/'],
         public: false,

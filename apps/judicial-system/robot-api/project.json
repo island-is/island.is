@@ -1,17 +1,17 @@
 {
-  "name": "judicial-system-xrd-robot-api",
+  "name": "judicial-system-robot-api",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/judicial-system/xrd-robot-api/src",
+  "sourceRoot": "apps/judicial-system/robot-api/src",
   "projectType": "application",
-  "prefix": "judicial-system-xrd-robot-api",
+  "prefix": "judicial-system-robot-api",
   "generators": {},
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
       "options": {
-        "outputPath": "dist/apps/judicial-system/xrd-robot-api",
-        "main": "apps/judicial-system/xrd-robot-api/src/main.ts",
-        "tsConfig": "apps/judicial-system/xrd-robot-api/tsconfig.app.json",
+        "outputPath": "dist/apps/judicial-system/robot-api",
+        "main": "apps/judicial-system/robot-api/src/main.ts",
+        "tsConfig": "apps/judicial-system/robot-api/tsconfig.app.json",
         "assets": [],
         "maxWorkers": 2
       },
@@ -26,28 +26,28 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "judicial-system-xrd-robot-api:build"
+        "buildTarget": "judicial-system-robot-api:build"
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/judicial-system/xrd-robot-api/**/*.{ts,tsx,js,jsx}"
+          "apps/judicial-system/robot-api/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/xrd-robot-api/jest.config.ts",
+        "jestConfig": "apps/judicial-system/robot-api/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/xrd-robot-api/tsconfig.app.json apps/judicial-system/xrd-robot-api/src/buildOpenApi.ts"
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/robot-api/tsconfig.app.json apps/judicial-system/robot-api/src/buildOpenApi.ts"
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
