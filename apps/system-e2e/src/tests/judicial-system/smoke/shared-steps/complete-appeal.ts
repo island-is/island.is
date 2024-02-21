@@ -2,11 +2,14 @@ import { Page, expect } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import { randomAppealCaseNumber, uploadDocument } from '../../utils/helpers'
 
-export async function coaJudgesCompleteAppealCaseTest(
+export const coaJudgesCompleteAppealCaseTest = async (
   page: Page,
   caseId: string,
-) {
-  await page.goto(`/landsrettur/yfirlit/${caseId}`)
+) => {
+  await Promise.all([
+    page.goto(`/landsrettur/yfirlit/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
 
   // Overview
   await expect(page).toHaveURL(`/landsrettur/yfirlit/${caseId}`)
@@ -22,6 +25,7 @@ export async function coaJudgesCompleteAppealCaseTest(
   await page.getByText('Mál nr. *').press('Tab')
   await page.getByTestId('select-assistant').click()
   await page.locator('#react-select-assistant-option-0').click()
+  // TODO: Make sure we select different judges - wait for dropdown updates?
   await page.getByTestId('icon-chevronDown').nth(2).click()
   await page.locator('#react-select-judge-option-0').click()
   await page.getByTestId('icon-chevronDown').nth(3).click()
