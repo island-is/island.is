@@ -1910,6 +1910,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Vinnuveitandi á síðustu 6 mánuðum?',
       description: 'Employer in the last 6 months?',
     },
+    language: {
+      id: 'pl.application:review.language',
+      defaultMessage: 'Tungumál fyrir samskipti við sjóðinn',
+      description:
+        'Language to use in communication with the Parental Leave Fund',
+    },
   }),
 
   draftFlow: defineMessages({
