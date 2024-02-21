@@ -1,7 +1,7 @@
 import { Box, Checkbox, Icon, Select, Tag } from '@island.is/island-ui/core'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { publishingPreferences } from '../../lib/messages'
+import { publishing } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { getWeekendDates } from '../../lib/utils'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
@@ -21,10 +21,7 @@ import { MinistryOfJusticeAdvertEntity } from '@island.is/api/schema'
 
 type SelectableCategory = { label: string; value: string }
 
-export const PublishingPreferences = ({
-  application,
-  errors,
-}: OJOIFieldBaseProps) => {
+export const Publishing = ({ application, errors }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
   const { setValue } = useFormContext()
@@ -37,7 +34,7 @@ export const PublishingPreferences = ({
   const [categories, setCategories] = useState<SelectableCategory[]>([])
   const [selectedCategories, setSelectedCategories] = useState<
     SelectableCategory[]
-  >(answers.publishingPreferences?.contentCategories ?? [])
+  >(answers.publishing?.contentCategories ?? [])
 
   const [lazyCategoryQuery] = useLazyQuery(CATEGORIES_QUERY, {
     onError: (error) => {
@@ -70,41 +67,37 @@ export const PublishingPreferences = ({
     if (so) {
       const filtered = selectedCategories.filter((c) => c.value !== value)
       setSelectedCategories(filtered)
-      setValue(InputFields.publishingPreferences.contentCategories, filtered)
+      setValue(InputFields.publishing.contentCategories, filtered)
     } else {
       const updated = [...selectedCategories, { label: label, value }]
       setSelectedCategories(updated)
-      setValue(InputFields.publishingPreferences.contentCategories, updated)
+      setValue(InputFields.publishing.contentCategories, updated)
     }
   }
 
   return (
     <>
       <FormIntro
-        title={f(publishingPreferences.general.formTitle)}
-        intro={f(publishingPreferences.general.formIntro)}
+        title={f(publishing.general.formTitle)}
+        intro={f(publishing.general.formIntro)}
       />
-      <FormGroup title={f(publishingPreferences.dateChapter.title)}>
+      <FormGroup title={f(publishing.dateChapter.title)}>
         <DatePickerController
           backgroundColor="blue"
           size="sm"
-          name={InputFields.publishingPreferences.date}
-          id={InputFields.publishingPreferences.date}
-          label={f(publishingPreferences.inputs.datepicker.label)}
+          name={InputFields.publishing.date}
+          id={InputFields.publishing.date}
+          label={f(publishing.inputs.datepicker.label)}
           minDate={today}
           maxDate={maxEndDate}
-          defaultValue={answers.publishingPreferences?.date ?? ''}
+          defaultValue={answers.publishing?.date ?? ''}
           excludeDates={getWeekendDates(today, maxEndDate)}
-          error={getErrorViaPath(
-            errors,
-            InputFields.publishingPreferences.date,
-          )}
+          error={getErrorViaPath(errors, InputFields.publishing.date)}
         />
         <Controller
-          name={InputFields.publishingPreferences.fastTrack}
+          name={InputFields.publishing.fastTrack}
           defaultValue={
-            application.answers.publishingPreferences?.fastTrack ??
-            AnswerOption.NO
+            application.answers.publishing?.fastTrack ?? AnswerOption.NO
           }
           render={({ field: { onChange, value } }) => {
             return (
@@ -115,9 +108,9 @@ export const PublishingPreferences = ({
                   )
                 }}
                 checked={value === AnswerOption.YES}
-                label={f(publishingPreferences.inputs.fastTrack.label)}
-                name={InputFields.publishingPreferences.fastTrack}
-                id={InputFields.publishingPreferences.fastTrack}
+                label={f(publishing.inputs.fastTrack.label)}
+                name={InputFields.publishing.fastTrack}
+                id={InputFields.publishing.fastTrack}
               />
             )
           }}
@@ -128,9 +121,9 @@ export const PublishingPreferences = ({
           <Select
             size="sm"
             backgroundColor="blue"
-            id={InputFields.publishingPreferences.contentCategories}
-            name={InputFields.publishingPreferences.contentCategories}
-            label={f(publishingPreferences.inputs.contentCategories.label)}
+            id={InputFields.publishing.contentCategories}
+            name={InputFields.publishing.contentCategories}
+            label={f(publishing.inputs.contentCategories.label)}
             options={categories}
             onChange={(e) =>
               e?.label && e?.value ? onSelect(e.label, e.value) : undefined
@@ -160,23 +153,21 @@ export const PublishingPreferences = ({
         </Box>
       </FormGroup>
       <FormGroup
-        title={f(publishingPreferences.communicationChapter.title)}
-        description={f(publishingPreferences.communicationChapter.intro)}
+        title={f(publishing.communicationChapter.title)}
+        description={f(publishing.communicationChapter.intro)}
       >
         <Box width="full">
           <Controller
-            name={InputFields.publishingPreferences.communicationChannels}
+            name={InputFields.publishing.communicationChannels}
             defaultValue={
-              application.answers.publishingPreferences
-                ?.communicationChannels ?? []
+              application.answers.publishing?.communicationChannels ?? []
             }
             render={({ field: { onChange, value } }) => {
               return (
                 <CommunicationChannels
                   onChange={(channels) => onChange(channels)}
                   channels={
-                    application.answers.publishingPreferences
-                      ?.communicationChannels ?? []
+                    application.answers.publishing?.communicationChannels ?? []
                   }
                 />
               )
@@ -186,17 +177,17 @@ export const PublishingPreferences = ({
       </FormGroup>
 
       <FormGroup
-        title={f(publishingPreferences.messagesChapter.title)}
-        description={f(publishingPreferences.messagesChapter.intro)}
+        title={f(publishing.messagesChapter.title)}
+        description={f(publishing.messagesChapter.intro)}
       >
         <Box width="full">
           <InputController
-            id={InputFields.publishingPreferences.message}
-            name={InputFields.publishingPreferences.message}
+            id={InputFields.publishing.message}
+            name={InputFields.publishing.message}
             textarea
             rows={4}
-            placeholder={f(publishingPreferences.inputs.messages.placeholder)}
-            label={f(publishingPreferences.inputs.messages.label)}
+            placeholder={f(publishing.inputs.messages.placeholder)}
+            label={f(publishing.inputs.messages.label)}
           />
         </Box>
       </FormGroup>

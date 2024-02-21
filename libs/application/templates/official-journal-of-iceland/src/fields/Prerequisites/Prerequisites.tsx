@@ -2,18 +2,18 @@ import { Box, Checkbox } from '@island.is/island-ui/core'
 
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { useFormatMessage } from '../../hooks'
-import { prerequisites } from '../../lib/messages'
+import { requirements } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { Controller } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
 
-export const Prerequisites = ({ application, errors }: OJOIFieldBaseProps) => {
+export const Requirements = ({ application, errors }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
   return (
     <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
       <FormIntro
-        title={f(prerequisites.general.formTitle)}
-        intro={f(prerequisites.general.formIntro, {
+        title={f(requirements.general.formTitle)}
+        intro={f(requirements.general.formIntro, {
           br: (
             <>
               <br />
@@ -23,17 +23,17 @@ export const Prerequisites = ({ application, errors }: OJOIFieldBaseProps) => {
         })}
       />
       <Controller
-        name={InputFields.prerequisites.approveExternalData}
+        name={InputFields.requirements.approveExternalData}
         defaultValue={
-          application.answers.prerequisites?.approveExternalData ??
+          application.answers.requirements?.approveExternalData ??
           AnswerOption.NO
         }
         render={({ field: { onChange, value } }) => {
           return (
             <Checkbox
-              id={InputFields.prerequisites.approveExternalData}
-              name={InputFields.prerequisites.approveExternalData}
-              label={f(prerequisites.checkbox.label)}
+              id={InputFields.requirements.approveExternalData}
+              name={InputFields.requirements.approveExternalData}
+              label={f(requirements.checkbox.label)}
               checked={value === AnswerOption.YES}
               onChange={(e) => {
                 onChange(e.target.checked ? AnswerOption.YES : AnswerOption.NO)
@@ -42,14 +42,14 @@ export const Prerequisites = ({ application, errors }: OJOIFieldBaseProps) => {
               hasError={
                 getErrorViaPath(
                   errors,
-                  InputFields.prerequisites.approveExternalData,
+                  InputFields.requirements.approveExternalData,
                 )
                   ? true
                   : false
               }
               errorMessage={getErrorViaPath(
                 errors,
-                InputFields.prerequisites.approveExternalData,
+                InputFields.requirements.approveExternalData,
               )}
               large
             />
@@ -60,4 +60,4 @@ export const Prerequisites = ({ application, errors }: OJOIFieldBaseProps) => {
   )
 }
 
-export default Prerequisites
+export default Requirements

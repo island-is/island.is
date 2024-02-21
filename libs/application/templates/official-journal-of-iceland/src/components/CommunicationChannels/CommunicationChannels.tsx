@@ -1,7 +1,7 @@
 import { Button } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { isValidEmail, isValidPhone } from '../../lib/utils'
-import { error, general, publishingPreferences } from '../../lib/messages'
+import { error, general, publishing } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { ChannelList } from './ChannelList'
 import { AddChannel } from './AddChannel'
@@ -55,9 +55,7 @@ export const CommunicationChannels = ({ channels, onChange }: Props) => {
     if (found) {
       setAlreadyExistsError(
         f(error.xAlreadyExists, {
-          x: f(
-            publishingPreferences.general.communicationChannel,
-          ).toLowerCase(),
+          x: f(publishing.general.communicationChannel).toLowerCase(),
         }),
       )
     }
@@ -128,7 +126,7 @@ export const CommunicationChannels = ({ channels, onChange }: Props) => {
         onClick={() => setAddChannelToggle((prev) => !prev)}
         icon="add"
       >
-        {f(publishingPreferences.buttons.addCommunicationChannel.label)}
+        {f(publishing.buttons.addCommunicationChannel.label)}
       </Button>
     </>
   )

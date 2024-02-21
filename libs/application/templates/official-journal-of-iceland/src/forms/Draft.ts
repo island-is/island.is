@@ -3,7 +3,6 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
-  buildKeyValueField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -12,19 +11,16 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Routes, UPLOAD_ACCEPT } from '../lib/constants'
 import {
-  additionsAndDocuments,
+  attachments,
   general,
   advert,
-  originalData,
-  prerequisites,
+  original,
+  requirements,
   preview,
-  publishingPreferences,
+  publishing,
   summary,
 } from '../lib/messages'
 import { InputFields } from '../lib/types'
-import { answerSchemas } from '../lib/dataSchema'
-import addDays from 'date-fns/addDays'
-import format from 'date-fns/format'
 export const Draft: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
   title: general.applicationName,
@@ -33,8 +29,8 @@ export const Draft: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: Routes.PREREQUISITES,
-      title: prerequisites.general.sectionTitle,
+      id: Routes.REQUIREMENTS,
+      title: requirements.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -44,45 +40,45 @@ export const Draft: Form = buildForm({
         buildCustomField({
           id: 'advert',
           title: '',
-          component: 'Advert',
+          component: 'AdvertScreen',
         }),
       ],
     }),
     buildSection({
-      id: Routes.ADDITIONS_AND_DOCUMENTS,
-      title: additionsAndDocuments.general.sectionTitle,
+      id: Routes.ATTACHMENTS,
+      title: attachments.general.sectionTitle,
       children: [
         buildMultiField({
-          id: Routes.ADDITIONS_AND_DOCUMENTS,
+          id: Routes.ATTACHMENTS,
           title: '',
           space: 2,
           children: [
             buildDescriptionField({
-              id: Routes.ADDITIONS_AND_DOCUMENTS,
-              title: additionsAndDocuments.general.formTitle,
-              description: additionsAndDocuments.general.formIntro,
+              id: Routes.ATTACHMENTS,
+              title: attachments.general.formTitle,
+              description: attachments.general.formIntro,
             }),
             buildFileUploadField({
-              id: InputFields.additionsAndDocuments.files,
+              id: InputFields.attachments.files,
               title: '',
               uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: additionsAndDocuments.fileUpload.header,
-              uploadDescription: additionsAndDocuments.fileUpload.description,
-              uploadButtonLabel: additionsAndDocuments.fileUpload.buttonLabel,
+              uploadHeader: attachments.fileUpload.header,
+              uploadDescription: attachments.fileUpload.description,
+              uploadButtonLabel: attachments.fileUpload.buttonLabel,
             }),
             buildRadioField({
-              id: InputFields.additionsAndDocuments.fileNames,
-              title: additionsAndDocuments.nameOfDocumentsChapter.title,
+              id: InputFields.attachments.fileNames,
+              title: attachments.nameOfDocumentsChapter.title,
               largeButtons: false,
               defaultValue: 'documents',
               options: [
                 {
                   value: 'documents',
-                  label: additionsAndDocuments.radio.documents.label,
+                  label: attachments.radio.documents.label,
                 },
                 {
                   value: 'additions',
-                  label: additionsAndDocuments.radio.additions.label,
+                  label: attachments.radio.additions.label,
                 },
               ],
             }),
@@ -97,49 +93,48 @@ export const Draft: Form = buildForm({
         buildCustomField({
           id: 'preview',
           title: '',
-          component: 'Preview',
+          component: 'PreviewScreen',
         }),
       ],
     }),
     buildSection({
-      id: Routes.ORIGINAL_DATA,
-      title: originalData.general.sectionTitle,
+      id: Routes.ORIGINAL,
+      title: original.general.sectionTitle,
       children: [
         buildMultiField({
-          id: Routes.ORIGINAL_DATA,
+          id: Routes.ORIGINAL,
           title: '',
           space: 2,
           children: [
             buildDescriptionField({
-              id: Routes.ORIGINAL_DATA,
-              title: originalData.general.formTitle,
-              description: originalData.general.formIntro,
+              id: Routes.ORIGINAL,
+              title: original.general.formTitle,
+              description: original.general.formIntro,
             }),
             buildFileUploadField({
-              id: 'InputFields.originalData.files', // TODO: fix this
+              id: 'InputFields.originalDocuments.files',
               title: '',
               uploadAccept: UPLOAD_ACCEPT,
               uploadMultiple: false,
-              uploadHeader: originalData.fileUpload.header,
-              uploadDescription: originalData.fileUpload.description,
-              uploadButtonLabel: originalData.fileUpload.buttonLabel,
+              uploadHeader: original.fileUpload.header,
+              uploadDescription: original.fileUpload.description,
+              uploadButtonLabel: original.fileUpload.buttonLabel,
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: Routes.PUBLISHING_PREFERENCES,
-      title: publishingPreferences.general.sectionTitle,
+      id: Routes.PUBLISHING,
+      title: publishing.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'publishingPreferences',
+          id: 'publishing',
           title: '',
-          component: 'PublishingPreferences',
+          component: 'PublishingScreen',
         }),
       ],
     }),
-    // Some of the values below will be provided through external data api that is not impletment yet
     buildSection({
       id: Routes.SUMMARY,
       title: summary.general.sectionTitle,
@@ -148,73 +143,10 @@ export const Draft: Form = buildForm({
           id: Routes.SUMMARY,
           title: '',
           children: [
-            // buildDescriptionField({
-            //   id: 'summary',
-            //   title: summary.general.formTitle,
-            //   description: summary.general.formIntro,
-            //   marginBottom: 2,
-            // }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.sender,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: (application) => application.applicant, // replace this with the correct value
-            // }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.title,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: ({ answers }) => (answers as answerSchemas).advert.title,
-            // }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.department,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: ({ answers }) =>
-            //     (answers as answerSchemas).advert.department,
-            // }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.submissionDate,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: format(new Date(), 'dd.MM.yyyy'),
-            // }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.fastTrack,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: format(addDays(new Date(), 90), 'dd.MM.yyyy'),
-            // }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.estimatedPrice,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: '23.000',
-            // }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.classification,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: 'Verkföll og vinnudeilur',
-            // }),
             buildCustomField({
               id: Routes.SUMMARY,
               title: '',
-              component: 'Summary',
+              component: 'SummaryScreen',
             }),
             buildSubmitField({
               id: 'toComplete',

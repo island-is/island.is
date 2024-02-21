@@ -1,11 +1,11 @@
 // id format ex. -> ojoi.application:advert.buttons.copyOldAdvert.label
 
-export * from './additionAndDocuments'
+export * from './attachments'
 export * from './error'
 export * from './general'
 export * from './advert'
-export * from './originalData'
-export * from './prerequisites'
+export * from './original'
+export * from './requriements'
 export * from './preview'
-export * from './publishingPreferences'
+export * from './publishing'
 export * from './summary'

@@ -8,13 +8,14 @@ export const VERDSKRA_LINK =
   'https://www.stjornartidindi.is/PdfVersions.aspx?recordId=0f574646-eb9d-430b-bbe7-936e7c9389a0'
 
 export enum Routes {
-  PREREQUISITES = 'prerequisites',
+  TEST = 'test',
+  REQUIREMENTS = 'requirements',
   ADVERT = 'advert',
   SIGNATURE = 'signature',
-  ADDITIONS_AND_DOCUMENTS = 'additionsAndDocuments',
+  ATTACHMENTS = 'attachments',
   PREVIEW = 'preview',
-  ORIGINAL_DATA = 'originalData',
-  PUBLISHING_PREFERENCES = 'publishingPreferences',
+  ORIGINAL = 'original',
+  PUBLISHING = 'publishing',
   SUMMARY = 'summary',
   COMPLETE = 'complete',
 }
@@ -31,8 +32,16 @@ export enum TypeIds {
 export const MEMBER_INDEX = '{memberIndex}'
 export const INSTITUTION_INDEX = '{institutionIndex}'
 
-export const INITAL_ANSWERS = {
-  [Routes.PREREQUISITES]: {
+export const INTERVAL_TIMER = 3000
+export const DEBOUNCE_TIMER = 500
+
+export const INITIAL_ANSWERS = {
+  [Routes.TEST]: {
+    name: '',
+    department: '',
+    job: '',
+  },
+  [Routes.REQUIREMENTS]: {
     approveExternalData: false,
   },
   [Routes.ADVERT]: {
@@ -78,11 +87,11 @@ export const INITAL_ANSWERS = {
       additonalSignature: '',
     },
   },
-  [Routes.ADDITIONS_AND_DOCUMENTS]: {
+  [Routes.ATTACHMENTS]: {
     files: [],
     fileNames: [],
   },
-  [Routes.PUBLISHING_PREFERENCES]: {
+  [Routes.PUBLISHING]: {
     date: '',
     fastTrack: false,
     contentCategories: [],

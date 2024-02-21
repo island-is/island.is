@@ -3,7 +3,7 @@ import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
-import { originalData } from '../../lib/messages'
+import { original } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
 
 export const OriginalData = ({ application }: OJOIFieldBaseProps) => {
@@ -14,8 +14,8 @@ export const OriginalData = ({ application }: OJOIFieldBaseProps) => {
   return (
     <Box>
       <FormIntro
-        title={f(originalData.general.formTitle)}
-        intro={f(originalData.general.formIntro)}
+        title={f(original.general.formTitle)}
+        intro={f(original.general.formIntro)}
       />
       <Box>
         <FormGroup>
@@ -24,9 +24,9 @@ export const OriginalData = ({ application }: OJOIFieldBaseProps) => {
               id="originalData"
               accept={UPLOAD_ACCEPT}
               maxSize={FILE_SIZE_LIMIT}
-              header={f(originalData.fileUpload.header)}
-              description={f(originalData.fileUpload.description)}
-              buttonLabel={f(originalData.fileUpload.buttonLabel)}
+              header={f(original.fileUpload.header)}
+              description={f(original.fileUpload.description)}
+              buttonLabel={f(original.fileUpload.buttonLabel)}
               fileList={[]}
               onRemove={function (file: UploadFile): void {
                 throw new Error('Function not implemented.')

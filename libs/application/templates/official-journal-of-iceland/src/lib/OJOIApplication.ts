@@ -19,7 +19,7 @@ import { general } from './messages'
 import { TemplateApiActions } from './types'
 
 export enum ApplicationStates {
-  PREREQUISITS = 'prerequisites',
+  REQUIREMENTS = 'requirements',
   DRAFT = 'draft',
   COMPLETE = 'complete',
 }
@@ -50,9 +50,9 @@ const OJOITemplate: ApplicationTemplate<
   dataSchema: dataSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
-    initial: ApplicationStates.PREREQUISITS,
+    initial: ApplicationStates.REQUIREMENTS,
     states: {
-      [ApplicationStates.PREREQUISITS]: {
+      [ApplicationStates.REQUIREMENTS]: {
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'draft',
@@ -65,8 +65,8 @@ const OJOITemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               formLoader: () =>
-                import('../forms/Prerequisites').then((val) =>
-                  Promise.resolve(val.Prerequsites),
+                import('../forms/Requirements').then((val) =>
+                  Promise.resolve(val.Requirements),
                 ),
             },
           ],

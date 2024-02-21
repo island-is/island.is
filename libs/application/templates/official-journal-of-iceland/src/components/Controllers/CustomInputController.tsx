@@ -6,11 +6,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useDebounce } from 'react-use'
 import { OJOIApplication } from '../../lib/types'
-import { dotToObj } from '../../lib/utils'
-import { INITAL_ANSWERS, Routes } from '../../lib/constants'
+import { dotToObj, getLocalError, keyMapper } from '../../lib/utils'
+import {
+  DEBOUNCE_TIMER,
+  INITIAL_ANSWERS,
+  INTERVAL_TIMER,
+} from '../../lib/constants'
 import { error as errorMessages } from '../../lib/messages'
-import get from 'lodash/get'
-import { RecordObject } from '@island.is/shared/types'
 
 type Props = {
   application: OJOIApplication
@@ -24,34 +26,6 @@ type Props = {
   isOptional?: boolean
 }
 
-const INTERVAL_TIMER = 3000
-const DEBOUNCE_TIMER = 500
-
-const keyMapper = (key: string) => {
-  switch (key) {
-    case Routes.ADVERT:
-      return Routes.ADVERT
-    case Routes.SIGNATURE:
-      return Routes.SIGNATURE
-    case Routes.ADDITIONS_AND_DOCUMENTS:
-      return Routes.ADDITIONS_AND_DOCUMENTS
-    case Routes.PUBLISHING_PREFERENCES:
-      return Routes.PUBLISHING_PREFERENCES
-    case Routes.PREREQUISITES:
-      return Routes.PREREQUISITES
-    default:
-      return null
-  }
-}
-
-type LocalError = {
-  type: string
-  message: string
-}
-
-const getLocalError = (obj: RecordObject, path: string) => {
-  return get(obj, path) as LocalError | undefined
-}
 export const CustomInputController = ({
   application,
   name,
@@ -105,7 +79,7 @@ export const CustomInputController = ({
 
       const defaultValue = {
         [key]: {
-          ...INITAL_ANSWERS[key],
+          ...INITIAL_ANSWERS[key],
           ...application.answers[key],
         },
       }
@@ -216,7 +190,7 @@ export const CustomInputController = ({
           loading={isSaving}
           value={value}
           hasError={Boolean(error)}
-          errorMessage={error?.message}
+          errorMessage={typeof error === 'string' ? error : error?.message}
           textarea={textarea}
           onChange={(e) => onChange(handleChange(e.target.value))}
           onBlur={(e) => handleUpdate(e.target.value)}

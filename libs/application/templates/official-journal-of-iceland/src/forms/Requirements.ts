@@ -8,32 +8,32 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 import {
-  additionsAndDocuments,
+  attachments,
   general,
   advert,
-  originalData,
-  prerequisites,
+  original,
+  requirements,
   preview,
-  publishingPreferences,
+  publishing,
   summary,
 } from '../lib/messages'
-export const Prerequsites: Form = buildForm({
+export const Requirements: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
   title: general.applicationName,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: Routes.PREREQUISITES,
-      title: prerequisites.general.sectionTitle,
+      id: Routes.REQUIREMENTS,
+      title: requirements.general.sectionTitle,
       children: [
         buildMultiField({
-          id: Routes.PREREQUISITES,
+          id: Routes.REQUIREMENTS,
           title: '',
           children: [
             buildCustomField({
-              id: 'prerequisites',
+              id: 'requirements',
               title: '',
-              component: 'Prerequisites',
+              component: 'RequirementsScreen',
             }),
             buildSubmitField({
               id: 'toDraft',
@@ -63,8 +63,8 @@ export const Prerequsites: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: Routes.ADDITIONS_AND_DOCUMENTS,
-      title: additionsAndDocuments.general.sectionTitle,
+      id: Routes.ATTACHMENTS,
+      title: attachments.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -73,13 +73,13 @@ export const Prerequsites: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: Routes.ORIGINAL_DATA,
-      title: originalData.general.sectionTitle,
+      id: Routes.ORIGINAL,
+      title: original.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: Routes.PUBLISHING_PREFERENCES,
-      title: publishingPreferences.general.sectionTitle,
+      id: Routes.PUBLISHING,
+      title: publishing.general.sectionTitle,
       children: [],
     }),
     buildSection({

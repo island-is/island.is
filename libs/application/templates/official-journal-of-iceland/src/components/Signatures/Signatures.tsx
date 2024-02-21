@@ -39,7 +39,7 @@ export const Signatures = ({
 
   useEffect(() => {
     setValue(InputFields.signature.type, selectedTab)
-  }, [selectedTab])
+  }, [selectedTab, setValue])
 
   const tabs = [
     {
@@ -72,9 +72,9 @@ export const Signatures = ({
 
   return (
     <Tabs
+      label="Undirskriftir"
       selected={selectedTab}
       onChange={(id) => setSelectedTab(id as SignatureType)}
-      label="Hello"
       tabs={tabs}
     />
   )

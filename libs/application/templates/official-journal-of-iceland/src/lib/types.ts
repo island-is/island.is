@@ -8,8 +8,13 @@ import {
 } from '@island.is/api/schema'
 
 export const InputFields = {
-  [Routes.PREREQUISITES]: {
-    approveExternalData: 'prerequisites.approveExternalData',
+  [Routes.TEST]: {
+    name: 'test.name',
+    department: 'test.department',
+    job: 'test.job',
+  },
+  [Routes.REQUIREMENTS]: {
+    approveExternalData: 'requirements.approveExternalData',
   },
   [Routes.ADVERT]: {
     department: 'advert.department',
@@ -48,17 +53,22 @@ export const InputFields = {
     },
     additonalSignature: 'signature.additonalSignature',
   },
-  [Routes.ADDITIONS_AND_DOCUMENTS]: {
+  [Routes.ATTACHMENTS]: {
     files: 'additionsAndDocuments.files',
     fileNames: 'additionsAndDocuments.fileNames',
   },
-  [Routes.PUBLISHING_PREFERENCES]: {
-    date: 'publishingPreferences.date',
-    fastTrack: 'publishingPreferences.fastTrack',
-    contentCategories: 'publishingPreferences.contentCategories',
-    communicationChannels: 'publishingPreferences.communicationChannels',
-    message: 'publishingPreferences.message',
+  [Routes.PUBLISHING]: {
+    date: 'publishing.date',
+    fastTrack: 'publishing.fastTrack',
+    contentCategories: 'publishing.contentCategories',
+    communicationChannels: 'publishing.communicationChannels',
+    message: 'publishing.message',
   },
+}
+
+export type LocalError = {
+  type: string
+  message: string
 }
 
 type Option = {

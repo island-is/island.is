@@ -1,48 +1,38 @@
 import { getErrorViaPath } from '@island.is/application/core'
-import { Box, Button, Input } from '@island.is/island-ui/core'
-import {
-  InputController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { advert, error } from '../../lib/messages'
+import { advert } from '../../lib/messages'
 import { AdvertOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
-import { useFormContext } from 'react-hook-form'
 import { TemplateModal } from './TemplateModal'
 import { HTMLEditor } from '../../components/HTMLEditor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { baseConfig } from '../../components/HTMLEditor/config/baseConfig'
 import { SignatureSection } from './SignatureSection'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
-import { TypeIds } from '../../lib/constants'
 import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { TYPES_QUERY } from '../../graphql/queries'
 import { CustomInputController } from '../../components/Controllers/CustomInputController'
+import { CustomSelectController } from '../../components/Controllers/CustomSelectController'
 
 type AvertTypeResponse = {
   ministryOfJusticeTypes: AdvertOption<'types'>
 }
 
-export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
-  const { answers } = application
+export const Advert = ({
+  application,
+  errors,
+  refetch,
+}: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
-  const [modalToggle, setModalToggle] = useState(false)
 
+  const [modalToggle, setModalToggle] = useState(false)
   const [reRenderEditor, setReRenderEditor] = useState(false)
 
-  const { setValue } = useFormContext()
-
-  const [state, setState] = useState({
-    department: answers?.advert?.department ?? '',
-    type: answers?.advert?.type ?? '',
-    subType: answers?.advert?.subType ?? '',
-    title: answers?.advert?.title ?? '',
-    template: answers?.advert?.template ?? '',
-    documentContents: answers?.advert?.documentContents ?? '',
-  })
+  const { answers } = application
+  const { departments } = application.externalData
 
   useEffect(() => {
     if (reRenderEditor) {
@@ -55,68 +45,19 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
   }
 
   const onSave = (advert: MinistryOfJusticeAdvert) => {
-    const newState: typeof state = {
-      type: advert.type.id,
-      title: advert.title,
-      department: advert.department.id,
-      documentContents: advert.document.html ?? '',
-      subType: '', // TODO updated values when API is updated
-      template: '',
-    }
-
-    setState(newState)
     setModalToggle(false)
     setDocumentHTML()
-
-    setValue(InputFields.advert.type, newState.type, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.advert.department, newState.department, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.advert.documentContents, newState.documentContents, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.advert.template, newState.template, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.advert.title, newState.title, { shouldValidate: true })
   }
 
-  const { departments } = application.externalData
-
-  const [typeOptions, setTypeOptions] = useState<AdvertOption<'types'>>()
-  const [lazyTypeQuery, { refetch }] = useLazyQuery<AvertTypeResponse>(
-    TYPES_QUERY,
-    {
-      variables: {
-        params: {
-          department: state.department,
-        },
-      },
-      onCompleted: (data) => {
-        setTypeOptions(data.ministryOfJusticeTypes)
+  const { data: typeOptions } = useQuery<AvertTypeResponse>(TYPES_QUERY, {
+    variables: {
+      params: {
+        search: '',
+        page: '1',
+        department: answers.advert?.department,
       },
     },
-  )
-
-  useEffect(() => {
-    if (state.department) {
-      refetch({
-        variables: {
-          search: '',
-          page: 1,
-          department: state.department,
-        },
-      })
-    }
-  }, [state.department])
-
-  const typeInternalKey = `${state.department}-${state.type}-${
-    typeOptions?.types.length
-      ? typeOptions.types.map((t) => t.id).join('-')
-      : ''
-  }`
+  })
 
   return (
     <>
@@ -136,33 +77,38 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
       />
       <FormGroup>
         <Box width="half">
-          <SelectController
-            id={InputFields.advert.department}
+          <CustomSelectController
+            // shouldRefetch
+            application={application}
             name={InputFields.advert.department}
             label={f(advert.inputs.department.label)}
             placeholder={f(advert.inputs.department.placeholder)}
-            defaultValue={state.department}
+            defaultValue={answers.advert?.department}
             options={departments.data.departments.map((d) => ({
               label: d.title,
               value: d.id,
             }))}
-            onSelect={(opt) => {
-              setState({
-                ...state,
-                type: '',
-                department: opt.value,
-              })
-              setValue(InputFields.advert.type, '', { shouldValidate: false })
-            }}
-            size="sm"
-            error={
+            errorMessage={
               errors && getErrorViaPath(errors, InputFields.advert.department)
             }
           />
         </Box>
-        <Box width="half">
-          <SelectController
-            internalKey={typeInternalKey}
+        {typeOptions && (
+          <Box width="half">
+            {/* <CustomSelectController
+              application={application}
+              name={InputFields.advert.type}
+              label={f(advert.inputs.type.label)}
+              placeholder={f(advert.inputs.type.placeholder)}
+              options={typeOptions.ministryOfJusticeTypes.types.map((t) => ({
+                label: t.title,
+                value: t.id,
+              }))}
+            /> */}
+          </Box>
+        )}
+        {/* <SelectController
+            // internalKey={typeInternalKey}
             disabled={!typeOptions}
             id={InputFields.advert.type}
             name={InputFields.advert.type}
@@ -194,26 +140,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             }}
             size="sm"
             error={errors && getErrorViaPath(errors, InputFields.advert.type)}
-          />
-        </Box>
-        {/* {state.type === TypeIds.REGLUGERDIR && options.subCategories.length && (
-          <Box width="half">
-            <SelectController
-              id={InputFields.advert.subType}
-              name={InputFields.advert.subType}
-              label={f(advert.inputs.subType.label)}
-              placeholder={f(advert.inputs.subType.placeholder)}
-              defaultValue={state.subType}
-              backgroundColor="blue"
-              options={options.subCategories}
-              onSelect={(opt) => setState({ ...state, subType: opt.value })}
-              size="sm"
-              error={
-                errors && getErrorViaPath(errors, InputFields.advert.subType)
-              }
-            />
-          </Box>
-        )} */}
+          /> */}
         <Box width="full">
           <CustomInputController
             application={application}
@@ -224,27 +151,23 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             textarea
           />
         </Box>
-      </FormGroup>
-      <FormGroup title={f(advert.materialForPublicationChapter.title)}>
-        {/* <Box width="half">
-          <SelectController
-            id={InputFields.advert.template}
+        <Box width="full">
+          <CustomInputController
+            application={application}
             name={InputFields.advert.template}
             label={f(advert.inputs.template.label)}
             placeholder={f(advert.inputs.template.placeholder)}
-            defaultValue={state.template}
-            backgroundColor="blue"
-            options={options.templates}
-            onSelect={(opt) => setState({ ...state, template: opt.value })}
-            size="sm"
-            error={errors && getErrorViaPath(errors, InputFields.advert.template)}
+            defaultValue={answers?.advert?.template ?? ''}
+            textarea
           />
-        </Box> */}
+        </Box>
+      </FormGroup>
+      <FormGroup title={f(advert.materialForPublicationChapter.title)}>
         {!reRenderEditor && (
           <Box width="full">
             <HTMLEditor
               config={baseConfig}
-              value={state.documentContents as HTMLText}
+              value={answers.advert?.documentContents as HTMLText}
               name={InputFields.advert.documentContents}
               error={
                 errors &&

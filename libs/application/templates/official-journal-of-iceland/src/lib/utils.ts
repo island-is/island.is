@@ -1,9 +1,11 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { TypeIds, emailRegex } from './constants'
+import { Routes, TypeIds, emailRegex } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationContext } from '@island.is/application/types'
+import { ApplicationContext, RecordObject } from '@island.is/application/types'
+import { LocalError } from './types'
+import get from 'lodash/get'
 
 const isWeekday = (date: Date) => {
   const day = date.getDay()
@@ -145,4 +147,27 @@ export const dotToObj = (dotString: string, obj = {}, value = '') => {
   }, result)
 
   return result
+}
+
+export const getLocalError = (obj: RecordObject, path: string) => {
+  return get(obj, path) as LocalError | string | undefined
+}
+
+export const keyMapper = (key: string) => {
+  switch (key) {
+    case Routes.ADVERT:
+      return Routes.ADVERT
+    case Routes.SIGNATURE:
+      return Routes.SIGNATURE
+    case Routes.ATTACHMENTS:
+      return Routes.ATTACHMENTS
+    case Routes.PUBLISHING:
+      return Routes.PUBLISHING
+    case Routes.REQUIREMENTS:
+      return Routes.REQUIREMENTS
+    case Routes.TEST:
+      return Routes.TEST
+    default:
+      return null
+  }
 }

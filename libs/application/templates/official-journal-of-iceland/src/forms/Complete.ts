@@ -2,19 +2,17 @@ import {
   buildCustomField,
   buildForm,
   buildMultiField,
-  buildRedirectToServicePortalField,
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 import {
-  additionsAndDocuments,
-  general,
+  attachments,
   advert,
-  originalData,
-  prerequisites,
+  original,
+  requirements,
   preview,
-  publishingPreferences,
+  publishing,
   summary,
 } from '../lib/messages'
 export const Complete: Form = buildForm({
@@ -25,8 +23,8 @@ export const Complete: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: Routes.PREREQUISITES,
-      title: prerequisites.general.sectionTitle,
+      id: Routes.REQUIREMENTS,
+      title: requirements.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -35,8 +33,8 @@ export const Complete: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: Routes.ADDITIONS_AND_DOCUMENTS,
-      title: additionsAndDocuments.general.sectionTitle,
+      id: Routes.ATTACHMENTS,
+      title: attachments.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -45,13 +43,13 @@ export const Complete: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: Routes.ORIGINAL_DATA,
-      title: originalData.general.sectionTitle,
+      id: Routes.ORIGINAL,
+      title: original.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: Routes.PUBLISHING_PREFERENCES,
-      title: publishingPreferences.general.sectionTitle,
+      id: Routes.PUBLISHING,
+      title: publishing.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -59,13 +57,13 @@ export const Complete: Form = buildForm({
       title: summary.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'summary',
+          id: 'complete',
           title: '',
           children: [
             buildCustomField({
               id: 'complete',
               title: '',
-              component: 'Complete',
+              component: 'CompleteScreen',
             }),
           ],
         }),

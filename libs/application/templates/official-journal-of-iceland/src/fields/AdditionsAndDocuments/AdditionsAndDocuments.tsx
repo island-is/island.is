@@ -9,7 +9,7 @@ import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
-import { additionsAndDocuments } from '../../lib/messages'
+import { attachments } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
 
 export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
@@ -21,8 +21,8 @@ export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
   return (
     <Box>
       <FormIntro
-        title={f(additionsAndDocuments.general.formTitle)}
-        intro={f(additionsAndDocuments.general.formIntro)}
+        title={f(attachments.general.formTitle)}
+        intro={f(attachments.general.formIntro)}
       />
       <Box>
         <FormGroup>
@@ -31,9 +31,9 @@ export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
               id="files"
               accept={UPLOAD_ACCEPT}
               maxSize={FILE_SIZE_LIMIT}
-              header={f(additionsAndDocuments.fileUpload.header)}
-              description={f(additionsAndDocuments.fileUpload.description)}
-              buttonLabel={f(additionsAndDocuments.fileUpload.buttonLabel)}
+              header={f(attachments.fileUpload.header)}
+              description={f(attachments.fileUpload.description)}
+              buttonLabel={f(attachments.fileUpload.buttonLabel)}
               fileList={[]}
               onRemove={function (file: UploadFile): void {
                 throw new Error('Function not implemented.')
@@ -41,15 +41,13 @@ export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
             />
           </Box>
         </FormGroup>
-        <FormGroup
-          title={f(additionsAndDocuments.nameOfDocumentsChapter.title)}
-        >
+        <FormGroup title={f(attachments.nameOfDocumentsChapter.title)}>
           <Box width="full">
             <Box marginBottom={2}>
               <RadioButton
                 name="documents"
                 value="documents"
-                label={f(additionsAndDocuments.radio.documents.label)}
+                label={f(attachments.radio.documents.label)}
                 checked={isDocuments}
                 onChange={() => setIsDocuments(true)}
               />
@@ -58,7 +56,7 @@ export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
               <RadioButton
                 name="attachments"
                 value="attachments"
-                label={f(additionsAndDocuments.radio.additions.label)}
+                label={f(attachments.radio.additions.label)}
                 checked={!isDocuments}
                 onChange={() => setIsDocuments(false)}
               />

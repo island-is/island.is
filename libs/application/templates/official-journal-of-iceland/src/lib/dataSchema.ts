@@ -12,22 +12,35 @@ const FileSchema = z.object({
 const getPath = (path: string) => path.split('.').slice(1)
 
 export const dataSchema = z.object({
-  prerequisites: z
+  test: z.object({
+    name: z.string().refine((v) => v && v.length, {
+      params: error.emptyFieldError,
+    }),
+    department: z.string().refine((v) => v && v.length, {
+      params: error.emptyFieldError,
+    }),
+    job: z.string().refine((v) => v && v.length, {
+      params: error.emptyFieldError,
+    }),
+  }),
+  requirements: z
     .object({
       approveExternalData: z.string(),
     })
     .refine((schema) => schema.approveExternalData === AnswerOption.YES, {
       params: error.dataGathering,
-      path: getPath(InputFields.prerequisites.approveExternalData),
+      path: getPath(InputFields.requirements.approveExternalData),
     }),
   advert: z
     .object({
       department: z.string().refine((v) => v && v.length),
       type: z.string().refine((v) => v && v.length),
-      subType: z.string().refine((v) => v && v.length),
-      title: z.string().refine((v) => v && v.length),
-      template: z.string().refine((v) => v && v.length),
+      title: z.string().refine((v) => v && v.length, {
+        params: error.emptyFieldError,
+      }),
       documentContents: z.string().refine((v) => v && v.length),
+      template: z.string().optional(),
+      subType: z.string().optional(),
     })
     .superRefine((advert, ctx) => {
       if (advert.type === TypeIds.REGLUGERDIR) {
@@ -44,22 +57,27 @@ export const dataSchema = z.object({
     .object({
       type: z.string().optional(),
       contents: z.string().optional(),
-      regular: z.array(
-        z.object({
-          institution: z.string(),
-          date: z.string(),
-          members: z
-            .array(
-              z.object({
-                textAbove: z.string().optional(),
-                name: z.string(),
-                textBelow: z.string().optional(),
-                textAfter: z.string().optional(),
-              }),
-            )
-            .optional(),
+      regular: z
+        .array(
+          z.object({
+            institution: z.string(),
+            date: z.string(),
+            members: z
+              .array(
+                z.object({
+                  textAbove: z.string().optional(),
+                  name: z.string(),
+                  textBelow: z.string().optional(),
+                  textAfter: z.string().optional(),
+                }),
+              )
+              .optional(),
+          }),
+        )
+        .refine((v) => {
+          console.log(v)
+          return v
         }),
-      ),
       committee: z.object({
         institution: z.string(),
         date: z.string().optional(),
@@ -163,7 +181,7 @@ export const dataSchema = z.object({
     files: z.array(FileSchema),
     fileNames: z.enum(['additions', 'documents']),
   }),
-  publishingPreferences: z.object({
+  publishing: z.object({
     date: z.string(),
     fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]),
     contentCategories: z.array(

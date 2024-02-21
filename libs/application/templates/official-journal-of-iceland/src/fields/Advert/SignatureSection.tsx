@@ -43,11 +43,7 @@ const emptyRegularSignature = {
   members: [{ ...emptyChairman }],
 }
 
-export const SignatureSection = ({
-  application,
-  errors,
-  setBeforeSubmitCallback,
-}: Props) => {
+export const SignatureSection = ({ application, errors }: Props) => {
   const { f } = useFormatMessage(application)
   const { answers } = application
   const { setValue } = useFormContext()
@@ -73,11 +69,11 @@ export const SignatureSection = ({
     })
 
   useEffect(() => {
-    setValue('advert.signature.regular', regularSignatures)
+    setValue('signature.regular', regularSignatures)
   }, [regularSignatures, setValue])
 
   useEffect(() => {
-    setValue('advert.signature.committee', committeeSignatures)
+    setValue('signature.committee', committeeSignatures)
   }, [committeeSignatures, setValue])
 
   const [additonalSignature, setAdditionalSignature] = useState(
