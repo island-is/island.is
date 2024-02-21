@@ -6,6 +6,10 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:title',
     defaultMessage: 'Skjalaveita',
   },
+  overview: {
+    id: 'portals-admin.document-provider:overview',
+    defaultMessage: 'Yfirlit',
+  },
   documentProviders: {
     id: 'portals-admin.document-provider:document-providers',
     defaultMessage: 'Skjalaveitur',
@@ -13,6 +17,10 @@ export const m = defineMessages({
   documentProviderSingle: {
     id: 'portals-admin.document-provider:document-provider-single',
     defaultMessage: 'Skjalaveitandi',
+  },
+  paper: {
+    id: 'portals-admin.document-provider:paper',
+    defaultMessage: 'Pappír',
   },
   MyCategories: {
     id: 'portals-admin.document-provider:my-categories',
@@ -750,5 +758,16 @@ export const m = defineMessages({
   statisticsBoxNetworkError: {
     id: 'portals-admin.document-provider:statistics-box-network-error',
     defaultMessage: 'Ekki tókst að sækja tölfræði',
+  },
+
+  // Paper
+  paperTitle: {
+    id: 'portals-admin.document-provider:paper-title',
+    defaultMessage: 'Pappírslistinn',
+  },
+  paperDescription: {
+    id: 'portals-admin.document-provider:paper-description',
+    defaultMessage:
+      'Listi yfir einstaklinga og fyrirtæki sem vilja fá send skjöl á pappír.',
   },
 })

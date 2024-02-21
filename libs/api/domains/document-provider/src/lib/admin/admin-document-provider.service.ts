@@ -1,9 +1,7 @@
 import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
-import { Injectable } from '@nestjs/common'
-import { DocumentProviderClientTest } from '../client/documentProviderClientTest'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { DocumentProviderClientProd } from '../client/documentProviderClientProd'
-import { OrganisationsApi, ProvidersApi } from '../../../gen/fetch'
+import { OrganisationsApi } from '../../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Contact, Helpdesk, Organisation, ProviderStatistics } from '../models'
 import {
@@ -13,14 +11,15 @@ import {
   UpdateHelpdeskInput,
   UpdateOrganisationInput,
 } from '../dto'
+import { DocumentProviderPaperMail } from '../models/PaperMail.model'
+
+const LOG_CATEGORY = 'document-provider-api'
 
 @Injectable()
 export class AdminDocumentProviderService {
   constructor(
-    private documentProviderClientTest: DocumentProviderClientTest,
     private documentProviderClientProd: DocumentProviderClientProd,
     private organisationsApi: OrganisationsApi,
-    private providersApi: ProvidersApi,
   ) {}
 
   organisationsApiWithAuth(authorization: Auth) {
@@ -153,6 +152,26 @@ export class AdminDocumentProviderService {
     return await this.organisationsApiWithAuth(
       authorization,
     ).organisationControllerUpdateHelpdesk(dto)
+  }
+
+  async getPaperMailList(): Promise<DocumentProviderPaperMail[]> {
+    try {
+      const res = await this.documentProviderClientProd.getPaperMailList()
+
+      return res.map((item) => ({
+        nationalId: item.kennitala,
+        origin: item.origin,
+        wantsPaper: item.wantsPaper,
+        dateAdded: item.dateAdded ? new Date(item.dateAdded) : undefined,
+        dateUpdated: item.dateUpdated ? new Date(item.dateUpdated) : undefined,
+      }))
+    } catch (e) {
+      logger.error('Get paper mail list failed', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw new InternalServerErrorException(`Paper mail list service error`)
+    }
   }
 
   //-------------------- STATISTICS --------------------------

@@ -1,0 +1,9 @@
+query GetPaperMailList {
+  getPaperMailList {
+    nationalId
+    origin
+    wantsPaper
+    dateAdded
+    dateUpdated
+  }
+}

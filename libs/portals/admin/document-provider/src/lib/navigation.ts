@@ -9,4 +9,19 @@ export const documentProviderNavigation: PortalNavigationItem = {
     icon: 'receipt',
   },
   description: m.rootName,
+  children: [
+    {
+      name: m.overview,
+      path: DocumentProviderPaths.DocumentProviderOverview,
+      icon: {
+        icon: 'receipt',
+      },
+      description: m.overview,
+    },
+    {
+      name: m.paper,
+      path: DocumentProviderPaths.DocumentProviderPaper,
+      description: m.paper,
+    },
+  ],
 }

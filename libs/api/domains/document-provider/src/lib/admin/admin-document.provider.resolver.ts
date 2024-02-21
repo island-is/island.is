@@ -20,6 +20,7 @@ import {
   UpdateOrganisationInput,
 } from '../dto'
 import { logger } from '@island.is/logging'
+import { DocumentProviderPaperMail } from '../models/PaperMail.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -180,5 +181,11 @@ export class AdminDocumentProviderResolver {
       input?.fromDate,
       input?.toDate,
     )
+  }
+
+  @Scopes(AdminPortalScope.documentProvider)
+  @Query(() => [DocumentProviderPaperMail])
+  async getPaperMailList(): Promise<DocumentProviderPaperMail[]> {
+    return this.documentProviderService.getPaperMailList()
   }
 }

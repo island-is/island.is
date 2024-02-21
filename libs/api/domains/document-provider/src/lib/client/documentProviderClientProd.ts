@@ -13,6 +13,7 @@ import {
   TestResult,
   Statistics,
 } from './models'
+import { PaperMail } from './models/paperMail'
 
 interface StatisticPayload {
   [key: string]: any
@@ -130,5 +131,10 @@ export class DocumentProviderClientProd {
     }
 
     return await this.postRequest<Statistics>(requestRoute, payload)
+  }
+
+  async getPaperMailList(): Promise<PaperMail[]> {
+    const requestRoute = '/api/DocumentProvider/paper'
+    return await this.getRequest(requestRoute)
   }
 }
