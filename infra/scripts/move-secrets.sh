@@ -6,7 +6,7 @@ set -euo pipefail
 : "${DELETE_OLD:=false}"
 : "${OVERWRITE:=false}"
 : "${APPLY:=false}"
-: "${DRY:=${APPLY}}"
+: "${DRY:=$(test "$APPLY" = true && echo "false" || echo "true")}"
 : "${SECRETS:=}"
 ACTION="$(test "$DELETE_OLD" = true && echo "move" || echo "copy")"
 
@@ -65,11 +65,11 @@ for secret in ${SECRETS}; do
   value_from="$(aws ssm get-parameters \
     --name="$from" --with-decryption | jq -r '.Parameters[0].Value' || (
     code=$?
-    echo "Failed getting secret for '$from'"
+    echo "Failed getting secret for '$from'" >&2
     exit $code
   ))" ||
     continue
-  if [ -z "$value_from" ] && [ "$FORCE" != true ]; then
+  if { [ "$value_from" = 'null' ] || [ -z "$value_from" ]; } && [ "$FORCE" != true ]; then
     echo "Secret '$from' does not exist, skipping"
     continue
   fi
