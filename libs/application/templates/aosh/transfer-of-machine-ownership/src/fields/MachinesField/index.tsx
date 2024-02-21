@@ -9,10 +9,7 @@ import { MachineSelectField } from './MachineSelectField'
 import { MachineDto } from '@island.is/clients/work-machines'
 import { FindVehicleFormField } from '@island.is/application/ui-fields'
 import { information, applicationCheck, error } from '../../lib/messages'
-import {
-  useLazyMachineDetails,
-  useLazyMachineDetailsByRegno,
-} from '../../hooks/useLazyMachineDetails'
+import { useLazyMachineDetailsByRegno } from '../../hooks/useLazyMachineDetails'
 import { ApolloQueryResult } from '@apollo/client'
 
 export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
@@ -24,7 +21,7 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     []
 
   const getMachineDetails = useLazyMachineDetailsByRegno()
-  const createGetVehicleDetailsWrapper = (
+  const createGetMachineDetailsWrapper = (
     getMachineDetailsFunction: (variables: {
       regno: string
     }) => Promise<ApolloQueryResult<any>>,
@@ -33,7 +30,7 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
       const variables = { regno: plate }
       const result = await getMachineDetailsFunction(variables)
       console.log('result', result)
-      return result.data.MachineDetails // Adjust based on your query
+      return result.data.getWorkerMachineByRegno // Adjust based on your query
     }
   }
 
@@ -45,14 +42,13 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           setFieldLoadingState={props.setFieldLoadingState}
           setSubmitButtonDisabled={props.setSubmitButtonDisabled}
           field={{
-            id: 'pickMachine',
+            id: 'machine',
             title: information.labels.pickMachine.title,
             description: information.labels.pickMachine.description,
             type: FieldTypes.FIND_VEHICLE,
             component: FieldComponents.FIND_VEHICLE,
             children: undefined,
-            getVehicleDetails:
-              createGetVehicleDetailsWrapper(getMachineDetails),
+            getDetails: createGetMachineDetailsWrapper(getMachineDetails),
             validationErrors: applicationCheck.validation,
             additionalErrors: false,
             findPlatePlaceholder:

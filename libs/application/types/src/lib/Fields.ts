@@ -505,7 +505,7 @@ export interface FindVehicleField extends BaseField {
   disabled?: boolean
   required?: boolean
   additionalErrors: boolean
-  getVehicleDetails?: (plate: string) => Promise<unknown>
+  getDetails?: (plate: string) => Promise<unknown>
   findVehicleButtonText?: FormText
   findPlatePlaceholder?: FormText
   notFoundErrorMessage?: FormText
