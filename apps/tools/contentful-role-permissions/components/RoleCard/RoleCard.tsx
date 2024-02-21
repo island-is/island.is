@@ -1,4 +1,6 @@
-import { ContentTypeProps, RoleProps } from 'contentful-management'
+import { useMemo } from 'react'
+import { ContentTypeProps, RoleProps, TagProps } from 'contentful-management'
+import isEqual from 'lodash/isEqual'
 import slugify from '@sindresorhus/slugify'
 
 import {
@@ -10,6 +12,7 @@ import {
   Inline,
   Stack,
   Text,
+  toast,
   ToggleSwitchButton,
   Tooltip,
 } from '@island.is/island-ui/core'
@@ -18,36 +21,68 @@ import {
   DEFAULT_EDITABLE_ENTRY_TYPE_IDS,
   DEFAULT_READ_ONLY_ENTRY_IDS,
 } from '../../constants'
+import { useCanReadAllAssetsState } from '../../hooks/useCanReadAllAssetsState'
 import { useCheckboxState } from '../../hooks/useCheckboxState'
 import * as styles from './RoleCard.css'
 
 interface RoleCardProps {
   role: RoleProps
-  tagExists: boolean
   contentTypes: ContentTypeProps[]
-  canReadAllAssets: boolean
+  tags: TagProps[]
 }
 
 const emptyFunction = () => {
   return undefined
 }
 
-export const RoleCard = ({
-  role,
-  tagExists,
-  contentTypes,
-  canReadAllAssets,
-}: RoleCardProps) => {
-  const [readOnlyState, setReadOnlyState] = useCheckboxState(
-    'readonly',
+export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
+  const {
+    initialState: initialReadOnlyState,
+    currentState: readOnlyState,
+    setCurrentState: setReadOnlyState,
+  } = useCheckboxState('readonly', role, contentTypes)
+  const {
+    initialState: initialEditableState,
+    currentState: editableState,
+    setCurrentState: setEditableState,
+  } = useCheckboxState('edit', role, contentTypes)
+  const [canReadAllAssets, setCanReadAllAssets] = useCanReadAllAssetsState(
     role,
-    contentTypes,
+    tags,
   )
-  const [editableState, setEditableState] = useCheckboxState(
-    'edit',
-    role,
-    contentTypes,
-  )
+
+  const canSave =
+    !isEqual(initialReadOnlyState, readOnlyState) ||
+    !isEqual(initialEditableState, editableState)
+
+  const onSave = async () => {
+    try {
+      const response = await fetch('/api/update-role-permissions', {
+        method: 'PUT',
+        body: JSON.stringify({
+          checkboxState: {
+            [role.name]: editableState,
+          },
+          readOnlyState: {
+            [role.name]: readOnlyState,
+          },
+          tags,
+          roleNamesThatCanReadAllAssets: canReadAllAssets ? [role.name] : [],
+        }),
+      })
+
+      if (response.ok) {
+        toast.success('Saved successfully')
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error('Error occured during save')
+    }
+  }
+
+  const tagExists = useMemo(() => {
+    return Boolean(tags.find((t) => t.name === slugify(role.name)))
+  }, [role.name, tags])
 
   return (
     <Box
@@ -80,7 +115,9 @@ export const RoleCard = ({
           </Box>
 
           <Box display="flex" flexDirection="row" justifyContent="flexEnd">
-            <Button size="small">Save</Button>
+            <Button disabled={!canSave} size="small" onClick={onSave}>
+              Save changes
+            </Button>
           </Box>
         </Inline>
 
@@ -88,6 +125,7 @@ export const RoleCard = ({
           <Box>
             <Stack space={1}>
               <DropdownMenu
+                fixed={true}
                 title="Read only entries"
                 icon="caretDown"
                 menuClassName={styles.menuContainer}
@@ -213,6 +251,7 @@ export const RoleCard = ({
           <Box>
             <Stack space={1}>
               <DropdownMenu
+                fixed={true}
                 title="Editable entries"
                 icon="caretDown"
                 menuClassName={styles.menuContainer}
@@ -340,13 +379,9 @@ export const RoleCard = ({
               <Checkbox
                 checked={canReadAllAssets}
                 label="Can read all assets"
-                // onChange={() =>
-                //   setRoleNamesThatCanReadAllAssets((prev) => {
-                //     if (prev.includes(role.name))
-                //       return prev.filter((name) => name !== role.name)
-                //     return prev.concat(role.name)
-                //   })
-                // }
+                onChange={() => {
+                  setCanReadAllAssets((prev) => !prev)
+                }}
               />
               <Tooltip
                 placement="right"

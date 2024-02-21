@@ -16,5 +16,13 @@ export const useCheckboxState = (
       ? extractInitialReadonlyCheckboxStateFromRolesAndContentTypes
       : extractInitialCheckboxStateFromRolesAndContentTypes
 
-  return useState(initialStateFunction([role], contentTypes)[role.name])
+  const initialState = initialStateFunction([role], contentTypes)[role.name]
+
+  const [currentState, setCurrentState] = useState(initialState)
+
+  return {
+    initialState,
+    currentState,
+    setCurrentState,
+  }
 }

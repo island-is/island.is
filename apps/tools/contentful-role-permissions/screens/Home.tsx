@@ -9,58 +9,29 @@ import {
   GridContainer,
   Input,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 
 import { RoleCard } from '../components/RoleCard'
 import {
-  extractInitialRoleNamesThatCanReadAllAssetsFromRoles,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
   getAllTags,
-  getTagNameToTagIdMap,
 } from '../utils'
 import * as styles from './Home.css'
 
-const INITIAL_PAGE_SIZE = 3
+const INITIAL_PAGE_SIZE = 2
 const DEBOUNCE_TIME = 300
 
 const Home = ({
   roles,
   contentTypes,
-  initialRoleNamesThatCanReadAllAssets,
   tags,
 }: InferGetServerSidePropsType<typeof getProps>) => {
   const [pageSize, setPageSize] = useState(INITIAL_PAGE_SIZE)
 
-  const [roleNamesThatCanReadAllAssets, setRoleNamesThatCanReadAllAssets] =
-    useState<string[]>(initialRoleNamesThatCanReadAllAssets)
-
   const [nameSearch, setNameSearch] = useState('')
-
-  // const onSave = () => {
-  //   fetch('/api/update-role-permissions', {
-  //     method: 'PUT',
-  //     body: JSON.stringify({
-  //       checkboxState: narrowDownCheckboxState(checkboxState, enabledRoleName),
-  //       readonlyCheckboxState: narrowDownCheckboxState(
-  //         readonlyCheckboxState,
-  //         enabledRoleName,
-  //       ),
-  //       roleNamesThatCanReadAllAssets,
-  //       tags,
-  //     }),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       toast.success('Saved successfully')
-  //       return setSavedState(data)
-  //     })
-  //     .catch((err) => {
-  //       console.error(err)
-  //       return toast.error('Error occured during save')
-  //     })
-  // }
 
   const filteredRoles = useMemo(
     () =>
@@ -92,13 +63,8 @@ const Home = ({
               <RoleCard
                 key={role.name}
                 role={role}
-                tagExists={Boolean(
-                  tags.find((t) => t.name === slugify(role.name)),
-                )}
                 contentTypes={contentTypes}
-                canReadAllAssets={roleNamesThatCanReadAllAssets.includes(
-                  role.name,
-                )}
+                tags={tags}
               />
             ))}
             {pageSize < filteredRoles.length && (
@@ -113,6 +79,15 @@ const Home = ({
                 </Button>
               </Box>
             )}
+            <Box display="flex" justifyContent="center">
+              <Stack space={2}>
+                {filteredRoles.slice(pageSize).map((role) => (
+                  <Text key={role.name} variant="small">
+                    {role.name}
+                  </Text>
+                ))}
+              </Stack>
+            </Box>
           </Stack>
         </Stack>
       </GridContainer>
@@ -131,16 +106,10 @@ export const getProps = async () => {
     .filter((role) => role.name.toLowerCase().startsWith('owner-'))
     .sort(sortAlpha('name'))
 
-  const tagsMap = getTagNameToTagIdMap(tags)
-
-  const initialRoleNamesThatCanReadAllAssets =
-    extractInitialRoleNamesThatCanReadAllAssetsFromRoles(rolesToShow, tagsMap)
-
   return {
     props: {
       roles: rolesToShow,
       contentTypes,
-      initialRoleNamesThatCanReadAllAssets,
       tags,
     },
   }
