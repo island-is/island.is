@@ -104,7 +104,6 @@ identity-server:
     ContentfulSettings__BaseAddress: 'https://cdn.contentful.com'
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
-    DD_RUNTIME_METRICS_ENABLED: 'true'
     Datadog__Metrics__Port: '5003'
     IdentityServer__ConsentsScope: '@island.is/auth/consents'
     IdentityServer__EnableFakeLogin: 'true'
