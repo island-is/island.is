@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -181,7 +182,11 @@ export const HeirsAndPartitionRepeater: FC<
   }, [getValues, id, props.sumField, setValue])
 
   useEffect(() => {
-    calculateTotal()
+    fields.forEach((field: any, mainIndex: number) => {
+      const fieldIndex = `${id}[${mainIndex}]`
+      const heirsPercentage = getValues(`${fieldIndex}.heirsPercentage`)
+      updateValues(fieldIndex, heirsPercentage)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

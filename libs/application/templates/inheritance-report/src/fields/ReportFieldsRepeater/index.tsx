@@ -211,8 +211,6 @@ export const ReportFieldsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log('answers', answers)
-  console.log('values', getValues())
   return (
     <Box>
       {fields.map((repeaterField: any, mainIndex) => {
@@ -277,7 +275,6 @@ export const ReportFieldsRepeater: FC<
                           },
                         ]}
                         onSelect={(val) => {
-                          console.log('val', val)
                           setValue(`${fieldIndex}.${field.id}`, val)
 
                           setForeignBankAccountIndexes(
