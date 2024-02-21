@@ -32,6 +32,16 @@ aws() {
   fi
 }
 
+echo "SECRETS: '$SECRETS'"
+echo "AWS_PROFILE: ${AWS_PROFILE:-<unset>}"
+echo "aws-cli version: $(aws --version)"
+echo "Current AWS user: $(aws sts get-caller-identity)"
+
+if ! aws sts get-caller-identity &>/dev/null; then
+  echo "You're not authenticated with AWS CLI. Please make sure you have the correct AWS_PROFILE set."
+  if ! dry; then exit 1; fi
+fi
+
 for secret in ${SECRETS}; do
   from="${secret%%:*}"
   to="${secret##*:}"
