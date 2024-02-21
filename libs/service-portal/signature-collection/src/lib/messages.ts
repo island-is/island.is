@@ -199,11 +199,6 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit meðmæla',
     description: '',
   },
-  downloadList: {
-    id: 'sp.signatureCollection:downloadList',
-    defaultMessage: 'Sækja lista',
-    description: '',
-  },
   searchInListPlaceholder: {
     id: 'sp.signatureCollection:searchInListPlaceholder',
     defaultMessage: 'Leitaðu að nafni eða kennitölu',
