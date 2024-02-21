@@ -288,7 +288,7 @@ export const heirs = buildSection({
                   0,
                 )
 
-                return total ? formatCurrency(String(total)) : ''
+                return formatCurrency(String(total ?? '0'))
               },
             }),
             buildDescriptionField({
@@ -307,7 +307,7 @@ export const heirs = buildSection({
                   0,
                 )
 
-                return total ? formatCurrency(String(total)) : ''
+                return formatCurrency(String(total ?? '0'))
               },
             }),
             buildDescriptionField({
@@ -326,7 +326,7 @@ export const heirs = buildSection({
                   0,
                 )
 
-                return total ? formatCurrency(String(total)) : ''
+                return formatCurrency(String(total ?? '0'))
               },
             }),
             buildDescriptionField({
@@ -345,7 +345,7 @@ export const heirs = buildSection({
                   0,
                 )
 
-                return total ? formatCurrency(String(total)) : ''
+                return formatCurrency(String(total ?? '0'))
               },
             }),
             buildDividerField({}),

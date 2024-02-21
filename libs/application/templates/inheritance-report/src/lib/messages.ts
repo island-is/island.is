@@ -1277,9 +1277,10 @@ export const m = defineMessages({
   },
 
   // Tax Free Limit
+  // This will be fetched from sýslumaður API when ready
   taxFreeLimit: {
     id: 'ir.application:taxFreeLimit',
-    defaultMessage: '5757759',
+    defaultMessage: '6203409',
     description: '',
   },
 

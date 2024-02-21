@@ -22,6 +22,7 @@ import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
+import { TAX_FREE_LIMIT } from '../../lib/constants'
 
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<
@@ -122,12 +123,9 @@ export const HeirsAndPartitionRepeater: FC<
       foreignCitizenship: [],
     })
 
-  const taxFreeLimitMessage = formatMessage(m.taxFreeLimit) ?? ''
-
   const updateValues = (updateIndex: string, value: number) => {
     const numValue = isNaN(value) ? 0 : value
     const percentage = numValue > 0 ? numValue / 100 : 0
-    const taxFreeLimit = Number(taxFreeLimitMessage.replace(/[^0-9]/, ''))
 
     const assetsTotal = Number(getValueViaPath(answers, 'assets.assetsTotal'))
     const debtsTotal = Number(getValueViaPath(answers, 'debts.debtsTotal'))
@@ -138,7 +136,7 @@ export const HeirsAndPartitionRepeater: FC<
     const inheritanceValue = Math.round(
       (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
     )
-    const taxFreeInheritanceValue = Math.round(taxFreeLimit * percentage)
+    const taxFreeInheritanceValue = Math.round(TAX_FREE_LIMIT * percentage)
     const taxableInheritanceValue = Math.round(
       inheritanceValue - taxFreeInheritanceValue,
     )
@@ -150,10 +148,13 @@ export const HeirsAndPartitionRepeater: FC<
       String(taxFreeInheritanceValue),
     )
     setValue(`${updateIndex}.inheritance`, String(inheritanceValue))
-    setValue(`${updateIndex}.inheritanceTax`, String(inheritanceTaxValue))
+    setValue(
+      `${updateIndex}.inheritanceTax`,
+      String(inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue),
+    )
     setValue(
       `${updateIndex}.taxableInheritance`,
-      String(taxableInheritanceValue),
+      String(taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue),
     )
 
     calculateTotal()

@@ -21,7 +21,7 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
+import { TAX_FREE_LIMIT, YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 
 type RepeaterProps = {
@@ -72,9 +72,6 @@ export const ReportFieldsRepeater: FC<
 
   const { setValue, getValues, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
-  const taxFreeLimit = Number(
-    formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
-  )
 
   /* ------ Bank accounts and balances ------ */
   const [foreignBankAccountIndexes, setForeignBankAccountIndexes] = useState<
@@ -200,7 +197,7 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
+    setTaxFreeInheritance(Math.round(TAX_FREE_LIMIT * percentage))
     setInheritance(
       Math.round(
         (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
