@@ -153,6 +153,17 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   organization,
   universities,
 }) => {
+  useEffect(() => {
+    const index = filterOptions.findIndex(
+      (filter) => filter.field === 'universityId',
+    )
+
+    if (index !== -1) {
+      const movedField = filterOptions.splice(index, 1)[0]
+      filterOptions.unshift(movedField)
+    }
+  }, [filterOptions])
+
   const router = useRouter()
   const { width } = useWindowSize()
   const n = useNamespace(namespace)
@@ -239,9 +250,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseOptions = {
     threshold: 0.4,
     findAllMatches: true,
+    ignoreLocation: true,
     keys: [
       'nameIs',
-      'departmentNameIs',
+      'specializationNameIs',
       'descriptionIs',
       'degreeType',
       'modeOfDelivery',
@@ -437,6 +449,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     return formattedList.join('')
   }
 
+  const formatFilterStrings = (tag: string, field: string) => {
+    if (field === 'universityId') {
+      return universities.filter((x) => x.id === tag)[0].contentfulTitle || ''
+    } else if (tag === 'OPEN') {
+      return `${n('openForApplication', 'Opið fyrir umsóknir')}`
+    } else {
+      return n(tag, TranslationDefaults[tag])
+    }
+  }
+
   return (
     <Box>
       {organizationPage && (
@@ -523,52 +545,41 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           >
                             <Stack space={[1, 1, 2]}>
                               {filter.options.map((option) => {
-                                let keyField = option
                                 const str = filter.field as keyof typeof filters
 
-                                if (str === 'universityId') {
-                                  keyField =
-                                    universities.filter(
-                                      (x) => x.id === option,
-                                    )[0].contentfulTitle || ''
+                                if (option === 'OTHER') {
+                                  return null
                                 }
-                                if (keyField !== 'OTHER') {
-                                  return (
-                                    <Checkbox
-                                      key={keyField}
-                                      label={
-                                        <Box
-                                          display="flex"
-                                          flexDirection="column"
-                                        >
+
+                                return (
+                                  <Checkbox
+                                    key={option}
+                                    label={
+                                      <Box
+                                        display="flex"
+                                        flexDirection="column"
+                                      >
+                                        <span>
+                                          {formatFilterStrings(option, str)}
+                                        </span>
+                                        {filter.field === 'degreeType' && (
                                           <span>
-                                            {filter.field ===
-                                            'applicationStatus'
-                                              ? n(
-                                                  'openForApplication',
-                                                  'opið fyrir umsóknir',
-                                                )
-                                              : n(keyField, keyField)}
+                                            {n(`${option}_EXTRA`, '')}
                                           </span>
-                                          <span>
-                                            {filter.field === 'degreeType'
-                                              ? `${n(`${keyField}_EXTRA`, '')}`
-                                              : ''}
-                                          </span>
-                                        </Box>
-                                      }
-                                      id={keyField}
-                                      value={option}
-                                      checked={
-                                        filters[str].filter((x) => x === option)
-                                          .length > 0
-                                      }
-                                      onChange={(e) =>
-                                        checkboxEventHandler(e, filter.field)
-                                      }
-                                    />
-                                  )
-                                }
+                                        )}
+                                      </Box>
+                                    }
+                                    id={option}
+                                    value={option}
+                                    checked={
+                                      filters[str].filter((x) => x === option)
+                                        .length > 0
+                                    }
+                                    onChange={(e) =>
+                                      checkboxEventHandler(e, filter.field)
+                                    }
+                                  />
+                                )
                               })}
                             </Stack>
                             <Box
@@ -665,14 +676,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             <Box paddingTop={1} display={'flex'} style={{ gap: '0.5rem' }}>
               {Object.keys(filters).map((key) =>
                 filters[key as keyof FilterProps].map((tag) => (
-                  <Tag>
+                  <Tag key={tag}>
                     <Box
                       display={'flex'}
                       justifyContent={'center'}
                       alignItems={'center'}
                       style={{ gap: '0.5rem' }}
                     >
-                      {n(tag, TranslationDefaults[tag])}
+                      {formatFilterStrings(tag, key)}
                       <button
                         style={{ alignSelf: 'end' }}
                         onClick={() =>
@@ -762,24 +773,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               filters: filter.options
                                 .filter((x) => x !== 'OTHER')
                                 .map((option) => {
-                                  let keyField = option
-
-                                  if (str === 'universityId') {
-                                    keyField =
-                                      universities.filter(
-                                        (x) => x.id === option,
-                                      )[0].contentfulTitle || ''
-                                  }
                                   return {
-                                    label: `${n(keyField, keyField)}${
-                                      filter.field === 'durationInYears'
-                                        ? locale === 'en'
-                                          ? keyField === '1'
-                                            ? ' year'
-                                            : ' years'
-                                          : ' ár'
-                                        : ''
-                                    }`,
+                                    label: formatFilterStrings(option, str),
                                     value: option,
                                   }
                                 }),
@@ -1326,7 +1321,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   )
 }
 
-UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
+UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=3300, stale-while-revalidate=300',
+  )
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
