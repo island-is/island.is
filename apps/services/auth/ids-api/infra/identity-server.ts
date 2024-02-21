@@ -17,6 +17,7 @@ export const serviceSetup = (services: {
       CORECLR_PROFILER_PATH: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so',
       DD_INTEGRATIONS: '/opt/datadog/integrations.json',
       DD_DOTNET_TRACER_HOME: '/opt/datadog',
+      DD_TRACE_DEBUG: 'true',
       Datadog__Metrics__Port: '5003',
       AudkenniSettings__Retries: '24',
 
