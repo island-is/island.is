@@ -283,7 +283,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           ) : (
             <Text>{formatMessage(m.noLists)}</Text>
           )}
-          {lists.length > 0 && (
+          {lists?.length > 0 && (
             <Box marginTop={5}>
               <Pagination
                 totalItems={lists.length}
@@ -302,16 +302,19 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               />
             </Box>
           )}
-          {lists.length > 0 &&
-            allowedToProcess &&
-            (collectionStatus === CollectionStatus.Processing ||
-              collectionStatus === CollectionStatus.InInitialReview ||
-              collectionStatus === CollectionStatus.InReview) && (
-              <>
-                <CompareLists />
+          {lists?.length > 0 && allowedToProcess && (
+            <Box>
+              {collectionStatus === CollectionStatus.Processing ||
+                collectionStatus === CollectionStatus.InInitialReview ||
+                (collectionStatus === CollectionStatus.InReview && (
+                  <CompareLists />
+                ))}
+
+              {collectionStatus === CollectionStatus.Processing && (
                 <ActionCompleteCollectionProcessing />
-              </>
-            )}
+              )}
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
