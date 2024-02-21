@@ -70,9 +70,14 @@ import {
   checkIfPhoneNumberIsGSM,
   isParamsActionName,
   checkActionName,
-  getFromDate
+  getFromDate,
 } from './parental-leave.utils'
-import { APPLICATION_ATTACHMENT_BUCKET, SIX_MONTHS_IN_SECONDS_EXPIRES, apiConstants, df } from './constants'
+import {
+  APPLICATION_ATTACHMENT_BUCKET,
+  SIX_MONTHS_IN_SECONDS_EXPIRES,
+  apiConstants,
+  df,
+} from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -212,17 +217,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (dateOfBirth?.data?.dateOfBirth) {
       return { dateOfBirth: dateOfBirth?.data?.dateOfBirth }
     }
-//    /*
-//    If you want to MOCK getting dateOfBirth from API use this.
+    //    /*
+    //    If you want to MOCK getting dateOfBirth from API use this.
     const fakeDateOfBirth = '2024-02-10'
     const promise = new Promise((resolve) => {
       setTimeout(() => {
-        resolve(fakeDateOfBirth)}, 5000)})
-        const newValue = await promise
-        return {
-          dateOfBirth: newValue,
-        }
-//    */
+        resolve(fakeDateOfBirth)
+      }, 5000)
+    })
+    const newValue = await promise
+    return {
+      dateOfBirth: newValue,
+    }
+    //    */
     try {
       const applicationInformation =
         await this.applicationInformationAPI.applicationGetApplicationInformation(

@@ -10,7 +10,10 @@ import {
   Attachment,
   Employer,
 } from '@island.is/clients/vmst'
-import { Application, ApplicationWithAttachments } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import {
   getSelectedChild,
   getApplicationAnswers,

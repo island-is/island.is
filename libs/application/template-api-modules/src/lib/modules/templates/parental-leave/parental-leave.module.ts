@@ -8,9 +8,7 @@ import {
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
-import {
-  ParentalLeaveService,
-} from './parental-leave.service'
+import { ParentalLeaveService } from './parental-leave.service'
 import { SmsModule } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
