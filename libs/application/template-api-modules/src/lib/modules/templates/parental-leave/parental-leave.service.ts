@@ -217,8 +217,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (dateOfBirth?.data?.dateOfBirth) {
       return { dateOfBirth: dateOfBirth?.data?.dateOfBirth }
     }
-    //    /*
-    //    If you want to MOCK getting dateOfBirth from API use this.
+    /*
+    If you want to MOCK getting dateOfBirth from API use this.
     const fakeDateOfBirth = '2024-02-10'
     const promise = new Promise((resolve) => {
       setTimeout(() => {
@@ -229,7 +229,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return {
       dateOfBirth: newValue,
     }
-    //    */
+    */
     try {
       const applicationInformation =
         await this.applicationInformationAPI.applicationGetApplicationInformation(
