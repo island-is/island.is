@@ -1,15 +1,17 @@
 // TODO: Add tests
 import {
+  CaseAppealRulingDecision,
   isIndictmentCase,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseType,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { TempCase as Case } from '../types'
 import { isBusiness } from './stepHelper'
 
 export type Validation =
@@ -256,7 +258,14 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return Boolean(workingCase.prosecutor && workingCase.court)
+  const defendantsAreValid = () =>
+    workingCase.defendants?.every((defendant) => {
+      return validate([[defendant.defendantPlea, ['empty']]]).isValid
+    })
+
+  return Boolean(
+    workingCase.prosecutor && workingCase.court && defendantsAreValid(),
+  )
 }
 
 export const isTrafficViolationStepValidIndictments = (
@@ -440,10 +449,11 @@ export const isAdminUserFormValid = (user: User): boolean => {
 
 export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.appealJudge1 &&
-      workingCase.appealJudge2 &&
-      workingCase.appealJudge3 &&
-      workingCase.appealAssistant &&
+    (workingCase.appealState === CaseAppealState.WITHDRAWN ||
+      (workingCase.appealJudge1 &&
+        workingCase.appealJudge2 &&
+        workingCase.appealJudge3 &&
+        workingCase.appealAssistant)) &&
       validate([
         [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,
@@ -451,10 +461,23 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
 }
 
 export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
-  const { appealRulingDecision, appealConclusion } = workingCase
+  const { appealRulingDecision, appealConclusion, appealState } = workingCase
 
   return (
-    appealRulingDecision !== null &&
-    validate([[appealConclusion, ['empty']]]).isValid
+    appealState === CaseAppealState.COMPLETED ||
+    appealState === CaseAppealState.WITHDRAWN ||
+    (appealRulingDecision !== null &&
+      validate([[appealConclusion, ['empty']]]).isValid) ||
+    appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+  )
+}
+
+export const isCourtOfAppealWithdrawnCaseStepValid = (
+  workingCase: Case,
+): boolean => {
+  return Boolean(
+    validate([
+      [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+    ]).isValid,
   )
 }

@@ -7,6 +7,7 @@ import {
   Scopes,
   CurrentUser,
   type User,
+  BypassAuth,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { SocialInsuranceService } from './socialInsurance.service'
@@ -17,11 +18,11 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { PensionCalculationInput } from './dtos/pensionCalculation.input'
+import { PensionCalculationResponse } from './models/pensionCalculation.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalSocialInsurancePageEnabled)
-@Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/api/social-insurance' })
 export class SocialInsuranceResolver {
   constructor(private readonly service: SocialInsuranceService) {}
@@ -30,11 +31,19 @@ export class SocialInsuranceResolver {
     name: 'socialInsurancePaymentPlan',
     nullable: true,
   })
+  @FeatureFlag(Features.servicePortalSocialInsurancePageEnabled)
+  @Scopes(ApiScope.internal)
   @Audit()
   async getPaymentPlan(
     @CurrentUser() user: User,
     @Args('input') input: PaymentPlanInput,
   ) {
     return this.service.getPaymentPlan(user, input.year)
+  }
+
+  @Query(() => PensionCalculationResponse)
+  @BypassAuth()
+  async getPensionCalculation(@Args('input') input: PensionCalculationInput) {
+    return this.service.getPensionCalculation(input)
   }
 }

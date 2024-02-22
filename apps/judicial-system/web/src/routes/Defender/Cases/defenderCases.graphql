@@ -12,6 +12,7 @@ query DefenderCases($input: CaseListQueryInput) {
     appealCaseNumber
     appealState
     appealRulingDecision
+    accusedPostponedAppealDate
     defendants {
       id
       created

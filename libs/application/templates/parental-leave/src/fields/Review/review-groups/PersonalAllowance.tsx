@@ -5,8 +5,9 @@ import {
 } from '@island.is/application/ui-components'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
-import { NO, YES, parentalLeaveFormMessages } from '../../..'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { NO, YES } from '../../../constants'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 
 export const PersonalAllowance = ({
@@ -15,9 +16,8 @@ export const PersonalAllowance = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [{ usePersonalAllowance, personalUseAsMuchAsPossible, personalUsage }] =
-    useStatefulAnswers(application)
-
+  const { usePersonalAllowance, personalUseAsMuchAsPossible, personalUsage } =
+    getApplicationAnswers(application.answers)
   return (
     <ReviewGroup
       isEditable={editable}

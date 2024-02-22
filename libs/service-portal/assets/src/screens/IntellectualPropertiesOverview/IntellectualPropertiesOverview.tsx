@@ -2,13 +2,12 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  EmptyState,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 import { Box } from '@island.is/island-ui/core'
-import { ipMessages, ipMessages as messages } from '../../lib/messages'
+import { ipMessages } from '../../lib/messages'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
@@ -80,21 +79,23 @@ const IntellectualPropertiesOverview = () => {
           ?.map((ip, index) => {
             switch (ip.__typename) {
               case 'IntellectualPropertiesDesign':
-                if (!ip.hId) {
+                if (!ip.id) {
                   return null
                 }
                 return generateActionCard(
                   index,
                   ip.specification?.description,
-                  ip.hId,
+                  ip.id,
                   undefined,
                   AssetsPaths.AssetsIntellectualPropertiesDesign.replace(
                     ':id',
-                    ip.hId,
+                    ip.id,
                   ),
                   ip.status,
                 )
-              case 'IntellectualPropertiesPatent':
+              case 'IntellectualPropertiesPatentEP':
+              case 'IntellectualPropertiesPatentIS':
+              case 'IntellectualPropertiesSPC':
                 return generateActionCard(
                   index,
                   ip.name,
@@ -110,11 +111,11 @@ const IntellectualPropertiesOverview = () => {
                 return generateActionCard(
                   index,
                   ip.text,
-                  ip.vmId,
+                  ip.id,
                   ip.type,
                   AssetsPaths.AssetsIntellectualPropertiesTrademark.replace(
                     ':id',
-                    ip.vmId ?? '',
+                    ip.id ?? '',
                   ),
                   ip.status,
                 )

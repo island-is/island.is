@@ -25,6 +25,24 @@ export class VehiclesService extends BaseTemplateApiService {
     const showCoOwned = params?.showCoOwned || false
     const showOperated = params?.showOperated || false
 
+    const countResult =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: showOwned,
+          showCoowned: showCoOwned,
+          showOperated: showOperated,
+          page: 1,
+          pageSize: 1,
+        })
+      ).totalRecords || 0
+    if (countResult && countResult > 20) {
+      return {
+        totalRecords: countResult,
+        vehicles: [],
+      }
+    }
     const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: showOwned,
@@ -64,11 +82,14 @@ export class VehiclesService extends BaseTemplateApiService {
       }
     }
 
-    return result?.map((vehicle) => ({
-      permno: vehicle.permno,
-      make: vehicle.make,
-      color: vehicle.color,
-      role: vehicle.role,
-    }))
+    return {
+      totalRecords: countResult,
+      vehicles: result?.map((vehicle) => ({
+        permno: vehicle.permno,
+        make: vehicle.make,
+        color: vehicle.color,
+        role: vehicle.role,
+      })),
+    }
   }
 }

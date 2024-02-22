@@ -90,7 +90,8 @@ export const applicantInformationMultiField = (
         variant: 'email',
         backgroundColor: 'blue',
         required: emailRequired,
-        defaultValue: '',
+        defaultValue: (application: ApplicantInformationInterface) =>
+          application.externalData?.userProfile?.data?.email ?? '',
         maxLength: 100,
       }),
       buildPhoneField({
@@ -98,7 +99,8 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.tel,
         width: 'half',
         backgroundColor: 'blue',
-        defaultValue: '',
+        defaultValue: (application: ApplicantInformationInterface) =>
+          application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
         required: phoneRequired,
       }),
     ],

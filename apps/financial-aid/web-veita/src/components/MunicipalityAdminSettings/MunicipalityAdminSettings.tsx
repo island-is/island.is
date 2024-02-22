@@ -1,10 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Text,
   Box,
   Input,
   Button,
-  toast,
   ToastContainer,
   Checkbox,
 } from '@island.is/island-ui/core'
@@ -12,28 +11,30 @@ import {
 import {
   Aid,
   AidName,
+  ApiKeysForMunicipality,
   Municipality,
   scrollToId,
 } from '@island.is/financial-aid/shared/lib'
-import { useMutation } from '@apollo/client'
-import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
-import omit from 'lodash/omit'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import useCurrentMunicipalityState from '@island.is/financial-aid-web/veita/src/utils/useCurrentMunicipalityState'
+import ApiKeysSettings from './ApiKeysSettings/ApiKeysSettings'
+import ApiKeyInfo from './ApiKeysSettings/ApiKeysInfo'
 
 interface Props {
   currentMunicipality: Municipality
 }
+
 const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
-  const [state, setState] = useState(currentMunicipality)
+  const { state, setState, loading, updateMunicipality } =
+    useCurrentMunicipalityState({
+      municipality: currentMunicipality,
+    })
+
+  const { apiKeyInfo, municipalityId } = state
 
   const [hasNavError, setHasNavError] = useState(false)
   const [hasAidError, setHasAidError] = useState(false)
-  const [updateMunicipalityMutation, { loading }] = useMutation(
-    UpdateMunicipalityMutation,
-  )
-  const { setMunicipality } = useContext(AdminContext)
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
@@ -90,38 +91,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     update()
   }
 
-  const updateMunicipality = async () => {
-    await updateMunicipalityMutation({
-      variables: {
-        input: {
-          individualAid: omit(state.individualAid, ['__typename']),
-          cohabitationAid: omit(state.cohabitationAid, ['__typename']),
-          homepage: state.homepage,
-          rulesHomepage: state.rulesHomepage,
-          email: state.email,
-          municipalityId: state.municipalityId,
-          usingNav: state.usingNav,
-          navUrl: state.navUrl
-            ? `${state.navUrl}${state.navUrl.endsWith('/') ? '' : '/'}`
-            : state.navUrl,
-          navUsername: state.navUsername,
-          navPassword: state.navPassword,
-        },
-      },
-    })
-      .then((res) => {
-        if (setMunicipality) {
-          setMunicipality(res.data.updateMunicipality)
-          toast.success('Það tókst að uppfæra sveitarfélagið')
-        }
-      })
-      .catch(() => {
-        toast.error(
-          'Ekki tókst að uppfæra sveitarfélagið, vinsamlega reynið aftur síðar',
-        )
-      })
-  }
-
   //This is because of animation on select doesnt work stand alone
   const navAndMultiSelectContent = [
     {
@@ -136,7 +105,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       ),
     },
     {
-      headline: 'Tenging við ytri kerfi',
+      headline: 'Tenging við Navision',
       component: (
         <>
           <Box marginBottom={3} id="navSettings">
@@ -335,10 +304,19 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
 
   return (
     <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
-      <Box className={`contentUp`}>
-        <Text as="h1" variant="h1" marginBottom={[2, 2, 7]}>
+      <Box
+        className={`contentUp`}
+        marginBottom={[2, 2, 7]}
+        display="flex"
+        justifyContent="spaceBetween"
+      >
+        <Text as="h1" variant="h1">
           Sveitarfélagsstillingar
         </Text>
+
+        <Button loading={loading} onClick={submit} icon="checkmark">
+          Vista stillingar
+        </Button>
       </Box>
 
       <Box className={`contentUp delay-25`}>
@@ -361,12 +339,29 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           )
         })}
       </Box>
+      <Box className={`contentUp`}>
+        <Box marginBottom={[2, 2, 7]} id="apiKeySettings">
+          <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+            <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+              Tenging við ytri kerfi
+            </Text>
+            <ApiKeysSettings
+              apiKeyInfo={apiKeyInfo}
+              code={municipalityId}
+              setCurrentState={(ApiKeyInfo: ApiKeysForMunicipality) =>
+                setState({ ...state, apiKeyInfo: ApiKeyInfo })
+              }
+            />
+          </Box>
+          <ApiKeyInfo apiKeyInfo={apiKeyInfo} />
+        </Box>
+      </Box>
 
       {EmailSiteAidContent.map((el, index) => {
         return (
           <Box
             marginBottom={[2, 2, 7]}
-            className={`contentUp`}
+            className={`contentUp delay-25`}
             style={{ animationDelay: index * 10 + 30 + 'ms' }}
             key={`EmailSiteAidContent-${index}`}
           >

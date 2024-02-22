@@ -23,6 +23,7 @@ export default {
     'event',
     'manual',
     'manualChapter',
+    'customPage',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -93,6 +94,7 @@ export default {
     'manualChapter',
     'chart',
     'chartComponent',
+    'featuredEvents',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

@@ -215,7 +215,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
             label={ipMessages.name}
-            content={ip?.text ? ip.text : ip?.vmId ?? ''}
+            content={ip?.text ? ip.text : ip?.id ?? ''}
             loading={loading}
           />
           <Divider />

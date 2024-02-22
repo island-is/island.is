@@ -22,3 +22,7 @@ export const brokenFile = style({
     textDecoration: 'none',
   },
 })
+
+export const caseFileName = style({
+  wordBreak: 'break-all',
+})

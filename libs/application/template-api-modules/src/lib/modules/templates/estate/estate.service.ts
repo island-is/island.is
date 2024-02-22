@@ -201,7 +201,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadDataId = 'danarbusskipti1.0'
     const answers = application.answers as unknown as EstateSchema
 
-    let estateData = externalData.estates?.find((estate) => estate.caseNumber)
+    let estateData = externalData.estates?.find(
+      (estate) => estate.caseNumber === answers.estateInfoSelection,
+    )
     // TODO: Remove the singular estate property in the future when
     //       legacy applications clear out of the system
     estateData = estateData ?? externalData.estate ?? undefined

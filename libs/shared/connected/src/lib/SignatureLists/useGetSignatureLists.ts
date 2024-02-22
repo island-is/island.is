@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 import {
   SignatureCollection,
-  SignatureCollectionList,
+  SignatureCollectionListBase,
 } from '@island.is/api/schema'
 import { Query } from '@island.is/api/schema'
 
@@ -41,16 +41,6 @@ export const GetOpenLists = gql`
       }
       endTime
       startTime
-      candidate {
-        nationalId
-        name
-        phone
-        email
-      }
-      collectors {
-        nationalId
-        name
-      }
       active
       collectionId
       slug
@@ -68,7 +58,7 @@ export const useGetCurrentCollection = () => {
 export const useGetOpenLists = () => {
   const { data, loading } = useQuery<Query>(GetOpenLists)
   const openLists =
-    data?.signatureCollectionAllOpenLists as SignatureCollectionList[]
+    data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
 
   return { openLists, loading }
 }

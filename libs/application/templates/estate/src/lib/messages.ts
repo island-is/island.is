@@ -1017,6 +1017,17 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
+  errorNotAutonmous: {
+    id: 'es.application:error.errorNotAutonmous',
+    defaultMessage:
+      'Umsækjandi er ekki lögráða og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'Applicant not autonomous',
+  },
+  errorPropertyNumber: {
+    id: 'es.application:error.errorPropertyNumber',
+    defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
+    description: 'Property number is invalid',
+  },
 
   // Inheritance step
   inheritanceAddMember: {

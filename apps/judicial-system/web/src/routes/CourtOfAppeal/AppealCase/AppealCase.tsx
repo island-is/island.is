@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -18,16 +18,13 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseAppealState,
   NotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import {
-  removeTabsValidateAndSet,
-  stepValidationsType,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   hasSentNotification,
@@ -35,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
 import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
@@ -45,7 +43,6 @@ const AppealCase = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const {
     updateCase,
-    setAndSendCaseToServer,
     sendNotification,
     sendNotificationError,
     isSendingNotification,
@@ -55,8 +52,6 @@ const AppealCase = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
-    useState<string>('')
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
@@ -109,13 +104,46 @@ const AppealCase = () => {
       hasSentNotification(
         NotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
-      ) ||
+      ).hasSent ||
       isReopenedCOACase(workingCase.appealState, workingCase.notifications)
     ) {
       router.push(`${destination}/${id}`)
     } else {
       await sendNotifications()
       setModalVisible(true)
+    }
+  }
+
+  const handleChange = async (coaJudgeId: string, coaJudgeProperty: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        [coaJudgeProperty]: coaJudgeId,
+      })
+
+      const coaJudge =
+        coaJudgeProperty === 'appealJudge1Id'
+          ? { appealJudge1: updatedCase?.appealJudge1 }
+          : coaJudgeProperty === 'appealJudge2Id'
+          ? { appealJudge2: updatedCase?.appealJudge2 }
+          : { appealJudge3: updatedCase?.appealJudge3 }
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        ...coaJudge,
+      }))
+    }
+  }
+
+  const handleAssistantChange = async (appealAssistantId: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        appealAssistantId,
+      })
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        appealAssistant: updatedCase?.appealAssistant,
+      }))
     }
   }
 
@@ -134,38 +162,9 @@ const AppealCase = () => {
             <SectionHeading
               title={formatMessage(core.appealCaseNumberHeading)}
             />
-            <Input
-              name="appealCaseNumber"
-              label={formatMessage(strings.caseNumberLabel)}
-              value={workingCase.appealCaseNumber ?? ''}
-              placeholder={formatMessage(strings.caseNumberPlaceholder, {
-                year: new Date().getFullYear(),
-              })}
-              errorMessage={appealCaseNumberErrorMessage}
-              onChange={(event) => {
-                removeTabsValidateAndSet(
-                  'appealCaseNumber',
-                  event.target.value,
-                  ['empty', 'appeal-case-number-format'],
-                  workingCase,
-                  setWorkingCase,
-                  appealCaseNumberErrorMessage,
-                  setAppealCaseNumberErrorMessage,
-                )
-              }}
-              onBlur={(event) => {
-                validateAndSendToServer(
-                  'appealCaseNumber',
-                  event.target.value,
-                  ['empty', 'appeal-case-number-format'],
-                  workingCase,
-                  updateCase,
-                  setAppealCaseNumberErrorMessage,
-                )
-              }}
-              required
-            />
+            <CaseNumberInput />
           </Box>
+
           <Box component="section" marginBottom={5}>
             <SectionHeading
               title={formatMessage(core.appealAssistantHeading)}
@@ -176,18 +175,9 @@ const AppealCase = () => {
               placeholder={formatMessage(strings.assistantPlaceholder)}
               value={defaultAssistant}
               options={assistants}
-              onChange={(so) => {
-                const assistantUpdate = (so as AssistantSelectOption).assistant
-
-                setAndSendCaseToServer(
-                  [
-                    {
-                      appealAssistantId: assistantUpdate.id ?? null,
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
+              onChange={(selectedOption) => {
+                handleAssistantChange(
+                  (selectedOption as AssistantSelectOption).assistant.id,
                 )
               }}
               required
@@ -217,20 +207,13 @@ const AppealCase = () => {
                           : undefined
                       }
                       options={judges}
-                      onChange={(so) => {
-                        const judgeUpdate = (so as JudgeSelectOption).judge
+                      onChange={(selectedOption) => {
+                        const judgeUpdate = (
+                          selectedOption as JudgeSelectOption
+                        ).judge.id
                         const judgeProperty = `appealJudge${index + 1}Id`
 
-                        setAndSendCaseToServer(
-                          [
-                            {
-                              [judgeProperty]: judgeUpdate.id ?? null,
-                              force: true,
-                            },
-                          ],
-                          workingCase,
-                          setWorkingCase,
-                        )
+                        handleChange(judgeUpdate, judgeProperty)
                       }}
                       required
                     />
@@ -267,7 +250,6 @@ const AppealCase = () => {
             )}
             primaryButtonText={formatMessage(strings.modalPrimaryButton)}
             onPrimaryButtonClick={() => router.push(`${navigateTo}/${id}`)}
-            onClose={() => setModalVisible(false)}
             onSecondaryButtonClick={() => {
               sendNotifications()
             }}

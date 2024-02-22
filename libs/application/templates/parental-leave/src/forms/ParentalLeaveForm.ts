@@ -16,70 +16,75 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  formatText,
   NO_ANSWER,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getAllPeriodDates,
-  getSelectedChild,
-  requiresOtherParentApproval,
-  isParentWithoutBirthParent,
-  getApplicationAnswers,
-  allowOtherParent,
-  getApplicationExternalData,
-  getMaxMultipleBirthsDays,
-  getDurationTitle,
-  getFirstPeriodTitle,
-  getLeavePlanTitle,
-  getPeriodImageTitle,
-  getPeriodSectionTitle,
-  getRatioTitle,
-  getRightsDescTitle,
-  getStartDateDesc,
-  getStartDateTitle,
-  getMultipleBirthRequestDays,
-  getMinimumStartDate,
-  allowOtherParentToUsePersonalAllowance,
-  getBeginningOfMonth3MonthsAgo,
-  getOtherParentOptions,
-} from '../lib/parentalLeaveUtils'
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
+
+import Logo from '../assets/Logo'
+import { minPeriodDays } from '../config'
 import {
-  GetPensionFunds,
-  GetUnions,
-  GetPrivatePensionFunds,
-} from '../graphql/queries'
-import {
+  ADOPTION,
   FILE_SIZE_LIMIT,
+  Languages,
   MANUAL,
-  SPOUSE,
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
-  ParentalRelations,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
-  PARENTAL_GRANT,
+  ParentalRelations,
+  PERMANENT_FOSTER_CARE,
   SINGLE,
+  SPOUSE,
   StartDateOptions,
   UnEmployedBenefitTypes,
   YES,
-  PERMANENT_FOSTER_CARE,
-  ADOPTION,
 } from '../constants'
-import Logo from '../assets/Logo'
-import { minPeriodDays } from '../config'
+import {
+  GetPensionFunds,
+  GetPrivatePensionFunds,
+  GetUnions,
+} from '../graphql/queries'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import {
+  allowOtherParent,
+  allowOtherParentToUsePersonalAllowance,
+  getAllPeriodDates,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getBeginningOfMonth3MonthsAgo,
+  getConclusionScreenSteps,
+  getDurationTitle,
+  getFirstPeriodTitle,
+  getLeavePlanTitle,
+  getMaxMultipleBirthsDays,
+  getMinimumStartDate,
+  getMultipleBirthRequestDays,
+  getOtherParentOptions,
+  getPeriodSectionTitle,
+  getRatioTitle,
+  getRightsDescTitle,
+  getSelectedChild,
+  getStartDateDesc,
+  getStartDateTitle,
+  isParentWithoutBirthParent,
+  requiresOtherParentApproval,
+} from '../lib/parentalLeaveUtils'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-import { YesOrNo } from '../types'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { useLocale } from '@island.is/localization'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -147,14 +152,15 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'applicant.language',
                   title: parentalLeaveFormMessages.applicant.languageTitle,
                   width: 'half',
+                  required: true,
                   space: 3,
                   options: [
                     {
-                      value: '',
+                      value: Languages.IS,
                       label: parentalLeaveFormMessages.applicant.icelandic,
                     },
                     {
-                      value: 'EN',
+                      value: Languages.EN,
                       label: parentalLeaveFormMessages.applicant.english,
                     },
                   ],
@@ -299,25 +305,38 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                   },
                 }),
-                buildCustomField({
+                buildRadioField({
+                  id: 'payments.useUnion',
+                  title: parentalLeaveFormMessages.shared.unionName,
+                  description:
+                    parentalLeaveFormMessages.shared.unionDescription,
                   condition: (answers) => {
                     const { applicationType } = getApplicationAnswers(answers)
 
                     return applicationType === PARENTAL_LEAVE
                   },
-                  component: 'UseUnion',
-                  id: 'useUnion',
-                  title: parentalLeaveFormMessages.shared.unionName,
-                  description:
-                    parentalLeaveFormMessages.shared.unionDescription,
+                  space: 6,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-union',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-union',
+                      value: NO,
+                    },
+                  ],
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => {
-                    const { applicationType } = getApplicationAnswers(answers)
-
+                    const { applicationType, useUnion } =
+                      getApplicationAnswers(answers)
                     return (
-                      applicationType === PARENTAL_LEAVE &&
-                      answers.useUnion === YES
+                      applicationType === PARENTAL_LEAVE && useUnion === YES
                     )
                   },
                   title: parentalLeaveFormMessages.shared.union,
@@ -342,27 +361,41 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                   },
                 }),
-                buildCustomField({
-                  condition: (answers) => {
-                    const { applicationType } = getApplicationAnswers(answers)
-
-                    return applicationType === PARENTAL_LEAVE
-                  },
-                  component: 'UsePrivatePensionFund',
-                  id: 'usePrivatePensionFund',
+                buildRadioField({
+                  id: 'payments.usePrivatePensionFund',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundName,
                   description:
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
-                }),
-                buildAsyncSelectField({
                   condition: (answers) => {
                     const { applicationType } = getApplicationAnswers(answers)
 
+                    return applicationType === PARENTAL_LEAVE
+                  },
+                  space: 6,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-private-pension-fund',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-private-pension-fund',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildAsyncSelectField({
+                  condition: (answers) => {
+                    const { applicationType, usePrivatePensionFund } =
+                      getApplicationAnswers(answers)
                     return (
                       applicationType === PARENTAL_LEAVE &&
-                      answers.usePrivatePensionFund === YES
+                      usePrivatePensionFund === YES
                     )
                   },
                   id: 'payments.privatePensionFund',
@@ -388,11 +421,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildSelectField({
                   condition: (answers) => {
-                    const { applicationType } = getApplicationAnswers(answers)
-
+                    const { applicationType, usePrivatePensionFund } =
+                      getApplicationAnswers(answers)
                     return (
                       applicationType === PARENTAL_LEAVE &&
-                      answers.usePrivatePensionFund === YES
+                      usePrivatePensionFund === YES
                     )
                   },
                   id: 'payments.privatePensionFundPercentage',
@@ -418,6 +451,16 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.personalAllowance.description,
               children: [
+                buildAlertMessageField({
+                  id: 'personalAllowance.alertMessage',
+                  title: parentalLeaveFormMessages.employer.alertTitle,
+                  message:
+                    parentalLeaveFormMessages.personalAllowance
+                      .alertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  marginTop: 0,
+                }),
                 buildRadioField({
                   id: 'personalAllowance.usePersonalAllowance',
                   title: parentalLeaveFormMessages.personalAllowance.useYours,
@@ -612,7 +655,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: '',
                   width: 'half',
                   required: true,
-                  defaultValue: NO,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -635,7 +677,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   titleVariant: 'h2',
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
-                    return isSelfEmployed !== YES
+                    return isSelfEmployed === NO
                   },
                 }),
                 buildAlertMessageField({
@@ -646,15 +688,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   alertType: 'info',
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
-                    return isSelfEmployed !== YES
+                    return isSelfEmployed === NO
                   },
                 }),
                 buildRadioField({
                   id: 'employment.isReceivingUnemploymentBenefits',
                   title: '',
                   width: 'half',
-                  required: true,
-                  defaultValue: NO,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -667,7 +707,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   ],
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
-                    return isSelfEmployed !== YES
+                    return isSelfEmployed === NO
                   },
                 }),
                 buildSelectField({
@@ -697,7 +737,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       getApplicationAnswers(answers)
 
                     return (
-                      isSelfEmployed !== YES &&
+                      isSelfEmployed === NO &&
                       isReceivingUnemploymentBenefits === YES
                     )
                   },
@@ -1056,11 +1096,27 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
+              id: 'fileUpload.employmentTerminationCertificateFile',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateTitle,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
-              maxSize: FILE_SIZE_LIMIT,
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateDescription,
+              condition: (answers) => {
+                const {
+                  applicationType,
+                  employerLastSixMonths,
+                  isNotStillEmployed,
+                } = getApplicationAnswers(answers)
+
+                return (
+                  (applicationType === PARENTAL_GRANT ||
+                    applicationType === PARENTAL_GRANT_STUDENTS) &&
+                  employerLastSixMonths === YES &&
+                  isNotStillEmployed
+                )
+              },
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
@@ -1071,28 +1127,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.employmentTerminationCertificateFile',
-              title:
-                parentalLeaveFormMessages.attachmentScreen
-                  .employmentTerminationCertificateTitle,
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.title,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .employmentTerminationCertificateDescription,
-              condition: (answers) => {
-                const { applicationType, employerLastSixMonths, employers } =
-                  getApplicationAnswers(answers)
-
-                const isNotStillEmployed = employers?.some(
-                  (employer) => employer.stillEmployed === NO,
-                )
-
-                return (
-                  (applicationType === PARENTAL_GRANT ||
-                    applicationType === PARENTAL_GRANT_STUDENTS) &&
-                  employerLastSixMonths === YES &&
-                  isNotStillEmployed
-                )
-              },
+                parentalLeaveFormMessages.attachmentScreen.description,
+              maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
@@ -1307,12 +1346,6 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'leavePeriods',
       title: getPeriodSectionTitle,
       children: [
-        buildCustomField({
-          id: 'periodsImageScreen',
-          title: getPeriodImageTitle,
-          component: 'PeriodsSectionImage',
-          doesNotRequireAnswer: true,
-        }),
         buildSubSection({
           id: 'addPeriods',
           title: parentalLeaveFormMessages.leavePlan.subSection,
@@ -1536,12 +1569,28 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: parentalLeaveFormMessages.finalScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertType: 'success',
+      expandableHeader: parentalLeaveFormMessages.finalScreen.title,
+      expandableDescription: (application: Application) => {
+        const nextSteps = getConclusionScreenSteps(application)
+
+        // Create a markdown from the steps translations strings
+        let markdown = ''
+
+        nextSteps.forEach((step) => {
+          const translation = formatText(
+            step,
+            application,
+            useLocale().formatMessage,
+          )
+          markdown += `* ${translation} \n`
+        })
+
+        return markdown
+      },
     }),
   ],
 })

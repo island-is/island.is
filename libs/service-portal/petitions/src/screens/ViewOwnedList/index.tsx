@@ -37,7 +37,8 @@ const ViewOwnedList = () => {
     '',
   )
 
-  const { petitionData, refetchSinglePetition } = useGetSinglePetition(listId)
+  const { petitionData, refetchSinglePetition, loadingPetition } =
+    useGetSinglePetition(listId)
 
   const petition = petitionData as EndorsementList
 
@@ -65,7 +66,8 @@ const ViewOwnedList = () => {
     isListOpen ? new Date(petition?.closedDate) : undefined,
   )
 
-  const { petitionEndorsements } = useGetSinglePetitionEndorsements(listId)
+  const { petitionEndorsements, loadingSigners } =
+    useGetSinglePetitionEndorsements(listId)
 
   useEffect(() => {
     setIsListOpen(new Date() <= new Date(petition?.closedDate))
@@ -111,7 +113,7 @@ const ViewOwnedList = () => {
 
   return (
     <Box>
-      {Object.entries(petition).length !== 0 ? (
+      {!loadingPetition && !loadingSigners ? (
         <>
           <Columns>
             <Column width="11/12">
