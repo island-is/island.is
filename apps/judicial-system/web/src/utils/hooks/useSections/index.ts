@@ -1356,7 +1356,8 @@ const useSections = (
             : workingCase.state,
         ),
         isActive:
-          workingCase.appealState === CaseAppealState.WITHDRAWN ||
+          (workingCase.appealState === CaseAppealState.WITHDRAWN &&
+            !workingCase.appealReceivedByCourtDate) ||
           (!workingCase.parentCase &&
             isCompletedCase(workingCase.state) &&
             !workingCase.prosecutorPostponedAppealDate &&
@@ -1388,7 +1389,8 @@ const useSections = (
           ]
         : []),
       ...(!workingCase.appealState ||
-      workingCase.appealState === CaseAppealState.WITHDRAWN
+      (workingCase.appealState === CaseAppealState.WITHDRAWN &&
+        !workingCase.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]
