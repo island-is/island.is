@@ -38,7 +38,7 @@ const CompareLists = () => {
 
       if (res.data) {
         setUploadResults(
-          res.data?.signatureCollectionBulkCompareSignaturesAllLists,
+          res.data?.signatureCollectionAdminBulkCompareSignaturesAllLists,
         )
       }
     } catch (e) {
@@ -56,7 +56,7 @@ const CompareLists = () => {
         },
       })
 
-      if (res.data && res.data.signatureCollectionUnsignAdmin.success) {
+      if (res.data && res.data.signatureCollectionAdminUnsign.success) {
         toast.success(formatMessage(m.unsignFromListSuccess))
         setUploadResults(
           uploadResults?.filter((result: SignatureCollectionSignature) => {
@@ -74,7 +74,7 @@ const CompareLists = () => {
     let data = await getFileData(newFile)
 
     data = data.map((d: { Kennitala: any }) => {
-      return String(d.Kennitala)
+      return String(d.Kennitala).replace('-', '')
     })
 
     compareLists(data)

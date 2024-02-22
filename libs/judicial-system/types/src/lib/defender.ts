@@ -6,7 +6,7 @@ export interface Lawyer {
   nationalId: string
 }
 
-export type LawyerFull = {
+type LawyerFull = {
   Id: number
   Name: string
   Title: string

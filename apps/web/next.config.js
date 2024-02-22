@@ -61,6 +61,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/s/haskolanam',
+        destination: '/haskolanam',
+        permanent: true,
+      },
+      {
+        source: '/en/o/university-studies',
+        destination: '/university-studies',
+        permanent: true,
+      },
+      {
         source: '/stofnanir/:slug',
         destination: '/s/:slug',
         permanent: true,

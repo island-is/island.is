@@ -35,7 +35,7 @@ export const DocumentReview: FC<Props> = ({
     <SummaryBlock editAction={() => goToScreen?.(route)}>
       <Box paddingBottom={4}>
         <GridRow>
-          <GridColumn span="1/2" paddingBottom={1}>
+          <GridColumn span="1/1" paddingBottom={1}>
             {DescriptionFormField({
               application: application,
               showFieldName: false,
@@ -92,7 +92,7 @@ export const DocumentReview: FC<Props> = ({
           {selectedChildren &&
             selectedChildren.map((child) => {
               return (
-                <GridColumn span="1/2" paddingBottom={1}>
+                <GridColumn span="1/1" paddingBottom={1}>
                   {DescriptionFormField({
                     application: application,
                     showFieldName: false,

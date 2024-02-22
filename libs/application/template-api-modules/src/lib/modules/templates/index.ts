@@ -96,6 +96,8 @@ import { HealthcareLicenseCertificateService } from './healthcare-license-certif
 
 import { EnergyFundsModule } from './energy-funds/energy-funds.module'
 import { EnergyFundsService } from './energy-funds/energy-funds.service'
+import { UniversityModule } from './university/university.module'
+import { UniversityService } from './university/university.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
@@ -111,6 +113,8 @@ import { SignatureListCreationModule } from './signature-collection/signature-li
 import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
 import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
 import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
+import { HomeSupportModule } from './home-support/home-support.module'
+import { HomeSupportService } from './home-support/home-support.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -169,7 +173,9 @@ export const modules = [
   SignatureListCreationModule,
   SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
+  HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
+  UniversityModule,
 ]
 
 export const services = [
@@ -229,5 +235,7 @@ export const services = [
   SignatureListCreationService,
   SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
+  HomeSupportService,
   ChangeMachineSupervisorTemplateService,
+  UniversityService,
 ]

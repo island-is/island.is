@@ -815,16 +815,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Tilhögun fæðingarstyrks',
       description: 'Grant periods',
     },
-    periodsImageTitle: {
-      id: 'pl.application:periods.image.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarorlofsins',
-      description: 'Now it is time to select the parental leave periods',
-    },
-    periodsImageGrantTitle: {
-      id: 'pl.application:periods.image.grant.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarstyrksins',
-      description: 'Now it is time to select the parental grant period',
-    },
     firstPeriodName: {
       id: 'pl.application:first.period.name',
       defaultMessage: 'Fyrsta tímabil orlofsins',
@@ -886,7 +876,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Primary parent has not given you their consent for right of access during the parental leave.',
     },
-
     editOrAddEmployer: {
       id: 'pl.application:edit.or.add.employer',
       defaultMessage: 'Viltu breyta eða bæta við vinnuveitanda?',
@@ -902,7 +891,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Breyta eða bæta við vinnuveitanda',
       description: 'Edit or add an employer',
     },
-
     periodReview: {
       id: 'pl.application:periodReview',
       defaultMessage: 'Tímabil',
@@ -913,36 +901,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Upplýsingar',
       description: 'Information',
     },
-    editOrAddInfoSectionTitle: {
-      id: 'pl.application:editOrAddInfoSectionTitle',
-      defaultMessage: 'Þú ert að fara breyta umsókn um fæðingarorlof',
-      description: 'english description',
-    },
-    editOrAddInfoSectionDescription: {
-      id: 'pl.application:editOrAddInfoSectionDescription',
-      defaultMessage:
-        'Í næstu skrefum geturu breytt eða bætt við upplýsingum um vinnuveitanda og tímabil fæðingarorlofsins.',
-      description: 'english description',
-    },
-
-    editOrAddInfoGrantSectionTitle: {
-      id: 'pl.application:editOrAddInfoGrantSectionTitle',
-      defaultMessage: 'Þú ert að fara breyta umsókn um fæðingarstyrk',
-      description: 'english description',
-    },
-    editOrAddInfoGrantSectionDescription: {
-      id: 'pl.application:editOrAddInfoGrantSectionDescription',
-      defaultMessage:
-        'Í næstu skrefum geturu breytt eða bætt við upplýsingum um vinnuveitanda og tímabil fæðingarstyrksins.',
-      description: 'english description',
-    },
-
     editOrAddPeriods: {
       id: 'pl.application:edit.or.add.periods',
       defaultMessage: 'Viltu breyta eða bæta við tímabili?',
       description: 'Do you want to edit or add a period?',
     },
-
     editPeriodsReviewAlertTitle: {
       id: 'pl.application:edit.periods.review.alert.title',
       defaultMessage: 'Athugið! ',
@@ -1196,6 +1159,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:allowance.allowance.usage',
       defaultMessage: 'Hlutfall af persónuafslættinum',
       description: 'Review copy for the usage percentage',
+    },
+    alertDescription: {
+      id: 'pl.application:personal.allowance.alertDescription',
+      defaultMessage:
+        'Óþarfi er að senda inn sérstaka beiðni til Fæðingarorlofssjóðs vegna nýtingar á persónuafslætti þegar sótt er um í gegnum Ísland.is',
+      description:
+        'There is no need to submit a separate request to the Parental Leave Fund for the use of personal allowance when applying through Ísland.is',
     },
   }),
 
@@ -1795,11 +1765,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Skoða forrit',
       description: 'View application',
     },
-    buttonsViewProgress: {
-      id: 'pl.application:review.buttonsViewProgress',
-      defaultMessage: 'Skoða framfarir',
-      description: 'View progress',
-    },
     buttonsEdit: {
       id: 'pl.application:review.buttonsEdit',
       defaultMessage: 'Breyta / bæta við tímabilum',
@@ -1945,6 +1910,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Vinnuveitandi á síðustu 6 mánuðum?',
       description: 'Employer in the last 6 months?',
     },
+    language: {
+      id: 'pl.application:review.language',
+      defaultMessage: 'Tungumál fyrir samskipti við sjóðinn',
+      description:
+        'Language to use in communication with the Parental Leave Fund',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -2084,7 +2055,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Congratulations, below are the next steps',
     },
     description: {
-      id: 'pl.application:finalscreen.description',
+      id: 'pl.application:finalscreen.description#markdown',
       defaultMessage: `Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á
         hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf
         vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum
@@ -2182,13 +2153,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Vegna frumættleiðingu þarf að skila inn forsamþykki frá sýslumanni og staðfestingu frá Ættleiðingu. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'Permanent adoption description',
-    },
-    additionalDocumentRequired: {
-      id: 'pl.application:attachmentscreen.additionalDocumentRequired',
-      defaultMessage:
-        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögn á næstu síðu',
-      description:
-        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
     },
     additionalDocumentRequiredTag: {
       id: 'pl.application:attachmentscreen.additionalDocumentRequiredTag',

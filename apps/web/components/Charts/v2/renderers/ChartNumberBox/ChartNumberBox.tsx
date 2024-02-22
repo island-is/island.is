@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import cn from 'classnames'
-import round from 'lodash/round'
 
 import { Icon, SkeletonLoader, Tooltip } from '@island.is/island-ui/core'
 import { ChartNumberBox as IChartNumberBox } from '@island.is/web/graphql/schema'
@@ -9,11 +8,14 @@ import { useI18n } from '@island.is/web/i18n'
 import { useGetChartData } from '../../hooks'
 import { messages } from '../../messages'
 import { ChartType } from '../../types'
-import { formatValueForPresentation } from '../../utils'
+import {
+  formatPercentageForPresentation,
+  formatValueForPresentation,
+} from '../../utils'
 import * as styles from './ChartNumberBox.css'
 
 type ChartNumberBoxRendererProps = {
-  slice: IChartNumberBox
+  slice: IChartNumberBox & { chartNumberBoxId: string }
 }
 
 interface ChartNumberBoxData {
@@ -83,6 +85,8 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
   return (
     <div
+      role="group"
+      aria-labelledby={`${slice.chartNumberBoxId}.title`}
       className={cn({
         [styles.wrapper]: true,
         [styles.wrapperTwoChildren]: boxData.length === 2,
@@ -91,16 +95,28 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     >
       {boxData.map((data, index) => {
         // We assume that the data that key that is provided is a valid number
-        const value = queryResult.data?.[data.sourceDataIndex]?.[
+        const comparisonValue = queryResult.data?.[data.sourceDataIndex]?.[
           data.sourceDataKey
         ] as number
         const mostRecentValue = queryResult.data[queryResult.data.length - 1][
           data.sourceDataKey
         ] as number
 
-        const divider = index === 0 ? 1 : mostRecentValue
+        const change = index === 0 ? 1 : mostRecentValue / comparisonValue
 
-        const result = index === 0 ? value : round(1 - value / divider, 2)
+        const ariaValue =
+          data.valueType === 'number'
+            ? formatValueForPresentation(activeLocale, mostRecentValue)
+            : formatPercentageForPresentation(
+                index === 0 ? mostRecentValue : change - 1,
+              )
+
+        const displayedValue =
+          data.valueType === 'number'
+            ? formatValueForPresentation(activeLocale, mostRecentValue)
+            : formatPercentageForPresentation(
+                index === 0 ? mostRecentValue : Math.abs(change - 1),
+              )
 
         return (
           <div
@@ -108,23 +124,27 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
               [styles.numberBox]: true,
               [styles.numberBoxFillWidth]: boxData.length === 3 && index === 0,
             })}
+            id={index === 0 ? `${slice.chartNumberBoxId}.title` : undefined}
+            aria-label={`${data.title}: ${ariaValue}`}
+            tabIndex={0}
           >
-            <div className={styles.titleWrapper}>
+            <div className={styles.titleWrapper} id={`${slice.id}.title`}>
               <h3 className={styles.title}>{data.title}</h3>
-              {index === 0 && <Tooltip text={slice.numberBoxDescription} />}
-            </div>
-            <p className={styles.value}>
-              {index > 0 && result !== 0 && (
-                <Icon
-                  type="outline"
-                  icon={result > 0 ? 'arrowUp' : 'arrowDown'}
+              {index === 0 && (
+                <Tooltip
+                  text={slice.numberBoxDescription}
+                  placement={boxData.length === 1 ? 'left' : undefined}
                 />
               )}
-              <span>
-                {data.valueType === 'number'
-                  ? formatValueForPresentation(activeLocale, result)
-                  : `${Math.abs(result) * 100}%`}
-              </span>
+            </div>
+            <p className={styles.value}>
+              {index > 0 && change !== 0 && (
+                <Icon
+                  type="outline"
+                  icon={change > 1 ? 'arrowUp' : 'arrowDown'}
+                />
+              )}
+              <span>{displayedValue}</span>
             </p>
           </div>
         )

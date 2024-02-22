@@ -4,15 +4,28 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
-import header from '../../../assets/headerImage.svg'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import Signees from './components/signees'
 import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
+import ListInfo from './components/listInfoAlert'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { format as formatNationalId } from 'kennitala'
+import { ListStatus } from '../../lib/utils'
 
-export const List = () => {
-  const { list } = useLoaderData() as { list: SignatureCollectionList }
+export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
+  const { list, listStatus } = useLoaderData() as {
+    list: SignatureCollectionList
+    listStatus: string
+  }
   const { formatMessage } = useLocale()
 
   return (
@@ -28,7 +41,7 @@ export const List = () => {
           />
         </GridColumn>
         <GridColumn
-          paddingTop={[5, 5, 5, 2]}
+          paddingTop={[5, 5, 5, 0]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
@@ -36,15 +49,69 @@ export const List = () => {
             <>
               <IntroHeader
                 title={list.title}
-                intro={formatMessage(m.singleListIntro)}
-                img={header}
+                intro={
+                  allowedToProcess
+                    ? formatMessage(m.singleListIntro)
+                    : formatMessage(m.singleListIntroManage)
+                }
+                img={
+                  allowedToProcess
+                    ? electionsCommitteeLogo
+                    : nationalRegistryLogo
+                }
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
+
+              <ListInfo
+                message={
+                  listStatus === ListStatus.Extendable
+                    ? formatMessage(m.listStatusExtendableAlert)
+                    : listStatus === ListStatus.InReview
+                    ? formatMessage(m.listStatusInReviewAlert)
+                    : listStatus === ListStatus.Reviewed
+                    ? formatMessage(m.listStatusReviewedStatusAlert)
+                    : formatMessage(m.listStatusActiveAlert)
+                }
+                type={
+                  listStatus === ListStatus.Reviewed ? 'success' : undefined
+                }
+              />
+              {list.collectors?.map((collector) => (
+                <Box key={collector.name} marginBottom={5}>
+                  <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
+                  <Text>
+                    {collector.name +
+                      ' ' +
+                      '(' +
+                      formatNationalId(collector.nationalId) +
+                      ')'}
+                  </Text>
+                </Box>
+              ))}
+              <Box marginBottom={5}>
+                <Text variant="h5">{formatMessage(m.candidateNationalId)}</Text>
+                <Text variant="medium">
+                  {formatNationalId(list.candidate.nationalId)}
+                </Text>
+              </Box>
+              <ActionExtendDeadline
+                listId={list.id}
+                endTime={list.endTime}
+                allowedToProcess={
+                  allowedToProcess && listStatus === ListStatus.Extendable
+                }
+              />
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-              <PaperUpload listId={list.id} />
-              <ActionReviewComplete />
+              {allowedToProcess && (
+                <>
+                  <PaperUpload listId={list.id} listStatus={listStatus} />
+                  <ActionReviewComplete
+                    listId={list.id}
+                    listStatus={listStatus}
+                  />
+                </>
+              )}
             </>
           )}
         </GridColumn>
