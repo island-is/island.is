@@ -15,13 +15,14 @@ import {
 } from '@island.is/shared/problem'
 import { ReviewGroupProps } from './props'
 import { useFormContext } from 'react-hook-form'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   PARENTAL_LEAVE,
   YES,
 } from '../../../constants'
-import { getApplicationAnswers, parentalLeaveFormMessages } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { useUnion as useUnionOptions } from '../../../hooks/useUnion'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../../hooks/usePrivatePensionFund'
 import { usePensionFund as usePensionFundOptions } from '../../../hooks/usePensionFund'

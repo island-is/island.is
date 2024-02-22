@@ -8,7 +8,7 @@ export const inputContainer = style({
   }),
 })
 
-export const yearSelectContainer = style({
+export const dateOfCalculationsSelect = style({
   ...themeUtils.responsiveStyle({
     xs: {
       width: '100%',
@@ -29,4 +29,20 @@ export const fullWidth = style({
 
 export const textMaxWidth = style({
   maxWidth: '793px',
+})
+
+export const monthSelectContainer = style({
+  ...themeUtils.responsiveStyle({
+    sm: { width: '230px' },
+    md: { width: '432px' },
+  }),
+})
+
+export const yearSelectContainer = style({
+  ...themeUtils.responsiveStyle({
+    sm: {
+      width: '180px',
+    },
+    md: { width: '204px' },
+  }),
 })

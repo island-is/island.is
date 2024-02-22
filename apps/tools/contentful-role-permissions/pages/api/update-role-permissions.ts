@@ -1,4 +1,3 @@
-import slugify from '@sindresorhus/slugify'
 import {
   ContentTypeProps,
   Role,
@@ -6,6 +5,8 @@ import {
   TagProps,
 } from 'contentful-management'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import slugify from '@sindresorhus/slugify'
+
 import type { CheckboxState } from '../../types'
 import {
   applyAssetPolicies,
@@ -18,7 +19,7 @@ import {
 
 interface RequestBody {
   checkboxState: CheckboxState
-  readonlyCheckboxState: CheckboxState
+  readOnlyCheckboxState: CheckboxState
   roleNamesThatCanReadAllAssets: string[]
   tags: TagProps[]
 }
@@ -68,11 +69,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const globallyReadableContentTypeIds = new Set<string>()
 
     // Gather all content types we want the user to be able to read globally
-    for (const contentTypeName in data.readonlyCheckboxState[roleName]) {
+    for (const contentTypeName in data.readOnlyCheckboxState[roleName]) {
       const contentType = contentTypesMap.get(contentTypeName)
       if (!contentType) continue
 
-      const checked = data.readonlyCheckboxState[roleName][contentTypeName]
+      const checked = data.readOnlyCheckboxState[roleName][contentTypeName]
       if (!checked) continue
 
       globallyReadableContentTypeIds.add(contentType.sys.id)
