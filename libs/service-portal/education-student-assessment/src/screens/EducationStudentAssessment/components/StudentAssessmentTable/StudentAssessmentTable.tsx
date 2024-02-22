@@ -11,12 +11,12 @@ import {
   TextProps,
 } from '@island.is/island-ui/core'
 import {
-  EmptyState,
   IntroHeader,
   MENNTAMALASTOFNUN_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {
