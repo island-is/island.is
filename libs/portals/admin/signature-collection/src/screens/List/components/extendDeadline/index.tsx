@@ -58,7 +58,7 @@ const ActionExtendDeadline = ({
       <Box display="flex" alignItems="flexEnd">
         <Input
           name="endTime"
-          size="xs"
+          size="sm"
           label={formatMessage(m.listEndTime)}
           readOnly
           value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
@@ -68,7 +68,7 @@ const ActionExtendDeadline = ({
             <Button
               icon="calendar"
               iconType="outline"
-              variant="utility"
+              variant="ghost"
               onClick={() => setModalChangeDateIsOpen(true)}
             ></Button>
           </Box>
