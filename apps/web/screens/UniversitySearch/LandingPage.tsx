@@ -32,11 +32,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../types'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
 import * as styles from './UniversitySearch.css'
 
@@ -49,7 +45,6 @@ interface LandingPageProps {
 }
 const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
-  organization,
   namespace,
   universities,
 }) => {
@@ -101,9 +96,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                   <Box width="full" className={cn(styles.courseListContainer)}>
                     <Box className={cn(styles.courseListContentContainer)}>
                       <Text variant="eyebrow" color="blueberry600">
-                        {' '}
-                        {/* TODO Translations */}
-                        Háskólar
+                        {n('universities', 'Háskólar')}
                       </Text>
                       {universities.map((university) => {
                         return (
@@ -142,8 +135,6 @@ const LandingPage: Screen<LandingPageProps> = ({
                 className={cn(styles.courseListContentContainer)}
               >
                 <Text variant="eyebrow" color="blueberry600">
-                  {' '}
-                  {/* TODO Translations */}
                   {n('universities', 'Háskólar')}
                 </Text>
                 {universities.map((university) => {
@@ -277,23 +268,11 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getOrganization },
-    },
     namespace,
     universities,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: locale === 'is' ? 'haskolanam' : 'university-studies',
@@ -321,20 +300,19 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
     }),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Page not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
-    organization: getOrganization,
     namespace,
     universities: universities.data.universityGatewayUniversities,
     locale,
     showSearchInHeader: false,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
+      getOrganizationPage?.organization,
     ),
   }
 }
