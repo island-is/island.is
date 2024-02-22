@@ -675,6 +675,7 @@ export function buildTableRepeaterField(
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
   } = data
 
   return {
@@ -690,5 +691,6 @@ export function buildTableRepeaterField(
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
   }
 }

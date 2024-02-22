@@ -54,13 +54,14 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           children: [
             buildTableRepeaterField({
               id: 'loans',
+              marginTop: 2,
               title: m.application.loanStatus.sectionTitle,
               addItemButtonText: m.application.loanStatus.addNewLoan,
               saveItemButtonText: m.application.loanStatus.saveNewLoan,
-              /* defaultValue: (app: any) => {
-                console.log('defaultvl', app)
-                return [{ status: '14500600', provider: 'Bingo' }]
-              }, */
+              getStaticTableData: (_application) => {
+                // TODO: Loan data from data provider
+                return [{ status: '1450000', provider: 'Bingo' }]
+              },
               fields: {
                 status: {
                   component: 'input',

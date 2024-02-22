@@ -23,9 +23,8 @@ import {
   RadioController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -51,6 +50,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     description,
     marginTop = 6,
     marginBottom,
+    getStaticTableData,
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
@@ -61,11 +61,10 @@ export const TableRepeaterFormField: FC<Props> = ({
     ...rawItems[key],
   }))
 
-  const defaultValues = getDefaultValue(data, application)
   const { formatMessage } = useLocale()
   const methods = useFormContext()
   const [activeIndex, setActiveIndex] = useState(-1)
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: data.id,
   })
@@ -76,6 +75,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableItems = items.filter((x) => x.displayInTable !== false)
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
+  const staticData = getStaticTableData?.(application)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -108,12 +108,6 @@ export const TableRepeaterFormField: FC<Props> = ({
     return errors?.[id]
   }
 
-  useEffect(() => {
-    if (defaultValues && (!values || values.length === 0)) {
-      replace(defaultValues)
-    }
-  }, [defaultValues, values, replace])
-
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
@@ -135,6 +129,20 @@ export const TableRepeaterFormField: FC<Props> = ({
               </T.Row>
             </T.Head>
             <T.Body>
+              {staticData &&
+                staticData.map((item, index) => (
+                  <T.Row key={index}>
+                    <T.Data></T.Data>
+                    {Object.keys(item).map((key, index) => {
+                      const formatFn = table?.format?.[key]
+                      return (
+                        <T.Data key={`static-${key}-${index}`}>
+                          {formatFn ? formatFn(item[key]) : item[key]}
+                        </T.Data>
+                      )
+                    })}
+                  </T.Row>
+                ))}
               {values &&
                 savedFields.map((field, index) => (
                   <T.Row key={field.id}>
