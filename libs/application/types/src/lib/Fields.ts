@@ -73,6 +73,7 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
+  condition?: (application: Application) => boolean
 } & (
   | {
       component: 'input'
@@ -484,6 +485,8 @@ export type TableRepeaterField = BaseField & {
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   removeButtonTooltipText?: StaticText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
   fields: Record<string, TableRepeaterItem>
   table?: {
     /**
