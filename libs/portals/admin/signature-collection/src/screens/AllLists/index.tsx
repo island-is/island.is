@@ -111,7 +111,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           />
         </GridColumn>
         <GridColumn
-          paddingTop={[5, 5, 5, 2]}
+          paddingTop={[5, 5, 5, 0]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
@@ -124,9 +124,19 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          {collectionStatus === CollectionStatus.InReview && (
+          {collectionStatus !== CollectionStatus.InitialActive && (
             <ListInfo
-              message={formatMessage(m.signatureCollectionProcessingComplete)}
+              message={formatMessage(
+                collectionStatus === CollectionStatus.InInitialReview
+                  ? m.signatureCollectionInInitialReview
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessing
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessed
+                  : collectionStatus === CollectionStatus.Active
+                  ? m.signatureCollectionActive
+                  : m.signatureCollectionInReview,
+              )}
             />
           )}
           <GridRow marginBottom={5}>
@@ -191,7 +201,8 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     }
                   />
                 </Filter>
-                {allowedToProcess &&
+                {lists?.length > 0 &&
+                  allowedToProcess &&
                   (collectionStatus === CollectionStatus.InInitialReview ||
                     collectionStatus === CollectionStatus.Processing) && (
                     <CreateCollection />
@@ -272,30 +283,38 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           ) : (
             <Text>{formatMessage(m.noLists)}</Text>
           )}
-          <Box marginTop={5}>
-            <Pagination
-              totalItems={lists.length}
-              itemsPerPage={pageSize}
-              page={page}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => setPage(page)}
-                  component="button"
-                >
-                  {children}
-                </Box>
-              )}
-            />
-          </Box>
-          {allowedToProcess &&
-            collectionStatus === CollectionStatus.Processing && (
-              <>
-                <CompareLists />
+          {lists?.length > 0 && (
+            <Box marginTop={5}>
+              <Pagination
+                totalItems={lists.length}
+                itemsPerPage={pageSize}
+                page={page}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                    component="button"
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
+          )}
+          {lists?.length > 0 && allowedToProcess && (
+            <Box>
+              {collectionStatus === CollectionStatus.Processing ||
+                collectionStatus === CollectionStatus.InInitialReview ||
+                (collectionStatus === CollectionStatus.InReview && (
+                  <CompareLists />
+                ))}
+
+              {collectionStatus === CollectionStatus.Processing && (
                 <ActionCompleteCollectionProcessing />
-              </>
-            )}
+              )}
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

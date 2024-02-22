@@ -122,14 +122,7 @@ export const PeriodPercentage: FC<
     }
 
     return options
-  }, [
-    currentPeriod.endDate,
-    currentPeriod.startDate,
-    fieldId,
-    formatMessage,
-    remainingRights,
-    setError,
-  ])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSelect = (option: SelectOption) => {
     const value = option.value as string

@@ -26,9 +26,9 @@ export interface Collection {
   processed: boolean
 }
 
-export function mapCollection(
+export const mapCollection = (
   collection: MedmaelasofnunExtendedDTO,
-): Collection {
+): Collection => {
   const {
     id,
     sofnunStart: startTime,

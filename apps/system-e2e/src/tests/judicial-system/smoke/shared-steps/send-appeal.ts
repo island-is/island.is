@@ -2,8 +2,11 @@ import { Page, expect } from '@playwright/test'
 import { chooseDocument, verifyUpload } from '../../utils/helpers'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 
-export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
-  await page.goto(`krafa/yfirlit/${caseId}`)
+export const prosecutorAppealsCaseTest = async (page: Page, caseId: string) => {
+  await Promise.all([
+    page.goto(`krafa/yfirlit/${caseId}`),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
   await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
   await Promise.all([
     page.getByRole('button', { name: 'Senda inn kæru' }).click(),
