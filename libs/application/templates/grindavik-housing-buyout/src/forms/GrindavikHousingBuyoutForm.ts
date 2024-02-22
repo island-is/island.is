@@ -1,6 +1,8 @@
 import {
   buildDescriptionField,
+  buildDividerField,
   buildForm,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildStaticTableField,
@@ -14,11 +16,16 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
+  applicantInformationMessages,
   applicantInformationMultiField,
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
-import { formatCurrency } from '@island.is/application/ui-components'
+import {
+  formatCurrency,
+  formatPhoneNumber,
+} from '@island.is/application/ui-components'
+import { GrindavikHousingBuyout } from '../lib/dataSchema'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -116,12 +123,106 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           id: 'overviewMultiField',
           title: m.application.overview.sectionTitle,
           description: m.application.overview.sectionDescription,
+          space: 3,
           children: [
+            buildDividerField({}),
+
+            // Applicant
             buildDescriptionField({
-              id: 'test3',
-              title: '',
-              description: 'Here be OVERVIEW',
+              id: 'applicantOverview',
+              title: m.application.overview.applicantTitle,
+              titleVariant: 'h4',
             }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.name,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as GrindavikHousingBuyout).applicant.name,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.nationalId,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as GrindavikHousingBuyout).applicant.nationalId,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.email,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as GrindavikHousingBuyout).applicant.email,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.tel,
+              colSpan: '6/12',
+              condition: (answers) =>
+                !!(answers as GrindavikHousingBuyout)?.applicant?.phoneNumber,
+              value: ({ answers }) =>
+                formatPhoneNumber(
+                  (answers as GrindavikHousingBuyout).applicant.phoneNumber,
+                ),
+            }),
+            buildDividerField({}),
+
+            // Property
+            buildDescriptionField({
+              id: 'propertyOverview',
+              title: m.application.overview.propertyTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: 'Vesturhóp 34, 240 Grindavík',
+            }),
+            buildDividerField({}),
+
+            // Compensation assessment
+            buildDescriptionField({
+              id: 'compensationAssessmentOverview',
+              title: m.application.overview.compensationAssessmentTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: formatCurrency('84500000'),
+            }),
+            buildDividerField({}),
+
+            // Payout
+            buildDescriptionField({
+              id: 'buyoutPriceOverview',
+              title: m.application.overview.buyoutPriceTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: formatCurrency('80275000'),
+            }),
+            buildDividerField({}),
+
+            // Total loan
+            buildDescriptionField({
+              id: 'totalLoanOverview',
+              title: m.application.overview.totalLoanTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: formatCurrency('52525000'),
+            }),
+            buildDividerField({}),
+
+            // Loan status
+            buildDescriptionField({
+              id: 'loanStatusOverview',
+              title: m.application.overview.loanStatusTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: formatCurrency('41564450'),
+            }),
+            buildDividerField({}),
+
             buildSubmitField({
               id: 'submit',
               title: m.application.general.submit,

@@ -78,5 +78,35 @@ export const application = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Overview section description',
     },
+    applicantTitle: {
+      id: 'ghb.application.overview:applicantTitle',
+      defaultMessage: 'Persónu upplýsingar',
+      description: 'Applicant information title',
+    },
+    propertyTitle: {
+      id: 'ghb.application.overview:propertyTitle',
+      defaultMessage: 'Fasteign',
+      description: 'Property information title',
+    },
+    compensationAssessmentTitle: {
+      id: 'ghb.application.overview:compensationAssessmentTitle',
+      defaultMessage: 'Brunabótamat',
+      description: 'Compensation assessment title',
+    },
+    buyoutPriceTitle: {
+      id: 'ghb.application.overview:buyoutPriceTitle',
+      defaultMessage: 'Kaupverð 95% af brunabótamati',
+      description: 'Buyout Price title',
+    },
+    totalLoanTitle: {
+      id: 'ghb.application.overview:totalLoanTitle',
+      defaultMessage: 'Lán á fasteign',
+      description: 'Total loan title',
+    },
+    loanStatusTitle: {
+      id: 'ghb.application.overview:loanStatusTitle',
+      defaultMessage: 'Staða á láni',
+      description: 'Loan status title',
+    },
   }),
 }
