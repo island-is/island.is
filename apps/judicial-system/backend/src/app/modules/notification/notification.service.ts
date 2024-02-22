@@ -227,6 +227,13 @@ export class NotificationService {
       // We use the first one as the main recipient and the rest as CC
       const recipients = recipientEmail ? recipientEmail.split(',') : undefined
 
+      if (!recipients) {
+        return {
+          address: recipientEmail,
+          success: false,
+        }
+      }
+
       html =
         html.match(/<a/g) || skipTail
           ? html
@@ -2170,7 +2177,7 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    const sendTo = await this.getNotificationRecipients(
+    const sendTo = await this.getWithdrawnNotificationRecipients(
       theCase,
       user,
       wasWithdrawnByProsecution,
@@ -2190,7 +2197,7 @@ export class NotificationService {
     )
   }
 
-  private async getNotificationRecipients(
+  private async getWithdrawnNotificationRecipients(
     theCase: Case,
     user: User,
     wasWithdrawnByProsecution: boolean,
@@ -2223,16 +2230,17 @@ export class NotificationService {
       })
     }
 
-    recipients.push(
-      {
-        name: theCase.registrar?.name,
-        email: theCase.registrar?.email,
-      },
-      {
-        name: theCase.court?.name,
-        email: this.getCourtEmail(theCase.court?.id),
-      },
-    )
+    recipients.push({
+      name: theCase.court?.name,
+      email: this.getCourtEmail(theCase.court?.id),
+    })
+
+    if (theCase.registrar) {
+      recipients.push({
+        name: theCase.registrar.name,
+        email: theCase.registrar.email,
+      })
+    }
 
     if (theCase.appealReceivedByCourtDate) {
       recipients.push({
