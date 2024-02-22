@@ -182,6 +182,7 @@ export enum FieldTypes {
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
   HIDDEN_INPUT = 'HIDDEN_INPUT',
+  HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
 }
 
 export enum FieldComponents {
@@ -248,11 +249,12 @@ export interface DescriptionField extends BaseField {
   titleVariant?: TitleVariants
 }
 
-export interface HiddenInputField extends BaseField {
-  readonly type: FieldTypes.HIDDEN_INPUT
-  component: FieldComponents.HIDDEN_INPUT
-  value?: MaybeWithApplicationAndField<unknown>
-}
+// export interface HiddenInputField extends BaseField {
+//   readonly type: FieldTypes.HIDDEN_INPUT
+//   component: FieldComponents.HIDDEN_INPUT
+//   watchedValue?: string
+//   valueModifier?: (application: Application, field: Field) => unknown
+// }
 
 export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
@@ -505,10 +507,18 @@ export type TableRepeaterField = BaseField & {
   }
 }
 
-export interface HiddenInputField extends Omit<BaseField, 'title'> {
-  readonly type: FieldTypes.HIDDEN_INPUT
+export interface HiddenInputWithWatchedValueField extends BaseField {
+  watchValue: string
+  type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
   component: FieldComponents.HIDDEN_INPUT
-  value?: MaybeWithApplicationAndField<unknown>
+  valueModifier?: (value: unknown) => unknown
+}
+
+export interface HiddenInputField extends BaseField {
+  watchValue?: never
+  type: FieldTypes.HIDDEN_INPUT
+  component: FieldComponents.HIDDEN_INPUT
+  valueModifier?: never
 }
 
 export type Field =
@@ -538,4 +548,5 @@ export type Field =
   | NationalIdWithNameField
   | ActionCardListField
   | TableRepeaterField
+  | HiddenInputWithWatchedValueField
   | HiddenInputField

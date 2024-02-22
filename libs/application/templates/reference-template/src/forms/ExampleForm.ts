@@ -12,7 +12,8 @@ import {
   buildRedirectToServicePortalField,
   buildSelectField,
   buildPhoneField,
-  buildHiddenInputField,
+  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
 import {
   Application,
@@ -54,14 +55,21 @@ export const ExampleForm: Form = buildForm({
           children: [
             buildTextField({
               id: 'person.name',
-              title: m.name,
+              title: m.personName,
             }),
-            buildHiddenInputField({
-              id: 'someHiddenFieldRequired',
-              value: (application: Application) => {
-                return application.answers.name.toString().toUpperCase()
-              },
-            }),
+            // buildHiddenInput({
+            //   id: 'person.someHiddenInputRequired',
+            //   defaultValue: () => {
+            //     return 'validAnswer'
+            //   },
+            // }),
+            // buildHiddenInputWithWatchedValue({
+            //   id: 'person.someHiddenInputWatchedRequired',
+            //   watchValue: 'person.name',
+            //   valueModifier: (watchedValue: any) => {
+            //     return watchedValue + 'Valid'
+            //   },
+            // }),
             buildTextField({
               id: 'person.nationalId',
               title: m.nationalId,
