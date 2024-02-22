@@ -12,11 +12,13 @@ const CaseNumbers: React.FC = () => {
 
   return (
     <Box marginBottom={7}>
-      <Text as="h2" variant="h2">
-        {formatMessage(strings.caseNumber, {
-          caseNumber: `${workingCase.appealCaseNumber}`,
-        })}
-      </Text>
+      {workingCase.appealCaseNumber && (
+        <Text as="h2" variant="h2">
+          {formatMessage(strings.caseNumber, {
+            caseNumber: `${workingCase.appealCaseNumber}`,
+          })}
+        </Text>
+      )}
       <Text as="h3" variant="default" fontWeight="semiBold">
         {formatMessage(strings.courtOfAppealCaseNumber, {
           caseNumber: workingCase.courtCaseNumber,

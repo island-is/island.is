@@ -17,10 +17,9 @@ export const serviceSetup = (services: {
       CORECLR_PROFILER_PATH: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so',
       DD_INTEGRATIONS: '/opt/datadog/integrations.json',
       DD_DOTNET_TRACER_HOME: '/opt/datadog',
-      DD_RUNTIME_METRICS_ENABLED: '1',
+      DD_TRACE_DEBUG: 'true',
       Datadog__Metrics__Port: '5003',
       AudkenniSettings__Retries: '24',
-
       AWS__SystemsManager__ParameterStore__DataProtectionPrefix: {
         dev: '/k8s/identity-server/DataProtectionSecret',
         staging: '/k8s/identity-server/DataProtectionSecret',

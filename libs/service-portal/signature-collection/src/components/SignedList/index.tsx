@@ -59,7 +59,7 @@ const SignedList = () => {
       {!loadingSignedLists && !!signedLists?.length && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
-          {signedLists.map((list: SignatureCollectionSignedList) => {
+          {signedLists?.map((list: SignatureCollectionSignedList) => {
             return (
               <Box marginBottom={5} key={list.id}>
                 <ActionCard
