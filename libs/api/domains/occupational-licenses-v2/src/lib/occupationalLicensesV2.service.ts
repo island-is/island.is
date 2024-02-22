@@ -1,7 +1,12 @@
-import { AuthMiddleware, CurrentUser } from '@island.is/auth-nest-tools'
+import { CurrentUser } from '@island.is/auth-nest-tools'
+import slugify from '@sindresorhus/slugify'
+import capitalize from 'lodash/capitalize'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
-import { RettindiFyrirIslandIsApi } from '@island.is/clients/district-commissioners-licenses'
+import {
+  DistrictCommissionersLicensesService,
+  RettindiFyrirIslandIsApi,
+} from '@island.is/clients/district-commissioners-licenses'
 import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { OccupationalLicenseStatusV2 } from './models/license.model'
@@ -12,27 +17,27 @@ import { info } from 'kennitala'
 import { EducationLicense } from './models/educationLicense.model'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
-import { handle404 } from '@island.is/clients/middlewares'
 import { DistrictCommissionersLicense } from './models/districtCommissionersLicense.model'
-import { addLicenseTypePrefix } from './utils'
+import {
+  addLicenseTypePrefix,
+  mapDistrictCommissionersLicenseStatusToStatus,
+} from './utils'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 export class OccupationalLicensesV2Service {
   constructor(
+    private readonly dcService: DistrictCommissionersLicensesService,
     private readonly dcApi: RettindiFyrirIslandIsApi,
-    private readonly healthApi: HealthDirectorateClientService,
+    private readonly healthService: HealthDirectorateClientService,
     private readonly mmsApi: MMSApi,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
   async getDistrictCommissionerLicenses(
     user: User,
   ): Promise<DistrictCommissionersLicense[] | null> {
-    const licenses = await this.dcApi
-      .withMiddleware(new AuthMiddleware(user))
-      .rettindiFyrirIslandIsGet({
-        kennitala: '0101303019',
-      })
-      .catch(handle404)
+    const licenses = await this.dcService.getLicenses(user)
 
     if (!licenses) {
       return []
@@ -41,24 +46,21 @@ export class OccupationalLicensesV2Service {
     const issuer: OrganizationSlugType = 'syslumenn'
 
     const data: Array<DistrictCommissionersLicense> =
-      licenses?.leyfi
+      licenses
         ?.map((l) => {
-          if (!l || !l.audkenni || !l.stada || !l.stada.titill || !l.titill)
+          if (!l || !l.status || !l.title || !l.validFrom) {
             return
+          }
 
           return {
-            licenseId: addLicenseTypePrefix(
-              l.audkenni,
-              'DistrictCommissioners',
-            ),
-            licenseNumber: l.audkenni,
+            ...l,
+            licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
+            licenseNumber: l.id,
             issuer,
-            profession: l.stada.titill,
-            type: l.titill,
+            profession: l.title,
             dateOfBirth: info(user.nationalId).birthday,
-            validFrom: l.utgafudagur,
-            status: OccupationalLicenseStatusV2.VALID,
-            title: l.titill,
+            validFrom: l.validFrom,
+            status: mapDistrictCommissionersLicenseStatusToStatus(l.status),
           }
         })
         .filter(isDefined) ?? []
@@ -69,24 +71,17 @@ export class OccupationalLicensesV2Service {
     user: User,
     id: string,
   ): Promise<DistrictCommissionersLicense | null> {
-    const res = await this.dcApi
-      .withMiddleware(new AuthMiddleware(user))
-      .rettindiFyrirIslandIsGet2({
-        audkenni: id,
-      })
-      .catch(handle404)
+    const license = await this.dcService.getLicense(user, id)
 
-    if (!res || !res.leyfi) {
+    if (!license) {
       return null
     }
 
-    const license = res.leyfi
-
     if (
-      !license.audkenni ||
-      !license.stada ||
-      !license.stada.titill ||
-      !license.titill
+      !license.id ||
+      !license.status ||
+      !license.title ||
+      !license.validFrom
     ) {
       return null
     }
@@ -94,27 +89,22 @@ export class OccupationalLicensesV2Service {
     const issuer: OrganizationSlugType = 'syslumenn'
 
     return {
-      licenseId: addLicenseTypePrefix(
-        license.audkenni,
-        'DistrictCommissioners',
-      ),
-      licenseNumber: license.audkenni,
+      licenseId: addLicenseTypePrefix(license.id, 'DistrictCommissioners'),
+      licenseNumber: license.id,
       issuer,
-      profession: license.stada.titill,
-      type: license.titill,
+      profession: license.title,
       dateOfBirth: info(user.nationalId).birthday,
-      validFrom: license.utgafudagur,
-      status: OccupationalLicenseStatusV2.VALID,
-      title: license.titill,
+      validFrom: license.validFrom,
+      status: mapDistrictCommissionersLicenseStatusToStatus(license.status),
+      title: license.title,
     }
   }
 
   async getHealthDirectorateLicenses(
     @CurrentUser() user: User,
   ): Promise<Array<HealthDirectorateLicense> | null> {
-    const licenses = await this.healthApi.getHealthDirectorateLicenseToPractice(
-      user,
-    )
+    const licenses =
+      await this.healthService.getHealthDirectorateLicenseToPractice(user)
 
     const issuer: OrganizationSlugType = 'landlaeknir'
 
@@ -137,6 +127,7 @@ export class OccupationalLicensesV2Service {
             licenseId: addLicenseTypePrefix(l.licenseNumber, 'Health'),
             issuer,
             type: l.practice,
+            profession: slugify(l.profession.toLowerCase()),
             licenseNumber: l.licenseNumber,
             title: l.profession,
             id: l.id,
@@ -172,10 +163,9 @@ export class OccupationalLicensesV2Service {
             licenseNumber: l.id,
             issuer,
             profession: l.type,
-            type: l.issuer,
             licenseHolderName: l.fullName,
             licenseHolderNationalId: l.nationalId,
-            titel: `${l.type} - ${l.issuer}`,
+            title: capitalize(l.type),
             dateOfBirth: info(l.nationalId).birthday,
             downloadUrl: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${l.id}`,
             validFrom: new Date(l.issued),

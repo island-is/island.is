@@ -120,10 +120,7 @@ import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
-import {
-  HealthDirectorateClientConfig,
-  HealthDirectorateClientModule,
-} from '@island.is/clients/health-directorate'
+import { HealthDirectorateClientConfig } from '@island.is/clients/health-directorate'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
@@ -254,7 +251,6 @@ const environment = getConfig
     OccupationalLicensesModule,
     OccupationalLicensesV2Module,
     SocialInsuranceModule,
-    HealthDirectorateClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,

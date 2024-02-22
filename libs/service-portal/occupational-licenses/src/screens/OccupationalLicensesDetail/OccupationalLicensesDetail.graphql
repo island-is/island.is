@@ -6,12 +6,12 @@ query getOccupationalLicenseById($input: OccupationalLicensesV2LicenseInput!) {
     profession
     licenseHolderName
     dateOfBirth
-    type
     validFrom
     status
+    type
     title
     ... on OccupationalLicensesV2EducationLicense {
-      downloadURI
+      downloadUrl
     }
   }
 }

@@ -8,17 +8,16 @@ import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import { ProblemError } from '@island.is/nest/problem'
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { License } from './models/license.model'
 import { OccupationalLicensesV2Service } from './occupationalLicensesV2.service'
 import { EducationLicense } from './models/educationLicense.model'
 import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
-import { ProblemType } from '@island.is/shared/problem'
 import { LicenseInput } from './dto/licenseInput.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { LicensesCollection } from './models/licenseCollectionResponse.model'
 import { getLicenseTypeByIdPrefix } from './utils'
+import { DistrictCommissionersLicense } from './models/districtCommissionersLicense.model'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Scopes(ApiScope.internal)
@@ -37,21 +36,13 @@ export class OccupationalLicensesV2Resolver {
   async occupationalLicensesV2(
     @CurrentUser() user: User,
   ): Promise<LicensesCollection | null> {
-    const data =
-      (await this.service.getDistrictCommissionerLicenses(user)) ?? []
-    return {
-      districtCommissioners: data,
-    }
+    return {}
   }
 
   @ResolveField('education', () => [EducationLicense], { nullable: true })
   async educationLicense(
     @CurrentUser() user: User,
   ): Promise<Array<EducationLicense> | null> {
-    throw new ProblemError({
-      type: ProblemType.HTTP_FORBIDDEN,
-      title: 'rbjiao',
-    })
     return this.service.getEducationLicenses(user)
   }
 
@@ -60,6 +51,15 @@ export class OccupationalLicensesV2Resolver {
     @CurrentUser() user: User,
   ): Promise<Array<HealthDirectorateLicense> | null> {
     return this.service.getHealthDirectorateLicenses(user)
+  }
+
+  @ResolveField('districtCommissioners', () => [DistrictCommissionersLicense], {
+    nullable: true,
+  })
+  async districtCommissionersLicense(
+    @CurrentUser() user: User,
+  ): Promise<Array<DistrictCommissionersLicense> | null> {
+    return this.service.getDistrictCommissionerLicenses(user)
   }
 
   @Query(() => License, {
@@ -76,18 +76,19 @@ export class OccupationalLicensesV2Resolver {
       throw new Error('Invalid license id')
     }
 
-    let licenseFunction: (user: User, id: string) => Promise<License | null>
     switch (licenseType.type) {
       case 'DistrictCommissioners':
-        licenseFunction = this.service.getDistrictCommissionerLicenseById
-        break
+        return this.service.getDistrictCommissionerLicenseById(
+          user,
+          licenseType.licenseId,
+        )
       case 'Education':
-        licenseFunction = this.service.getEducationLicenseById
-        break
+        return this.service.getEducationLicenseById(user, licenseType.licenseId)
       case 'Health':
-        licenseFunction = this.service.getHealthDirectorateLicenseById
-        break
+        return this.service.getHealthDirectorateLicenseById(
+          user,
+          licenseType.licenseId,
+        )
     }
-    return licenseFunction(user, licenseType.licenseId)
   }
 }

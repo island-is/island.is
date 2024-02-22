@@ -1,16 +1,14 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { HealthDirectorateLicense } from './healthDirectorateLicense.model'
-import { EducationLicense } from './educationLicense.model'
-import { DistrictCommissionersLicense } from './districtCommissionersLicense.model'
+import { Extensions, Field, ObjectType } from '@nestjs/graphql'
+import { License } from './license.model'
 
 @ObjectType('OccupationalLicensesV2Collection')
 export class LicensesCollection {
-  @Field(() => [HealthDirectorateLicense], { nullable: true })
-  health?: Array<HealthDirectorateLicense>
+  @Field(() => [License], { nullable: true })
+  health?: Array<License>
 
-  @Field(() => [EducationLicense], { nullable: true })
-  education?: Array<EducationLicense>
+  @Field(() => [License], { nullable: true })
+  education?: Array<License>
 
-  @Field(() => [DistrictCommissionersLicense], { nullable: true })
-  districtCommissioners?: Array<DistrictCommissionersLicense>
+  @Field(() => [License], { nullable: true })
+  districtCommissioners?: Array<License>
 }

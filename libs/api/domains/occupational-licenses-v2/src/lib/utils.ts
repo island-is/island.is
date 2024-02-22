@@ -1,3 +1,6 @@
+import { DistrictCommissionersLicenseStatus } from '@island.is/clients/district-commissioners-licenses'
+import { OccupationalLicenseStatusV2 } from './models/license.model'
+
 export type LicenseType = 'Education' | 'Health' | 'DistrictCommissioners'
 
 export const addLicenseTypePrefix = (id: string, type: LicenseType) => {
@@ -33,4 +36,22 @@ export const getLicenseTypeByIdPrefix = (
   }
 
   return { type, licenseId: id.substring(1) }
+}
+
+export const mapDistrictCommissionersLicenseStatusToStatus = (
+  status: DistrictCommissionersLicenseStatus,
+): OccupationalLicenseStatusV2 => {
+  switch (status) {
+    case 'expired':
+      return OccupationalLicenseStatusV2.ERROR
+
+    case 'in-progress':
+      return OccupationalLicenseStatusV2.IN_PROGRESS
+
+    case 'valid':
+      return OccupationalLicenseStatusV2.VALID
+
+    default:
+      return OccupationalLicenseStatusV2.UNKNOWN
+  }
 }

@@ -1,22 +1,16 @@
 import { useParams } from 'react-router-dom'
 import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
 import {
-  CardLoader,
-  EmptyState,
-  ErrorScreen,
   FootNote,
-  HEALTH_DIRECTORATE_SLUG,
   IntroHeader,
   UserInfoLine,
   formSubmit,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserInfo } from '@island.is/auth/react'
-import { LicenseDetail } from '../../components/LicenseDetail'
 import { olMessage as om } from '../../lib/messages'
-import { m } from '@island.is/service-portal/core'
 import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
-import { useState } from 'react'
+import { Problem } from '@island.is/react-spa/shared'
+import { useMemo } from 'react'
 
 type UseParams = {
   id: string
@@ -35,36 +29,38 @@ const OccupationalLicenseDetail = () => {
 
   const license = data?.occupationalLicenseV2
 
-  const introHeader = () => {
+  const introHeader = useMemo(() => {
     switch (license?.__typename) {
       case 'OccupationalLicensesV2EducationLicense':
         return (
           <IntroHeader
+            marginBottom={2}
             title={license?.title ?? formatMessage(om.occupationalLicense)}
             intro={formatMessage(om.educationIntro)}
-            serviceProviderSlug={'syslumenn'}
-            introComponent={
-              <Box paddingTop={3}>
-                <Button
-                  variant="utility"
-                  onClick={() => {
-                    if (license.downloadURI) {
-                      formSubmit(license.downloadURI)
-                    }
-                  }}
-                  icon="download"
-                >
-                  {formatMessage(om.fetchLicense)}
-                </Button>
-              </Box>
-            }
-          />
+            serviceProviderSlug={'menntamalastofnun'}
+          >
+            <Box paddingTop={3}>
+              <Button
+                variant="utility"
+                onClick={() => {
+                  if (license.downloadUrl) {
+                    formSubmit(license.downloadUrl)
+                  }
+                }}
+                icon="download"
+              >
+                {formatMessage(om.fetchLicense)}
+              </Button>
+            </Box>
+          </IntroHeader>
         )
       case 'OccupationalLicensesV2HealthDirectorateLicense':
         return (
           <IntroHeader
+            marginBottom={2}
             title={license?.title ?? formatMessage(om.occupationalLicense)}
             intro={formatMessage(om.healthDirectorateIntro)}
+            fixedImgWidth
             serviceProviderSlug={'landlaeknir'}
             serviceProviderTooltip={formatMessage(om.healthDirectorateTooltip)}
           />
@@ -72,55 +68,71 @@ const OccupationalLicenseDetail = () => {
       case 'OccupationalLicensesV2DistrictCommissionersLicense':
         return (
           <IntroHeader
+            marginBottom={2}
+            fixedImgWidth
             title={license?.title ?? formatMessage(om.occupationalLicense)}
             serviceProviderSlug={'syslumenn'}
           />
         )
     }
-  }
+  }, [license, formatMessage])
 
   return (
     <>
+      {introHeader}
+      {error && !loading && <Problem noBorder={false} error={error} />}
       <Stack dividers space={2}>
-        {introHeader()}
-        {license?.licenseHolderName && (
+        <UserInfoLine
+          loading={loading}
+          label={formatMessage(om.nameOfIndividual)}
+          content={license?.licenseHolderName ?? 'default nafn'}
+        />
+        {(license?.dateOfBirth || loading) && (
           <UserInfoLine
-            label={formatMessage(om.nameOfIndividual)}
-            content={license.licenseHolderName}
-          />
-        )}
-        {license?.dateOfBirth && (
-          <UserInfoLine
+            loading={loading}
             label={formatMessage(om.dateOfBirth)}
-            content={formatDateFns(license.dateOfBirth, 'DD.MM.YYY')}
+            content={
+              license?.dateOfBirth
+                ? formatDateFns(license.dateOfBirth, 'dd.MM.yyyy')
+                : undefined
+            }
           />
         )}
-        {license?.profession && (
+        {(license?.title || loading) && (
           <UserInfoLine
+            loading={loading}
             label={formatMessage(om.profession)}
-            content={license.profession}
+            content={license?.title ?? ''}
           />
         )}
-        {license?.type && (
+        {(license?.type || loading) && (
           <UserInfoLine
+            loading={loading}
             label={formatMessage(om.typeofLicense)}
-            content={license.type}
+            content={license?.type ?? ''}
           />
         )}
-        {license?.issuer && (
+        {(license?.issuer || loading) && (
           <UserInfoLine
+            loading={loading}
             label={formatMessage(om.publisher)}
-            content={license.issuer}
+            content={license?.issuer}
           />
         )}
-        {license?.validFrom && (
+        {(license?.validFrom || loading) && (
           <UserInfoLine
+            loading={loading}
             label={formatMessage(om.dateOfIssue)}
-            content={formatDateFns(license.validFrom, 'DD.MM.YYYY')}
+            content={
+              license?.validFrom
+                ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
+                : undefined
+            }
           />
         )}
-        {license?.status && (
+        {(license?.status || loading) && (
           <UserInfoLine
+            loading={loading}
             label={formatMessage(om.licenseStatus)}
             content={
               <Box
@@ -131,25 +143,25 @@ const OccupationalLicenseDetail = () => {
               >
                 <Text>
                   {formatMessage(
-                    license.status === 'VALID'
+                    license?.status === 'VALID'
                       ? om.validLicense
-                      : license.status === 'LIMITED'
+                      : license?.status === 'LIMITED'
                       ? om.validWithLimitationsLicense
                       : om.invalidLicense,
                   )}
                 </Text>
                 <Icon
                   icon={
-                    license.status === 'VALID'
+                    license?.status === 'VALID'
                       ? 'checkmarkCircle'
-                      : license.status === 'LIMITED'
+                      : license?.status === 'LIMITED'
                       ? 'warning'
                       : 'closeCircle'
                   }
                   color={
-                    license.status === 'VALID'
+                    license?.status === 'VALID'
                       ? 'mint600'
-                      : license.status === 'LIMITED'
+                      : license?.status === 'LIMITED'
                       ? 'yellow600'
                       : 'red600'
                   }

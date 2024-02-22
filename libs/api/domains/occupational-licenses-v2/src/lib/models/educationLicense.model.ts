@@ -6,5 +6,5 @@ import { License } from './license.model'
 })
 export class EducationLicense extends License {
   @Field({ nullable: true })
-  downloadURI?: string
+  downloadUrl?: string
 }

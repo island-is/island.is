@@ -1,23 +1,21 @@
 import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
-import { Box, Stack } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   IntroHeader,
   FootNote,
   m,
-  ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-
+import { isDefined } from '@island.is/shared/utils'
 import { LicenceActionCard } from '../../components/LicenceActionCard'
 import { OccupationalLicensesPaths } from '../../lib/paths'
-import { OrganizationSlugType } from '@island.is/shared/constants'
 import { Problem } from '@island.is/react-spa/shared'
 import { useOrganizations } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
+import { olMessage } from '../../lib/messages'
 
-const OccupationalLicensesOverview = () => {
+export const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({
     errorPolicy: 'all',
   })
@@ -34,47 +32,83 @@ const OccupationalLicensesOverview = () => {
     [data?.occupationalLicensesV2],
   )
 
-  const generateUrl = (route: string, id: string, type: string) =>
-    route
-      .replace(':id', id)
-      .replace(':type', type.charAt(0).toUpperCase() + type.slice(1))
+  const errorString = useMemo(() => {
+    const mapPathsToIssuerString = (paths?: Array<string | number>) => {
+      const mapPath = (path: string | number) => {
+        if (typeof path === 'number') {
+          return
+        }
+        switch (path) {
+          case 'education':
+            return formatMessage(olMessage.education)
+          case 'districtCommissioners':
+            return formatMessage(olMessage.districtCommissioners)
+          case 'health':
+            return formatMessage(olMessage.health)
+          default:
+            return
+        }
+      }
+      if (!paths) {
+        return
+      }
+
+      return paths.map((p) => mapPath(p)).filter(isDefined)
+    }
+    let issuersArray: Array<string> = []
+    if (error?.graphQLErrors) {
+      error.graphQLErrors.forEach((e) => {
+        const paths = e.path ? [...e.path] : []
+        const mappedPaths = mapPathsToIssuerString(paths)
+        if (mappedPaths) {
+          issuersArray = [...issuersArray, ...mappedPaths]
+        }
+      })
+    }
+    return issuersArray.join(', ')
+  }, [error?.graphQLErrors, formatMessage])
 
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
-        serviceProviderSlug={'syslumenn'}
-        serviceProviderTooltip={formatMessage(m.occupationalLicenseTooltip)}
       />
+
       {error && !data && !loading && <Problem error={error} noBorder={false} />}
+      {error && !loading && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(olMessage.fetchOverviewError)}
+          message={formatMessage(olMessage.fetchOverviewErrorDetail, {
+            arg: errorString,
+          })}
+        />
+      )}
 
       <Box marginTop={6}>
         {loading && !error && <CardLoader />}
         <Stack space={2}>
-          {licenses.map((license, index) => (
-            <LicenceActionCard
-              key={index}
-              title={license.title ?? ''}
-              validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
-              url={generateUrl(
-                OccupationalLicensesPaths.OccupationalLicensesDetail,
-                license.licenseId,
-                license.profession,
-              )}
-              image={getOrganizationLogoUrl(
-                license.issuer ?? '',
-                organizations,
-                120,
-              )}
-              status={license.status}
-            />
-          ))}
+          {licenses.map((license, index) => {
+            const image = organizations.find((o) => o.slug === license.issuer)
+              ?.logo?.url
+            return (
+              <LicenceActionCard
+                key={index}
+                title={license.title ?? ''}
+                validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
+                url={OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
+                  ':id',
+                  license.licenseId,
+                )}
+                image={image}
+                status={license.status}
+              />
+            )
+          })}
         </Stack>
       </Box>
-      <FootNote
-        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
-      />
+      <FootNote serviceProviderSlug={'syslumenn'} />
     </Box>
   )
 }

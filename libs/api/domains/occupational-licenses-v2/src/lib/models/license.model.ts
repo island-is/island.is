@@ -9,21 +9,17 @@ export enum OccupationalLicenseStatusV2 {
   VALID = 'valid',
   ERROR = 'error',
   LIMITED = 'limited',
+  IN_PROGRESS = 'in-progress',
+  UNKNOWN = 'unknown',
 }
 
 registerEnumType(OccupationalLicenseStatusV2, {
   name: 'OccupationalLicenseStatusV2',
 })
 
-export enum OccupationalLicenseStatus {
-  VALID = 'valid',
-  ERROR = 'error',
-  LIMITED = 'limited',
-}
-
 @InterfaceType('OccupationalLicenseV2', {
   resolveType(license) {
-    if (license.downloadURI) {
+    if (license.downloadUrl) {
       return 'OccupationalLicensesV2EducationLicense'
     }
     if (license.legalEntityId) {
@@ -45,8 +41,8 @@ export abstract class License {
   @Field()
   profession!: string
 
-  @Field()
-  type!: string
+  @Field({ nullable: true })
+  type?: string
 
   @Field({ nullable: true })
   licenseHolderName?: string

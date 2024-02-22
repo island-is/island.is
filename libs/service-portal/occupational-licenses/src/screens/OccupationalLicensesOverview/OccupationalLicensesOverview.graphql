@@ -1,26 +1,28 @@
-fragment OccupationalLicense on OccupationalLicenseV2 {
-  licenseId
-  issuer
-  profession
-  type
-  validFrom
-  status
-  title
-}
-
 query getOccupationalLicenses {
   occupationalLicensesV2 {
     districtCommissioners {
       __typename
-      ...OccupationalLicense
+      licenseId
+      issuer
+      validFrom
+      status
+      title
     }
     education {
       __typename
-      ...OccupationalLicense
+      licenseId
+      issuer
+      validFrom
+      status
+      title
     }
     health {
       __typename
-      ...OccupationalLicense
+      licenseId
+      issuer
+      validFrom
+      status
+      title
     }
   }
 }

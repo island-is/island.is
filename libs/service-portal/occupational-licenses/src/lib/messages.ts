@@ -95,10 +95,15 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:license-status',
     defaultMessage: 'Staða',
   },
-  fetchOverviewErrorMessage: {
+
+  fetchOverviewError: {
     id: 'sp.occupational-licenses:fetch-overview-error',
+    defaultMessage: 'Ekki tókst að sækja öll gögn',
+  },
+  fetchOverviewErrorDetail: {
+    id: 'sp.occupational-licenses:fetch-overview-error-detail',
     defaultMessage:
-      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja öll gögn. Verið er að vinna í að lagfæra tenginguna.',
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginguna.',
   },
   fetchServerErrorTitle: {
     id: 'sp.occupational-licenses:fetch-server-error-title',
@@ -121,5 +126,17 @@ export const olMessage = defineMessages({
   noLicenses: {
     id: 'sp.occupational-licenses:no-licenses',
     defaultMessage: 'Engin starfsleyfi fundust',
+  },
+  education: {
+    id: 'sp.occupational-licenses:education-issuer',
+    defaultMessage: 'Menntamálastofnun',
+  },
+  districtCommissioners: {
+    id: 'sp.occupational-licenses:district-commissioners-issuer',
+    defaultMessage: 'Sýslumenn',
+  },
+  health: {
+    id: 'sp.occupational-licenses:health-issuer',
+    defaultMessage: 'Landlæknir',
   },
 })
