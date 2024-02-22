@@ -16,69 +16,69 @@
 #         path: node_modules
 #         key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-name: 'Cache'
-description: 'Cache with retry'
+name: "Cache"
+description: "Cache with retry"
 inputs:
   # From https://github.com/actions/cache?tab=readme-ov-file#inputs
   key:
-    description: 'An explicit key for a cache entry. See creating a cache key.'
+    description: "An explicit key for a cache entry. See creating a cache key."
     required: false
   path:
-    description: 'A list of files, directories, and wildcard patterns to cache and restore. See @actions/glob for supported patterns.'
+    description: "A list of files, directories, and wildcard patterns to cache and restore. See @actions/glob for supported patterns."
     required: false
   restore-keys:
-    description: 'An ordered list of prefix-matched keys to use for restoring stale cache if no cache hit occurred for key.'
+    description: "An ordered list of prefix-matched keys to use for restoring stale cache if no cache hit occurred for key."
     required: false
   enableCrossOsArchive:
-    description: 'An optional boolean when enabled, allows Windows runners to save or restore caches that can be restored or saved respectively on other platforms'
+    description: "An optional boolean when enabled, allows Windows runners to save or restore caches that can be restored or saved respectively on other platforms"
     required: false
-    default: 'false'
+    default: "false"
   fail-on-cache-miss:
-    description: 'Fail the workflow if cache entry is not found'
+    description: "Fail the workflow if cache entry is not found"
     required: false
-    default: 'false'
+    default: "false"
   lookup-only:
-    description: 'If true, only checks if cache entry exists and skips download. Does not change save cache behavior'
+    description: "If true, only checks if cache entry exists and skips download. Does not change save cache behavior"
     required: false
-    default: 'false'
+    default: "false"
   # From https://github.com/island-is/cache?tab=readme-ov-file#inputs
   retries:
-    description: 'Number of retries'
+    description: "Number of retries"
     required: false
-    default: '1'
+    default: "1"
   retry-interval:
-    description: 'Time between retries'
+    description: "Time between retries"
     required: false
-    default: '10'
+    default: "10"
   cache-url:
-    description: 'URL to your cache'
+    description: "URL to your cache"
     required: false
     default: https://cache.dev01.devland.is/
   # Custom secrets
   slack-webhook:
-    description: 'Slack webhook'
+    description: "Slack webhook"
     required: false
   slack-notify-on-success:
-    description: 'Notify on success'
+    description: "Notify on success"
     required: false
-    default: 'false'
+    default: "false"
 
 outputs:
   cache-hit:
-    description: 'Did the cache key match and restored the cache?'
+    description: "Did the cache key match and restored the cache?"
     value: ${{ steps.cache-attempt.outputs.cache-hit }}
   result:
-    description: 'Result of the action'
+    description: "Result of the action"
     value: ${{ steps.cache-attempt.outputs.result }}
   success:
-    description: 'Did the action succeed?'
+    description: "Did the action succeed?"
     value: ${{ steps.cache-attempt.outputs.success }}
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Exit if no retries
-      if: inputs.retries < 0
+      if: ${{ inputs.retries < 0 }}
       shell: bash
       run: exit 0
 
@@ -144,7 +144,7 @@ runs:
       env:
         SLACK_CHANNEL: infra-updates
         SLACK_ICON: https://github.com/island-is.png?size=48
-        SLACK_MESSAGE: ''
+        SLACK_MESSAGE: ""
         SLACK_TITLE: Github Actions cache check
         SLACK_USERNAME: Digital Iceland cache bot
         SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
@@ -163,8 +163,8 @@ runs:
       continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_COLOR: 'good'
-        SLACK_MESSAGE: 'Cache success'
+        SLACK_COLOR: "good"
+        SLACK_MESSAGE: "Cache success"
         # Defaults
         SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
         SLACK_ICON: ${{ env.SLACK_ICON }}
@@ -177,8 +177,8 @@ runs:
       continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_COLOR: 'bad'
-        SLACK_MESSAGE: 'Cache failed'
+        SLACK_COLOR: "bad"
+        SLACK_MESSAGE: "Cache failed"
         # Defaults
         SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
         SLACK_ICON: ${{ env.SLACK_ICON }}
