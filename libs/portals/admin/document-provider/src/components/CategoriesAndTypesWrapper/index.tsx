@@ -8,11 +8,14 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
-import { DocumentProviderCategories } from '@island.is/api/schema'
+import {
+  DocumentProviderCategories,
+  DocumentProviderTypes,
+} from '@island.is/api/schema'
 import { ApolloError } from '@apollo/client'
 
 interface Props {
-  dataArray: Array<Omit<DocumentProviderCategories, '__typename'>>
+  dataArray: Array<DocumentProviderCategories | DocumentProviderTypes>
   loading: boolean
   error?: ApolloError
 }
