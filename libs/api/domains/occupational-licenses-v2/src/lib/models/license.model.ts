@@ -42,7 +42,7 @@ export abstract class License {
   profession!: string
 
   @Field({ nullable: true })
-  type?: string
+  permit?: string
 
   @Field({ nullable: true })
   licenseHolderName?: string

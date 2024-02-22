@@ -53,13 +53,14 @@ export class OccupationalLicensesV2Service {
           }
 
           return {
-            ...l,
             licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
             licenseNumber: l.id,
             issuer,
             profession: l.title,
+            permit: l.title,
             dateOfBirth: info(user.nationalId).birthday,
             validFrom: l.validFrom,
+            title: l.title,
             status: mapDistrictCommissionersLicenseStatusToStatus(l.status),
           }
         })
@@ -123,15 +124,17 @@ export class OccupationalLicensesV2Service {
               status = OccupationalLicenseStatusV2.ERROR
           }
           return {
-            ...l,
             licenseId: addLicenseTypePrefix(l.licenseNumber, 'Health'),
-            issuer,
-            type: l.practice,
-            profession: slugify(l.profession.toLowerCase()),
             licenseNumber: l.licenseNumber,
-            title: l.profession,
-            id: l.id,
+            legalEntityId: l.legalEntityId,
+            issuer,
+            profession: l.profession,
+            permit: l.practice,
+            licenseHolderName: l.licenseHolderName,
+            licenseHolderNationalId: l.licenseHolderNationalId,
             dateOfBirth: info(l.licenseHolderNationalId).birthday,
+            validFrom: l.validFrom,
+            title: `${l.profession} - ${l.practice}`,
             status,
           }
         })
@@ -163,12 +166,13 @@ export class OccupationalLicensesV2Service {
             licenseNumber: l.id,
             issuer,
             profession: l.type,
+            permit: l.type,
             licenseHolderName: l.fullName,
             licenseHolderNationalId: l.nationalId,
-            title: capitalize(l.type),
             dateOfBirth: info(l.nationalId).birthday,
             downloadUrl: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${l.id}`,
             validFrom: new Date(l.issued),
+            title: capitalize(l.type),
             status:
               new Date(l.issued) < new Date()
                 ? OccupationalLicenseStatusV2.VALID

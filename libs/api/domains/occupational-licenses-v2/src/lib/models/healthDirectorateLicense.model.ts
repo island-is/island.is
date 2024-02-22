@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { License } from './license.model'
 
 @ObjectType('OccupationalLicensesV2HealthDirectorateLicense', {
@@ -7,10 +7,4 @@ import { License } from './license.model'
 export class HealthDirectorateLicense extends License {
   @Field()
   legalEntityId?: string
-
-  @Field()
-  number?: string
-
-  @Field(() => Int)
-  id?: number
 }

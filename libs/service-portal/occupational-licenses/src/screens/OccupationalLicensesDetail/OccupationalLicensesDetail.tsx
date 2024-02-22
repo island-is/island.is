@@ -58,7 +58,7 @@ const OccupationalLicenseDetail = () => {
         return (
           <IntroHeader
             marginBottom={2}
-            title={license?.title ?? formatMessage(om.occupationalLicense)}
+            title={license?.profession ?? formatMessage(om.occupationalLicense)}
             intro={formatMessage(om.healthDirectorateIntro)}
             fixedImgWidth
             serviceProviderSlug={'landlaeknir'}
@@ -76,6 +76,8 @@ const OccupationalLicenseDetail = () => {
         )
     }
   }, [license, formatMessage])
+
+  console.log(license)
 
   return (
     <>
@@ -98,18 +100,18 @@ const OccupationalLicenseDetail = () => {
             }
           />
         )}
-        {(license?.title || loading) && (
+        {(license?.profession || loading) && (
           <UserInfoLine
             loading={loading}
             label={formatMessage(om.profession)}
-            content={license?.title ?? ''}
+            content={license?.profession ?? ''}
           />
         )}
-        {(license?.type || loading) && (
+        {(license?.permit || loading) && (
           <UserInfoLine
             loading={loading}
             label={formatMessage(om.typeofLicense)}
-            content={license?.type ?? ''}
+            content={license?.permit ?? ''}
           />
         )}
         {(license?.issuer || loading) && (

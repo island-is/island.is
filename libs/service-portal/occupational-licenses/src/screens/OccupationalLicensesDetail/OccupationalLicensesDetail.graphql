@@ -8,7 +8,7 @@ query getOccupationalLicenseById($input: OccupationalLicensesV2LicenseInput!) {
     dateOfBirth
     validFrom
     status
-    type
+    permit
     title
     ... on OccupationalLicensesV2EducationLicense {
       downloadUrl
