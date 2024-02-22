@@ -41,7 +41,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           />
         </GridColumn>
         <GridColumn
-          paddingTop={[5, 5, 5, 2]}
+          paddingTop={[5, 5, 5, 0]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
@@ -89,6 +89,12 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   </Text>
                 </Box>
               ))}
+              <Box marginBottom={5}>
+                <Text variant="h5">{formatMessage(m.candidateNationalId)}</Text>
+                <Text variant="medium">
+                  {formatNationalId(list.candidate.nationalId)}
+                </Text>
+              </Box>
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
