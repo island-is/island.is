@@ -65,14 +65,18 @@ export const StaticTableFormField: FC<Props> = ({
         {summary && (
           <Box
             marginTop={3}
-            display="flex"
+            display={['block', 'block', 'flex']}
             justifyContent="spaceBetween"
             alignItems="center"
             padding={3}
             borderRadius="large"
             background="blue100"
           >
-            <Text variant="medium" fontWeight="semiBold">
+            <Text
+              variant="medium"
+              fontWeight="semiBold"
+              marginBottom={[1, 1, 0]}
+            >
               {formatText(summary.label, application, formatMessage)}
             </Text>
             <Text variant="h3" as="span" color="blue400">
