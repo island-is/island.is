@@ -6,11 +6,12 @@ import {
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { getOptions } from '@island.is/nest/sequelize'
+import { getOptions, enforceReplication } from '@island.is/nest/sequelize'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as dbConfig from '../../../sequelize.config.js'
+const config = enforceReplication(dbConfig)
 
 @Injectable()
 export class SequelizeConfigService implements SequelizeOptionsFactory {
@@ -20,8 +21,6 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
   ) {}
 
   createSequelizeOptions(): SequelizeModuleOptions {
-    const env = process.env.NODE_ENV || 'development'
-    const config = (dbConfig as { [key: string]: object })[env]
     return {
       ...config,
       ...getOptions({ logger: this.logger, recycleConnections: true }),
