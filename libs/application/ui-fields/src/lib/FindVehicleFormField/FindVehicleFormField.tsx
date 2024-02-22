@@ -167,7 +167,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       }
 
       const response = await getDetails(plate.toUpperCase())
-      console.log('response', response)
 
       const details: VehicleDetails | MachineDetails = extractDetails(response)
       setValues(details)
