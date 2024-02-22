@@ -1082,6 +1082,21 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Enska',
       description: 'english',
     },
+    commentSection: {
+      id: 'pl.application:applicant.comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    commentDescription: {
+      id: 'pl.application:applicant.comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'Please leave any additional comments below.',
+    },
+    commentPlaceholder: {
+      id: 'pl.application:applicant.comment.placeholder',
+      defaultMessage: 'Skrifaðu athugasemd hér',
+      description: 'Your comment',
+    },
   }),
 
   errors: defineMessages({

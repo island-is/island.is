@@ -29,6 +29,7 @@ import { OtherParent } from './review-groups/OtherParent'
 import { Payments } from './review-groups/Payments'
 import { PersonalAllowance } from './review-groups/PersonalAllowance'
 import { SpousePersonalAllowance } from './review-groups/SpousePersonalAllowance'
+import { Comment } from './review-groups/Comment'
 import { Employment } from './review-groups/Employment'
 import { Periods } from './review-groups/Periods'
 import { useLocale } from '@island.is/localization'
@@ -117,6 +118,7 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
         ((applicationType === PARENTAL_GRANT ||
           applicationType === PARENTAL_GRANT_STUDENTS) &&
           employerLastSixMonths === YES)) && <Employment {...childProps} />}
+      <Comment {...childProps} />    
       <ReviewGroup>
         <SummaryRights application={application} />
       </ReviewGroup>
