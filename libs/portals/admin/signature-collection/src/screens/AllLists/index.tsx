@@ -304,11 +304,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           )}
           {lists?.length > 0 && allowedToProcess && (
             <Box>
-              {collectionStatus === CollectionStatus.Processing ||
+              {(collectionStatus === CollectionStatus.Processing ||
                 collectionStatus === CollectionStatus.InInitialReview ||
-                (collectionStatus === CollectionStatus.InReview && (
-                  <CompareLists />
-                ))}
+                collectionStatus === CollectionStatus.InReview) && (
+                <CompareLists />
+              )}
 
               {collectionStatus === CollectionStatus.Processing && (
                 <ActionCompleteCollectionProcessing />
