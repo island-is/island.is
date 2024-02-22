@@ -31,10 +31,10 @@ jobs:
 
     outputs:
       # Don't cause a syntax error during JSON parsing if the relevant steps fail producing outputs
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS && steps.build_projects.outputs.CHUNKS || '[]' }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS && steps.e2e_projects.outputs.CHUNKS || '[]' }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS && steps.lint_projects.outputs.CHUNKS || '[]' }}
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS && steps.test_projects.outputs.CHUNKS || '[]' }}
+      BUILD_CHUNKS: '${{ steps.build_projects.outputs.CHUNKS && steps.build_projects.outputs.CHUNKS || ''{"projects": []}'' }}'
+      E2E_CHUNKS: '${{ steps.e2e_projects.outputs.CHUNKS && steps.e2e_projects.outputs.CHUNKS || ''{"projects": []}'' }}'
+      LINT_CHUNKS: '${{ steps.lint_projects.outputs.CHUNKS && steps.lint_projects.outputs.CHUNKS || ''{"projects": []}'' }}'
+      TEST_CHUNKS: '${{ steps.test_projects.outputs.CHUNKS && steps.test_projects.outputs.CHUNKS || ''{"projects": []}'' }}'
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
