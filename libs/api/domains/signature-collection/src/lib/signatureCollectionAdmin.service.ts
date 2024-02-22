@@ -12,7 +12,7 @@ import { SignatureCollectionCandidateLookUp } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
 import { SignatureCollectionAdminClientService } from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
-import { Auth, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
 import {

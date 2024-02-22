@@ -31,6 +31,7 @@ import {
   SignatureCollectionListStatus,
   SignatureCollectionStatus,
 } from './models/status.model'
+import { SignatureCollectionManagerService } from './signatureCollectionManager.service'
 
 @UseGuards(IdsUserGuard, CollectionGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -39,6 +40,7 @@ import {
 export class SignatureCollectionAdminResolver {
   constructor(
     private signatureCollectionService: SignatureCollectionAdminService,
+    private signatureCollectionManagerService: SignatureCollectionManagerService,
   ) {}
 
   @Query(() => SignatureCollection)
@@ -49,30 +51,57 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => [SignatureCollectionList])
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminLists(
     @CurrentUser() user: User,
     @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollectionList[]> {
-    return this.signatureCollectionService.allLists(collection, user)
+    const isManager = user.scope.includes(
+      AdminPortalScope.signatureCollectionManage,
+    )
+    return isManager
+      ? this.signatureCollectionManagerService.allLists(collection, user)
+      : this.signatureCollectionService.allLists(collection, user)
   }
 
   @Query(() => SignatureCollectionList)
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminList(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionList> {
-    return this.signatureCollectionService.list(input.id, user)
+    const isManager = user.scope.includes(
+      AdminPortalScope.signatureCollectionManage,
+    )
+    return isManager
+      ? this.signatureCollectionManagerService.list(input.id, user)
+      : this.signatureCollectionService.list(input.id, user)
   }
 
   @Query(() => [SignatureCollectionSignature], { nullable: true })
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminSignatures(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSignature[]> {
-    return this.signatureCollectionService.signatures(input.id, user)
+    const isManager = user.scope.includes(
+      AdminPortalScope.signatureCollectionManage,
+    )
+    return isManager
+      ? this.signatureCollectionManagerService.signatures(input.id, user)
+      : this.signatureCollectionService.signatures(input.id, user)
   }
 
   @Query(() => SignatureCollectionCandidateLookUp)
@@ -85,14 +114,27 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => SignatureCollectionStatus)
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminStatus(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionStatus> {
-    return this.signatureCollectionService.collectionStatus(user)
+    const isManager = user.scope.includes(
+      AdminPortalScope.signatureCollectionManage,
+    )
+    return isManager
+      ? this.signatureCollectionManagerService.collectionStatus(user)
+      : this.signatureCollectionService.collectionStatus(user)
   }
 
   @Query(() => SignatureCollectionListStatus)
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminListStatus(
     @CurrentUser() user: User,

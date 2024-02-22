@@ -37,7 +37,6 @@ export class ApiUserController {
     private readonly apiUserService: ApiUserService,
   ) {}
 
-  @StaffRolesRules(StaffRole.ADMIN)
   @Scopes(MunicipalitiesFinancialAidScope.employee)
   @Get('')
   @ApiOkResponse({
@@ -47,7 +46,11 @@ export class ApiUserController {
   async getApiKeysByMunicipalityCodes(
     @CurrentStaff() staff: Staff,
   ): Promise<ApiUserModel[]> {
-    return this.apiUserService.findByMunicipalityCode(staff.municipalityIds)
+    if (staff.roles.includes(StaffRole.ADMIN)) {
+      return this.apiUserService.findByMunicipalityCode(staff.municipalityIds)
+    } else {
+      return []
+    }
   }
 
   @StaffRolesRules(StaffRole.ADMIN)

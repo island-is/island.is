@@ -2,15 +2,12 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
-  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
 
-import WomanWithLaptopIllustration from '../assets/Images/WomanWithLaptopIllustration'
-import WomanWithPhoneIllustration from '../assets/Images/WomanWithPhoneIllustration'
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -42,12 +39,6 @@ export const ResidenceGrant: Form = buildForm({
               description:
                 parentalLeaveFormMessages.residenceGrantMessage
                   .residenceGrantPeriodDescriptionLineTwo,
-            }),
-            buildImageField({
-              id: 'imagefield.submit',
-              title: '',
-              image: WomanWithPhoneIllustration,
-              imageWidth: 'auto',
             }),
           ],
         }),
@@ -95,12 +86,6 @@ export const ResidenceGrant: Form = buildForm({
                   type: 'primary',
                 },
               ],
-            }),
-            buildImageField({
-              id: 'residenceGrantApplicationNoBirthDate.image',
-              title: '',
-              image: WomanWithLaptopIllustration,
-              imageWidth: 'auto',
             }),
           ],
         }),

@@ -64,7 +64,7 @@ export const m = defineMessages({
     description: '',
   },
   uploadedTime: {
-    id: 'sp.signatureCollection:signedTime',
+    id: 'sp.signatureCollection:uploadedTime',
     defaultMessage: 'Lesið inn:',
     description: '',
   },
@@ -197,11 +197,6 @@ export const m = defineMessages({
   signeesHeader: {
     id: 'sp.signatureCollection:signeesHeader',
     defaultMessage: 'Yfirlit meðmæla',
-    description: '',
-  },
-  downloadList: {
-    id: 'sp.signatureCollection:downloadList',
-    defaultMessage: 'Sækja lista',
     description: '',
   },
   searchInListPlaceholder: {
