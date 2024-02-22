@@ -4,8 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { OpenApiApplicationController } from './openApiApplication.controller'
 import { OpenApiApplicationService } from './openApiApplication.service'
 import { StaffModule, ApiUserModule } from '../index'
-import { ApplicationModel } from '../application/models'
-
+import { ApplicationModel } from '../application'
 @Module({
   imports: [
     forwardRef(() => ApiUserModule),

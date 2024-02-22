@@ -23,13 +23,17 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
+  CaseAppealState,
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
+import {
+  isTrafficViolationCase,
+  shouldUseAppealWithdrawnRoutes,
+} from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -38,6 +42,7 @@ const useCaseList = () => {
   const [clickedCase, setClickedCase] = useState<
     [id: string | null, showLoading: boolean]
   >([null, false])
+  const [openCaseInNewTab, setOpenCaseInNewTab] = useState<boolean>(false)
 
   const { user, limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -88,16 +93,10 @@ const useCaseList = () => {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        if (
-          findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
-          constants.courtOfAppealRoutes[1]
-        ) {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
-          routeTo = findFirstInvalidStep(
-            constants.courtOfAppealRoutes,
-            caseToOpen,
-          )
+          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
         }
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
@@ -137,14 +136,23 @@ const useCaseList = () => {
       }
     }
 
-    if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
+    if (openCaseInNewTab) {
+      window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
+      setOpenCaseInNewTab(false)
+    } else if (routeTo) {
+      router.push(`${routeTo}/${caseToOpen.id}`)
+    }
   }
 
   const handleOpenCase = useCallback(
-    (id: string) => {
+    (id: string, openInNewTab?: boolean) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      if (clickedCase[0] !== id) {
+      if (openInNewTab === true) {
+        setOpenCaseInNewTab(openInNewTab)
+      }
+
+      if (clickedCase[0] !== id && !openInNewTab) {
         setClickedCase([id, false])
 
         timeouts.push(

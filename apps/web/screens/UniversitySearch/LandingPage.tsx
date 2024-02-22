@@ -5,8 +5,6 @@ import { useRouter } from 'next/router'
 import {
   Accordion,
   AccordionItem,
-  ActionCard,
-  AlertMessage,
   Box,
   GridColumn,
   Hidden,
@@ -17,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   getThemeConfig,
+  NewsCard,
   OrganizationWrapper,
   SliceMachine,
 } from '@island.is/web/components'
@@ -33,7 +32,6 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../types'
-import { LandingPageFooter } from '../Organization/Home/LandingPage'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
@@ -77,10 +75,6 @@ const LandingPage: Screen<LandingPageProps> = ({
     router.push(`${linkResolver('universitysearch').href}?search=${searchTerm}`)
   }
 
-  const routeToStudies = () => {
-    console.log('..')
-  }
-
   return (
     <OrganizationWrapper
       showExternalLinks={true}
@@ -120,7 +114,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                             <Box style={{ width: '1.5rem', height: '1.5rem' }}>
                               <img
                                 src={university.contentfulLogoUrl?.toString()}
-                                alt={`logo`}
+                                alt={`logo for ${university.contentfulTitle}`}
                               />
                             </Box>
                             <LinkV2
@@ -150,7 +144,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                 <Text variant="eyebrow" color="blueberry600">
                   {' '}
                   {/* TODO Translations */}
-                  Háskólar
+                  {n('universities', 'Háskólar')}
                 </Text>
                 {universities.map((university) => {
                   return (
@@ -161,7 +155,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                       <Box style={{ width: '1.5rem', height: '1.5rem' }}>
                         <img
                           src={university.contentfulLogoUrl?.toString()}
-                          alt={`logo`}
+                          alt={`logo for ${university.contentfulTitle}`}
                         />
                       </Box>
                       <LinkV2
@@ -180,35 +174,37 @@ const LandingPage: Screen<LandingPageProps> = ({
         </>
       }
       mainContent={
-        <Box paddingTop={0}>
+        <Box
+          paddingTop={0}
+          style={{ gap: '2.5rem' }}
+          display="flex"
+          flexDirection={'column'}
+        >
           {organizationPage?.slices?.map((slice, index) => {
             return (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                namespace={namespace}
-                slug={organizationPage.slug}
-                fullWidth={organizationPage.theme === 'landing_page'}
-                marginBottom={
-                  index === organizationPage.slices.length - 1 ? 5 : 0
-                }
-                paddingBottom={
-                  !organizationPage.description && index === 0 ? 0 : 6
-                }
-              />
+              <Box key={index}>
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  namespace={namespace}
+                  slug={organizationPage.slug}
+                  fullWidth={organizationPage.theme === 'landing_page'}
+                  marginBottom={
+                    index === organizationPage.slices.length - 1 ? 5 : 0
+                  }
+                  paddingBottom={
+                    !organizationPage.description && index === 0 ? 0 : 6
+                  }
+                />
+              </Box>
             )
           })}
-          <GridColumn offset="1/9" span="7/9">
-            <Box marginY={4}>
-              <AlertMessage
-                type="warning"
-                message="ATH. Tímabundin BETA útgáfa"
-              />
-            </Box>
-          </GridColumn>
-          <GridColumn offset="1/9" span="7/9">
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
             <Input
               placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
@@ -227,26 +223,32 @@ const LandingPage: Screen<LandingPageProps> = ({
               }}
             />
             <button
+              aria-label="Search"
               className={cn(styles.searchIcon)}
               onClick={() => routeToSearch()}
             >
               <Icon size="large" icon="search" color="blue400" />
             </button>
           </GridColumn>
-          <GridColumn offset="1/9" span="7/9">
-            <Box marginY={4}>
-              <ActionCard
-                heading={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
-                text={n(
-                  'straightToApplying',
-                  'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið.',
-                )}
-                cta={{
-                  label: n('applyToUniversity', 'Sækja um í háskóla'),
-                  onClick: routeToStudies, // TODO Route me!
-                }}
-              />
-            </Box>
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <NewsCard
+              title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
+              readMoreText={`${n(
+                'applyToUniversityProgram',
+                'Sækja um í Háskóla',
+              )}`}
+              introduction={n(
+                'straightToApplying',
+                'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið',
+              )}
+              image={{
+                url: 'https://images.ctfassets.net/8k0h54kbe6bj/442DRqHvfQcYnuffRbnbHD/5d27a2e0a399aef064d5b3702821ff0b/woman_in_chair.png',
+              }}
+              href={''}
+            />
           </GridColumn>
         </Box>
       }
@@ -268,11 +270,6 @@ const LandingPage: Screen<LandingPageProps> = ({
           }}
         />
       ))}
-      {organizationPage?.theme === 'landing_page' && (
-        <LandingPageFooter
-          footerItems={organizationPage.organization?.footerItems}
-        />
-      )}
     </OrganizationWrapper>
   )
 }
@@ -292,7 +289,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
@@ -301,7 +298,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },

@@ -25,10 +25,12 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   InstitutionType,
+  NotificationType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 
+import { hasSentNotification } from '../../stepHelper'
 import { strings } from './useAppealAlertBanner.strings'
 import * as styles from './useAppealAlertBanner.css'
 
@@ -64,6 +66,8 @@ export const getAppealDecision = (
       return formatMessage(appealRuling.decisionDismissedFromCourt)
     case CaseAppealRulingDecision.REMAND:
       return formatMessage(appealRuling.decisionRemand)
+    case CaseAppealRulingDecision.DISCONTINUED:
+      return formatMessage(appealRuling.decisionDiscontinued)
     default:
       return undefined
   }
@@ -108,14 +112,27 @@ const useAppealAlertBanner = (
     (isProsecutionUser(user) && prosecutorStatementDate) ||
     (isDefenceUser(user) && defendantStatementDate)
 
+  const appealCompletedDate = hasSentNotification(
+    NotificationType.APPEAL_COMPLETED,
+    workingCase.notifications,
+  ).date
+
+  // WITHDRAWN APPEAL BANNER IS HANDLED HERE:
+  if (appealState === CaseAppealState.WITHDRAWN) {
+    title = formatMessage(strings.statementTitle)
+    description = formatMessage(strings.appealWithdrawnDescription, {
+      appealWithdrawnDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
+    })
+  }
+
   // COURT OF APPEALS AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
-  if (
+  else if (
     user?.institution?.type === InstitutionType.COURT_OF_APPEALS ||
     isSharedWithProsecutor
   ) {
     if (appealState === CaseAppealState.COMPLETED) {
       title = formatMessage(strings.appealCompletedTitle, {
-        appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+        appealedDate: formatDate(appealCompletedDate, 'PPP'),
       })
       description = getAppealDecision(formatMessage, appealRulingDecision)
     } else {
@@ -126,6 +143,7 @@ const useAppealAlertBanner = (
       })
     }
   }
+
   // DEFENDER, PROSECUTOR AND DISTRICT COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
   else if (appealState === CaseAppealState.RECEIVED) {
@@ -170,7 +188,7 @@ const useAppealAlertBanner = (
     }
   } else if (appealState === CaseAppealState.COMPLETED) {
     title = formatMessage(strings.appealCompletedTitle, {
-      appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+      appealedDate: formatDate(appealCompletedDate, 'PPP'),
     })
     description = getAppealDecision(formatMessage, appealRulingDecision)
   }

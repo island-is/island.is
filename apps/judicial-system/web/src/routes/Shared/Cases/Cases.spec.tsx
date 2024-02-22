@@ -229,27 +229,6 @@ jest.mock('next/router', () => ({
 
 describe('Cases', () => {
   describe('Prosecutor users', () => {
-    test('should not display a button to delete a case that does not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      expect(
-        await waitFor(
-          () => screen.getAllByLabelText('Viltu afturkalla kröfu?').length,
-        ),
-      ).toEqual(5)
-    })
-
     test('should not show deleted or past cases', async () => {
       render(
         <MockedProvider

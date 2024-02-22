@@ -22,6 +22,7 @@ type CardProps = {
   href: string
   checkboxId?: string
   checked?: boolean
+  subHeading?: string
 }
 
 export const ListViewCard = ({
@@ -34,6 +35,7 @@ export const ListViewCard = ({
   heading,
   checked,
   href,
+  subHeading,
 }: CardProps) => {
   return (
     <Box>
@@ -74,15 +76,26 @@ export const ListViewCard = ({
             variant="h4"
             color="blue400"
             truncate={false}
-            title={heading}
-            paddingBottom={3}
+            paddingBottom={subHeading ? 0 : 3}
+            lineHeight="sm"
           >
             {heading}
+          </Text>
+          <Text
+            variant="eyebrow"
+            color="blue400"
+            truncate={false}
+            title={subHeading}
+            paddingBottom={3}
+            lineHeight="sm"
+          >
+            {subHeading}
           </Text>
         </LinkV2>
         {infoItems.map((item) => {
           return (
             <Box
+              key={item.title}
               display="flex"
               flexDirection="row"
               width="full"
@@ -95,15 +108,17 @@ export const ListViewCard = ({
             </Box>
           )
         })}
-        <Box>
-          <Checkbox
-            label="Setja í samanburð"
-            labelVariant="small"
-            onChange={onCheck}
-            id={checkboxId}
-            checked={checked}
-          />
-        </Box>
+        {checkboxId && (
+          <Box>
+            <Checkbox
+              label="Setja í samanburð"
+              labelVariant="small"
+              onChange={onCheck}
+              id={checkboxId}
+              checked={checked}
+            />
+          </Box>
+        )}
         <Box paddingTop={3} width="full">
           <Button
             {...(cta.buttonType ?? { variant: cta.variant })}

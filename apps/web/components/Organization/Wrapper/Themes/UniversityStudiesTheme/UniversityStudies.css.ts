@@ -5,14 +5,20 @@ import { themeUtils } from '@island.is/island-ui/theme'
 export const headerBg = style({
   position: 'relative',
   ...themeUtils.responsiveStyle({
-    xs: {},
-    md: {
+    xs: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       height: 340,
-      marginTop: 16,
+    },
+    md: {
+      display: 'block',
+      justifyContent: 'unset',
+      alignItems: 'unset',
+      height: 340,
     },
     lg: {
       height: 444,
-      marginTop: 16,
     },
   }),
 })
@@ -27,6 +33,7 @@ export const iconCircle = style({
   justifyContent: 'center',
   alignItems: 'center',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
+  zIndex: 1000,
   ...themeUtils.responsiveStyle({
     xs: {
       marginTop: 32,
@@ -58,7 +65,7 @@ export const headerBorder = style({
 })
 
 export const headerWrapper = style({
-  marginTop: -20,
+  marginTop: -30,
 })
 
 export const headerLogo = style({
@@ -67,6 +74,7 @@ export const headerLogo = style({
 })
 
 export const footerLogo = style({
+  marginBottom: -30,
   width: 180,
   maxHeight: 180,
   padding: '2rem 0',
@@ -80,10 +88,6 @@ export const footerContainer = style({
   }),
 })
 
-export const footerLogoContainer = style({
-  borderBottom: '1px solid #0B0F66',
-})
-
 export const footerLinksContainer = style({
   padding: '2rem 0',
   flexDirection: 'column',
@@ -94,7 +98,7 @@ export const footerLinksContainer = style({
     md: {
       flexDirection: 'row',
       padding: '3rem 0',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
     },
   }),
 })
@@ -139,11 +143,21 @@ export const ellipsisRight = style({
   }),
 })
 
-export const footerLinkContainer = style({
+export const footerFirstColumnContainer = style({
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  width: '17rem',
+  height: '100%',
+  gap: '1.5rem',
+})
+
+export const footerSecondColumnContainer = style({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'flex-start',
-  gap: '0.625rem',
+  width: '17rem',
+  gap: '1.5rem',
 })
 
 export const navigation = style({
@@ -161,20 +175,3 @@ export const navigation = style({
     },
   }),
 })
-
-// export const desktopTitleContainer = style({
-//   ...themeUtils.responsiveStyle({
-//     xl: {
-//       display: 'flex',
-//       justifyContent: 'center',
-//     },
-//   }),
-// })
-
-// export const desktopTitle = style({
-//   ...themeUtils.responsiveStyle({
-//     xl: {
-//       transform: 'translate(-150px, 165px)',
-//     },
-//   }),
-// })

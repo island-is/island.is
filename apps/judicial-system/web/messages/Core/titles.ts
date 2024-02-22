@@ -245,6 +245,11 @@ export const titles = {
       defaultMessage: 'Kæra til Landsréttar - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir Kæra til Landsréttar skjá',
     }),
+    withdrawAppeal: defineMessage({
+      id: 'judicial.system.core:titles.shared.appeal_to_court_of_appeals',
+      defaultMessage: 'Niðurfelling kæru - Réttarvörslugátt',
+      description: 'Notaður sem titill fyrir Niðurfelling kæru skjá',
+    }),
   },
   admin: {
     users: defineMessage({

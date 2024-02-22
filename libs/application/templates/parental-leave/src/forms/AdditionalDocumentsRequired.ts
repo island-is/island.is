@@ -1,44 +1,38 @@
 import {
-  buildCustomField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
-
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import {
   inReviewFormMessages,
   parentalLeaveFormMessages,
 } from '../lib/messages'
+
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'ParentalLeaveInReviewUpload',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'reviewUpload',
       title: parentalLeaveFormMessages.attachmentScreen.title,
       children: [
-        buildCustomField({
-          id: 'uploadAdditionalFilesInfoScreen',
-          title: parentalLeaveFormMessages.attachmentScreen.title,
-          component: 'UploadAdditionalFilesInfoScreen',
-        }),
         buildMultiField({
           id: 'additionalDocumentsScreen',
           title: parentalLeaveFormMessages.attachmentScreen.title,
+          description: parentalLeaveFormMessages.attachmentScreen.description,
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
+              title: '',
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
@@ -48,6 +42,7 @@ export const AdditionalDocumentsRequired: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
+              uploadMultiple: true,
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',
@@ -61,16 +56,11 @@ export const AdditionalDocumentsRequired: Form = buildForm({
                   name: parentalLeaveFormMessages.attachmentScreen
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
-                  event: 'APPROVE',
+                  event: DefaultEvents.APPROVE,
                 },
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),

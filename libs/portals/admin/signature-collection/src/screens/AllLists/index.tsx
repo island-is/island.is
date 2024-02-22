@@ -13,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -21,17 +20,29 @@ import { useEffect, useState } from 'react'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import header from '../../../assets/headerImage.svg'
-import { Filters, countryAreas, pageSize } from '../../lib/utils'
+import {
+  CollectionStatus,
+  Filters,
+  countryAreas,
+  pageSize,
+} from '../../lib/utils'
 import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
 import CreateCollection from './components/createCollection'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
+import ListInfo from '../List/components/listInfoAlert'
 
-const Lists = () => {
+const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const allLists = useLoaderData() as SignatureCollectionList[]
+  const { allLists, collectionStatus } = useLoaderData() as {
+    allLists: SignatureCollectionList[]
+    collectionStatus: string
+  }
+
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<Filters>({
@@ -107,10 +118,27 @@ const Lists = () => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={header}
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
           />
+          {collectionStatus !== CollectionStatus.InitialActive && (
+            <ListInfo
+              message={formatMessage(
+                collectionStatus === CollectionStatus.InInitialReview
+                  ? m.signatureCollectionInInitialReview
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessing
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessed
+                  : collectionStatus === CollectionStatus.Active
+                  ? m.signatureCollectionActive
+                  : m.signatureCollectionInReview,
+              )}
+            />
+          )}
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
@@ -173,11 +201,15 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-                <CreateCollection />
+                {lists?.length > 0 &&
+                  allowedToProcess &&
+                  (collectionStatus === CollectionStatus.InInitialReview ||
+                    collectionStatus === CollectionStatus.Processing) && (
+                    <CreateCollection />
+                  )}
               </Box>
             </GridColumn>
           </GridRow>
-
           {lists?.length > 0 ? (
             <>
               <Box marginBottom={2}>
@@ -214,6 +246,15 @@ const Lists = () => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
+                        tag={
+                          list.reviewed
+                            ? {
+                                label: m.confirmListReviewed.defaultMessage,
+                                variant: 'mint',
+                                outlined: false,
+                              }
+                            : undefined
+                        }
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',
@@ -242,24 +283,38 @@ const Lists = () => {
           ) : (
             <Text>{formatMessage(m.noLists)}</Text>
           )}
-          <Box marginTop={5}>
-            <Pagination
-              totalItems={lists.length}
-              itemsPerPage={pageSize}
-              page={page}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => setPage(page)}
-                  component="button"
-                >
-                  {children}
-                </Box>
+          {lists?.length > 0 && (
+            <Box marginTop={5}>
+              <Pagination
+                totalItems={lists.length}
+                itemsPerPage={pageSize}
+                page={page}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                    component="button"
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
+          )}
+          {lists?.length > 0 && allowedToProcess && (
+            <Box>
+              {collectionStatus === CollectionStatus.Processing ||
+                collectionStatus === CollectionStatus.InInitialReview ||
+                (collectionStatus === CollectionStatus.InReview && (
+                  <CompareLists />
+                ))}
+
+              {collectionStatus === CollectionStatus.Processing && (
+                <ActionCompleteCollectionProcessing />
               )}
-            />
-          </Box>
-          <CompareLists />
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

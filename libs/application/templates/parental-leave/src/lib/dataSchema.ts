@@ -15,6 +15,10 @@ import {
   PERMANENT_FOSTER_CARE,
   OTHER_NO_CHILDREN_FOUND,
   ADOPTION,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  NO_UNEMPLOYED_BENEFITS,
+  Languages,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
@@ -46,6 +50,12 @@ const PersonalAllowance = z
       path: ['usage'],
     },
   )
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 /**
  * Both periods and employers objects had been removed from here, and the logic has
@@ -104,25 +114,61 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.phoneNumber },
     ),
+    language: z.enum([Languages.IS, Languages.EN]),
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
-  payments: z.object({
-    bank: z.string().refine(
-      (b) => {
-        const bankAccount = formatBankInfo(b)
-        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+  payments: z
+    .object({
+      bank: z.string().refine(
+        (b) => {
+          const bankAccount = formatBankInfo(b)
+          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+        },
+        { params: errorMessages.bank },
+      ),
+      useUnion: z.enum([YES, NO]).optional(),
+      usePrivatePensionFund: z.enum([YES, NO]).optional(),
+      pensionFund: z.string().optional(),
+      privatePensionFund: z.string().optional(),
+      privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
+      union: z.string().optional(),
+    })
+    .refine((p) => ('pensionFund' in p ? !!p.pensionFund : true), {
+      path: ['pensionFund'],
+      params: coreErrorMessages.missingAnswer,
+    })
+    .refine(
+      ({ useUnion, union }) =>
+        useUnion === YES ? !!union && union !== NO_UNION : true,
+      {
+        path: ['union'],
+        params: coreErrorMessages.missingAnswer,
       },
-      { params: errorMessages.bank },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFund }) =>
+        usePrivatePensionFund === YES
+          ? !!privatePensionFund &&
+            privatePensionFund !== NO_PRIVATE_PENSION_FUND
+          : true,
+      {
+        path: ['privatePensionFund'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFundPercentage }) =>
+        usePrivatePensionFund === YES
+          ? !!privatePensionFundPercentage &&
+            privatePensionFundPercentage !== '0'
+          : true,
+      {
+        path: ['privatePensionFundPercentage'],
+        params: coreErrorMessages.missingAnswer,
+      },
     ),
-    pensionFund: z.string().optional(),
-    privatePensionFund: z.string().optional(),
-    privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
-    union: z.string().optional(),
-  }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
-  useUnion: z.enum([YES, NO]),
-  usePrivatePensionFund: z.enum([YES, NO]),
   // We don't have away to validate companyId yet because isCompany return false on personal business ID
   employerNationalRegistryId: z.string().refine((n) => kennitala.isValid(n), {
     params: errorMessages.employerNationalRegistryId,
@@ -163,10 +209,12 @@ export const dataSchema = z.object({
         unemploymentBenefits,
       }) =>
         isSelfEmployed === NO && isReceivingUnemploymentBenefits === YES
-          ? !!unemploymentBenefits
+          ? !!unemploymentBenefits &&
+            unemploymentBenefits !== NO_UNEMPLOYED_BENEFITS
           : true,
       { path: ['unemploymentBenefits'] },
     ),
+  employerLastSixMonths: z.enum([YES, NO]),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
@@ -271,6 +319,68 @@ export const dataSchema = z.object({
     ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
+  fileUpload: z.object({
+    selfEmployedFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    studentFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    singleParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    parentWithoutBirthParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    permanentFosterCare: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    adoption: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    employmentTerminationCertificateFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    benefitsFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    residenceGrant: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    additionalDocuments: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

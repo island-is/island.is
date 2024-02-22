@@ -96,6 +96,7 @@ export enum CaseAppealState {
   APPEALED = 'APPEALED',
   RECEIVED = 'RECEIVED',
   COMPLETED = 'COMPLETED',
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 export enum CaseTransition {
@@ -111,6 +112,7 @@ export enum CaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -158,6 +160,7 @@ export enum CaseAppealRulingDecision {
   DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
   DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
   REMAND = 'REMAND',
+  DISCONTINUED = 'DISCONTINUED',
 }
 
 export enum SessionArrangements {
@@ -171,6 +174,12 @@ export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
   NOT_SHARED = 'NOT_SHARED',
+}
+
+export enum DefendantPlea {
+  GUILTY = 'GUILTY',
+  NOT_GUILTY = 'NOT_GUILTY',
+  NO_PLEA = 'NO_PLEA',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]

@@ -112,7 +112,10 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
       setDatepickerErrorMessage(undefined)
     }
 
-    sendToParent(newDate, !currentDate ? defaultTime : currentTime)
+    sendToParent(
+      newDate,
+      !currentDate && defaultTime ? defaultTime : currentTime,
+    )
   }
 
   const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {

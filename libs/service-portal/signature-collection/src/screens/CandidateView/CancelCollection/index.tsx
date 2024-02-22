@@ -40,7 +40,7 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   }
 
   return (
-    <Box marginTop={[5, 8]} display={'flex'} justifyContent={'center'}>
+    <Box marginTop={5} display={'flex'} justifyContent={'center'}>
       <Modal
         id="cancelCollection"
         isVisible={modalIsOpen}
