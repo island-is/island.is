@@ -75,8 +75,8 @@ export default function Navbar() {
             variant="ghost"
             size="small"
             onClick={() => {
-              setInSettings(false);
-              const step = lists.steps.find((s) => s.type === 'Innsláttur');
+              setInSettings(false)
+              const step = lists.steps.find((s) => s.type === 'Innsláttur')
               if (step) {
                 listsDispatch({
                   type: 'setActiveItem',
@@ -84,7 +84,7 @@ export default function Navbar() {
                     type: 'Step',
                     data: step,
                   },
-                });
+                })
               }
             }}
           >
@@ -209,7 +209,7 @@ export default function Navbar() {
     }
   }
 
-  type ActionType = 'removeStep' | 'removeGroup' | 'removeInput';
+  type ActionType = 'removeStep' | 'removeGroup' | 'removeInput'
 
   function removeItem(type: ItemType, guid: UniqueIdentifier, id: number) {
     const actionTypes: Record<ItemType, ActionType> = {
@@ -221,7 +221,7 @@ export default function Navbar() {
     listsDispatch({
       type: actionTypes[type],
       payload: {
-        guid: guid
+        guid: guid,
       },
     })
     deleteItem(type, id)
@@ -268,7 +268,12 @@ export default function Navbar() {
     formUpdate()
   }
 
-  type DndAction = 'stepOverStep' | 'groupOverStep' | 'groupOverGroup' | 'inputOverGroup' | 'inputOverInput';
+  type DndAction =
+    | 'stepOverStep'
+    | 'groupOverStep'
+    | 'groupOverGroup'
+    | 'inputOverGroup'
+    | 'inputOverInput'
 
   function onDragOver(event: DragOverEvent) {
     const { active, over } = event

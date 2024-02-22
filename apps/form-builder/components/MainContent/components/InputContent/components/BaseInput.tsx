@@ -5,21 +5,21 @@ import {
   Stack,
   Input,
   Checkbox,
+  Option,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import FormBuilderContext from '../../../../../context/FormBuilderContext'
-import { IInput } from '../../../../../types/interfaces'
+import {
+  IInput,
+  IInputSettings,
+  IInputType,
+} from '../../../../../types/interfaces'
 import { translationStation } from '../../../../../services/translationStation'
+import { SingleValue } from 'react-select'
 
 export default function BaseInput() {
-  const {
-    formBuilder,
-    lists,
-    listsDispatch,
-    changeSelectHandler,
-    onFocus,
-    blur,
-  } = useContext(FormBuilderContext)
+  const { formBuilder, lists, listsDispatch, onFocus, blur } =
+    useContext(FormBuilderContext)
   const { activeItem } = lists
   const currentItem = activeItem.data as IInput
   const createAndSortOptions = formBuilder.inputTypes
@@ -48,7 +48,18 @@ export default function BaseInput() {
             backgroundColor="blue"
             isSearchable
             value={defaultOption}
-            onChange={(e) => changeSelectHandler(e)}
+            onChange={(e: SingleValue<Option<string>>) =>
+              listsDispatch({
+                type: 'changeInputType',
+                payload: {
+                  newValue: e?.value ?? 'Default',
+                  inputSettings:
+                    (formBuilder?.inputTypes?.find(
+                      (inputType: IInputType) => inputType?.type === e?.value,
+                    )?.inputSettings as IInputSettings) ?? {},
+                },
+              })
+            }
           />
         </Column>
       </Row>
@@ -61,13 +72,15 @@ export default function BaseInput() {
             name="name"
             value={currentItem.name.is}
             backgroundColor="blue"
-            onChange={(e) => listsDispatch({
-              type: 'changeName',
-              payload: {
-                lang: 'is',
-                newValue: e.target.value,
-              }
-            })}
+            onChange={(e) =>
+              listsDispatch({
+                type: 'changeName',
+                payload: {
+                  lang: 'is',
+                  newValue: e.target.value,
+                },
+              })
+            }
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
           />
@@ -81,13 +94,15 @@ export default function BaseInput() {
             name="nameEn"
             value={currentItem.name.en}
             backgroundColor="blue"
-            onChange={(e) => listsDispatch({
-              type: 'changeName',
-              payload: {
-                lang: 'en',
-                newValue: e.target.value,
-              }
-            })}
+            onChange={(e) =>
+              listsDispatch({
+                type: 'changeName',
+                payload: {
+                  lang: 'en',
+                  newValue: e.target.value,
+                },
+              })
+            }
             onFocus={(e) => onFocus(e.target.value)}
             onBlur={(e) => blur(e)}
             buttons={[

@@ -1,6 +1,6 @@
-import { Forms } from '../screens'
-import { getAllFormsFromOrganisation } from '../services/apiService'
-import { IFormBuilder } from '../types/interfaces'
+import { Forms } from '../../screens'
+import { getAllFormsFromOrganisation } from '../../services/apiService'
+import { IFormBuilder } from '../../types/interfaces'
 
 interface Props {
   formBuilder: IFormBuilder

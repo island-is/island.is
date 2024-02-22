@@ -1,22 +1,12 @@
-import { Forms } from '../screens'
-import { getAllFormsFromOrganisation } from '../services/apiService'
-import { IFormBuilder } from '../types/interfaces'
+import { useEffect } from 'react'
+import router from 'next/router'
 
-interface Props {
-  formBuilder: IFormBuilder
-}
+const Index = () => {
+  useEffect(() => {
+    router.push('/Forms')
+  }, [])
 
-const Index = ({ formBuilder }: Props) => {
-  return <Forms formBuilder={formBuilder} />
+  return <></>
 }
 
 export default Index
-
-export async function getServerSideProps() {
-  const allForms: IFormBuilder = await getAllFormsFromOrganisation(1)
-  return {
-    props: {
-      formBuilder: allForms,
-    },
-  }
-}

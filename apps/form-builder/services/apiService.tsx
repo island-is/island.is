@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 import {
   IForm,
   IFormApplicantType,
@@ -10,12 +11,15 @@ import {
   IStep,
   ItemType,
 } from '../types/interfaces'
+import { groupSchema, stepSchema } from './zodValidation'
 
 const BASEURL = 'https://profun.island.is/umsoknarkerfi/api'
 
-export async function getForm(id: unknown) {
+export async function getForm(id: unknown): Promise<IFormBuilder> {
   try {
     const response = await axios.get(`${BASEURL}/Forms/${id}`)
+    // const validatedFormData: IFormBuilder = formFormBuilderSchema.parse(response.data)
+    // return validatedFormData
     return response.data
   } catch (error) {
     console.error(error)
@@ -86,7 +90,7 @@ export async function updateItem(type: string, data: IStep | IGroup | IInput) {
   }
 }
 
-export async function getNewForm(organisationId: number) {
+export async function getNewForm(organisationId: number): Promise<IForm> {
   try {
     const response = await axios.post(`${BASEURL}/Forms/${organisationId}`)
     return response.data
@@ -117,7 +121,7 @@ export async function addStep(
   stepType: number,
   waitingText: ILanguage,
   callRuleset: boolean,
-): Promise<IStep | null> {
+): Promise<IStep> {
   try {
     const response = await axios.post(`${BASEURL}/Steps`, {
       formId,
@@ -128,9 +132,8 @@ export async function addStep(
       callRuleset,
     })
 
-    const data = response.data
-
-    return data
+    const validatedStep: IStep = stepSchema.parse(response.data)
+    return validatedStep
   } catch (error) {
     console.error('Error in addStep: ', error)
     throw error
@@ -140,16 +143,16 @@ export async function addStep(
 export async function addGroup(
   displayOrder: number,
   parentId: number,
-): Promise<IGroup | null> {
+): Promise<IGroup> {
   try {
     const response = await axios.post(`${BASEURL}/Groups`, {
       displayOrder: displayOrder,
       stepId: parentId,
     })
 
-    const data = response.data
+    const validatedGroup: IGroup = groupSchema.parse(response.data)
 
-    return data
+    return validatedGroup
   } catch (error) {
     console.error('Error in addGroup: ', error)
     throw error
@@ -202,7 +205,6 @@ export async function saveFormSettings(id: number, settings: IInputSettings) {
         },
       },
     )
-    console.log('saved', response.data)
     return response
   } catch (error) {
     console.error('Error in saveFormSettings: ', error)

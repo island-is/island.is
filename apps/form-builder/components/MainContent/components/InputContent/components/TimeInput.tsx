@@ -26,7 +26,7 @@ export default function TimeInput() {
           onChange={(e) => {
             listsDispatch({
               type: 'timeInterval',
-              payload: { data: e ? e.value : '0' }
+              payload: { data: e ? e.value : '0' },
             })
           }}
         />

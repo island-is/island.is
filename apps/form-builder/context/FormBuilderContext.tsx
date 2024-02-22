@@ -1,9 +1,12 @@
-import { ChangeEvent, FocusEvent, SetStateAction, createContext } from 'react'
+import { FocusEvent, SetStateAction, createContext } from 'react'
 import {
   ActiveItem,
   IFormBuilder,
   IFormBuilderContext,
+  IGroup,
+  IInput,
   IListItem,
+  IStep,
   NavbarSelectStatus,
 } from '../types/interfaces'
 
@@ -14,17 +17,14 @@ const FormBuilderContext = createContext<IFormBuilderContext>({
   },
   lists: {
     activeItem: {} as ActiveItem,
-    steps: [],
-    groups: [],
-    inputs: [],
+    steps: [] as IStep[],
+    groups: [] as IGroup[],
+    inputs: [] as IInput[],
   },
   listsDispatch: function (_value: unknown): void {
     throw new Error('Function not implemented.')
   },
   formUpdate: async function (): Promise<void> {
-    throw new Error('Function not implemented.')
-  },
-  setIsTyping: function (_value: SetStateAction<boolean>): void {
     throw new Error('Function not implemented.')
   },
   inSettings: false,
@@ -36,15 +36,6 @@ const FormBuilderContext = createContext<IFormBuilderContext>({
   },
   selectStatus: NavbarSelectStatus.OFF,
   setActiveListItem: function (_value: SetStateAction<IListItem | null>): void {
-    throw new Error('Function not implemented.')
-  },
-  changeSelectHandler: function (_e: unknown): void {
-    throw new Error('Function not implemented.')
-  },
-  changeHandler: function (
-    _e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    _propertyName: string,
-  ): void {
     throw new Error('Function not implemented.')
   },
   blur: function (

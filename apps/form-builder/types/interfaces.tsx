@@ -1,4 +1,3 @@
-
 import { Dispatch, SetStateAction, FocusEvent } from 'react'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { EFormApplicantTypes } from './enums'
@@ -23,7 +22,6 @@ export interface IFormBuilderContext {
   selectStatus: NavbarSelectStatus
   activeListItem?: IListItem | null
   setActiveListItem: Dispatch<SetStateAction<IListItem | null>>
-  changeSelectHandler(e: unknown): void
   blur(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void
   onFocus(e: string): void
 }
@@ -87,6 +85,7 @@ export interface IStep {
   callRuleset: boolean
   isHidden: boolean
   isCompleted: boolean
+  groups: IGroup[]
 }
 
 export interface IGroup {
@@ -141,10 +140,18 @@ export interface ITenging {
 
 export interface IFormBuilder {
   form: IForm
-  forms?: IForm[]
+  forms?: IForm[] | null
   documentTypes: ICertificate[]
-  inputTypes: IInputTypes[]
+  inputTypes: IInputType[]
   applicantTypes: IApplicantType[]
+  listTypes: IListType[]
+}
+
+export interface IListType {
+  id: number
+  type: string
+  name: ILanguage
+  description: ILanguage
 }
 
 export interface IListItem {
@@ -184,11 +191,11 @@ export interface IFormDocumentType {
   documentTypeId: number
 }
 
-export interface IInputTypes {
+export interface IInputType {
   type: string
   name: string
   description: string
-  organizations?: [] //
+  organizations?: []
   inputFields?: object
   inputMetadata?: object
   ruleset?: object

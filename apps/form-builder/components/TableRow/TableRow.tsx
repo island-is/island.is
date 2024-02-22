@@ -72,9 +72,7 @@ const TableRow = ({
           />
         </Column>
         <Column span="1/12">
-          <Box
-            display="flex"
-          >
+          <Box display="flex">
             <TranslationTag translated={translated ? translated : false} />
           </Box>
         </Column>
@@ -90,7 +88,6 @@ const TableRow = ({
               menuLabel={`Aðgerðir ${name}`}
               disclosure={
                 <Button
-
                   icon="menu"
                   circle
                   colorScheme="negative"

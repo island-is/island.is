@@ -68,7 +68,7 @@ export default function Banknumber() {
           value={banki}
           maxLength={4}
           name=""
-          onChange={(e) => console.log(typeof e.target.value)} //handleChange(0, e.target.value)}
+          onChange={(e) => handleChange(0, e.target.value)}
           onBlur={(e) => setBanki(addLeadingZeros(e.target.value, 4))}
         />
       </Column>

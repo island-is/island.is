@@ -12,8 +12,7 @@ import LayoutContext from '../../../../context/LayoutContext'
 import { saveFormSettings } from '../../../../services/apiService'
 
 export default function BaseSettings() {
-  const { formBuilder, formDispatch } =
-    useContext(FormBuilderContext)
+  const { formBuilder, formDispatch } = useContext(FormBuilderContext)
   const { infoDispatch } = useContext(LayoutContext)
   const [focus, setFocus] = useState('')
   const {
@@ -46,8 +45,8 @@ export default function BaseSettings() {
               infoDispatch({
                 type: 'changeApplicationName',
                 payload: {
-                  value: e.target.value
-                }
+                  value: e.target.value,
+                },
               })
             }}
           />
@@ -103,7 +102,11 @@ export default function BaseSettings() {
             label="Umsóknarfrestur"
             placeholderText="Veldu dagsetningu"
             backgroundColor="blue"
-            selected={formBuilder.form.invalidationDate ? new Date(formBuilder.form.invalidationDate) : null}
+            selected={
+              formBuilder.form.invalidationDate
+                ? new Date(formBuilder.form.invalidationDate)
+                : null
+            }
             handleChange={(e) => {
               formDispatch({
                 type: 'invalidationDate',

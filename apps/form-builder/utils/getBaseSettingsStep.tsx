@@ -16,4 +16,5 @@ export const baseSettingsStep = {
   callRuleset: false,
   isHidden: false,
   isCompleted: false,
+  groups: [],
 }
