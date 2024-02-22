@@ -59,11 +59,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_FILTERS,
   GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
@@ -87,7 +83,6 @@ interface UniversitySearchProps {
   locale: string
   universities: Array<UniversityGatewayUniversity>
   organizationPage?: Query['getOrganizationPage']
-  organization?: Query['getOrganization']
   searchQuery: string
 }
 
@@ -148,7 +143,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   searchQuery,
   locale,
   organizationPage,
-  organization,
   universities,
 }) => {
   useEffect(() => {
@@ -672,30 +666,50 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setQuery(e.target.value)
               }}
             />
-            <Box paddingTop={1} display={'flex'} style={{ gap: '0.5rem' }}>
-              {Object.keys(filters).map((key) =>
-                filters[key as keyof FilterProps].map((tag) => (
-                  <Tag key={tag}>
-                    <Box
-                      display={'flex'}
-                      justifyContent={'center'}
-                      alignItems={'center'}
-                      style={{ gap: '0.5rem' }}
-                    >
-                      {formatFilterStrings(tag, key)}
-                      <button
-                        style={{ alignSelf: 'end' }}
-                        onClick={() =>
-                          handleRemoveTag(key as keyof FilterProps, tag)
-                        }
+            <Box
+              paddingTop={2}
+              display={'flex'}
+              justifyContent={'spaceBetween'}
+            >
+              <Box display={'flex'} style={{ gap: '0.5rem' }}>
+                {Object.keys(filters).map((key) =>
+                  filters[key as keyof FilterProps].map((tag) => (
+                    <Tag key={tag}>
+                      <Box
+                        display={'flex'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        style={{ gap: '0.5rem' }}
                       >
-                        <Icon icon={'close'} size="small" />
-                      </button>
-                    </Box>
-                  </Tag>
-                )),
-              )}
+                        {formatFilterStrings(tag, key)}
+                        <button
+                          style={{ alignSelf: 'end' }}
+                          onClick={() =>
+                            handleRemoveTag(key as keyof FilterProps, tag)
+                          }
+                        >
+                          <Icon icon={'close'} size="small" />
+                        </button>
+                      </Box>
+                    </Tag>
+                  )),
+                )}
+              </Box>
+              <Box style={{ flexShrink: 0 }}>
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => {
+                    setSelectedPage(1)
+                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                  }}
+                >
+                  {n('clearAllFilters', 'Hreinsa allar síur')}
+                </Button>
+              </Box>
             </Box>
+
             <ContentBlock>
               <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
@@ -1365,9 +1379,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
       data: { getOrganizationPage },
     },
     {
-      data: { getOrganization },
-    },
-    {
       data: { universityGatewayPrograms },
     },
     filters,
@@ -1377,15 +1388,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: locale === 'is' ? 'haskolanam' : 'university-studies',
@@ -1411,7 +1413,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
     locale,
     namespace,
     organizationPage: getOrganizationPage,
-    organization: getOrganization,
     universities: universityGatewayUniversities,
   }
 }
