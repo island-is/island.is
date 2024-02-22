@@ -39,6 +39,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           title: m.application.propertyInformation.sectionTitle,
           description: m.application.propertyInformation.sectionDescription,
           children: [
+            // TODO: Add data provider for property information
             buildStaticTableField({
               title: 'Vesturhóp 34, 240 Grindavík',
               header: [
@@ -86,7 +87,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           saveItemButtonText: m.application.loanStatus.saveNewLoan,
           getStaticTableData: (_application) => {
             // TODO: Loan data from data provider
-            console.log(_application)
             return [{ status: '1450000', provider: 'Bingo' }]
           },
           fields: {
