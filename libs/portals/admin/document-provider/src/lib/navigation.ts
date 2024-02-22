@@ -23,5 +23,10 @@ export const documentProviderNavigation: PortalNavigationItem = {
       path: DocumentProviderPaths.DocumentProviderPaper,
       description: m.paper,
     },
+    {
+      name: m.catAndTypeName,
+      path: DocumentProviderPaths.DocumentProviderCategoryAndType,
+      description: m.catAndTypeName,
+    },
   ],
 }

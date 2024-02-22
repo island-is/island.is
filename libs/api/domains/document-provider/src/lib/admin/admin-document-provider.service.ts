@@ -12,6 +12,15 @@ import {
   UpdateOrganisationInput,
 } from '../dto'
 import { DocumentProviderPaperMail } from '../models/PaperMail.model'
+import {
+  DocumentProviderTypes,
+  DocumentProviderCategories,
+} from '../models/DocumentTypes.model'
+import {
+  CategoriesAndTypesSharedInput,
+  DocumentProvidedCategoryInput,
+  DocumentProvidedTypeInput,
+} from '../dto/mutateDocumentCategoryOrType.input'
 
 const LOG_CATEGORY = 'document-provider-api'
 
@@ -154,6 +163,7 @@ export class AdminDocumentProviderService {
     ).organisationControllerUpdateHelpdesk(dto)
   }
 
+  // Paper
   async getPaperMailList(): Promise<DocumentProviderPaperMail[]> {
     try {
       const res = await this.documentProviderClientProd.getPaperMailList()
@@ -171,6 +181,133 @@ export class AdminDocumentProviderService {
         error: e,
       })
       throw new InternalServerErrorException(`Paper mail list service error`)
+    }
+  }
+
+  // Types
+  async getDocumentProvidedTypes(): Promise<DocumentProviderTypes[]> {
+    try {
+      logger.debug('Getting document types')
+      const res =
+        await this.documentProviderClientProd.getDocumentProvidedTypes()
+      return res.map((item) => ({
+        ...item,
+        id: item.messageTypeId,
+      }))
+    } catch (e) {
+      logger.error('Get document provider types failed', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw new InternalServerErrorException(`Provider types service error`)
+    }
+  }
+
+  async postDocumentProvidedType(
+    input: CategoriesAndTypesSharedInput,
+  ): Promise<DocumentProviderTypes> {
+    try {
+      logger.debug('Posting document type')
+      const res =
+        await this.documentProviderClientProd.postDocumentProvidedType(input)
+      return {
+        ...res,
+        id: res.messageTypeId,
+      }
+    } catch (e) {
+      const error = 'Post document provider types failed'
+      logger.error(error, {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+  async putDocumentProvidedType(
+    input: DocumentProvidedTypeInput,
+  ): Promise<DocumentProviderTypes> {
+    try {
+      logger.debug('Putting document types')
+      const res = await this.documentProviderClientProd.putDocumentProvidedType(
+        input,
+      )
+      return {
+        ...res,
+        id: res.messageTypeId,
+      }
+    } catch (e) {
+      const error = 'Put document provider types failed'
+      logger.error(error, {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+  // Categories
+  async getDocumentProvidedCategories(): Promise<DocumentProviderCategories[]> {
+    try {
+      logger.debug('Getting document categories')
+      const res =
+        await this.documentProviderClientProd.getDocumentProvidedCategories()
+      return res.map((item) => ({
+        ...item,
+        id: item.categoryId,
+      }))
+    } catch (e) {
+      logger.error('Get document provider categories failed', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw new InternalServerErrorException(
+        `Provider categories service error`,
+      )
+    }
+  }
+
+  async postDocumentProvidedCategory(
+    input: CategoriesAndTypesSharedInput,
+  ): Promise<DocumentProviderCategories> {
+    try {
+      logger.debug('Posting document category')
+      const res =
+        await this.documentProviderClientProd.postDocumentProvidedCategory(
+          input,
+        )
+      return {
+        ...res,
+        id: res.categoryId,
+      }
+    } catch (e) {
+      const error = 'Post document provider category failed'
+      logger.error(error, {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+  async putDocumentProvidedCategory(
+    input: DocumentProvidedCategoryInput,
+  ): Promise<DocumentProviderCategories> {
+    try {
+      logger.debug('Putting document category')
+      const res =
+        await this.documentProviderClientProd.putDocumentProvidedCategory(input)
+      return {
+        ...res,
+        id: res.categoryId,
+      }
+    } catch (e) {
+      const error = 'Put document provider category failed'
+      logger.error(error, {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw new InternalServerErrorException(error)
     }
   }
 

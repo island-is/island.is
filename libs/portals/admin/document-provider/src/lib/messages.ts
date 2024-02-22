@@ -770,4 +770,32 @@ export const m = defineMessages({
     defaultMessage:
       'Listi yfir einstaklinga og fyrirtæki sem vilja fá send skjöl á pappír.',
   },
+
+  // Categories
+  catAndTypeName: {
+    id: 'portals-admin.document-provider:category-types-name',
+    defaultMessage: 'Flokkar og Tegundir',
+  },
+  catAndTypeTitle: {
+    id: 'portals-admin.document-provider:category-types-title',
+    defaultMessage: 'Flokkar og tegundir erinda',
+  },
+  catAndTypeDescription: {
+    id: 'portals-admin.document-provider:category-types-description',
+    defaultMessage: 'Flokkar og tegundir erinda í pósthólfi á Ísland.is',
+  },
+  change: {
+    id: 'portals-admin.document-provider:change',
+    defaultMessage: 'Breyta',
+  },
+
+  categories: {
+    id: 'portals-admin.document-provider:categories',
+    defaultMessage: 'Flokkar',
+  },
+
+  types: {
+    id: 'portals-admin.document-provider:types',
+    defaultMessage: 'Tegundir',
+  },
 })

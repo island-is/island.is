@@ -3,4 +3,5 @@ export enum DocumentProviderPaths {
   DocumentProviderOverview = '/skjalaveitur/yfirlt',
   DocumentProviderDocumentProvidersSingle = '/skjalaveitur/yfirlit/:nationalId',
   DocumentProviderPaper = '/skjalaveitur/pappir',
+  DocumentProviderCategoryAndType = '/skjalaveitur/flokkar-og-tegundir',
 }
