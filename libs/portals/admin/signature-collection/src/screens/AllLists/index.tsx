@@ -255,19 +255,23 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                               }
                             : undefined
                         }
-                        cta={{
-                          label: formatMessage(m.viewList),
-                          variant: 'text',
-                          icon: 'arrowForward',
-                          onClick: () => {
-                            navigate(
-                              SignatureCollectionPaths.SignatureList.replace(
-                                ':id',
-                                list.id,
-                              ),
-                            )
-                          },
-                        }}
+                        cta={
+                          collectionStatus !== CollectionStatus.InitialActive
+                            ? {
+                                label: formatMessage(m.viewList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                onClick: () => {
+                                  navigate(
+                                    SignatureCollectionPaths.SignatureList.replace(
+                                      ':id',
+                                      list.id,
+                                    ),
+                                  )
+                                },
+                              }
+                            : undefined
+                        }
                       />
                     )
                   })}
