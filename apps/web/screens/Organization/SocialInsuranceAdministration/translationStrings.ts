@@ -257,15 +257,20 @@ export const translationStrings = defineMessages({
     defaultMessage: ' ár',
     description: ' ár',
   },
+  ageOfFirst75DisabilityAssessment: {
+    id: 'web.pensionCalculator:yearsSuffix',
+    defaultMessage: ' ár',
+    description: ' ár',
+  },
   livingConditionAbroadInYearsPlaceholder: {
     id: 'web.pensionCalculator:livingConditionAbroadInYearsPlaceholder',
     defaultMessage: '0 ár',
     description: '0 ár',
   },
-  ageOfFirst75DisabilityAssessment: {
-    id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessment',
-    defaultMessage: 'Fyrsta örorkumat',
-    description: 'Fyrsta 75% örorkumat',
+  ageOfFirst75DisabilityAssessmentSuffix: {
+    id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessmentSuffix',
+    defaultMessage: 'ára',
+    description: 'Það sem stendur á eftir það sem notandi slær inn (43 "ára")',
   },
   ageOfFirst75RehabilitationAssessment: {
     id: 'web.pensionCalculator:ageOfFirst75RehabilitationAssessment',

@@ -58,6 +58,8 @@ import {
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
+const CURRENCY_INPUT_MAX_LENGTH = 15
+
 interface PensionCalculatorProps {
   organizationPage: OrganizationPage
   organization: Organization
@@ -688,10 +690,14 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 ? translationStrings.ageOfFirst75DisabilityAssessment
                                 : translationStrings.ageOfFirst75RehabilitationAssessment,
                             )}
-                            suffix={formatMessage(
-                              translationStrings.yearsSuffix,
-                            )}
+                            suffix={
+                              ' ' +
+                              formatMessage(
+                                translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                              )
+                            }
                             type="number"
+                            maxLength={7}
                           />
                         </Box>
                       )}
@@ -743,11 +749,15 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               label={formatMessage(
                                 translationStrings.livingConditionAbroadInYearsLabel,
                               )}
-                              placeholder="0 ár"
-                              type="number"
-                              suffix={formatMessage(
-                                translationStrings.yearsSuffix,
+                              placeholder={formatMessage(
+                                translationStrings.livingConditionAbroadInYearsPlaceholder,
                               )}
+                              type="number"
+                              suffix={
+                                ' ' +
+                                formatMessage(translationStrings.yearsSuffix)
+                              }
+                              maxLength={5}
                             />
                           </Box>
                         )}
@@ -807,6 +817,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           placeholder="%"
                           type="number"
                           suffix="%"
+                          maxLength={4}
                         />
                       </Box>
 
@@ -817,6 +828,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           label={formatMessage(translationStrings.incomeLabel)}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
                       <Box className={styles.inputContainer}>
@@ -828,6 +840,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           )}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
 
@@ -844,6 +857,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           )}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
 
@@ -856,6 +870,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           )}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
 
@@ -868,6 +883,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           )}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
 
@@ -884,6 +900,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           )}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
 
@@ -894,6 +911,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           label={formatMessage(translationStrings.premiumLabel)}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
 
@@ -906,6 +924,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           )}
                           placeholder="kr."
                           currency={true}
+                          maxLength={CURRENCY_INPUT_MAX_LENGTH}
                         />
                       </Box>
 
