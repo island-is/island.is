@@ -116,6 +116,7 @@ import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { InnaClientConfig } from '@island.is/clients/inna'
+import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
@@ -354,6 +355,7 @@ const environment = getConfig
         FiskistofaClientConfig,
         ChargeFjsV2ClientConfig,
         EnergyFundsClientConfig,
+        DocumentsClientV2Config,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,

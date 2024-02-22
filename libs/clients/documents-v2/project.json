@@ -6,25 +6,36 @@
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/clients/documents-v2/**/*.ts"]
+        "lintFilePatterns": ["libs/clients/documents-v2/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/documents-v2"],
       "options": {
         "jestConfig": "libs/clients/documents-v2/jest.config.ts",
         "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
       }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl ${POSTHOLF_BASE_PATH}/swagger/docs/v1 -H \"accept: application/json\" -H \"Authorization:Bearer $(curl -X POST ${POSTHOLF_TOKEN_URL} -d grant_type='client_credentials&client_id=${POSTHOLF_CLIENTID}&client_secret=${POSTHOLF_CLIENT_SECRET}&scope={POSTHOLF_BASE_PATH}/.default' | jq .access_token -r  )\" > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/documents-v2"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/documents-v2/gen/fetch -i libs/clients/documents-v2/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }
