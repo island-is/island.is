@@ -166,6 +166,7 @@ export class AdminDocumentProviderService {
   // Paper
   async getPaperMailList(): Promise<DocumentProviderPaperMail[]> {
     try {
+      logger.debug('Getting paper mail list')
       const res = await this.documentProviderClientProd.getPaperMailList()
 
       return res.map((item) => ({
