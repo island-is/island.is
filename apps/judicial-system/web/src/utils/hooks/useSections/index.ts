@@ -1202,105 +1202,113 @@ const useSections = (
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
-        isActive:
-          isCourtOfAppealsUser(user) &&
-          appealState !== CaseAppealState.COMPLETED,
-        children: [
-          {
-            name: formatMessage(sections.courtOfAppealSection.overview),
-            isActive: isActive(constants.COURT_OF_APPEAL_OVERVIEW_ROUTE),
-            href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
-          },
-          ...(!useAppealWithdrawnSections
-            ? [
-                {
-                  name: formatMessage(sections.courtOfAppealSection.reception),
-                  isActive: isActive(constants.COURT_OF_APPEAL_CASE_ROUTE),
-                  href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
-                  onClick:
-                    !isActive(constants.COURT_OF_APPEAL_CASE_ROUTE) &&
-                    validateFormStepper(
-                      isValid,
-                      [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
-                      workingCase,
-                    ) &&
-                    onNavigationTo
-                      ? async () =>
-                          await onNavigationTo(
+        isActive: appealState && appealState !== CaseAppealState.COMPLETED,
+        children: isCourtOfAppealsUser(user)
+          ? [
+              {
+                name: formatMessage(sections.courtOfAppealSection.overview),
+                isActive: isActive(constants.COURT_OF_APPEAL_OVERVIEW_ROUTE),
+                href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+              },
+              ...(!useAppealWithdrawnSections
+                ? [
+                    {
+                      name: formatMessage(
+                        sections.courtOfAppealSection.reception,
+                      ),
+                      isActive: isActive(constants.COURT_OF_APPEAL_CASE_ROUTE),
+                      href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+                      onClick:
+                        !isActive(constants.COURT_OF_APPEAL_CASE_ROUTE) &&
+                        validateFormStepper(
+                          isValid,
+                          [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                          workingCase,
+                        ) &&
+                        onNavigationTo
+                          ? async () =>
+                              await onNavigationTo(
+                                constants.COURT_OF_APPEAL_CASE_ROUTE,
+                              )
+                          : undefined,
+                    },
+                    {
+                      name: formatMessage(sections.courtOfAppealSection.ruling),
+                      isActive: isActive(
+                        constants.COURT_OF_APPEAL_RULING_ROUTE,
+                      ),
+                      href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
+                      onClick:
+                        !isActive(constants.COURT_OF_APPEAL_RULING_ROUTE) &&
+                        validateFormStepper(
+                          isValid,
+                          [
+                            constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
                             constants.COURT_OF_APPEAL_CASE_ROUTE,
-                          )
-                      : undefined,
-                },
-                {
-                  name: formatMessage(sections.courtOfAppealSection.ruling),
-                  isActive: isActive(constants.COURT_OF_APPEAL_RULING_ROUTE),
-                  href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
-                  onClick:
-                    !isActive(constants.COURT_OF_APPEAL_RULING_ROUTE) &&
-                    validateFormStepper(
-                      isValid,
-                      [
-                        constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
-                        constants.COURT_OF_APPEAL_CASE_ROUTE,
-                      ],
-                      workingCase,
-                    ) &&
-                    onNavigationTo
-                      ? async () =>
-                          await onNavigationTo(
-                            constants.COURT_OF_APPEAL_RULING_ROUTE,
-                          )
-                      : undefined,
-                },
-              ]
-            : []),
-          ...(useAppealWithdrawnSections
-            ? [
-                {
-                  name: formatMessage(sections.courtOfAppealSection.withdrawal),
-                  isActive: isActive(
-                    constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
-                  ),
-                  href: `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
-                  onClick:
-                    !isActive(constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE) &&
-                    validateFormStepper(
-                      isValid,
-                      [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
-                      workingCase,
-                    ) &&
-                    onNavigationTo
-                      ? async () =>
-                          await onNavigationTo(
-                            constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
-                          )
-                      : undefined,
-                },
-              ]
-            : []),
-          {
-            name: formatMessage(sections.courtOfAppealSection.summary),
-            isActive: isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE),
-            href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
-            onClick:
-              !isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE) &&
-              validateFormStepper(
-                isValid,
-                [
-                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
-                  constants.COURT_OF_APPEAL_CASE_ROUTE,
-                  constants.COURT_OF_APPEAL_RULING_ROUTE,
-                ],
-                workingCase,
-              ) &&
-              onNavigationTo
-                ? async () =>
-                    await onNavigationTo(
-                      constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
-                    )
-                : undefined,
-          },
-        ],
+                          ],
+                          workingCase,
+                        ) &&
+                        onNavigationTo
+                          ? async () =>
+                              await onNavigationTo(
+                                constants.COURT_OF_APPEAL_RULING_ROUTE,
+                              )
+                          : undefined,
+                    },
+                  ]
+                : []),
+              ...(useAppealWithdrawnSections
+                ? [
+                    {
+                      name: formatMessage(
+                        sections.courtOfAppealSection.withdrawal,
+                      ),
+                      isActive: isActive(
+                        constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+                      ),
+                      href: `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
+                      onClick:
+                        !isActive(
+                          constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+                        ) &&
+                        validateFormStepper(
+                          isValid,
+                          [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                          workingCase,
+                        ) &&
+                        onNavigationTo
+                          ? async () =>
+                              await onNavigationTo(
+                                constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
+                              )
+                          : undefined,
+                    },
+                  ]
+                : []),
+              {
+                name: formatMessage(sections.courtOfAppealSection.summary),
+                isActive: isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE),
+                href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
+                onClick:
+                  !isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE) &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                      constants.COURT_OF_APPEAL_CASE_ROUTE,
+                      constants.COURT_OF_APPEAL_RULING_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
+                        )
+                    : undefined,
+              },
+            ]
+          : [],
       },
       {
         name:
