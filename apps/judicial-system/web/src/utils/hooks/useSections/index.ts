@@ -13,6 +13,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
+  isProsecutionUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
@@ -75,7 +76,7 @@ const useSections = (
         caseType: type,
       }),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isRestrictionCase(type) &&
         !isCompletedCase(state) &&
         !parentCase,
@@ -238,7 +239,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isInvestigationCase(type) &&
         !isCompletedCase(state) &&
         !parentCase,
@@ -405,8 +406,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
-        (user?.role === UserRole.PROSECUTOR ||
-          user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) &&
+        isProsecutionUser(user) &&
         isIndictmentCase(type) &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
@@ -598,7 +598,9 @@ const useSections = (
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
-        isDistrictCourtUser(user) && !isCompletedCase(state) && !parentCase,
+        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
+        !isCompletedCase(state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
@@ -743,7 +745,9 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       isActive:
-        isDistrictCourtUser(user) && !isCompletedCase(state) && !parentCase,
+        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
+        !isCompletedCase(state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
@@ -894,7 +898,9 @@ const useSections = (
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
-      isActive: isDistrictCourtUser(user) && !isCompletedCase(state),
+      isActive:
+        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
+        !isCompletedCase(state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
@@ -995,7 +1001,7 @@ const useSections = (
     return {
       name: formatMessage(sections.extensionSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isRestrictionCase(type) &&
         Boolean(parentCase) &&
         !isCompletedCase(state),
@@ -1085,7 +1091,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isInvestigationCase(type) &&
         Boolean(parentCase) &&
         !isCompletedCase(state),
