@@ -3,11 +3,16 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildStaticTableField,
   buildSubmitField,
   buildTableRepeaterField,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import {
   applicantInformationMultiField,
   buildFormConclusionSection,
@@ -34,10 +39,35 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           title: m.application.propertyInformation.sectionTitle,
           description: m.application.propertyInformation.sectionDescription,
           children: [
-            buildDescriptionField({
-              id: 'test',
-              title: '',
-              description: 'Here be dragons',
+            buildStaticTableField({
+              title: 'Vesturhóp 34, 240 Grindavík',
+              header: [
+                'Þinglýstir eigendur',
+                'Kennitala',
+                'Heimild',
+                'Eignarhlutfall',
+                'Brunabótamat',
+              ],
+              rows: (application) => {
+                const data = application.externalData.nationalRegistry
+                  .data as NationalRegistryIndividual
+
+                return [
+                  [
+                    data.fullName,
+                    data.nationalId,
+                    'Íbúð',
+                    '100%',
+                    formatCurrency('84500000'),
+                  ],
+                ]
+              },
+              summary: (_application) => {
+                return {
+                  label: 'Kaupverð 95% af brunabótamati',
+                  value: formatCurrency('80275000'),
+                }
+              },
             }),
           ],
         }),
@@ -47,39 +77,34 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
       id: 'loanStatusSection',
       title: m.application.loanStatus.sectionTitle,
       children: [
-        buildMultiField({
-          id: 'loanStatusMultiField',
+        buildTableRepeaterField({
+          id: 'loans',
+          marginTop: 2,
           title: m.application.loanStatus.sectionTitle,
           description: m.application.loanStatus.sectionDescription,
-          children: [
-            buildTableRepeaterField({
-              id: 'loans',
-              marginTop: 2,
-              title: m.application.loanStatus.sectionTitle,
-              addItemButtonText: m.application.loanStatus.addNewLoan,
-              saveItemButtonText: m.application.loanStatus.saveNewLoan,
-              getStaticTableData: (_application) => {
-                // TODO: Loan data from data provider
-                return [{ status: '1450000', provider: 'Bingo' }]
-              },
-              fields: {
-                status: {
-                  component: 'input',
-                  label: m.application.loanStatus.statusOfLoan,
-                  currency: true,
-                },
-                provider: {
-                  component: 'input',
-                  label: m.application.loanStatus.loanProvider,
-                },
-              },
-              table: {
-                format: {
-                  status: (v) => formatCurrency(v),
-                },
-              },
-            }),
-          ],
+          addItemButtonText: m.application.loanStatus.addNewLoan,
+          saveItemButtonText: m.application.loanStatus.saveNewLoan,
+          getStaticTableData: (_application) => {
+            // TODO: Loan data from data provider
+            console.log(_application)
+            return [{ status: '1450000', provider: 'Bingo' }]
+          },
+          fields: {
+            status: {
+              component: 'input',
+              label: m.application.loanStatus.statusOfLoan,
+              currency: true,
+            },
+            provider: {
+              component: 'input',
+              label: m.application.loanStatus.loanProvider,
+            },
+          },
+          table: {
+            format: {
+              status: (v) => formatCurrency(v),
+            },
+          },
         }),
       ],
     }),
