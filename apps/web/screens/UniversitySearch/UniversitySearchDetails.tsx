@@ -210,6 +210,12 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     return universities.filter((x) => x.id === data.universityId)[0] || {}
   }, [universities, data.universityId])
 
+  const htmlParser = (dataEn: string | undefined, dataIs: string) => {
+    return locale === 'en'
+      ? ReactHtmlParser(dataEn ? dataEn : '')
+      : ReactHtmlParser(dataIs ? dataIs : '')
+  }
+
   return (
     <>
       {organizationPage && (
@@ -299,13 +305,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
               <Text marginTop={3} marginBottom={3} variant="default">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.descriptionEn ? data.descriptionEn : '',
-                    )
-                  : ReactHtmlParser(
-                      data.descriptionIs ? data.descriptionIs : '',
-                    )}
+                {htmlParser(data.descriptionEn, data.descriptionIs)}
               </Text>
               {data.externalUrlIs && (
                 <LinkV2
@@ -443,17 +443,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(0)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.admissionRequirementsEn
-                              ? data.admissionRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.admissionRequirementsIs
-                              ? data.admissionRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.admissionRequirementsEn || '',
+                        data.admissionRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}
@@ -468,17 +461,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(1)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.studyRequirementsEn
-                              ? data.studyRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.studyRequirementsIs
-                              ? data.studyRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.studyRequirementsEn || '',
+                        data.studyRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}
