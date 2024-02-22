@@ -55,8 +55,12 @@ export class WorkMachinesService {
   async getWorkMachines(
     user: User,
     input: GetWorkMachineCollectionInput,
-  ): Promise<PaginatedCollectionResponse> {
+  ): Promise<PaginatedCollectionResponse | null> {
     const data = await this.machineService.getWorkMachines(user, input)
+
+    if (!data) {
+      return null
+    }
 
     if (!data.links || !data.pagination || !data.labels) {
       this.logger.warn(
@@ -101,6 +105,10 @@ export class WorkMachinesService {
     input: GetWorkMachineInput,
   ): Promise<WorkMachine | null> {
     const data = await this.machineService.getWorkMachineById(user, input)
+
+    if (!data) {
+      return null
+    }
 
     if (!data.links || !data.labels) {
       this.logger.warn('No links or label in work machine response')

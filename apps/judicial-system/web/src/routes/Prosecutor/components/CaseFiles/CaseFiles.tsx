@@ -259,7 +259,6 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'caseFilesComments',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

@@ -9,7 +9,7 @@ import { IntellectualPropertiesClientService } from '@island.is/clients/intellec
 import { Patent } from './models/patent.model'
 import { Trademark, TrademarkType } from './models/trademark.model'
 import { mapTrademarkType, mapTrademarkSubtype, mapFullAddress } from './mapper'
-import { parseDateIfValid } from './utils'
+import { checkIfDesignValueIsFalsy, parseDateIfValid } from './utils'
 import { Image } from './models/image.model'
 import { PatentIS } from './models/patentIS.model'
 import { PatentEP } from './models/patentEP.model'
@@ -427,7 +427,19 @@ export class IntellectualPropertiesService {
   async getDesignById(user: User, designId: string): Promise<Design | null> {
     const response = await this.ipService.getDesignByHID(user, designId)
 
-    const object: Design = {
+    if (!response) {
+      return null
+    }
+
+    const isFalsy = Object.values(response).every((v) =>
+      checkIfDesignValueIsFalsy(v),
+    )
+
+    if (isFalsy) {
+      return null
+    }
+
+    return {
       ...response,
       id: designId,
       applicationNumber: response.applicationNumber ?? '',
@@ -524,8 +536,6 @@ export class IntellectualPropertiesService {
         nationalId: response?.agent?.ssn ?? '',
       },
     }
-
-    return object
   }
 
   async getDesignImages(
@@ -533,6 +543,10 @@ export class IntellectualPropertiesService {
     designId: string,
   ): Promise<Array<Image> | null> {
     const response = await this.ipService.getDesignImages(user, designId)
+
+    if (!response) {
+      return null
+    }
 
     const designImages = response
       .flatMap(({ designNumber, designImage }) =>
@@ -551,6 +565,7 @@ export class IntellectualPropertiesService {
     user: User,
     designId: string,
     designNumber: string,
+
     imageNumber: string,
     size?: string,
   ) {

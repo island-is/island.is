@@ -16,6 +16,7 @@ import {
   Field,
   FormValue,
   Option,
+  PendingAction,
   RepeaterProps,
 } from '@island.is/application/types'
 
@@ -29,6 +30,7 @@ import {
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
+  Roles,
   SINGLE,
   SPOUSE,
   StartDateOptions,
@@ -38,7 +40,7 @@ import {
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { parentalLeaveFormMessages } from '../lib/messages'
+import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
 
 import { FormatMessage } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
@@ -48,6 +50,7 @@ import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
+import { MessageDescriptor } from 'react-intl'
 import {
   additionalSingleParentMonths,
   daysInMonth,
@@ -820,10 +823,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+
   const employerLastSixMonths = getValueViaPath(
     answers,
     'employerLastSixMonths',
   ) as YesOrNo
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -1004,6 +1012,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUsage,
     employers,
     employerLastSixMonths,
+    isNotStillEmployed,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -1129,22 +1138,18 @@ export const requiresOtherParentApproval = (
 
 export const otherParentApprovalDescription = (
   answers: Application['answers'],
-  formatMessage: FormatMessage,
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
 
   const { isRequestingRights, usePersonalAllowanceFromSpouse } =
     applicationAnswers
 
-  const description =
-    isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
-      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
-      : isRequestingRights === YES
-      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
-      : parentalLeaveFormMessages.reviewScreen
-          .otherParentDescRequestingPersonalDiscount
-
-  return formatMessage(description)
+  return isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+    ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+    : isRequestingRights === YES
+    ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+    : parentalLeaveFormMessages.reviewScreen
+        .otherParentDescRequestingPersonalDiscount
 }
 
 export const allowOtherParentToUsePersonalAllowance = (
@@ -1460,29 +1465,6 @@ export const getRightsDescTitle = (application: Application) => {
     : otherParent === SINGLE
     ? parentalLeaveFormMessages.shared.singleParentRightsDescription
     : parentalLeaveFormMessages.shared.rightsDescription
-}
-
-export const getPeriodImageTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
-  }
-  return parentalLeaveFormMessages.shared.periodsImageTitle
-}
-
-export const getEditOrAddInfoSectionTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
-  }
-  return parentalLeaveFormMessages.shared.editOrAddInfoSectionTitle
-}
-
-export const getEditOrAddInfoSectionDescription = (
-  application: Application,
-) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionDescription
-  }
-  return parentalLeaveFormMessages.shared.editOrAddInfoSectionDescription
 }
 
 export const getFirstPeriodTitle = (application: Application) => {
@@ -1810,6 +1792,67 @@ export const setTestBirthAndExpectedDate = (
   }
 }
 
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.nameGrant
+  }
+
+  return parentalLeaveFormMessages.shared.name
+}
+
+export const otherParentApprovalStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.otherParentRequestApprovalTitle,
+      content: statesMessages.otherParentRequestApprovalDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    const applicationAnswers = getApplicationAnswers(application.answers)
+
+    const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+      applicationAnswers
+
+    const description =
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+        : isRequestingRights === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+        : parentalLeaveFormMessages.reviewScreen
+            .otherParentDescRequestingPersonalDiscount
+
+    return {
+      title: statesMessages.otherParentApprovalDescription,
+      content: description,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const employerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.employerApprovalPendingActionTitle,
+      content: statesMessages.employerApprovalPendingActionDescription,
+      displayStatus: 'info',
+    }
+  } else {
+    return {
+      title: statesMessages.employerWaitingToAssignDescription,
+      content: parentalLeaveFormMessages.reviewScreen.employerDesc,
+      displayStatus: 'info',
+    }
+  }
+}
+
 export const getChildrenOptions = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData) as {
     children: {
@@ -1879,4 +1922,52 @@ export const showResidenceGrant = (application: Application) => {
   )
     return true
   return false
+}
+
+export const getConclusionScreenSteps = (
+  application: Application,
+): MessageDescriptor[] => {
+  const {
+    isSelfEmployed,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    employerLastSixMonths,
+    employers,
+  } = getApplicationAnswers(application.answers)
+
+  const steps = [
+    parentalLeaveFormMessages.finalScreen.step3,
+  ] as MessageDescriptor[]
+
+  // Added this check for applications that is in the db already
+  const oldApplication = applicationType === undefined
+  const isBeneficiaries = !oldApplication
+    ? applicationType === PARENTAL_LEAVE
+      ? isReceivingUnemploymentBenefits === YES
+      : false
+    : false
+  const isStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === YES,
+  )
+
+  if (isSelfEmployed === NO && !isBeneficiaries) {
+    steps.unshift(parentalLeaveFormMessages.reviewScreen.employerDesc)
+  }
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isStillEmployed
+  ) {
+    steps.unshift(parentalLeaveFormMessages.reviewScreen.employerDesc)
+  }
+
+  if (
+    requiresOtherParentApproval(application.answers, application.externalData)
+  ) {
+    steps.unshift(otherParentApprovalDescription(application.answers))
+  }
+
+  return steps
 }

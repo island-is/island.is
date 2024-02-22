@@ -23,6 +23,13 @@ export class DocumentBuilder {
       url: 'https://thjonustusidur.rsk.is/alagningarsedill',
       fileType: FileType.URL,
     },
+    {
+      senderName: 'Ríkisskattstjóri',
+      senderNatReg: '5402696029',
+      subjectContains: 'Skjöl send í undirritun fyrir umsókn',
+      url: '',
+      fileType: FileType.URL,
+    },
   ]
 
   public buildDocument(documentDto: DocumentInfoDTO): Document {

@@ -6,9 +6,13 @@ export const m = defineMessages({
     defaultMessage: 'Veldu umboð',
     description: 'Choose delegation',
   },
-  noDelegations: {
-    id: 'sp.access-control-delegations:empty',
+  noOutgoingDelegations: {
+    id: 'sp.access-control-delegations:empty-outgoing',
     defaultMessage: 'Umboð sem þú hefur veitt öðrum munu birtast hér.',
+  },
+  noIncomingDelegations: {
+    id: 'sp.access-control-delegations:empty-incoming',
+    defaultMessage: 'Þegar aðrir hafa veitt þér umboð birtast þau hér.',
   },
   noDelegationsImageAlt: {
     id: 'sp.access-control-delegations:empty-image-alt',

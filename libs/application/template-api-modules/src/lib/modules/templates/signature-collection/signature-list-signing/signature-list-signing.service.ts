@@ -57,8 +57,8 @@ export class SignatureListSigningService extends BaseTemplateApiService {
           return errorMessages.active
         case ReasonKey.AlreadySigned:
           return errorMessages.signer
-        case ReasonKey.AlreadyOwner:
-          return errorMessages.owner
+        case ReasonKey.noInvalidSignature:
+          return errorMessages.invalidSignature
         default:
           return errorMessages.deniedByService
       }
