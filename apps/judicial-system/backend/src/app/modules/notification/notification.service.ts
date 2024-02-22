@@ -227,13 +227,6 @@ export class NotificationService {
       // We use the first one as the main recipient and the rest as CC
       const recipients = recipientEmail ? recipientEmail.split(',') : undefined
 
-      if (!recipients) {
-        return {
-          address: recipientEmail,
-          success: false,
-        }
-      }
-
       html =
         html.match(/<a/g) || skipTail
           ? html
