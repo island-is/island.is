@@ -2,21 +2,21 @@ import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './FormGroup.css'
 type Props = {
   title?: string
-  description?: string
+  intro?: string
   children?: React.ReactNode
 }
 
-export const FormGroup = ({ title, description, children }: Props) => {
+export const FormGroup = ({ title, intro, children }: Props) => {
   return (
     <Box className={styles.formGroup}>
-      {(title || description) && (
+      {(title || intro) && (
         <Box>
           {title && (
-            <Text marginBottom={description ? 2 : 0} variant="h4">
+            <Text marginBottom={intro ? 2 : 0} variant="h4">
               {title}
             </Text>
           )}
-          {description && <Text>{description}</Text>}
+          {intro && <Text>{intro}</Text>}
         </Box>
       )}
       {children}

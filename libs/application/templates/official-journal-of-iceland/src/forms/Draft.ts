@@ -30,12 +30,12 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: Routes.REQUIREMENTS,
-      title: requirements.general.sectionTitle,
+      title: requirements.general.section,
       children: [],
     }),
     buildSection({
       id: Routes.ADVERT,
-      title: advert.general.sectionTitle,
+      title: advert.general.section,
       children: [
         buildCustomField({
           id: 'advert',

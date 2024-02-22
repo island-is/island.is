@@ -14,3 +14,9 @@ export const titleWrapper = style({
   justifyContent: 'space-between',
   alignItems: 'center',
 })
+
+export const childrenWrapper = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing[6],
+})

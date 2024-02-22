@@ -167,7 +167,7 @@ export const Advert = ({
           <Box width="full">
             <HTMLEditor
               config={baseConfig}
-              value={answers.advert?.documentContents as HTMLText}
+              value={answers.advert?.document as HTMLText}
               name={InputFields.advert.documentContents}
               error={
                 errors &&

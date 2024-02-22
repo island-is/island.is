@@ -22,7 +22,7 @@ export const InputFields = {
     subType: 'advert.subType',
     title: 'advert.title',
     template: 'advert.template',
-    documentContents: 'advert.documentContents',
+    document: 'advert.document',
   },
   [Routes.SIGNATURE]: {
     type: 'signature.type',

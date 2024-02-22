@@ -7,6 +7,11 @@ export const tabWrapper = style({
   background: theme.color.white,
 })
 
+export const signatureWrapper = style({
+  paddingBlockStart: spacing * 2,
+  background: theme.color.white,
+})
+
 export const wrapper = style({
   width: '100%',
   padding: spacing,

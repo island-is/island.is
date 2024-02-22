@@ -33,7 +33,7 @@ export const MEMBER_INDEX = '{memberIndex}'
 export const INSTITUTION_INDEX = '{institutionIndex}'
 
 export const INTERVAL_TIMER = 3000
-export const DEBOUNCE_TIMER = 500
+export const DEBOUNCE_INPUT_TIMER = 250
 
 export const INITIAL_ANSWERS = {
   [Routes.TEST]: {
@@ -50,42 +50,42 @@ export const INITIAL_ANSWERS = {
     subType: '',
     title: '',
     template: '',
-    documentContents: '',
+    document: '',
   },
   [Routes.SIGNATURE]: {
-    signatureType: '',
-    signatureContents: '',
-    signature: {
-      regular: {
+    type: '',
+    signature: '',
+    regular: [
+      {
         institution: '',
         date: '',
         members: [
           {
-            textAbove: '',
+            above: '',
             name: '',
-            textBelow: '',
-            textAfter: '',
+            below: '',
+            after: '',
           },
         ],
       },
-      committee: {
-        institution: '',
-        date: '',
-        chairman: {
-          textAbove: '',
+    ],
+    committee: {
+      institution: '',
+      date: '',
+      chairman: {
+        textAbove: '',
+        name: '',
+        textAfter: '',
+        textBelow: '',
+      },
+      members: [
+        {
           name: '',
-          textAfter: '',
           textBelow: '',
         },
-        members: [
-          {
-            name: '',
-            textBelow: '',
-          },
-        ],
-      },
-      additonalSignature: '',
+      ],
     },
+    additional: '',
   },
   [Routes.ATTACHMENTS]: {
     files: [],

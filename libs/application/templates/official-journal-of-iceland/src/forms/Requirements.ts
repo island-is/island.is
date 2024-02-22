@@ -24,7 +24,7 @@ export const Requirements: Form = buildForm({
   children: [
     buildSection({
       id: Routes.REQUIREMENTS,
-      title: requirements.general.sectionTitle,
+      title: requirements.general.section,
       children: [
         buildMultiField({
           id: Routes.REQUIREMENTS,
@@ -59,7 +59,7 @@ export const Requirements: Form = buildForm({
     }),
     buildSection({
       id: Routes.ADVERT,
-      title: advert.general.sectionTitle,
+      title: advert.general.section,
       children: [],
     }),
     buildSection({

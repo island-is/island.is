@@ -38,7 +38,7 @@ export const dataSchema = z.object({
       title: z.string().refine((v) => v && v.length, {
         params: error.emptyFieldError,
       }),
-      documentContents: z.string().refine((v) => v && v.length),
+      document: z.string().refine((v) => v && v.length),
       template: z.string().optional(),
       subType: z.string().optional(),
     })
@@ -55,48 +55,39 @@ export const dataSchema = z.object({
     }),
   signature: z
     .object({
-      type: z.string().optional(),
-      contents: z.string().optional(),
-      regular: z
-        .array(
-          z.object({
-            institution: z.string(),
-            date: z.string(),
-            members: z
-              .array(
-                z.object({
-                  textAbove: z.string().optional(),
-                  name: z.string(),
-                  textBelow: z.string().optional(),
-                  textAfter: z.string().optional(),
-                }),
-              )
-              .optional(),
-          }),
-        )
-        .refine((v) => {
-          console.log(v)
-          return v
+      type: z.string(),
+      signature: z.string(),
+      regular: z.array(
+        z.object({
+          institution: z.string(),
+          date: z.string(),
+          members: z.array(
+            z.object({
+              above: z.string(),
+              name: z.string(),
+              below: z.string(),
+              after: z.string(),
+            }),
+          ),
         }),
+      ),
       committee: z.object({
         institution: z.string(),
-        date: z.string().optional(),
+        date: z.string(),
         chairman: z.object({
-          textAbove: z.string().optional(),
+          textAbove: z.string(),
           name: z.string(),
-          textBelow: z.string().optional(),
-          textAfter: z.string().optional(),
+          textBelow: z.string(),
+          textAfter: z.string(),
         }),
-        members: z
-          .array(
-            z.object({
-              name: z.string(),
-              textBelow: z.string().optional(),
-            }),
-          )
-          .optional(),
+        members: z.array(
+          z.object({
+            name: z.string(),
+            textBelow: z.string(),
+          }),
+        ),
       }),
-      additionalSignature: z.string().optional(),
+      additional: z.string().optional(),
     })
     .superRefine((signature, ctx) => {
       if (signature.type === 'regular') {

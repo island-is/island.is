@@ -83,7 +83,7 @@ export const SignatureSection = ({ application, errors }: Props) => {
   return (
     <FormGroup
       title={f(advert.signatureChapter.title)}
-      description={f(advert.signatureChapter.intro)}
+      intro={f(advert.signatureChapter.intro)}
     >
       <Box width="full">
         <Signatures

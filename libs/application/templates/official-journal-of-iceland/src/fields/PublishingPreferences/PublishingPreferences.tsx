@@ -154,7 +154,7 @@ export const Publishing = ({ application, errors }: OJOIFieldBaseProps) => {
       </FormGroup>
       <FormGroup
         title={f(publishing.communicationChapter.title)}
-        description={f(publishing.communicationChapter.intro)}
+        intro={f(publishing.communicationChapter.intro)}
       >
         <Box width="full">
           <Controller
@@ -178,7 +178,7 @@ export const Publishing = ({ application, errors }: OJOIFieldBaseProps) => {
 
       <FormGroup
         title={f(publishing.messagesChapter.title)}
-        description={f(publishing.messagesChapter.intro)}
+        intro={f(publishing.messagesChapter.intro)}
       >
         <Box width="full">
           <InputController

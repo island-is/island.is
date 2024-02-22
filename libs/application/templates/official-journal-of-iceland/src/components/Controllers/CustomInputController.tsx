@@ -8,7 +8,7 @@ import { useDebounce } from 'react-use'
 import { OJOIApplication } from '../../lib/types'
 import { dotToObj, getLocalError, keyMapper } from '../../lib/utils'
 import {
-  DEBOUNCE_TIMER,
+  DEBOUNCE_INPUT_TIMER,
   INITIAL_ANSWERS,
   INTERVAL_TIMER,
 } from '../../lib/constants'
@@ -166,7 +166,7 @@ export const CustomInputController = ({
     () => {
       setLazyValue(localValue)
     },
-    DEBOUNCE_TIMER,
+    DEBOUNCE_INPUT_TIMER,
     [localValue],
   )
 

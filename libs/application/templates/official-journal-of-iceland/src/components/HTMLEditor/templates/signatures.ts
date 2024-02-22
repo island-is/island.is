@@ -87,14 +87,7 @@ export const regularSignatureTemplate = ({
           )}
           <div class="${className}">
             ${signatureGroup?.members
-              ?.map((s) =>
-                signatureTemplate(
-                  s.name,
-                  s.textAfter,
-                  s.textAbove,
-                  s.textBelow,
-                ),
-              )
+              ?.map((s) => signatureTemplate(s.name, s.after, s.above, s.below))
               .join('')}
           </div>
         </div>`

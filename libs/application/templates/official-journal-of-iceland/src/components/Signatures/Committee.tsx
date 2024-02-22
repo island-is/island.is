@@ -1,7 +1,6 @@
 import { Box, Text, Button } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
-import { advert } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   CommitteeSignatureState,
@@ -13,15 +12,17 @@ import {
   DatePickerController,
   InputController,
 } from '@island.is/shared/form-fields'
-import { MEMBER_INDEX } from '../../lib/constants'
+import { INITIAL_ANSWERS, MEMBER_INDEX } from '../../lib/constants'
 import { getErrorViaPath } from '@island.is/application/core'
+import { signatures } from '../../lib/messages/signatures'
 
 type ChairmanKey = keyof CommitteeSignatureState['chairman']
 type MemberKey = keyof Required<CommitteeSignatureState>['members'][0]
 
+type LocalState = typeof INITIAL_ANSWERS['signature']
 type Props = Pick<OJOIFieldBaseProps, 'errors'> & {
-  state: CommitteeSignatureState
-  setState: (state: CommitteeSignatureState) => void
+  state: LocalState
+  setState: (state: LocalState) => void
   addSignature?: boolean
 }
 
@@ -35,7 +36,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
 
   const onCommitteeChairmanChange = (key: ChairmanKey, value: string) => {
     const newState = cloneDeep(state)
-    newState.chairman[key] = value
+    newState.committee.chairman[key] = value
     setState(newState)
   }
 
@@ -45,8 +46,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
     value: string,
   ) => {
     const newState = cloneDeep(state)
-    if (!newState.members) return
-    newState.members[index][key] = value
+    if (!newState.committee.members) return
+    newState.committee.members[index][key] = value
     setState(newState)
   }
 
@@ -55,26 +56,26 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
     value: string,
   ) => {
     const newState = cloneDeep(state)
-    newState[key] = value
+    newState.committee[key] = value
     setState(newState)
   }
 
   const onAddCommitteeMember = () => {
     const newState = cloneDeep(state)
-    if (!newState.members) return
-    newState.members.push(cloneDeep(emptyMember))
+    if (!newState.committee.members) return
+    newState.committee.members.push(cloneDeep(emptyMember))
     setState(newState)
   }
 
   const onRemoveCommitteeMember = (index: number) => {
     const newState = cloneDeep(state)
-    if (!newState.members) return
-    newState.members.splice(index, 1)
+    if (!newState.committee.members) return
+    newState.committee.members.splice(index, 1)
     setState(newState)
   }
 
   return (
-    <Box>
+    <Box className={styles.signatureWrapper}>
       <Box
         display="flex"
         flexDirection="row"
@@ -87,12 +88,12 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
           required={true}
           id={InputFields.signature.committee.institution}
           name={InputFields.signature.committee.institution}
-          label={f(advert.inputs.signature.institution.label)}
+          label={f(signatures.inputs.institution.label)}
           error={
             errors &&
             getErrorViaPath(errors, InputFields.signature.committee.institution)
           }
-          defaultValue={state.institution}
+          defaultValue={state.committee.institution}
           backgroundColor="blue"
           onChange={(e) => onCommitteeChange('institution', e.target.value)}
           size="sm"
@@ -100,25 +101,25 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         <DatePickerController
           id={InputFields.signature.committee.date}
           name={InputFields.signature.committee.date}
-          label={f(advert.inputs.signature.date.label)}
-          placeholder={f(advert.inputs.signature.date.placeholder)}
+          label={f(signatures.inputs.date.label)}
+          placeholder={f(signatures.inputs.date.placeholder)}
           backgroundColor="blue"
           size="sm"
-          defaultValue={state.date}
+          defaultValue={state.committee.date}
           onChange={(date) => onCommitteeChange('date', date)}
         />
       </Box>
       <Box className={styles.wrapper}>
         <Text variant="h5" marginBottom={2}>
-          {f(advert.general.chairman)}
+          {f(signatures.headings.chairman)}
         </Text>
         <Box className={styles.inputGroup}>
           <Box className={styles.inputWrapper}>
             <InputController
               id={InputFields.signature.committee.chairman.textAbove}
               name={InputFields.signature.committee.chairman.textAbove}
-              label={f(advert.inputs.signature.textAbove.label)}
-              defaultValue={state.chairman.textAbove}
+              label={f(signatures.inputs.above.label)}
+              defaultValue={state.committee.chairman.textAbove}
               backgroundColor="blue"
               size="sm"
               onChange={(e) =>
@@ -136,8 +137,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                   InputFields.signature.committee.chairman.name,
                 )
               }
-              label={f(advert.inputs.signature.name.label)}
-              defaultValue={state.chairman.name}
+              label={f(signatures.inputs.name.label)}
+              defaultValue={state.committee.chairman.name}
               backgroundColor="blue"
               size="sm"
               onChange={(e) =>
@@ -149,8 +150,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
             <InputController
               id={InputFields.signature.committee.chairman.textAfter}
               name={InputFields.signature.committee.chairman.textAfter}
-              label={f(advert.inputs.signature.textAfter.label)}
-              defaultValue={state.chairman.textAfter}
+              label={f(signatures.inputs.after.label)}
+              defaultValue={state.committee.chairman.textAfter}
               backgroundColor="blue"
               size="sm"
               onChange={(e) =>
@@ -160,8 +161,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
             <InputController
               id={InputFields.signature.committee.chairman.textBelow}
               name={InputFields.signature.committee.chairman.textBelow}
-              label={f(advert.inputs.signature.textBelow.label)}
-              defaultValue={state.chairman.textBelow}
+              label={f(signatures.inputs.below.label)}
+              defaultValue={state.committee.chairman.textBelow}
               backgroundColor="blue"
               size="sm"
               onChange={(e) =>
@@ -173,9 +174,9 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
       </Box>
       <Box className={styles.wrapper} marginTop={2}>
         <Text variant="h5" marginBottom={2}>
-          {f(advert.general.committeeMembers)}
+          {f(signatures.headings.committeeMembers)}
         </Text>
-        {state.members?.map((member, index) => {
+        {state.committee.members?.map((member, index) => {
           const localName =
             InputFields.signature.committee.members.name.replace(
               MEMBER_INDEX,
@@ -188,7 +189,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                   id={localName}
                   name={localName}
                   error={errors && getErrorViaPath(errors, localName)}
-                  label={f(advert.inputs.signature.name.label)}
+                  label={f(signatures.inputs.name.label)}
                   defaultValue={member.name}
                   backgroundColor="blue"
                   size="sm"
@@ -206,7 +207,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                     MEMBER_INDEX,
                     `${index}`,
                   )}
-                  label={f(advert.inputs.signature.textBelow.label)}
+                  label={f(signatures.inputs.below.label)}
                   defaultValue={member.textBelow}
                   backgroundColor="blue"
                   size="sm"
@@ -229,7 +230,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         })}
         <Box marginTop={2}>
           <Button onClick={onAddCommitteeMember} variant="utility" icon="add">
-            {f(advert.buttons.addCommitteeMember.label)}
+            {f(signatures.buttons.addCommitteeMember)}
           </Button>
         </Box>
       </Box>

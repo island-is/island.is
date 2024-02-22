@@ -25,7 +25,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
 
   const { answers } = application
 
-  const { documentContents, title, type: advertType } = answers.advert
+  const { document: documentContents, title, type: advertType } = answers.advert
   const { type: signatureType } = answers.signature
 
   return (
