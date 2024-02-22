@@ -2121,7 +2121,6 @@ export class NotificationService {
         theCase.defenderName,
         theCase.defenderEmail,
       ),
-      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
     )
 
     return Promise.all(promises)
