@@ -36,19 +36,23 @@ const ViewList = () => {
               <Text>{listInfo.numberOfSignatures}</Text>
             </Box>
             <Box marginTop={[2, 0]}>
-              <Text marginTop={[2, 0]} variant="h5">
-                {formatMessage(m.coOwners)}
-              </Text>
-              {listInfo.collectors?.map((collector) => (
-                <Box
-                  key={collector.name}
-                  width="half"
-                  display={['block', 'flex']}
-                  justifyContent="spaceBetween"
-                >
-                  <Text>{collector.name}</Text>
-                </Box>
-              ))}
+              {!!listInfo.collectors?.length && (
+                <>
+                  <Text marginTop={[2, 0]} variant="h5">
+                    {formatMessage(m.coOwners)}
+                  </Text>
+                  {listInfo.collectors?.map((collector) => (
+                    <Box
+                      key={collector.name}
+                      width="half"
+                      display={['block', 'flex']}
+                      justifyContent="spaceBetween"
+                    >
+                      <Text>{collector.name}</Text>
+                    </Box>
+                  ))}
+                </>
+              )}
             </Box>
           </Box>
           <Signees />
