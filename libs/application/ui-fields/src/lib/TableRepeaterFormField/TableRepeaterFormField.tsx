@@ -22,8 +22,9 @@ import {
   RadioController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -56,10 +57,11 @@ export const TableRepeaterFormField: FC<Props> = ({
     ...rawItems[key],
   }))
 
+  const defaultValues = getDefaultValue(data, application)
   const { formatMessage } = useLocale()
   const methods = useFormContext()
   const [activeIndex, setActiveIndex] = useState(-1)
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control: methods.control,
     name: data.id,
   })
@@ -101,6 +103,12 @@ export const TableRepeaterFormField: FC<Props> = ({
     const errors = errorList?.[activeIndex]
     return errors?.[id]
   }
+
+  useEffect(() => {
+    if (defaultValues && (!values || values.length === 0)) {
+      replace(defaultValues)
+    }
+  }, [defaultValues, values, replace])
 
   return (
     <Box marginTop={6}>

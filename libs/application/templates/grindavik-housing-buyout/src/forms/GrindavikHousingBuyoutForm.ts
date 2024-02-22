@@ -5,6 +5,7 @@ import {
   buildSection,
   buildSubmitField,
   buildTableRepeaterField,
+  buildTextField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
@@ -56,6 +57,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               title: m.application.loanStatus.sectionTitle,
               addItemButtonText: m.application.loanStatus.addNewLoan,
               saveItemButtonText: m.application.loanStatus.saveNewLoan,
+              /* defaultValue: (app: any) => {
+                console.log('defaultvl', app)
+                return [{ status: '14500600', provider: 'Bingo' }]
+              }, */
               fields: {
                 status: {
                   component: 'input',
