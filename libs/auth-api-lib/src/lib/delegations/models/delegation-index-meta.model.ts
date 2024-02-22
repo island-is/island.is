@@ -19,11 +19,11 @@ export class DelegationIndexMeta extends Model<
     type: DataType.DATE,
     allowNull: false,
   })
-  lastFullReindex!: string
+  lastFullReindex!: Date
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
   })
-  nextReindex!: string
+  nextReindex!: Date
 }

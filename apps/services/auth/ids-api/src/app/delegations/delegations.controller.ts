@@ -13,6 +13,7 @@ import {
   DelegationDTO,
   DelegationScope,
   DelegationScopeService,
+  DelegationsIndexService,
   DelegationsIncomingService,
   DelegationsService,
   DelegationType,
@@ -38,6 +39,7 @@ export class DelegationsController {
     private readonly delegationsService: DelegationsService,
     private readonly delegationScopeService: DelegationScopeService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
+    private readonly delegationsIndexService: DelegationsIndexService,
   ) {}
 
   @Scopes('@identityserver.api/authentication')
@@ -59,6 +61,9 @@ export class DelegationsController {
     )
     requestedScopes: Array<string>,
   ): Promise<MergedDelegationDTO[]> {
+    // Index delegations for the user
+    void this.delegationsIndexService.indexDelegations(user)
+
     return this.delegationsIncomingService.findAllAvailable({
       user,
       requestedScopes,
