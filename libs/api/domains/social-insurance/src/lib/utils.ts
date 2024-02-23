@@ -48,16 +48,21 @@ export const mapPensionCalculationInput = (
   let delayPension = 0
   let startPension: 1 | 2 = 2
 
-  if (input.birthdate) {
-    const birthdate = new Date(input.birthdate)
+  if (
+    typeof input.birthMonth === 'number' &&
+    typeof input.birthYear === 'number'
+  ) {
+    const birthdate = new Date(input.birthYear, input.birthMonth)
 
     const defaultPensionAge =
       (pageData?.configJson?.['defaultPensionAge'] as number) ?? 67
     const defaultPensionDate = addYears(birthdate, defaultPensionAge)
 
-    const startDate = input.startDate
-      ? new Date(input.startDate)
-      : defaultPensionDate
+    const startDate =
+      typeof input.startMonth === 'number' &&
+      typeof input.startYear === 'number'
+        ? new Date(input.startYear, input.startMonth)
+        : defaultPensionDate
 
     // How many months is the user delaying or hurrying the pension payments
     const offset = differenceInMonths(startDate, defaultPensionDate)
@@ -86,7 +91,6 @@ export const mapPensionCalculationInput = (
     income: input.income,
     otherIncome: input.otherIncome,
     livingConditionAbroadInYears: input.livingConditionAbroadInYears,
-    mobilityImpairment: input.mobilityImpairment,
     pensionPayments: input.pensionPayments,
     premium: input.premium,
     privatePensionPayments: input.privatePensionPayments,
@@ -94,6 +98,7 @@ export const mapPensionCalculationInput = (
     ageOfFirst75DisabilityAssessment: input.ageOfFirst75DisabilityAssessment,
     installmentClaims: input.installmentClaims,
     livingConditionRatio: input.livingConditionRatio,
+    mobilityImpairment: false,
 
     // Fields that are calculated or mapped
     hurryPension,
@@ -106,17 +111,25 @@ export const mapPensionCalculationInput = (
     livingCondition: input.livingCondition
       ? livingConditionMapping[input.livingCondition]
       : input.livingCondition,
-    yearOfBirth: input.birthdate
-      ? new Date(input.birthdate).getFullYear() >= 1952
-        ? 1
-        : 2
-      : 1,
+    yearOfBirth:
+      typeof input.birthYear === 'number'
+        ? input.birthYear >= 1952
+          ? 1
+          : 2
+        : 1,
     typeOfPeriodIncome: input.typeOfPeriodIncome
       ? periodIncomeTypeMapping[input.typeOfPeriodIncome]
       : input.typeOfPeriodIncome,
-    ageNow: input.birthdate
-      ? Math.abs(differenceInYears(new Date(input.birthdate), new Date()))
-      : undefined,
+    ageNow:
+      typeof input.birthMonth === 'number' &&
+      typeof input.birthYear === 'number'
+        ? Math.abs(
+            differenceInYears(
+              new Date(input.birthYear, input.birthMonth),
+              new Date(),
+            ),
+          )
+        : undefined,
   }
 }
 

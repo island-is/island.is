@@ -1,8 +1,9 @@
 import { AppProps } from 'next/app'
 import Head from 'next/head'
+
 import { ToastContainer } from '@island.is/island-ui/core'
 
-function CustomApp({ Component, pageProps }: AppProps) {
+const CustomApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
