@@ -35,8 +35,14 @@ export abstract class License {
   @Field()
   licenseNumber!: string
 
+  @Field({ nullable: true })
+  issuer?: string
+
   @Field()
-  issuer!: string
+  issuerOrganizationSlug!: string
+
+  @Field()
+  serviceProviderOrganizationSlug!: string
 
   @Field()
   profession!: string

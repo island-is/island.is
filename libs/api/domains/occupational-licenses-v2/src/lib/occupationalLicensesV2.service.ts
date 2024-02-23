@@ -51,11 +51,12 @@ export class OccupationalLicensesV2Service {
           if (!l || !l.status || !l.title || !l.validFrom) {
             return
           }
-
           return {
             licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
             licenseNumber: l.id,
-            issuer,
+            serviceProviderOrganizationSlug: issuer,
+            issuerOrganizationSlug: issuer,
+            issuer: l.issuer,
             profession: l.title,
             permit: l.title,
             dateOfBirth: info(user.nationalId).birthday,
@@ -92,7 +93,9 @@ export class OccupationalLicensesV2Service {
     return {
       licenseId: addLicenseTypePrefix(license.id, 'DistrictCommissioners'),
       licenseNumber: license.id,
-      issuer,
+      serviceProviderOrganizationSlug: issuer,
+      issuerOrganizationSlug: issuer,
+      issuer: license.issuer,
       profession: license.title,
       dateOfBirth: info(user.nationalId).birthday,
       validFrom: license.validFrom,
@@ -127,7 +130,8 @@ export class OccupationalLicensesV2Service {
             licenseId: addLicenseTypePrefix(l.licenseNumber, 'Health'),
             licenseNumber: l.licenseNumber,
             legalEntityId: l.legalEntityId,
-            issuer,
+            serviceProviderOrganizationSlug: issuer,
+            issuerOrganizationSlug: issuer,
             profession: l.profession,
             permit: l.practice,
             licenseHolderName: l.licenseHolderName,
@@ -156,7 +160,8 @@ export class OccupationalLicensesV2Service {
   ): Promise<EducationLicense[] | null> {
     const licenses = await this.mmsApi.getLicenses(user.nationalId)
 
-    const issuer: OrganizationSlugType = 'menntamalastofnun'
+    const issuer: OrganizationSlugType = 'haskoli-islands'
+    const serviceProvider: OrganizationSlugType = 'menntamalastofnun'
 
     const data: Array<EducationLicense> =
       licenses
@@ -164,9 +169,11 @@ export class OccupationalLicensesV2Service {
           return {
             licenseId: addLicenseTypePrefix(l.id, 'Education'),
             licenseNumber: l.id,
-            issuer,
-            profession: l.type,
-            permit: l.type,
+            serviceProviderOrganizationSlug: serviceProvider,
+            issuerOrganizationSlug: issuer,
+            issuer: l.issuer,
+            profession: capitalize(l.type),
+            permit: capitalize(l.type),
             licenseHolderName: l.fullName,
             licenseHolderNationalId: l.nationalId,
             dateOfBirth: info(l.nationalId).birthday,

@@ -3,7 +3,8 @@ query getOccupationalLicenses {
     districtCommissioners {
       __typename
       licenseId
-      issuer
+      issuerOrganizationSlug
+      serviceProviderOrganizationSlug
       validFrom
       status
       title
@@ -11,7 +12,8 @@ query getOccupationalLicenses {
     education {
       __typename
       licenseId
-      issuer
+      issuerOrganizationSlug
+      serviceProviderOrganizationSlug
       validFrom
       status
       title
@@ -19,7 +21,8 @@ query getOccupationalLicenses {
     health {
       __typename
       licenseId
-      issuer
+      issuerOrganizationSlug
+      serviceProviderOrganizationSlug
       validFrom
       status
       title

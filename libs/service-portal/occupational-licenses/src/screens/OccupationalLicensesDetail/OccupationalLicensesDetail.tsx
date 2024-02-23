@@ -11,6 +11,7 @@ import { olMessage as om } from '../../lib/messages'
 import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { useMemo } from 'react'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 type UseParams = {
   id: string
@@ -37,7 +38,9 @@ const OccupationalLicenseDetail = () => {
             marginBottom={2}
             title={license?.title ?? formatMessage(om.occupationalLicense)}
             intro={formatMessage(om.educationIntro)}
-            serviceProviderSlug={'menntamalastofnun'}
+            serviceProviderSlug={
+              license.serviceProviderOrganizationSlug as OrganizationSlugType
+            }
           >
             <Box paddingTop={3}>
               <Button
@@ -118,7 +121,7 @@ const OccupationalLicenseDetail = () => {
           <UserInfoLine
             loading={loading}
             label={formatMessage(om.publisher)}
-            content={license?.issuer}
+            content={license?.issuer ?? ''}
           />
         )}
         {(license?.validFrom || loading) && (

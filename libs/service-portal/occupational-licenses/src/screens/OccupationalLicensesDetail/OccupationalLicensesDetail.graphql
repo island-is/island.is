@@ -2,12 +2,14 @@ query getOccupationalLicenseById($input: OccupationalLicensesV2LicenseInput!) {
   occupationalLicenseV2(input: $input) {
     __typename
     licenseId
-    issuer
     profession
     licenseHolderName
     dateOfBirth
     validFrom
+    issuerOrganizationSlug
+    serviceProviderOrganizationSlug
     status
+    issuer
     permit
     title
     ... on OccupationalLicensesV2EducationLicense {
