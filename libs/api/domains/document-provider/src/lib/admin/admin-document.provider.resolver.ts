@@ -29,7 +29,7 @@ import {
   CategoriesAndTypesSharedInput,
   DocumentProvidedCategoryInput,
   DocumentProvidedTypeInput,
-} from '../dto/mutateDocumentCategoryOrType.input'
+} from '../dto/mutateCategoryOrType.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -208,7 +208,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderTypes)
   async postDocumentProvidedType(
-    input: CategoriesAndTypesSharedInput,
+    @Args('input') input: CategoriesAndTypesSharedInput,
   ): Promise<DocumentProviderTypes> {
     return this.documentProviderService.postDocumentProvidedType(input)
   }
@@ -216,7 +216,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderTypes)
   async putDocumentProvidedType(
-    input: DocumentProvidedTypeInput,
+    @Args('input') input: DocumentProvidedTypeInput,
   ): Promise<DocumentProviderTypes> {
     return this.documentProviderService.putDocumentProvidedType(input)
   }
@@ -231,7 +231,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderCategories)
   async postDocumentProvidedCategory(
-    input: CategoriesAndTypesSharedInput,
+    @Args('input') input: CategoriesAndTypesSharedInput,
   ): Promise<DocumentProviderCategories> {
     return this.documentProviderService.postDocumentProvidedCategory(input)
   }
@@ -239,7 +239,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderCategories)
   async putDocumentProvidedCategory(
-    input: DocumentProvidedCategoryInput,
+    @Args('input') input: DocumentProvidedCategoryInput,
   ): Promise<DocumentProviderCategories> {
     return this.documentProviderService.putDocumentProvidedCategory(input)
   }

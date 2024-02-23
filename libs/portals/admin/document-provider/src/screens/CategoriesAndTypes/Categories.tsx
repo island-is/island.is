@@ -2,7 +2,11 @@ import React from 'react'
 import { useGetDocumentProvidedCategoriesQuery } from './CategoriesAndTypes.generated'
 import CategoriesAndTypesWrapper from '../../components/CategoriesAndTypesWrapper'
 
-const DocumentCategories = () => {
+type Props = {
+  callback: () => void
+}
+
+const DocumentCategories = (props: Props) => {
   const { data, loading, error } = useGetDocumentProvidedCategoriesQuery()
   const categoryArray = data?.getDocumentProvidedCategories ?? []
 
@@ -11,6 +15,7 @@ const DocumentCategories = () => {
       dataArray={categoryArray}
       error={error}
       loading={loading}
+      {...props}
     />
   )
 }

@@ -20,7 +20,7 @@ import {
   CategoriesAndTypesSharedInput,
   DocumentProvidedCategoryInput,
   DocumentProvidedTypeInput,
-} from '../dto/mutateDocumentCategoryOrType.input'
+} from '../dto/mutateCategoryOrType.input'
 
 const LOG_CATEGORY = 'document-provider-api'
 

@@ -793,9 +793,50 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:categories',
     defaultMessage: 'Flokkar',
   },
-
+  categoryP: {
+    id: 'portals-admin.document-provider:category-participle',
+    defaultMessage: 'flokki',
+  },
   types: {
     id: 'portals-admin.document-provider:types',
     defaultMessage: 'Tegundir',
+  },
+  typeP: {
+    id: 'portals-admin.document-provider:type-participle',
+    defaultMessage: 'tegund',
+  },
+  add: {
+    id: 'portals-admin.document-provider:add-new',
+    defaultMessage: 'Bæta við {add}',
+  },
+
+  close: {
+    id: 'portals-admin.document-provider:close',
+    defaultMessage: 'Loka',
+  },
+  cancel: {
+    id: 'portals-admin.document-provider:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  save: {
+    id: 'portals-admin.document-provider:save',
+    defaultMessage: 'Vista',
+  },
+  modalTitleType: {
+    id: 'portals-admin.document-provider:modal-title-type',
+    defaultMessage: 'Bæta við nýrri tegund',
+  },
+  modalTitleCategory: {
+    id: 'portals-admin.document-provider:modal-title-category',
+    defaultMessage: 'Bæta við nýjum flokki',
+  },
+  name: {
+    id: 'portals-admin.document-provider:name',
+    defaultMessage: 'Nafn',
+  },
+
+  saved: {
+    id: 'portals-admin.document-provider:saved',
+    defaultMessage: 'Vistað',
   },
 })

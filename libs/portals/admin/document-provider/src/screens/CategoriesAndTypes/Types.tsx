@@ -2,7 +2,11 @@ import React from 'react'
 import { useGetDocumentProvidedTypesQuery } from './CategoriesAndTypes.generated'
 import CategoriesAndTypesWrapper from '../../components/CategoriesAndTypesWrapper'
 
-const DocumentTypes = () => {
+type Props = {
+  callback: () => void
+}
+
+const DocumentTypes = (props: Props) => {
   const { data, loading, error } = useGetDocumentProvidedTypesQuery()
   const TypeArray = data?.getDocumentProvidedTypes ?? []
 
@@ -11,6 +15,7 @@ const DocumentTypes = () => {
       dataArray={TypeArray}
       error={error}
       loading={loading}
+      {...props}
     />
   )
 }

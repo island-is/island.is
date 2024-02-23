@@ -1,0 +1,31 @@
+mutation PutDocumentProvidedType($input: DocumentProvidedTypeInput!) {
+  putDocumentProvidedType(input: $input) {
+    id
+    name
+    active
+  }
+}
+
+mutation PostDocumentProvidedType($input: CategoriesAndTypesSharedInput!) {
+  postDocumentProvidedType(input: $input) {
+    id
+    name
+    active
+  }
+}
+
+mutation PutDocumentProvidedCategory($input: DocumentProvidedCategoryInput!) {
+  putDocumentProvidedCategory(input: $input) {
+    id
+    name
+    active
+  }
+}
+
+mutation PostDocumentProvidedCategory($input: CategoriesAndTypesSharedInput!) {
+  postDocumentProvidedCategory(input: $input) {
+    id
+    name
+    active
+  }
+}

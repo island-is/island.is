@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -13,15 +13,23 @@ import {
   DocumentProviderTypes,
 } from '@island.is/api/schema'
 import { ApolloError } from '@apollo/client'
+import { TypeCategoryContext } from '../../screens/CategoriesAndTypes/TypeCategoryContext'
 
 interface Props {
   dataArray: Array<DocumentProviderCategories | DocumentProviderTypes>
   loading: boolean
   error?: ApolloError
+  callback: () => void
 }
 
-const CategoriesAndTypesWrapper = ({ dataArray, loading, error }: Props) => {
+const CategoriesAndTypesWrapper = ({
+  dataArray,
+  loading,
+  error,
+  callback,
+}: Props) => {
   const { formatMessage } = useLocale()
+  const { setCurrentTypeCategory } = useContext(TypeCategoryContext)
 
   if (error) {
     return <Problem error={error} />
@@ -52,7 +60,10 @@ const CategoriesAndTypesWrapper = ({ dataArray, loading, error }: Props) => {
                 cta={{
                   label: formatMessage(m.change),
                   variant: 'text',
-                  onClick: () => console.log('item: ', JSON.stringify(item)),
+                  onClick: () => {
+                    callback()
+                    setCurrentTypeCategory(item)
+                  },
                 }}
               />
             ))}
