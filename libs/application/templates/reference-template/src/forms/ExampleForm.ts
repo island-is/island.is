@@ -57,19 +57,19 @@ export const ExampleForm: Form = buildForm({
               id: 'person.name',
               title: m.personName,
             }),
-            // buildHiddenInput({
-            //   id: 'person.someHiddenInputRequired',
-            //   defaultValue: () => {
-            //     return 'validAnswer'
-            //   },
-            // }),
-            // buildHiddenInputWithWatchedValue({
-            //   id: 'person.someHiddenInputWatchedRequired',
-            //   watchValue: 'person.name',
-            //   valueModifier: (watchedValue: any) => {
-            //     return watchedValue + 'Valid'
-            //   },
-            // }),
+            buildHiddenInput({
+              id: 'person.someHiddenInputRequired',
+              defaultValue: () => {
+                return 'validAnswer'
+              },
+            }),
+            buildHiddenInputWithWatchedValue({
+              id: 'person.someHiddenInputWatchedRequired',
+              watchValue: 'person.name',
+              valueModifier: (watchedValue: any) => {
+                return watchedValue + 'Valid'
+              },
+            }),
             buildTextField({
               id: 'person.nationalId',
               title: m.nationalId,

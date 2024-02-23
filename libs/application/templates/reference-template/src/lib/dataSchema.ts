@@ -39,7 +39,9 @@ export const ExampleSchema = z.object({
       .refine(isValidNumber, { params: m.dataSchemePhoneNumber }),
     email: z.string().email(),
     someHiddenInputRequired: z.string().refine((x) => x === 'validAnswer'),
-    someHiddenInputWatchedRequired: z.string().refine((x) => x.length > 0),
+    someHiddenInputWatchedRequired: z
+      .string()
+      .refine((x) => x.includes('Valid')),
   }),
   careerHistory: z.enum(['yes', 'no']).optional(),
   careerIndustry: z.enum(['software', 'finance', 'consulting', 'other']),

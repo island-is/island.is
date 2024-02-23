@@ -249,13 +249,6 @@ export interface DescriptionField extends BaseField {
   titleVariant?: TitleVariants
 }
 
-// export interface HiddenInputField extends BaseField {
-//   readonly type: FieldTypes.HIDDEN_INPUT
-//   component: FieldComponents.HIDDEN_INPUT
-//   watchedValue?: string
-//   valueModifier?: (application: Application, field: Field) => unknown
-// }
-
 export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
