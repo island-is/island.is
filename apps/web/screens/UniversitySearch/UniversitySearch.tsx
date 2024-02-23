@@ -265,7 +265,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   useEffect(() => {
     const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
-    Object.keys(filters).forEach(function (key) {
+    Object.keys(filters).forEach((key) => {
       const str = key as keyof typeof filters
       if (filters[str].length > 0) {
         activeFiltersFound.push({ key, value: filters[str] })
