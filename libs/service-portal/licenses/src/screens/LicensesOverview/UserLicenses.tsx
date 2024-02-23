@@ -84,6 +84,8 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
         genericLicenses
           .filter((license) => license.license.status === 'HasLicense')
           .map((license, index) => {
+            console.log(license)
+
             return (
               <Box marginBottom={3} key={index}>
                 <ActionCard

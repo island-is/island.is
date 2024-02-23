@@ -20,6 +20,7 @@ import { DrivingLicensePayloadMapper } from '../../../license-service/src/lib/ma
 import { LicenseClientModule } from '@island.is/clients/license-client'
 import { PCardPayloadMapper } from '../../../license-service/src/lib/mappers/pCardMapper'
 import { EHICCardPayloadMapper } from '../../../license-service/src/lib/mappers/ehicCardMapper'
+import { HuntingLicensePayloadMapper } from './mappers/huntingLicenseMapper'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -102,6 +103,16 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.Passport,
   },
+  {
+    type: GenericLicenseType.HuntingLicense,
+    provider: {
+      id: GenericLicenseProviderId.EnvironmentAgency,
+    },
+    pkpass: true,
+    pkpassVerify: false,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.HuntingLicense,
+  },
 ]
 @Module({
   imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
@@ -121,6 +132,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
           machine: MachineLicensePayloadMapper,
           firearm: FirearmLicensePayloadMapper,
           driving: DrivingLicensePayloadMapper,
+          hunting: HuntingLicensePayloadMapper,
           pCard: PCardPayloadMapper,
           ehic: EHICCardPayloadMapper,
         ) =>
@@ -138,6 +150,8 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
               return firearm
             case GenericLicenseType.DriversLicense:
               return driving
+            case GenericLicenseType.HuntingLicense:
+              return hunting
             case GenericLicenseType.PCard:
               return pCard
             case GenericLicenseType.Ehic:
@@ -152,6 +166,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         MachineLicensePayloadMapper,
         FirearmLicensePayloadMapper,
         DrivingLicensePayloadMapper,
+        HuntingLicensePayloadMapper,
         PCardPayloadMapper,
         EHICCardPayloadMapper,
       ],

@@ -1,0 +1,84 @@
+import isAfter from 'date-fns/isAfter'
+import { Locale } from '@island.is/shared/types'
+import {
+  DEFAULT_LICENSE_ID,
+  GenericLicenseDataField,
+  GenericLicenseDataFieldType,
+  GenericLicenseLabels,
+  GenericLicenseMapper,
+  GenericUserLicensePayload,
+} from '../licenceService.type'
+import { getLabel } from '../utils/translations'
+import { Injectable } from '@nestjs/common'
+import { PermitHunting } from '@island.is/clients/hunting-license'
+
+@Injectable()
+export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
+  parsePayload(
+    payload: Array<unknown>,
+    locale: Locale = 'is',
+    labels?: GenericLicenseLabels,
+  ): Array<GenericUserLicensePayload> {
+    if (!payload) return []
+
+    const typedPayload = payload as Array<PermitHunting>
+
+    const label = labels?.labels
+
+    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
+      (t) => {
+        const data: Array<GenericLicenseDataField> = [
+          {
+            name: getLabel('basicInfoLicense', locale, label),
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('personName', locale, label),
+            value: t.personname ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('nationalId', locale, label),
+            value: t.personid ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('legalAddress', locale, label),
+            value: '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('cardNumber', locale, label),
+            value: t.permitNumber ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('publishedDate', locale, label),
+            value: t.validFrom ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('validDuration', locale, label),
+            value: `${t.validFrom} - ${t.validTo}` ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('huntingPermitValidFor', locale, label),
+            value: t.permitNumber ?? '',
+          },
+        ]
+
+        return {
+          data,
+          rawData: JSON.stringify(t),
+          metadata: {
+            licenseNumber: t.permitNumber?.toString() ?? '',
+            licenseId: DEFAULT_LICENSE_ID,
+            expired: t.permitValidity === 'Í gildi',
+            expireDate: t.validTo ?? undefined,
+          },
+        }
+      },
+    )
+
+    return mappedPayload
+  }
+}

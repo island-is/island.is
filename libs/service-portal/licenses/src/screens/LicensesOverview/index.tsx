@@ -96,6 +96,7 @@ export const LicensesOverview = () => {
     GenericLicenseType.MachineLicense,
     GenericLicenseType.FirearmLicense,
     GenericLicenseType.DisabilityLicense,
+    GenericLicenseType.HuntingLicense,
   ])
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import { MachineLicensePayloadMapper } from './machineLicenseMapper'
 import { DrivingLicensePayloadMapper } from './drivingLicenseMapper'
 import { PCardPayloadMapper } from './pCardMapper'
 import { EHICCardPayloadMapper } from './ehicCardMapper'
+import { HuntingLicensePayloadMapper } from './huntingLicenseMapper'
 
 @Module({
   providers: [
@@ -14,6 +15,7 @@ import { EHICCardPayloadMapper } from './ehicCardMapper'
     DisabilityLicensePayloadMapper,
     MachineLicensePayloadMapper,
     DrivingLicensePayloadMapper,
+    HuntingLicensePayloadMapper,
     PCardPayloadMapper,
     EHICCardPayloadMapper,
   ],
@@ -23,6 +25,7 @@ import { EHICCardPayloadMapper } from './ehicCardMapper'
     DisabilityLicensePayloadMapper,
     MachineLicensePayloadMapper,
     DrivingLicensePayloadMapper,
+    HuntingLicensePayloadMapper,
     PCardPayloadMapper,
     EHICCardPayloadMapper,
   ],
