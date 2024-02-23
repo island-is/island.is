@@ -3,18 +3,14 @@ import { HttpService } from '@nestjs/axios'
 import { lastValueFrom } from 'rxjs'
 import * as xml2js from 'xml2js'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { environment } from '../../../environments'
 import { RecyclingRequestService } from '../recyclingRequest'
 import { VehicleInformation } from './samgongustofa.model'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class SamgongustofaService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
     private httpService: HttpService,
     @Inject(forwardRef(() => RecyclingRequestService))
     private recyclingRequestService: RecyclingRequestService,
@@ -25,6 +21,8 @@ export class SamgongustofaService {
   ): Promise<VehicleInformation[]> {
     try {
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
+
+      logger.info(`DEBUG# soapUrl ${soapUrl}`)
 
       const parser = new xml2js.Parser()
 
@@ -55,10 +53,17 @@ export class SamgongustofaService {
         }),
       )
       if (allCarsResponse.status != 200) {
+        logger.error(
+          `Failed on getUserVehiclesInformation request with status: ${allCarsResponse.statusText}`,
+        )
         throw new Error(
           `Failed on getUserVehiclesInformation request with status: ${allCarsResponse.statusText}`,
         )
       }
+
+      logger.info(`DEBUG# allCarsResponse data`, {
+        data: allCarsResponse.data,
+      })
 
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
       const vehicleInformationList: VehicleInformation[] = await parser
@@ -71,6 +76,11 @@ export class SamgongustofaService {
               'soapenv:Fault',
             )
           ) {
+            logger.error(
+              allCarsResult['soapenv:Envelope']['soapenv:Body'][0][
+                'soapenv:Fault'
+              ][0]['faultstring'][0],
+            )
             throw new Error(
               allCarsResult['soapenv:Envelope']['soapenv:Body'][0][
                 'soapenv:Fault'
@@ -97,6 +107,9 @@ export class SamgongustofaService {
                   // otherwise is 'inUse'
                   if (car['vehiclestatus'][0] == 'Afskráð') {
                     carStatus = 'deregistered'
+                    logger.info(
+                      `DEBUG# Vehicle ${car['permno'][0]} is deregistered and not recyclable`,
+                    )
                     carIsRecyclable = false
                   }
                   let carHasCoOwner = true
@@ -104,6 +117,10 @@ export class SamgongustofaService {
                     carHasCoOwner = false
                   } else {
                     carIsRecyclable = false
+
+                    logger.info(
+                      `DEBUG# Vehicle ${car['permno'][0]} has co-owner and not recyclable`,
+                    )
                   }
 
                   // Create new Vehicle information object on each vehicle
@@ -123,18 +140,28 @@ export class SamgongustofaService {
               return vehicleArr
             })
             .catch(function (err) {
+              logger.error(
+                `Failed while parsing xml to json on getUserVehiclesInformation request with error: ${err}`,
+              )
               throw new Error(
                 `Failed while parsing xml to json on getUserVehiclesInformation request with error: ${err}`,
               )
             })
         })
         .catch(function (err) {
+          logger.error(
+            `Failed while parsing xml to json on allVehiclesForPersidno request with error: ${err}`,
+          )
           throw new Error(
             `Failed while parsing xml to json on allVehiclesForPersidno request with error: ${err}`,
           )
         })
 
       const newVehicleArr = vehicleInformationList
+
+      logger.info(`DEBUG# newVehicleArr`, {
+        data: newVehicleArr,
+      })
 
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
       for (let i = 0; i < newVehicleArr.length; i++) {
@@ -162,10 +189,18 @@ export class SamgongustofaService {
             }),
           )
           if (basicInforesponse.status !== 200) {
+            logger.error(
+              `Failed on basicInforesponse request with status: ${basicInforesponse.statusText}`,
+            )
             throw new Error(
               `Failed on basicInforesponse request with status: ${basicInforesponse.statusText}`,
             )
           }
+
+          logger.info(`DEBUG# basicInforesponse data`, {
+            data: basicInforesponse.data,
+          })
+
           // parse xml to Json all Soap
           vehicleInformationList[i] = await parser
             .parseStringPromise(
@@ -193,6 +228,8 @@ export class SamgongustofaService {
                   ][0]['basicVehicleInformationReturn'][0]['_'],
                 )
                 .then(function (basicInfo) {
+                  logger.info(`DEBUG# basicInfo`, { basicInfo })
+
                   //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
                     typeof basicInfo.vehicle.ownerregistrationerrors[0]
@@ -200,6 +237,10 @@ export class SamgongustofaService {
                   ) {
                     //Handle registrationerror
                     newVehicleArr[i].isRecyclable = false
+
+                    logger.info(
+                      `DEBUG#  NOT isRecyclable ownerregistrationerrors`,
+                    )
                   }
                   if (
                     //Handle stolen
@@ -209,6 +250,7 @@ export class SamgongustofaService {
                       .stolen) {
                       if (!stolenEndDate.enddate[0].trim()) {
                         newVehicleArr[i].isRecyclable = false
+                        logger.info(`DEBUG#  NOT isRecyclable Stolen`)
                         break
                       }
                     }
@@ -222,6 +264,7 @@ export class SamgongustofaService {
                       .updatelock) {
                       if (!lockEndDate.enddate[0].trim()) {
                         newVehicleArr[i].isRecyclable = false
+                        logger.info(`DEBUG#  NOT isRecyclable Update Locks`)
                         break
                       }
                     }
@@ -229,18 +272,28 @@ export class SamgongustofaService {
                   return newVehicleArr[i]
                 })
                 .catch(function (err) {
+                  logger.error(
+                    `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
+                  )
                   throw new Error(
                     `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
                   )
                 })
             })
             .catch(function (err) {
+              logger.error(
+                `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
+              )
               throw new Error(
                 `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
               )
             })
         }
       }
+
+      logger.info(`DEBUG# vehicleInformationList`, {
+        vehicleInformationList,
+      })
 
       for (let i = 0; i < vehicleInformationList.length; i++) {
         const vehicle = vehicleInformationList[i]
@@ -256,13 +309,16 @@ export class SamgongustofaService {
             }
           }
         } catch (err) {
-          this.logger.warn(
+          logger.warn(
             `Error while checking requestType in DB for vehicle ${vehicle['permno']} with error: ${err} but continue on next vehicle`,
           )
         }
       }
       return vehicleInformationList ?? []
     } catch (err) {
+      logger.error(
+        `Failed on getting vehicles information from Samgongustofa with error: ${err}`,
+      )
       throw new Error(
         `Failed on getting vehicles information from Samgongustofa with error: ${err}`,
       )
@@ -276,6 +332,8 @@ export class SamgongustofaService {
   ): Promise<VehicleInformation> {
     const userVehicles = await this.getUserVehiclesInformation(nationalId)
     const car = userVehicles.find((car) => car && car.permno === permno)
+
+    logger.info(`DEBUG# Vehicle TO recycle`, { requireRecyclable, car })
 
     if (requireRecyclable && car) {
       return car.isRecyclable ? car : null

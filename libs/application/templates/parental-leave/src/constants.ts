@@ -141,3 +141,8 @@ export enum FileType {
   EMPPER = 'empper',
   EMPLOYER = 'employer',
 }
+
+export enum Languages {
+  IS = 'IS',
+  EN = 'EN',
+}

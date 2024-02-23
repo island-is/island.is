@@ -33,15 +33,19 @@ export class VehicleAppSysResolver {
     logger.info(`Creating Vehicle ${input.permno}`, {
       permno: input.permno,
       mileage: input.mileage,
+      userName: user.name,
     })
 
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,
       input.permno,
     )
+
+    logger.info(`Vehicle ${input.permno}`, { vehicle })
+
     if (!vehicle) {
       logger.error(
-        `User ${user.nationalId} does not own the requested vehicle`,
+        `Vehicle ${input.permno} not allowed for recycling or is not found for user ${user.name}`,
         { permno: input.permno, user },
       )
       throw new NotFoundException(

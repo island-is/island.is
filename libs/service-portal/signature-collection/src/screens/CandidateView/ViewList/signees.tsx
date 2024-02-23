@@ -52,8 +52,8 @@ const Signees = () => {
   }, [searchTerm])
 
   return (
-    <Box marginTop={5}>
-      <Text variant="h5">{formatMessage(m.signeesHeader)}</Text>
+    <Box marginTop={[0, 5]}>
+      <Text variant="h4">{formatMessage(m.signeesHeader)}</Text>
       <Box
         display={['block', 'flex']}
         justifyContent="spaceBetween"
