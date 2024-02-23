@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -51,7 +51,20 @@ const LandingPage: Screen<LandingPageProps> = ({
   const n = useNamespace(namespace)
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
+  const [sortedUniversities, setSortedUniversities] = useState<
+    UniversityGatewayUniversity[]
+  >([])
 
+  useEffect(() => {
+    const newArray = [...universities]
+    newArray.sort((x, y) => {
+      const titleX = x.contentfulTitle || ''
+      const titleY = y.contentfulTitle || ''
+      return titleX.localeCompare(titleY)
+    })
+
+    setSortedUniversities(newArray)
+  }, [universities])
   const [searchTerm, setSearchTerm] = useState('')
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -98,7 +111,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                       <Text variant="eyebrow" color="blueberry600">
                         {n('universities', 'Háskólar')}
                       </Text>
-                      {universities.map((university) => {
+                      {sortedUniversities.map((university) => {
                         return (
                           <Box
                             className={cn(styles.courseListItems)}
@@ -137,7 +150,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                 <Text variant="eyebrow" color="blueberry600">
                   {n('universities', 'Háskólar')}
                 </Text>
-                {universities.map((university) => {
+                {sortedUniversities.map((university) => {
                   return (
                     <Box
                       className={cn(styles.courseListItems)}
