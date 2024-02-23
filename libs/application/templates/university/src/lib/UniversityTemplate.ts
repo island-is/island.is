@@ -16,13 +16,13 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application as applicationMessage } from './messages'
+import { application, application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { UniversitySchema } from './dataSchema'
 import {
   UserProfileApi,
-  NationalRegistryIndividualApi,
+  NationalRegistryUserApi,
   UniversityApi,
   ProgramApi,
   InnaApi,
@@ -77,7 +77,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryIndividualApi,
+                NationalRegistryUserApi,
                 UserProfileApi,
                 UniversityApi,
                 ProgramApi,
@@ -101,7 +101,7 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.paymentStarted,
+                logMessage: coreHistoryMessages.applicationAssigned,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -124,7 +124,85 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.PENDING_SCHOOL },
+        },
+      },
+      [States.PENDING_SCHOOL]: {
+        meta: {
+          name: 'Umsókn um inngöngu í háskóla',
+          status: 'inprogress',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardWaitingForSchool,
+              variant: 'purple',
+            },
+            // historyLogs: [
+            //   {
+            //     onEvent: DefaultEvents.SUBMIT,
+            //     logMessage: coreHistoryMessages.applicationApproved,
+            //   },
+            // ], TODO
+            pendingAction: {
+              title: coreHistoryMessages.applicationInProgress,
+              content: application.pendingActionSchool,
+              displayStatus: 'info',
+            },
+          },
+          lifecycle: pruneAfterDays(90), // TODO what should this be?
+          onExit: defineTemplateApi({
+            action: ApiActions.addSchoolAcceptance, // TODO what if the school does not accept
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Overview').then((module) =>
+                  Promise.resolve(module.OverviewForm),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.PENDING_STUDENT]: {
+        meta: {
+          name: 'Umsókn um inngöngu í háskóla',
+          status: 'inprogress',
+          actionCard: {
+            tag: {
+              label: applicationMessage.historyApprovedBySchool,
+              variant: 'mint',
+            },
+            // historyLogs: [
+            //   {
+            //     onEvent: DefaultEvents.SUBMIT,
+            //     logMessage: coreHistoryMessages.applicationApproved,
+            //   },
+            // ], TODO
+            pendingAction: {
+              title: coreHistoryMessages.applicationApproved,
+              content: application.pendingActionStudent,
+              displayStatus: 'warning',
+            },
+          },
+          lifecycle: pruneAfterDays(90), // TODO what should this be?
+          onExit: defineTemplateApi({
+            action: ApiActions.addStudentAcceptance, // TODO what if the school does not accept
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Overview').then((module) =>
+                  Promise.resolve(module.OverviewForm),
+                ),
+              read: 'all',
+              // write: { answers: [ // TODO is this correct and add this to dataScheme
+              //     'approvedByStudent',
+              //   ],
+              // }
+            },
+          ],
         },
       },
       [States.COMPLETED]: {

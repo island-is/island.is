@@ -63,6 +63,7 @@ export class UniversityOfIcelandApplicationClient {
     const mappedApplication = mapUglaApplication(
       application,
       (courseExternalId: string, e: Error) => {
+        console.log('failed to map application', e)
         logger.error(
           `Failed to map application for user ${application.applicant.nationalId} to University of Iceland, reason:`,
           e,
@@ -70,9 +71,12 @@ export class UniversityOfIcelandApplicationClient {
       },
     )
 
+    console.log('mappedApplication', mappedApplication)
+
     const response = await this.applicationApi.applicationsPost(
       mappedApplication,
     )
+    console.log('response here', response)
     return response
   }
 

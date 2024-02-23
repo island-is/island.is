@@ -8,13 +8,20 @@ import {
   buildSelectField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { formerEducation } from '../../../lib/messages/formerEducation'
 import { Routes } from '../../../lib/constants'
-import { FormValue, YES } from '@island.is/application/types'
+import {
+  Application,
+  Field,
+  FormValue,
+  YES,
+} from '@island.is/application/types'
 import { UniversityApplication } from '../../../lib/dataSchema'
 import { FILE_SIZE_LIMIT } from '../../../shared'
 import { getAllCountryCodes } from '@island.is/shared/utils'
+import { InlineResponse200Items } from '@island.is/clients/inna'
 
 export const EducationDetailsSubSection = buildSubSection({
   id: Routes.EDUCATIONDETAILS,
@@ -23,6 +30,7 @@ export const EducationDetailsSubSection = buildSubSection({
     buildMultiField({
       id: 'EducationDetailsMultiField',
       title: formerEducation.labels.educationDetails.pageTitle,
+      description: formerEducation.labels.educationDetails.pageDescription,
       children: [
         buildAlertMessageField({
           id: `${Routes.EDUCATIONDETAILS}[0].innuInformation`,
@@ -32,6 +40,7 @@ export const EducationDetailsSubSection = buildSubSection({
             formerEducation.labels.educationDetails.informationAlertDescription,
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
+
             const chosenOption = answers.educationOptions
             return chosenOption === 'notFinished'
           },
@@ -46,6 +55,15 @@ export const EducationDetailsSubSection = buildSubSection({
           title: formerEducation.labels.educationDetails.schoolLabel,
           width: 'half',
           required: true,
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return innaData[0].organisation || ''
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
@@ -57,6 +75,15 @@ export const EducationDetailsSubSection = buildSubSection({
           title: formerEducation.labels.educationDetails.degreeLevelLabel,
           width: 'half',
           required: true,
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return innaData ? 'framhaldsskoli' : ''
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
@@ -65,12 +92,26 @@ export const EducationDetailsSubSection = buildSubSection({
           options: () => {
             return [
               {
-                label: 'Stúdentspróf',
-                value: 'studentsprof',
+                label:
+                  formerEducation.labels.educationDetails
+                    .framhaldsskoliSelectionLabel,
+                value: 'framhaldsskoli',
               },
               {
-                label: 'Sveinspróf',
-                value: 'sveinsprof',
+                label:
+                  formerEducation.labels.educationDetails
+                    .bachelorsSelectionLabel,
+                value: 'bachelors',
+              },
+              {
+                label:
+                  formerEducation.labels.educationDetails.mastersSelectionLabel,
+                value: 'masters',
+              },
+              {
+                label:
+                  formerEducation.labels.educationDetails.doctorsSelectionLabel,
+                value: 'doctors',
               },
             ]
           },
@@ -79,10 +120,29 @@ export const EducationDetailsSubSection = buildSubSection({
           id: `${Routes.EDUCATIONDETAILS}[0].degreeMajor`,
           title: formerEducation.labels.educationDetails.degreeMajorLabel,
           width: 'half',
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return innaData[0].diplomaLongName || ''
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return true
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            }
           },
         }),
         buildTextField({
@@ -90,10 +150,28 @@ export const EducationDetailsSubSection = buildSubSection({
           title: formerEducation.labels.educationDetails.finishedUnitsLabel,
           width: 'half',
           variant: 'number',
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return innaData[0].diplomaCreditsTotal || 0 // TODO use diplomaCredits or diplomaCreditsTotal?
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return true
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            }
           },
         }),
         buildTextField({
@@ -101,10 +179,28 @@ export const EducationDetailsSubSection = buildSubSection({
           title: formerEducation.labels.educationDetails.averageGradeLabel,
           width: 'half',
           variant: 'number',
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return 0 // TODO calculate this from all courses or add to service?
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return true
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            }
           },
         }),
         buildSelectField({
@@ -112,10 +208,32 @@ export const EducationDetailsSubSection = buildSubSection({
           title: formerEducation.labels.educationDetails.degreeCountryLabel,
           width: 'half',
           required: true,
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            if (innaData) {
+              return 'IS'
+            }
+
+            return ''
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return true
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            }
           },
           options: () => {
             const countries = getAllCountryCodes()
@@ -131,11 +249,28 @@ export const EducationDetailsSubSection = buildSubSection({
           id: `${Routes.EDUCATIONDETAILS}[0].beginningDate`,
           title: formerEducation.labels.educationDetails.beginningDateLabel,
           width: 'half',
-          required: true,
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return '' // TODO the service only gives me 1 date, the end of the diploma..
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return true
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            }
           },
         }),
         buildDateField({
@@ -143,19 +278,55 @@ export const EducationDetailsSubSection = buildSubSection({
           title: formerEducation.labels.educationDetails.endDateLabel,
           width: 'half',
           required: true,
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return innaData[0].diplomaDate || '' // TODO the service only gives me 1 date, the end of the diploma..
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return true
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+            }
           },
         }),
         buildCheckboxField({
           id: `${Routes.EDUCATIONDETAILS}[0].degreeFinished`,
           title: '',
+          defaultValue: (application: Application) => {
+            const innaData = getValueViaPath(
+              application.externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+
+            return !!innaData[0] || false
+          },
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption === 'diploma'
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return false
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption === 'diploma'
+            }
           },
           options: () => {
             return [
@@ -178,8 +349,17 @@ export const EducationDetailsSubSection = buildSubSection({
           // TODO decide which types of file can be uploaded
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return chosenOption !== 'notFinished'
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return false
+            } else {
+              const chosenOption = answers.educationOptions
+              return chosenOption !== 'notFinished'
+            }
           },
           uploadHeader:
             formerEducation.labels.educationDetails.degreeFileUploadTitle,
@@ -190,6 +370,18 @@ export const EducationDetailsSubSection = buildSubSection({
           id: `${Routes.EDUCATIONDETAILS}[0].moreDetails`,
           variant: 'textarea',
           title: formerEducation.labels.educationDetails.moreDetailsLabel,
+          condition: (formValue: FormValue, externalData) => {
+            const answers = formValue as UniversityApplication
+            const innaData = getValueViaPath(
+              externalData,
+              'innaEducation.data',
+              [],
+            ) as Array<InlineResponse200Items>
+            if (innaData) {
+              return false
+            }
+            return true
+          },
         }),
         buildCustomField({
           id: `${Routes.EDUCATIONDETAILS}`,

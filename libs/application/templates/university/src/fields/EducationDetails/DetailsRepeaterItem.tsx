@@ -4,8 +4,13 @@ import {
   YES,
 } from '@island.is/application/types'
 import { FC, useEffect } from 'react'
-import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { Routes } from '../../lib/constants'
+import {
+  Box,
+  Text,
+  Button,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import {
   CheckboxController,
   DatePickerController,
@@ -26,6 +31,7 @@ interface DetailsRepeaterItemProps extends FieldBaseProps {
   itemNumber: number
   handleRemove: (index: number) => void
   addDataToEducationList: (field: string, value: string, index: number) => void
+  readOnly?: boolean
 }
 
 export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
@@ -38,6 +44,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
   itemNumber,
   handleRemove,
   addDataToEducationList,
+  readOnly,
 }) => {
   const { formatMessage } = useLocale()
   const countries = getAllCountryCodes()
@@ -108,9 +115,16 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
     <Box
       position="relative"
       marginBottom={1}
-      hidden={repeaterField.wasRemoved === 'true'}
+      hidden={repeaterField.wasRemoved === 'true' && !readOnly}
     >
       {itemNumber > 0 && (
+        <Text variant="h5">
+          {formatMessage(formerEducation.labels.educationDetails.itemTitle, {
+            index: itemNumber + 1,
+          })}
+        </Text>
+      )}
+      {itemNumber > 0 && !readOnly && (
         <Box display="flex" flexDirection="row" justifyContent="flexEnd">
           <Button
             variant="text"
@@ -132,6 +146,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
             )}
             backgroundColor="blue"
             required
+            readOnly={readOnly}
             onChange={(value) =>
               addDataToEducationList(
                 'school',
@@ -149,6 +164,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
             )}
             backgroundColor="blue"
             required
+            disabled={readOnly}
             onSelect={(value) =>
               addDataToEducationList(
                 'degreeLevel',
@@ -158,12 +174,30 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
             }
             options={[
               {
-                label: 'Stúdentspróf',
-                value: 'studentsprof',
+                label: formatMessage(
+                  formerEducation.labels.educationDetails
+                    .framhaldsskoliSelectionLabel,
+                ),
+                value: 'framhaldsskoli',
               },
               {
-                label: 'Sveinspróf',
-                value: 'sveinsprof',
+                label: formatMessage(
+                  formerEducation.labels.educationDetails
+                    .bachelorsSelectionLabel,
+                ),
+                value: 'bachelors',
+              },
+              {
+                label: formatMessage(
+                  formerEducation.labels.educationDetails.mastersSelectionLabel,
+                ),
+                value: 'masters',
+              },
+              {
+                label: formatMessage(
+                  formerEducation.labels.educationDetails.doctorsSelectionLabel,
+                ),
+                value: 'doctors',
               },
             ]}
           />
@@ -177,6 +211,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
               formerEducation.labels.educationDetails.degreeMajorLabel,
             )}
             backgroundColor="blue"
+            readOnly={readOnly}
             onChange={(value) =>
               addDataToEducationList(
                 'degreeMajor',
@@ -194,6 +229,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
               formerEducation.labels.educationDetails.finishedUnitsLabel,
             )}
             backgroundColor="blue"
+            readOnly={readOnly}
             onChange={(value) =>
               addDataToEducationList(
                 'finishedUnits',
@@ -205,23 +241,26 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <InputController
-            id={averageGradeField}
-            type="number"
-            label={formatMessage(
-              formerEducation.labels.educationDetails.averageGradeLabel,
-            )}
-            backgroundColor="blue"
-            onChange={(value) =>
-              addDataToEducationList(
-                'averageGrade',
-                value.target.value as string,
-                index,
-              )
-            }
-          />
-        </GridColumn>
+        {!readOnly && (
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <InputController
+              id={averageGradeField}
+              type="number"
+              label={formatMessage(
+                formerEducation.labels.educationDetails.averageGradeLabel,
+              )}
+              backgroundColor="blue"
+              readOnly={readOnly}
+              onChange={(value) =>
+                addDataToEducationList(
+                  'averageGrade',
+                  value.target.value as string,
+                  index,
+                )
+              }
+            />
+          </GridColumn>
+        )}
 
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <SelectController
@@ -237,6 +276,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
               }
             })}
             backgroundColor="blue"
+            disabled={readOnly}
             onSelect={(value) =>
               addDataToEducationList(
                 'degreeCountry',
@@ -251,11 +291,11 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <DatePickerController
             id={beginningDateField}
-            required
             label={formatMessage(
               formerEducation.labels.educationDetails.beginningDateLabel,
             )}
             backgroundColor="blue"
+            readOnly={readOnly}
             onChange={(value) =>
               addDataToEducationList('beginningDate', value as string, index)
             }
@@ -273,6 +313,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
             label={formatMessage(
               formerEducation.labels.educationDetails.endDateLabel,
             )}
+            readOnly={readOnly}
             backgroundColor="blue"
             onChange={(value) =>
               addDataToEducationList('endDate', value as string, index)
@@ -280,53 +321,59 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
           />
         </GridColumn>
       </GridRow>
-      <CheckboxController
-        id={degreeFinishedField}
-        backgroundColor="blue"
-        large
-        spacing={2}
-        options={[
-          {
-            label: formatMessage(
-              formerEducation.labels.educationDetails
-                .degreeFinishedCheckboxLabel,
-            ),
-            value: YES,
-          },
-        ]}
-        onSelect={(value) =>
-          addDataToEducationList('degreeLevel', value[0] as string, index)
-        }
-      />
+      {!readOnly && (
+        <CheckboxController
+          id={degreeFinishedField}
+          backgroundColor="blue"
+          large
+          spacing={2}
+          options={[
+            {
+              label: formatMessage(
+                formerEducation.labels.educationDetails
+                  .degreeFinishedCheckboxLabel,
+              ),
+              value: YES,
+            },
+          ]}
+          onSelect={(value) =>
+            addDataToEducationList('degreeLevel', value[0] as string, index)
+          }
+        />
+      )}
 
-      <FileUploadController
-        id={degreeAttachmentsField}
-        application={application}
-        multiple
-        header={formatMessage(
-          formerEducation.labels.educationDetails.degreeFileUploadTitle,
-        )}
-        description={formatMessage(
-          formerEducation.labels.educationDetails.degreeFileUploadDescription,
-        )}
-        buttonLabel={formatMessage(
-          formerEducation.labels.educationDetails.degreeFileUploadButtonLabel,
-        )}
-      />
-      <InputController
-        id={moreDetailsField}
-        textarea
-        label={formatMessage(
-          formerEducation.labels.educationDetails.moreDetailsLabel,
-        )}
-        onChange={(value) =>
-          addDataToEducationList(
-            'moreDetails',
-            value.target.value as string,
-            index,
-          )
-        }
-      />
+      {!readOnly && (
+        <FileUploadController
+          id={degreeAttachmentsField}
+          application={application}
+          multiple
+          header={formatMessage(
+            formerEducation.labels.educationDetails.degreeFileUploadTitle,
+          )}
+          description={formatMessage(
+            formerEducation.labels.educationDetails.degreeFileUploadDescription,
+          )}
+          buttonLabel={formatMessage(
+            formerEducation.labels.educationDetails.degreeFileUploadButtonLabel,
+          )}
+        />
+      )}
+      {!readOnly && (
+        <InputController
+          id={moreDetailsField}
+          textarea
+          label={formatMessage(
+            formerEducation.labels.educationDetails.moreDetailsLabel,
+          )}
+          onChange={(value) =>
+            addDataToEducationList(
+              'moreDetails',
+              value.target.value as string,
+              index,
+            )
+          }
+        />
+      )}
     </Box>
   )
 }

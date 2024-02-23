@@ -18,6 +18,13 @@ import {
 
 import { UniversityAnswers } from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import {
+  InlineResponse2001Items,
+  InlineResponse200Items,
+  InnaClientService,
+} from '@island.is/clients/inna'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class UniversityService extends BaseTemplateApiService {
@@ -27,6 +34,7 @@ export class UniversityService extends BaseTemplateApiService {
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
     private readonly universityApplicationApi: ApplicationApi,
+    private readonly innaService: InnaClientService,
   ) {
     super(ApplicationTypes.UNIVERSITY)
   }
@@ -99,7 +107,7 @@ export class UniversityService extends BaseTemplateApiService {
     const answers = application.answers as UniversityAnswers
     const userFromAnswers = answers.userInformation
     const externalData = application.externalData
-    const nationalRegistryUser = externalData.individual
+    const nationalRegistryUser = externalData.nationalRegistry
       .data as NationalRegistryIndividual
     const user = {
       givenName: nationalRegistryUser.givenName || '',
@@ -116,20 +124,43 @@ export class UniversityService extends BaseTemplateApiService {
       phone: userFromAnswers.phone,
     }
 
+    const predefinedInnaData = externalData.innaEducation
+      .data as Array<InlineResponse200Items>
+
+    const combinedEducationLists = [
+      ...predefinedInnaData.map((i) => {
+        return {
+          school: i.organisation || '',
+          degreeLevel: 'framhaldsskoli',
+          degreeCountry: 'IS',
+          degreeMajor: i.diplomaLongName || '',
+          finishedUnits: i.diplomaCreditsTotal || 0,
+          beginningDate: '',
+          endDate: i.diplomaDate || '',
+          degreeAttachments: [],
+        }
+      }),
+      ...answers.educationDetails.filter((x) => x.wasRemoved !== 'true'),
+    ]
+
     const createApplicationDto = {
       createApplicationDto: {
         applicationId: application.id,
         universityId: answers.programInformation.university,
         programId: answers.programInformation.program,
         modeOfDelivery: mapStringToEnum(
-          answers.programInformation.modeOfDelivery,
+          answers.modeOfDeliveryInformation,
           CreateApplicationDtoModeOfDeliveryEnum,
         ),
         applicant: user,
-        educationList: answers.educationDetails.map((education) => {
+        educationList: combinedEducationLists.map((education) => {
           return {
             schoolName: education.school,
             degree: education.degreeLevel,
+            degreeName: education.degreeMajor,
+            degreeCountry: education.degreeCountry,
+            finishedUnits: education.finishedUnits?.toString(),
+            degreeEndDate: education.endDate,
           }
         }),
         workExperienceList: [],

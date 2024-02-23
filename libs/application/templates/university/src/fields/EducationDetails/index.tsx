@@ -6,6 +6,11 @@ import { DetailsRepeaterItem } from './DetailsRepeaterItem'
 import { formerEducation } from '../../lib/messages/formerEducation'
 import { getValueViaPath } from '@island.is/application/core'
 import { EducationDetailsItem } from '../../shared/types'
+import { InlineResponse200Items } from '@island.is/clients/inna'
+
+interface ExtendedEducationDetailsProps extends EducationDetailsItem {
+  readOnly?: boolean
+}
 
 export const EducationDetails: FC<FieldBaseProps> = ({
   application,
@@ -14,7 +19,15 @@ export const EducationDetails: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const [educationList, setEducationList] = useState<EducationDetailsItem[]>(
+  const predefinedInnaData = getValueViaPath(
+    application.externalData,
+    'innaEducation.data',
+    [],
+  ) as Array<InlineResponse200Items>
+
+  const [educationList, setEducationList] = useState<
+    ExtendedEducationDetailsProps[]
+  >(
     getValueViaPath(
       application.answers,
       'educationDetails',
@@ -27,8 +40,29 @@ export const EducationDetails: FC<FieldBaseProps> = ({
   >([])
 
   useEffect(() => {
+    const combinedLists = [
+      ...predefinedInnaData.map((i) => {
+        return {
+          school: i.organisation || '',
+          degreeLevel: 'framhaldsskoli',
+          degreeCountry: 'IS',
+          degreeMajor: i.diplomaLongName || '',
+          finishedUnits: i.diplomaCreditsTotal || 0,
+          beginningDate: '',
+          endDate: i.diplomaDate || '',
+          degreeAttachments: [],
+          wasRemoved: 'true',
+          readOnly: true,
+        } as ExtendedEducationDetailsProps
+      }),
+      ...educationList,
+    ]
+    setEducationList(combinedLists)
+  }, [])
+
+  useEffect(() => {
     setFilteredEducationList(
-      educationList.filter((x) => x.wasRemoved !== 'true'),
+      educationList.filter((x) => x.wasRemoved !== 'true' || x.readOnly), // Remove all manual answers that have been removed, but keep in the readOnly data from Inna even though it's marked wasRemoved, that is done to avoid duplicates
     )
   }, [educationList])
 
@@ -92,6 +126,7 @@ export const EducationDetails: FC<FieldBaseProps> = ({
                 index={index}
                 handleRemove={handleRemove}
                 itemNumber={position}
+                readOnly={educationItem.readOnly}
                 addDataToEducationList={addDataToEducationList}
               />
             </Box>

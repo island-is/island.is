@@ -14,7 +14,7 @@ import {
 } from '../../lib/messages'
 import {
   InnaApi,
-  NationalRegistryIndividualApi,
+  NationalRegistryUserApi,
   ProgramApi,
   UniversityApi,
   UserProfileApi,
@@ -53,7 +53,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryIndividualApi,
+              provider: NationalRegistryUserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),
@@ -63,13 +63,9 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
+              provider: InnaApi,
               title: externalData.universityProfile.title,
               subTitle: externalData.universityProfile.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: InnaApi,
-              title: 'INNA TODO TITLE',
-              subTitle: 'INNA TODO SUBTITLE',
             }),
             buildDataProviderItem({
               provider: UniversityApi,

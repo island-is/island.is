@@ -908,6 +908,11 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'History application received',
   },
+  applicationInProgress: {
+    id: 'application.system:core.history.applicationInProgress',
+    defaultMessage: 'Umsókn í vinnslu',
+    description: 'History application in progress',
+  },
 })
 
 export const corePendingActionMessages = defineMessages({

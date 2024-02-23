@@ -110,6 +110,36 @@ class CreateApplicationEducationDto {
     example: 'Stúdentspróf',
   })
   degree!: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Degree name',
+    example: 'Félagsfræðibraut',
+  })
+  degreeName?: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Degree country',
+    example: 'Ísland',
+  })
+  degreeCountry!: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Finished units',
+    example: '180',
+  })
+  finishedUnits?: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Degree end date',
+    example: '27.05.2022',
+  })
+  degreeEndDate!: string
 }
 
 class CreateApplicationWorkExperienceDto {

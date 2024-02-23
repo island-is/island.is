@@ -46,14 +46,14 @@ export const RepeateableEducationDetailsSchema = z
     school: z.string(),
     degreeLevel: z.string(),
     degreeMajor: z.string().optional(),
-    finishedUnits: z.string().optional(),
-    averageGrade: z.string().optional(),
+    finishedUnits: z.number().optional(),
+    averageGrade: z.number().optional(),
     degreeCountry: z.string(),
-    beginningDate: z.string(),
+    beginningDate: z.string().optional(),
     endDate: z.string(),
     degreeFinished: z.array(z.enum([YES])).optional(),
     moreDetails: z.string().optional(),
-    degreeAttachments: z.array(FileDocumentSchema),
+    degreeAttachments: z.array(FileDocumentSchema).optional(),
     wasRemoved: z.string(),
   })
   .refine(
@@ -82,16 +82,16 @@ export const RepeateableEducationDetailsSchema = z
       path: ['degreeCountry'],
     },
   )
-  .refine(
-    ({ wasRemoved, beginningDate }) => {
-      return (
-        wasRemoved === 'true' || (beginningDate && beginningDate.length > 0)
-      )
-    },
-    {
-      path: ['beginningDate'],
-    },
-  )
+  // .refine(
+  //   ({ wasRemoved, beginningDate }) => {
+  //     return (
+  //       wasRemoved === 'true' || (beginningDate && beginningDate.length > 0)
+  //     )
+  //   },
+  //   {
+  //     path: ['beginningDate'],
+  //   },
+  // )
   .refine(
     ({ wasRemoved, endDate }) => {
       return wasRemoved === 'true' || (endDate && endDate.length > 0)

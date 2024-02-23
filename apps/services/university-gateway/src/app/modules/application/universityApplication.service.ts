@@ -126,7 +126,7 @@ export class UniversityApplicationService {
         programId: program.id,
         programModeOfDeliveryId: programModeOfDelivery.id,
         status: ApplicationStatus.IN_REVIEW,
-        externalId: 'testid123',
+        externalId: 'testid124',
       })
     ).id
 
@@ -137,6 +137,11 @@ export class UniversityApplicationService {
         applicationExternalId =
           await this.reykjavikUniversityClient.createApplication(applicationObj)
       } catch (e) {
+        await this.applicationModel.destroy({
+          where: {
+            id: applicationDto.applicationId,
+          },
+        })
         throw new Error(
           `Failed to create application in Reykjavik University DB`,
         )
@@ -151,8 +156,13 @@ export class UniversityApplicationService {
         )
         applicationExternalId = response.id
       } catch (e) {
+        await this.applicationModel.destroy({
+          where: {
+            id: applicationDto.applicationId,
+          },
+        })
         throw new Error(
-          `Failed to create application in University of Iceland DB`,
+          `Failed to create application in University of Iceland DB - ${e}`,
         )
       }
     }

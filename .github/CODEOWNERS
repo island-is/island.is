@@ -328,6 +328,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/energy-funds/                                                                          @island-is/origo
 /libs/clients/energy-funds/                                                                              @island-is/origo
 
+/libs/application/templates/university/                                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/university/                             @island-is/origo
+
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
 

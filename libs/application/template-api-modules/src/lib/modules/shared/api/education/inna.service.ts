@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { InlineResponse2001, InnaClientService } from '@island.is/clients/inna'
+import {
+  InlineResponse2001Items,
+  InlineResponse200Items,
+  InnaClientService,
+} from '@island.is/clients/inna'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class InnaService extends BaseTemplateApiService {
@@ -9,18 +15,65 @@ export class InnaService extends BaseTemplateApiService {
     super('EducationShared')
   }
 
+  async getInnaDiplomas({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<
+    Array<InlineResponse200Items> | null | undefined
+  > {
+    let res
+    try {
+      res = await this.innaService.getDiplomas(auth)
+    } catch (e) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+
+    if (!res) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+
+    return res?.items
+  }
+
   async getInnaPeriods({
     auth,
   }: TemplateApiModuleActionProps): Promise<
-    InlineResponse2001 | null | undefined
+    Array<InlineResponse2001Items> | null | undefined
   > {
-    console.log('auth', auth)
-    let results
+    let res
     try {
-      results = await this.innaService.getPeriods(auth)
+      res = await this.innaService.getPeriods(auth)
     } catch (e) {
-      console.log('errrrrrror', e)
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
     }
-    return results
+
+    if (!res) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+
+    return res?.items
   }
 }

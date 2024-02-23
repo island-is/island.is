@@ -51,4 +51,43 @@ export const review = {
       description: 'phone label',
     },
   }),
+  buttons: defineMessages({
+    back: {
+      id: 'uni.application:review.buttons.back',
+      defaultMessage: 'Til baka',
+      description: 'Back button in review process',
+    },
+    reject: {
+      id: 'uni.application:review.buttons.reject',
+      defaultMessage: 'Hafna',
+      description: 'Reject button in review process',
+    },
+    approve: {
+      id: 'uni.application:review.buttons.approve',
+      defaultMessage: `Samþykkja`,
+      description: 'Approve button in review process',
+    },
+  }),
+  confirmationModal: defineMessages({
+    title: {
+      id: 'uni.application:overview.confirmationModal.title',
+      defaultMessage: 'Hafna tilkynningu',
+      description: 'Confirmation modal reject title',
+    },
+    text: {
+      id: 'uni.application:overview.confirmationModal.text',
+      defaultMessage: 'Þú ert að fara að hafna tilkynningu.',
+      description: 'Confirmation modal reject text',
+    },
+    buttonText: {
+      id: 'uni.application:overview.confirmationModal.buttonText',
+      defaultMessage: 'Hafna tilkynningu',
+      description: 'Confirmation modal reject button',
+    },
+    cancelButton: {
+      id: 'uni.application:overview.confirmationModal.cancelButton',
+      defaultMessage: 'Hætta við',
+      description: 'Confirmation modal cancel button',
+    },
+  }),
 }

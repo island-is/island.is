@@ -33,7 +33,7 @@ export const UserInformationSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const individual = getValueViaPath(
               application.externalData,
-              'individual.data',
+              'nationalRegistry.data',
               undefined,
             ) as NationalRegistryIndividual | undefined
 
@@ -50,7 +50,7 @@ export const UserInformationSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const individual = getValueViaPath(
               application.externalData,
-              'individual.data',
+              'nationalRegistry.data',
               undefined,
             ) as NationalRegistryIndividual | undefined
 
@@ -66,7 +66,7 @@ export const UserInformationSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const individual = getValueViaPath(
               application.externalData,
-              'individual.data',
+              'nationalRegistry.data',
               undefined,
             ) as NationalRegistryIndividual | undefined
 
@@ -82,7 +82,7 @@ export const UserInformationSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const individual = getValueViaPath(
               application.externalData,
-              'individual.data',
+              'nationalRegistry.data',
               undefined,
             ) as NationalRegistryIndividual | undefined
 
@@ -101,6 +101,7 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           variant: 'email',
           required: true,
+          readOnly: true,
           defaultValue: (application: Application) => {
             const userProfile = getValueViaPath(
               application.externalData,
@@ -118,6 +119,7 @@ export const UserInformationSubSection = buildSubSection({
           variant: 'tel',
           format: '###-####',
           required: true,
+          readOnly: true,
           defaultValue: (application: Application) => {
             const userProfile = getValueViaPath(
               application.externalData,

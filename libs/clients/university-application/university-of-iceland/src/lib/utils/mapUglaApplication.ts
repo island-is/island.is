@@ -8,7 +8,8 @@ export const mapUglaApplication = (
   const uglaApplication: ApplicationsPostRequest = {
     inlineObject: {
       guid: application.id,
-      kennitala: application.applicant.nationalId,
+      kennitala: '0101302989',
+      // .replace('**', ''), //**REMOVE_PII: 0101302989**
 
       simi: application.applicant.phone,
 
@@ -26,7 +27,7 @@ export const mapUglaApplication = (
 
       inntokuskilyrdiLesin: 'false', // TODO done when extraApplicationFields are connected
 
-      kjorsvid: 'TODO', // TODO connect to chosen kjorsvid
+      // kjorsvid: und, // TODO connect to chosen kjorsvid
 
       personuverndSamthykki: 'false', // TODO done when extraApplicationFields are connected
       hugverkaretturSamthykki: 'false', // TODO done when extraApplicationFields are connected
@@ -37,13 +38,17 @@ export const mapUglaApplication = (
       samthykkiTrunadarlaeknir: 'false', // TODO done when extraApplicationFields are connected
       samthykkiSakaskra: 'false', // TODO done when extraApplicationFields are connected
       samthykkiOkurettindaskra: 'false', // TODO done when extraApplicationFields are connected
-      framhaldsskolar: application.educationList.map((education) => {
+      framhaldsskolar: [],
+      fyrraNam: application.educationList.map((education) => {
         return {
-          framhaldsskoliNafn: education.schoolName,
-          framhaldsskoliLand: 'TODO',
+          skoli: education.schoolName,
+          namsgrada: education.degree,
+          // land?: string;
+          // namiLokid?: string;
+          // arLokid?: number;
+          // manudurLokid?: number;
         }
-      }),
-      fyrraNam: [], // TODO við gerum ekki greinamun í educationList á framhaldsskóla námi og öðru námi.. hvernig höndlum við þetta?
+      }), // TODO við gerum ekki greinamun í educationList á framhaldsskóla námi og öðru námi.. hvernig höndlum við þetta?
       medmaelendur: [], // TODO are we doing this?
       leidbeinandi: undefined, // TODO are we doing this?
       tenglar: [], // TODO are we doing this?

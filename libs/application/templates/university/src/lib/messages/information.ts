@@ -76,6 +76,11 @@ export const information = {
         defaultMessage: 'Prófstaður',
         description: 'select exam location label',
       },
+      specilizationLabel: {
+        id: 'uni.application:information.labels.programSelection.specilizationLabel',
+        defaultMessage: 'Kjörsvið',
+        description: 'specilization label',
+      },
     }),
     modeOfDeliverySection: defineMessages({
       sectionTitle: {

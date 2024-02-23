@@ -36,15 +36,17 @@ export const Review: FC<FieldBaseProps> = ({
       {educationList &&
         educationList.length > 0 &&
         educationList.map((educationItem) => {
-          return (
-            <SchoolCareerReview
-              educationItem={educationItem}
-              field={field}
-              application={application}
-              route={Routes.EDUCATIONOPTIONS}
-              goToScreen={goToScreen}
-            />
-          )
+          if (educationItem.wasRemoved !== 'true') {
+            return (
+              <SchoolCareerReview
+                educationItem={educationItem}
+                field={field}
+                application={application}
+                route={Routes.EDUCATIONOPTIONS}
+                goToScreen={goToScreen}
+              />
+            )
+          }
         })}
       <Divider />
     </Box>

@@ -50,11 +50,6 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
     Array<UniversityGatewayUniversity>
   >([])
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  // const { data: innaData } = useLazyInnaQuery()
-  // console.log('innaData', innaData)
-
   const getUniversities = useLazyUniversityQuery()
   const getUniversityInformationCallback = useCallback(async () => {
     const { data } = await getUniversities({})
@@ -83,11 +78,15 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
     )[0]
     const extra =
       lang === 'is'
-        ? programInfo.specializationNameEn
-          ? ` - ${programInfo.specializationNameEn}`
+        ? programInfo.specializationNameIs
+          ? ` - ${formatMessage(
+              information.labels.programSelection.specilizationLabel,
+            )}: ${programInfo.specializationNameIs}`
           : ''
         : programInfo.specializationNameEn
-        ? ` - ${programInfo.specializationNameEn}`
+        ? ` - ${formatMessage(
+            information.labels.programSelection.specilizationLabel,
+          )}: ${programInfo.specializationNameEn}`
         : ''
     const programName = `${
       lang === 'is' ? programInfo.nameIs : programInfo.nameEn
@@ -128,15 +127,24 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
             defaultValue={chosenProgram}
             onSelect={(value) => ChooseProgram(value.value as string)}
             options={programs
+              // .sort((x, y) => {
+              //   if (x > y) return 1
+              //   else return -1
+              // })
               .filter((program) => program.universityId === chosenUniversity)
               .map((program) => {
                 const extra =
                   lang === 'is'
-                    ? program.specializationNameEn
-                      ? ` - ${program.specializationNameEn}`
+                    ? program.specializationNameIs
+                      ? ` - ${formatMessage(
+                          information.labels.programSelection
+                            .specilizationLabel,
+                        )}: ${program.specializationNameIs}`
                       : ''
                     : program.specializationNameEn
-                    ? ` - ${program.specializationNameEn}`
+                    ? ` - ${formatMessage(
+                        information.labels.programSelection.specilizationLabel,
+                      )}: ${program.specializationNameEn}`
                     : ''
                 return {
                   label: `${

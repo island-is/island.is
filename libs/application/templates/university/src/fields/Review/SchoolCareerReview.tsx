@@ -29,7 +29,9 @@ export const SchoolCareerReview: FC<Props> = ({
         educationItem.degreeLevel,
         educationItem.degreeMajor || '',
         `${educationItem.finishedUnits} einingar`,
-        `Hófst: ${formatDate(new Date(educationItem.beginningDate))}`,
+        educationItem.beginningDate
+          ? `Hófst: ${formatDate(new Date(educationItem.beginningDate))}`
+          : '',
         `Lauk: ${formatDate(new Date(educationItem.endDate))}`,
       ]}
       leftDescription={formatMessage(review.labels.schoolCareer)}

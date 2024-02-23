@@ -7,6 +7,10 @@ import {
 import { formerEducation } from '../../../lib/messages/formerEducation'
 import { Routes } from '../../../lib/constants'
 import { Program } from '@island.is/clients/university-gateway-api'
+import { FormValue } from '@island.is/application/types'
+
+import { UniversityApplication } from '../../../lib/dataSchema'
+import { InlineResponse200Items } from '@island.is/clients/inna'
 
 export const EducationOptionsSubSection = buildSubSection({
   id: Routes.EDUCATIONOPTIONS,
@@ -15,6 +19,13 @@ export const EducationOptionsSubSection = buildSubSection({
     buildRadioField({
       id: `${Routes.EDUCATIONOPTIONS}`,
       title: formerEducation.labels.educationOptions.pageTitle,
+      description: formerEducation.labels.educationOptions.pageDescription,
+      condition: (formValue: FormValue, externalData) => {
+        const data = externalData.innaEducation
+          .data as Array<InlineResponse200Items>
+        const hasInnaData = data && data.length > 0
+        return !hasInnaData
+      },
       options: (application, field) => {
         const externalData = application.externalData
         const chosenProgram = getValueViaPath(
@@ -25,8 +36,9 @@ export const EducationOptionsSubSection = buildSubSection({
 
         const programs = externalData.programs.data as Array<Program>
 
-        const showException = programs.filter((x) => x.id === chosenProgram)[0]
-          .allowException
+        const showException =
+          programs.filter((x) => x.id === chosenProgram)[0].allowException ??
+          false
 
         const options = [
           {
