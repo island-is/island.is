@@ -14,6 +14,7 @@ import {
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
   DrivingDigitalLicenseClientConfig,
+  HuntingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
@@ -35,6 +36,7 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
         DrivingDigitalLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
+        HuntingDigitalLicenseClientConfig,
       ],
     }),
     LicenseModule,
