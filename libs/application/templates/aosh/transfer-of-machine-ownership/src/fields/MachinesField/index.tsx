@@ -6,19 +6,18 @@ import {
 import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { MachineSelectField } from './MachineSelectField'
-import { MachineDto } from '@island.is/clients/work-machines'
 import { FindVehicleFormField } from '@island.is/application/ui-fields'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { useLazyMachineDetailsByRegno } from '../../hooks/useLazyMachineDetails'
 import { ApolloQueryResult } from '@apollo/client'
+import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
 
 export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application } = props
-  const machineList =
-    (application?.externalData.machinesList.data as MachineDto[] | undefined) ||
-    []
+  const machineList = application?.externalData.machinesList
+    .data as MachinesWithTotalCount
 
   const getMachineDetails = useLazyMachineDetailsByRegno()
   const createGetMachineDetailsWrapper = (
@@ -29,14 +28,13 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     return async (plate: string) => {
       const variables = { regno: plate }
       const result = await getMachineDetailsFunction(variables)
-      console.log('result', result)
       return result.data.getWorkerMachineByRegno // Adjust based on your query
     }
   }
 
   return (
     <Box paddingTop={2}>
-      {machineList.length > 5 ? (
+      {machineList.totalCount > 20 ? (
         <FindVehicleFormField
           application={application}
           setFieldLoadingState={props.setFieldLoadingState}
@@ -63,7 +61,10 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           }}
         />
       ) : (
-        <MachineSelectField currentMachineList={machineList} {...props} />
+        <MachineSelectField
+          currentMachineList={machineList.machines}
+          {...props}
+        />
       )}
     </Box>
   )
