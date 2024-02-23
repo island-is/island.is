@@ -256,7 +256,10 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                             : undefined
                         }
                         cta={
-                          collectionStatus !== CollectionStatus.InitialActive
+                          (allowedToProcess &&
+                            collectionStatus !==
+                              CollectionStatus.InitialActive) ||
+                          !allowedToProcess
                             ? {
                                 label: formatMessage(m.viewList),
                                 variant: 'text',

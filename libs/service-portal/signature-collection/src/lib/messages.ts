@@ -95,6 +95,11 @@ export const m = defineMessages({
   },
 
   /* Signee View */
+  noCollectionIsActive: {
+    id: 'sp.signatureCollection:noCollectionIsActive',
+    defaultMessage: 'Engin meðmælasöfnun er í gangi í augnablikinu.',
+    description: '',
+  },
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
     defaultMessage: 'Frambjóðandi sem þú hefur mælt með: ',

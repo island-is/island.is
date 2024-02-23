@@ -50,7 +50,11 @@ const SigneeView = () => {
               {formatMessage(m.createListButton)}
             </Button>
           )}
-
+          {listsForUser.length === 0 && signedLists.length === 0 && (
+            <Text fontWeight="medium" marginTop={10}>
+              {formatMessage(m.noCollectionIsActive)}
+            </Text>
+          )}
           <Box marginTop={[2, 7]}>
             {/* Signed list */}
             <SignedList />
