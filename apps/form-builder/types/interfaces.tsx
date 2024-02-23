@@ -245,5 +245,9 @@ export type ILanguage = {
   is: string
   en: string
 }
-
+export interface User {
+  name?: string
+  email?: string
+  image?: string
+}
 type Sizes = 'xs' | 'sm' | 'md'
