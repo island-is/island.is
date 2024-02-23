@@ -1,1 +1,97 @@
-{"openapi":"3.0.0","info":{"title":"Forritunarskil þróunar á island.is","version":"1.0","contact":{"email":"api@ust.is"}},"servers":[{"url":"/gatt/api/islandisdev"}],"paths":{"/permit_hunting/":{"get":{"tags":["permits"],"operationId":"permit_hunting","parameters":[{"name":"X-Query-National-Id","in":"header","description":"Auðkenni einstaklings","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Veiðikortaréttindi","content":{"application/json":{"schema":{"$ref":"#/components/schemas/PermitHunting"}}}},"400":{"description":"Invalid ID supplied"},"404":{"description":"Not found"},"405":{"description":"Validation exception"}}}}},"components":{"schemas":{"PermitHunting":{"title":"Hunting Permit","description":"Hunting Permits in Iceland","properties":{"personid":{"type":"string","example":"0101305069","readOnly":true},"personname":{"type":"string","example":"Gervimaður Bandaríkin","readOnly":true},"permit_category":{"type":"string","example":"Almennt veiði- og hlunnindakort","readOnly":true},"permit_number":{"type":"string","example":"101003","readOnly":true},"permit_validity":{"type":"string","example":"Í gildi","readOnly":true},"valid_from":{"type":"string","example":"2023-04-01","readOnly":true},"valid_to":{"type":"string","example":"2024-03-31","readOnly":true},"permit_for":{"type":"array","items":{"type":"string","example":"fuglum","readOnly":true}},"benefits":{"type":"object","properties":{"benefit_land":{"type":"string","example":"Brák"},"benefits_number":{"type":"string","example":"25225"}}},"personphoto":{"type":"string","format":"byte"}},"type":"object"}}}}
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Forritunarskil þróunar á island.is",
+    "version": "1.0",
+    "contact": { "email": "api@ust.is" }
+  },
+  "servers": [{ "url": "/gatt/api/islandisdev" }],
+  "paths": {
+    "/permit_hunting/": {
+      "get": {
+        "tags": ["permits"],
+        "operationId": "permit_hunting",
+        "parameters": [
+          {
+            "name": "X-Query-National-Id",
+            "in": "header",
+            "description": "Auðkenni einstaklings",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Veiðikortaréttindi",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PermitHunting" }
+              }
+            }
+          },
+          "400": { "description": "Invalid ID supplied" },
+          "404": { "description": "Not found" },
+          "405": { "description": "Validation exception" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PermitHunting": {
+        "title": "Hunting Permit",
+        "description": "Hunting Permits in Iceland",
+        "properties": {
+          "personid": {
+            "type": "string",
+            "example": "0101305069",
+            "readOnly": true
+          },
+          "personname": {
+            "type": "string",
+            "example": "Gervimaður Bandaríkin",
+            "readOnly": true
+          },
+          "permit_category": {
+            "type": "string",
+            "example": "Almennt veiði- og hlunnindakort",
+            "readOnly": true
+          },
+          "permit_number": {
+            "type": "string",
+            "example": "101003",
+            "readOnly": true
+          },
+          "permit_validity": {
+            "type": "string",
+            "example": "Í gildi",
+            "readOnly": true
+          },
+          "valid_from": {
+            "type": "string",
+            "example": "2023-04-01",
+            "readOnly": true
+          },
+          "valid_to": {
+            "type": "string",
+            "example": "2024-03-31",
+            "readOnly": true
+          },
+          "permit_for": {
+            "type": "array",
+            "items": { "type": "string", "example": "fuglum", "readOnly": true }
+          },
+          "benefits": {
+            "type": "object",
+            "properties": {
+              "benefit_land": { "type": "string", "example": "Brák" },
+              "benefits_number": { "type": "string", "example": "25225" }
+            }
+          },
+          "personphoto": { "type": "string", "format": "byte" }
+        },
+        "type": "object"
+      }
+    }
+  }
+}
