@@ -424,6 +424,9 @@ export const getOtherParentOptions = (application: Application) => {
   const spouse = getSpouse(application)
 
   if (spouse) {
+    options.forEach((o) => {
+      o.disabled = true
+    })
     options.unshift({
       value: SPOUSE,
       label: {
