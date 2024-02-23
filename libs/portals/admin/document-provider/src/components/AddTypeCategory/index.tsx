@@ -55,7 +55,6 @@ export const AddTypeCategory = ({
       ? formatMessage(m.modalTitleType)
       : formatMessage(m.modalTitleCategory)
 
-  console.log('currentTypeCategory in modaæ', currentTypeCategory)
   return (
     <Modal
       id="add-type-or-category"

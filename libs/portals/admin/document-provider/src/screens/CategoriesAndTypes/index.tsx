@@ -27,7 +27,6 @@ const CategoriesAndTypes = () => {
   const [activeTab, setActiveTab] = useState<TabOptions>('categories')
   const [isModalVisible, setIsModalVisible] = useState(false)
 
-  console.log('currentTypeCategory', currentTypeCategory)
   return (
     <TypeCategoryContext.Provider
       value={{
