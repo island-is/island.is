@@ -78,6 +78,7 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
             render: () => {
               return (
                 <button
+                  key="copyLinkDesktop"
                   className={cn(styles.hideOnDesktop, styles.menuItem)}
                   onClick={() => {
                     const copied = copyToClipboard(baseUrl + petitionId)
