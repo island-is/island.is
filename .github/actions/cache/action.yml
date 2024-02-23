@@ -190,3 +190,8 @@ runs:
         if [ "${{ inputs.fail-on-missing }}" = 'false' ]; then
           echo "success=true" >> "$GITHUB_OUTPUT"
         fi
+
+        # Fail on conditions
+        if [ "${{ inputs.fail-on-missing }}" = 'true' ] && [ "${{ steps.cache-attempt.outputs.cache-hit }}" = 'false' ]; then
+          exit 1
+        fi
