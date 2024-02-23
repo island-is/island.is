@@ -45,11 +45,11 @@ inputs:
   retries:
     description: "Number of retries"
     required: false
-    default: "1"
+    default: "3"
   retry-interval:
     description: "Time between retries"
     required: false
-    default: "10"
+    default: "5"
   cache-url:
     description: "URL to your cache"
     required: false
