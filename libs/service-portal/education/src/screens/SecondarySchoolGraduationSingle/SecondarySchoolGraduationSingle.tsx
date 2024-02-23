@@ -35,7 +35,9 @@ export const EducationGraduationDetail = () => {
       <Problem
         type="no_data"
         noBorder={false}
-        imgSrc="./assets/images/empty.svg"
+        title={formatMessage(m.noData)}
+        message={formatMessage(m.noDataFoundDetail)}
+        imgSrc="./assets/images/sofa.svg"
       />
     )
   }

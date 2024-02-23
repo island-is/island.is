@@ -4,7 +4,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ActionCard } from '@island.is/service-portal/core'
+import { ActionCard, m } from '@island.is/service-portal/core'
 import { EducationStudentAssessmentPaths } from '@island.is/service-portal/education-student-assessment'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -75,7 +75,9 @@ const CareerCards = () => {
         <Problem
           type="no_data"
           noBorder={false}
-          imgSrc="./assets/images/empty.svg"
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
         />
       )}
     </>
