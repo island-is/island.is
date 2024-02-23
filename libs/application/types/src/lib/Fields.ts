@@ -182,6 +182,8 @@ export enum FieldTypes {
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
+  HIDDEN_INPUT = 'HIDDEN_INPUT',
+  HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
 }
 
@@ -211,6 +213,7 @@ export enum FieldComponents {
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
+  HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
 }
 
@@ -508,7 +511,7 @@ export interface FindVehicleField extends BaseField {
   disabled?: boolean
   required?: boolean
   additionalErrors: boolean
-  getVehicleDetails?: (plate: string) => Promise<unknown>
+  getDetails?: (plate: string) => Promise<unknown>
   findVehicleButtonText?: FormText
   findPlatePlaceholder?: FormText
   notFoundErrorMessage?: FormText
@@ -518,6 +521,21 @@ export interface FindVehicleField extends BaseField {
   isNotDebtLessTag?: FormText
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
+  isMachine?: boolean
+}
+
+export interface HiddenInputWithWatchedValueField extends BaseField {
+  watchValue: string
+  type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
+  component: FieldComponents.HIDDEN_INPUT
+  valueModifier?: (value: unknown) => unknown
+}
+
+export interface HiddenInputField extends BaseField {
+  watchValue?: never
+  type: FieldTypes.HIDDEN_INPUT
+  component: FieldComponents.HIDDEN_INPUT
+  valueModifier?: never
 }
 
 export type Field =
@@ -547,4 +565,6 @@ export type Field =
   | NationalIdWithNameField
   | ActionCardListField
   | TableRepeaterField
+  | HiddenInputWithWatchedValueField
+  | HiddenInputField
   | FindVehicleField
