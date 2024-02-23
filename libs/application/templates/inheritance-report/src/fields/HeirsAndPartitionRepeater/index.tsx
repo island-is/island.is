@@ -21,7 +21,10 @@ import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
-import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
 import { TAX_FREE_LIMIT } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
@@ -134,7 +137,9 @@ export const HeirsAndPartitionRepeater: FC<
     const businessTotal = Number(
       getValueViaPath(answers, 'business.businessTotal'),
     )
-    const totalDeduction = Number(getValueViaPath(answers, 'totalDeduction'))
+    const totalDeduction = valueToNumber(
+      getValueViaPath(answers, 'totalDeduction'),
+    )
     const inheritanceValue = Math.round(
       (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
     )
@@ -143,6 +148,15 @@ export const HeirsAndPartitionRepeater: FC<
       inheritanceValue - taxFreeInheritanceValue,
     )
     const inheritanceTaxValue = Math.round(taxableInheritanceValue * 0.1)
+
+    console.log('assetsTotal', assetsTotal)
+    console.log('debtsTotal', debtsTotal)
+    console.log('businessTotal', businessTotal)
+    console.log('totalDeduction', totalDeduction)
+    console.log('inheritanceValue', inheritanceValue)
+    console.log('taxFreeInheritanceValue', taxFreeInheritanceValue)
+    console.log('taxableInheritanceValue', taxableInheritanceValue)
+    console.log('inheritanceTaxValue', inheritanceTaxValue)
 
     setValue(`${updateIndex}.heirsPercentage`, String(numValue))
     setValue(
@@ -216,6 +230,9 @@ export const HeirsAndPartitionRepeater: FC<
     }
   }, [estateData?.estate?.estateMembers, fields.length, replace])
 
+  console.log('fields', fields)
+  console.log('application', application)
+  console.log('answers', answers)
   return (
     <Box>
       {fields.reduce(

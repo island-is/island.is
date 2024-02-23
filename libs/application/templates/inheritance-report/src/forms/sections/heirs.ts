@@ -13,6 +13,7 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
 import { valueToNumber } from '../../lib/utils/helpers'
+import { YES } from '../../lib/constants'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -27,18 +28,15 @@ export const heirs = buildSection({
           title: m.spousesShare,
           description: m.spousesShareDescription,
           children: [
-            // buildDescriptionField({
-            //   id: '',
-            //   titleVariant: 'h3',
-            //   title: m.spousesShare,
-            //   description: m.spousesShareDescription,
-            //   marginBottom: 'containerGutter',
-            // }),
             buildCustomField({
               title: '',
               id: 'spouse',
               doesNotRequireAnswer: false,
               component: 'SpouseEstateShare',
+              childInputIds: [
+                'spouse.spouseTotalSeparateProperty',
+                'spouse.spouseTotalDeduction',
+              ],
             }),
           ],
         }),
@@ -87,17 +85,42 @@ export const heirs = buildSection({
             buildKeyValueField({
               label: m.netPropertyForExchange,
               display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
+              value: ({ answers }) => {
+                console.log('overview answers', answers)
+                const spouseTotalDeduction = valueToNumber(
+                  getValueViaPath(answers, 'spouse.spouseTotalDeduction'),
+                )
+                const spouseTotalSeparateProperty = valueToNumber(
+                  getValueViaPath(
+                    answers,
+                    'spouse.spouseTotalSeparateProperty',
+                  ),
+                )
+
+                const wasInCohabitation =
+                  getValueViaPath(answers, 'spouse.wasInCohabitation') === YES
+                const hadSeparateProperty =
+                  getValueViaPath(answers, 'spouse.hadSeparateProperty') === YES
+
+                const deductionValue = !wasInCohabitation
+                  ? 0
+                  : !hadSeparateProperty
+                  ? spouseTotalDeduction
+                  : spouseTotalSeparateProperty
+
+                console.log('deductionValue', deductionValue)
+
+                return formatCurrency(
                   String(
                     Number(getValueViaPath(answers, 'assets.assetsTotal')) -
                       Number(getValueViaPath(answers, 'debts.debtsTotal')) +
                       Number(
                         getValueViaPath(answers, 'business.businessTotal'),
                       ) -
-                      Number(getValueViaPath(answers, 'spouse.totalDeduction')),
+                      deductionValue,
                   ),
-                ),
+                )
+              },
             }),
           ],
         }),

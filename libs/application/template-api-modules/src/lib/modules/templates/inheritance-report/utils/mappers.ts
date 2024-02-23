@@ -1,3 +1,4 @@
+// bla
 import {
   EstateAsset,
   EstateInfo,
@@ -254,8 +255,9 @@ export const expandAnswers = (
     spouse: {
       wasInCohabitation: answers?.spouse?.wasInCohabitation,
       hadSeparateProperty: answers?.spouse?.hadSeparateProperty,
-      totalDeduction: answers?.spouse?.totalDeduction ?? 0,
-      totalSeperateProperty: answers?.spouse?.totalSeperateProperty ?? 0,
+      spouseTotalDeduction: answers?.spouse?.spouseTotalDeduction ?? 0,
+      spouseTotalSeparateProperty:
+        answers?.spouse?.spouseTotalSeparateProperty ?? 0,
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',

@@ -24,6 +24,7 @@ import { Answers } from '../../types'
 import { NO, YES } from '../../lib/constants'
 import { MessageDescriptor } from 'react-intl'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { valueToNumber } from '../../lib/utils/helpers'
 
 type CustomField = {
   id: string
@@ -52,7 +53,7 @@ const radioButtons: RadioSelection[] = [
   },
   {
     name: 'hadSeparateProperty',
-    title: m.hadSeperateProperty,
+    title: m.hadSeparateProperty,
   },
 ]
 
@@ -70,9 +71,8 @@ export const SpouseEstateShare: FC<
 
   const getUpdatedValues = useCallback(() => getValues(id), [getValues, id])
 
-  const [totalDeduction, setTotalDeduction] = useState<string | undefined>(
-    getUpdatedValues()?.totalDeduction ?? undefined,
-  )
+  const [localSpouseTotalDeduction, setLocalSpouseTotalDeductionvalue] =
+    useState<number>(getUpdatedValues()?.spouseTotalDeduction ?? 0)
   const [wasInCohabitation, setWasInCohabitation] = useState<
     YesOrNo | undefined
   >(getUpdatedValues()?.wasInCohabitation ?? undefined)
@@ -80,10 +80,10 @@ export const SpouseEstateShare: FC<
     YesOrNo | undefined
   >(getUpdatedValues()?.hadSeparateProperty ?? undefined)
 
-  const wasInCohabitationField = `${id}.'wasInCohabitation`
-  const hadSeparatePropertyField = `${id}.'hadSeparateProperty`
-  const totalDeductionField = `${id}.'totalDeduction`
-  const totalSeperatePropertyField = `${id}.'totalSeperateProperty`
+  const wasInCohabitationField = `${id}.wasInCohabitation`
+  const hadSeparatePropertyField = `${id}.hadSeparateProperty`
+  const spouseTotalDeductionField = `${id}.spouseTotalDeduction`
+  const spouseTotalSeparatePropertyField = `${id}.spouseTotalSeparateProperty`
 
   const assetsTotal = getValues()?.assets?.assetsTotal ?? 0
 
@@ -94,7 +94,7 @@ export const SpouseEstateShare: FC<
     )
   }
 
-  const showTotalDeduction =
+  const showSpouseTotalDeduction =
     wasInCohabitation === YES && hadSeparateProperty === NO
   const showSeparateProperty =
     wasInCohabitation === YES && hadSeparateProperty === YES
@@ -104,35 +104,38 @@ export const SpouseEstateShare: FC<
     setValue(hadSeparatePropertyField, undefined)
   }, [hadSeparatePropertyField, setValue])
 
-  const clearTotalDeduction = useCallback(() => {
-    setTotalDeduction('0')
-    setValue(totalDeductionField, undefined)
-  }, [setValue, totalDeductionField])
-
   useEffect(() => {
     if (wasInCohabitation === NO) {
       clearHadSeparateProperty()
-      clearTotalDeduction()
     }
 
-    if (hadSeparateProperty === YES) {
-      clearTotalDeduction()
+    if (wasInCohabitation === YES && hadSeparateProperty === YES) {
+      setValue(spouseTotalDeductionField, 0)
     }
 
-    if (hadSeparateProperty === NO) {
-      const totalDeduction = assetsTotal * 0.5
-      const value = String(totalDeduction).replace('.', ',')
+    if (wasInCohabitation === YES && hadSeparateProperty === NO) {
+      const value = assetsTotal * 0.5
 
-      setValue(totalDeductionField, totalDeduction)
-      setTotalDeduction(value)
+      setLocalSpouseTotalDeductionvalue(value)
+      setValue(spouseTotalDeductionField, value)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetsTotal, hadSeparateProperty, showTotalDeduction, wasInCohabitation])
+  }, [
+    assetsTotal,
+    hadSeparateProperty,
+    spouseTotalDeductionField,
+    wasInCohabitation,
+  ])
 
   const options: { label: string; value: YesOrNo }[] = [
     { label: formatMessage(m.yes), value: YES },
     { label: formatMessage(m.no), value: NO },
   ]
+
+  console.log(
+    'getUpdatedValues()?.spouseTotalDeduction',
+    getUpdatedValues()?.spouseTotalDeduction,
+  )
 
   return (
     <GridRow>
@@ -213,18 +216,18 @@ export const SpouseEstateShare: FC<
         )
       })}
 
-      {showTotalDeduction && (
+      {showSpouseTotalDeduction && (
         <Fragment>
-          <GridColumn>
+          <GridColumn span="1/1">
             <Text paddingBottom={2} variant="h4">
               {formatMessage(m.totalDeduction)}
             </Text>
           </GridColumn>
           <GridColumn span={span}>
             <Input
-              id={totalDeductionField}
-              name={totalDeductionField}
-              value={formatCurrency(String(totalDeduction))}
+              id={spouseTotalDeductionField}
+              name={spouseTotalDeductionField}
+              value={formatCurrency(String(localSpouseTotalDeduction ?? '0'))}
               label={formatMessage(m.spousesShare)}
               backgroundColor="white"
               readOnly
@@ -235,17 +238,25 @@ export const SpouseEstateShare: FC<
 
       {showSeparateProperty && (
         <Fragment>
-          <GridColumn>
+          <GridColumn span="1/1">
             <Text paddingBottom={2} variant="h4">
               {formatMessage(m.totalSeparateProperty)}
             </Text>
           </GridColumn>
           <GridColumn span={span}>
             <InputController
-              id={totalSeperatePropertyField}
-              name={totalSeperatePropertyField}
+              id={spouseTotalSeparatePropertyField}
+              name={spouseTotalSeparatePropertyField}
+              defaultValue={'0'}
               label={formatMessage(m.totalSeparatePropertyLabel)}
+              error={getError('spouseTotalSeparateProperty')}
               backgroundColor="blue"
+              onChange={(e) => {
+                const value = e.target.value
+
+                setValue(spouseTotalSeparatePropertyField, valueToNumber(value))
+                clearErrors()
+              }}
               currency
             />
           </GridColumn>

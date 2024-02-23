@@ -980,8 +980,8 @@ export const m = defineMessages({
     defaultMessage: 'Var hinn látni í hjúskap?',
     description: '',
   },
-  hadSeperateProperty: {
-    id: 'ir.application:hadSeperateProperty',
+  hadSeparateProperty: {
+    id: 'ir.application:hadSeparateProperty',
     defaultMessage:
       'Átti hinn látni séreign í hjúskapnum samkvæmt kaupmála eða fyrirmælum í erfðaskrá?',
     description: '',
@@ -990,6 +990,16 @@ export const m = defineMessages({
     id: 'ir.application:totalSeparateProperty',
     defaultMessage:
       'Vinsamlegast tilgreindu heildar verðmæti séreignar hins látna.',
+    description: '',
+  },
+  errorTotalSeparateProperty: {
+    id: 'ir.application:errorTotalSeparateProperty',
+    defaultMessage: 'Vantar að fylla út.',
+    description: '',
+  },
+  errorTotalDeduction: {
+    id: 'ir.application:errorTotalDeduction',
+    defaultMessage: 'Vantar að fylla út.',
     description: '',
   },
   totalSeparatePropertyLabel: {
