@@ -23,9 +23,9 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á þingbók á niðurfellingarmála síðu',
   },
   courtRecordFileSubtitle: {
-    id: 'judicial.system.withdrawn_appeal_case:court_record_subtitle',
+    id: 'judicial.system.withdrawn_appeal_case:court_record_subtitle_v1',
     defaultMessage:
-      'Ef úrskurðað var um málskostnað er hægt að hlaða upp þingbók sem deilt verður með verjanda. (og fleirum?)',
+      'Ef úrskurðað var um málskostnað er hægt að hlaða upp þingbók sem deilt verður með verjanda.',
     description: 'Notaður sem titill á þingbók máls á niðurfellingarmála síðu',
   },
   continueButton: {
