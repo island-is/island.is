@@ -83,7 +83,7 @@ runs:
     - name: Exit if no retries
       if: ${{ fromJSON(inputs.retries) < 0 }}
       shell: bash
-      run: exit 0
+      run: exit 1
 
     - name: Attempting to cache (${{ inputs.retries }} retries left)
       id: cache-attempt
@@ -100,9 +100,7 @@ runs:
     - name: Fail on cache miss
       if: ${{ inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.cache-miss == 'true' }}
       shell: bash
-      run: |
-        echo "success=false" >> "$GITHUB_OUTPUT"
-        exit 0
+      run: exit 1
 
     - name: Exit successfully if cache is hit
       if: ${{ steps.cache-attempt.outputs.cache-hit == 'true' }}
