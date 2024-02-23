@@ -45,7 +45,7 @@ inputs:
   retries:
     description: 'Number of retries'
     required: false
-    default: '3'
+    default: '0'
   retry-interval:
     description: 'Time between retries'
     required: false
