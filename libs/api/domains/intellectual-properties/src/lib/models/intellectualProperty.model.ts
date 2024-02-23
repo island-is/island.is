@@ -11,10 +11,10 @@ import { PatentIS } from './patentIS.model'
 
 @InterfaceType('IntellectualProperty', {
   resolveType(res) {
-    if (res.vmId) {
+    if (res.vmid) {
       return Trademark
     }
-    if (res.hId) {
+    if (res.hid) {
       return Design
     }
     if (res.epApplicationNumber) {

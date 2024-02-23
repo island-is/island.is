@@ -91,10 +91,12 @@ const Home: Screen<HomeProps> = ({
     institutionSlug.includes('mannaudstorg')
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const headerTitle = o(
-    'serviceWebHeaderTitle',
-    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-  )
+  const headerTitle = institutionSlugBelongsToMannaudstorg
+    ? o(
+        'serviceWebHeaderTitle',
+        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      )
+    : ''
   const logoUrl = organization?.logo?.url ?? ''
   const searchTitle = o(
     'serviceWebSearchTitle',
@@ -105,9 +107,11 @@ const Home: Screen<HomeProps> = ({
     'serviceWebPageTitle',
     `${
       institutionSlug && organization && organization.title
-        ? organization.title + ' | '
+        ? institutionSlugBelongsToMannaudstorg
+          ? organization.title + ' | '
+          : organization.title
         : ''
-    }${o('serviceWebPageTitleSuffix', headerTitle)}`,
+    }`,
   )
 
   const hasContent = !!supportCategories?.length
