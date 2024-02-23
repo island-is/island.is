@@ -1,11 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const translationStrings = defineMessages({
-  pensionStartIsDefault: {
-    id: 'web.pensionCalculator:pensionStartIsDefault',
-    defaultMessage: 'Þú vilt hefja töku 67 ára',
-    description:
-      'Upplýsingar sem birtast ef þú vilt hvorki flýta né seinka töku ellilífeyris',
+  introduction: {
+    id: 'web.pensionCalculator:introduction#markdown',
+    defaultMessage:
+      'Í reiknivélinni getur þú sett inn mismunandi forsendur og séð hvernig það hefur áhrif á greiðslurnar þínar. Lífeyrir er fyrir flesta grunnlífeyrir frá Tryggingastofnun og viðbótagreiðslur. Ef þú ert með aðrar tekjur en lífeyri frá TR, getur það haft áhrif á réttindin þín.',
+    description: 'Upplýsingar efst á fyrstu síðu',
   },
   pensionStartIsDelayed: {
     id: 'web.pensionCalculator:pensionStartIsDelayed',
@@ -172,50 +172,157 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Árstekjur',
     description: 'Árstekjur',
   },
+  amountDisclaimer: {
+    id: 'web.pensionCalculator:amountDisclaimer',
+    defaultMessage: 'Skráðu allar upphæðir fyrir skatt',
+    description: 'Skráðu allar upphæðir fyrir skatt',
+  },
   taxCardRatioLabel: {
     id: 'web.pensionCalculator:taxCardRatioLabel',
     defaultMessage: 'Hlutfall skattkorts hjá TR',
     description: 'Hlutfall skattkorts hjá TR',
+  },
+  taxCardRatioHeading: {
+    id: 'web.pensionCalculator:taxCardRatioHeading',
+    defaultMessage: 'Upplýsingar um nýtingu skattkorts',
+    description:
+      'Texti fyrir ofan lýsingu varðandi "Hlutfall skattkorts hjá TR"',
+  },
+  taxCardRatioDescription: {
+    id: 'web.pensionCalculator:taxCardRatioDescription',
+    defaultMessage: 'Skrá hlutfall skattkorts sem á að nýta',
+    description: 'Lýsing varðandi "Hlutfall skattkorts hjá TR"',
+  },
+  incomeHeading: {
+    id: 'web.pensionCalculator:incomeHeading',
+    defaultMessage: 'Upplýsingar um atvinnutekjur',
+    description:
+      'Texti fyrir ofan lýsingu varðandi "Tekjur m.a. af atvinnu og atvinnuleysisbótum"',
   },
   incomeLabel: {
     id: 'web.pensionCalculator:incomeLabel',
     defaultMessage: 'Tekjur m.a. af atvinnu, eftirlaunum og atvinnuleysisbótum',
     description: 'Tekjur m.a. af atvinnu, eftirlaunum og atvinnuleysisbótum',
   },
+  incomeDescription: {
+    id: 'web.pensionCalculator:incomeDescription',
+    defaultMessage:
+      'Laun frá vinnuveitanda, reiknað endurgjald, verktakagreiðslur, atvinnuleysisbætur, aðrar tekjur af atvinnurekstri, fæðingarorlof, hlunnindi og styrkir.',
+    description:
+      'Lýsing varðandi "Tekjur m.a. af atvinnu og atvinnuleysisbótum"',
+  },
   pensionPaymentsLabel: {
     id: 'web.pensionCalculator:pensionPaymentsLabel',
     defaultMessage: 'Greiðslur frá lífeyrissjóðum',
     description: 'Greiðslur frá lífeyrissjóðum',
+  },
+  pensionPaymentsHeading: {
+    id: 'web.pensionCalculator:pensionPaymentsHeading',
+    defaultMessage: 'Greiðslur frá lífeyrissjóðum',
+    description:
+      'Texti fyrir ofan lýsingu varðandi "Greiðslur frá lífeyrissjóðum"',
+  },
+  pensionPaymentsDescription: {
+    id: 'web.pensionCalculator:pensionPaymentsDescription',
+    defaultMessage:
+      'Allar greiðslur frá lífeyrissjóðum, lífeyristryggingafélagi, makalífeyrir, séreign og séreignasparnaður. Það er gott að gera ráð fyrir vísitöluhækkunum og áætla meira í lífeyrissjóðsgreiðslur heldur en minna.',
+    description: 'Lýsing varðandi "Greiðslur frá lífeyrissjóðum"',
   },
   privatePensionPaymentsLabel: {
     id: 'web.pensionCalculator:privatePensionPaymentsLabel',
     defaultMessage: 'Greiðslur viðbótarlífeyrissparnaðar',
     description: 'Greiðslur viðbótarlífeyrissparnaðar',
   },
+  privatePensionPaymentsHeading: {
+    id: 'web.pensionCalculator:privatePensionPaymentsHeading',
+    defaultMessage: 'Greiðslur úr viðbótarlífeyrissparnaði',
+    description: 'Greiðslur viðbótarlífeyrissparnaðar',
+  },
+  privatePensionPaymentsDescription: {
+    id: 'web.pensionCalculator:privatePensionPaymentsDescription',
+    defaultMessage:
+      'Viðbótarlífeyrissparnaður er sparnaður þar sem þú greiðir 2% eða 4% af launum og laungreiðandi leggur 2% fram á móti.',
+    description: 'Lýsing varðandi "Greiðslur viðbótarlífeyrissparnaðar"',
+  },
   otherIncomeLabel: {
     id: 'web.pensionCalculator:otherIncomeLabel',
     defaultMessage: 'Aðrar tekjur',
     description: 'Aðrar tekjur',
+  },
+  otherIncomeHeading: {
+    id: 'web.pensionCalculator:otherIncomeHeading',
+    defaultMessage: 'Aðrar tekjur',
+    description: 'Texti fyrir ofan lýsingu varðandi "Aðrar tekjur"',
+  },
+  otherIncomeDescription: {
+    id: 'web.pensionCalculator:otherIncomeDescription',
+    defaultMessage:
+      'Styrkir og félagsleg aðstoð svo sem náms- og vísindastyrkir, fæðingarstyrkir og félagsleg aðstoð. Greiðslur eða skaðabætur frá tryggingafélagi eða stéttarfélagi.',
+    description: 'Lýsing varðandi "Aðrar tekjur"',
   },
   capitalIncomeLabel: {
     id: 'web.pensionCalculator:capitalIncomeLabel',
     defaultMessage: 'Fjármagnstekjur',
     description: 'Fjármagnstekjur',
   },
+  capitalIncomeHeading: {
+    id: 'web.pensionCalculator:capitalIncomeHeading',
+    defaultMessage: 'Fjármagnstekjur',
+    description: 'Fjármagnstekjur',
+  },
+  capitalIncomeDescription: {
+    id: 'web.pensionCalculator:capitalIncomeDescription#markdown',
+    defaultMessage:
+      'Vextir og verðbætur af innistæðum í banka og verðbréfum, leigutekjur, arður af hlutabréfum, söluhagnaður af hlutabréfum og öðrum eignum. Allar fjármagnstekjur eru sameiginlegar fyrir hjón og sambýlisfólk. Þessar upphæðir þurfa að vera samanlögð upphæð fyrir ykkur bæði. Í útreikningi er tekið tillit til þess og fjármagnstekjunum skipt til helminga.',
+    description: 'Lýsing varðandi "Fjármagnstekjur"',
+  },
   benefitsFromMunicipalityLabel: {
     id: 'web.pensionCalculator:benefitsFromMunicipalityLabel',
     defaultMessage: 'Skattskyldar bætur sveitarfélaga',
     description: 'Skattskyldar bætur sveitarfélaga',
+  },
+  benefitsFromMunicipalityHeading: {
+    id: 'web.pensionCalculator:benefitsFromMunicipalityHeading',
+    defaultMessage: 'Skattskyldar bætur sveitarfélaga',
+    description:
+      'Texti fyrir ofan lýsingu varðandi "Skattskyldar bætur sveitarfélaga"',
+  },
+  benefitsFromMunicipalityDescription: {
+    id: 'web.pensionCalculator:benefitsFromMunicipalityDescription',
+    defaultMessage:
+      'Hér á að setja skattskyldar bætur frá sveitarfélögunum. Húsaleigubætur eru ekki skattskyldar og því þarf ekki að taka þær fram',
+    description: 'Lýsing varðandi "Skattskyldar bætur sveitarfélaga"',
   },
   premiumLabel: {
     id: 'web.pensionCalculator:premiumLabel',
     defaultMessage: 'Frádregin iðgjöld í lífeyrissjóði',
     description: 'Frádregin iðgjöld í lífeyrissjóði',
   },
+  premiumHeading: {
+    id: 'web.pensionCalculator:premiumHeading',
+    defaultMessage: 'Frádregin iðgjöld í lífeyrissjóði',
+    description: 'Frádregin iðgjöld í lífeyrissjóði',
+  },
+  premiumDescription: {
+    id: 'web.pensionCalculator:premiumDescription',
+    defaultMessage: 'Iðgjöld í sérsjóði og lífeyrissjóði',
+    description: 'Lýsing varðandi "Frádregin iðgjöld í lífeyrissjóði"',
+  },
   foreignBasicPensionLabel: {
     id: 'web.pensionCalculator:foreignBasicPensionLabel',
     defaultMessage: 'Erlendur grunnlífeyrir',
     description: 'Erlendur grunnlífeyrir',
+  },
+  foreignBasicPensionHeading: {
+    id: 'web.pensionCalculator:foreignBasicPensionHeading',
+    defaultMessage: 'Erlendur grunnlífeyrir',
+    description: 'Erlendur grunnlífeyrir',
+  },
+  foreignBasicPensionDescription: {
+    id: 'web.pensionCalculator:foreignBasicPensionDescription',
+    defaultMessage:
+      'Ef þú færð lífeyri frá erlendri almannatryggingastofnun þarf að skrá upphæðina í íslenskum krónum.',
+    description: 'Lýsing á erlendum grunnlífeyrir',
   },
   calculateResults: {
     id: 'web.pensionCalculator:calculateResults',
@@ -227,10 +334,16 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Tekjur fyrir skatt',
     description: 'H3, Tekjur fyrir skatt',
   },
-  incomeHeading: {
-    id: 'web.pensionCalculator:incomeHeading',
+  mainIncomeHeading: {
+    id: 'web.pensionCalculator:mainIncomeHeading',
     defaultMessage: 'Tekjur',
     description: 'H2, Tekjur',
+  },
+  incomeDisclaimer: {
+    id: 'web.pensionCalculator:incomeDisclaimer#markdown',
+    defaultMessage:
+      'Reiknivélin miðar við jafnar tekjur alla mánuði ársins. Í umsókn er hægt að óska eftir greiðslum samkvæmt atvinnutekjum hvers mánaðar.',
+    description: 'Fyrirvari um tekjur',
   },
   hasLivedAbroadLabel: {
     id: 'web.pensionCalculator:hasLivedAbroadLabel',
@@ -257,30 +370,25 @@ export const translationStrings = defineMessages({
     defaultMessage: ' ár',
     description: ' ár',
   },
+  ageOfFirst75DisabilityAssessment: {
+    id: 'web.pensionCalculator:yearsSuffix',
+    defaultMessage: ' ár',
+    description: ' ár',
+  },
   livingConditionAbroadInYearsPlaceholder: {
     id: 'web.pensionCalculator:livingConditionAbroadInYearsPlaceholder',
     defaultMessage: '0 ár',
     description: '0 ár',
   },
-  mobilityImpairmentLabel: {
-    id: 'web.pensionCalculator:mobilityImpairmentLabel',
-    defaultMessage: 'Með hreyfihömlunarmat',
-    description: 'Með hreyfihömlunarmat',
+  ageOfFirst75DisabilityAssessmentSuffix: {
+    id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessmentSuffix',
+    defaultMessage: 'ára',
+    description: 'Það sem stendur á eftir það sem notandi slær inn (43 "ára")',
   },
-  mobilityImpairmentNo: {
-    id: 'web.pensionCalculator:mobilityImpairmentNo',
-    defaultMessage: 'Nei',
-    description: 'Með hreyfihömlunarmat, Nei',
-  },
-  mobilityImpairmentYes: {
-    id: 'web.pensionCalculator:mobilityImpairmentYes',
-    defaultMessage: 'Já',
-    description: 'Með hreyfihömlunarmat, Já',
-  },
-  ageOfFirst75DisabilityAssessment: {
-    id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessment',
-    defaultMessage: 'Fyrsta 75% örorkumat',
-    description: 'Fyrsta 75% örorkumat',
+  ageOfFirst75RehabilitationAssessment: {
+    id: 'web.pensionCalculator:ageOfFirst75RehabilitationAssessment',
+    defaultMessage: 'Fyrsta endurhæfingarmat',
+    description: 'Fyrsta 75% endurhæfingarmat',
   },
   livingConditionRatioLabel: {
     id: 'web.pensionCalculator:livingConditionRatioLabel',
@@ -332,25 +440,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þínar aðstæður',
     description: 'H2, Þínar aðstæður',
   },
-  startDateLabel: {
-    id: 'web.pensionCalculator:startDateLabel',
-    defaultMessage: 'Hvenær viltu hefja töku á ellilífeyri',
-    description: 'Hvenær viltu hefja töku á ellilífeyri',
-  },
-  startDatePlaceholder: {
-    id: 'web.pensionCalculator:startDatePlaceholder',
-    defaultMessage: 'Veldu dagsetningu',
-    description: 'Hvenær viltu hefja töku á ellilífeyri, placeholder',
-  },
-  birthdateLabel: {
-    id: 'web.pensionCalculator:birthdateLabel',
-    defaultMessage: 'Fæðingardagur',
-    description: 'Fæðingardagur',
-  },
-  birthdatePlaceholder: {
-    id: 'web.pensionCalculator:birthdatePlaceholder',
-    defaultMessage: 'Veldu fæðingardag',
-    description: 'Fæðingardagur, placeholder',
+  startOfPaymentsDescription: {
+    id: 'web.pensionCalculator:startOfPaymentsDescription',
+    defaultMessage:
+      'Ellilífeyrir er eftirágreiddur og miðað er við að taka hefjist við 67 ára aldur.',
+    description: 'Lýsing varðandi "Hvenær viltu hefja töku á ellilífeyri"',
   },
   typeOfBasePensionLabel: {
     id: 'web.pensionCalculator:typeOfBasePensionLabel',
@@ -359,7 +453,7 @@ export const translationStrings = defineMessages({
   },
   dateOfCalculationsLabel: {
     id: 'web.pensionCalculator:dateOfCalculationsLabel',
-    defaultMessage: 'Reiknivélar síðustu ára',
+    defaultMessage: 'Allar reiknivélar',
     description: 'Val á milli ára',
   },
   dateOfCalculationsPlaceholder: {
@@ -504,6 +598,19 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:desember',
     defaultMessage: 'Desember',
     description: 'December',
+  },
+  birthMonthAndYearDescription: {
+    id: 'web.pensionCalculator:birthMonthAndYearDescription',
+    defaultMessage:
+      'Veldu fæðingarmánuð og ár til að sjá hvenær þú átt rétt á að hefja töku ellilífeyris.',
+    description: 'Lýsing fyrir ofan fæðingarmánuð og ár reiti',
+  },
+  startMonthAndYearDescription: {
+    id: 'web.pensionCalculator:startMonthAndYearDescription',
+    defaultMessage:
+      'Þú getur byrjað töku ellilífeyris frá {month} {year}. Þú getur flýtt um 2 ár eða frestað töku ellilífeyris.',
+    description:
+      'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
   },
   birthMonthLabel: {
     id: 'web.pensionCalculator:birthMonthLabel',

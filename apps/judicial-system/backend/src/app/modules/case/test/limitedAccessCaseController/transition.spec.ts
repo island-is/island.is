@@ -4,6 +4,7 @@ import { uuid } from 'uuidv4'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
@@ -24,7 +25,11 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (state: CaseState) => Promise<Then>
+type GivenWhenThen = (
+  state: CaseState,
+  transition: CaseTransition,
+  appealState?: CaseAppealState,
+) => Promise<Then>
 
 describe('LimitedAccessCaseController - Transition', () => {
   const date = randomDate()
@@ -81,15 +86,19 @@ describe('LimitedAccessCaseController - Transition', () => {
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
 
-    givenWhenThen = async (state: CaseState) => {
+    givenWhenThen = async (
+      state: CaseState,
+      transition: CaseTransition,
+      appealState?: CaseAppealState,
+    ) => {
       const then = {} as Then
 
       try {
         then.result = await limitedAccessCaseController.transition(
           caseId,
           user,
-          { id: caseId, state, caseFiles } as Case,
-          { transition: CaseTransition.APPEAL },
+          { id: caseId, state, caseFiles, appealState } as Case,
+          { transition },
         )
       } catch (error) {
         then.error = error as Error
@@ -115,7 +124,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         const mockFindOne = mockCaseModel.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
-        then = await givenWhenThen(state)
+        then = await givenWhenThen(state, CaseTransition.APPEAL)
       })
 
       it('should transition the case', () => {
@@ -150,6 +159,54 @@ describe('LimitedAccessCaseController - Transition', () => {
           },
           {
             type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+            user,
+            caseId,
+          },
+        ])
+      })
+
+      it('should return the updated case', () => {
+        expect(then.result).toBe(updatedCase)
+      })
+    },
+  )
+
+  describe.each([CaseState.ACCEPTED, CaseState.REJECTED])(
+    'withdraw %s case',
+    (state) => {
+      const updatedCase = {
+        id: caseId,
+        state,
+        caseFiles,
+        appealState: CaseAppealState.WITHDRAWN,
+      } as Case
+      let then: Then
+
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        then = await givenWhenThen(
+          state,
+          CaseTransition.WITHDRAW_APPEAL,
+          CaseAppealState.RECEIVED,
+        )
+      })
+
+      it('should transition the case', () => {
+        expect(mockCaseModel.update).toHaveBeenCalledWith(
+          {
+            appealState: CaseAppealState.WITHDRAWN,
+            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+          },
+          { where: { id: caseId } },
+        )
+      })
+
+      it('should queue a notification message', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
             user,
             caseId,
           },

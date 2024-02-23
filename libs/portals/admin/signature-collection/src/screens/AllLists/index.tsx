@@ -111,7 +111,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           />
         </GridColumn>
         <GridColumn
-          paddingTop={[5, 5, 5, 2]}
+          paddingTop={[5, 5, 5, 0]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
@@ -255,19 +255,23 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                               }
                             : undefined
                         }
-                        cta={{
-                          label: formatMessage(m.viewList),
-                          variant: 'text',
-                          icon: 'arrowForward',
-                          onClick: () => {
-                            navigate(
-                              SignatureCollectionPaths.SignatureList.replace(
-                                ':id',
-                                list.id,
-                              ),
-                            )
-                          },
-                        }}
+                        cta={
+                          collectionStatus !== CollectionStatus.InitialActive
+                            ? {
+                                label: formatMessage(m.viewList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                onClick: () => {
+                                  navigate(
+                                    SignatureCollectionPaths.SignatureList.replace(
+                                      ':id',
+                                      list.id,
+                                    ),
+                                  )
+                                },
+                              }
+                            : undefined
+                        }
                       />
                     )
                   })}
@@ -283,7 +287,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           ) : (
             <Text>{formatMessage(m.noLists)}</Text>
           )}
-          {lists.length > 0 && (
+          {lists?.length > 0 && (
             <Box marginTop={5}>
               <Pagination
                 totalItems={lists.length}
@@ -302,16 +306,19 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               />
             </Box>
           )}
-          {lists.length > 0 &&
-            allowedToProcess &&
-            (collectionStatus === CollectionStatus.Processing ||
-              collectionStatus === CollectionStatus.InInitialReview ||
-              collectionStatus === CollectionStatus.InReview) && (
-              <>
+          {lists?.length > 0 && allowedToProcess && (
+            <Box>
+              {(collectionStatus === CollectionStatus.Processing ||
+                collectionStatus === CollectionStatus.InInitialReview ||
+                collectionStatus === CollectionStatus.InReview) && (
                 <CompareLists />
+              )}
+
+              {collectionStatus === CollectionStatus.Processing && (
                 <ActionCompleteCollectionProcessing />
-              </>
-            )}
+              )}
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

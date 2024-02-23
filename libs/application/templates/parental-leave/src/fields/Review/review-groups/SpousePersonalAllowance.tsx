@@ -4,12 +4,9 @@ import {
   ReviewGroup,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import {
-  NO,
-  YES,
-  getApplicationAnswers,
-  parentalLeaveFormMessages,
-} from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { NO, YES } from '../../../constants'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
 

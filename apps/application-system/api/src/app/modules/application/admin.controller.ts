@@ -42,7 +42,7 @@ export class AdminController {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  @Scopes(AdminPortalScope.applicationSystem)
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
   @Get('admin/:nationalId/applications')
   @UseInterceptors(ApplicationAdminSerializer)
@@ -95,7 +95,6 @@ export class AdminController {
     )
   }
   @Scopes(AdminPortalScope.applicationSystemInstitution)
-  @Scopes(AdminPortalScope.applicationSystem)
   @BypassDelegation()
   @Get('admin/institution/:nationalId/applications/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
