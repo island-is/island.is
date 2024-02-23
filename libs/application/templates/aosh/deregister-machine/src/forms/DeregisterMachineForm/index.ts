@@ -23,7 +23,6 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
       alertTitle: conclusion.default.accordionTitle,
-      alertMessage: conclusion.default.alertMessage,
       expandableHeader: conclusion.default.accordionTitle,
       expandableDescription: conclusion.default.accordionText,
     }),

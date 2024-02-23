@@ -8,3 +8,8 @@ export type Machine = {
   plate?: string
   ownerNumber?: string
 }
+
+export enum Status {
+  TEMPORARY = 'Temporary',
+  PERMANENT = 'Permanent',
+}

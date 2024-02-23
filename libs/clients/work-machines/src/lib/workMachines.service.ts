@@ -19,7 +19,7 @@ import {
   ChangeMachineOwner,
   ConfirmOwnerChange,
   SupervisorChange,
-  MachineWithTotalCount,
+  MachinesWithTotalCount,
 } from './workMachines.types'
 import {
   apiChangeMachineOwnerToApiRequest,
@@ -84,7 +84,7 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
-  async getMachines(auth: User): Promise<MachineWithTotalCount> {
+  async getMachines(auth: User): Promise<MachinesWithTotalCount> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
       pageSize: 20,

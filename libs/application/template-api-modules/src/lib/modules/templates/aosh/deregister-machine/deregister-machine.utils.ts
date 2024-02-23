@@ -5,6 +5,7 @@ import { generateApplicationSubmittedSms } from './smsGenerators/applicationSubm
 import { EmailRecipient, EmailRole, UserProfile } from './types'
 import { ChangeMachineSupervisorAnswers } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import { EmailTemplateGeneratorProps } from '../../../../types'
+import { MachineStatusEnum } from '@island.is/clients/work-machines'
 export const getApplicationPruneDateStr = (
   applicationCreated: Date,
 ): string => {
@@ -102,4 +103,9 @@ export const sendNotificationsToRecipients = async (
 
 export const cleanPhoneNumber = (phoneNumber: string) => {
   return phoneNumber.replace(/[-+]/g, '')
+}
+
+export const statusMapping: Record<string, MachineStatusEnum> = {
+  Temporary: MachineStatusEnum.Temporary,
+  Permanent: MachineStatusEnum.Permanent,
 }

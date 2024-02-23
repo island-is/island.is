@@ -15,29 +15,14 @@ export const deregister = {
     },
   }),
   labels: defineMessages({
-    addressTitle: {
-      id: 'aosh.drm.application:deregister.labels.addressTitle',
-      defaultMessage: 'Staðsetning',
-      description: 'Location select title',
-    },
-    ownerIsderegister: {
-      id: 'aosh.drm.application:deregister.labels.addressLabel',
-      defaultMessage: 'Eigandi er umráðamaður',
-      description: 'Location address label',
-    },
-    postCodeLabel: {
-      id: 'aosh.drm.application:deregister.labels.postCodeLabel',
-      defaultMessage: 'Póstnúmer',
-      description: 'Cocation postcode label',
-    },
-    moreInfoLabel: {
-      id: 'aosh.drm.application:deregister.labels.moreInfoLabel',
-      defaultMessage: 'Nánari lýsing',
+    fateOfMachine: {
+      id: 'aosh.drm.application:deregister.labels.fateOfMachine',
+      defaultMessage: 'Afdrif tækis',
       description: 'Location more info label',
     },
     approveButton: {
       id: 'aosh.drm.application:deregister.labels.approveButton',
-      defaultMessage: 'Staðfesta',
+      defaultMessage: 'Áfram',
       description: 'Location approve button text',
     },
     temporary: {
@@ -51,16 +36,16 @@ export const deregister = {
         'Tímabundin afskráning getur verið ef vél:<br>• seld úr landi<br>• fargað eða seld í brotajárn<br>• nýtt í varahluti',
       description: 'Temporary description label',
     },
-    final: {
-      id: 'aosh.drm.application:deregister.labels.final',
+    permanent: {
+      id: 'aosh.drm.application:deregister.labels.permanent',
       defaultMessage: 'Endanleg afskráning',
-      description: 'Final label',
+      description: 'permanent label',
     },
-    finalDescription: {
-      id: 'aosh.drm.application:deregister.labels.finalDescription',
+    permanentDescription: {
+      id: 'aosh.drm.application:deregister.labels.permanentDescription',
       defaultMessage:
         'Endanleg afskráning getur verið ef vél er:<br>• seld úr landi<br>• fargað eða seld í brotajárn<br>• nýtt í varahluti<br>Vélar sem eru afskráðar endanlega má endurskrá. Þær þarf að skoða af eftirlitsmanni áður en hægt er að endurskrá.',
-      description: 'Final description label',
+      description: 'Permanent description label',
     },
     date: {
       id: 'aosh.drm.application:deregister.general.date',

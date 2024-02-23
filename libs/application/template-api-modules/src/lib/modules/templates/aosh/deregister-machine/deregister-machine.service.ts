@@ -6,19 +6,14 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
-import { EmailRole, UserProfile } from './types'
-import { ChangeMachineSupervisorAnswers } from '@island.is/application/templates/aosh/change-machine-supervisor'
-import {
-  cleanPhoneNumber,
-  getRecipients,
-  sendNotificationsToRecipients,
-} from './deregister-machine.utils'
+import { UserProfile } from './types'
+import { DeregisterMachineAnswers } from '@island.is/application/templates/aosh/deregister-machine'
+import { statusMapping } from './deregister-machine.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import {
-  MachineDto,
-  SupervisorChange,
+  MachinesWithTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
@@ -33,7 +28,7 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
 
   async getMachines({
     auth,
-  }: TemplateApiModuleActionProps): Promise<MachineDto[]> {
+  }: TemplateApiModuleActionProps): Promise<MachinesWithTotalCount> {
     const result = await this.workMachineClientService.getMachines(auth)
     if (!result || !result.totalCount) {
       throw new TemplateApiError(
@@ -45,26 +40,29 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
       )
     }
     if (result.totalCount <= 5) {
-      return await Promise.all(
-        result.machines.map(async (machine) => {
-          if (machine.id) {
-            return await this.workMachineClientService.getMachineDetail(
-              auth,
-              machine.id,
-            )
-          }
-          return machine
-        }),
-      )
+      return {
+        machines: await Promise.all(
+          result.machines.map(async (machine) => {
+            if (machine.id) {
+              return await this.workMachineClientService.getMachineDetail(
+                auth,
+                machine.id,
+              )
+            }
+            return machine
+          }),
+        ),
+        totalCount: result.totalCount,
+      }
     }
-    return result.machines
+    return result
   }
 
   async submitApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers = application.answers as ChangeMachineSupervisorAnswers
+    const answers = application.answers as unknown as DeregisterMachineAnswers
 
     if (auth.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -76,69 +74,44 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
       )
     }
     const machineId = answers.machine.id || answers.pickMachine.id
+    console.log('answers', answers)
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }
-    const userProfile = application.externalData?.userProfile
-      ?.data as UserProfile
-    const owner = application.externalData.identity.data as { name: string }
 
-    const supervisorChange: SupervisorChange =
-      answers.supervisor.isOwner[0] === 'ownerIsSupervisor'
-        ? {
-            machineId: machineId,
-            delegateNationalId: auth.nationalId,
-            address: answers.location?.address,
-            email: userProfile.email,
-            phoneNumber: cleanPhoneNumber(userProfile.mobilePhoneNumber),
-            moreInfo: answers.location?.moreInfo,
-            ownerNationalId: auth.nationalId,
-            postalCode: answers.location?.postalCode
-              ? Number(answers.location?.postalCode)
-              : undefined,
-            supervisorNationalId: auth.nationalId,
-          }
-        : {
-            machineId: machineId,
-            delegateNationalId: auth.nationalId,
-            address: answers.location?.address,
-            email: answers.supervisor.email,
-            phoneNumber: cleanPhoneNumber(answers.supervisor?.phone || ''),
-            moreInfo: answers.location?.moreInfo,
-            ownerNationalId: auth.nationalId,
-            postalCode: answers.location?.postalCode
-              ? Number(answers.location?.postalCode)
-              : undefined,
-            supervisorNationalId: answers.supervisor.nationalId,
-          }
-
-    await this.workMachineClientService.changeMachineSupervisor(
-      auth,
-      supervisorChange,
-    )
+    await this.workMachineClientService.deregisterMachine(auth, {
+      machineStatusUpdateDto: {
+        machineId: machineId,
+        delegateNationalId: auth.nationalId,
+        ownerNationalId: auth.nationalId,
+        status: statusMapping[answers.deregister.status],
+        dateOfStatusChange: new Date(answers.deregister.date),
+        fateOfMachine: answers.deregister.fateOfMachine,
+      },
+    })
 
     // send email/sms to all recipients
-    const recipientList =
-      answers.supervisor.isOwner[0] === 'ownerIsSupervisor'
-        ? getRecipients(answers, [EmailRole.owner], userProfile)
-        : getRecipients(
-            answers,
-            [EmailRole.owner, EmailRole.supervisor],
-            userProfile,
-          )
-    const errors = await sendNotificationsToRecipients(
-      recipientList,
-      answers.supervisor.isOwner[0] === 'ownerIsSupervisor'
-        ? owner.name
-        : answers.supervisor?.name || '',
-      this.sharedTemplateAPIService,
-      application,
-    )
+    // const recipientList =
+    //   answers.supervisor.isOwner[0] === 'ownerIsSupervisor'
+    //     ? getRecipients(answers, [EmailRole.owner], userProfile)
+    //     : getRecipients(
+    //         answers,
+    //         [EmailRole.owner, EmailRole.supervisor],
+    //         userProfile,
+    //       )
+    // const errors = await sendNotificationsToRecipients(
+    //   recipientList,
+    //   answers.supervisor.isOwner[0] === 'ownerIsSupervisor'
+    //     ? owner.name
+    //     : answers.supervisor?.name || '',
+    //   this.sharedTemplateAPIService,
+    //   application,
+    // )
 
-    if (errors.length > 0) {
-      errors.forEach((error) => {
-        this.logger.error(error)
-      })
-    }
+    // if (errors.length > 0) {
+    //   errors.forEach((error) => {
+    //     this.logger.error(error)
+    //   })
+    // }
   }
 }

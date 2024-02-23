@@ -48,7 +48,7 @@ export type SupervisorChange = {
   moreInfo?: string | null
 }
 
-export type MachineWithTotalCount = {
+export type MachinesWithTotalCount = {
   machines: MachineDto[]
   totalCount: number
 }

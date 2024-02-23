@@ -1,14 +1,14 @@
 import {
-  buildCheckboxField,
   buildDateField,
-  buildDividerField,
   buildMultiField,
+  buildRadioField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import { location, deregister } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { Status } from '../../../shared'
 
 export const deregisterSubSection = buildSubSection({
   id: 'deregisterSubSection',
@@ -24,38 +24,25 @@ export const deregisterSubSection = buildSubSection({
           title: deregister.labels.date,
           width: 'half',
           required: true,
-          colSpan: '1/2',
+          minDate: new Date(),
         }),
-        buildCheckboxField({
-          id: 'deregister.temporary',
+        buildRadioField({
+          id: 'deregister.status',
           title: '',
           width: 'half',
+          defaultValue: Status.TEMPORARY,
           options: [
             {
-              value: 'true',
-
+              value: Status.TEMPORARY,
               label: deregister.labels.temporary,
               tooltip: deregister.labels.temporaryDescription,
             },
             {
-              value: 'true',
-              label: deregister.labels.final,
-              tooltip: deregister.labels.finalDescription,
+              value: Status.PERMANENT,
+              label: deregister.labels.permanent,
+              tooltip: deregister.labels.permanentDescription,
             },
           ],
-          //description: deregister.labels.temporaryDescription,
-        }),
-        buildCheckboxField({
-          id: 'deregister.final',
-          title: '',
-          width: 'half',
-          options: [
-            {
-              value: 'true',
-              label: deregister.labels.final,
-            },
-          ],
-          //description: deregister.labels.finalDescription,
         }),
         buildTextField({
           id: 'deregister.fateOfMachine',
@@ -63,6 +50,7 @@ export const deregisterSubSection = buildSubSection({
           width: 'full',
           variant: 'textarea',
           required: false,
+          rows: 5,
         }),
         buildSubmitField({
           id: 'submit',

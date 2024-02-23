@@ -31,7 +31,7 @@ export const conclusion = {
     },
     accordionTitle: {
       id: 'aosh.drm.application:conclusion.default.accordionTitle',
-      defaultMessage: 'Hvað gerist næst?',
+      defaultMessage: 'Afskráning þín á tæki hefur verið móttekin!',
       description: 'Conclusion seller accordion title',
     },
     accordionText: {
