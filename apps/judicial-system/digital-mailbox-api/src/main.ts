@@ -6,7 +6,7 @@ import { openApi } from './openApi'
 bootstrap({
   appModule: AppModule,
   name: 'judicial-system-digital-mailbox-api',
-  port: 3356,
+  port: 3357,
   swaggerPath: 'api/swagger',
   openApi,
 })
