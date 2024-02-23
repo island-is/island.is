@@ -1,9 +1,11 @@
 // TODO: Add tests
 import {
+  CaseAppealRulingDecision,
   isIndictmentCase,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseType,
   SessionArrangements,
   User,
@@ -447,10 +449,11 @@ export const isAdminUserFormValid = (user: User): boolean => {
 
 export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.appealJudge1 &&
-      workingCase.appealJudge2 &&
-      workingCase.appealJudge3 &&
-      workingCase.appealAssistant &&
+    (workingCase.appealState === CaseAppealState.WITHDRAWN ||
+      (workingCase.appealJudge1 &&
+        workingCase.appealJudge2 &&
+        workingCase.appealJudge3 &&
+        workingCase.appealAssistant)) &&
       validate([
         [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,
@@ -458,10 +461,23 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
 }
 
 export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
-  const { appealRulingDecision, appealConclusion } = workingCase
+  const { appealRulingDecision, appealConclusion, appealState } = workingCase
 
   return (
-    appealRulingDecision !== null &&
-    validate([[appealConclusion, ['empty']]]).isValid
+    appealState === CaseAppealState.COMPLETED ||
+    appealState === CaseAppealState.WITHDRAWN ||
+    (appealRulingDecision !== null &&
+      validate([[appealConclusion, ['empty']]]).isValid) ||
+    appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+  )
+}
+
+export const isCourtOfAppealWithdrawnCaseStepValid = (
+  workingCase: Case,
+): boolean => {
+  return Boolean(
+    validate([
+      [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+    ]).isValid,
   )
 }
