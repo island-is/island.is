@@ -255,19 +255,23 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                               }
                             : undefined
                         }
-                        cta={{
-                          label: formatMessage(m.viewList),
-                          variant: 'text',
-                          icon: 'arrowForward',
-                          onClick: () => {
-                            navigate(
-                              SignatureCollectionPaths.SignatureList.replace(
-                                ':id',
-                                list.id,
-                              ),
-                            )
-                          },
-                        }}
+                        cta={
+                          collectionStatus !== CollectionStatus.InitialActive
+                            ? {
+                                label: formatMessage(m.viewList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                onClick: () => {
+                                  navigate(
+                                    SignatureCollectionPaths.SignatureList.replace(
+                                      ':id',
+                                      list.id,
+                                    ),
+                                  )
+                                },
+                              }
+                            : undefined
+                        }
                       />
                     )
                   })}
@@ -304,11 +308,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           )}
           {lists?.length > 0 && allowedToProcess && (
             <Box>
-              {collectionStatus === CollectionStatus.Processing ||
+              {(collectionStatus === CollectionStatus.Processing ||
                 collectionStatus === CollectionStatus.InInitialReview ||
-                (collectionStatus === CollectionStatus.InReview && (
-                  <CompareLists />
-                ))}
+                collectionStatus === CollectionStatus.InReview) && (
+                <CompareLists />
+              )}
 
               {collectionStatus === CollectionStatus.Processing && (
                 <ActionCompleteCollectionProcessing />
