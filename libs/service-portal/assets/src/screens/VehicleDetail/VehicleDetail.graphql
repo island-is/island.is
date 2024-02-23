@@ -113,7 +113,7 @@ query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
     }
     downloadServiceURL
     lastMileage {
-      mileage
+      mileageNumber
     }
   }
 }

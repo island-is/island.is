@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import {
   FrambodApi,
   MedmaelalistarApi,
@@ -57,18 +57,23 @@ export class SignatureCollectionSharedClientService {
     listApi: ListApi,
     candidateApi: CandidateApi,
   ): Promise<List> {
-    const list = await listApi.medmaelalistarIDGet({
-      iD: parseInt(listId),
-    })
-    if (!list.frambod?.id) {
-      throw new Error(
-        'Fetch list failed. Received partial collection information from the national registry.',
-      )
+    try {
+      const list = await listApi.medmaelalistarIDGet({
+        iD: parseInt(listId),
+      })
+
+      if (!list.frambod?.id) {
+        throw new Error(
+          'Fetch list failed. Received partial collection information from the national registry.',
+        )
+      }
+      const { umbodList } = await candidateApi.frambodIDGet({
+        iD: list.frambod?.id,
+      })
+      return mapList(list, umbodList)
+    } catch (error) {
+      throw new NotFoundException('List not found')
     }
-    const { umbodList } = await candidateApi.frambodIDGet({
-      iD: list.frambod?.id,
-    })
-    return mapList(list, umbodList)
   }
 
   async getSignatures(api: ListApi, listId: string): Promise<Signature[]> {
@@ -77,6 +82,6 @@ export class SignatureCollectionSharedClientService {
     })
     return signatures
       .map((signature) => mapSignature(signature))
-      .filter((s) => s.active)
+      .filter((s) => s.valid)
   }
 }

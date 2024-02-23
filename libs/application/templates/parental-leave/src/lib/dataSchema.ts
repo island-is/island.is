@@ -18,6 +18,7 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   NO_UNEMPLOYED_BENEFITS,
+  Languages,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
@@ -49,6 +50,12 @@ const PersonalAllowance = z
       path: ['usage'],
     },
   )
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 /**
  * Both periods and employers objects had been removed from here, and the logic has
@@ -107,6 +114,7 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.phoneNumber },
     ),
+    language: z.enum([Languages.IS, Languages.EN]),
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
@@ -311,6 +319,68 @@ export const dataSchema = z.object({
     ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
+  fileUpload: z.object({
+    selfEmployedFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    studentFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    singleParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    parentWithoutBirthParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    permanentFosterCare: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    adoption: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    employmentTerminationCertificateFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    benefitsFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    residenceGrant: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    additionalDocuments: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

@@ -13,14 +13,14 @@ import {
   SINGLE,
   SPOUSE,
 } from '../../../constants'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import {
+  getApplicationAnswers,
   getOtherParentId,
   getOtherParentName,
   getSelectedChild,
   requiresOtherParentApproval,
 } from '../../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { ReviewGroupProps } from './props'
 
@@ -30,8 +30,8 @@ export const OtherParent = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [{ otherParent, otherParentEmail, otherParentPhoneNumber }] =
-    useStatefulAnswers(application)
+  const { otherParent, otherParentEmail, otherParentPhoneNumber } =
+    getApplicationAnswers(application.answers)
 
   const selectedChild = getSelectedChild(
     application.answers,

@@ -139,7 +139,7 @@ export class ProgramExtraApplicationField extends Model<
     example: 'Option 1;Option 2;Option 3',
   })
   @Column({
-    type: DataType.STRING,
+    type: DataType.JSONB,
     allowNull: true,
   })
   options?: string

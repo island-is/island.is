@@ -107,6 +107,7 @@ export function buildDateField(
     placeholder,
     backgroundColor = 'blue',
     required,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -119,6 +120,7 @@ export function buildDateField(
     component: FieldComponents.DATE,
     backgroundColor,
     required,
+    readOnly,
   }
 }
 
@@ -722,6 +724,8 @@ export function buildTableRepeaterField(
     fields,
     table,
     formTitle,
+    marginTop,
+    marginBottom,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
@@ -735,6 +739,8 @@ export function buildTableRepeaterField(
     fields,
     table,
     formTitle,
+    marginTop,
+    marginBottom,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,

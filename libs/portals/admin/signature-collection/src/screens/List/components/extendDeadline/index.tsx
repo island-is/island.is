@@ -16,14 +16,16 @@ import { useRevalidator } from 'react-router-dom'
 const ActionExtendDeadline = ({
   listId,
   endTime,
+  allowedToProcess,
 }: {
   listId: string
   endTime: string
+  allowedToProcess: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
   const [endDate, setEndDate] = useState(endTime)
-  const [extendDeadlineMutation] = useExtendDeadlineMutation()
+  const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
   const { revalidate } = useRevalidator()
 
   useEffect(() => {
@@ -56,19 +58,21 @@ const ActionExtendDeadline = ({
       <Box display="flex" alignItems="flexEnd">
         <Input
           name="endTime"
-          size="xs"
+          size="sm"
           label={formatMessage(m.listEndTime)}
           readOnly
           value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
         />
-        <Box marginLeft={2}>
-          <Button
-            icon="calendar"
-            iconType="outline"
-            variant="utility"
-            onClick={() => setModalChangeDateIsOpen(true)}
-          ></Button>
-        </Box>
+        {allowedToProcess && (
+          <Box marginLeft={2}>
+            <Button
+              icon="calendar"
+              iconType="outline"
+              variant="ghost"
+              onClick={() => setModalChangeDateIsOpen(true)}
+            ></Button>
+          </Box>
+        )}
       </Box>
       <Modal
         id="extendDeadline"
@@ -89,6 +93,7 @@ const ActionExtendDeadline = ({
           />
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
+              loading={loading}
               onClick={() => {
                 extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)

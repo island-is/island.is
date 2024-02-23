@@ -825,12 +825,15 @@ export const slices = gql`
       stackId
     }
     sourceData
+    flipAxis
     xAxisKey
+    xAxisFormat
     xAxisValueType
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {
     __typename
+    chartNumberBoxId: id
     title
     numberBoxDescription
     sourceDataKey

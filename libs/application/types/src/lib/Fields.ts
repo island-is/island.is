@@ -73,6 +73,7 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
+  condition?: (application: Application) => boolean
 } & (
   | {
       component: 'input'
@@ -183,6 +184,7 @@ export enum FieldTypes {
   TABLE_REPEATER = 'TABLE_REPEATER',
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
+  FIND_VEHICLE = 'FIND_VEHICLE',
 }
 
 export enum FieldComponents {
@@ -212,6 +214,7 @@ export enum FieldComponents {
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
+  FIND_VEHICLE = 'FindVehicleFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -235,6 +238,7 @@ export interface DateField extends BaseField {
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
   required?: boolean
+  readOnly?: boolean
 }
 
 export interface DescriptionField extends BaseField {
@@ -395,7 +399,7 @@ export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText?: StaticText
-  description: StaticText
+  description: FormText
   startExpanded?: boolean
 }
 
@@ -484,6 +488,8 @@ export type TableRepeaterField = BaseField & {
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   removeButtonTooltipText?: StaticText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
   fields: Record<string, TableRepeaterItem>
   table?: {
     /**
@@ -498,6 +504,23 @@ export type TableRepeaterField = BaseField & {
     rows?: string[]
     format?: Record<string, (value: string) => string>
   }
+}
+export interface FindVehicleField extends BaseField {
+  readonly type: FieldTypes.FIND_VEHICLE
+  component: FieldComponents.FIND_VEHICLE
+  disabled?: boolean
+  required?: boolean
+  additionalErrors: boolean
+  getVehicleDetails?: (plate: string) => Promise<unknown>
+  findVehicleButtonText?: FormText
+  findPlatePlaceholder?: FormText
+  notFoundErrorMessage?: FormText
+  notFoundErrorTitle?: FormText
+  fallbackErrorMessage?: FormText
+  hasErrorTitle?: FormText
+  isNotDebtLessTag?: FormText
+  validationErrors?: Record<string, FormText>
+  requiredValidVehicleErrorMessage?: FormText
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
@@ -543,3 +566,4 @@ export type Field =
   | TableRepeaterField
   | HiddenInputWithWatchedValueField
   | HiddenInputField
+  | FindVehicleField
