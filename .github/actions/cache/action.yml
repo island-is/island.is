@@ -66,26 +66,22 @@ inputs:
 outputs:
   cache-hit:
     description: 'Did the cache key match and restored the cache?'
-    value: ${{ steps.cache-attempt.outputs.cache-hit }}
+    value: ${{ steps.collector.outputs.cache-hit }}
   result:
     description: 'Result of the action'
-    value: ${{ steps.cache-attempt.outputs.result }}
+    value: ${{ steps.collector.outputs.result }}
   success:
     description: 'Did the action succeed?'
-    value: ${{ steps.cache-attempt.outputs.success }}
+    value: ${{ steps.collector.outputs.success }}
   conclusion:
     description: 'Did the action succeed?'
-    value: ${{ steps.cache-attempt.outputs.conclusion }}
+    value: ${{ steps.collector.outputs.conclusion }}
 
 runs:
   using: 'composite'
   steps:
-    - name: Exit if no retries
-      if: ${{ fromJSON(inputs.retries) < 0 }}
-      shell: bash
-      run: exit 1
-
     - name: Attempting to cache (${{ inputs.retries }} retries left)
+      if: ${{ !cancelled() && fromJSON(inputs.retries) >= 0 }}
       id: cache-attempt
       # uses: actions/cache@v3 # Good for local debugging with act ❤️
       uses: island-is/cache@v0.3
@@ -98,32 +94,28 @@ runs:
         enable-cross-os-archive: ${{ inputs.enableCrossOsArchive }}
 
     - name: Fail on cache miss
-      if: ${{ inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.cache-miss == 'true' }}
+      if: ${{ !cancelled() && inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.cache-miss == 'true' }}
       shell: bash
       run: exit 1
 
-    - name: Exit successfully if cache is hit
-      if: ${{ steps.cache-attempt.outputs.cache-hit == 'true' }}
-      shell: bash
-      run: exit 0
-
     - name: Sleep for ${{ inputs.retry-interval }} seconds
-      if: ${{ fromJSON(inputs.retries) > 0 && steps.cache-attempt.outputs.success != 'true' }}
+      if: ${{ !cancelled() && fromJSON(inputs.retries) >= 0 && steps.cache-attempt.outputs.success != 'true' }}
       shell: bash
       run: sleep ${{ inputs.retry-interval }}
 
     - name: Calculate retries left
       shell: bash
-      id: calc-retries
+      id: calculator
       run: echo "retries-left=$(( ${{ inputs.retries }} - 1 ))" >> "$GITHUB_OUTPUT"
 
     - name: Recursively loop caching
+      if: ${{ !cancelled() && fromJSON(inputs.retries) >= 0 }}
       id: recurse-loop
       uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        retries: ${{ steps.calc-retries.outputs.retries-left }}
+        retries: ${{ steps.calculator.outputs.retries-left }}
         retry-interval: ${{ inputs.retry-interval }}
         cache-url: ${{ inputs.cache-url }}
 
@@ -182,3 +174,19 @@ runs:
         SLACK_TITLE: ${{ env.SLACK_TITLE }}
         SLACK_USERNAME: ${{ env.SLACK_USERNAME }}
         SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
+
+    - name: Collect statuses
+      if: '${{ !cancelled() }}'
+      id: collector
+      shell: bash
+      run: |
+        # Default to cache-attempt outputs
+        echo "cache-hit=${{ steps.cache-attempt.outputs.cache-hit }}" >> "$GITHUB_OUTPUT"
+        echo "conclusion=${{ steps.cache-attempt.outputs.conclusion }}" >> "$GITHUB_OUTPUT"
+        echo "result=${{ steps.cache-attempt.outputs.result }}" >> "$GITHUB_OUTPUT"
+        echo "success=${{ steps.cache-attempt.outputs.success }}" >> "$GITHUB_OUTPUT"
+
+        # Overwrite on specific config
+        if [ "${{ inputs.fail-on-cache-miss }}" = 'false' ]; then
+          echo "success=true" >> "$GITHUB_OUTPUT"
+        fi
