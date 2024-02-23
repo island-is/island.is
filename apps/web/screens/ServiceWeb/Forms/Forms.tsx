@@ -126,19 +126,18 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
   }, [error])
 
-  const headerTitle = o(
-    'serviceWebHeaderTitle',
-    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-  )
-  const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${
-    institutionSlug && organization && organization.title
-      ? organization.title + ' | '
-      : ''
-  }${headerTitle}`
-
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
+
+  const headerTitle = institutionSlugBelongsToMannaudstorg
+    ? o(
+        'serviceWebHeaderTitle',
+        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      )
+    : ''
+
+  const organizationTitle = (organization && organization.title) || 'Ísland.is'
+  const pageTitle = `${organization?.title ? organization.title : ''}`
 
   const breadcrumbItems = useMemo(() => {
     const items = []

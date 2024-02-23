@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { applyCase } from 'beygla'
+import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'framer-motion'
 import router from 'next/router'
 

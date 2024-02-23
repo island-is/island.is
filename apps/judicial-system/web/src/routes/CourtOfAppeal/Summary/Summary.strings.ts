@@ -35,4 +35,17 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í loka máli modal á skrefi samantektar Landsréttar.',
   },
+  appealDiscontinuedModalTitle: {
+    id: 'judicial.system.core:court_of_appeal.summary.appeal_discontinued_modal_title',
+    defaultMessage: 'Máli hefur verið lokið',
+    description:
+      'Notaður sem titill í niðurfelling máls modal á skrefi samantektar Landsréttar.',
+  },
+  appealDiscontinuedModalText: {
+    id: 'judicial.system.core:court_of_appeal.summary.appeal_discontinued_modal_text',
+    defaultMessage:
+      'Tilkynning um niðurfellingu kæru hefur verið send á aðila máls',
+    description:
+      'Notaður sem texti í niðurfelling máls modal á skrefi samantektar Landsréttar.',
+  },
 })

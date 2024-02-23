@@ -29,6 +29,7 @@ import {
   PERMANENT_FOSTER_CARE,
   ChildInformation,
   ADOPTION,
+  Languages,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -439,7 +440,7 @@ export const transformApplicationToParentalLeaveDTO = (
         ? multipleBirths.toString()
         : undefined,
     type,
-    language,
+    language: language === Languages.EN ? language : undefined, // Only send language if EN
   }
 }
 

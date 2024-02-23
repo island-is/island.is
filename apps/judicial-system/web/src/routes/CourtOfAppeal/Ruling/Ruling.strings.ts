@@ -39,4 +39,9 @@ export const courtOfAppealRuling = defineMessages({
     description:
       'Notaður sem titill á hlaða upp takka á skrefi úrskurður Landsréttar.',
   },
+  courtRecordHeading: {
+    id: 'judicial.system.core:court_of_appeal_ruling.court_record_heading',
+    defaultMessage: 'Þingbók Landsréttar',
+    description: 'Notaður sem fyrirsögn á þingbók.',
+  },
 })
