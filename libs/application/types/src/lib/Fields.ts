@@ -511,7 +511,7 @@ export interface FindVehicleField extends BaseField {
   disabled?: boolean
   required?: boolean
   additionalErrors: boolean
-  getVehicleDetails?: (plate: string) => Promise<unknown>
+  getDetails?: (plate: string) => Promise<unknown>
   findVehicleButtonText?: FormText
   findPlatePlaceholder?: FormText
   notFoundErrorMessage?: FormText
@@ -521,6 +521,7 @@ export interface FindVehicleField extends BaseField {
   isNotDebtLessTag?: FormText
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
+  isMachine?: boolean
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
