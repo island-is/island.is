@@ -50,9 +50,6 @@ export class PensionCalculationInput {
   @Field(() => LivingCondition, { nullable: true })
   livingCondition?: LivingCondition
 
-  @Field(() => Boolean, { nullable: true })
-  mobilityImpairment?: boolean
-
   @Field(() => Int, { nullable: true })
   startMonth?: number
 
