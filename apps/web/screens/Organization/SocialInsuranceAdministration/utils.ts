@@ -38,9 +38,6 @@ export const convertQueryParametersToCalculationInput = (
       query.livingConditionAbroadInYears,
     ),
     taxCard: parseAsInteger.parseServerSide(query.taxCard),
-    mobilityImpairment: parseAsBoolean.parseServerSide(
-      query.mobilityImpairment,
-    ),
     ageOfFirst75DisabilityAssessment: parseAsInteger.parseServerSide(
       query.ageOfFirst75DisabilityAssessment,
     ),
