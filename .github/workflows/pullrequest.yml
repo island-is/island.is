@@ -52,6 +52,7 @@ jobs:
           echo "whoami: $(whoami)"
           echo "HOME: $HOME"
           echo "PWD: $PWD"
+          echo "Homedir permissions: $(ls -lahd $HOME)"
 
       - uses: actions/setup-node@v3
         with:
