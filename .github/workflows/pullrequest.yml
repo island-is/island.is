@@ -242,7 +242,7 @@ jobs:
   tests:
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS }}
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
@@ -301,7 +301,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS }}
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
@@ -462,7 +462,7 @@ jobs:
     container:
       image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
+    if: ${{ needs.prepare.outputs.LINT_CHUNKS }}
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
@@ -521,7 +521,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
     steps:
       - uses: actions/checkout@v3
 
