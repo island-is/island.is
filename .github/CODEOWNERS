@@ -36,10 +36,10 @@
 /libs/service-portal/petitions/                                                                          @island-is/juni
 /libs/service-portal/signature-collection/                                                               @island-is/juni
 /libs/service-portal/education/                                                                          @island-is/juni @island-is/hugsmidjan
-/libs/service-portal/education-career/                                                                   @island-is/juni
-/libs/service-portal/education-degree/                                                                   @island-is/juni
-/libs/service-portal/education-license/                                                                  @island-is/juni
-/libs/service-portal/education-student-assessment/                                                       @island-is/juni @island-is/norda
+/libs/service-portal/education-career/                                                                   @island-is/juni @island-is/hugsmidjan
+/libs/service-portal/education-degree/                                                                   @island-is/juni @island-is/hugsmidjan
+/libs/service-portal/education-license/                                                                  @island-is/juni @island-is/hugsmidjan
+/libs/service-portal/education-student-assessment/                                                       @island-is/juni @island-is/norda @island-is/hugsmidjan
 /libs/clients/driving-license/                                                                           @island-is/juni
 /libs/clients/judicial-administration/                                                                   @island-is/juni
 /libs/application/templates/announcement-of-death/                                                       @island-is/juni
