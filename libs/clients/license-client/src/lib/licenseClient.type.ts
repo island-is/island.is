@@ -14,6 +14,7 @@ export enum LicenseType {
   PCard = 'PCard',
   Ehic = 'Ehic',
   Passport = 'Passport',
+  HuntingLicense = 'HuntingLicense',
 }
 
 export type LicenseTypeType = keyof typeof LicenseType
@@ -30,6 +31,7 @@ export type PassTemplateIds = {
   machineLicense: string
   disabilityLicense: string
   drivingLicense: string
+  huntingLicense: string
 }
 
 export type PkPassVerificationData = {

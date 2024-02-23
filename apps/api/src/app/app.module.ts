@@ -40,6 +40,7 @@ import {
   DisabilityDigitalLicenseClientConfig,
   AdrDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
+  HuntingDigitalLicenseClientConfig,
   DrivingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 import {
@@ -319,6 +320,7 @@ const environment = getConfig
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
+        HuntingDigitalLicenseClientConfig,
         FirearmDigitalLicenseClientConfig,
         DisabilityDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
