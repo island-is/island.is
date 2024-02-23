@@ -114,6 +114,7 @@ import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-in
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
+import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
@@ -331,6 +332,7 @@ const environment = getConfig
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
+        HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsLoansClientConfig,
         FinanceClientConfig,

@@ -1,4 +1,4 @@
-# clients/hunting-license
+# clients-hunting-license
 
 This library was generated with [Nx](https://nx.dev).
 

@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients/hunting-license',
+  displayName: 'clients-hunting-license',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
