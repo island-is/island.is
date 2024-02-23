@@ -86,7 +86,6 @@ export const heirs = buildSection({
               label: m.netPropertyForExchange,
               display: 'flex',
               value: ({ answers }) => {
-                console.log('overview answers', answers)
                 const spouseTotalDeduction = valueToNumber(
                   getValueViaPath(answers, 'spouse.spouseTotalDeduction'),
                 )
@@ -107,8 +106,6 @@ export const heirs = buildSection({
                   : !hadSeparateProperty
                   ? spouseTotalDeduction
                   : spouseTotalSeparateProperty
-
-                console.log('deductionValue', deductionValue)
 
                 return formatCurrency(
                   String(

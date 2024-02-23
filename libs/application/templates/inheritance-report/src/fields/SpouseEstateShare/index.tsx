@@ -132,11 +132,6 @@ export const SpouseEstateShare: FC<
     { label: formatMessage(m.no), value: NO },
   ]
 
-  console.log(
-    'getUpdatedValues()?.spouseTotalDeduction',
-    getUpdatedValues()?.spouseTotalDeduction,
-  )
-
   return (
     <GridRow>
       {radioButtons.map(({ name, title }) => {

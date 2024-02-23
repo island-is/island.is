@@ -1,4 +1,3 @@
-// bla
 import {
   EstateAsset,
   EstateInfo,

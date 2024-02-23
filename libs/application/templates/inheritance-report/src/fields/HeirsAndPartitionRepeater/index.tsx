@@ -149,15 +149,6 @@ export const HeirsAndPartitionRepeater: FC<
     )
     const inheritanceTaxValue = Math.round(taxableInheritanceValue * 0.1)
 
-    console.log('assetsTotal', assetsTotal)
-    console.log('debtsTotal', debtsTotal)
-    console.log('businessTotal', businessTotal)
-    console.log('totalDeduction', totalDeduction)
-    console.log('inheritanceValue', inheritanceValue)
-    console.log('taxFreeInheritanceValue', taxFreeInheritanceValue)
-    console.log('taxableInheritanceValue', taxableInheritanceValue)
-    console.log('inheritanceTaxValue', inheritanceTaxValue)
-
     setValue(`${updateIndex}.heirsPercentage`, String(numValue))
     setValue(
       `${updateIndex}.taxFreeInheritance`,
@@ -230,9 +221,6 @@ export const HeirsAndPartitionRepeater: FC<
     }
   }, [estateData?.estate?.estateMembers, fields.length, replace])
 
-  console.log('fields', fields)
-  console.log('application', application)
-  console.log('answers', answers)
   return (
     <Box>
       {fields.reduce(
