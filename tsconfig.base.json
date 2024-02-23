@@ -627,6 +627,9 @@
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
+      "@island.is/clients/license-client-factory": [
+        "libs/clients/license-client-factory/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
