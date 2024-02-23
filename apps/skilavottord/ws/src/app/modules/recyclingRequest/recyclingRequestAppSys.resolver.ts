@@ -50,7 +50,7 @@ export class RecyclingRequestAppSysResolver {
       // Check if user owns the vehicle
       if (!vehicle) {
         logger.error(
-          `User ${user.nationalId} does not own the requested vehicle`,
+          `RecyclingRequestResponse - User ${user.nationalId} does not own the requested vehicle`,
           { permno: input.permno, user },
         )
         throw new NotFoundException(

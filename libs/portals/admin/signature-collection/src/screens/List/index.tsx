@@ -77,18 +77,20 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   listStatus === ListStatus.Reviewed ? 'success' : undefined
                 }
               />
-              {list.collectors?.map((collector) => (
-                <Box key={collector.name} marginBottom={5}>
-                  <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
-                  <Text>
-                    {collector.name +
-                      ' ' +
-                      '(' +
-                      formatNationalId(collector.nationalId) +
-                      ')'}
-                  </Text>
+              {!!list.collectors?.length && (
+                <Box marginBottom={5}>
+                  <Text variant="h5">{formatMessage(m.collectors)}</Text>
+                  {list.collectors?.map((collector) => (
+                    <Text variant="medium" key={collector.name}>
+                      {collector.name +
+                        ' ' +
+                        '(' +
+                        formatNationalId(collector.nationalId) +
+                        ')'}
+                    </Text>
+                  ))}
                 </Box>
-              ))}
+              )}
               <Box marginBottom={5}>
                 <Text variant="h5">{formatMessage(m.candidateNationalId)}</Text>
                 <Text variant="medium">
