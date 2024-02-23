@@ -7,7 +7,9 @@ export default function useUser() {
   const [session, loading] = useSession()
 
   const timeNow = Math.floor(Date.now() / 1000)
-  const expiryStr = session?.expires ? new Date(session.expires.replace(/['"]+/g, '')).getTime() : undefined
+  const expiryStr = session?.expires
+    ? new Date(session.expires.replace(/['"]+/g, '')).getTime()
+    : undefined
   const expiry = Math.floor((expiryStr ?? 0) / 1000)
 
   const hasNotExpired = timeNow < expiry
@@ -25,7 +27,7 @@ export default function useUser() {
       if (!user && session?.user) {
         const { name = '', email, image } = session.user || {}
         setUser({ name: name || '', email: email || '', image: image || '' })
-        setIsAuthenticated(true);
+        setIsAuthenticated(true)
       }
     }
   }, [setUser, session, user])

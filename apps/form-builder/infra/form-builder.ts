@@ -27,20 +27,20 @@ export const serviceSetup = (services: {
         staging: 'identity-server.staging01.devland.is',
         prod: 'innskra.island.is',
       },
-      NEXTAUTH_URL: { //TODO add paths
+      NEXTAUTH_URL: {
+        //TODO add paths
         dev: '',
         staging: '',
         prod: '',
       },
-      BACKEND_DL_URL: { //TODO add paths
+      BACKEND_DL_URL: {
+        //TODO add paths
         dev: '',
         staging: '',
         prod: '',
       },
     })
-    .secrets({
-
-    })
+    .secrets({})
     .ingress({
       primary: {
         host: {

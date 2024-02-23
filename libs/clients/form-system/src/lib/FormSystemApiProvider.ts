@@ -8,8 +8,16 @@ import {
 
 import { FormSystemClientConfig } from './FormSystemClient.config'
 
-import { Configuration, FilesApi, FormsApi, GroupsApi, InputsApi, OrganizationsApi, ServicesApi, StepsApi } from '../../gen/fetch'
-
+import {
+  Configuration,
+  FilesApi,
+  FormsApi,
+  GroupsApi,
+  InputsApi,
+  OrganizationsApi,
+  ServicesApi,
+  StepsApi,
+} from '../../gen/fetch'
 
 const provideApi = <T>(
   Api: new (configuration: Configuration) => T,
@@ -28,12 +36,12 @@ const provideApi = <T>(
           logErrorResponseBody: true,
           autoAuth: idsClientConfig.isConfigured
             ? {
-              mode: 'auto',
-              issuer: idsClientConfig.issuer,
-              clientId: idsClientConfig.clientId,
-              clientSecret: idsClientConfig.clientSecret,
-              scope: config.tokenExchangeScope,
-            }
+                mode: 'auto',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: config.tokenExchangeScope,
+              }
             : undefined,
         }),
         basePath: config.basePath,

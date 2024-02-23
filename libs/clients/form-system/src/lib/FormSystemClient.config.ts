@@ -3,7 +3,7 @@ import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({
   basePath: z.string(),
-  tokenExchangeScope: z.array(z.string())
+  tokenExchangeScope: z.array(z.string()),
 })
 
 export const FormSystemClientConfig = defineConfig({
@@ -12,7 +12,7 @@ export const FormSystemClientConfig = defineConfig({
   load(env) {
     return {
       basePath: env.required('https://profun.island.is/umsoknarkerfi/api'),
-      tokenExchangeScope: ['api_resource.scope'] // TODO: add correct scope
+      tokenExchangeScope: ['api_resource.scope'], // TODO: add correct scope
     }
-  }
+  },
 })
