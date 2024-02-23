@@ -16,6 +16,7 @@ concurrency:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  HOME: /tmp/node-home
 
 jobs:
   prepare:
@@ -44,6 +45,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Debug environment and user
+        run: |
+          echo "id: $(id)"
+          echo "whoami: $(whoami)"
+          echo "HOME: $HOME"
+          echo "PWD: $PWD"
 
       - uses: actions/setup-node@v3
         with:
