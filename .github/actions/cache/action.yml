@@ -73,14 +73,17 @@ outputs:
   success:
     description: "Did the action succeed?"
     value: ${{ steps.cache-attempt.outputs.success }}
+  conclusion:
+    description: "Did the action succeed?"
+    value: ${{ steps.cache-attempt.outputs.conclusion }}
 
 runs:
   using: "composite"
   steps:
     - name: Exit if no retries
-      if: ${{ inputs.retries < 0 }}
+      if: ${{ fromJSON(inputs.retries) < 0 }}
       shell: bash
-      run: exit 0
+      run: exit 1
 
     - name: Attempting to cache (${{ inputs.retries }} retries left)
       id: cache-attempt
@@ -95,9 +98,9 @@ runs:
         enable-cross-os-archive: ${{ inputs.enableCrossOsArchive }}
 
     - name: Fail on cache miss
-      if: inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.success != 'true'
+      if: ${{ inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.cache-miss == 'true' }}
       shell: bash
-      run: exit 0
+      run: exit 1
 
     - name: Exit successfully if cache is hit
       if: ${{ steps.cache-attempt.outputs.cache-hit == 'true' }}
@@ -105,7 +108,7 @@ runs:
       run: exit 0
 
     - name: Sleep for ${{ inputs.retry-interval }} seconds
-      if: ${{ inputs.retries > 0 && steps.cache-attempt.outputs.success != 'true' }}
+      if: ${{ fromJSON(inputs.retries) > 0 && steps.cache-attempt.outputs.success != 'true' }}
       shell: bash
       run: sleep ${{ inputs.retry-interval }}
 
@@ -116,7 +119,6 @@ runs:
 
     - name: Recursively loop caching
       id: recurse-loop
-      if: ${{ steps.cache-attempt.outputs.success != 'true' }}
       uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
@@ -124,11 +126,6 @@ runs:
         retries: ${{ steps.calc-retries.outputs.retries-left }}
         retry-interval: ${{ inputs.retry-interval }}
         cache-url: ${{ inputs.cache-url }}
-
-    - name: Exit if recurse failed
-      if: ${{ steps.recurse-loop.outputs.success != 'true' }}
-      shell: bash
-      run: exit 0
 
       # From https://github.com/marketplace/actions/slack-notify#environment-variables
       # SLACK_CHANNEL: general
