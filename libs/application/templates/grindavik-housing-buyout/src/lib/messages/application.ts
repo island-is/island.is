@@ -32,6 +32,12 @@ export const application = {
         'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
       description: 'Property information section description',
     },
+    explaination: {
+      id: 'ghb.application.propertyInformation:explaination#markdown',
+      defaultMessage:
+        '5% af kaupverði fasteignar er haldið eftir fram að afsali er 4.225.000.\n\n Útgreitt við kaupsamning er þá (4.225.000 - 80.275.000) eða 76.050.000.\n\n Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n Afhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
+      description: 'Property information explaination',
+    },
   }),
   loanStatus: defineMessages({
     sectionTitle: {
@@ -41,14 +47,24 @@ export const application = {
     },
     sectionDescription: {
       id: 'ghb.application.loanStatus:section.description',
-      defaultMessage:
-        'Hér getur þú bætt við upplýsingum um stöðu á láni fasteignar.',
+      defaultMessage: 'Hér birtast upplýsingar um stöðu á láni fasteignar.',
       description: 'Loan status section description',
     },
     statusOfLoan: {
       id: 'ghb.application.loanStatus:statusOfLoan',
       defaultMessage: 'Staða á láni',
       description: 'Status of loan',
+    },
+    addLoanTitle: {
+      id: 'ghb.application.loanStatus:addLoanTitle',
+      defaultMessage: 'Bættu við núverandi stöðu á lánum fasteignar',
+      description: 'Add loan title',
+    },
+    addLoanDescription: {
+      id: 'ghb.application.loanStatus:addLoanDescription',
+      defaultMessage:
+        'Bættu við núverandi stöðu á þínum lánum hjá banka eða lífeyrissjóði.',
+      description: 'Add loan description',
     },
     loanProvider: {
       id: 'ghb.application.loanStatus:loanProvider',

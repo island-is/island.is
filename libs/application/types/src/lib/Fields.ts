@@ -490,6 +490,7 @@ export type TableRepeaterField = BaseField & {
   removeButtonTooltipText?: StaticText
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
   table?: {
     /**

@@ -41,6 +41,7 @@ const componentMapper = {
 export const TableRepeaterFormField: FC<Props> = ({
   application,
   field: data,
+  showFieldName,
   error,
 }) => {
   const {
@@ -51,6 +52,8 @@ export const TableRepeaterFormField: FC<Props> = ({
     marginTop = 6,
     marginBottom,
     getStaticTableData,
+    title,
+    titleVariant = 'h4',
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
@@ -110,12 +113,17 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
+      {showFieldName && (
+        <Text variant={titleVariant} marginBottom={2}>
+          {formatText(title, application, formatMessage)}
+        </Text>
+      )}
       {description && (
         <FieldDescription
           description={formatText(description, application, formatMessage)}
         />
       )}
-      <Box marginTop={description ? 4 : 0}>
+      <Box marginTop={description ? 3 : 0}>
         <Stack space={4}>
           <T.Table>
             <T.Head>

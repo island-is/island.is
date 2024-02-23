@@ -8,7 +8,6 @@ import {
   buildStaticTableField,
   buildSubmitField,
   buildTableRepeaterField,
-  buildTextField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -26,6 +25,7 @@ import {
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import { GrindavikHousingBuyout } from '../lib/dataSchema'
+import { calculateTotalLoanFromAnswers } from '../utils'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -64,7 +64,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                   [
                     data.fullName,
                     data.nationalId,
-                    'Íbúð',
+                    'Afsal',
                     '100%',
                     formatCurrency('84500000'),
                   ],
@@ -72,10 +72,16 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               },
               summary: (_application) => {
                 return {
-                  label: 'Kaupverð 95% af brunabótamati',
+                  label: m.application.overview.buyoutPriceTitle,
                   value: formatCurrency('80275000'),
                 }
               },
+            }),
+            buildDescriptionField({
+              id: '',
+              title: '',
+              marginTop: 4,
+              description: m.application.propertyInformation.explaination,
             }),
           ],
         }),
@@ -89,13 +95,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           id: 'loans',
           marginTop: 2,
           title: m.application.loanStatus.sectionTitle,
-          description: m.application.loanStatus.sectionDescription,
+          description: m.application.loanStatus.addLoanDescription,
           addItemButtonText: m.application.loanStatus.addNewLoan,
           saveItemButtonText: m.application.loanStatus.saveNewLoan,
-          getStaticTableData: (_application) => {
-            // TODO: Loan data from data provider
-            return [{ status: '1450000', provider: 'Bingo' }]
-          },
           fields: {
             status: {
               component: 'input',
@@ -207,19 +209,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildKeyValueField({
               label: '',
-              value: formatCurrency('52525000'),
-            }),
-            buildDividerField({}),
-
-            // Loan status
-            buildDescriptionField({
-              id: 'loanStatusOverview',
-              title: m.application.overview.loanStatusTitle,
-              titleVariant: 'h4',
-            }),
-            buildKeyValueField({
-              label: '',
-              value: formatCurrency('41564450'),
+              value: ({ answers }) => {
+                const total = calculateTotalLoanFromAnswers(answers)
+                return formatCurrency(total?.toString() ?? '0')
+              },
             }),
             buildDividerField({}),
 

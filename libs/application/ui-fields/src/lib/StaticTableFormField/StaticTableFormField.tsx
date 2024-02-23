@@ -39,7 +39,7 @@ export const StaticTableFormField: FC<Props> = ({
           description={formatText(description, application, formatMessage)}
         />
       )}
-      <Box marginTop={description ? 4 : 0}>
+      <Box marginTop={description ? 3 : 0}>
         <T.Table>
           <T.Head>
             <T.Row>
