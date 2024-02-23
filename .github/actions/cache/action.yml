@@ -33,7 +33,7 @@ inputs:
     description: 'An optional boolean when enabled, allows Windows runners to save or restore caches that can be restored or saved respectively on other platforms'
     required: false
     default: 'false'
-  fail-on-cache-miss:
+  fail-on-missing:
     description: 'Fail the workflow if cache entry is not found'
     required: false
     default: 'false'
@@ -89,17 +89,17 @@ runs:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
         cache-url: ${{ inputs.cache-url }}
-        fail-on-missing: ${{ inputs.fail-on-cache-miss }}
+        fail-on-missing: ${{ inputs.fail-on-missing }}
         lookup-only: ${{ inputs.lookup-only }}
         enable-cross-os-archive: ${{ inputs.enableCrossOsArchive }}
 
     - name: Fail on cache miss
-      if: ${{ !cancelled() && inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.cache-miss == 'true' }}
+      if: ${{ !cancelled() && inputs.fail-on-missing == 'true' && steps.cache-attempt.outputs.cache-miss == 'true' }}
       shell: bash
       run: exit 1
 
     - name: Sleep for ${{ inputs.retry-interval }} seconds
-      if: ${{ !cancelled() && fromJSON(inputs.retries) >= 0 && steps.cache-attempt.outputs.success != 'true' }}
+      if: ${{ !cancelled() && fromJSON(inputs.retries) > 0 && steps.cache-attempt.outputs.success != 'true' }}
       shell: bash
       run: sleep ${{ inputs.retry-interval }}
 
@@ -187,6 +187,6 @@ runs:
         echo "success=${{ steps.cache-attempt.outputs.success }}" >> "$GITHUB_OUTPUT"
 
         # Overwrite on specific config
-        if [ "${{ inputs.fail-on-cache-miss }}" = 'false' ]; then
+        if [ "${{ inputs.fail-on-missing }}" = 'false' ]; then
           echo "success=true" >> "$GITHUB_OUTPUT"
         fi
