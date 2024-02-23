@@ -30,7 +30,6 @@ function populateError(
       if (includeNamespace) {
         message = formatMessage(element.params as StaticTextObject)
       } else if (!defaultZodError) {
-        console.log(element.message)
         message = element.message
       }
     }
@@ -50,6 +49,7 @@ export function validateAnswers({
   isFullSchemaValidation?: boolean
   formatMessage: FormatMessage
 }): ValidationRecord | undefined {
+  console.log(answers.signature)
   try {
     if (dataSchema instanceof ZodEffects) {
       // cases where zod schema has a refinement on the schema object, needs to be defined partial

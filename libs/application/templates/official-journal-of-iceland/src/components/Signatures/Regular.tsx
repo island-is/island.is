@@ -52,14 +52,14 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
 
     if (!institution) return
 
-    const member = institution?.members?.find(
+    const member = institution?.members.find(
       (_, index) => index === memberIndex,
     )
 
     if (!member) return
 
     const updatedMember = { ...member, [key]: value }
-    institution.members?.splice(memberIndex, 1, updatedMember)
+    institution.members.splice(memberIndex, 1, updatedMember)
     clonedState.regular.splice(institutionIndex, 1, institution)
     setState(clonedState)
   }
@@ -72,7 +72,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
 
     if (!institution) return
 
-    institution.members?.splice(memberIndex, 1)
+    institution.members.splice(memberIndex, 1)
     clonedState.regular.splice(institutionIndex, 1, institution)
     setState(clonedState)
   }
@@ -85,7 +85,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
 
     if (!institution) return
 
-    institution.members?.push({
+    institution.members.push({
       above: '',
       name: '',
       after: '',
@@ -120,20 +120,18 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
 
   const onAddInstitution = () => {
     const clonedState = cloneDeep(state)
-    clonedState.regular.push(
-      cloneDeep({
-        institution: '',
-        date: '',
-        members: [
-          {
-            above: '',
-            name: '',
-            after: '',
-            below: '',
-          },
-        ],
-      }),
-    )
+    clonedState.regular.push({
+      institution: '',
+      date: '',
+      members: [
+        {
+          above: '',
+          name: '',
+          after: '',
+          below: '',
+        },
+      ],
+    })
     setState(clonedState)
   }
 
@@ -210,7 +208,6 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     <Box className={styles.inputWrapper}>
                       <InputController
                         id={abovePath}
-                        name={abovePath}
                         label={f(signatures.inputs.above.label)}
                         defaultValue={signature.above}
                         backgroundColor="blue"
@@ -222,7 +219,6 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                       />
                       <InputController
                         id={namePath}
-                        name={namePath}
                         label={f(signatures.inputs.name.label)}
                         defaultValue={signature.name}
                         backgroundColor="blue"
@@ -236,7 +232,6 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     <Box className={styles.inputWrapper}>
                       <InputController
                         id={afterPath}
-                        name={afterPath}
                         label={f(signatures.inputs.after.label)}
                         defaultValue={signature.after}
                         backgroundColor="blue"
@@ -248,7 +243,6 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                       />
                       <InputController
                         id={belowPath}
-                        name={belowPath}
                         label={f(signatures.inputs.below.label)}
                         defaultValue={signature.below}
                         backgroundColor="blue"

@@ -18,6 +18,9 @@ type Resolver = ({
 }) => Promise<ResolverResult> | ResolverResult | ResolverError
 
 export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
+  console.log(formValue)
+  console.log(context)
+
   if (!context) {
     return {
       values: formValue,

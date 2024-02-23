@@ -64,6 +64,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
           skipValidation: true,
           id: application.id,
           answers: {
+            ...application.answers,
             advert: state,
           },
         },

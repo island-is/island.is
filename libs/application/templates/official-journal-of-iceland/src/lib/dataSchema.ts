@@ -51,12 +51,8 @@ export const dataSchema = z.object({
     }),
   signature: z
     .object({
-      type: z.string().refine((v) => v && v.length, {
-        params: error.emptyFieldError,
-      }),
-      signature: z.string().refine((v) => v && v.length, {
-        params: error.emptyFieldError,
-      }),
+      type: z.string().optional(),
+      signature: z.string().optional(),
       regular: z
         .array(
           z.object({
@@ -94,10 +90,11 @@ export const dataSchema = z.object({
       additional: z.string().optional(),
     })
     .superRefine((signature, ctx) => {
+      console.log('signature type from dataschema', signature.type)
       switch (signature.type) {
         case 'regular':
           signature.regular?.forEach((institution, index) => {
-            // required fields are, institution, date, member.name
+            // required fields are institution, date, member.name
 
             if (!institution.institution) {
               ctx.addIssue({
