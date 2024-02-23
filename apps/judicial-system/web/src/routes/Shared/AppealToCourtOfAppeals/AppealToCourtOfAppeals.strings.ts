@@ -23,7 +23,7 @@ export const appealToCourtOfAppeals = defineMessages({
     description: 'Undirtitill á Gögn hluta á Kæra til Landsréttar síðu',
   },
   appealCaseFilesCOASubtitle: {
-    id: 'judicial.system.core:appeal_case_files.appeal_case_files_coa_subtitle',
+    id: 'judicial.system.core:appeal_to_court_of_appeals.appeal_case_files_coa_subtitle',
     defaultMessage:
       'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.',
     description: 'Undirtitill á Gögn hluta á Kæra til Landsréttar síðu',
@@ -50,5 +50,10 @@ export const appealToCourtOfAppeals = defineMessages({
       'Þess er óskað að birtingu úrskurðar á vef Landsréttar verði frestað',
     description:
       'Texti í svæði sem segir til um hvort óskað sé eftir að birtingu úrskurðar á vef Landsréttar verði frestað',
+  },
+  uploadFailedNextButtonText: {
+    id: 'judicial.system.core:appeal_to_court_of_appeals.upload_failed_next_button_text',
+    defaultMessage: 'Reyna aftur',
+    description: 'Texti á reyna aftur takka á Kæra til Landsréttar síðu',
   },
 })

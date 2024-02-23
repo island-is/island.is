@@ -1181,4 +1181,21 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   requestAppealRulingNotToBePublished?: UserRole[]
+
+  /**********
+   * The surrogate key of the prosecutors office that created the case
+   **********/
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  prosecutorsOfficeId?: string
+
+  /**********
+   * The prosecutors office that created the case
+   **********/
+  @BelongsTo(() => Institution, 'prosecutorsOfficeId')
+  @ApiPropertyOptional({ type: () => Institution })
+  prosecutorsOffice?: Institution
 }

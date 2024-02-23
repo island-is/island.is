@@ -3,12 +3,11 @@ import { globalStyle, style } from '@vanilla-extract/css'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM as hheight } from '@island.is/service-portal/constants'
 
 export const modalBase = style({
-  width: '100vw',
+  width: '100%',
   height: `calc(100vh - ${hheight}px)`,
   background: theme.color.white,
-  position: 'absolute',
+  position: 'relative',
   top: 'calc(-0.5rem + 1px)',
-  left: '-1rem',
   zIndex: 100,
 })
 

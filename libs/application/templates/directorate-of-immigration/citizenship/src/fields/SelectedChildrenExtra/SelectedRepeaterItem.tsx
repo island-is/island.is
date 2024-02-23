@@ -136,8 +136,8 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
       <RadioController
         id={`selectedChildrenExtraData[${index}].hasFullCustody`}
         split="1/2"
-        onSelect={() => {
-          setShowMoreQuestions(!showMoreQuestions)
+        onSelect={(value) => {
+          setShowMoreQuestions(value === YES ? false : true)
         }}
         disabled={readOnlyFields}
         defaultValue={repeaterField.hasFullCustody === NO ? NO : ''}

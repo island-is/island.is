@@ -37,3 +37,53 @@ export const hasMatchingContactInfo = (
 
   return matchingPhoneNumbers && matchingEmails
 }
+
+export const chooseEmailFields = (
+  migratedProfile: UserProfileAdvania,
+  existingProfile: UserProfile,
+): Pick<UserProfile, 'email' | 'emailVerified' | 'emailStatus'> => {
+  if (stringHasValue(migratedProfile.email)) {
+    return {
+      email: migratedProfile.email,
+      emailVerified: false,
+      emailStatus: 'NOT_VERIFIED',
+    }
+  }
+
+  return {
+    email: existingProfile.email,
+    emailVerified: existingProfile.emailVerified,
+    emailStatus: existingProfile.emailStatus,
+  }
+}
+
+export const choosePhoneNumberFields = (
+  migratedProfile: UserProfileAdvania,
+  existingProfile: UserProfile,
+): Pick<
+  UserProfile,
+  'mobilePhoneNumber' | 'mobilePhoneNumberVerified' | 'mobileStatus'
+> => {
+  if (stringHasValue(migratedProfile.mobilePhoneNumber)) {
+    return {
+      mobilePhoneNumber: migratedProfile.mobilePhoneNumber,
+      mobilePhoneNumberVerified: false,
+      mobileStatus: 'NOT_VERIFIED',
+    }
+  }
+
+  return {
+    mobilePhoneNumber: existingProfile.mobilePhoneNumber,
+    mobilePhoneNumberVerified: existingProfile.mobilePhoneNumberVerified,
+    mobileStatus: existingProfile.mobileStatus,
+  }
+}
+
+export const chooseEmailAndPhoneNumberFields = (
+  migratedProfile: UserProfileAdvania,
+  existingProfile: UserProfile,
+): ReturnType<typeof chooseEmailFields> &
+  ReturnType<typeof choosePhoneNumberFields> => ({
+  ...chooseEmailFields(migratedProfile, existingProfile),
+  ...choosePhoneNumberFields(migratedProfile, existingProfile),
+})

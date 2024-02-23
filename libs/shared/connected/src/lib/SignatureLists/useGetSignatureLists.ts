@@ -1,6 +1,9 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
-import { SignatureCollection } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionListBase,
+} from '@island.is/api/schema'
 import { Query } from '@island.is/api/schema'
 
 export const GetCurrentCollection = gql`
@@ -25,10 +28,37 @@ export const GetCurrentCollection = gql`
     }
   }
 `
+export const GetOpenLists = gql`
+  query allOpenLists {
+    signatureCollectionAllOpenLists {
+      id
+      title
+      area {
+        id
+        name
+        min
+        max
+      }
+      endTime
+      startTime
+      active
+      collectionId
+      slug
+    }
+  }
+`
 
 export const useGetCurrentCollection = () => {
   const { data, loading } = useQuery<Query>(GetCurrentCollection)
   const collection = data?.signatureCollectionCurrent as SignatureCollection
 
   return { collection, loading }
+}
+
+export const useGetOpenLists = () => {
+  const { data, loading } = useQuery<Query>(GetOpenLists)
+  const openLists =
+    data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
+
+  return { openLists, loading }
 }

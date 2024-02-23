@@ -32,6 +32,12 @@
             "description": "first date registration format (yyyy-mm-dd)",
             "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "name": "carNumber",
+            "in": "query",
+            "description": "Car number (fastnúmer)",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {

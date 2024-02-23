@@ -37,6 +37,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseTransition,
@@ -175,13 +176,8 @@ export class CaseController {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
-        theCase.creatingProsecutor?.institutionId,
+        theCase.prosecutorsOfficeId,
       )
-
-      // If the case was created via xRoad, then there may not have been a creating prosecutor
-      if (!theCase.creatingProsecutor) {
-        update.creatingProsecutorId = update.prosecutorId
-      }
     }
 
     if (update.judgeId) {
@@ -362,6 +358,18 @@ export class CaseController {
             // The court of appeals has repealed the ruling of a restriction case
             update.validToDate = nowFactory()
           }
+        }
+        break
+      case CaseTransition.WITHDRAW_APPEAL:
+        // We only want to set the appeal ruling decision if the
+        // case has already been received.
+        // Otherwise the court of appeals never knew of the appeal in
+        // the first place so it remains withdrawn without a decision.
+        if (
+          !theCase.appealRulingDecision &&
+          theCase.appealState === CaseAppealState.RECEIVED
+        ) {
+          update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
         }
         break
     }

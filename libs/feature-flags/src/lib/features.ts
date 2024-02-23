@@ -26,7 +26,9 @@ export enum Features {
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
   pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
+  university = 'isUniversityEnabled',
   additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
+  homeSupport = 'isHomeSupportEnabled',
   ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
 
   // Application System Delegations active
@@ -44,6 +46,7 @@ export enum Features {
   servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
+  servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',

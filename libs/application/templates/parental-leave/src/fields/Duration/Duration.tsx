@@ -90,7 +90,7 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const handleChangeEnd = async (
     months: number,
-    onChange: (...event: any[]) => void,
+    onChange: (...event: unknown[]) => void,
   ) => {
     const date = await monthsToEndDate(months)
 
@@ -105,7 +105,7 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     }
 
     init()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isGrant = isParentalGrant(application)
   const rangeDates =

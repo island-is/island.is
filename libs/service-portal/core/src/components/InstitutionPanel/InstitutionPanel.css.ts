@@ -20,8 +20,20 @@ export const link = style({
 })
 
 export const image = style({
+  maxWidth: 60,
   maxHeight: 40,
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxHeight: 'initial',
+    },
+  }),
 })
+
+export const fixedImage = style({
+  width: 96,
+  aspectRatio: '1/1',
+})
+
 export const tooltip = style({
   position: 'absolute',
   top: 1,

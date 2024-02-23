@@ -294,6 +294,101 @@ describe('UserProfileWorker', () => {
           },
         )
       })
+
+      describe('existing user profile email or phone number edge cases', () => {
+        const exported = new Date(2023, 10, 1)
+        const modified = new Date(2023, 9, 1)
+
+        const advaniaProfiles = new Array(4).fill(null).map((_, index) => ({
+          ssn: `${index}`,
+          // Email and mobile phone number from advania is null
+          email: null,
+          mobilePhoneNumber: null,
+          exported,
+        }))
+
+        const pickFields = (p: Partial<UserProfile>) =>
+          pick(p, [
+            'email',
+            'emailVerified',
+            'emailStatus',
+            'mobilePhoneNumber',
+            'mobilePhoneNumberVerified',
+            'mobileStatus',
+          ])
+
+        it('should not replace an existing email with a null value during migration', async () => {
+          // Arrange
+          const existingProfiles: Partial<UserProfile>[] = advaniaProfiles.map(
+            (p, index) => ({
+              nationalId: p.ssn,
+              modified,
+              email: `test${index}@test.local`, // Existing profile has a defined email
+              emailVerified: true,
+              emailStatus: 'VERIFIED',
+              mobilePhoneNumber: null,
+              mobilePhoneNumberVerified: false,
+              mobileStatus: 'NOT_VERIFIED',
+            }),
+          )
+
+          // Act
+          await userProfileAdvaniaModel.bulkCreate(advaniaProfiles.slice())
+          await userProfileModel.bulkCreate(existingProfiles)
+
+          const userProfilesBeforeMigration = await userProfileModel.findAll()
+
+          await workerService.run()
+
+          const userProfilesAfterMigration = await userProfileModel.findAll()
+
+          const existingProfileFields = existingProfiles.map(pickFields)
+
+          // Assert
+          expect(userProfilesBeforeMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+          expect(userProfilesAfterMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+        })
+
+        it('should not replace an existing phone number with a null value during migration', async () => {
+          // Arrange
+          const existingProfiles: Partial<UserProfile>[] = advaniaProfiles.map(
+            (p, index) => ({
+              nationalId: p.ssn,
+              modified,
+              email: null,
+              emailVerified: false,
+              emailStatus: 'NOT_VERIFIED',
+              mobilePhoneNumber: `888111${index}`, // Existing profile has a defined phone number
+              mobilePhoneNumberVerified: true,
+              mobileStatus: 'VERIFIED',
+            }),
+          )
+
+          // Act
+          await userProfileAdvaniaModel.bulkCreate(advaniaProfiles.slice())
+          await userProfileModel.bulkCreate(existingProfiles)
+
+          const userProfilesBeforeMigration = await userProfileModel.findAll()
+
+          await workerService.run()
+
+          const userProfilesAfterMigration = await userProfileModel.findAll()
+
+          const existingProfileFields = existingProfiles.map(pickFields)
+
+          // Assert
+          expect(userProfilesBeforeMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+          expect(userProfilesAfterMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+        })
+      })
     })
   })
 

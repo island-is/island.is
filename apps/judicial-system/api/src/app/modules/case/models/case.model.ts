@@ -382,4 +382,7 @@ export class Case {
 
   @Field(() => [UserRole], { nullable: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  @Field(() => Institution, { nullable: true })
+  readonly prosecutorsOffice?: Institution
 }

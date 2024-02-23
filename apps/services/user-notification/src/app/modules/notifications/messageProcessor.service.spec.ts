@@ -98,4 +98,42 @@ describe('MessageProcessorService', () => {
     expect(notification.category).toMatch('DEMO')
     expect(notification.appURI).toMatch('//demo/world')
   })
+
+  it('should not leak value replacement of template keys to the template cache', async () => {
+    // This test is added to verify that the template cache is not modified
+    jest
+      .spyOn(notificationsService, 'getTemplates')
+      .mockImplementation(() => Promise.resolve(mockTemplates))
+    jest
+      .spyOn(notificationsService, 'getTemplate')
+      .mockImplementation(() => Promise.resolve(mockHnippTemplate))
+
+    const notification1 = await service.convertToNotification(
+      mockCreateHnippNotificationDto,
+      mockProfile,
+    )
+    const notification2 = await service.convertToNotification(
+      {
+        ...mockCreateHnippNotificationDto,
+        args: [
+          { key: 'arg1', value: 'hello2' },
+          { key: 'arg2', value: 'world2' },
+        ],
+      },
+      mockProfile,
+    )
+
+    expect(notification1.title).toMatch('Demo title')
+    expect(notification1.body).toMatch('Demo body hello')
+    expect(notification1.category).toMatch('DEMO')
+    expect(notification1.appURI).toMatch('//demo/world')
+
+    expect(notification2).toMatchObject({
+      title: 'Demo title',
+      body: 'Demo body hello2',
+      category: 'DEMO',
+      dataCopy: 'Demo data copy',
+      appURI: '//demo/world2',
+    })
+  })
 })

@@ -9,6 +9,7 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  ContextMenu,
   TagAppealState,
   TagCaseState,
   UserContext,
@@ -31,7 +32,10 @@ import {
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useContextMenu } from '../../ContextMenu/ContextMenu'
+import IconButton from '../../IconButton/IconButton'
 import MobilePastCase from './MobilePastCase'
+import { contextMenu } from '../../ContextMenu/ContextMenu.strings'
 import * as styles from '../Table.css'
 
 interface Props {
@@ -49,6 +53,9 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
+
+  const { withdrawAppealMenuOption, shouldDisplayWithdrawAppealOption } =
+    useContextMenu()
 
   const pastCasesData = useMemo(
     () =>
@@ -143,7 +150,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
               <CreatedDate created={column.created} />
             </td>
             <td>
-              <Box marginRight={1} marginBottom={1}>
+              <Box
+                marginRight={column.appealState ? 1 : 0}
+                marginBottom={column.appealState ? 1 : 0}
+              >
                 <TagCaseState
                   caseState={column.state}
                   caseType={column.type}
@@ -169,11 +179,39 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
               </Text>
             </td>
             <td className={styles.loadingContainer}>
-              <AnimatePresence>
-                {isOpeningCaseId === column.id && showLoading && (
-                  <LoadingIndicator />
-                )}
-              </AnimatePresence>
+              {showLoading ? (
+                <AnimatePresence>
+                  {isOpeningCaseId === column.id && showLoading && (
+                    <LoadingIndicator />
+                  )}
+                </AnimatePresence>
+              ) : (
+                <Box>
+                  <ContextMenu
+                    items={[
+                      {
+                        title: formatMessage(contextMenu.openInNewTab),
+                        onClick: () => handleOpenCase(column.id, true),
+                        icon: 'open',
+                      },
+                      ...(shouldDisplayWithdrawAppealOption(column)
+                        ? [withdrawAppealMenuOption(column.id, cases)]
+                        : []),
+                    ]}
+                    menuLabel="Opna valmöguleika á máli"
+                    disclosure={
+                      <IconButton
+                        icon="ellipsisVertical"
+                        colorScheme="transparent"
+                        onClick={(evt) => {
+                          evt.stopPropagation()
+                        }}
+                        disabled={false}
+                      />
+                    }
+                  />
+                </Box>
+              )}
             </td>
           </tr>
         )

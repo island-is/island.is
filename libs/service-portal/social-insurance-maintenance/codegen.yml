@@ -1,0 +1,15 @@
+schema:
+  - apps/api/src/api.graphql
+documents:
+  - libs/service-portal/social-insurance-maintenance/src/screens/**/*.graphql
+generates:
+  libs/service-portal/social-insurance-maintenance/src/:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+hooks:
+  afterAllFileWrite:
+    - prettier --write

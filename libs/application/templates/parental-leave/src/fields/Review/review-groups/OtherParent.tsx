@@ -13,14 +13,14 @@ import {
   SINGLE,
   SPOUSE,
 } from '../../../constants'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import {
+  getApplicationAnswers,
   getOtherParentId,
   getOtherParentName,
   getSelectedChild,
   requiresOtherParentApproval,
 } from '../../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { ReviewGroupProps } from './props'
 
@@ -30,8 +30,8 @@ export const OtherParent = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [{ otherParent, otherParentEmail, otherParentPhoneNumber }] =
-    useStatefulAnswers(application)
+  const { otherParent, otherParentEmail, otherParentPhoneNumber } =
+    getApplicationAnswers(application.answers)
 
   const selectedChild = getSelectedChild(
     application.answers,
@@ -63,7 +63,10 @@ export const OtherParent = ({
 
       {otherParent === SPOUSE && (
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={[2, 2, 2, 0]}
+          >
             <DataValue
               label={formatMessage(
                 parentalLeaveFormMessages.shared.otherParentName,
@@ -86,7 +89,10 @@ export const OtherParent = ({
 
       {otherParent === MANUAL && (
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={[2, 2, 2, 0]}
+          >
             <DataValue
               label={formatMessage(
                 parentalLeaveFormMessages.shared.otherParentName,
@@ -118,7 +124,10 @@ export const OtherParent = ({
             />
           </GridColumn>
           {otherParentPhoneNumber && (
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '5/12']}
+              paddingTop={[2, 2, 2, 0]}
+            >
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.shared

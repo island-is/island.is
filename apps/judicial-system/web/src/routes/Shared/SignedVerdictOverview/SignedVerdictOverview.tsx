@@ -355,10 +355,10 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: undefined,
-        })
+        }))
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
@@ -379,8 +379,8 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: {
             id: institution?.value as string,
             name: institution?.label as string,
@@ -389,10 +389,10 @@ export const SignedVerdictOverview: React.FC = () => {
             modified: new Date().toString(),
             active: true,
           },
-          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
+          isHeightenedSecurityLevel: prevWorkingCase.isHeightenedSecurityLevel
             ? false
-            : workingCase.isHeightenedSecurityLevel,
-        })
+            : prevWorkingCase.isHeightenedSecurityLevel,
+        }))
 
         updateCase(workingCase.id, {
           sharedWithProsecutorsOfficeId: institution?.value as string,
@@ -411,7 +411,7 @@ export const SignedVerdictOverview: React.FC = () => {
       return false
     }
 
-    setWorkingCase((theCase) => ({ ...theCase, ...update }))
+    setWorkingCase((prevWorkingCase) => ({ ...prevWorkingCase, ...update }))
 
     return true
   }
@@ -529,7 +529,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
@@ -658,8 +658,9 @@ export const SignedVerdictOverview: React.FC = () => {
               />
             </Box>
           )}
-
-          <AppealCaseFilesOverview />
+          <Box marginBottom={5}>
+            <AppealCaseFilesOverview />
+          </Box>
           <CaseDocuments
             isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
             handleRequestCourtRecordSignature={
@@ -670,8 +671,7 @@ export const SignedVerdictOverview: React.FC = () => {
           />
 
           {isProsecutionUser(user) &&
-            user?.institution?.id ===
-              workingCase.creatingProsecutor?.institution?.id &&
+            user?.institution?.id === workingCase.prosecutorsOffice?.id &&
             isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}

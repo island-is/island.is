@@ -144,7 +144,6 @@ export interface IAnchorPageFields {
   pageType?:
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
-    | 'Life Event'
     | undefined
 
   /** featured image */
@@ -566,11 +565,17 @@ export interface IChartFields {
   /** Source Data */
   sourceData?: Record<string, any> | undefined
 
+  /** Flip Axis */
+  flipAxis?: boolean | undefined
+
   /** X Axis Key */
   xAxisKey?: string | undefined
 
   /** X Axis Value Type */
   xAxisValueType?: 'date' | 'number' | 'string' | undefined
+
+  /** X Axis Format */
+  xAxisFormat?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -718,6 +723,40 @@ export interface IContactUs extends Entry<IContactUsFields> {
     contentType: {
       sys: {
         id: 'contactUs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICustomPageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Unique Identifier */
+  uniqueIdentifier: 'PensionCalculator'
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Translation Namespace */
+  translationNamespace?: INamespace | undefined
+
+  /** Configuration */
+  configJson?: Record<string, any> | undefined
+}
+
+export interface ICustomPage extends Entry<ICustomPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'customPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1125,6 +1164,34 @@ export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
     contentType: {
       sys: {
         id: 'featuredArticles'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFeaturedEventsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** No events found text */
+  noEventsFoundText?: Document | undefined
+}
+
+export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredEvents'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1864,13 +1931,6 @@ export interface ILifeEventPageFields {
 
   /** See More Text */
   seeMoreText?: string | undefined
-
-  /** Page Type */
-  pageType?:
-    | 'Life Event'
-    | 'Digital Iceland Service'
-    | 'Digital Iceland Community Page'
-    | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1883,32 +1943,6 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ILifeEventPageListSliceFields {
-  /** Title */
-  title?: string | undefined
-
-  /** List */
-  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
-}
-
-export interface ILifeEventPageListSlice
-  extends Entry<ILifeEventPageListSliceFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1986,10 +2020,10 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink
+  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
 
   /** Children Links */
-  childrenLinks?: ILink[] | undefined
+  childrenLinks?: (ILink | IOrganizationSubpage | IProjectSubpage)[] | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -2741,7 +2775,6 @@ export interface IOrganizationPageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IDistricts
         | IEmailSignup
@@ -2759,6 +2792,7 @@ export interface IOrganizationPageFields {
         | ITwoColumnText
         | ISectionWithVideo
         | IAnchorPageList
+        | ISectionWithImage
       )[]
     | undefined
 
@@ -2884,7 +2918,6 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
@@ -3596,6 +3629,9 @@ export interface ISliceDropdownFields {
 
   /** Dropdown Label */
   dropdownLabel?: string | undefined
+
+  /** Alphabetically ordered */
+  alphabeticallyOrdered?: boolean | undefined
 
   /** Slices */
   slices?: IOneColumnText[] | undefined
@@ -4758,6 +4794,7 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'customPage'
   | 'districts'
   | 'emailSignup'
   | 'embed'
@@ -4769,6 +4806,7 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
+  | 'featuredEvents'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'
@@ -4787,7 +4825,6 @@ export type CONTENT_TYPE =
   | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
-  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'

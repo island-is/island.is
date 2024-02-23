@@ -18,6 +18,7 @@ import { indexModule } from '../screens/Dashboard/module'
 import { consentModule } from '@island.is/service-portal/consent'
 import { occupationalLicensesModule } from '@island.is/service-portal/occupational-licenses'
 import { signatureCollectionModule } from '@island.is/service-portal/signature-collection'
+import { socialInsuranceMaintenanceModule } from '@island.is/service-portal/social-insurance-maintenance'
 
 /**
  * NOTE:
@@ -44,5 +45,6 @@ export const modules: PortalModule[] = [
   petitionsModule,
   restrictionsModule,
   sessionsModule,
+  socialInsuranceMaintenanceModule,
   signatureCollectionModule,
 ]

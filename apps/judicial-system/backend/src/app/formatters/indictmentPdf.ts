@@ -108,7 +108,7 @@ export const createIndictment = async (
       indictment.signature,
       {
         prosecutorsOfficeName:
-          lowercase(theCase.creatingProsecutor?.institution?.name)
+          lowercase(theCase.prosecutorsOffice?.name)
             .replace('lögreglustjórinn', 'lögreglustjórans')
             .replace('saksóknari', 'saksóknara') ?? '',
         date: formatDate(nowFactory(), 'PPP'),

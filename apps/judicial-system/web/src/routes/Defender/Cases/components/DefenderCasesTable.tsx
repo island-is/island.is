@@ -10,9 +10,13 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  ContextMenu,
   TagAppealState,
   TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
+import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -45,6 +49,9 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
     useSortCases('createdAt', 'descending', cases)
   const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
     useCaseList()
+
+  const { withdrawAppealMenuOption, shouldDisplayWithdrawAppealOption } =
+    useContextMenu()
 
   return (
     <Box marginBottom={7}>
@@ -136,7 +143,10 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   <CreatedDate created={c.created} />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Box marginRight={1} marginBottom={1}>
+                  <Box
+                    marginRight={c.appealState ? 1 : 0}
+                    marginBottom={c.appealState ? 1 : 0}
+                  >
                     <TagCaseState
                       caseState={c.state}
                       caseType={c.type}
@@ -184,8 +194,34 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                 )}
                 <td>
                   <AnimatePresence>
-                    {isOpeningCaseId === c.id && showLoading && (
+                    {isOpeningCaseId === c.id && showLoading ? (
                       <LoadingIndicator />
+                    ) : (
+                      <Box>
+                        <ContextMenu
+                          items={[
+                            {
+                              title: formatMessage(contextMenu.openInNewTab),
+                              onClick: () => handleOpenCase(c.id, true),
+                              icon: 'open',
+                            },
+                            ...(shouldDisplayWithdrawAppealOption(c)
+                              ? [withdrawAppealMenuOption(c.id, cases)]
+                              : []),
+                          ]}
+                          menuLabel="Opna valmöguleika á máli"
+                          disclosure={
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                              }}
+                              disabled={false}
+                            />
+                          }
+                        />
+                      </Box>
                     )}
                   </AnimatePresence>
                 </td>

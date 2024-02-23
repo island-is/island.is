@@ -159,6 +159,7 @@ export interface UpdateCase
 const eventTypes = Object.values(EventType)
 
 export const include: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
@@ -246,6 +247,7 @@ export const order: OrderItem[] = [
 ]
 
 export const caseListInclude: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Defendant, as: 'defendants' },
   {
     model: User,
@@ -638,6 +640,11 @@ export class CaseService {
           user,
           caseId: theCase.id,
         },
+        {
+          type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
+          user,
+          caseId: theCase.id,
+        },
       ]),
     )
   }
@@ -789,6 +796,19 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForAppealWithdrawnToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -834,6 +854,8 @@ export class CaseService {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.WITHDRAWN) {
+        await this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }
     }
 
@@ -918,6 +940,7 @@ export class CaseService {
             prosecutorId:
               user.role === UserRole.PROSECUTOR ? user.id : undefined,
             courtId: user.institution?.defaultCourtId,
+            prosecutorsOfficeId: user.institution?.id,
           } as CreateCaseDto,
           transaction,
         )
@@ -1210,6 +1233,7 @@ export class CaseService {
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
+            prosecutorsOfficeId: user.institution?.id,
           } as CreateCaseDto,
           transaction,
         )

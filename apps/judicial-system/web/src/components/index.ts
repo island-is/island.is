@@ -12,6 +12,7 @@ export {
 } from './CheckboxList/CheckboxList'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
+export { default as ContextMenu } from './ContextMenu/ContextMenu'
 export {
   CourtArrangements,
   useCourtArrangements,
@@ -23,7 +24,6 @@ export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
 export { default as DefenderInput } from './DefenderInfo/DefenderInput'
 export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
-export { default as DropdownMenu } from './DropdownMenu/DropdownMenu'
 export {
   default as FeatureProvider,
   FeatureContext,

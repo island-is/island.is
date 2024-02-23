@@ -64,12 +64,7 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
-export const OperatorSchema = z.intersection(
-  RemovableUserSchemaBase,
-  z.object({
-    approved: z.boolean().optional(),
-  }),
-)
+export const OperatorSchema = RemovableUserSchemaBase
 
 export const RejecterSchema = z.object({
   regNumber: z.string(),
@@ -100,7 +95,7 @@ export const MachineAnswersSchema = z.object({
     postCode: z.number().optional(),
     moreInfo: z.string(),
   }),
-  buyerOperator: OperatorSchema.optional(),
+  buyerOperator: OperatorSchema,
   approveExternalData: z.boolean(),
   rejecter: RejecterSchema,
 })

@@ -45,19 +45,11 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     prosecutor {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     courtCaseNumber
     courtEndTime
@@ -131,5 +123,9 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
     }
     appealConclusion
     appealRulingDecision
+    prosecutorsOffice {
+      id
+      name
+    }
   }
 }

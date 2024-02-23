@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "charts": "scripts/generate-chart-values.sh",
+    "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
+    "update": "yarn update:packagejson",
+    "update:packagejson": "node -r esbuild-register scripts/update-package-json.ts",
     "cli": "node -r esbuild-register src/cli/cli.ts"
   },
   "license": "MIT",

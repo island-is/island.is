@@ -1,59 +1,89 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from './constants'
-import { isValidString } from './utils/helpers'
+import {
+  customZodError,
+  isValidEmail,
+  isValidPhoneNumber,
+  isValidString,
+} from './utils/helpers'
 import { m } from './messages'
+
+const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
+  z
+    .object({
+      data: z
+        .object({
+          assetNumber: z.string(),
+          description: z.string(),
+          propertyValuation: z.string(),
+          ...(withShare ? { share: z.string() } : {}),
+        })
+        .refine(
+          ({ propertyValuation }) => {
+            return propertyValuation !== ''
+          },
+          {
+            path: ['propertyValuation'],
+          },
+        )
+        .refine(
+          ({ assetNumber }) => {
+            return isValidString(assetNumber)
+          },
+          {
+            path: ['assetNumber'],
+          },
+        )
+        .refine(
+          ({ share = undefined }) => {
+            if (withShare && typeof share === 'string') {
+              const num = parseInt(share, 10)
+
+              const value = isNaN(num) ? 0 : num
+
+              return value >= 0 && value <= 100
+            }
+
+            return true
+          },
+          {
+            path: ['share'],
+          },
+        )
+        .refine(
+          ({ description }) => {
+            return isValidString(description)
+          },
+          {
+            path: ['description'],
+          },
+        )
+        .array()
+        .optional(),
+      hasModified: z.boolean().optional(),
+      total: z.number().optional(),
+    })
+    .optional()
+
+const asset = assetSchema()
+const assetWithShare = assetSchema({ withShare: true })
 
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
   applicant: z.object({
     email: z.string().email(),
-    phone: z.string(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v)),
     nationalId: z.string(),
+    relation: z.string(),
   }),
 
   /* assets */
   assets: z.object({
-    realEstate: z
-      .object({
-        data: z
-          .object({
-            assetNumber: z.string(),
-            description: z.string(),
-            propertyValuation: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
-    vehicles: z
-      .object({
-        data: z
-          .object({
-            assetNumber: z.string(),
-            description: z.string(),
-            propertyValuation: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
-    guns: z
-      .object({
-        data: z
-          .object({
-            assetNumber: z.string(),
-            description: z.string(),
-            propertyValuation: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
+    realEstate: assetWithShare,
+    vehicles: asset,
+    guns: asset,
     inventory: z
       .object({
         info: z.string().optional(),
@@ -64,6 +94,7 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
+            foreignBankAccount: z.array(z.enum([YES])).optional(),
             accountNumber: z.string(),
             balance: z.string().refine((v) => v),
           })
@@ -184,17 +215,7 @@ export const inheritanceReportSchema = z.object({
         total: z.number().optional(),
       })
       .optional(),
-    publicCharges: z
-      .object({
-        data: z
-          .object({
-            publicChargesAmount: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
+    publicCharges: z.string().optional(),
     debtsTotal: z.number().optional(),
   }),
 
@@ -282,23 +303,101 @@ export const inheritanceReportSchema = z.object({
   heirs: z.object({
     data: z
       .object({
-        nationalId: z.string(),
-        heirsName: z.string(),
-        email: z.string(),
+        name: z.string(),
+        relation: customZodError(z.string().min(1), m.errorRelation),
+        nationalId: z.string().optional(),
+        foreignCitizenship: z.string().array().min(0).max(1).optional(),
+        dateOfBirth: z.string().optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
         phone: z.string(),
-        relation: z.string(),
-        heirsPercentage: z.string(),
-        taxFreeInheritance: z.number(),
-        inheritance: z.number(),
-        taxableInheritance: z.number(),
-        inheritanceTax: z.number(),
+        email: z.string(),
+        heirsPercentage: z.string().refine((v) => {
+          if (!v) return true
+
+          const num = parseInt(v, 10) ?? 0
+          return num > -1 && num < 101
+        }),
+        taxFreeInheritance: z.string(),
+        inheritance: z.string(),
+        taxableInheritance: z.string(),
+        inheritanceTax: z.string(),
+        // Málsvari
+        advocate: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z.string(),
+            email: z.string(),
+          })
+          .optional(),
       })
+      .refine(
+        ({ enabled, foreignCitizenship, dateOfBirth }) => {
+          if (!enabled) return true
+
+          return foreignCitizenship?.length && !dateOfBirth ? false : true
+        },
+        {
+          path: ['dateOfBirth'],
+        },
+      )
+      .refine(
+        ({ enabled, foreignCitizenship, nationalId }) => {
+          if (!enabled) return true
+
+          return !foreignCitizenship?.length
+            ? nationalId && kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+
+      /* Validating email and phone of member depending on whether the field is 
+          enabled and whether member has advocate */
+      .refine(
+        ({ enabled, advocate, phone }) => {
+          return enabled && !advocate ? isValidPhoneNumber(phone) : true
+        },
+        {
+          path: ['phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate, email }) => {
+          return enabled && !advocate ? isValidEmail(email) : true
+        },
+        {
+          path: ['email'],
+        },
+      )
+
+      /* validation for advocates */
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
+        },
+        {
+          path: ['advocate', 'phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidEmail(advocate.email) : true
+        },
+        {
+          path: ['advocate', 'email'],
+        },
+      )
       .array()
       .optional(),
-    total: z
-      .number()
-      //.refine((v) => v === 100)
-      .optional(),
+    total: z.number().refine((v) => {
+      const val = typeof v === 'string' ? parseInt(v, 10) ?? 0 : v
+
+      return val === 100
+    }),
   }),
 
   heirsAdditionalInfo: z.string().optional(),

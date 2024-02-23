@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   pageTitle: {
     id: 'sp.signatureCollection:title',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
     description: '',
   },
   pageDescription: {
@@ -20,12 +20,7 @@ export const m = defineMessages({
   },
   createListButton: {
     id: 'sp.signatureCollection:createListButton',
-    defaultMessage: 'Stofna',
-    description: '',
-  },
-  myListsHeader: {
-    id: 'sp.signatureCollection:myListsHeader',
-    defaultMessage: 'Listar stofnaðir af mér',
+    defaultMessage: 'Stofna söfnun',
     description: '',
   },
   collectionTitle: {
@@ -33,9 +28,44 @@ export const m = defineMessages({
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
+  myListsDescription: {
+    id: 'sp.signatureCollection:myListsDescription',
+    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað:',
+    description: '',
+  },
+  copyLinkButton: {
+    id: 'sp.signatureCollection:copyLinkButton',
+    defaultMessage: 'Afrita hlekk',
+    description: '',
+  },
+  copyLinkDescription: {
+    id: 'sp.signatureCollection:copyLinkDescription',
+    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila.',
+    description: '',
+  },
+  copyLinkSuccess: {
+    id: 'sp.signatureCollection:copyLinkSuccess',
+    defaultMessage: 'Hlekkur afritaður',
+    description: '',
+  },
+  copyLinkError: {
+    id: 'sp.signatureCollection:copyLinkError',
+    defaultMessage: 'Ekki tókst að afrita hlekk',
+    description: '',
+  },
   endTime: {
     id: 'sp.signatureCollection:endTime',
     defaultMessage: 'Lokadagur:',
+    description: '',
+  },
+  signedTime: {
+    id: 'sp.signatureCollection:signedTime',
+    defaultMessage: 'Skrifað undir:',
+    description: '',
+  },
+  uploadedTime: {
+    id: 'sp.signatureCollection:uploadedTime',
+    defaultMessage: 'Lesið inn:',
     description: '',
   },
   viewList: {
@@ -48,11 +78,26 @@ export const m = defineMessages({
     defaultMessage: 'Söfnuninni lokið',
     description: '',
   },
+  collectionMaxReached: {
+    id: 'sp.signatureCollection:collectionMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
+  paperUploadedSignature: {
+    id: 'sp.signatureCollection:paperUploadedSignature',
+    defaultMessage: 'Meðmæli lesin inn',
+    description: '',
+  },
+  signatureIsInvalid: {
+    id: 'sp.signatureCollection:signatureIsInvalid',
+    defaultMessage: 'Ógilt meðmæli',
+    description: '',
+  },
 
   /* Signee View */
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
-    defaultMessage: 'Frambjóðandi sem þú hefur mælt með',
+    defaultMessage: 'Frambjóðandi sem þú hefur mælt með: ',
     description: '',
   },
   mySigneeListsByAreaHeader: {
@@ -88,6 +133,16 @@ export const m = defineMessages({
   unSignError: {
     id: 'sp.signatureCollection:unSignError',
     defaultMessage: 'Tókst ekki að draga meðmæli til baka',
+    description: '',
+  },
+  actorNoAccessTitle: {
+    id: 'sp.signatureCollection:actorNoAccessTitle',
+    defaultMessage: 'Ekki réttindi',
+    description: '',
+  },
+  actorNoAccessDescription: {
+    id: 'sp.signatureCollection:actorNoAccessDescription',
+    defaultMessage: 'Þú hefur ekki réttindi til að sjá þessar upplýsingar.',
     description: '',
   },
 
@@ -142,11 +197,6 @@ export const m = defineMessages({
   signeesHeader: {
     id: 'sp.signatureCollection:signeesHeader',
     defaultMessage: 'Yfirlit meðmæla',
-    description: '',
-  },
-  downloadList: {
-    id: 'sp.signatureCollection:downloadList',
-    defaultMessage: 'Sækja lista',
     description: '',
   },
   searchInListPlaceholder: {

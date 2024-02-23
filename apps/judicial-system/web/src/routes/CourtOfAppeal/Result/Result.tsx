@@ -43,14 +43,13 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <>
-      {isLoadingAppealBanner && (
+      {!isLoadingAppealBanner && (
         <AlertBanner
           variant="warning"
           title={title}
           description={description}
         />
       )}
-
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -110,7 +109,7 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),

@@ -47,3 +47,8 @@ export interface ExamResult {
   fullName: string
   grades: GradeResult[]
 }
+
+export interface Student {
+  name: string
+  nationalId: string
+}

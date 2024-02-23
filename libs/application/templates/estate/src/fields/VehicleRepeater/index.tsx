@@ -15,6 +15,7 @@ import { m } from '../../lib/messages'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalVehicle } from './AdditionalVehicle'
 import { InputController } from '@island.is/shared/form-fields'
+import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const VehicleRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
@@ -28,13 +29,11 @@ export const VehicleRepeater: FC<
 
   const { clearErrors } = useFormContext()
 
-  const externalData = application.externalData.syslumennOnEntry?.data as {
-    estate: { vehicles: EstateAsset[] }
-  }
+  const estateData = getEstateDataFromApplication(application)
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate.vehicles) {
-      replace(externalData.estate.vehicles)
+    if (fields.length === 0 && estateData.estate?.vehicles) {
+      replace(estateData.estate.vehicles)
     }
   }, [])
 

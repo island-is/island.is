@@ -16,7 +16,6 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant/defendant.service'
 import { Defendant } from '../../../defendant/models/defendant.model'
-import { Institution } from '../../../institution'
 import { User, UserService } from '../../../user'
 import { InternalCreateCaseDto } from '../../dto/internalCreateCase.dto'
 import { Case } from '../../models/case.model'
@@ -97,11 +96,13 @@ describe('InternalCaseController - Create', () => {
 
   describe('creating case', () => {
     const userId = uuid()
+    const prosecutorsOfficeId = uuid()
     const courtId = uuid()
     const user = {
       id: userId,
       role: UserRole.PROSECUTOR,
       institution: {
+        id: prosecutorsOfficeId,
         type: InstitutionType.PROSECUTORS_OFFICE,
         defaultCourtId: courtId,
       },
@@ -135,6 +136,7 @@ describe('InternalCaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
+          prosecutorsOfficeId,
         },
         { transaction },
       )
@@ -149,19 +151,6 @@ describe('InternalCaseController - Create', () => {
         transaction,
       )
       expect(mockCaseModel.findByPk).toHaveBeenCalledWith(caseId, {
-        include: [
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-        ],
         transaction,
       })
       expect(then.result).toBe(returnedCase)
@@ -189,6 +178,7 @@ describe('InternalCaseController - Create', () => {
       id: uuid(),
       role: UserRole.DISTRICT_COURT_JUDGE,
       institution: {
+        id: uuid(),
         type: InstitutionType.DISTRICT_COURT,
         defaultCourtId: uuid(),
       },
@@ -215,6 +205,7 @@ describe('InternalCaseController - Create', () => {
       id: uuid(),
       role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
+        id: uuid(),
         type: InstitutionType.PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
@@ -238,11 +229,13 @@ describe('InternalCaseController - Create', () => {
 
   describe('prosecutor representative creating indictment case', () => {
     const userId = uuid()
+    const prosecutorsOfficeId = uuid()
     const courtId = uuid()
     const user = {
       id: userId,
       role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
+        id: prosecutorsOfficeId,
         type: InstitutionType.PROSECUTORS_OFFICE,
         defaultCourtId: courtId,
       },
@@ -267,6 +260,7 @@ describe('InternalCaseController - Create', () => {
           state: CaseState.DRAFT,
           creatingProsecutorId: userId,
           courtId,
+          prosecutorsOfficeId,
         },
         {
           transaction,
@@ -277,11 +271,13 @@ describe('InternalCaseController - Create', () => {
 
   describe('creating case with heightened security', () => {
     const userId = uuid()
+    const prosecutorsOfficeId = uuid()
     const courtId = uuid()
     const user = {
       id: userId,
       role: UserRole.PROSECUTOR,
       institution: {
+        id: prosecutorsOfficeId,
         type: InstitutionType.PROSECUTORS_OFFICE,
         defaultCourtId: courtId,
       },
@@ -303,6 +299,7 @@ describe('InternalCaseController - Create', () => {
           prosecutorId: userId,
           courtId,
           isHeightenedSecurityLevel: true,
+          prosecutorsOfficeId,
         },
         {
           transaction,
@@ -331,6 +328,7 @@ describe('InternalCaseController - Create', () => {
       id: uuid(),
       role: UserRole.PROSECUTOR,
       institution: {
+        id: uuid(),
         type: InstitutionType.PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
@@ -355,6 +353,7 @@ describe('InternalCaseController - Create', () => {
       id: uuid(),
       role: UserRole.PROSECUTOR,
       institution: {
+        id: uuid(),
         type: InstitutionType.PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
@@ -382,6 +381,7 @@ describe('InternalCaseController - Create', () => {
       id: uuid(),
       role: UserRole.PROSECUTOR,
       institution: {
+        id: uuid(),
         type: InstitutionType.PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
