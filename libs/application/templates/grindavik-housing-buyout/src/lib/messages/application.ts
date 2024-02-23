@@ -35,7 +35,7 @@ export const application = {
     explaination: {
       id: 'ghb.application.propertyInformation:explaination#markdown',
       defaultMessage:
-        '5% af kaupverði fasteignar er haldið eftir fram að afsali er 4.225.000.\n\n Útgreitt við kaupsamning er þá (4.225.000 - 80.275.000) eða 76.050.000.\n\n Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n Afhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
+        '5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **4.225.000**.\n\n Útgreitt við kaupsamning er þá (80.275.000 - 4.225.000) eða **76.050.000**.\n\n Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n Afhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
       description: 'Property information explaination',
     },
   }),
