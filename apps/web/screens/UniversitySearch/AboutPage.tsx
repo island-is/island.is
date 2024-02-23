@@ -159,9 +159,7 @@ const AboutPage: Screen<AboutPageProps> = ({
                   <Box width="full" className={cn(styles.courseListContainer)}>
                     <Box className={cn(styles.courseListContentContainer)}>
                       <Text variant="eyebrow" color="blueberry600">
-                        {' '}
-                        {/* TODO Translations */}
-                        Háskólar
+                        {n('universities', 'Háskólar')}
                       </Text>
                       {universities.map((university) => {
                         return (
