@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, InputFields } from './types'
 import { TypeIds, INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
+import { institution } from '../components/signatures/Signatures.css'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -12,17 +13,6 @@ const FileSchema = z.object({
 const getPath = (path: string) => path.split('.').slice(1)
 
 export const dataSchema = z.object({
-  test: z.object({
-    name: z.string().refine((v) => v && v.length, {
-      params: error.emptyFieldError,
-    }),
-    department: z.string().refine((v) => v && v.length, {
-      params: error.emptyFieldError,
-    }),
-    job: z.string().refine((v) => v && v.length, {
-      params: error.emptyFieldError,
-    }),
-  }),
   requirements: z
     .object({
       approveExternalData: z.string(),
@@ -33,12 +23,18 @@ export const dataSchema = z.object({
     }),
   advert: z
     .object({
-      department: z.string().refine((v) => v && v.length),
-      type: z.string().refine((v) => v && v.length),
+      department: z.string().refine((v) => v && v.length, {
+        params: error.emptyFieldError,
+      }),
+      type: z.string().refine((v) => v && v.length, {
+        params: error.emptyFieldError,
+      }),
       title: z.string().refine((v) => v && v.length, {
         params: error.emptyFieldError,
       }),
-      document: z.string().refine((v) => v && v.length),
+      document: z.string().refine((v) => v && v.length, {
+        params: error.emptyFieldError,
+      }),
       template: z.string().optional(),
       subType: z.string().optional(),
     })
@@ -55,82 +51,120 @@ export const dataSchema = z.object({
     }),
   signature: z
     .object({
-      type: z.string(),
-      signature: z.string(),
-      regular: z.array(
-        z.object({
+      type: z.string().refine((v) => v && v.length, {
+        params: error.emptyFieldError,
+      }),
+      signature: z.string().refine((v) => v && v.length, {
+        params: error.emptyFieldError,
+      }),
+      regular: z
+        .array(
+          z.object({
+            institution: z.string(),
+            date: z.string(),
+            members: z.array(
+              z.object({
+                above: z.string(),
+                name: z.string(),
+                below: z.string(),
+                after: z.string(),
+              }),
+            ),
+          }),
+        )
+        .optional(),
+      committee: z
+        .object({
           institution: z.string(),
           date: z.string(),
+          chairman: z.object({
+            above: z.string(),
+            name: z.string(),
+            below: z.string(),
+            after: z.string(),
+          }),
           members: z.array(
             z.object({
-              above: z.string(),
               name: z.string(),
               below: z.string(),
-              after: z.string(),
             }),
           ),
-        }),
-      ),
-      committee: z.object({
-        institution: z.string(),
-        date: z.string(),
-        chairman: z.object({
-          textAbove: z.string(),
-          name: z.string(),
-          textBelow: z.string(),
-          textAfter: z.string(),
-        }),
-        members: z.array(
-          z.object({
-            name: z.string(),
-            textBelow: z.string(),
-          }),
-        ),
-      }),
+        })
+        .optional(),
       additional: z.string().optional(),
     })
     .superRefine((signature, ctx) => {
-      if (signature.type === 'regular') {
-        // required fields are institution and members name
-        signature.regular?.forEach((signature, institutionIndex) => {
-          if (!signature.institution) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              params: error.emptyFieldError,
-              path: InputFields.signature.regular.institution
-                .replace(INSTITUTION_INDEX, `${institutionIndex}`)
-                .split('.')
-                .slice(1),
-            })
-          }
+      switch (signature.type) {
+        case 'regular':
+          signature.regular?.forEach((institution, index) => {
+            // required fields are, institution, date, member.name
 
-          signature.members?.forEach((member, memberIndex) => {
-            if (!member.name) {
+            if (!institution.institution) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: error.emptyFieldError,
-                path: InputFields.signature.regular.members.name
-                  .replace(INSTITUTION_INDEX, `${institutionIndex}`)
-                  .replace(MEMBER_INDEX, `${memberIndex}`)
+                path: InputFields.signature.regular.institution
+                  .replace(INSTITUTION_INDEX, `${index}`)
                   .split('.')
                   .slice(1),
               })
             }
-          })
-        })
-      } else {
-        // required fields are institution and chairman name and members name
-        if (!signature.committee.institution) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: error.emptyFieldError,
-            path: InputFields.signature.committee.institution
-              .split('.')
-              .slice(1),
+
+            if (!institution.date) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                params: error.emptyFieldError,
+                path: InputFields.signature.regular.date
+                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .split('.')
+                  .slice(1),
+              })
+            }
+
+            institution.members?.forEach((member, memberIndex) => {
+              if (!member.name) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  params: error.emptyFieldError,
+                  path: InputFields.signature.regular.members.name
+                    .replace(INSTITUTION_INDEX, `${index}`)
+                    .replace(MEMBER_INDEX, `${memberIndex}`)
+                    .split('.')
+                    .slice(1),
+                })
+              }
+            })
           })
 
-          // check name of members
-          signature.committee.members?.forEach((member, index) => {
+          break
+        case 'committee':
+          // required fields are institution, date, chairman.name, members.name
+
+          if (!signature.committee?.institution) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: error.emptyFieldError,
+              path: getPath(InputFields.signature.committee.institution),
+            })
+          }
+
+          if (!signature.committee?.date) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: error.emptyFieldError,
+              path: getPath(InputFields.signature.committee.date),
+            })
+          }
+
+          if (!signature.committee?.chairman.name) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: error.emptyFieldError,
+              path: getPath(InputFields.signature.committee.chairman.name),
+            })
+          }
+
+          signature.committee?.members?.forEach((member, index) => {
             if (!member.name) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -142,30 +176,7 @@ export const dataSchema = z.object({
               })
             }
           })
-        }
-
-        if (!signature.committee.chairman.name) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: error.emptyFieldError,
-            path: InputFields.signature.committee.chairman.name
-              .split('.')
-              .slice(1),
-          })
-        }
-
-        signature.committee.members?.forEach((member, index) => {
-          if (!member.name) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              params: error.emptyFieldError,
-              path: InputFields.signature.committee.members.name
-                .replace(MEMBER_INDEX, `${index}`)
-                .split('.')
-                .slice(1),
-            })
-          }
-        })
+          break
       }
     }),
   additionsAndDocuments: z.object({

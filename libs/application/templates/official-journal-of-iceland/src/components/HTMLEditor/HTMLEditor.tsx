@@ -43,36 +43,44 @@ export const HTMLEditor = ({
   }
 
   return (
-    <>
-      {title && (
-        <Text marginBottom={2} variant="h5">
-          {title}
-        </Text>
-      )}
-      <Box
-        className={editorWrapper({
-          error: !!error,
-        })}
-      >
-        <Editor
-          readOnly={readOnly}
-          hideWarnings={hideWarnings}
-          disabled={readOnly}
-          elmRef={editorRef}
-          config={config}
-          fileUploader={fileUploader}
-          valueRef={valueRef}
-          classes={classes}
-          onChange={() => {
-            onChange && onChange(valueRef.current())
-          }}
-          onBlur={() => {
-            // updateFormValue(valueRef.current())
-            onChange && onChange(valueRef.current())
-          }}
-        />
-      </Box>
-      {error && <div className={errorStyle}>{error}</div>}
-    </>
+    <Controller
+      name={name}
+      defaultValue={initialValue}
+      render={({ field: { onChange: updateFormValue, value } }) => {
+        return (
+          <>
+            {title && (
+              <Text marginBottom={2} variant="h5">
+                {title}
+              </Text>
+            )}
+            <Box
+              className={editorWrapper({
+                error: !!error,
+              })}
+            >
+              <Editor
+                readOnly={readOnly}
+                hideWarnings={hideWarnings}
+                disabled={readOnly}
+                elmRef={editorRef}
+                config={config}
+                fileUploader={fileUploader}
+                valueRef={valueRef}
+                classes={classes}
+                onChange={() => {
+                  onChange && onChange(valueRef.current())
+                }}
+                onBlur={() => {
+                  updateFormValue(valueRef.current())
+                  onChange && onChange(valueRef.current())
+                }}
+              />
+            </Box>
+            {error && <div className={errorStyle}>{error}</div>}
+          </>
+        )
+      }}
+    />
   )
 }

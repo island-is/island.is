@@ -33,7 +33,7 @@ export const MEMBER_INDEX = '{memberIndex}'
 export const INSTITUTION_INDEX = '{institutionIndex}'
 
 export const INTERVAL_TIMER = 3000
-export const DEBOUNCE_INPUT_TIMER = 250
+export const DEBOUNCE_INPUT_TIMER = 333
 
 export const INITIAL_ANSWERS = {
   [Routes.TEST]: {
@@ -53,7 +53,7 @@ export const INITIAL_ANSWERS = {
     document: '',
   },
   [Routes.SIGNATURE]: {
-    type: '',
+    type: 'regular',
     signature: '',
     regular: [
       {
@@ -73,15 +73,15 @@ export const INITIAL_ANSWERS = {
       institution: '',
       date: '',
       chairman: {
-        textAbove: '',
+        above: '',
         name: '',
-        textAfter: '',
-        textBelow: '',
+        after: '',
+        below: '',
       },
       members: [
         {
           name: '',
-          textBelow: '',
+          below: '',
         },
       ],
     },

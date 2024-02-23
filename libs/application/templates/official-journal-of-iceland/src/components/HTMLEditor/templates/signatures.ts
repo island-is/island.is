@@ -21,23 +21,19 @@ type CommitteeSignatureTemplateParams = {
 
 const signatureTemplate = (
   name?: string,
-  textAfter?: string,
-  textAbove?: string,
-  textBelow?: string,
+  after?: string,
+  above?: string,
+  below?: string,
 ) => {
   if (!name) return ''
   return `
   <div class="signature">
-    ${textAbove ? `<p class="signature__textAbove">${textAbove}</p>` : ''}
+    ${above ? `<p class="signature__above">${above}</p>` : ''}
     <div class="signature__nameWrapper">
       <p class="signature__name">${name}
-        ${
-          textAfter
-            ? `<span class="signature__textAfter">${textAfter}</span>`
-            : ''
-        }
+        ${after ? `<span class="signature__after">${after}</span>` : ''}
       </p>
-      ${textBelow ? `<p class="signature__textBelow">${textBelow}</p>` : ''}
+      ${below ? `<p class="signature__below">${below}</p>` : ''}
     </div>
   </div>
   `
@@ -116,18 +112,18 @@ export const committeeSignatureTemplate = ({
 
   const html = `
   <div class="signature__group">
-    ${titleTemplate(signature.institution, signature.date, locale)}
+    ${titleTemplate(signature?.institution, signature?.date, locale)}
     <div class="signatures single chairman">
       ${signatureTemplate(
-        signature.chairman.name,
-        signature.chairman.textAfter,
-        signature.chairman.textAbove,
-        signature.chairman.textBelow,
+        signature?.chairman.name,
+        signature?.chairman.after,
+        signature?.chairman.above,
+        signature?.chairman.below,
       )}
     </div>
     <div class="${className}">
       ${signature?.members
-        ?.map((s) => signatureTemplate(s.name, '', '', s.textBelow))
+        ?.map((s) => signatureTemplate(s.name, '', '', s.below))
         .join('')}
     </div>
   </div>

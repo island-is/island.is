@@ -8,7 +8,12 @@ import { RegularSignature } from '../components/signatures/Regular'
 import { useCallback, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { DEBOUNCE_INPUT_TIMER, INITIAL_ANSWERS } from '../lib/constants'
+import {
+  DEBOUNCE_INPUT_TIMER,
+  INITIAL_ANSWERS,
+  INSTITUTION_INDEX,
+  MEMBER_INDEX,
+} from '../lib/constants'
 import debounce from 'lodash/debounce'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import {
@@ -16,6 +21,7 @@ import {
   regularSignatureTemplate,
 } from '../components/htmlEditor/templates/signatures'
 import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
+import { useFormContext } from 'react-hook-form'
 
 type LocalState = typeof INITIAL_ANSWERS['signature']
 
@@ -25,20 +31,104 @@ export const Signatures = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const { setValue } = useFormContext()
 
   const [selectedTab, setSelectedTab] = useState<string>(
-    answers?.signature?.type ?? 'regular',
+    answers?.signature?.type ?? INITIAL_ANSWERS.signature.type,
   )
   const [state, setState] = useState<LocalState>({
-    type: answers?.signature?.type ?? '',
+    type: answers?.signature?.type ?? INITIAL_ANSWERS.signature.type,
     signature: answers?.signature?.signature ?? '',
     regular: answers?.signature?.regular ?? INITIAL_ANSWERS.signature.regular,
     committee:
-      answers?.signature.committee ?? INITIAL_ANSWERS.signature.committee,
-    additional: answers?.signature.additional ?? '',
+      answers?.signature?.committee ?? INITIAL_ANSWERS.signature.committee,
+    additional: answers?.signature?.additional ?? '',
   })
 
   const updateHandler = useCallback(async () => {
+    setValue(InputFields.signature.type, state.type)
+    setValue(InputFields.signature.contents, state.signature)
+    state.regular.forEach((group, i) => {
+      setValue(
+        InputFields.signature.regular.institution.replace(
+          INSTITUTION_INDEX,
+          i.toString(),
+        ),
+        group.institution,
+      )
+      setValue(
+        InputFields.signature.regular.date.replace(
+          INSTITUTION_INDEX,
+          i.toString(),
+        ),
+        group.date,
+      )
+      group.members.forEach((member, j) => {
+        setValue(
+          InputFields.signature.regular.members.above
+            .replace(INSTITUTION_INDEX, i.toString())
+            .replace(INSTITUTION_INDEX, j.toString()),
+          member.above,
+        )
+        setValue(
+          InputFields.signature.regular.members.name
+            .replace(INSTITUTION_INDEX, i.toString())
+            .replace(INSTITUTION_INDEX, j.toString()),
+          member.name,
+        )
+        setValue(
+          InputFields.signature.regular.members.below
+            .replace(INSTITUTION_INDEX, i.toString())
+            .replace(INSTITUTION_INDEX, j.toString()),
+          member.below,
+        )
+        setValue(
+          InputFields.signature.regular.members.after
+            .replace(INSTITUTION_INDEX, i.toString())
+            .replace(INSTITUTION_INDEX, j.toString()),
+          member.after,
+        )
+      })
+    })
+
+    setValue(
+      InputFields.signature.committee.institution,
+      state.committee.institution,
+    )
+    setValue(InputFields.signature.committee.date, state.committee.date)
+    setValue(
+      InputFields.signature.committee.chairman.above,
+      state.committee.chairman.above,
+    )
+    setValue(
+      InputFields.signature.committee.chairman.name,
+      state.committee.chairman.name,
+    )
+    setValue(
+      InputFields.signature.committee.chairman.after,
+      state.committee.chairman.after,
+    )
+    setValue(
+      InputFields.signature.committee.chairman.below,
+      state.committee.chairman.below,
+    )
+    state.committee.members.forEach((member, i) => {
+      setValue(
+        InputFields.signature.committee.members.name.replace(
+          MEMBER_INDEX,
+          i.toString(),
+        ),
+        member.name,
+      )
+      setValue(
+        InputFields.signature.committee.members.below.replace(
+          MEMBER_INDEX,
+          i.toString(),
+        ),
+        member.below,
+      )
+    })
+
     await updateApplication({
       variables: {
         locale,
@@ -46,15 +136,44 @@ export const Signatures = ({ application, errors }: OJOIFieldBaseProps) => {
           skipValidation: true,
           id: application.id,
           answers: {
-            signature: state,
+            signature: {
+              type: state.type,
+              signature: state.signature,
+              regular: state.regular,
+              committee: state.committee,
+              additional: state.additional,
+            },
           },
         },
       },
     })
-  }, [application.id, locale, state, updateApplication])
+  }, [
+    application.id,
+    locale,
+    setValue,
+    state.additional,
+    state.committee,
+    state.regular,
+    state.signature,
+    state.type,
+    updateApplication,
+  ])
 
   const updateState = useCallback((newState: typeof state) => {
-    setState((prev) => ({ ...prev, ...newState }))
+    setState((prev) => ({
+      ...prev,
+      ...newState,
+      signature:
+        newState.type === 'regular'
+          ? regularSignatureTemplate({
+              signatureGroups: newState.regular,
+              additionalSignature: newState.additional,
+            })
+          : committeeSignatureTemplate({
+              signature: newState.committee,
+              additionalSignature: newState.additional,
+            }),
+    }))
   }, [])
 
   const debouncedStateUpdate = debounce(updateState, DEBOUNCE_INPUT_TIMER)
@@ -109,6 +228,7 @@ export const Signatures = ({ application, errors }: OJOIFieldBaseProps) => {
           selected={selectedTab}
           onChange={(id) => {
             updateState({ ...state, type: id })
+            setValue(InputFields.signature.type, id)
             setSelectedTab(id)
           }}
           tabs={tabs}

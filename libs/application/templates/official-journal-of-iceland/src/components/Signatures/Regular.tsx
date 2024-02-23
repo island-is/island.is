@@ -1,4 +1,4 @@
-import { Box, Button, Text, DatePicker, Input } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { useLocale } from '@island.is/localization'
@@ -15,8 +15,10 @@ import {
 } from '../../lib/constants'
 import { getErrorViaPath } from '@island.is/application/core'
 import { signatures } from '../../lib/messages/signatures'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
+import {
+  DatePickerController,
+  InputController,
+} from '@island.is/shared/form-fields'
 
 type LocalState = typeof INITIAL_ANSWERS['signature']
 
@@ -33,8 +35,6 @@ type InstitutionMember = NonNullable<Institution['members']>[0]
 type MemberKey = keyof InstitutionMember
 
 type InstitutionKey = keyof Omit<Institution, 'members'>
-
-const df = 'yyyy-MM-dd'
 
 export const RegularSignature = ({ state, setState, errors }: Props) => {
   const { formatMessage: f } = useLocale()
@@ -139,176 +139,152 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
 
   return (
     <Box className={styles.signatureWrapper}>
-      {state.regular.map((institution, index) => (
-        <Box className={styles.institutionWrapper} key={index}>
-          <Box className={styles.institution}>
-            <Input
-              name={InputFields.signature.regular.institution.replace(
-                INSTITUTION_INDEX,
-                `${index}`,
-              )}
-              label={f(signatures.inputs.institution.label)}
-              defaultValue={institution.institution}
-              backgroundColor="blue"
-              onChange={(e) =>
-                onChangeInstitution(index, 'institution', e.target.value)
-              }
-              errorMessage={
-                errors &&
-                getErrorViaPath(
-                  errors,
-                  InputFields.signature.regular.institution.replace(
-                    INSTITUTION_INDEX,
-                    `${index}`,
-                  ),
-                )
-              }
-              size="sm"
-            />
-            <DatePicker
-              name={InputFields.signature.regular.date.replace(
-                INSTITUTION_INDEX,
-                `${index}`,
-              )}
-              label={f(signatures.inputs.date.label)}
-              placeholderText={f(signatures.inputs.date.placeholder)}
-              backgroundColor="blue"
-              size="sm"
-              selected={
-                institution.date ? parseISO(institution.date) : undefined
-              }
-              handleChange={(date) =>
-                onChangeInstitution(index, 'date', format(date, df))
-              }
-            />
-            {index > 0 && (
-              <Box className={styles.removeInputGroup}>
-                <Button
-                  variant="utility"
-                  icon="trash"
-                  onClick={() => onRemoveInstitution(index)}
-                />
-              </Box>
-            )}
-          </Box>
-          <Box className={styles.wrapper}>
-            <Text variant="h5" marginBottom={2}>
-              {f(signatures.headings.signedBy)}
-            </Text>
-            {institution.members?.map((signature, i) => (
-              <Box className={styles.inputGroup} key={`${index}-${i}`}>
-                <Box className={styles.inputWrapper}>
-                  <Input
-                    name={InputFields.signature.regular.members.textAbove
-                      .replace(INSTITUTION_INDEX, `${index}`)
-                      .replace(MEMBER_INDEX, `${i}`)}
-                    errorMessage={
-                      errors &&
-                      getErrorViaPath(
-                        errors,
-                        InputFields.signature.regular.members.textAbove
-                          .replace(INSTITUTION_INDEX, `${index}`)
-                          .replace(MEMBER_INDEX, `${i}`),
-                      )
-                    }
-                    label={f(signatures.inputs.above.label)}
-                    defaultValue={signature.above}
-                    backgroundColor="blue"
-                    size="sm"
-                    onChange={(e) =>
-                      onChangeMember(index, i, 'above', e.target.value)
-                    }
-                  />
-                  <Input
-                    name={InputFields.signature.regular.members.name
-                      .replace(INSTITUTION_INDEX, `${index}`)
-                      .replace(MEMBER_INDEX, `${i}`)}
-                    errorMessage={
-                      errors &&
-                      getErrorViaPath(
-                        errors,
-                        InputFields.signature.regular.members.name
-                          .replace(INSTITUTION_INDEX, `${index}`)
-                          .replace(MEMBER_INDEX, `${i}`),
-                      )
-                    }
-                    label={f(signatures.inputs.name.label)}
-                    defaultValue={signature.name}
-                    backgroundColor="blue"
-                    size="sm"
-                    onChange={(e) =>
-                      onChangeMember(index, i, 'name', e.target.value)
-                    }
+      {state.regular.map((institution, index) => {
+        const institutionPath =
+          InputFields.signature.regular.institution.replace(
+            INSTITUTION_INDEX,
+            `${index}`,
+          )
+
+        const datePath = InputFields.signature.regular.date.replace(
+          INSTITUTION_INDEX,
+          `${index}`,
+        )
+
+        return (
+          <Box className={styles.institutionWrapper} key={index}>
+            <Box className={styles.institution}>
+              <InputController
+                id={institutionPath}
+                name={institutionPath}
+                label={f(signatures.inputs.institution.label)}
+                defaultValue={institution.institution}
+                backgroundColor="blue"
+                onChange={(e) =>
+                  onChangeInstitution(index, 'institution', e.target.value)
+                }
+                error={errors && getErrorViaPath(errors, institutionPath)}
+                size="sm"
+              />
+              <DatePickerController
+                id={datePath}
+                name={datePath}
+                label={f(signatures.inputs.date.label)}
+                placeholder={f(signatures.inputs.date.placeholder)}
+                backgroundColor="blue"
+                size="sm"
+                defaultValue={institution.date}
+                onChange={(date) => onChangeInstitution(index, 'date', date)}
+                error={errors && getErrorViaPath(errors, datePath)}
+              />
+              {index > 0 && (
+                <Box className={styles.removeInputGroup}>
+                  <Button
+                    variant="utility"
+                    icon="trash"
+                    onClick={() => onRemoveInstitution(index)}
                   />
                 </Box>
-                <Box className={styles.inputWrapper}>
-                  <Input
-                    name={InputFields.signature.regular.members.textAfter
-                      .replace(INSTITUTION_INDEX, `${index}`)
-                      .replace(MEMBER_INDEX, `${i}`)}
-                    errorMessage={
-                      errors &&
-                      getErrorViaPath(
-                        errors,
-                        InputFields.signature.regular.members.textAfter
-                          .replace(INSTITUTION_INDEX, `${index}`)
-                          .replace(MEMBER_INDEX, `${i}`),
-                      )
-                    }
-                    label={f(signatures.inputs.after.label)}
-                    defaultValue={signature.after}
-                    backgroundColor="blue"
-                    size="sm"
-                    onChange={(e) =>
-                      onChangeMember(index, i, 'after', e.target.value)
-                    }
-                  />
-                  <Input
-                    name={InputFields.signature.regular.members.textBelow
-                      .replace(INSTITUTION_INDEX, `${index}`)
-                      .replace(MEMBER_INDEX, `${i}`)}
-                    errorMessage={
-                      errors &&
-                      getErrorViaPath(
-                        errors,
-                        InputFields.signature.regular.members.textBelow
-                          .replace(INSTITUTION_INDEX, `${index}`)
-                          .replace(MEMBER_INDEX, `${i}`),
-                      )
-                    }
-                    label={f(signatures.inputs.below.label)}
-                    defaultValue={signature.below}
-                    backgroundColor="blue"
-                    size="sm"
-                    onChange={(e) =>
-                      onChangeMember(index, i, 'below', e.target.value)
-                    }
-                  />
-                  {i > 0 && (
-                    <Box className={styles.removeInputGroup}>
-                      <Button
-                        variant="utility"
-                        icon="trash"
-                        onClick={() => onRemoveMember(index, i)}
+              )}
+            </Box>
+            <Box className={styles.wrapper}>
+              <Text variant="h5" marginBottom={2}>
+                {f(signatures.headings.signedBy)}
+              </Text>
+              {institution.members?.map((signature, i) => {
+                const abovePath = InputFields.signature.regular.members.above
+                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(MEMBER_INDEX, `${i}`)
+                const namePath = InputFields.signature.regular.members.name
+                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(MEMBER_INDEX, `${i}`)
+                const afterPath = InputFields.signature.regular.members.after
+                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(MEMBER_INDEX, `${i}`)
+                const belowPath = InputFields.signature.regular.members.below
+                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(MEMBER_INDEX, `${i}`)
+
+                return (
+                  <Box className={styles.inputGroup} key={`${index}-${i}`}>
+                    <Box className={styles.inputWrapper}>
+                      <InputController
+                        id={abovePath}
+                        name={abovePath}
+                        label={f(signatures.inputs.above.label)}
+                        defaultValue={signature.above}
+                        backgroundColor="blue"
+                        size="sm"
+                        onChange={(e) =>
+                          onChangeMember(index, i, 'above', e.target.value)
+                        }
+                        error={errors && getErrorViaPath(errors, abovePath)}
+                      />
+                      <InputController
+                        id={namePath}
+                        name={namePath}
+                        label={f(signatures.inputs.name.label)}
+                        defaultValue={signature.name}
+                        backgroundColor="blue"
+                        size="sm"
+                        onChange={(e) =>
+                          onChangeMember(index, i, 'name', e.target.value)
+                        }
+                        error={errors && getErrorViaPath(errors, namePath)}
                       />
                     </Box>
-                  )}
-                </Box>
+                    <Box className={styles.inputWrapper}>
+                      <InputController
+                        id={afterPath}
+                        name={afterPath}
+                        label={f(signatures.inputs.after.label)}
+                        defaultValue={signature.after}
+                        backgroundColor="blue"
+                        size="sm"
+                        onChange={(e) =>
+                          onChangeMember(index, i, 'after', e.target.value)
+                        }
+                        error={errors && getErrorViaPath(errors, afterPath)}
+                      />
+                      <InputController
+                        id={belowPath}
+                        name={belowPath}
+                        label={f(signatures.inputs.below.label)}
+                        defaultValue={signature.below}
+                        backgroundColor="blue"
+                        size="sm"
+                        onChange={(e) =>
+                          onChangeMember(index, i, 'below', e.target.value)
+                        }
+                        error={errors && getErrorViaPath(errors, belowPath)}
+                      />
+                      {i > 0 && (
+                        <Box className={styles.removeInputGroup}>
+                          <Button
+                            variant="utility"
+                            icon="trash"
+                            onClick={() => onRemoveMember(index, i)}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                )
+              })}
+              <Box marginTop={2}>
+                <Button
+                  size="small"
+                  icon="add"
+                  variant="utility"
+                  onClick={() => onAddMember(index)}
+                >
+                  {f(signatures.buttons.addPerson)}
+                </Button>
               </Box>
-            ))}
-            <Box marginTop={2}>
-              <Button
-                size="small"
-                icon="add"
-                variant="utility"
-                onClick={() => onAddMember(index)}
-              >
-                {f(signatures.buttons.addPerson)}
-              </Button>
             </Box>
           </Box>
-        </Box>
-      ))}
+        )
+      })}
       <Box marginTop={2}>
         <Button variant="utility" icon="add" onClick={onAddInstitution}>
           {f(signatures.buttons.addInstitution)}

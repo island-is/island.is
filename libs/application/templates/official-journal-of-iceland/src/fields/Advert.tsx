@@ -9,17 +9,22 @@ import {
   MinistryOfJusticeGraphqlResponse,
   OJOIFieldBaseProps,
 } from '../lib/types'
-import { Box, Input, Select, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
 import { advert } from '../lib/messages'
 import debounce from 'lodash/debounce'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
+import { getErrorViaPath } from '@island.is/application/core'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 
 type LocalState = typeof INITIAL_ANSWERS['advert']
 type TypeResonse = MinistryOfJusticeGraphqlResponse<'types'>
 
-export const Advert = ({ application }: OJOIFieldBaseProps) => {
+export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
   const { formatMessage: f, locale } = useLocale()
   const { answers, externalData } = application
 
@@ -99,18 +104,21 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     <>
       <FormGroup>
         <Box width="half">
-          <Select
+          <SelectController
+            id={InputFields.advert.department}
             name={InputFields.advert.department}
             label={f(advert.inputs.department.label)}
             placeholder={f(advert.inputs.department.placeholder)}
             options={departments}
-            defaultValue={departments.find((d) => d.value === state.department)}
+            defaultValue={state.department}
             size="sm"
             backgroundColor="blue"
-            onChange={(opt) => {
-              if (!opt) return
+            onSelect={(opt) =>
               setState((prev) => ({ ...prev, department: opt.value, type: '' }))
-            }}
+            }
+            error={
+              errors && getErrorViaPath(errors, InputFields.advert.department)
+            }
           />
         </Box>
         {loadingTypes ? (
@@ -123,23 +131,23 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
           </Box>
         ) : (
           <Box width="half">
-            <Select
+            <SelectController
+              id={InputFields.advert.type}
               name={InputFields.advert.type}
               label={f(advert.inputs.type.label)}
               placeholder={f(advert.inputs.type.placeholder)}
               options={types}
-              defaultValue={types.find((t) => t.value === state.type)}
+              defaultValue={state.type}
               size="sm"
               backgroundColor="blue"
-              onChange={(opt) => {
-                if (!opt) return
-                setState((prev) => ({ ...prev, type: opt.value }))
-              }}
+              onSelect={(opt) => setState((prev) => ({ ...prev, type: '' }))}
+              error={errors && getErrorViaPath(errors, InputFields.advert.type)}
             />
           </Box>
         )}
         <Box width="full">
-          <Input
+          <InputController
+            id={InputFields.advert.title}
             name={InputFields.advert.title}
             label={f(advert.inputs.title.label)}
             placeholder={f(advert.inputs.title.placeholder)}
@@ -151,12 +159,14 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             onChange={(e) =>
               debouncedStateUpdate({ ...state, title: e.target.value })
             }
+            error={errors && getErrorViaPath(errors, InputFields.advert.title)}
           />
         </Box>
       </FormGroup>
       <FormGroup title={f(advert.headings.materialForPublication)}>
         <Box width="half">
-          <Input
+          <InputController
+            id={InputFields.advert.template}
             name={InputFields.advert.template}
             label={f(advert.inputs.template.label)}
             placeholder={f(advert.inputs.template.placeholder)}
@@ -169,6 +179,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
                 template: e.target.value,
               })
             }
+            error={
+              errors && getErrorViaPath(errors, InputFields.advert.template)
+            }
           />
         </Box>
         <Box width="full">
@@ -176,6 +189,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             name={InputFields.advert.document}
             value={state.document as HTMLText}
             onChange={(value) => setState({ ...state, document: value })}
+            error={
+              errors && getErrorViaPath(errors, InputFields.advert.document)
+            }
           />
         </Box>
       </FormGroup>

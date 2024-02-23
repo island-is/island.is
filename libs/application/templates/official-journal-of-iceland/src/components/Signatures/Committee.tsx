@@ -16,19 +16,14 @@ import { INITIAL_ANSWERS, MEMBER_INDEX } from '../../lib/constants'
 import { getErrorViaPath } from '@island.is/application/core'
 import { signatures } from '../../lib/messages/signatures'
 
-type ChairmanKey = keyof CommitteeSignatureState['chairman']
-type MemberKey = keyof Required<CommitteeSignatureState>['members'][0]
+type ChairmanKey = keyof NonNullable<CommitteeSignatureState>['chairman']
+type MemberKey = keyof NonNullable<CommitteeSignatureState>['members'][0]
 
 type LocalState = typeof INITIAL_ANSWERS['signature']
 type Props = Pick<OJOIFieldBaseProps, 'errors'> & {
   state: LocalState
   setState: (state: LocalState) => void
   addSignature?: boolean
-}
-
-const emptyMember = {
-  name: '',
-  textBelow: '',
 }
 
 export const CommitteeSignature = ({ state, setState, errors }: Props) => {
@@ -63,7 +58,10 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
   const onAddCommitteeMember = () => {
     const newState = cloneDeep(state)
     if (!newState.committee.members) return
-    newState.committee.members.push(cloneDeep(emptyMember))
+    newState.committee.members.push({
+      name: '',
+      below: '',
+    })
     setState(newState)
   }
 
@@ -85,8 +83,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         marginBottom={2}
       >
         <InputController
-          required={true}
           id={InputFields.signature.committee.institution}
+          required={true}
           name={InputFields.signature.committee.institution}
           label={f(signatures.inputs.institution.label)}
           error={
@@ -116,27 +114,27 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         <Box className={styles.inputGroup}>
           <Box className={styles.inputWrapper}>
             <InputController
-              id={InputFields.signature.committee.chairman.textAbove}
-              name={InputFields.signature.committee.chairman.textAbove}
+              id={InputFields.signature.committee.chairman.above}
+              name={InputFields.signature.committee.chairman.above}
               label={f(signatures.inputs.above.label)}
-              defaultValue={state.committee.chairman.textAbove}
+              defaultValue={state.committee.chairman.above}
               backgroundColor="blue"
               size="sm"
               onChange={(e) =>
-                onCommitteeChairmanChange('textAbove', e.target.value)
+                onCommitteeChairmanChange('above', e.target.value)
               }
-            />
-            <InputController
-              required={true}
-              id={InputFields.signature.committee.chairman.name}
-              name={InputFields.signature.committee.chairman.name}
               error={
                 errors &&
                 getErrorViaPath(
                   errors,
-                  InputFields.signature.committee.chairman.name,
+                  InputFields.signature.committee.chairman.above,
                 )
               }
+            />
+            <InputController
+              id={InputFields.signature.committee.chairman.name}
+              name={InputFields.signature.committee.chairman.name}
+              required={true}
               label={f(signatures.inputs.name.label)}
               defaultValue={state.committee.chairman.name}
               backgroundColor="blue"
@@ -144,29 +142,50 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
               onChange={(e) =>
                 onCommitteeChairmanChange('name', e.target.value)
               }
+              error={
+                errors &&
+                getErrorViaPath(
+                  errors,
+                  InputFields.signature.committee.chairman.name,
+                )
+              }
             />
           </Box>
           <Box className={styles.inputWrapper}>
             <InputController
-              id={InputFields.signature.committee.chairman.textAfter}
-              name={InputFields.signature.committee.chairman.textAfter}
+              id={InputFields.signature.committee.chairman.after}
+              name={InputFields.signature.committee.chairman.after}
               label={f(signatures.inputs.after.label)}
-              defaultValue={state.committee.chairman.textAfter}
+              defaultValue={state.committee.chairman.after}
               backgroundColor="blue"
               size="sm"
               onChange={(e) =>
-                onCommitteeChairmanChange('textAfter', e.target.value)
+                onCommitteeChairmanChange('after', e.target.value)
+              }
+              error={
+                errors &&
+                getErrorViaPath(
+                  errors,
+                  InputFields.signature.committee.chairman.after,
+                )
               }
             />
             <InputController
-              id={InputFields.signature.committee.chairman.textBelow}
-              name={InputFields.signature.committee.chairman.textBelow}
+              id={InputFields.signature.committee.chairman.below}
+              name={InputFields.signature.committee.chairman.below}
               label={f(signatures.inputs.below.label)}
-              defaultValue={state.committee.chairman.textBelow}
+              defaultValue={state.committee.chairman.below}
               backgroundColor="blue"
               size="sm"
               onChange={(e) =>
-                onCommitteeChairmanChange('textBelow', e.target.value)
+                onCommitteeChairmanChange('below', e.target.value)
+              }
+              error={
+                errors &&
+                getErrorViaPath(
+                  errors,
+                  InputFields.signature.committee.chairman.below,
+                )
               }
             />
           </Box>
@@ -177,8 +196,13 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
           {f(signatures.headings.committeeMembers)}
         </Text>
         {state.committee.members?.map((member, index) => {
-          const localName =
-            InputFields.signature.committee.members.name.replace(
+          const namePath = InputFields.signature.committee.members.name.replace(
+            MEMBER_INDEX,
+            `${index}`,
+          )
+
+          const belowPath =
+            InputFields.signature.committee.members.below.replace(
               MEMBER_INDEX,
               `${index}`,
             )
@@ -186,9 +210,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
             <Box key={index} className={styles.inputGroup}>
               <Box className={styles.inputWrapper}>
                 <InputController
-                  id={localName}
-                  name={localName}
-                  error={errors && getErrorViaPath(errors, localName)}
+                  id={namePath}
+                  name={namePath}
                   label={f(signatures.inputs.name.label)}
                   defaultValue={member.name}
                   backgroundColor="blue"
@@ -197,23 +220,19 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                   onChange={(e) =>
                     onCommitteMemberChange(index, 'name', e.target.value)
                   }
+                  error={errors && getErrorViaPath(errors, namePath)}
                 />
                 <InputController
-                  id={InputFields.signature.committee.members.textBelow.replace(
-                    MEMBER_INDEX,
-                    `${index}`,
-                  )}
-                  name={InputFields.signature.committee.members.textBelow.replace(
-                    MEMBER_INDEX,
-                    `${index}`,
-                  )}
+                  id={belowPath}
+                  name={belowPath}
                   label={f(signatures.inputs.below.label)}
-                  defaultValue={member.textBelow}
+                  defaultValue={member.below}
                   backgroundColor="blue"
                   size="sm"
                   onChange={(e) =>
-                    onCommitteMemberChange(index, 'textBelow', e.target.value)
+                    onCommitteMemberChange(index, 'below', e.target.value)
                   }
+                  error={errors && getErrorViaPath(errors, belowPath)}
                 />
                 {index > 1 && (
                   <Box className={styles.removeInputGroup}>

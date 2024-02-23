@@ -31,24 +31,24 @@ export const InputFields = {
       institution: `signature.regular-${INSTITUTION_INDEX}.institution`,
       date: `signature.regular-${INSTITUTION_INDEX}.date`,
       members: {
-        textAbove: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAbove`,
+        above: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.above`,
         name: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
-        textBelow: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textBelow`,
-        textAfter: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAfter`,
+        below: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.below`,
+        after: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.after`,
       },
     },
     committee: {
       institution: 'signature.committee.institution',
       date: 'signature.committee.date',
       chairman: {
-        textAbove: 'signature.committee.chairman.textAbove',
+        above: 'signature.committee.chairman.above',
         name: 'signature.committee.chairman.name',
-        textAfter: 'signature.committee.chairman.textAfter',
-        textBelow: 'signature.committee.chairman.textBelow',
+        after: 'signature.committee.chairman.after',
+        below: 'signature.committee.chairman.below',
       },
       members: {
         name: `signature.committee.members-${MEMBER_INDEX}.name`,
-        textBelow: `signature.committee.members-${MEMBER_INDEX}.textBelow`,
+        below: `signature.committee.members-${MEMBER_INDEX}.below`,
       },
     },
     additonalSignature: 'signature.additonalSignature',
@@ -82,8 +82,13 @@ export type AdvertOption<Key extends string> = {
 }
 
 export type SignatureType = 'regular' | 'committee'
-export type RegularSignatureState = answerSchemas['signature']['regular']
-export type CommitteeSignatureState = answerSchemas['signature']['committee']
+
+export type RegularSignatureState = NonNullable<
+  answerSchemas['signature']['regular']
+>
+export type CommitteeSignatureState = NonNullable<
+  answerSchemas['signature']['committee']
+>
 
 export enum TemplateApiActions {
   departments = 'departments',
@@ -132,7 +137,7 @@ export interface ExternalData {
 export type OJOIApplication = Override<
   Application,
   {
-    answers: answerSchemas
+    answers: Partial<answerSchemas>
     externalData: ExternalData
   }
 >
