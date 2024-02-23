@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from './constants'
+import { NO, YES } from './constants'
 import {
   customZodError,
   isValidEmail,
@@ -446,6 +446,34 @@ export const inheritanceReportSchema = z.object({
   }),
 
   heirsAdditionalInfo: z.string().optional(),
+
+  spouse: z
+    .object({
+      wasInCohabitation: z.string().optional(),
+      hadSeparateProperty: z.string().optional(),
+      totalDeduction: z.number().optional(),
+      totalSeperateProperty: z.number().optional(),
+    })
+    .refine(
+      ({ wasInCohabitation }) => {
+        return wasInCohabitation && [YES, NO].includes(wasInCohabitation)
+      },
+      {
+        path: ['wasInCohabitation'],
+      },
+    )
+    .refine(
+      ({ hadSeparateProperty, wasInCohabitation }) => {
+        if (wasInCohabitation && [NO].includes(wasInCohabitation)) {
+          return true
+        }
+
+        return hadSeparateProperty && [YES, NO].includes(hadSeparateProperty)
+      },
+      {
+        path: ['hadSeparateProperty'],
+      },
+    ),
 
   totalDeduction: z.string(),
 

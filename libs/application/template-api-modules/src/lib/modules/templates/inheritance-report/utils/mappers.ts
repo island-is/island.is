@@ -251,6 +251,12 @@ export const expandAnswers = (
       }),
       total: answers.heirs?.total ?? 0,
     },
+    spouse: {
+      wasInCohabitation: answers?.spouse?.wasInCohabitation,
+      hadSeparateProperty: answers?.spouse?.hadSeparateProperty,
+      totalDeduction: answers?.spouse?.totalDeduction ?? 0,
+      totalSeperateProperty: answers?.spouse?.totalSeperateProperty ?? 0,
+    },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',
   }

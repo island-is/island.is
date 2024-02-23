@@ -969,6 +969,34 @@ export const m = defineMessages({
     defaultMessage: 'Búshluti eftirlifandi maka',
     description: '',
   },
+  spousesShareDescription: {
+    id: 'ir.application:spousesShareDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  wasInCohabitation: {
+    id: 'ir.application:wasInCohabitation',
+    defaultMessage: 'Var hinn látni í hjúskap?',
+    description: '',
+  },
+  hadSeperateProperty: {
+    id: 'ir.application:hadSeperateProperty',
+    defaultMessage:
+      'Átti hinn látni séreign í hjúskapnum samkvæmt kaupmála eða fyrirmælum í erfðaskrá?',
+    description: '',
+  },
+  totalSeparateProperty: {
+    id: 'ir.application:totalSeparateProperty',
+    defaultMessage:
+      'Vinsamlegast tilgreindu heildar verðmæti séreignar hins látna.',
+    description: '',
+  },
+  totalSeparatePropertyLabel: {
+    id: 'ir.application:totalSeparatePropertyLabel',
+    defaultMessage: 'Heildar verðmæti séreignir hins látna',
+    description: '',
+  },
   propertyForExchange: {
     id: 'ir.application:propertyForExchange',
     defaultMessage: 'Hrein eign dánarbús til skipta milli erfingja',

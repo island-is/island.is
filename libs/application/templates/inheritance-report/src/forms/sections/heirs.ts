@@ -23,15 +23,22 @@ export const heirs = buildSection({
       title: m.spousesShare,
       children: [
         buildMultiField({
-          id: 'spouseRate',
+          id: 'spouse',
           title: m.spousesShare,
-          description: m.propertyForExchangeDescription,
+          description: m.spousesShareDescription,
           children: [
-            buildTextField({
-              id: 'totalDeduction',
-              title: m.totalDeduction,
-              width: 'half',
-              variant: 'currency',
+            // buildDescriptionField({
+            //   id: '',
+            //   titleVariant: 'h3',
+            //   title: m.spousesShare,
+            //   description: m.spousesShareDescription,
+            //   marginBottom: 'containerGutter',
+            // }),
+            buildCustomField({
+              title: '',
+              id: 'spouse',
+              doesNotRequireAnswer: false,
+              component: 'SpouseEstateShare',
             }),
           ],
         }),
@@ -88,7 +95,7 @@ export const heirs = buildSection({
                       Number(
                         getValueViaPath(answers, 'business.businessTotal'),
                       ) -
-                      Number(getValueViaPath(answers, 'totalDeduction')),
+                      Number(getValueViaPath(answers, 'spouse.totalDeduction')),
                   ),
                 ),
             }),
