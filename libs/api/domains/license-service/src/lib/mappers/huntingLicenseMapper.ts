@@ -11,6 +11,7 @@ import {
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 import { PermitHunting } from '@island.is/clients/hunting-license'
+import { format } from 'kennitala'
 
 @Injectable()
 export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
@@ -37,7 +38,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('nationalId', locale, label),
-            value: t.personid ?? '',
+            value: t.personid ? format(t.personid) : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
