@@ -45,7 +45,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     auth,
   }: TemplateApiModuleActionProps): Promise<MachineDto[]> {
     const result = await this.workMachineClientService.getMachines(auth)
-    if (!result || !result.length) {
+    if (!result || !result.totalCount) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.machinesEmptyListDefault,
@@ -54,9 +54,9 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         400,
       )
     }
-    if (result.length <= 5) {
+    if (result.totalCount <= 5) {
       return await Promise.all(
-        result.map(async (machine) => {
+        result.machines.map(async (machine) => {
           if (machine.id) {
             return await this.workMachineClientService.getMachineDetail(
               auth,
@@ -67,7 +67,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         }),
       )
     }
-    return result
+    return result.machines
   }
 
   async submitApplication({

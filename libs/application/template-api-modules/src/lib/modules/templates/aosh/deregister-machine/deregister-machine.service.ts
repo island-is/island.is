@@ -12,7 +12,7 @@ import {
   cleanPhoneNumber,
   getRecipients,
   sendNotificationsToRecipients,
-} from './change-machine-supervisor.utils'
+} from './deregister-machine.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
@@ -22,13 +22,13 @@ import {
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
-export class ChangeMachineSupervisorTemplateService extends BaseTemplateApiService {
+export class DeregisterMachineTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly workMachineClientService: WorkMachinesClientService,
   ) {
-    super(ApplicationTypes.CHANGE_MACHINE_SUPERVISOR)
+    super(ApplicationTypes.DEREGISTER_MACHINE)
   }
 
   async getMachines({

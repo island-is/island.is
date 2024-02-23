@@ -47,3 +47,8 @@ export type SupervisorChange = {
   postalCode?: number | null
   moreInfo?: string | null
 }
+
+export type MachineWithTotalCount = {
+  machines: MachineDto[]
+  totalCount: number
+}

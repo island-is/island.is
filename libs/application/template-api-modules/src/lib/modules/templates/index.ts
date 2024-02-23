@@ -115,6 +115,8 @@ import { SignatureListSigningModule } from './signature-collection/signature-lis
 import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 import { HomeSupportModule } from './home-support/home-support.module'
 import { HomeSupportService } from './home-support/home-support.service'
+import { DeregisterMachineTemplateModule } from './aosh/deregister-machine/deregister-machine.module'
+import { DeregisterMachineTemplateService } from './aosh/deregister-machine/deregister-machine.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -176,6 +178,7 @@ export const modules = [
   HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
   UniversityModule,
+  DeregisterMachineTemplateModule,
 ]
 
 export const services = [
@@ -238,4 +241,5 @@ export const services = [
   HomeSupportService,
   ChangeMachineSupervisorTemplateService,
   UniversityService,
+  DeregisterMachineTemplateService,
 ]
