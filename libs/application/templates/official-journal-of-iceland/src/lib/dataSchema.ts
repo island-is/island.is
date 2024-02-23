@@ -1,8 +1,12 @@
 import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, InputFields } from './types'
-import { TypeIds, INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
-import { institution } from '../components/signatures/Signatures.css'
+import {
+  TypeIds,
+  INSTITUTION_INDEX,
+  MEMBER_INDEX,
+  FileNames,
+} from './constants'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -90,7 +94,6 @@ export const dataSchema = z.object({
       additional: z.string().optional(),
     })
     .superRefine((signature, ctx) => {
-      console.log('signature type from dataschema', signature.type)
       switch (signature.type) {
         case 'regular':
           signature.regular?.forEach((institution, index) => {
@@ -176,9 +179,9 @@ export const dataSchema = z.object({
           break
       }
     }),
-  additionsAndDocuments: z.object({
+  attachments: z.object({
     files: z.array(FileSchema),
-    fileNames: z.enum(['additions', 'documents']),
+    fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]),
   }),
   publishing: z.object({
     date: z.string(),

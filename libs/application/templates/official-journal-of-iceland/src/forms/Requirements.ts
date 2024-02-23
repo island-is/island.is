@@ -64,7 +64,7 @@ export const Requirements: Form = buildForm({
     }),
     buildSection({
       id: Routes.ATTACHMENTS,
-      title: attachments.general.sectionTitle,
+      title: attachments.general.section,
       children: [],
     }),
     buildSection({

@@ -1,10 +1,22 @@
+import { useLocale } from '@island.is/localization'
+import { FormScreen } from '../components/form/FormScreen'
+import { Attachments } from '../fields/Attachments'
+import { attachments } from '../lib/messages'
 import { OJOIFieldBaseProps } from '../lib/types'
 
-export const AttachmentsScreen = ({ application }: OJOIFieldBaseProps) => {
+export const AttachmentsScreen = ({
+  application,
+  errors,
+  field,
+}: OJOIFieldBaseProps) => {
+  const { formatMessage: f } = useLocale()
+
   return (
-    <div>
-      <h1>AttachmentsScreen</h1>
-      <p>Application id: {application.id}</p>
-    </div>
+    <FormScreen
+      title={f(attachments.general.title)}
+      intro={f(attachments.general.intro)}
+    >
+      <Attachments field={field} application={application} errors={errors} />
+    </FormScreen>
   )
 }

@@ -35,6 +35,11 @@ export const INSTITUTION_INDEX = '{institutionIndex}'
 export const INTERVAL_TIMER = 3000
 export const DEBOUNCE_INPUT_TIMER = 333
 
+export enum FileNames {
+  DOCUMENT = 'document',
+  ADDITIONS = 'additions',
+}
+
 export const INITIAL_ANSWERS = {
   [Routes.TEST]: {
     name: '',

@@ -13,13 +13,13 @@ import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
 import { advert } from '../lib/messages'
 import debounce from 'lodash/debounce'
-import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { getErrorViaPath } from '@island.is/application/core'
 import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 
 type LocalState = typeof INITIAL_ANSWERS['advert']
 type TypeResonse = MinistryOfJusticeGraphqlResponse<'types'>
@@ -70,7 +70,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
         },
       },
     })
-  }, [application.id, locale, state, updateApplication])
+  }, [application.answers, application.id, locale, state, updateApplication])
 
   useEffect(() => {
     updateHandler()
@@ -141,7 +141,9 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
               defaultValue={state.type}
               size="sm"
               backgroundColor="blue"
-              onSelect={(opt) => setState((prev) => ({ ...prev, type: '' }))}
+              onSelect={(opt) =>
+                setState((prev) => ({ ...prev, type: opt.value }))
+              }
               error={errors && getErrorViaPath(errors, InputFields.advert.type)}
             />
           </Box>

@@ -20,7 +20,6 @@ import {
   publishing,
   summary,
 } from '../lib/messages'
-import { InputFields } from '../lib/types'
 export const Draft: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
   title: general.applicationName,
@@ -46,43 +45,12 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: Routes.ATTACHMENTS,
-      title: attachments.general.sectionTitle,
+      title: attachments.general.section,
       children: [
-        buildMultiField({
-          id: Routes.ATTACHMENTS,
+        buildCustomField({
+          id: 'attachments',
           title: '',
-          space: 2,
-          children: [
-            buildDescriptionField({
-              id: Routes.ATTACHMENTS,
-              title: attachments.general.formTitle,
-              description: attachments.general.formIntro,
-            }),
-            buildFileUploadField({
-              id: InputFields.attachments.files,
-              title: '',
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: attachments.fileUpload.header,
-              uploadDescription: attachments.fileUpload.description,
-              uploadButtonLabel: attachments.fileUpload.buttonLabel,
-            }),
-            buildRadioField({
-              id: InputFields.attachments.fileNames,
-              title: attachments.nameOfDocumentsChapter.title,
-              largeButtons: false,
-              defaultValue: 'documents',
-              options: [
-                {
-                  value: 'documents',
-                  label: attachments.radio.documents.label,
-                },
-                {
-                  value: 'additions',
-                  label: attachments.radio.additions.label,
-                },
-              ],
-            }),
-          ],
+          component: 'AttachmentsScreen',
         }),
       ],
     }),

@@ -2,61 +2,63 @@ import { defineMessages } from 'react-intl'
 
 export const attachments = {
   general: defineMessages({
-    formTitle: {
-      id: 'ojoi.application:attachments.general.formTitle',
+    title: {
+      id: 'ojoi.application:attachments.general.title',
       defaultMessage: 'Viðaukar og fylgirit',
       description: 'Title of the addition and documents form',
     },
-    formIntro: {
-      id: 'ojoi.application:attachments.general.formIntro',
+    intro: {
+      id: 'ojoi.application:attachments.general.intro',
       defaultMessage:
         'Hér skal skrá fylgiskjöl og viðauka sem eiga að birtast með auglýsingu á vef Stjórnartíðinda. Önnur gögn sem tilheyra meginmáli auglýsingar (t.d. myndefni) ætti að skrá gegnum ritil fyrir meginmálið.',
       description: 'Intro of the addition and documents form',
     },
-    sectionTitle: {
-      id: 'ojoi.application:attachments.general.sectionTitle',
+    section: {
+      id: 'ojoi.application:attachments.general.section',
       defaultMessage: 'Viðaukar og fylgirit',
       description: 'Title of the addition and documents section',
     },
   }),
-  fileUpload: defineMessages({
-    header: {
-      id: 'ojoi.application:attachments.fileUpload.header',
-      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
-      description: 'Heading of the file upload input',
-    },
-    description: {
-      id: 'ojoi.application:attachments.fileUpload.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'Description of the file upload input',
-    },
-    buttonLabel: {
-      id: 'ojoi.application:attachments.fileUpload.buttonLabel',
-      defaultMessage: 'Velja skjöl til að hlaða upp',
-      description: 'Label of the upload button of the file upload input',
-    },
-  }),
-  nameOfDocumentsChapter: defineMessages({
-    title: {
-      id: 'ojoi.application:attachments.nameOfDocumentsChapter.title',
+  headings: defineMessages({
+    fileNames: {
+      id: 'ojoi.application:attachments.headings.fileNames',
       defaultMessage: 'Við birtingu verða skjölin nefnd:',
-      description: 'Title of the name of documents chapter',
+      description: 'Heading of the attachments section',
     },
   }),
-  radio: {
-    additions: defineMessages({
-      label: {
-        id: 'ojoi.application:attachments.radio.additions.label',
-        defaultMessage: 'Viðaukar (1, 2, 3..)',
-        description: 'Label of the additions radio button',
+  inputs: {
+    fileUpload: defineMessages({
+      header: {
+        id: 'ojoi.application:attachments.fileUpload.header',
+        defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+        description: 'Heading of the file upload input',
+      },
+      description: {
+        id: 'ojoi.application:attachments.fileUpload.description',
+        defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+        description: 'Description of the file upload input',
+      },
+      buttonLabel: {
+        id: 'ojoi.application:attachments.fileUpload.buttonLabel',
+        defaultMessage: 'Velja skjöl til að hlaða upp',
+        description: 'Label of the upload button of the file upload input',
       },
     }),
-    documents: defineMessages({
-      label: {
-        id: 'ojoi.application:attachments.radio.documents.label',
-        defaultMessage: 'Fylgirit (I, II, III..)',
-        description: 'Label of the documents radio button',
-      },
-    }),
+    radio: {
+      additions: defineMessages({
+        label: {
+          id: 'ojoi.application:attachments.radio.additions.label',
+          defaultMessage: 'Viðaukar (1, 2, 3..)',
+          description: 'Label of the additions radio button',
+        },
+      }),
+      documents: defineMessages({
+        label: {
+          id: 'ojoi.application:attachments.radio.documents.label',
+          defaultMessage: 'Fylgirit (I, II, III..)',
+          description: 'Label of the documents radio button',
+        },
+      }),
+    },
   },
 }
