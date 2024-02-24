@@ -105,8 +105,18 @@ export class WorkMachinesClientService {
     }
   }
 
+  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
+    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+      onlyShowOwnedMachines: true,
+      searchQuery: regNumber,
+    })
+
+    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '')
+  }
+
   async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
+
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,

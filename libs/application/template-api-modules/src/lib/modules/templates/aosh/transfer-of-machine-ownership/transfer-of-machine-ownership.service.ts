@@ -28,6 +28,7 @@ import { generateApplicationRejectedSms } from './smsGenerators/applicationRejec
 import {
   ChangeMachineOwner,
   MachineDto,
+  MachinesWithTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
@@ -43,7 +44,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
   async getMachines({
     auth,
-  }: TemplateApiModuleActionProps): Promise<MachineDto[]> {
+  }: TemplateApiModuleActionProps): Promise<MachinesWithTotalCount> {
     const result = await this.workMachineClientService.getMachines(auth)
     if (!result || !result.totalCount) {
       throw new TemplateApiError(
@@ -55,19 +56,22 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       )
     }
     if (result.totalCount <= 5) {
-      return await Promise.all(
-        result.machines.map(async (machine) => {
-          if (machine.id) {
-            return await this.workMachineClientService.getMachineDetail(
-              auth,
-              machine.id,
-            )
-          }
-          return machine
-        }),
-      )
+      return {
+        machines: await Promise.all(
+          result.machines.map(async (machine) => {
+            if (machine.id) {
+              return await this.workMachineClientService.getMachineDetail(
+                auth,
+                machine.id,
+              )
+            }
+            return machine
+          }),
+        ),
+        totalCount: result.totalCount,
+      }
     }
-    return result.machines
+    return result
   }
 
   async submitApplication({

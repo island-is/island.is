@@ -18,6 +18,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import {
   MachineDto,
+  MachinesWithTotalCount,
   SupervisorChange,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
@@ -33,7 +34,7 @@ export class ChangeMachineSupervisorTemplateService extends BaseTemplateApiServi
 
   async getMachines({
     auth,
-  }: TemplateApiModuleActionProps): Promise<MachineDto[]> {
+  }: TemplateApiModuleActionProps): Promise<MachinesWithTotalCount> {
     const result = await this.workMachineClientService.getMachines(auth)
     if (!result || !result.totalCount) {
       throw new TemplateApiError(
@@ -45,19 +46,22 @@ export class ChangeMachineSupervisorTemplateService extends BaseTemplateApiServi
       )
     }
     if (result.totalCount <= 5) {
-      return await Promise.all(
-        result.machines.map(async (machine) => {
-          if (machine.id) {
-            return await this.workMachineClientService.getMachineDetail(
-              auth,
-              machine.id,
-            )
-          }
-          return machine
-        }),
-      )
+      return {
+        machines: await Promise.all(
+          result.machines.map(async (machine) => {
+            if (machine.id) {
+              return await this.workMachineClientService.getMachineDetail(
+                auth,
+                machine.id,
+              )
+            }
+            return machine
+          }),
+        ),
+        totalCount: result.totalCount,
+      }
     }
-    return result.machines
+    return result
   }
 
   async submitApplication({
