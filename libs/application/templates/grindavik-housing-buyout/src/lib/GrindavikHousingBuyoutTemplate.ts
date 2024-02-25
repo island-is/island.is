@@ -7,7 +7,12 @@ import {
   DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  checkResidence,
+  grindaVikHousing,
+} from '../dataProviders'
 import { GrindavikHousingBuyoutSchema } from './dataSchema'
 import { States, TWENTY_FOUR_HOURS_IN_MS } from './constants'
 import {
@@ -74,7 +79,12 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [
+                UserProfileApi,
+                NationalRegistryUserApi,
+                checkResidence,
+                grindaVikHousing,
+              ],
             },
           ],
         },

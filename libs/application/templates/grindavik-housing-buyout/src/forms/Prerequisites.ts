@@ -7,7 +7,12 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  checkResidence,
+  grindaVikHousing,
+} from '../dataProviders'
 import { prerequisites, application } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
@@ -41,9 +46,14 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: checkResidence,
               title: prerequisites.dataProviders.nationalRegistryTitle,
               subTitle: prerequisites.dataProviders.nationalRegistryDescription,
+            }),
+            buildDataProviderItem({
+              provider: grindaVikHousing,
+              title: 'Grindavík Housing',
+              subTitle: 'Get grindavik housing',
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
