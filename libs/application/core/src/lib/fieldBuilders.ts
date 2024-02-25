@@ -38,6 +38,7 @@ import {
   NationalIdWithNameField,
   ActionCardListField,
   TableRepeaterField,
+  StaticTableField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -670,9 +671,13 @@ export function buildTableRepeaterField(
     fields,
     table,
     formTitle,
+    marginTop,
+    marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
   } = data
 
   return {
@@ -683,8 +688,59 @@ export function buildTableRepeaterField(
     fields,
     table,
     formTitle,
+    marginTop,
+    marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
+  }
+}
+
+export function buildStaticTableField(
+  data: Omit<
+    StaticTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  >,
+): StaticTableField {
+  const {
+    header,
+    condition,
+    dataTestId,
+    title,
+    description,
+    rows,
+    summary,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+  } = data
+
+  return {
+    id: '',
+    title,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.STATIC_TABLE,
+    component: FieldComponents.STATIC_TABLE,
+    header,
+    rows,
+    summary,
+    marginTop,
+    marginBottom,
+    titleVariant,
   }
 }

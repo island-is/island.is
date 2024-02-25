@@ -73,6 +73,7 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
+  condition?: (application: Application) => boolean
 } & (
   | {
       component: 'input'
@@ -182,6 +183,7 @@ export enum FieldTypes {
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  STATIC_TABLE = 'STATIC_TABLE',
 }
 
 export enum FieldComponents {
@@ -211,6 +213,7 @@ export enum FieldComponents {
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  STATIC_TABLE = 'StaticTableFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -483,7 +486,11 @@ export type TableRepeaterField = BaseField & {
   formTitle?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
   table?: {
     /**
@@ -517,6 +524,19 @@ export interface FindVehicleField extends BaseField {
   requiredValidVehicleErrorMessage?: FormText
 }
 
+export interface StaticTableField extends BaseField {
+  readonly type: FieldTypes.STATIC_TABLE
+  component: FieldComponents.STATIC_TABLE
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  summary?:
+    | { label: StaticText; value: StaticText }
+    | ((application: Application) => { label: StaticText; value: StaticText })
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -545,3 +565,4 @@ export type Field =
   | ActionCardListField
   | TableRepeaterField
   | FindVehicleField
+  | StaticTableField

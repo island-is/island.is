@@ -1,1 +1,1 @@
-export * from './eligibility'
+export * from './loan'

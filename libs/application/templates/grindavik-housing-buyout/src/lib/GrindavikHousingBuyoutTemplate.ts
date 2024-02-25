@@ -21,7 +21,6 @@ import {
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { application } from './messages'
-import { isEligibleForApplication } from '../utils'
 
 type GrindavikHousingBuyoutEvent =
   | { type: DefaultEvents.APPROVE }
@@ -89,37 +88,9 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
-            {
-              target: States.DRAFT,
-              cond: isEligibleForApplication,
-            },
-            {
-              target: States.NOT_ELIGIBLE,
-            },
-          ],
-        },
-      },
-      [States.NOT_ELIGIBLE]: {
-        meta: {
-          status: 'rejected',
-          name: application.general.name.defaultMessage,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: TWENTY_FOUR_HOURS_IN_MS,
+          SUBMIT: {
+            target: States.DRAFT,
           },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/NotEligible').then((val) =>
-                  Promise.resolve(val.NotEligible),
-                ),
-              delete: true,
-              read: 'all',
-            },
-          ],
         },
       },
       [States.DRAFT]: {
