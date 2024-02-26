@@ -30,7 +30,6 @@
       }
     }
   },
-  "defaultProject": "web",
   "generators": {
     "@nrwl/nx-plugin": {
       "plugin": {
