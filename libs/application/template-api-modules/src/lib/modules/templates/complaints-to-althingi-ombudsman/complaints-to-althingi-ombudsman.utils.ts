@@ -92,3 +92,19 @@ export const gatherContacts = (
   }
   return [complaintant, complainee]
 }
+
+export const cleanFileName = (filename: string): string => {
+  const delimiter = '_'
+  const indexOfDelimiter = filename.indexOf(delimiter)
+  if (indexOfDelimiter == -1) {
+    return filename
+  }
+
+  return filename.substring(indexOfDelimiter + 1)
+}
+export const cleanFileNames = (files: DocumentInfo[]): DocumentInfo[] => {
+  return files.map((file) => {
+    file.fileName = cleanFileName(file.fileName || '')
+    return file
+  })
+}
