@@ -5,7 +5,7 @@ import {
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, writeFile, mkdir, } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
@@ -117,10 +117,10 @@ export const getLocalrunValueFile = async (
                       // soffia proxy service hack. need to get this proxy to forward host header but not really how to do it yet.
                       ...(target === 'https://localhost:8443'
                         ? {
-                            injectHeaders: {
-                              Host: 'soffiaprufa.skra.is',
-                            },
-                          }
+                          injectHeaders: {
+                            Host: 'soffiaprufa.skra.is',
+                          },
+                        }
                         : {}),
                       predicateGenerators: [
                         {
@@ -143,9 +143,12 @@ export const getLocalrunValueFile = async (
     },
     { ports: [] as number[], configs: [] as any[] },
   )
-  const defaultMountebankConfig = 'mountebank-imposter-config.json'
+  const mountebankConfigDir = `${rootDir}/dist`
+  const mountebankConfig = 'mountebank-imposter-config.json'
+  const mountebankPath = `${mountebankConfigDir}/${mountebankConfig}`
+  await mkdir(mountebankConfigDir, { recursive: true })
   await writeFile(
-    defaultMountebankConfig,
+    mountebankPath,
     JSON.stringify({ imposters: mocksConfigs.configs }),
     { encoding: 'utf-8' },
   )
@@ -154,7 +157,7 @@ export const getLocalrunValueFile = async (
     .map((port) => `-p ${port}:${port}`)
     .join(
       ' ',
-    )} -v ${process.cwd()}/${defaultMountebankConfig}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
+    )} -v ${mountebankPath}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
 
   return {
     services: Object.entries(dockerComposeServices).reduce(

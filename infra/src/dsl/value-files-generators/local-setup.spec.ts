@@ -8,6 +8,7 @@ import {
   SecretOptions,
 } from '../output-generators/map-to-localrun'
 import path from 'path'
+import { rootDir } from '../consts'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -47,12 +48,7 @@ describe('Local setup', () => {
   })
   it('Should have mocks', async () => {
     expect(serviceDef.mocks).toStrictEqual(
-      `docker run -it --rm -p 2525:2525 -p 9453:9453 -v ${path.resolve(
-        __dirname,
-        '..',
-        '..',
-        '..',
-      )}/mountebank-imposter-config.json:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
+      `docker run -it --rm -p 2525:2525 -p 9453:9453 -v ${rootDir}/dist/mountebank-imposter-config.json:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
     )
   })
 })
