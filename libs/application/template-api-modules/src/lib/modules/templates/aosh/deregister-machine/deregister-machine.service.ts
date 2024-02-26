@@ -73,7 +73,6 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
       )
     }
     const machineId = answers.machine.id || answers.pickMachine.id
-    console.log('answers', answers)
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }
