@@ -32,7 +32,7 @@ export class SignatureCollectionSharedClientService {
             collection?.isSignatureCollection &&
             collection.startTime < new Date(),
         ) as Collection[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[1]
+    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
 
     if (!current) {
       throw new Error('No current collection')
