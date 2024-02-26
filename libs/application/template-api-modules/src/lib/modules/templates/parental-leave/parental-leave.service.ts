@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
 import cloneDeep from 'lodash/cloneDeep'
 
 import type { Attachment, Period } from '@island.is/clients/vmst'
@@ -17,7 +16,7 @@ import {
   ApplicationConfigurations,
   Application,
   ApplicationTypes,
-  ApplicationWithAttachments,
+  YesOrNo,
 } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -34,7 +33,6 @@ import {
   SINGLE,
   getAdditionalSingleParentRightsInDays,
   getApplicationExternalData,
-  DAYS_IN_MONTH,
   getUnApprovedEmployers,
   ParentalRelations,
   ChildInformation,
@@ -44,7 +42,6 @@ import {
   OTHER_NO_CHILDREN_FOUND,
   States,
   ADOPTION,
-  FileType,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -71,8 +68,16 @@ import {
   getRatio,
   getRightsCode,
   checkIfPhoneNumberIsGSM,
+  isParamsActionName,
+  checkActionName,
+  getFromDate,
 } from './parental-leave.utils'
-import { apiConstants } from './constants'
+import {
+  APPLICATION_ATTACHMENT_BUCKET,
+  SIX_MONTHS_IN_SECONDS_EXPIRES,
+  apiConstants,
+  df,
+} from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -87,7 +92,6 @@ interface VMSTError {
   errors: Record<string, string[]>
 }
 
-type YesOrNo = typeof NO | typeof YES
 interface AnswerPeriod {
   startDate: string
   endDate: string
@@ -98,10 +102,6 @@ interface AnswerPeriod {
   rawIndex?: number
   rightCodePeriod?: string
 }
-
-export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
-const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
-const df = 'yyyy-MM-dd'
 
 @Injectable()
 export class ParentalLeaveService extends BaseTemplateApiService {
@@ -129,25 +129,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return {
       message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
     }
-  }
-
-  // Check whether phoneNumber is GSM
-  checkIfPhoneNumberIsGSM(phoneNumber: string) {
-    const phoneNumberStartStr = ['6', '7', '8']
-    return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
-  }
-
-  getFromDate(
-    isFirstPeriod: boolean,
-    isActualDateOfBirth: boolean,
-    useLength: string,
-    period: AnswerPeriod,
-  ) {
-    return isFirstPeriod && isActualDateOfBirth && useLength === YES
-      ? apiConstants.actualDateOfBirthMonths
-      : isFirstPeriod && isActualDateOfBirth
-      ? apiConstants.actualDateOfBirth
-      : period.startDate
   }
 
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
@@ -238,14 +219,16 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     /*
     If you want to MOCK getting dateOfBirth from API use this.
-    const fakeDateOfBirth = '2023-02-10'
-    const promise = new Promise(function (resolve) {
+    const fakeDateOfBirth = '2024-02-10'
+    const promise = new Promise((resolve) => {
       setTimeout(() => {
-        resolve(fakeDateOfBirth)}, 5000)})
-        const newValue = await promise
-        return {
-          dateOfBirth: newValue,
-        }
+        resolve(fakeDateOfBirth)
+      }, 5000)
+    })
+    const newValue = await promise
+    return {
+      dateOfBirth: newValue,
+    }
     */
     try {
       const applicationInformation =
@@ -925,7 +908,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       ) {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
-          from: this.getFromDate(
+          from: getFromDate(
             isFirstPeriod,
             isActualDateOfBirth,
             useLength,
@@ -971,7 +954,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               // Personal rights
               const daysLeftOfPersonalRights =
                 maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-              const fromDate = this.getFromDate(
+              const fromDate = getFromDate(
                 isFirstPeriod,
                 isActualDateOfBirth,
                 useLength,
@@ -1032,7 +1015,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               // Personal rights
               const daysLeftOfPersonalRights =
                 maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-              const fromDate = this.getFromDate(
+              const fromDate = getFromDate(
                 isFirstPeriod,
                 isActualDateOfBirth,
                 useLength,
@@ -1197,7 +1180,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           // 1. Period includes personal and transfer rights
           if (maximumMultipleBirthsDaysToSpend === 0) {
-            const fromDate = this.getFromDate(
+            const fromDate = getFromDate(
               isFirstPeriod,
               isActualDateOfBirth,
               useLength,
@@ -1281,12 +1264,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             // Personal
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-            const fromDate = this.getFromDate(
+            const fromDate = getFromDate(
               isFirstPeriod,
               isActualDateOfBirth,
               useLength,
               period,
             )
+
             const personalPeriod = await this.getCalculatedPeriod(
               nationalRegistryId,
               startDate,
@@ -1357,7 +1341,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           // Personal
           const daysLeftOfPersonalRights =
             maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-          const fromDate = this.getFromDate(
+          const fromDate = getFromDate(
             isFirstPeriod,
             isActualDateOfBirth,
             useLength,
@@ -1401,43 +1385,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
-  checkActionName = (
-    application: ApplicationWithAttachments,
-    params: FileType | undefined = undefined,
-  ) => {
-    const { actionName } = getApplicationAnswers(application.answers)
-    if (params) {
-      params === 'document' ||
-        params === 'documentPeriod' ||
-        params === 'period' ||
-        params === 'empper' ||
-        params === 'employer'
-      return params
-    }
-    if (
-      actionName === 'document' ||
-      actionName === 'documentPeriod' ||
-      actionName === 'period' ||
-      actionName === 'empper' ||
-      actionName === 'employer'
-    ) {
-      return actionName
-    }
-    return undefined
-  }
-
-  isParamsActionName = (params: any) => {
-    typeof params === 'string' &&
-    (params === 'period' ||
-      params === 'document' ||
-      params === 'documentPeriod' ||
-      params === 'empper' ||
-      params === 'employer')
-      ? (params as FileType)
-      : undefined
-    return params
-  }
-
   async sendApplication({
     application,
     params = undefined,
@@ -1463,7 +1410,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     try {
       const actionNameFromParams =
         previousState === States.RESIDENCE_GRANT_APPLICATION
-          ? this.isParamsActionName(params)
+          ? isParamsActionName(params)
           : undefined
 
       const periods = await this.createPeriodsDTO(
@@ -1476,7 +1423,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        this.checkActionName(application, actionNameFromParams),
+        checkActionName(application, actionNameFromParams),
       )
 
       const response =
@@ -1562,8 +1509,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const attachments = await this.getAttachments(application)
     try {
-      const actionNameFromParams = this.isParamsActionName(params)
-
+      const actionNameFromParams = isParamsActionName(params)
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1574,7 +1520,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        this.checkActionName(application, actionNameFromParams),
+        checkActionName(application, actionNameFromParams),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

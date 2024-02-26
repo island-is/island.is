@@ -163,7 +163,7 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
                 label={
                   complaintOverview.labels.previousOmbudsmanComplaintDescription
                 }
-                value={answers.previousOmbudsmanComplaint.moreInfo}
+                value={answers.previousOmbudsmanComplaint?.moreInfo || ''}
               />
             )}
           </GridColumn>
