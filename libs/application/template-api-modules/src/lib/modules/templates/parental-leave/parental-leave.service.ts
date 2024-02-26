@@ -164,8 +164,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       fosterCareOrAdoptionBirthDate,
     } = getApplicationAnswers(application.answers)
 
-    const { applicantGenderCode, children, existingApplications } =
-      getApplicationExternalData(application.externalData)
+    const { applicantGenderCode, children } = getApplicationExternalData(
+      application.externalData,
+    )
 
     if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {
@@ -180,10 +181,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       const children: ChildInformation[] = [child]
 
-      return {
-        children: children,
-        existingApplications,
-      }
+      return children
     } else if (
       noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
       noChildrenFoundTypeOfApplication === ADOPTION
@@ -199,16 +197,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       const children: ChildInformation[] = [child]
 
-      return {
-        children: children,
-        existingApplications,
-      }
+      return children
     } else {
       // "normal application" - children found just return them
-      return {
-        children: children,
-        existingApplications,
-      }
+      return children
     }
   }
 
