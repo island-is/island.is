@@ -102,9 +102,3 @@ export const cleanFileName = (filename: string): string => {
 
   return filename.substring(indexOfDelimiter + 1)
 }
-export const cleanFileNames = (files: DocumentInfo[]): DocumentInfo[] => {
-  return files.map((file) => {
-    file.fileName = cleanFileName(file.fileName || '')
-    return file
-  })
-}
