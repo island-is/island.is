@@ -108,9 +108,11 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
     'mainHeading',
     'Útreikningur vegna uppkaupa fasteigna í Grindavík',
   )
-  const currencySuffix = n('currencySuffix', ' krónur')
+  const currencySuffix = n('currencySuffix', ' krónur') as string
 
   const canCalculate = !isEqual(resultState?.inputState, inputState)
+
+  const maxLength = (slice.configJson?.maxLength ?? 11) + currencySuffix.length
 
   return (
     <Stack space={5}>
@@ -133,9 +135,11 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                   label={n('fireInsuranceValueLabel', 'Brunabótamat')}
                   placeholder={n('currencyInputPlaceholder', 'kr.')}
                   currency={true}
-                  maxLength={15}
+                  maxLength={maxLength}
                   type="number"
                   size="sm"
+                  suffix={currencySuffix}
+                  inputMode="numeric"
                 />
               </Stack>
 
@@ -159,30 +163,36 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                     name="loan1"
                     label={n('loan1Label', 'Lán 1')}
                     currency={true}
-                    maxLength={15}
+                    maxLength={maxLength}
                     placeholder={n('currencyInputPlaceholder', 'kr.')}
                     type="number"
                     size="sm"
+                    inputMode="numeric"
+                    suffix={currencySuffix}
                   />
                   <InputController
                     id="loan2"
                     name="loan2"
                     label={n('loan2Label', 'Lán 2')}
                     currency={true}
-                    maxLength={15}
+                    maxLength={maxLength}
                     placeholder={n('currencyInputPlaceholder', 'kr.')}
                     type="number"
                     size="sm"
+                    inputMode="numeric"
+                    suffix={currencySuffix}
                   />
                   <InputController
                     id="loan3"
                     name="loan3"
                     label={n('loan3Label', 'Lán 3')}
                     currency={true}
-                    maxLength={15}
+                    maxLength={maxLength}
                     placeholder={n('currencyInputPlaceholder', 'kr.')}
                     type="number"
                     size="sm"
+                    inputMode="numeric"
+                    suffix={currencySuffix}
                   />
                 </Stack>
               </Stack>
