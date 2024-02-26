@@ -46,10 +46,6 @@ export class DelegationsIndexService {
     private delegationsIncomingWardService: DelegationsIncomingWardService,
   ) {}
 
-  private async getCustomDelegations(user: User): Promise<DelegationDTO[]> {
-    return this.delegationsIncomingCustomService.findAllValidIncoming(user)
-  }
-
   async indexDelegations(user: User) {
     const now = new Date().getTime()
 
@@ -77,7 +73,7 @@ export class DelegationsIndexService {
     })
 
     const delegationRes = await Promise.all([
-      this.getCustomDelegations(user),
+      this.delegationsIncomingCustomService.findAllValidIncoming(user),
       this.delegationsIncomingRepresentativeService.findAllIncoming(user),
       this.delegationsIncomingCompanyService.findAllIncoming(user),
       this.delegationsIncomingWardService.findAllIncoming(user),
