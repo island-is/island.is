@@ -214,7 +214,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
             resultState !== null && !canCalculate ? 'visible' : 'hidden',
         }}
       >
-        <Stack space={8}>
+        <Stack space={[5, 5, 8]}>
           <Stack space={3}>
             <Text variant="h3">{n('resultsHeading', 'Niðurstöður')}</Text>
             <Stack space={5}>
@@ -223,12 +223,12 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                 rowGap={1}
                 justifyContent="spaceBetween"
                 display="flex"
-                flexDirection={['column', 'column', 'row']}
+                flexDirection={['column', 'row']}
               >
                 <Text variant="h4">
                   {n('thorkatlaPaymentLabel', 'Greitt úr af Þórkötlu*')}
                 </Text>
-                <Text variant="h4" color="blue400">
+                <Text variant="h4" color="blue400" whiteSpace="nowrap">
                   {formatCurrency(
                     resultState?.thorkatlaPayment,
                     currencySuffix,
@@ -237,46 +237,48 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
               </Box>
               <Stack space={1}>
                 <Text variant="eyebrow">{n('breakdown', 'Sundurliðun')}</Text>
-                <Box
-                  columnGap={2}
-                  rowGap={1}
-                  justifyContent="spaceBetween"
-                  display="flex"
-                  flexDirection={['column', 'column', 'row']}
-                >
-                  <Text>
-                    {n(
-                      'purchaseAgreementPaymentLabel',
-                      'Greitt við kaupsamning',
-                    )}
-                  </Text>
-                  <Text>
-                    {formatCurrency(
-                      resultState?.purchaseAgreementPayment,
-                      currencySuffix,
-                    )}
-                  </Text>
-                </Box>
-                <Box
-                  columnGap={2}
-                  rowGap={1}
-                  justifyContent="spaceBetween"
-                  display="flex"
-                  flexDirection={['column', 'column', 'row']}
-                >
-                  <Text>
-                    {n(
-                      'closingPaymentLabel',
-                      'Greitt við afsal (5% af kaupvirði)**',
-                    )}
-                  </Text>
-                  <Text>
-                    {formatCurrency(
-                      resultState?.closingPayment,
-                      currencySuffix,
-                    )}
-                  </Text>
-                </Box>
+                <Stack space={2}>
+                  <Box
+                    columnGap={2}
+                    rowGap={1}
+                    justifyContent="spaceBetween"
+                    display="flex"
+                    flexDirection={['column', 'row']}
+                  >
+                    <Text>
+                      {n(
+                        'purchaseAgreementPaymentLabel',
+                        'Greitt við kaupsamning',
+                      )}
+                    </Text>
+                    <Text whiteSpace="nowrap">
+                      {formatCurrency(
+                        resultState?.purchaseAgreementPayment,
+                        currencySuffix,
+                      )}
+                    </Text>
+                  </Box>
+                  <Box
+                    columnGap={2}
+                    rowGap={1}
+                    justifyContent="spaceBetween"
+                    display="flex"
+                    flexDirection={['column', 'row']}
+                  >
+                    <Text>
+                      {n(
+                        'closingPaymentLabel',
+                        'Greitt við afsal (5% af kaupvirði)**',
+                      )}
+                    </Text>
+                    <Text whiteSpace="nowrap">
+                      {formatCurrency(
+                        resultState?.closingPayment,
+                        currencySuffix,
+                      )}
+                    </Text>
+                  </Box>
+                </Stack>
               </Stack>
             </Stack>
           </Stack>
