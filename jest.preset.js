@@ -1,9 +1,9 @@
-import { join } from 'path'
-import nxPreset from '@nx/jest/preset'
+const path = require('path')
+const nxPreset = require('@nx/jest/preset')
 const { transform, ...nxPresetRest } = nxPreset
-const customResolver = join(__dirname, 'jest.resolver.js')
+const customResolver = path.join(__dirname, 'jest.resolver.js')
 
-export default {
+module.exports = {
   ...nxPresetRest,
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   resolver: customResolver,
