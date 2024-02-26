@@ -135,7 +135,12 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engin meðmælasöfnun í gangi',
+    defaultMessage: 'Engin söfnun í gangi',
+    description: '',
+  },
+  noListsDescription: {
+    id: 'admin-portal.signature-collection:noLists',
+    defaultMessage: 'Engin meðmælasöfnun hefur verið stöfnuð að því stöddu.',
     description: '',
   },
   noListsFoundBySearch: {

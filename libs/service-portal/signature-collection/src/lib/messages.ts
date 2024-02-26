@@ -97,7 +97,7 @@ export const m = defineMessages({
   /* Signee View */
   noCollectionIsActive: {
     id: 'sp.signatureCollection:noCollectionIsActive',
-    defaultMessage: 'Engin meðmælasöfnun er í gangi í augnablikinu.',
+    defaultMessage: 'Engin söfnun í gangi',
     description: '',
   },
   mySigneeListsHeader: {
