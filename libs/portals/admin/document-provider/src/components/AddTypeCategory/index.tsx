@@ -54,7 +54,7 @@ export const AddTypeCategory = ({
       ? formatMessage(m.modalTitleTypeChange)
       : formatMessage(m.modalTitleCategoryChange)
 
-  const isChange = !!currentTypeCategory?.id
+  const isChange = typeof currentTypeCategory?.id === 'number'
 
   return (
     <Modal
@@ -70,7 +70,6 @@ export const AddTypeCategory = ({
     >
       <Form method="post">
         <Box paddingTop={3}>
-          {/* <Text>Some title</Text> */}
           <Input
             name="type-or-category"
             backgroundColor="blue"
