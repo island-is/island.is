@@ -194,6 +194,10 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'otherParentObj.chooseOtherParent',
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                   options: (application) => getOtherParentOptions(application),
+                  defaultValue: (application: Application) =>
+                    getOtherParentOptions(application)[0].value === SPOUSE
+                      ? SPOUSE
+                      : '',
                 }),
                 buildTextField({
                   id: 'otherParentObj.otherParentName',

@@ -40,9 +40,11 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
         application,
       )
     const buffer = await generateComplaintPdf(application)
+    const now = new Date()
+    const nowString = now.toISOString().replace(/T.*$/g, '')
     const pdf: DocumentInfo = {
       content: buffer.toString('base64'),
-      fileName: 'kvörtun.pdf',
+      fileName: `kvörtun-${nowString}.pdf`,
       type: 'Kvörtun',
       subject: 'Kvörtun',
     }
@@ -73,6 +75,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
           props,
           this.complaintConfig.applicationSenderName,
           this.complaintConfig.applicationSenderEmail,
+          pdf,
         ),
       application,
     )
