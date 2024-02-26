@@ -1,0 +1,39 @@
+{
+  "name": "infra",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest",
+    "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
+    "cli": "node -r esbuild-register src/cli/cli.ts"
+  },
+  "sourceRoot": "infra/src",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.ts"
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/{projectName}"
+      ]
+    },
+    "charts": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "node -r esbuild-register ./infra/src/cli/generate-chart-values.ts"
+          }
+        ]
+      }
+    }
+  },
+  "tags": [
+    "lib:nest",
+    "lib:node",
+    "scope:nest",
+    "TODO:splitUp"
+  ]
+}
