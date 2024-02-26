@@ -1,0 +1,190 @@
+import { TestApp, truncate } from '@island.is/testing/nest'
+
+import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
+
+import {
+  createCurrentUser,
+  createNationalId,
+  createNationalRegistryUser,
+} from '@island.is/testing/fixtures'
+import {
+  DelegationsIndexService,
+  DelegationIndex,
+  DelegationIndexMeta,
+} from '@island.is/auth-api-lib'
+import { FixtureFactory } from '@island.is/services/auth/testing'
+import { testcases } from './delegation-index-test-cases'
+import { setupWithAuth } from '../../../../test/setup'
+import { Sequelize } from 'sequelize-typescript'
+import { Type } from '@nestjs/common'
+import { user } from './delegations-filters-types'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import faker from 'faker'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+
+const testDate = new Date(2024, 2, 1)
+
+describe('DelegationsIndexService', () => {
+  let app: TestApp
+  let delegationIndexService: DelegationsIndexService
+  let delegationIndexModel: typeof DelegationIndex
+  let delegationIndexMetaModel: typeof DelegationIndexMeta
+  let factory: FixtureFactory
+  let sequelize: Sequelize
+  let nationalRegistryApi: NationalRegistryClientService
+  let rskApi: RskRelationshipsClient
+
+  beforeAll(async () => {
+    app = await setupWithAuth({
+      user: user,
+    })
+
+    delegationIndexService = app.get(DelegationsIndexService)
+
+    delegationIndexModel = app.get(getModelToken(DelegationIndex))
+    delegationIndexMetaModel = app.get(getModelToken(DelegationIndexMeta))
+
+    sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+
+    factory = new FixtureFactory(app)
+
+    nationalRegistryApi = app.get(NationalRegistryClientService)
+    jest
+      .spyOn(nationalRegistryApi, 'getIndividual')
+      .mockImplementation(async (nationalId: string) =>
+        createNationalRegistryUser({
+          nationalId,
+          name: faker.name.findName(),
+        }),
+      )
+
+    rskApi = app.get(RskRelationshipsClient)
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  beforeEach(() => {
+    const mockedDate = testDate
+
+    jest.useFakeTimers()
+    jest.setSystemTime(mockedDate)
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  describe('indexDelegations', () => {
+    describe('should reindex', () => {
+      it('should not index delegations if next reindex date is in the future', async () => {
+        const nextReindex = new Date(testDate.getTime() + 1000) // future date
+        const lastFullReindex = new Date(testDate.getTime() - 1000)
+
+        // Arrange
+        await delegationIndexMetaModel.create({
+          nationalId: user.nationalId,
+          nextReindex,
+          lastFullReindex,
+        })
+
+        // Act
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const meta = await delegationIndexMetaModel.findOne({
+          where: { nationalId: user.nationalId },
+        })
+        const delegations = await delegationIndexModel.findAll({
+          where: {
+            toNationalId: user.nationalId,
+          },
+        })
+
+        expect(meta).not.toBeNull()
+        expect(meta?.nextReindex).toStrictEqual(nextReindex)
+        expect(meta?.lastFullReindex).toStrictEqual(lastFullReindex)
+        expect(delegations).toHaveLength(0)
+      })
+    })
+
+    describe('delegation index meta logic', () => {
+      it('should set nextReindex to week in the future after successful reindex', async () => {
+        const nextReindex = new Date(testDate.getTime() - 1000) // past date
+        const lastFullReindex = new Date(testDate.getTime() - 1000)
+
+        // Arrange
+        // test when there is no meta
+
+        // Act
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const meta = await delegationIndexMetaModel.findOne({
+          where: { nationalId: user.nationalId },
+        })
+        const delegations = await delegationIndexModel.findAll({
+          where: {
+            toNationalId: user.nationalId,
+          },
+        })
+
+        expect(meta).not.toBeNull()
+        expect(meta?.nextReindex).toStrictEqual(
+          new Date(testDate.getTime() + 1000 * 60 * 60 * 24 * 7),
+        )
+        expect(meta?.lastFullReindex).toStrictEqual(testDate)
+      })
+    })
+
+    describe.each(Object.keys(testcases))(
+      'Index delegations of type: %s',
+      (type) => {
+        const testcase = testcases[type]
+        testcase.user = user
+
+        beforeAll(async () => {
+          await truncate(sequelize)
+
+          await factory.createDomain(testcase.domain)
+          await factory.createClient(testcase.client)
+
+          await Promise.all(
+            testcase.apiScopes.map((scope) => factory.createApiScope(scope)),
+          )
+
+          await Promise.all(
+            testcase.customDelegations.map((delegation) =>
+              factory.createCustomDelegation(delegation),
+            ),
+          )
+
+          jest
+            .spyOn(nationalRegistryApi, 'getCustodyChildren')
+            .mockImplementation(async () => testcase.fromChildren)
+
+          jest
+            .spyOn(rskApi, 'getIndividualRelationships')
+            .mockImplementation(async () => testcase.procuration)
+        })
+
+        it('should index delegations', async () => {
+          // Act
+          await delegationIndexService.indexDelegations(user)
+
+          // Assert
+          const meta = await delegationIndexMetaModel.findOne({
+            where: { nationalId: user.nationalId },
+          })
+          const delegations = await delegationIndexModel.findAll()
+
+          expect(delegations.length).toBe(testcase.expectedFrom.length)
+          delegations.forEach((delegation) => {
+            expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+          })
+        })
+      },
+    )
+  })
+})

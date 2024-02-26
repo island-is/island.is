@@ -4,20 +4,29 @@ import { User } from '@island.is/auth-nest-tools'
 import { DelegationIndex } from './models/delegation-index.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
+import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
+import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
 import { DelegationType } from './types/delegationType'
-import { DelegationProvider } from './dto/delegation.dto'
+import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
+import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
+import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
 
 const TEN_MINUTES = 1000 * 60 * 10
+const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
-  | 'toNationalId'
-  | 'fromNationalId'
-  | 'provider'
-  | 'type'
-  | 'validTo'
-  | 'customDelegationScopes'
+  'toNationalId' | 'fromNationalId' | 'provider' | 'type' | 'validTo'
 >
+
+const toDelegationIndexInfo = (
+  delegation: DelegationDTO,
+): DelegationIndexInfo => ({
+  fromNationalId: delegation.fromNationalId,
+  toNationalId: delegation.toNationalId,
+  type: delegation.type,
+  provider: delegation.provider,
+})
 
 /**
  * Service class for delegation index.
@@ -32,11 +41,18 @@ export class DelegationsIndexService {
     @InjectModel(DelegationIndexMeta)
     private delegationIndexMetaModel: typeof DelegationIndexMeta,
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
+    private delegationsIncomingRepresentativeService: DelegationsIncomingRepresentativeService,
+    private delegationsIncomingCompanyService: IncomingDelegationsCompanyService,
+    private delegationsIncomingWardService: DelegationsIncomingWardService,
   ) {}
+
+  private async getCustomDelegations(user: User): Promise<DelegationDTO[]> {
+    return this.delegationsIncomingCustomService.findAllValidIncoming(user)
+  }
 
   async indexDelegations(user: User) {
     const now = new Date().getTime()
-    // logic to determine if we need to index delegations
+
     const meta = await this.delegationIndexMetaModel.findOne({
       where: {
         nationalId: user.nationalId,
@@ -54,37 +70,29 @@ export class DelegationsIndexService {
     }
 
     // set next reindex 10 minutes in the future
-    const nextReindex = new Date(now + TEN_MINUTES)
     await this.delegationIndexMetaModel.upsert({
       nationalId: user.nationalId,
-      nextReindex,
+      nextReindex: new Date(now + TEN_MINUTES),
       lastFullReindex: new Date(),
     })
 
-    const allDelegations: DelegationIndexInfo[] = []
+    const delegationRes = await Promise.all([
+      this.getCustomDelegations(user),
+      this.delegationsIncomingRepresentativeService.findAllIncoming(user),
+      this.delegationsIncomingCompanyService.findAllIncoming(user),
+      this.delegationsIncomingWardService.findAllIncoming(user),
+    ])
 
-    const customDelegations =
-      await this.delegationsIncomingCustomService.findAllValidIncoming(user)
+    const delegations = delegationRes.flat().map(toDelegationIndexInfo)
 
-    allDelegations.push(
-      ...customDelegations.map((delegation) => ({
-        fromNationalId: delegation.fromNationalId,
-        toNationalId: delegation.toNationalId,
-        customDelegationScopes: delegation.scopes?.map(
-          (scope) => scope.scopeName,
-        ),
-        type: DelegationType.Custom,
-        provider: DelegationProvider.Custom,
-      })),
-    )
+    await this.delegationIndexModel.bulkCreate(delegations)
 
-    await this.delegationIndexModel.bulkCreate(allDelegations)
-
-    // company delegations
-    // need to query the company service for delegations
-    // representative delegations
-    // ward delegations
-
-    // Lastly update last full reindex to current timestamp and next reindex to 1 week in the future
+    console.log('SETTING TO', new Date(new Date().getTime() + ONE_WEEK))
+    // set next reindex to one week in the future
+    await this.delegationIndexMetaModel.upsert({
+      nationalId: user.nationalId,
+      nextReindex: new Date(new Date().getTime() + ONE_WEEK),
+      lastFullReindex: new Date(),
+    })
   }
 }

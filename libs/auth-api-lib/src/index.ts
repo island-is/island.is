@@ -43,6 +43,8 @@ export * from './lib/delegations/dto/merged-delegation.dto'
 export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
+export * from './lib/delegations/models/delegation-index.model'
+export * from './lib/delegations/models/delegation-index-meta.model'
 export * from './lib/delegations/DelegationConfig'
 export * from './lib/delegations/utils/scopes'
 
