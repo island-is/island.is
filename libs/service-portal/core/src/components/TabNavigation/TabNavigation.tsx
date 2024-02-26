@@ -107,7 +107,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                 <GridColumn span="6/8">
                   <Box className={styles.description}>
                     {(activeItemChildren?.length ?? 0) > 1 && (
-                      <Inline collapseBelow="sm">
+                      <Inline>
                         {activeItemChildren?.map((itemChild, ii) => (
                           <SubTabItem
                             key={`subnav-${ii}`}
@@ -118,10 +118,8 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                                 : undefined
                             }
                             title={formatMessage(itemChild.name)}
-                            colorScheme={
-                              pathname === itemChild.path ? 'default' : 'light'
-                            }
-                            marginLeft={ii === 0 ? 0 : 2}
+                            isActive={pathname === itemChild.path}
+                            marginLeft={0}
                           />
                         ))}
                       </Inline>
@@ -143,7 +141,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                   </Box>
                 </GridColumn>
               )}
-              {activeItem.displayServiceProviderLogo && (
+              {activeItem.displayServiceProviderLogo && !isMobile && (
                 <GridColumn span="1/8" offset="1/8">
                   {organization?.logo && (
                     <InstitutionPanel
