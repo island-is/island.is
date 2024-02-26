@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import isEqual from 'lodash/isEqual'
 
-import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -214,39 +214,92 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
             resultState !== null && !canCalculate ? 'visible' : 'hidden',
         }}
       >
-        <Stack space={3}>
-          <Text variant="h3">{n('resultsHeading', 'Niðurstöður')}</Text>
+        <Stack space={8}>
+          <Stack space={3}>
+            <Text variant="h3">{n('resultsHeading', 'Niðurstöður')}</Text>
+            <Stack space={5}>
+              <Box
+                columnGap={2}
+                rowGap={1}
+                justifyContent="spaceBetween"
+                display="flex"
+                flexDirection={['column', 'column', 'row']}
+              >
+                <Text variant="h4">
+                  {n('thorkatlaPaymentLabel', 'Greitt úr af Þórkötlu*')}
+                </Text>
+                <Text variant="h4" color="blue400">
+                  {formatCurrency(
+                    resultState?.thorkatlaPayment,
+                    currencySuffix,
+                  )}
+                </Text>
+              </Box>
+              <Stack space={1}>
+                <Text variant="eyebrow">{n('breakdown', 'Sundurliðun')}</Text>
+                <Box
+                  columnGap={2}
+                  rowGap={1}
+                  justifyContent="spaceBetween"
+                  display="flex"
+                  flexDirection={['column', 'column', 'row']}
+                >
+                  <Text>
+                    {n(
+                      'purchaseAgreementPaymentLabel',
+                      'Greitt við kaupsamning',
+                    )}
+                  </Text>
+                  <Text>
+                    {formatCurrency(
+                      resultState?.purchaseAgreementPayment,
+                      currencySuffix,
+                    )}
+                  </Text>
+                </Box>
+                <Box
+                  columnGap={2}
+                  rowGap={1}
+                  justifyContent="spaceBetween"
+                  display="flex"
+                  flexDirection={['column', 'column', 'row']}
+                >
+                  <Text>
+                    {n(
+                      'closingPaymentLabel',
+                      'Greitt við afsal (5% af kaupvirði)**',
+                    )}
+                  </Text>
+                  <Text>
+                    {formatCurrency(
+                      resultState?.closingPayment,
+                      currencySuffix,
+                    )}
+                  </Text>
+                </Box>
+              </Stack>
+            </Stack>
+          </Stack>
+
           <Stack space={2}>
-            <Inline space={2} justifyContent="spaceBetween">
-              <Text variant="h4">
-                {n('thorkatlaPaymentLabel', 'Greitt úr af Þórkötlu*')}
-              </Text>
-              <Text variant="h4" color="blue400">
-                {formatCurrency(resultState?.thorkatlaPayment, currencySuffix)}
-              </Text>
-            </Inline>
-            <Inline space={2} justifyContent="spaceBetween">
-              <Text>
-                {n('purchaseAgreementPaymentLabel', 'Greitt við kaupsamning')}
-              </Text>
-              <Text>
-                {formatCurrency(
-                  resultState?.purchaseAgreementPayment,
-                  currencySuffix,
-                )}
-              </Text>
-            </Inline>
-            <Inline space={2} justifyContent="spaceBetween">
-              <Text>
-                {n(
-                  'closingPaymentLabel',
-                  'Greitt við afsal (5% af kaupvirði)**',
-                )}
-              </Text>
-              <Text>
-                {formatCurrency(resultState?.closingPayment, currencySuffix)}
-              </Text>
-            </Inline>
+            <Text variant="small">
+              {n(
+                'thorkatlaPaymentDisclaimer',
+                'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
+              )}
+            </Text>
+            <Text variant="small">
+              {n(
+                'purchaseAgreementPaymentDisclaimer',
+                '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
+              )}
+            </Text>
+            <Text variant="small">
+              {n(
+                'closingResultDisclaimer',
+                '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
+              )}
+            </Text>
           </Stack>
         </Stack>
       </Box>
