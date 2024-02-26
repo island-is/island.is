@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import isEqual from 'lodash/isEqual'
 
 import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -11,6 +12,7 @@ interface ResultState {
   thorkatlaPayment: number
   purchaseAgreementPayment: number
   closingPayment: number
+  inputState: InputState
 }
 
 interface InputState {
@@ -62,6 +64,7 @@ const calculateResultState = (
     thorkatlaPayment,
     purchaseAgreementPayment,
     closingPayment,
+    inputState,
   }
 }
 
@@ -73,17 +76,31 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
   const resultContainerRef = useRef<HTMLDivElement>(null)
 
   const fireInsuranceValue = methods.watch('fireInsuranceValue')
+  const loan1 = methods.watch('loan1')
+  const loan2 = methods.watch('loan2')
+  const loan3 = methods.watch('loan3')
+
+  const inputState: InputState = {
+    fireInsuranceValue,
+    loan1,
+    loan2,
+    loan3,
+  }
+
   const [resultState, setResultState] = useState<ResultState | null>(null)
 
   const thorkatlaPurchasePrice = (fireInsuranceValue ?? 0) * 0.95
 
   const onSubmit = (inputState: InputState) => {
-    if (!isElementInView(resultContainerRef.current)) {
-      resultContainerRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      })
-    }
+    setTimeout(() => {
+      // Only scroll results container into view it isn't already in view
+      if (!isElementInView(resultContainerRef.current)) {
+        resultContainerRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+        })
+      }
+    }, 0)
     setResultState(calculateResultState(inputState, thorkatlaPurchasePrice))
   }
 
@@ -92,6 +109,8 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
     'Útreikningur vegna uppkaupa fasteigna í Grindavík',
   )
   const currencySuffix = n('currencySuffix', ' krónur')
+
+  const canCalculate = !isEqual(resultState?.inputState, inputState)
 
   return (
     <Stack space={5}>
@@ -116,6 +135,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                   currency={true}
                   maxLength={15}
                   type="number"
+                  size="sm"
                 />
               </Stack>
 
@@ -126,7 +146,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                     'Kaupverð Þórkötlu (95% af brunabótamati)',
                   )}
                 </Text>
-                <Text variant="h5" color="blue400">
+                <Text variant="h4" color="blue400">
                   {formatCurrency(thorkatlaPurchasePrice, currencySuffix)}
                 </Text>
               </Stack>
@@ -142,6 +162,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                     maxLength={15}
                     placeholder={n('currencyInputPlaceholder', 'kr.')}
                     type="number"
+                    size="sm"
                   />
                   <InputController
                     id="loan2"
@@ -151,6 +172,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                     maxLength={15}
                     placeholder={n('currencyInputPlaceholder', 'kr.')}
                     type="number"
+                    size="sm"
                   />
                   <InputController
                     id="loan3"
@@ -160,11 +182,14 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                     maxLength={15}
                     placeholder={n('currencyInputPlaceholder', 'kr.')}
                     type="number"
+                    size="sm"
                   />
                 </Stack>
               </Stack>
 
-              <Button type="submit">{n('calculate', 'Reikna')}</Button>
+              <Button disabled={!canCalculate} type="submit">
+                {n('calculate', 'Reikna')}
+              </Button>
             </Stack>
           </form>
         </FormProvider>
@@ -174,16 +199,19 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
         background="blue100"
         paddingY={[3, 3, 5]}
         paddingX={[3, 3, 3, 3, 12]}
-        style={{ visibility: resultState !== null ? 'visible' : 'hidden' }}
+        style={{
+          visibility:
+            resultState !== null && !canCalculate ? 'visible' : 'hidden',
+        }}
       >
         <Stack space={3}>
           <Text variant="h3">{n('resultsHeading', 'Niðurstöður')}</Text>
           <Stack space={2}>
             <Inline space={2} justifyContent="spaceBetween">
-              <Text variant="h5">
+              <Text variant="h4">
                 {n('thorkatlaPaymentLabel', 'Greitt úr af Þórkötlu*')}
               </Text>
-              <Text variant="h5" color="blue400">
+              <Text variant="h4" color="blue400">
                 {formatCurrency(resultState?.thorkatlaPayment, currencySuffix)}
               </Text>
             </Inline>
