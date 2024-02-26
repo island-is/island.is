@@ -37,6 +37,7 @@ import {
   ListViewCard,
   OrganizationFooter,
   OrganizationHeader,
+  Webreader,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -178,7 +179,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       : 'CLOSED'
   }
 
-  const [originalSortedResults, setOriginalSortedList] = useState(
+  // TODO Create proper types here
+  const [originalSortedResults, setOriginalSortedList] = useState<any>(
     [...data]
       // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
       .sort(() => Math.random() - 0.5)
@@ -645,6 +647,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             </Box>
           )}
           <Box minWidth={0} className={styles.mainContentWrapper}>
+            <Webreader />
             <Text
               marginTop={0}
               marginBottom={2}
