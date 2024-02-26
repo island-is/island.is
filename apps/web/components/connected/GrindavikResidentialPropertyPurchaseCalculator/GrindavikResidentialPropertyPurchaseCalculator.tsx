@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
@@ -5,7 +6,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { formatCurrency } from '@island.is/web/utils/currency'
-import { useState } from 'react'
 
 interface ResultState {
   thorkatlaPayment: number
@@ -24,11 +24,53 @@ interface GrindavikResidentialPropertyPurchaseCalculatorProps {
   slice: ConnectedComponent
 }
 
+const isElementInView = (element: HTMLDivElement | null) => {
+  if (!element) {
+    return true
+  }
+
+  const rect = element.getBoundingClientRect()
+
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  )
+}
+
+const calculateResultState = (
+  inputState: InputState,
+  thorkatlaPurchasePrice: number,
+) => {
+  let thorkatlaPayment = thorkatlaPurchasePrice
+  if (inputState.loan1) {
+    thorkatlaPayment -= Number(inputState.loan1)
+  }
+  if (inputState.loan2) {
+    thorkatlaPayment -= Number(inputState.loan2)
+  }
+  if (inputState.loan3) {
+    thorkatlaPayment -= Number(inputState.loan3)
+  }
+  const closingPayment = 0.05 * thorkatlaPurchasePrice
+
+  const purchaseAgreementPayment = thorkatlaPayment - closingPayment
+
+  return {
+    thorkatlaPayment,
+    purchaseAgreementPayment,
+    closingPayment,
+  }
+}
+
 const GrindavikResidentialPropertyPurchaseCalculator = ({
   slice,
 }: GrindavikResidentialPropertyPurchaseCalculatorProps) => {
   const n = useNamespace(slice.json ?? {})
   const methods = useForm<InputState>()
+  const resultContainerRef = useRef<HTMLDivElement>(null)
 
   const fireInsuranceValue = methods.watch('fireInsuranceValue')
   const [resultState, setResultState] = useState<ResultState | null>(null)
@@ -36,26 +78,13 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
   const thorkatlaPurchasePrice = (fireInsuranceValue ?? 0) * 0.95
 
   const onSubmit = (inputState: InputState) => {
-    console.log(inputState)
-    let thorkatlaPayment = thorkatlaPurchasePrice
-    if (inputState.loan1) {
-      thorkatlaPayment -= Number(inputState.loan1)
+    if (!isElementInView(resultContainerRef.current)) {
+      resultContainerRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
     }
-    if (inputState.loan2) {
-      thorkatlaPayment -= Number(inputState.loan2)
-    }
-    if (inputState.loan3) {
-      thorkatlaPayment -= Number(inputState.loan3)
-    }
-    const closingPayment = 0.05 * thorkatlaPurchasePrice
-
-    const purchaseAgreementPayment = thorkatlaPayment - closingPayment
-
-    setResultState({
-      thorkatlaPayment,
-      purchaseAgreementPayment,
-      closingPayment,
-    })
+    setResultState(calculateResultState(inputState, thorkatlaPurchasePrice))
   }
 
   const mainHeading = n(
@@ -141,6 +170,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
         </FormProvider>
       </Box>
       <Box
+        ref={resultContainerRef}
         background="blue100"
         paddingY={[3, 3, 5]}
         paddingX={[3, 3, 3, 3, 12]}
