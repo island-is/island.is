@@ -12,6 +12,10 @@ import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { format } from 'kennitala'
+import dateFormat from 'date-fns/format'
+import { isDefined } from '@island.is/shared/utils'
+
+const formatDate = (date: Date) => dateFormat(date, 'dd.MM.yyyy')
 
 @Injectable()
 export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
@@ -50,22 +54,26 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
             label: getLabel('cardNumber', locale, label),
             value: t.number ?? '',
           },
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publishedDate', locale, label),
-            value: t.validFrom?.toString() ?? '',
-          },
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('validDuration', locale, label),
-            value: `${t.validFrom} - ${t.validTo}` ?? '',
-          },
+          t.validFrom
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('publishedDate', locale, label),
+                value: formatDate(t.validFrom),
+              }
+            : undefined,
+          t.validFrom && t.validTo
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('validDuration', locale, label),
+                value: `${formatDate(t.validFrom)} - ${formatDate(t.validTo)}`,
+              }
+            : undefined,
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('huntingPermitValidFor', locale, label),
             value: t.permitFor?.join(' ,') ?? '',
           },
-        ]
+        ].filter(isDefined)
 
         return {
           data,
@@ -73,8 +81,8 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           metadata: {
             licenseNumber: t.number?.toString() ?? '',
             licenseId: DEFAULT_LICENSE_ID,
-            expired: t.isValid,
-            expireDate: t.validTo ?? undefined,
+            expired: !t.isValid,
+            expireDate: t.validTo ? t.validTo.toISOString() : undefined,
           },
         }
       },
