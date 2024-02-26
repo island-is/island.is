@@ -11,7 +11,10 @@ import {
   TokenMiddleware,
 } from '@island.is/clients/althingi-ombudsman'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
-import { applicationToCaseRequest } from './complaints-to-althingi-ombudsman.utils'
+import {
+  applicationToCaseRequest,
+  cleanFileNames,
+} from './complaints-to-althingi-ombudsman.utils'
 import { generateComplaintPdf } from './pdfGenerators'
 import { SharedTemplateApiService } from '../../shared'
 
@@ -47,8 +50,8 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
       subject: 'Kvörtun',
     }
 
-    const attachedFiles = complaintAttachedFiles.concat(
-      commissionsAttachedFiles,
+    const attachedFiles = cleanFileNames(
+      complaintAttachedFiles.concat(commissionsAttachedFiles),
     )
     const attachments = [pdf, ...attachedFiles]
     const caseRequest = await applicationToCaseRequest(application, attachments)
