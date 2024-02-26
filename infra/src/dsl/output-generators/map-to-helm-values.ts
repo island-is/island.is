@@ -52,15 +52,15 @@ const serializeService: SerializeMethod<HelmService> = async (
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
-      repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-        serviceDef.image ?? serviceDef.name
-      }`,
+      repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${serviceDef.image ?? serviceDef.name
+        }`,
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )}`,
+      LOG_LEVEL: 'info',
     },
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
