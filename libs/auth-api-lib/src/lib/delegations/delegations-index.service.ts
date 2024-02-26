@@ -85,7 +85,7 @@ export class DelegationsIndexService {
     // set next reindex to one week in the future
     await this.delegationIndexMetaModel.update(
       {
-        nextReindex: new Date(new Date().getTime() + ONE_WEEK),
+        nextReindex: new Date(now + ONE_WEEK),
         lastFullReindex: new Date(),
       },
       {
