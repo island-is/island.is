@@ -850,6 +850,6 @@ export const m = defineMessages({
 
   error: {
     id: 'portals-admin.document-provider:save-error',
-    defaultMessage: 'Vistað',
+    defaultMessage: 'Villa',
   },
 })
