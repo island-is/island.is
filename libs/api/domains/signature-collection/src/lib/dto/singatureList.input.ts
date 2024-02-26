@@ -4,6 +4,9 @@ import { SignatureCollectionAreaInput } from './area.input'
 
 @InputType()
 export class SignatureCollectionListInput {
+  @Field()
+  collectionId!: string
+
   @Field(() => SignatureCollectionOwnerInput)
   owner!: SignatureCollectionOwnerInput
 

@@ -5,7 +5,6 @@ import {
   OwnerAccess,
   UserAccess,
 } from '../decorators/acessRequirement.decorator'
-import { SignatureCollectionSignee } from '../models/signee.model'
 import { SignatureCollectionService } from '../signatureCollection.service'
 
 @Injectable()
@@ -31,7 +30,13 @@ export class UserAccessGuard implements CanActivate {
     const request = getRequest(context)
 
     const user = request.user
+    if (!user) {
+      return false
+    }
     const isDelegatedUser = !!user?.actor?.nationalId
+    // IsOwner needs signee
+    const signee = await this.signatureCollectionService.signee(user)
+    request.body = { ...request.body, signee }
     // IsOwner decorator not used
     if (!ownerRestriction) {
       return true
@@ -40,7 +45,7 @@ export class UserAccessGuard implements CanActivate {
       return isDelegatedUser ? false : true
     }
 
-    const signee: SignatureCollectionSignee = request.body.signee
+    // const signee: SignatureCollectionSignee = request.body.signee
     const { candidate } = signee
 
     if (signee.isOwner && candidate) {

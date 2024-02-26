@@ -3,12 +3,14 @@ import {
   FrambodApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
+  MedmaelasofnunExtendedDTO,
 } from '../../gen/fetch'
-import { GetListInput } from './signature-collection.types'
+import { CanCreateInput, GetListInput } from './signature-collection.types'
 import { Collection, mapCollection } from './types/collection.dto'
 import { List, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { AdminCandidateApi, AdminCollectionApi, AdminListApi } from './apis'
+import { Success, mapReasons } from './types/success.dto'
 
 type CollectionApi = MedmaelasofnunApi | AdminCollectionApi
 type ListApi = MedmaelalistarApi | AdminListApi
@@ -30,7 +32,7 @@ export class SignatureCollectionSharedClientService {
             collection?.isSignatureCollection &&
             collection.startTime < new Date(),
         ) as Collection[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
+    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[1]
 
     if (!current) {
       throw new Error('No current collection')
@@ -83,5 +85,29 @@ export class SignatureCollectionSharedClientService {
     return signatures
       .map((signature) => mapSignature(signature))
       .filter((s) => s.valid)
+  }
+
+  async canCreate({
+    requirementsMet = false,
+    canCreateInfo,
+    isPresidential,
+    isActive = true,
+    ownedLists,
+    areas,
+  }: CanCreateInput): Promise<Success> {
+    // can create if requirements met and collection is active
+    // if collection is presidential and user has no lists otherwise does not have lists for all areas of collection
+    const alreadyOwnsAllLists = isPresidential
+      ? ownedLists.length > 0
+      : areas.length === ownedLists.length
+
+    const canCreate = requirementsMet && isActive && !alreadyOwnsAllLists
+    const reasons =
+      mapReasons({
+        ...canCreateInfo,
+        active: isActive,
+        notOwner: !alreadyOwnsAllLists,
+      }) ?? []
+    return { success: canCreate, reasons }
   }
 }

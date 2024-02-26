@@ -27,4 +27,7 @@ export class SignatureCollection {
 
   @Field(() => [SignatureCollectionCandidate])
   candidates!: SignatureCollectionCandidate[]
+
+  @Field()
+  status!: string
 }

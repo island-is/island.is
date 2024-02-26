@@ -18,15 +18,22 @@ import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import SignedList from '../../components/SignedList'
 import { useAuth } from '@island.is/auth/react'
+import { SignatureCollection } from '../../types/schema'
 
-const SigneeView = () => {
+const SigneeView = ({
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   useNamespaces('sp.signatureCollection')
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
-  const { currentCollection } = useGetCurrentCollection()
+  // const { currentCollection } = useGetCurrentCollection()
   const { signedLists, loadingSignedLists } = useGetSignedList()
-  const { listsForUser, loadingUserLists } = useGetListsForUser()
+  const { listsForUser, loadingUserLists } = useGetListsForUser(
+    currentCollection?.id,
+  )
 
   return (
     <Box>

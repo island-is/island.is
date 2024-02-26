@@ -9,7 +9,7 @@ export const cancelCollectionMutation = gql`
 `
 
 export const unSignList = gql`
-  mutation removeSignature($input: SignatureCollectionIdInput!) {
+  mutation removeSignature($input: SignatureCollectionSignatureIdInput!) {
     signatureCollectionUnsign(input: $input) {
       success
       reasons

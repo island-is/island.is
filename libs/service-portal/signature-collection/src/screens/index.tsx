@@ -2,17 +2,24 @@ import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import OwnerView from './CandidateView'
 import SigneeView from './SigneeView'
-import { useIsOwner } from '../hooks'
+import { useGetCurrentCollection, useIsOwner } from '../hooks'
 
 const SignatureLists = () => {
   useNamespaces('sp.signatureCollection')
 
   const { isOwner, loadingIsOwner } = useIsOwner()
-
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection()
   return (
     <div>
-      {!loadingIsOwner && (
-        <Box>{isOwner.success ? <OwnerView /> : <SigneeView />}</Box>
+      {!loadingIsOwner && !loadingCurrentCollection && (
+        <Box>
+          {isOwner.success ? (
+            <OwnerView currentCollection={currentCollection} />
+          ) : (
+            <SigneeView currentCollection={currentCollection} />
+          )}
+        </Box>
       )}
     </div>
   )

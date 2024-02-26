@@ -24,6 +24,47 @@ export interface Collection {
   areas: Area[]
   candidates: Candidate[]
   processed: boolean
+  status: CollectionStatus
+}
+
+const getStatus = ({
+  isActive,
+  processed,
+  hasActiveLists,
+  hasExtendedLists,
+}: {
+  isActive: boolean
+  processed: boolean
+  hasActiveLists: boolean
+  hasExtendedLists: boolean
+}): CollectionStatus => {
+  // Collection in inital opening time
+  if (isActive) {
+    return CollectionStatus.InitialActive
+  }
+
+  // Initial opening time passed not all lists reviewed
+  if (!hasActiveLists && !processed) {
+    return CollectionStatus.InInitialReview
+  }
+  // Initial opening time passed all lists have been reviewd
+  // Not in use for now check prosseced status in frontend
+  // if (!hasActiveLists && !processed && !hasInReview) {
+  //   return CollectionStatus.Processing
+  // }
+  // Initial opening time passed, collection has been manually processed
+  if (!hasActiveLists && processed && !hasExtendedLists) {
+    return CollectionStatus.Processed
+  }
+  // Collection active if any lists have been extended
+  if (hasActiveLists && processed && hasExtendedLists) {
+    return CollectionStatus.Active
+  }
+  // Collection had extended lists that have all expired
+  if (!hasActiveLists && processed && hasExtendedLists) {
+    return CollectionStatus.InReview
+  }
+  return CollectionStatus.Inactive
 }
 
 export const mapCollection = (
@@ -46,19 +87,30 @@ export const mapCollection = (
       'Received partial collection information from the national registry.',
     )
   }
+  const isActive = startTime < new Date() && endTime > new Date()
+  const processed = collection.lokadHandvirkt ?? false
+  const hasActiveLists = collection.opnirListar ?? false
+  const hasExtendedLists = collection.framlengdirListar ?? false
 
+  const status = getStatus({
+    isActive,
+    processed,
+    hasActiveLists,
+    hasExtendedLists,
+  })
   return {
     id: id.toString(),
     name: collection.kosningNafn ?? '',
     startTime,
     endTime,
-    isActive: startTime < new Date() && endTime > new Date(),
+    isActive,
     isPresidential: collection.kosningTegund == 'Forsetakosning',
     isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
       ? candidates.map((candidate) => mapCandidate(candidate))
       : [],
     areas: areas.map((area) => mapArea(area)),
-    processed: collection.lokadHandvirkt ?? false,
+    processed,
+    status,
   }
 }

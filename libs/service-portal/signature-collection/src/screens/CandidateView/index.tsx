@@ -11,23 +11,30 @@ import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { IntroHeader } from '@island.is/service-portal/core'
 import CancelCollection from './CancelCollection'
-import { useGetCurrentCollection, useGetListsForOwner } from '../../hooks'
+import { useGetListsForOwner } from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import copyToClipboard from 'copy-to-clipboard'
 import SignedList from '../../components/SignedList'
+import { SignatureCollection } from '@island.is/api/schema'
 
-const CandidateView = () => {
+const CandidateView = ({
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
-  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner()
-  const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection()
+
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
+    currentCollection?.id,
+  )
+
   const collectionId = currentCollection?.id
 
   return (
@@ -36,7 +43,7 @@ const CandidateView = () => {
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescription)}
       />
-      {!loadingOwnerLists && !loadingCurrentCollection ? (
+      {!loadingOwnerLists && !!currentCollection ? (
         <Box>
           {listsForOwner?.length === 0 && currentCollection.isActive && (
             <Button
