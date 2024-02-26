@@ -7,8 +7,10 @@ export {
 
 export const checkResidence = defineTemplateApi({
   action: 'checkResidence',
+  order: 0,
 })
 
 export const grindaVikHousing = defineTemplateApi({
   action: 'getGrindavikHousing',
+  order: 1,
 })

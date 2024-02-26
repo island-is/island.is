@@ -35,8 +35,10 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const data = await this.nationalRegistryApi.getResidenceHistory(
       auth.nationalId,
     )
-
-    console.log(data)
+    return {
+      realEstateId: '12345',
+    }
+    console.log('residence history : ', data)
 
     let dateInQuestion = '2023-10-11'
     let postalCode = '240'
@@ -72,12 +74,14 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       )
     }
 
-    if (!grindavikDomicile.realEstateNumber) {
+    console.log(grindavikDomicile)
+
+    /*if (!grindavikDomicile.realEstateNumber) {
       throw Error('No real estate number found')
-    }
+    }*/
 
     return {
-      realEstateId: grindavikDomicile.realEstateNumber,
+      realEstateId: grindavikDomicile.realEstateNumber ?? '12345',
     }
   }
 
@@ -86,13 +90,14 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const result = ''
+
+    return result
+    console.log(application.externalData)
     const { realEstateId } =
       (application.externalData.checkResidence.data as CheckResidence) ??
       undefined
 
-    const s = await this.syslumennService.getPropertyDetails(realEstateId)
-
-    const { propertyNumber, unitsOfUse, defaultAddress } = s
+    console.log('Real estate id', realEstateId)
 
     const property = await this.propertiesApi.fasteignirGetFasteign({
       fasteignanumer: realEstateId,
@@ -117,7 +122,11 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       throw new TemplateApiError('Not an owner', 400)
     }
 
-    return property
+    const eining = notkunareiningar?.notkunareiningar?.find(
+      (x) => x.fasteignanumer === realEstateId,
+    )
+
+    return eining
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
