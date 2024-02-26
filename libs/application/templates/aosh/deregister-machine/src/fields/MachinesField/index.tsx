@@ -18,7 +18,6 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { application } = props
   const machineList = application?.externalData.machinesList
     .data as MachinesWithTotalCount
-  console.log('machineList', machineList)
 
   const getMachineDetails = useLazyMachineDetailsByRegno()
   const createGetMachineDetailsWrapper = (
