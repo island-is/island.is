@@ -50,17 +50,23 @@ export const AddTypeCategory = ({
   }
 
   const isLoading = loading
-  const label =
+  const labelCreate =
     activeTab === 'types'
       ? formatMessage(m.modalTitleType)
       : formatMessage(m.modalTitleCategory)
+  const labelChange =
+    activeTab === 'types'
+      ? formatMessage(m.modalTitleTypeChange)
+      : formatMessage(m.modalTitleCategoryChange)
+
+  const isChange = !!currentTypeCategory?.id
 
   return (
     <Modal
       id="add-type-or-category"
       isVisible={isVisible}
-      title={label}
-      label={label}
+      title={isChange ? labelChange : labelCreate}
+      label={isChange ? labelChange : labelCreate}
       onClose={() => {
         onClose?.()
         setInputValue('')

@@ -102,12 +102,15 @@ const CategoriesAndTypes = () => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-      <AddTypeCategory
-        isVisible={isModalVisible}
-        onClose={() => {
-          setIsModalVisible(false)
-        }}
-      />
+      {isModalVisible && (
+        <AddTypeCategory
+          isVisible={isModalVisible}
+          onClose={() => {
+            setIsModalVisible(false)
+            setCurrentTypeCategory(undefined)
+          }}
+        />
+      )}
     </TypeCategoryContext.Provider>
   )
 }

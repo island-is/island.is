@@ -830,6 +830,14 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:modal-title-category',
     defaultMessage: 'Bæta við nýjum flokki',
   },
+  modalTitleTypeChange: {
+    id: 'portals-admin.document-provider:modal-title-type-change',
+    defaultMessage: 'Breyta tegund',
+  },
+  modalTitleCategoryChange: {
+    id: 'portals-admin.document-provider:modal-title-category-change',
+    defaultMessage: 'Breyta flokki',
+  },
   name: {
     id: 'portals-admin.document-provider:name',
     defaultMessage: 'Nafn',
