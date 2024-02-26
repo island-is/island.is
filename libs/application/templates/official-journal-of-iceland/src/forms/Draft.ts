@@ -56,7 +56,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: Routes.PREVIEW,
-      title: preview.general.sectionTitle,
+      title: preview.general.section,
       children: [
         buildCustomField({
           id: 'preview',
@@ -67,7 +67,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: Routes.ORIGINAL,
-      title: original.general.sectionTitle,
+      title: original.general.section,
       children: [
         buildMultiField({
           id: Routes.ORIGINAL,
@@ -76,8 +76,8 @@ export const Draft: Form = buildForm({
           children: [
             buildDescriptionField({
               id: Routes.ORIGINAL,
-              title: original.general.formTitle,
-              description: original.general.formIntro,
+              title: original.general.title,
+              description: original.general.intro,
             }),
             buildFileUploadField({
               id: 'InputFields.originalDocuments.files',
@@ -94,7 +94,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: Routes.PUBLISHING,
-      title: publishing.general.sectionTitle,
+      title: publishing.general.section,
       children: [
         buildCustomField({
           id: 'publishing',
@@ -105,7 +105,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: Routes.SUMMARY,
-      title: summary.general.sectionTitle,
+      title: summary.general.section,
       children: [
         buildMultiField({
           id: Routes.SUMMARY,

@@ -2,19 +2,19 @@ import { defineMessages } from 'react-intl'
 
 export const publishing = {
   general: defineMessages({
-    formTitle: {
-      id: 'ojoi.application:publishing.general.formTitle',
+    title: {
+      id: 'ojoi.application:publishing.general.title',
       defaultMessage: 'Óskir um birtingu',
       description: 'Title of the publishing preferences form',
     },
-    formIntro: {
-      id: 'ojoi.application:publishing.general.formIntro',
+    intro: {
+      id: 'ojoi.application:publishing.general.intro',
       defaultMessage:
         'Mál sem sent er til birtingar birtist 10 virkum dögum eftir skrásetningardag, hægt er að biðja um að mál birtist fyrr gegn greiðslu álags. Til að fá mál birt samdægurs þarf mál að hafa borist Stjórnartíðindum fyrir hádegi þann dag. Senda skal skilaboð með máli um birtingu samdægurs.',
       description: 'Intro of the publishing preferences form',
     },
-    sectionTitle: {
-      id: 'ojoi.application:publishing.general.sectionTitle',
+    section: {
+      id: 'ojoi.application:publishing.general.section',
       defaultMessage: 'Óskir um birtingu',
       description: 'Title of the publishing preferences section',
     },

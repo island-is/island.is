@@ -69,22 +69,22 @@ export const Requirements: Form = buildForm({
     }),
     buildSection({
       id: Routes.PREVIEW,
-      title: preview.general.sectionTitle,
+      title: preview.general.section,
       children: [],
     }),
     buildSection({
       id: Routes.ORIGINAL,
-      title: original.general.sectionTitle,
+      title: original.general.section,
       children: [],
     }),
     buildSection({
       id: Routes.PUBLISHING,
-      title: publishing.general.sectionTitle,
+      title: publishing.general.section,
       children: [],
     }),
     buildSection({
       id: Routes.SUMMARY,
-      title: summary.general.sectionTitle,
+      title: summary.general.section,
       children: [],
     }),
   ],

@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const complete = {
   general: defineMessages({
-    formTitle: {
-      id: 'ojoi.application:complete.general.formTitle',
+    title: {
+      id: 'ojoi.application:complete.general.title',
       defaultMessage: 'Mál hefur verið sent inn til yfirferðar',
       description: 'Title of the complete screen',
     },

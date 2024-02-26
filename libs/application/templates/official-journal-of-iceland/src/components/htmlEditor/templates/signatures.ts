@@ -8,13 +8,13 @@ import en from 'date-fns/locale/en-US'
 import format from 'date-fns/format'
 
 type RegularSignatureTemplateParams = {
-  signatureGroups: RegularSignatureState
+  signatureGroups?: RegularSignatureState
   additionalSignature?: string
   locale?: 'is' | 'en'
 }
 
 type CommitteeSignatureTemplateParams = {
-  signature: CommitteeSignatureState
+  signature?: CommitteeSignatureState
   additionalSignature?: string
   locale?: 'is' | 'en'
 }

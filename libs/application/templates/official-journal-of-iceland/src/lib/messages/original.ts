@@ -2,19 +2,19 @@ import { defineMessages } from 'react-intl'
 
 export const original = {
   general: defineMessages({
-    formTitle: {
-      id: 'ojoi.application:original.general.formTitle',
+    title: {
+      id: 'ojoi.application:original.general.title',
       defaultMessage: 'Frumgögn',
       description: 'Title of the original data form',
     },
-    formIntro: {
-      id: 'ojoi.application:original.general.formIntro',
+    intro: {
+      id: 'ojoi.application:original.general.intro',
       defaultMessage:
         'Hér skal setja inn skjal sem er skannað afrit af frumtexta auglýsingarinnar þar sem koma fram undirritanir þeirra sem við á. Undirritun máls er staðfesting á innihaldi og réttmæti auglýsingar sem send hefur verið til birtingar í Stjórnartíðindum og er lagalega bindandi. Þetta skjal verður ekki birt á vef Stjórnartíðinda en er vistað í innri kerfum. ',
       description: 'Intro of the original data form',
     },
-    sectionTitle: {
-      id: 'ojoi.application:original.general.sectionTitle',
+    section: {
+      id: 'ojoi.application:original.general.section',
       defaultMessage: 'Frumgögn',
       description: 'Title of the original data section',
     },

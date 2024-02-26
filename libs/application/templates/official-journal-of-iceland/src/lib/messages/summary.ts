@@ -2,19 +2,19 @@ import { defineMessages } from 'react-intl'
 
 export const summary = {
   general: defineMessages({
-    formTitle: {
-      id: 'ojoi.application:summary.general.formTitle',
+    title: {
+      id: 'ojoi.application:summary.general.title',
       defaultMessage: 'Samantekt',
       description: 'Title of the summary form',
     },
-    formIntro: {
-      id: 'ojoi.application:summary.general.formIntro',
+    intro: {
+      id: 'ojoi.application:summary.general.intro',
       defaultMessage:
         'Með því að senda auglýsingu til birtingar staðfestir þú eftirfarandi forsendur og felur Stjórnartíðindum að undirbúa útgáfu hennar.',
       description: 'Intro of the summary form',
     },
-    sectionTitle: {
-      id: 'ojoi.application:summary.general.sectionTitle',
+    section: {
+      id: 'ojoi.application:summary.general.section',
       defaultMessage: 'Samantekt',
       description: 'Title of the summary section',
     },
