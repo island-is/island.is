@@ -441,6 +441,27 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ?.label ?? dateOfCalculationsOptions[0].label
   }`
 
+  const startMonthOptions = useMemo(() => {
+    if (
+      startYear === startYearOptions?.[0]?.value &&
+      typeof birthMonth === 'number' &&
+      typeof startMonth === 'number'
+    ) {
+      if (startMonth < birthMonth) {
+        methods.setValue('startMonth', birthMonth)
+      }
+      return monthOptions.slice(birthMonth)
+    }
+    return monthOptions
+  }, [
+    birthMonth,
+    methods,
+    monthOptions,
+    startMonth,
+    startYear,
+    startYearOptions,
+  ])
+
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -601,7 +622,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     month: monthOptions.find(
                                       (option) => option.value === birthMonth,
                                     )?.label,
-                                    year: startYearOptions?.[0]?.label,
+                                    year: startYearOptions?.[2]?.label,
                                   },
                                 )}
                               </Text>
@@ -617,7 +638,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     name={
                                       'startMonth' as keyof CalculationInput
                                     }
-                                    options={monthOptions}
+                                    options={startMonthOptions}
                                     label={formatMessage(
                                       translationStrings.startMonthLabel,
                                     )}

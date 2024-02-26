@@ -75,8 +75,7 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               type: FieldTypes.FIND_VEHICLE,
               component: FieldComponents.FIND_VEHICLE,
               children: undefined,
-              getVehicleDetails:
-                createGetVehicleDetailsWrapper(getVehicleDetails),
+              getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
               validationErrors: applicationCheck.validation,
               additionalErrors: true,
               fallbackErrorMessage:
