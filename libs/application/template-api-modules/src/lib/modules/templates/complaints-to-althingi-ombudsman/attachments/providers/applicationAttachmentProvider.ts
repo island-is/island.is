@@ -3,6 +3,7 @@ import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 import { AttachmentType } from '../../models/attachments'
 import { AttachmentS3Service } from '../../../../shared/services'
 import { Injectable } from '@nestjs/common'
+import { cleanFileName } from '../../complaints-to-althingi-ombudsman.utils'
 
 export interface DocumentBuildInfo {
   key: string
@@ -29,10 +30,11 @@ export class ApplicationAttachmentProvider {
     )
     return files.map((file, index) => {
       const type = this.mapAnswerToType(file.answerKey)
+      const fileName = cleanFileName(file.fileName)
       return {
-        subject: `${type} ${index + 1}`,
+        subject: fileName,
         content: file.fileContent,
-        fileName: file.fileName,
+        fileName: fileName,
         type: type,
       }
     })
