@@ -10,6 +10,16 @@
   "projectType": "application",
   "generators": {},
   "targets": {
+    "cli": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "node -r esbuild-register ./infra/src/cli/cli.ts"
+          }
+        ]
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
