@@ -33,7 +33,7 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 import ListInfo from '../List/components/listInfoAlert'
-import { EmptyState } from '@island.is/service-portal/core'
+import EmptyState from './components/emptyState'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -291,8 +291,8 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           ) : (
             <Box marginTop={10}>
               <EmptyState
-                title={m.noLists}
-                description={m.noListsDescription}
+                title={formatMessage(m.noLists)}
+                description={formatMessage(m.noListsDescription)}
               />
             </Box>
           )}
