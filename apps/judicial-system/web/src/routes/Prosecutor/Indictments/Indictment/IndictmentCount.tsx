@@ -55,10 +55,10 @@ interface Props {
   ) => void
 }
 
-const offensesCompare = (
+function offensesCompare(
   offense1: IndictmentCountOffense,
   offense2: IndictmentCountOffense,
-) => {
+) {
   const offense1Index = Object.values(IndictmentCountOffense).indexOf(offense1)
   const offense2Index = Object.values(IndictmentCountOffense).indexOf(offense2)
 
@@ -91,7 +91,7 @@ const offenseLawsMap: Record<
 
 const generalLaws: [number, number][] = [[95, 1]]
 
-const lawsCompare = (law1: number[], law2: number[]) => {
+function lawsCompare(law1: number[], law2: number[]) {
   if (law1[0] < law2[0]) {
     return -1
   }
@@ -112,10 +112,10 @@ const laws = Object.values(offenseLawsMap)
   .concat(generalLaws)
   .sort(lawsCompare)
 
-const getLawsBroken = (
+function getLawsBroken(
   offenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
-) => {
+) {
   if (!offenses || offenses.length === 0) {
     return []
   }
@@ -144,10 +144,10 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
-export const getRelevantSubstances = (
+export function getRelevantSubstances(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
-) => {
+) {
   const allowedSubstances = offenses.map(
     (offense) => offenseSubstances[offense],
   )
@@ -162,11 +162,11 @@ export const getRelevantSubstances = (
   return relevantSubstances
 }
 
-export const getIncidentDescriptionReason = (
+export function getIncidentDescriptionReason(
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
-) => {
+) {
   let reason = offenses.reduce((acc, offense, index) => {
     if (
       (offenses.length > 1 && index === offenses.length - 1) ||
@@ -233,10 +233,10 @@ export const getIncidentDescriptionReason = (
   return reason
 }
 
-export const getLegalArguments = (
+export function getLegalArguments(
   lawsBroken: number[][],
   formatMessage: IntlShape['formatMessage'],
-) => {
+) {
   if (lawsBroken.length === 0) {
     return ''
   }
@@ -272,48 +272,6 @@ export const getLegalArguments = (
   return formatMessage(strings.legalArgumentsAutofill, {
     articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
   })
-}
-
-export const getIncidentDescription = (
-  formatMessage: IntlShape['formatMessage'],
-  indictmentCount: TIndictmentCount,
-  crimeScenes?: Case['crimeScenes'],
-) => {
-  const { offenses, substances, policeCaseNumber, vehicleRegistrationNumber } =
-    indictmentCount
-
-  if (offenses?.length === 0) {
-    return ''
-  }
-
-  let incidentLocation = ''
-  let incidentDate = ''
-  let incidentDescription = ''
-
-  if (crimeScenes && policeCaseNumber) {
-    const crimeDate = crimeScenes[policeCaseNumber].date
-
-    incidentLocation = crimeScenes[policeCaseNumber].place ?? ''
-    incidentDate =
-      formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
-  }
-
-  const reason = getIncidentDescriptionReason(
-    offenses ?? [],
-    substances ?? {},
-    formatMessage,
-  )
-
-  incidentDescription = formatMessage(strings.incidentDescriptionAutofill, {
-    incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-    vehicleRegistrationNumber: vehicleRegistrationNumber
-      ? vehicleRegistrationNumber
-      : '[Skráningarnúmer ökutækis]',
-    reason,
-    incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
-  })
-
-  return incidentDescription
 }
 
 export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
@@ -368,13 +326,48 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
 
   const incidentDescription = useCallback(
     (indictmentCount: TIndictmentCount) => {
+      const {
+        offenses,
+        substances,
+        policeCaseNumber,
+        vehicleRegistrationNumber,
+      } = indictmentCount
+
+      if (offenses?.length === 0) {
+        return ''
+      }
+
+      let incidentLocation = ''
+      let incidentDate = ''
+      let incidentDescription = ''
+
+      if (workingCase.crimeScenes && policeCaseNumber) {
+        const crimeScenes = workingCase.crimeScenes
+        const crimeDate = crimeScenes[policeCaseNumber].date
+
+        incidentLocation = crimeScenes[policeCaseNumber].place ?? ''
+        incidentDate =
+          formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
+      }
+
+      const reason = getIncidentDescriptionReason(
+        offenses ?? [],
+        substances ?? {},
+        formatMessage,
+      )
+
+      incidentDescription = formatMessage(strings.incidentDescriptionAutofill, {
+        incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
+        vehicleRegistrationNumber: vehicleRegistrationNumber
+          ? vehicleRegistrationNumber
+          : '[Skráningarnúmer ökutækis]',
+        reason,
+        incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
+      })
+
       setIncidentDescriptionErrorMessage('')
 
-      return getIncidentDescription(
-        formatMessage,
-        indictmentCount,
-        workingCase.crimeScenes,
-      )
+      return incidentDescription
     },
     [formatMessage, workingCase.crimeScenes],
   )

@@ -112,8 +112,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
-  const { updateIndictmentCount, updateIndictmentCountState } =
-    useIndictmentCounts()
+  const { updateIndictmentCount } = useIndictmentCounts()
   const router = useRouter()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
@@ -225,23 +224,6 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       indictmentSubtypes,
       crimeScenes,
     }))
-
-    if (
-      workingCase.indictmentCounts &&
-      (update?.crimeScene?.date || update?.crimeScene?.place)
-    ) {
-      updateIndictmentCount(
-        workingCase.id,
-        workingCase.indictmentCounts[index || 0].id,
-        {
-          incidentDescription: getIncidentDescription(
-            formatMessage,
-            workingCase.indictmentCounts[index || 0],
-            workingCase.crimeScenes,
-          ),
-        },
-      )
-    }
   }
 
   const handleDeletePoliceCase = (index: number) => {
@@ -266,7 +248,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
-  const handleUpdatePoliceCase = async (
+  const handleUpdatePoliceCase = (
     index?: number,
     update?: {
       policeCaseNumber?: string
