@@ -36,7 +36,6 @@ import ListInfo from '../List/components/listInfoAlert'
 import { ListsLoaderReturn } from './AllLists.loader'
 import EmptyState from './components/emptyState'
 
-
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
