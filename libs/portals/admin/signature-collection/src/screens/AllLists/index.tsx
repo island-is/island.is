@@ -34,6 +34,8 @@ import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 import ListInfo from '../List/components/listInfoAlert'
 import { ListsLoaderReturn } from './AllLists.loader'
+import EmptyState from './components/emptyState'
+
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -264,7 +266,10 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                             : undefined
                         }
                         cta={
-                          collectionStatus !== CollectionStatus.InitialActive
+                          (allowedToProcess &&
+                            collectionStatus !==
+                              CollectionStatus.InitialActive) ||
+                          !allowedToProcess
                             ? {
                                 label: formatMessage(m.viewList),
                                 variant: 'text',
@@ -293,7 +298,12 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               </Box>
             </Box>
           ) : (
-            <Text>{formatMessage(m.noLists)}</Text>
+            <Box marginTop={10}>
+              <EmptyState
+                title={formatMessage(m.noLists)}
+                description={formatMessage(m.noListsDescription)}
+              />
+            </Box>
           )}
           {lists?.length > 0 && (
             <Box marginTop={5}>

@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
 import {
   useGetCurrentCollection,
   useGetListsForUser,
@@ -57,7 +57,11 @@ const SigneeView = ({
               {formatMessage(m.createListButton)}
             </Button>
           )}
-
+          {listsForUser.length === 0 && signedLists.length === 0 && (
+            <Box marginTop={10}>
+              <EmptyState title={m.noCollectionIsActive} />
+            </Box>
+          )}
           <Box marginTop={[2, 7]}>
             {/* Signed list */}
             <SignedList />
