@@ -87,8 +87,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     false,
   ])
 
-  console.log(data)
-
   const toggleIsOpen = (index: number) => {
     const newIsOpen = isOpen.map((x, i) => {
       if (i === index) {
@@ -219,6 +217,27 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       : ReactHtmlParser(dataIs ? dataIs : '')
   }
 
+  const applicationUrlParser = () => {
+    switch (universityData.contentfulTitle) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
+  }
+
   return (
     <>
       {organizationPage && (
@@ -251,14 +270,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               imgSrc={universityData.contentfulLogoUrl || ''}
               alt="University infomation"
             />
-            <Box width="full">
-              <Button fluid>
-                <Box display={'flex'} style={{ gap: '0.5rem' }}>
-                  {n('applyToUniversityProgram', 'Sækja um háskólanám')}
-                  <Icon icon="open" type="outline" />
-                </Box>
-              </Button>
-            </Box>
           </Stack>
         }
       >
@@ -281,9 +292,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             <Box
               display={'flex'}
               flexDirection={'column'}
-              style={{ gap: '1rem' }}
+              style={{ gap: '0.5rem' }}
             >
-              <Box style={{ marginBottom: '-24px' }}>
+              <Box style={{ marginBottom: '-16px' }}>
                 <Webreader />
               </Box>
               <Text variant="h1" as="h2">
@@ -312,7 +323,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 {n('applyForProgram', 'Umsókn í háskólanám')}
               </Text>
 
-              <Button>
+              <Button onClick={() => router.push(applicationUrlParser())}>
                 <Box display={'flex'} style={{ gap: '0.5rem' }}>
                   {n('apply', 'Sækja um')}
                   <Icon icon="open" type="outline" />
@@ -326,7 +337,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
               {data.iscedCode && (
-                <Text variant="default">{`ISCED-F-2023: ${data.iscedCode}`}</Text>
+                <Text variant="small">{`${n('isced', 'ISCED Flokkur')}: ${
+                  data.iscedCode
+                }`}</Text>
               )}
               <Text marginTop={3} marginBottom={3} variant="default">
                 {htmlParser(data.descriptionEn, data.descriptionIs)}

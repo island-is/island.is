@@ -241,8 +241,8 @@ const LandingPage: Screen<LandingPageProps> = ({
             <NewsCard
               title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
               readMoreText={`${n(
-                'applyToUniversityProgram',
-                'Sækja um í Háskóla',
+                'searchForProgram',
+                'Leitaðu að háskólanámi',
               )}`}
               introduction={n(
                 'straightToApplying',
@@ -251,7 +251,7 @@ const LandingPage: Screen<LandingPageProps> = ({
               image={{
                 url: 'https://images.ctfassets.net/8k0h54kbe6bj/442DRqHvfQcYnuffRbnbHD/5d27a2e0a399aef064d5b3702821ff0b/woman_in_chair.png',
               }}
-              href={''}
+              href={'https://island.is/haskolanam/leit'}
             />
           </GridColumn>
         </Box>
