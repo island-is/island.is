@@ -17,7 +17,7 @@ export const Preview = (props: OJOIFieldBaseProps) => {
   const { advert, signature } = answers
   return (
     <>
-      <Box marginBottom={3} display="flex" columnGap={2}>
+      <Box display="flex" columnGap={2}>
         <Button
           onClick={() => console.log('api logic not implemented')}
           variant="utility"

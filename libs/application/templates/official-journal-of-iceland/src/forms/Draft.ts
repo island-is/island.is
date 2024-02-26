@@ -1,15 +1,12 @@
 import {
   buildCustomField,
-  buildDescriptionField,
-  buildFileUploadField,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Routes, UPLOAD_ACCEPT } from '../lib/constants'
+import { Routes } from '../lib/constants'
 import {
   attachments,
   general,
@@ -69,26 +66,10 @@ export const Draft: Form = buildForm({
       id: Routes.ORIGINAL,
       title: original.general.section,
       children: [
-        buildMultiField({
-          id: Routes.ORIGINAL,
+        buildCustomField({
+          id: 'original',
           title: '',
-          space: 2,
-          children: [
-            buildDescriptionField({
-              id: Routes.ORIGINAL,
-              title: original.general.title,
-              description: original.general.intro,
-            }),
-            buildFileUploadField({
-              id: 'InputFields.originalDocuments.files',
-              title: '',
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadMultiple: false,
-              uploadHeader: original.fileUpload.header,
-              uploadDescription: original.fileUpload.description,
-              uploadButtonLabel: original.fileUpload.buttonLabel,
-            }),
-          ],
+          component: 'OriginalScreen',
         }),
       ],
     }),

@@ -57,6 +57,9 @@ export const InputFields = {
     files: 'additionsAndDocuments.files',
     fileNames: 'additionsAndDocuments.fileNames',
   },
+  [Routes.ORIGINAL]: {
+    files: 'original.files',
+  },
   [Routes.PUBLISHING]: {
     date: 'publishing.date',
     fastTrack: 'publishing.fastTrack',
