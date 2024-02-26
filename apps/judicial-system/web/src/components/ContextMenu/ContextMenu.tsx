@@ -12,7 +12,10 @@ import {
   useBoxStyles,
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { isProsecutionUser } from '@island.is/judicial-system/types'
+import {
+  isDefenceUser,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 
 import {
   CaseAppealState,
@@ -31,6 +34,10 @@ export const useContextMenu = () => {
 
   const shouldDisplayWithdrawAppealOption = useCallback(
     (caseEntry: CaseListEntry) => {
+      if (!isProsecutionUser(user) && !isDefenceUser(user)) {
+        return false
+      }
+
       return Boolean(
         (caseEntry.appealState === CaseAppealState.APPEALED ||
           caseEntry.appealState === CaseAppealState.RECEIVED) &&
