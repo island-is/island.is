@@ -47,7 +47,7 @@ export const edMessage = defineMessages({
   },
   graduationPath: {
     id: 'sp.education-secondary-school:graduation-path',
-    defaultMessage: 'Námsbraut.',
+    defaultMessage: 'Námsbraut',
   },
   school: {
     id: 'sp.education-secondary-school:school',

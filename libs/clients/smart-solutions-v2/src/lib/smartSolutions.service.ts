@@ -107,7 +107,7 @@ export class SmartSolutionsService {
     payload: PassDataInput,
     onCreateCallback?: () => Promise<void>,
     requestId?: string,
-  ): Promise<PkPass | null> {
+  ): Promise<PkPass> {
     const res = await this.client.mutate<
       UpsertPassMutation,
       UpsertPassMutationVariables
@@ -127,30 +127,31 @@ export class SmartSolutionsService {
         passId: res.data?.upsertPass?.id,
         category: LOG_CATEGORY,
       })
-      return res.data?.upsertPass ?? null
+      throw res.errors
     }
 
     if (
-      onCreateCallback &&
       res.data?.upsertPass?.whenCreated &&
-      res.data?.upsertPass?.whenModified &&
-      res.data?.upsertPass?.whenCreated === res.data?.upsertPass?.whenModified
+      res.data?.upsertPass?.whenModified
     ) {
       this.logger.debug('PkPass created successfully', {
         requestId,
         passId: res.data?.upsertPass?.id,
         category: LOG_CATEGORY,
       })
-      onCreateCallback()
-    } else {
-      this.logger.debug('PkPass upsert successful', {
-        requestId,
-        passId: res.data?.upsertPass?.id,
-        category: LOG_CATEGORY,
-      })
+      if (onCreateCallback) {
+        onCreateCallback()
+      }
+      const k: PkPass = res.data.upsertPass
+
+      return k
     }
 
-    return res.data?.upsertPass ?? null
+    this.logger.debug('PkPass pass upsert returned nothing', {
+      category: LOG_CATEGORY,
+      requestId,
+    })
+    throw new Error('Invalid pkpass response')
   }
 
   async revokePkPass(
