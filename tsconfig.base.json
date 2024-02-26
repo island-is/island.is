@@ -896,6 +896,9 @@
       "@island.is/infra-tracing": [
         "libs/infra-tracing/src/index.ts"
       ],
+      "@island.is/infra": [
+        "infra/*"
+      ],
       "@island.is/island-ui-native": [
         "apps/native/island-ui/src/index.ts"
       ],
