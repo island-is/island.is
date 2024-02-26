@@ -181,7 +181,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       const children: ChildInformation[] = [child]
 
-      return children
+      return { children }
     } else if (
       noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
       noChildrenFoundTypeOfApplication === ADOPTION
@@ -197,10 +197,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       const children: ChildInformation[] = [child]
 
-      return children
+      return { children }
     } else {
       // "normal application" - children found just return them
-      return children
+      return { children }
     }
   }
 
