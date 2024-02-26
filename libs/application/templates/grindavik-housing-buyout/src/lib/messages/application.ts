@@ -32,10 +32,35 @@ export const application = {
         'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
       description: 'Property information section description',
     },
+    propertyOwners: {
+      id: 'ghb.application.propertyInformation:propertyOwners',
+      defaultMessage: 'Þinglýstir eigendur',
+      description: 'Property owners',
+    },
+    propertyPermit: {
+      id: 'ghb.application.propertyInformation:propertyPermit',
+      defaultMessage: 'Heimild',
+      description: 'Property permit',
+    },
+    ownershipRatio: {
+      id: 'ghb.application.propertyInformation:ownershipRatio',
+      defaultMessage: 'Eignarhlutfall',
+      description: 'Ownership ratio',
+    },
+    ownerNationalId: {
+      id: 'ghb.application.propertyInformation:ownerNationalid',
+      defaultMessage: 'Kennitala',
+      description: 'Owner national id',
+    },
+    fireInsuranceValue: {
+      id: 'ghb.application.propertyInformation:fireInsuranceValue',
+      defaultMessage: 'Brunabótamat',
+      description: 'Fire insurance value',
+    },
     explaination: {
       id: 'ghb.application.propertyInformation:explaination#markdown',
       defaultMessage:
-        '5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **4.225.000**.\n\n Útgreitt við kaupsamning er þá (80.275.000 - 4.225.000) eða **76.050.000**.\n\n Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n Afhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
+        'Kaupverð fasteignar er **{buyoutPrice}** Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **{closingPayment}**\n\n Útreikningur er (kaupverð) - (áhvílandi lán) - (5% af kaupverði).\n\nÚtgreitt við kaupsamning er þá (**{buyoutPrice}** - **{totalLoans}** - **{closingPayment}**) eða **{result}**\n\nAfhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
       description: 'Property information explaination',
     },
   }),
@@ -80,6 +105,13 @@ export const application = {
       id: 'ghb.application.loanStatus:saveNewLoan',
       defaultMessage: 'Vista lán',
       description: 'Save new loan',
+    },
+  }),
+  results: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application.results:section.title',
+      defaultMessage: 'Útreikingur',
+      description: 'Results section title',
     },
   }),
   overview: defineMessages({
