@@ -25,8 +25,8 @@ export const Conclusion: Form = buildForm({
       multiFieldTitle: conclusion.general.title,
       alertTitle: conclusion.default.accordionTitle,
       alertMessage: conclusion.default.alertMessage,
-      expandableHeader: conclusion.default.accordionTitle,
-      expandableDescription: conclusion.default.accordionText,
+      expandableHeader: conclusion.default.expandableHeader,
+      expandableDescription: conclusion.default.expandableDescription,
     }),
   ],
 })

@@ -1,5 +1,6 @@
 import { defineMessages } from 'react-intl'
 
+const linebreak = '\n\n'
 export const deregister = {
   general: defineMessages({
     title: {
@@ -33,7 +34,10 @@ export const deregister = {
     temporaryDescription: {
       id: 'aosh.drm.application:deregister.labels.temporaryDescription',
       defaultMessage:
-        'Tímabundin afskráning getur verið ef vél:<br>• seld úr landi<br>• fargað eða seld í brotajárn<br>• nýtt í varahluti',
+        'Tímabundin afskráning getur verið ef vél:<br>' +
+        '• seld úr landi<br>' +
+        '• fargað eða seld í brotajárn<br>' +
+        '• nýtt í varahluti',
       description: 'Temporary description label',
     },
     permanent: {
@@ -44,7 +48,11 @@ export const deregister = {
     permanentDescription: {
       id: 'aosh.drm.application:deregister.labels.permanentDescription',
       defaultMessage:
-        'Endanleg afskráning getur verið ef vél er:<br>• seld úr landi<br>• fargað eða seld í brotajárn<br>• nýtt í varahluti<br>Vélar sem eru afskráðar endanlega má endurskrá. Þær þarf að skoða af eftirlitsmanni áður en hægt er að endurskrá.',
+        'Endanleg afskráning getur verið ef vél er:<br>' +
+        '• seld úr landi <br>' +
+        '• fargað eða seld í brotajárn<br>' +
+        '• nýtt í varahluti<br>' +
+        'Vélar sem eru afskráðar endanlega má endurskrá. Þær þarf að skoða af eftirlitsmanni áður en hægt er að endurskrá.',
       description: 'Permanent description label',
     },
     date: {

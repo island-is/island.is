@@ -26,7 +26,7 @@ export const pickMachineSubSection = buildSubSection({
               'machinesList.data',
               {},
             ) as MachinesWithTotalCount
-
+            console.log('machines', machines)
             return machines.totalCount <= 5
           },
 

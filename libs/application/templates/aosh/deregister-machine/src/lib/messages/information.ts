@@ -52,6 +52,26 @@ export const information = {
         defaultMessage: 'Ekki er hægt að selja þetta tæki vegna:',
         description: 'Pick machine has an error title',
       },
+      notFoundTitle: {
+        id: 'aosh.drm.application:information.labels.pickMachine.notFoundTitle',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
+        description: 'Pick machine not found title',
+      },
+      notFoundMessage: {
+        id: 'aosh.drm.application:information.labels.pickMachine.notFoundMessage',
+        defaultMessage: 'Tæki fannst ekki',
+        description: 'Pick machine not found message',
+      },
+      findRegistrationNumberPlaceholder: {
+        id: 'aosh.drm.application:information.labels.pickMachine.findRegistrationNumberPlaceholder',
+        defaultMessage: 'Sláðu inn skráningarnúmer',
+        description: 'Pick machine find registration number placeholder',
+      },
+      findButton: {
+        id: 'aosh.drm.application:information.labels.pickMachine.findButton',
+        defaultMessage: 'Leita',
+        description: 'Pick machine find button',
+      },
     }),
     machine: defineMessages({
       sectionTitle: {

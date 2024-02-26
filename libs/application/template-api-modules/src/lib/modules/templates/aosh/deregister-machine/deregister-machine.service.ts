@@ -6,7 +6,6 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
-import { UserProfile } from './types'
 import { DeregisterMachineAnswers } from '@island.is/application/templates/aosh/deregister-machine'
 import { statusMapping } from './deregister-machine.utils'
 import type { Logger } from '@island.is/logging'
@@ -89,29 +88,5 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
         fateOfMachine: answers.deregister.fateOfMachine,
       },
     })
-
-    // send email/sms to all recipients
-    // const recipientList =
-    //   answers.supervisor.isOwner[0] === 'ownerIsSupervisor'
-    //     ? getRecipients(answers, [EmailRole.owner], userProfile)
-    //     : getRecipients(
-    //         answers,
-    //         [EmailRole.owner, EmailRole.supervisor],
-    //         userProfile,
-    //       )
-    // const errors = await sendNotificationsToRecipients(
-    //   recipientList,
-    //   answers.supervisor.isOwner[0] === 'ownerIsSupervisor'
-    //     ? owner.name
-    //     : answers.supervisor?.name || '',
-    //   this.sharedTemplateAPIService,
-    //   application,
-    // )
-
-    // if (errors.length > 0) {
-    //   errors.forEach((error) => {
-    //     this.logger.error(error)
-    //   })
-    // }
   }
 }

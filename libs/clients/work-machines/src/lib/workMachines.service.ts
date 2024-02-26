@@ -101,7 +101,7 @@ export class WorkMachinesClientService {
             status: machine?.status || '',
           }
         }) || [],
-      totalCount: result?.pagination?.currentPage || 0,
+      totalCount: result?.pagination?.totalCount || 0,
     }
   }
 

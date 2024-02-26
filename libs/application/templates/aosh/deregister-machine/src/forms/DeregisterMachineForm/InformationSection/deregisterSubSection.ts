@@ -6,7 +6,7 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { location, deregister } from '../../../lib/messages'
+import { deregister } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
 import { Status } from '../../../shared'
 
@@ -46,7 +46,7 @@ export const deregisterSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'deregister.fateOfMachine',
-          title: location.labels.moreInfoLabel,
+          title: deregister.labels.fateOfMachine,
           width: 'full',
           variant: 'textarea',
           required: false,
@@ -55,7 +55,7 @@ export const deregisterSubSection = buildSubSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: location.labels.approveButton,
+          title: deregister.labels.approveButton,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
