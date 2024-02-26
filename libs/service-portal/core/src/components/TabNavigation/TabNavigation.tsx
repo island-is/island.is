@@ -103,8 +103,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
         <Box marginTop={[1, 1, 2, 4, 4]}>
           <GridContainer>
             <GridRow>
-              {(!!activeItem.description ||
-                (activeItemChildren?.length ?? 0) > 1) && (
+              {(!!activeItem.description || !!activeItemChildren?.length) && (
                 <GridColumn span="6/8">
                   <Box className={styles.description}>
                     {(activeItemChildren?.length ?? 0) > 1 && (
