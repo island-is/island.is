@@ -1,4 +1,4 @@
-mutation PutDocumentProvidedType($input: DocumentProvidedTypeInput!) {
+mutation PutDocumentProvidedType($input: CategoriesAndTypesPutInput!) {
   putDocumentProvidedType(input: $input) {
     id
     name
@@ -6,7 +6,7 @@ mutation PutDocumentProvidedType($input: DocumentProvidedTypeInput!) {
   }
 }
 
-mutation PostDocumentProvidedType($input: CategoriesAndTypesSharedInput!) {
+mutation PostDocumentProvidedType($input: CategoriesAndTypesPostInput!) {
   postDocumentProvidedType(input: $input) {
     id
     name
@@ -14,7 +14,7 @@ mutation PostDocumentProvidedType($input: CategoriesAndTypesSharedInput!) {
   }
 }
 
-mutation PutDocumentProvidedCategory($input: DocumentProvidedCategoryInput!) {
+mutation PutDocumentProvidedCategory($input: CategoriesAndTypesPutInput!) {
   putDocumentProvidedCategory(input: $input) {
     id
     name
@@ -22,7 +22,7 @@ mutation PutDocumentProvidedCategory($input: DocumentProvidedCategoryInput!) {
   }
 }
 
-mutation PostDocumentProvidedCategory($input: CategoriesAndTypesSharedInput!) {
+mutation PostDocumentProvidedCategory($input: CategoriesAndTypesPostInput!) {
   postDocumentProvidedCategory(input: $input) {
     id
     name

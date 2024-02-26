@@ -17,9 +17,8 @@ import {
   DocumentProviderCategories,
 } from '../models/DocumentTypes.model'
 import {
-  CategoriesAndTypesSharedInput,
-  DocumentProvidedCategoryInput,
-  DocumentProvidedTypeInput,
+  CategoriesAndTypesPostInput,
+  CategoriesAndTypesPutInput,
 } from '../dto/mutateCategoryOrType.input'
 
 const LOG_CATEGORY = 'document-provider-api'
@@ -205,7 +204,7 @@ export class AdminDocumentProviderService {
   }
 
   async postDocumentProvidedType(
-    input: CategoriesAndTypesSharedInput,
+    input: CategoriesAndTypesPostInput,
   ): Promise<DocumentProviderTypes> {
     try {
       logger.debug('Posting document type')
@@ -226,12 +225,12 @@ export class AdminDocumentProviderService {
   }
 
   async putDocumentProvidedType(
-    input: DocumentProvidedTypeInput,
+    input: CategoriesAndTypesPutInput,
   ): Promise<DocumentProviderTypes> {
     try {
       logger.debug('Putting document types')
       const res = await this.documentProviderClientProd.putDocumentProvidedType(
-        input,
+        { ...input, messageTypeId: input.id },
       )
       return {
         ...res,
@@ -269,7 +268,7 @@ export class AdminDocumentProviderService {
   }
 
   async postDocumentProvidedCategory(
-    input: CategoriesAndTypesSharedInput,
+    input: CategoriesAndTypesPostInput,
   ): Promise<DocumentProviderCategories> {
     try {
       logger.debug('Posting document category')
@@ -292,12 +291,15 @@ export class AdminDocumentProviderService {
   }
 
   async putDocumentProvidedCategory(
-    input: DocumentProvidedCategoryInput,
+    input: CategoriesAndTypesPutInput,
   ): Promise<DocumentProviderCategories> {
     try {
       logger.debug('Putting document category')
       const res =
-        await this.documentProviderClientProd.putDocumentProvidedCategory(input)
+        await this.documentProviderClientProd.putDocumentProvidedCategory({
+          ...input,
+          categoryId: input.id,
+        })
       return {
         ...res,
         id: res.categoryId,

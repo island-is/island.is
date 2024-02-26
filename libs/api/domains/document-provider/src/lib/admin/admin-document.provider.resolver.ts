@@ -26,9 +26,8 @@ import {
   DocumentProviderTypes,
 } from '../models/DocumentTypes.model'
 import {
-  CategoriesAndTypesSharedInput,
-  DocumentProvidedCategoryInput,
-  DocumentProvidedTypeInput,
+  CategoriesAndTypesPutInput,
+  CategoriesAndTypesPostInput,
 } from '../dto/mutateCategoryOrType.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -208,7 +207,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderTypes)
   async postDocumentProvidedType(
-    @Args('input') input: CategoriesAndTypesSharedInput,
+    @Args('input') input: CategoriesAndTypesPostInput,
   ): Promise<DocumentProviderTypes> {
     return this.documentProviderService.postDocumentProvidedType(input)
   }
@@ -216,7 +215,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderTypes)
   async putDocumentProvidedType(
-    @Args('input') input: DocumentProvidedTypeInput,
+    @Args('input') input: CategoriesAndTypesPutInput,
   ): Promise<DocumentProviderTypes> {
     return this.documentProviderService.putDocumentProvidedType(input)
   }
@@ -231,7 +230,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderCategories)
   async postDocumentProvidedCategory(
-    @Args('input') input: CategoriesAndTypesSharedInput,
+    @Args('input') input: CategoriesAndTypesPostInput,
   ): Promise<DocumentProviderCategories> {
     return this.documentProviderService.postDocumentProvidedCategory(input)
   }
@@ -239,7 +238,7 @@ export class AdminDocumentProviderResolver {
   @Scopes(AdminPortalScope.documentProvider)
   @Mutation(() => DocumentProviderCategories)
   async putDocumentProvidedCategory(
-    @Args('input') input: DocumentProvidedCategoryInput,
+    @Args('input') input: CategoriesAndTypesPutInput,
   ): Promise<DocumentProviderCategories> {
     return this.documentProviderService.putDocumentProvidedCategory(input)
   }

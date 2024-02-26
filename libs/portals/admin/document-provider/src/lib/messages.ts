@@ -844,7 +844,12 @@ export const m = defineMessages({
   },
 
   saved: {
-    id: 'portals-admin.document-provider:saved',
+    id: 'portals-admin.document-provider:save-success',
+    defaultMessage: 'Vistað',
+  },
+
+  error: {
+    id: 'portals-admin.document-provider:save-error',
     defaultMessage: 'Vistað',
   },
 })

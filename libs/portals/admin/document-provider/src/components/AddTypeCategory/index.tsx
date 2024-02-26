@@ -11,9 +11,9 @@ import { Modal, ModalProps } from '@island.is/react/components'
 import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { usePutDocumentProvidedCategoryMutation } from './MutateTypeCategory.generated'
+import { useContext, useMemo, useState } from 'react'
 import { TypeCategoryContext } from '../../screens/CategoriesAndTypes/TypeCategoryContext'
+import { useTypeAndCategoryMutation } from './useTypeAndCategoryMutation'
 
 export const AddTypeCategory = ({
   isVisible,
@@ -23,7 +23,8 @@ export const AddTypeCategory = ({
   const { activeTab, currentTypeCategory } = useContext(TypeCategoryContext)
   const [inputValue, setInputValue] = useState('')
   const [checked, setChecked] = useState(true)
-  const [putCategory, { loading }] = usePutDocumentProvidedCategoryMutation()
+
+  const { mutationFunction, isLoading } = useTypeAndCategoryMutation(activeTab)
 
   useMemo(() => {
     setInputValue(currentTypeCategory?.name ?? '')
@@ -31,25 +32,19 @@ export const AddTypeCategory = ({
   }, [currentTypeCategory?.name, currentTypeCategory?.active])
 
   const handleSubmit = async () => {
-    const payload = {
-      variables: {
-        input: {
-          categoryId: 1,
-        },
+    mutationFunction(
+      {
+        id: currentTypeCategory?.id,
+        name: inputValue,
+        active: checked,
       },
-      onCompleted: () => {
-        toast.success(formatMessage(m.saved))
-      },
-      onError: () => {
-        toast.success('Error')
-      },
-    }
+      formatMessage(m.saved),
+      formatMessage(m.error),
+    )
 
-    putCategory(payload)
     onClose?.()
   }
 
-  const isLoading = loading
   const labelCreate =
     activeTab === 'types'
       ? formatMessage(m.modalTitleType)
