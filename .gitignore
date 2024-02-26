@@ -1,12 +1,14 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
-/tmp
-/out-tsc
-**/tsconfig.tsbuildinfo
-infra/mountebank-imposter-config.json
-infra/helm/**/*.tgz
+dist
+tmp
+out-tsc
+tsconfig.tsbuildinfo
+*.tgz
+.out.*
+.dist.*
+
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache
