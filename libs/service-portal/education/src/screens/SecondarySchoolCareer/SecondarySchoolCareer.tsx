@@ -4,7 +4,7 @@ import {
   formatDate,
   IntroHeader,
   m,
-  NotFound,
+  MENNTAMALASTOFNUN_SLUG,
   SortableTable,
 } from '@island.is/service-portal/core'
 import { Box, Column, SkeletonLoader } from '@island.is/island-ui/core'
@@ -13,7 +13,6 @@ import { useGetInnaPeriodsQuery } from './Periods.generated'
 import { tagSelector } from '../../utils/tagSelector'
 import { useLocale } from '@island.is/localization'
 import { edMessage } from '../../lib/messages'
-import { defineMessage } from 'react-intl'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const EducationGraduationDetail = () => {
@@ -27,6 +26,8 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={m.educationFramhskoliCareer}
         intro={edMessage.careerIntro}
+        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
       {/* <GridRow marginTop={4}>
         <GridColumn span="1/1">
@@ -103,6 +104,17 @@ export const EducationGraduationDetail = () => {
             />
           </Box>
         ))}
+
+      {error && <Problem noBorder={false} error={error} />}
+      {noData && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
     </Box>
   )
 }

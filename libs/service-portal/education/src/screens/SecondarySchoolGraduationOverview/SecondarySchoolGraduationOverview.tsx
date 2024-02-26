@@ -2,6 +2,8 @@ import {
   ActionCard,
   CardLoader,
   IntroHeader,
+  MENNTAMALASTOFNUN_SLUG,
+  m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
@@ -18,6 +20,7 @@ export const EducationGraduationDetail = () => {
   const { formatMessage } = useLocale()
 
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
+  const noData = !diplomaItems.length && !loading && !error
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -28,6 +31,8 @@ export const EducationGraduationDetail = () => {
           defaultMessage:
             'Hér getur þú fundið yfirlit yfir þínar útskriftir úr framhaldsskóla.',
         })}
+        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
       {error && !loading && <Problem error={error} noBorder={false} />}
 
@@ -67,6 +72,17 @@ export const EducationGraduationDetail = () => {
               />
             </Box>
           ))}
+
+        {error && <Problem noBorder={false} error={error} />}
+        {noData && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
       </Box>
     </Box>
   )
