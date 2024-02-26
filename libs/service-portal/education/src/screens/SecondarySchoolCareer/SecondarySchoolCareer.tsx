@@ -104,17 +104,6 @@ export const EducationGraduationDetail = () => {
             />
           </Box>
         ))}
-
-      {error && <Problem noBorder={false} error={error} />}
-      {noData && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
     </Box>
   )
 }

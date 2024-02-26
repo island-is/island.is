@@ -7,7 +7,6 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
 import { EducationPaths } from '../../lib/paths'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { defineMessage } from 'react-intl'
@@ -20,7 +19,6 @@ export const EducationGraduationDetail = () => {
   const { formatMessage } = useLocale()
 
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
-  const noData = !diplomaItems.length && !loading && !error
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -72,17 +70,6 @@ export const EducationGraduationDetail = () => {
               />
             </Box>
           ))}
-
-        {error && <Problem noBorder={false} error={error} />}
-        {noData && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFoundDetail)}
-            imgSrc="./assets/images/sofa.svg"
-          />
-        )}
       </Box>
     </Box>
   )

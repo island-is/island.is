@@ -12,7 +12,6 @@ import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.gener
 import { useParams } from 'react-router-dom'
 import { edMessage } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
-import { m } from '@island.is/service-portal/core'
 
 type UseParams = {
   id: string
