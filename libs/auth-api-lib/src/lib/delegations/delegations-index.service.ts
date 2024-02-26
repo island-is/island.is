@@ -87,7 +87,6 @@ export class DelegationsIndexService {
 
     await this.delegationIndexModel.bulkCreate(delegations)
 
-    console.log('SETTING TO', new Date(new Date().getTime() + ONE_WEEK))
     // set next reindex to one week in the future
     await this.delegationIndexMetaModel.upsert({
       nationalId: user.nationalId,

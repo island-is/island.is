@@ -65,11 +65,14 @@ describe('DelegationsIndexService', () => {
     await app.cleanUp()
   })
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const mockedDate = testDate
 
     jest.useFakeTimers()
     jest.setSystemTime(mockedDate)
+
+    // remove all delegation meta and delegations
+    await delegationIndexMetaModel.destroy({ where: {} })
   })
 
   afterEach(() => {
@@ -111,9 +114,6 @@ describe('DelegationsIndexService', () => {
 
     describe('delegation index meta logic', () => {
       it('should set nextReindex to week in the future after successful reindex', async () => {
-        const nextReindex = new Date(testDate.getTime() - 1000) // past date
-        const lastFullReindex = new Date(testDate.getTime() - 1000)
-
         // Arrange
         // test when there is no meta
 
@@ -124,17 +124,12 @@ describe('DelegationsIndexService', () => {
         const meta = await delegationIndexMetaModel.findOne({
           where: { nationalId: user.nationalId },
         })
-        const delegations = await delegationIndexModel.findAll({
-          where: {
-            toNationalId: user.nationalId,
-          },
-        })
 
         expect(meta).not.toBeNull()
+        expect(meta?.lastFullReindex).toStrictEqual(testDate)
         expect(meta?.nextReindex).toStrictEqual(
           new Date(testDate.getTime() + 1000 * 60 * 60 * 24 * 7),
         )
-        expect(meta?.lastFullReindex).toStrictEqual(testDate)
       })
     })
 
@@ -174,9 +169,6 @@ describe('DelegationsIndexService', () => {
           await delegationIndexService.indexDelegations(user)
 
           // Assert
-          const meta = await delegationIndexMetaModel.findOne({
-            where: { nationalId: user.nationalId },
-          })
           const delegations = await delegationIndexModel.findAll()
 
           expect(delegations.length).toBe(testcase.expectedFrom.length)

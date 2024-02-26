@@ -11,6 +11,7 @@ export class DelegationIndexMeta extends Model<
 > {
   @Column({
     type: DataType.STRING,
+    primaryKey: true,
     allowNull: false,
   })
   nationalId!: string
