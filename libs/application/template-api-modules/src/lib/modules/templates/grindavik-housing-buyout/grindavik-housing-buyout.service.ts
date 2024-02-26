@@ -35,8 +35,11 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const data = await this.nationalRegistryApi.getResidenceHistory(
       auth.nationalId,
     )
-    return {
-      realEstateId: '12345',
+    // gervimaður færeyjar pass through
+    if (auth.nationalId === '0101302399') {
+      return {
+        realEstateId: 'F12345',
+      }
     }
     console.log('residence history : ', data)
 
@@ -44,7 +47,6 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     let postalCode = '240'
 
     const danmork = {
-      //Gervimaður danmörk pass through
       dateInQuestion: '2009-07-30',
       postalCode: '301',
     }
@@ -81,7 +83,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     }*/
 
     return {
-      realEstateId: grindavikDomicile.realEstateNumber ?? '12345',
+      realEstateId: grindavikDomicile?.realEstateNumber ?? '12345',
     }
   }
 
@@ -89,13 +91,92 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const result = ''
-
-    return result
-    console.log(application.externalData)
     const { realEstateId } =
       (application.externalData.checkResidence.data as CheckResidence) ??
       undefined
+
+    // mock from checkResidence function
+    if (realEstateId === 'F12345') {
+      return {
+        fasteignanumer: 'F12345',
+        sjalfgefidStadfang: {
+          stadfanganumer: 1234,
+          landeignarnumer: 567,
+          postnumer: 113,
+          sveitarfelagBirting: 'Reykjavík',
+          birting: 'Reykjavík',
+          birtingStutt: 'RVK',
+        },
+        fasteignamat: {
+          gildandiFasteignamat: 50000000,
+          fyrirhugadFasteignamat: 55000000,
+          gildandiMannvirkjamat: 30000000,
+          fyrirhugadMannvirkjamat: 35000000,
+          gildandiLodarhlutamat: 20000000,
+          fyrirhugadLodarhlutamat: 25000000,
+          gildandiAr: 2024,
+          fyrirhugadAr: 2025,
+        },
+        landeign: {
+          landeignarnumer: '123456',
+          lodamat: 75000000,
+          notkunBirting: 'Íbúðarhúsalóð',
+          flatarmal: '300000',
+          flatarmalEining: 'm²',
+        },
+        thinglystirEigendur: {
+          thinglystirEigendur: [
+            {
+              nafn: 'Gervimaður Danmörk',
+              kennitala: '2222222222',
+              eignarhlutfall: 0.5,
+              kaupdagur: new Date(),
+              heimildBirting: 'A+',
+            },
+            {
+              nafn: 'Jóna Jónasdóttir',
+              kennitala: '3333333333',
+              eignarhlutfall: 0.5,
+              kaupdagur: new Date(),
+              heimildBirting: 'A+',
+            },
+          ],
+        },
+        notkunareiningar: {
+          notkunareiningar: [
+            {
+              birtStaerdMaelieining: 'm²',
+              notkunareininganumer: '010101',
+              fasteignanumer: 'F12345',
+              stadfang: {
+                birtingStutt: 'RVK',
+                birting: 'Reykjavík',
+                landeignarnumer: 1234,
+                sveitarfelagBirting: 'Reykjavík',
+                postnumer: 113,
+                stadfanganumer: 1234,
+              },
+              merking: 'SomeValue',
+              notkunBirting: 'SomeUsage',
+              skyring: 'SomeDescription',
+              byggingararBirting: 'SomeYear',
+              birtStaerd: 100,
+              fasteignamat: {
+                gildandiFasteignamat: 50000000,
+                fyrirhugadFasteignamat: 55000000,
+                gildandiMannvirkjamat: 30000000,
+                fyrirhugadMannvirkjamat: 35000000,
+                gildandiLodarhlutamat: 20000000,
+                fyrirhugadLodarhlutamat: 25000000,
+                gildandiAr: 2024,
+                fyrirhugadAr: 2025,
+              },
+              brunabotamat: 1000000,
+            },
+          ],
+        },
+      }
+    }
 
     console.log('Real estate id', realEstateId)
 
