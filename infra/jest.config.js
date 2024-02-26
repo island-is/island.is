@@ -8,5 +8,10 @@ module.exports = {
   // roots: [__dirname],
   // testEnvironment: 'node',
   // // transform: { '^.+\\.[tj]sx?$': 'esbuild-jest', },
-  transform: { '^.+\\.[tj]sx?$': ['ts-jest', { tsconfig: `${__dirname}/tsconfig.spec.json` },], },
+  transform: {
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+    ],
+  },
 }

@@ -5,7 +5,7 @@ import {
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
-import { readFile, writeFile, mkdir, } from 'fs/promises'
+import { readFile, writeFile, mkdir } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
@@ -117,10 +117,10 @@ export const getLocalrunValueFile = async (
                       // soffia proxy service hack. need to get this proxy to forward host header but not really how to do it yet.
                       ...(target === 'https://localhost:8443'
                         ? {
-                          injectHeaders: {
-                            Host: 'soffiaprufa.skra.is',
-                          },
-                        }
+                            injectHeaders: {
+                              Host: 'soffiaprufa.skra.is',
+                            },
+                          }
                         : {}),
                       predicateGenerators: [
                         {

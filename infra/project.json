@@ -25,9 +25,7 @@
       "options": {
         "jestConfig": "{projectRoot}/jest.config.js"
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/libs/{projectName}"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/libs/{projectName}"]
     },
     "charts": {
       "executor": "nx:run-commands",
@@ -40,10 +38,5 @@
       }
     }
   },
-  "tags": [
-    "lib:nest",
-    "lib:node",
-    "scope:nest",
-    "TODO:splitUp"
-  ]
+  "tags": ["lib:nest", "lib:node", "scope:nest", "TODO:splitUp"]
 }
