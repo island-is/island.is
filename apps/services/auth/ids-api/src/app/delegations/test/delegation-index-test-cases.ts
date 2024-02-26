@@ -40,14 +40,15 @@ export const indexingTestcases: Record<string, TestCase> = {
       fromCompanies: [company1, company2],
       expectedFrom: [company1, company2],
     },
-  ), // Should index personal representatives delegations
+  ),
+  // Should index personal representatives delegations
   personalRepresentative: new TestCase(
     createClient({
       clientId: clientId,
       supportsPersonalRepresentatives: true,
     }),
     {
-      fromChildren: [person1, person2],
+      fromRepresentative: [person1, person2],
       expectedFrom: [person1, person2],
     },
   ),
