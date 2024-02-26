@@ -208,7 +208,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     JSON.parse(JSON.stringify(initialFilters)),
   )
 
-  const [gridView, setGridView] = useState<boolean>(false)
+  const [gridView, setGridView] = useState<boolean>(true)
 
   const [totalPages, setTotalPages] = useState<number>(
     Math.ceil(data.length / ITEMS_PER_PAGE),
@@ -246,7 +246,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [])
 
   const fuseOptions = {
-    threshold: 0.4,
+    threshold: 0.3,
     findAllMatches: true,
 <<<<<<< HEAD
     ignoreLocation: true,
@@ -423,6 +423,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
     const length = items.length
 
     if (length === 0) {
@@ -434,10 +438,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
 
     if (length === 2) {
-      return `${n(items[0], TranslationDefaults[items[0]])} or ${n(
-        items[0],
-        TranslationDefaults[items[0]],
-      )}`
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
     }
 
     const formattedList = items.map((item, index) => {
@@ -1128,7 +1132,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${dataItem.credits} ${n(
                                     'units',
                                     'einingar',
-                                  )}, ${dataItem.durationInYears} ${
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
