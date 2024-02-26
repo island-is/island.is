@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { PermitsApi } from '../../gen/fetch'
+import { HuntingLicenseDto, mapHuntingLicenseDto } from './huntingLicense.types'
 
 @Injectable()
 export class HuntingLicenseClientService {
@@ -9,9 +10,11 @@ export class HuntingLicenseClientService {
   private apiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getPermits(user: User) {
-    return this.apiWithAuth(user).permitHunting({
+  async getPermits(user: User): Promise<HuntingLicenseDto | null> {
+    const data = await this.apiWithAuth(user).permitHunting({
       xQueryNationalId: user.nationalId,
     })
+
+    return mapHuntingLicenseDto(data)
   }
 }

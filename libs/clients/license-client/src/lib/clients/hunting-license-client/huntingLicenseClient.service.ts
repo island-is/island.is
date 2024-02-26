@@ -18,14 +18,14 @@ import {
 } from '../../licenseClient.type'
 import {
   HuntingLicenseClientService,
-  PermitHunting,
+  HuntingLicenseDto,
 } from '@island.is/clients/hunting-license'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class HuntingLicenseClient implements LicenseClient<PermitHunting> {
+export class HuntingLicenseClient implements LicenseClient<HuntingLicenseDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private huntingService: HuntingLicenseClientService,
@@ -35,9 +35,9 @@ export class HuntingLicenseClient implements LicenseClient<PermitHunting> {
   clientSupportsPkPass = true
 
   private checkLicenseValidityForPkPass(
-    licenseInfo: PermitHunting,
+    licenseInfo: HuntingLicenseDto,
   ): LicensePkPassAvailability {
-    if (!licenseInfo || !licenseInfo.permitValidity) {
+    if (!licenseInfo || !licenseInfo.isValid) {
       return LicensePkPassAvailability.Unknown
     }
 
@@ -46,7 +46,7 @@ export class HuntingLicenseClient implements LicenseClient<PermitHunting> {
 
   private async fetchLicense(
     user: User,
-  ): Promise<Result<PermitHunting | null>> {
+  ): Promise<Result<HuntingLicenseDto | null>> {
     try {
       const licenseInfo = await this.huntingService.getPermits(user)
       return { ok: true, data: licenseInfo }
@@ -92,7 +92,7 @@ export class HuntingLicenseClient implements LicenseClient<PermitHunting> {
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
     if (typeof payload === 'string') {
-      let jsonLicense: PermitHunting
+      let jsonLicense: HuntingLicenseDto
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
@@ -101,10 +101,10 @@ export class HuntingLicenseClient implements LicenseClient<PermitHunting> {
       }
       return this.checkLicenseValidityForPkPass(jsonLicense)
     }
-    return this.checkLicenseValidityForPkPass(payload as PermitHunting)
+    return this.checkLicenseValidityForPkPass(payload as HuntingLicenseDto)
   }
 
-  async getLicenses(user: User): Promise<Result<Array<PermitHunting>>> {
+  async getLicenses(user: User): Promise<Result<Array<HuntingLicenseDto>>> {
     const licenseData = await this.fetchLicense(user)
 
     if (!licenseData.ok) {
@@ -126,7 +126,7 @@ export class HuntingLicenseClient implements LicenseClient<PermitHunting> {
   }
 
   private async createPkPassPayload(
-    data: PermitHunting,
+    data: HuntingLicenseDto,
   ): Promise<PassDataInput | null> {
     const inputValues = createPkPassDataInput(data)
 
@@ -134,7 +134,7 @@ export class HuntingLicenseClient implements LicenseClient<PermitHunting> {
     //Fetch template from api?
     return {
       inputFieldValues: inputValues,
-      expirationDate: data.validTo,
+      expirationDate: data.validTo?.toString(),
     }
   }
 

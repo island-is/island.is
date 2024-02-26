@@ -1,20 +1,21 @@
 import format from 'date-fns/format'
-import { PermitHunting } from '@island.is/clients/hunting-license'
+import { isDefined } from '@island.is/shared/utils'
+import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
 
 export const createPkPassDataInput = (
-  license: PermitHunting,
+  license: HuntingLicenseDto,
 ): Array<PassInputFieldValueDataInput> | null => {
   if (!license) return null
 
   return [
     {
       identifier: 'nafn',
-      value: license.personname ?? '',
+      value: license.holderName ?? '',
     },
     {
       identifier: 'kt',
-      value: license.personid ?? '',
+      value: license.holderNationalId ?? '',
     },
     {
       identifier: 'heimili',
@@ -26,7 +27,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'number',
-      value: license.permitNumber ?? '',
+      value: license.number ?? '',
     },
     {
       identifier: 'gildir_fyrir',
@@ -34,23 +35,23 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'tegund',
-      value: license.permitCategory ?? '',
+      value: license.category ?? '',
     },
-    {
-      identifier: 'gildir_til',
-      value: license.validTo
-        ? format(new Date(license.validTo), 'dd.MM.yyyy')
-        : '',
-    },
-    {
-      identifier: 'gildir_fra',
-      value: license.validFrom
-        ? format(new Date(license.validFrom), 'dd.MM.yyyy')
-        : '',
-    },
+    license.validTo
+      ? {
+          identifier: 'gildir_til',
+          value: format(new Date(license.validTo), 'dd.MM.yyyy'),
+        }
+      : undefined,
+    license.validFrom
+      ? {
+          identifier: 'gildir_fra',
+          value: format(new Date(license.validFrom), 'dd.MM.yyyy'),
+        }
+      : undefined,
     {
       identifier: 'hljord',
-      value: license.benefits?.benefitLand ?? '',
+      value: license.benefits?.land ?? '',
     },
-  ]
+  ].filter(isDefined)
 }

@@ -10,7 +10,7 @@ import {
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
-import { PermitHunting } from '@island.is/clients/hunting-license'
+import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { format } from 'kennitala'
 
 @Injectable()
@@ -22,7 +22,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
   ): Array<GenericUserLicensePayload> {
     if (!payload) return []
 
-    const typedPayload = payload as Array<PermitHunting>
+    const typedPayload = payload as Array<HuntingLicenseDto>
 
     const label = labels?.labels
 
@@ -33,12 +33,12 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
             name: getLabel('basicInfoLicense', locale, label),
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('personName', locale, label),
-            value: t.personname ?? '',
+            value: t.holderName ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('nationalId', locale, label),
-            value: t.personid ? format(t.personid) : '',
+            value: t.holderNationalId ? format(t.holderNationalId) : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
@@ -48,12 +48,12 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('cardNumber', locale, label),
-            value: t.permitNumber ?? '',
+            value: t.number ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('publishedDate', locale, label),
-            value: t.validFrom ?? '',
+            value: t.validFrom?.toString() ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
@@ -63,7 +63,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('huntingPermitValidFor', locale, label),
-            value: t.permitNumber ?? '',
+            value: t.permitFor?.join(' ,') ?? '',
           },
         ]
 
@@ -71,9 +71,9 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           data,
           rawData: JSON.stringify(t),
           metadata: {
-            licenseNumber: t.permitNumber?.toString() ?? '',
+            licenseNumber: t.number?.toString() ?? '',
             licenseId: DEFAULT_LICENSE_ID,
-            expired: t.permitValidity === 'Í gildi',
+            expired: t.isValid,
             expireDate: t.validTo ?? undefined,
           },
         }
