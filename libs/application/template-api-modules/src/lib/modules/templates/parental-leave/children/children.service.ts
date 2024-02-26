@@ -65,7 +65,6 @@ export class ChildrenService {
       YES
     const shouldUseMockData = useMockData && !this.isRunningOnProduction
 
-    console.log('DEBUG provideChildren')
     if (shouldUseMockData) {
       return await this.getMockData(application, customTemplateFindQuery)
     }
