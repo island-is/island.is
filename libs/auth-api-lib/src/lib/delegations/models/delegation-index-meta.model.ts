@@ -18,9 +18,10 @@ export class DelegationIndexMeta extends Model<
 
   @Column({
     type: DataType.DATE,
-    allowNull: false,
+    allowNull: true,
+    defaultValue: null,
   })
-  lastFullReindex!: Date
+  lastFullReindex!: Date | null
 
   @Column({
     type: DataType.DATE,

@@ -69,7 +69,6 @@ export class DelegationsIndexService {
     await this.delegationIndexMetaModel.upsert({
       nationalId: user.nationalId,
       nextReindex: new Date(now + TEN_MINUTES),
-      lastFullReindex: new Date(),
     })
 
     const delegationRes = await Promise.all([
@@ -84,10 +83,16 @@ export class DelegationsIndexService {
     await this.delegationIndexModel.bulkCreate(delegations)
 
     // set next reindex to one week in the future
-    await this.delegationIndexMetaModel.upsert({
-      nationalId: user.nationalId,
-      nextReindex: new Date(new Date().getTime() + ONE_WEEK),
-      lastFullReindex: new Date(),
-    })
+    await this.delegationIndexMetaModel.update(
+      {
+        nextReindex: new Date(new Date().getTime() + ONE_WEEK),
+        lastFullReindex: new Date(),
+      },
+      {
+        where: {
+          nationalId: user.nationalId,
+        },
+      },
+    )
   }
 }
