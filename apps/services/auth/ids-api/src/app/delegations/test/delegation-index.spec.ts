@@ -2,18 +2,14 @@ import { TestApp, truncate } from '@island.is/testing/nest'
 
 import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 
-import {
-  createCurrentUser,
-  createNationalId,
-  createNationalRegistryUser,
-} from '@island.is/testing/fixtures'
+import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import {
   DelegationsIndexService,
   DelegationIndex,
   DelegationIndexMeta,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { testcases } from './delegation-index-test-cases'
+import { indexingTestcases } from './delegation-index-test-cases'
 import { setupWithAuth } from '../../../../test/setup'
 import { Sequelize } from 'sequelize-typescript'
 import { Type } from '@nestjs/common'
@@ -128,15 +124,15 @@ describe('DelegationsIndexService', () => {
         expect(meta).not.toBeNull()
         expect(meta?.lastFullReindex).toStrictEqual(testDate)
         expect(meta?.nextReindex).toStrictEqual(
-          new Date(testDate.getTime() + 1000 * 60 * 60 * 24 * 7),
+          new Date(2024, 2, 8, 0, 0, 0, 0), // week in the future from test date
         )
       })
     })
 
-    describe.each(Object.keys(testcases))(
+    describe.each(Object.keys(indexingTestcases))(
       'Index delegations of type: %s',
       (type) => {
-        const testcase = testcases[type]
+        const testcase = indexingTestcases[type]
         testcase.user = user
 
         beforeAll(async () => {
@@ -149,16 +145,25 @@ describe('DelegationsIndexService', () => {
             testcase.apiScopes.map((scope) => factory.createApiScope(scope)),
           )
 
+          // create custom delegations
           await Promise.all(
             testcase.customDelegations.map((delegation) =>
               factory.createCustomDelegation(delegation),
             ),
           )
 
+          await Promise.all(
+            testcase.personalRepresentativeDelegation.map((d) =>
+              factory.createPersonalRepresentativeDelegation(d),
+            ),
+          )
+
+          // mock national registry for ward delegations
           jest
             .spyOn(nationalRegistryApi, 'getCustodyChildren')
             .mockImplementation(async () => testcase.fromChildren)
 
+          // mock rsk for procuration delegations
           jest
             .spyOn(rskApi, 'getIndividualRelationships')
             .mockImplementation(async () => testcase.procuration)

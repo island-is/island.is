@@ -7,7 +7,7 @@ const person2 = createNationalId('person')
 const company1 = createNationalId('company')
 const company2 = createNationalId('company')
 
-export const testcases: Record<string, TestCase> = {
+export const indexingTestcases: Record<string, TestCase> = {
   // Should index custom delegations
   custom: new TestCase(
     createClient({
@@ -39,6 +39,16 @@ export const testcases: Record<string, TestCase> = {
     {
       fromCompanies: [company1, company2],
       expectedFrom: [company1, company2],
+    },
+  ), // Should index personal representatives delegations
+  personalRepresentative: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsPersonalRepresentatives: true,
+    }),
+    {
+      fromChildren: [person1, person2],
+      expectedFrom: [person1, person2],
     },
   ),
 }

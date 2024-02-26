@@ -21,6 +21,10 @@ import {
   Domain,
   IdentityResource,
   Language,
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
   Translation,
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
@@ -41,6 +45,7 @@ import {
   CreateClientUri,
   CreateCustomDelegation,
   CreateIdentityResource,
+  CreatePersonalRepresentativeDelegation,
 } from './types'
 
 export class FixtureFactory {
@@ -323,6 +328,51 @@ export class FixtureFactory {
     })
 
     return delegation
+  }
+
+  async createPersonalRepresentativeDelegation({
+    toNationalId,
+    fromNationalId,
+    validTo,
+    type,
+    rightType,
+  }: CreatePersonalRepresentativeDelegation) {
+    const [personalRepresentativeType] = await this.get(
+      PersonalRepresentativeType,
+    ).findOrCreate({
+      where: {
+        code: type?.code ?? faker.random.word(),
+        validTo: type?.validTo ?? addYears(new Date(), 1),
+        name: type?.name ?? faker.random.word(),
+        description: type?.description ?? faker.random.words(3),
+      },
+    })
+
+    const personalRepresentative = await this.get(
+      PersonalRepresentative,
+    ).create({
+      id: faker.datatype.uuid(),
+      fromNationalId: fromNationalId ?? createNationalId(),
+      toNationalId: toNationalId ?? createNationalId('person'),
+      validTo: validTo ?? addYears(new Date(), 1),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
+    })
+
+    const [personalRepresentativeRightType] = await this.get(
+      PersonalRepresentativeRightType,
+    ).findOrCreate({
+      where: {
+        code: rightType?.code ?? faker.random.word(),
+        validFrom: rightType?.validFrom ?? startOfDay(new Date()),
+        validTo: rightType?.validTo ?? addYears(new Date(), 1),
+      },
+    })
+
+    await this.get(PersonalRepresentativeRight).create({
+      id: faker.datatype.uuid(),
+      personalRepresentativeId: personalRepresentative.id,
+      rightTypeCode: personalRepresentativeRightType.code,
+    })
   }
 
   async createTranslations(
