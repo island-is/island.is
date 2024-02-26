@@ -8,6 +8,7 @@ import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices } from './render-local-mocks'
 
 yargs(process.argv.slice(2))
+  .scriptName('yarn infra')
   .command(
     'render-env',
     'Render a chart for environment',
