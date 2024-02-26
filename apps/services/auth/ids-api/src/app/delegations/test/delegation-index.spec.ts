@@ -179,6 +179,7 @@ describe('DelegationsIndexService', () => {
           expect(delegations.length).toBe(testcase.expectedFrom.length)
           delegations.forEach((delegation) => {
             expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+            expect(delegation.toNationalId).toBe(user.nationalId)
           })
         })
       },
