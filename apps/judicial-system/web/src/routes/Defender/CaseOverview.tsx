@@ -221,24 +221,36 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                         title: formatMessage(core.appealCaseNumberHeading),
                         value: workingCase.appealCaseNumber,
                       },
-                      {
-                        title: formatMessage(core.appealAssistantHeading),
-                        value: workingCase.appealAssistant?.name,
-                      },
-                      {
-                        title: formatMessage(core.appealJudgesHeading),
-                        value: (
-                          <>
-                            {sortByIcelandicAlphabet([
-                              workingCase.appealJudge1?.name || '',
-                              workingCase.appealJudge2?.name || '',
-                              workingCase.appealJudge3?.name || '',
-                            ]).map((judge, index) => (
-                              <Text key={index}>{judge}</Text>
-                            ))}
-                          </>
-                        ),
-                      },
+                      ...(workingCase.appealAssistant
+                        ? [
+                            {
+                              title: formatMessage(core.appealAssistantHeading),
+                              value: workingCase.appealAssistant.name,
+                            },
+                          ]
+                        : []),
+                      ...(workingCase.appealJudge1 &&
+                      workingCase.appealJudge2 &&
+                      workingCase.appealJudge3
+                        ? [
+                            {
+                              title: formatMessage(core.appealJudgesHeading),
+                              value: (
+                                <>
+                                  {sortByIcelandicAlphabet([
+                                    workingCase.appealJudge1.name || '',
+                                    workingCase.appealJudge2.name || '',
+                                    workingCase.appealJudge3.name || '',
+                                  ]).map((judge, index) => (
+                                    <Text key={`${judge}_${index}`}>
+                                      {judge}
+                                    </Text>
+                                  ))}
+                                </>
+                              ),
+                            },
+                          ]
+                        : []),
                     ]
                   : undefined
               }

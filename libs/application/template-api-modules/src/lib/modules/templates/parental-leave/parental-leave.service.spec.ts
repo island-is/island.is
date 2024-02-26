@@ -36,11 +36,8 @@ import {
   BaseTemplateApiApplicationService,
   TemplateApiModuleActionProps,
 } from '../../../types'
-import {
-  APPLICATION_ATTACHMENT_BUCKET,
-  ParentalLeaveService,
-} from './parental-leave.service'
-import { apiConstants } from './constants'
+import { ParentalLeaveService } from './parental-leave.service'
+import { APPLICATION_ATTACHMENT_BUCKET, apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'

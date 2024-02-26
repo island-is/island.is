@@ -1247,6 +1247,10 @@ export const m = defineMessages({
     id: 'service.portal:mms-tooltip',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um grunnskóla.',
   },
+  mmsTooltipSecondary: {
+    id: 'service.portal:mms-tooltip-secondary',
+    defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
+  },
   occupationalLicenseTooltip: {
     id: 'service.portal:occupational-license-tooltip',
     defaultMessage:

@@ -11,7 +11,6 @@ export const getSelectedVehicle = (
       answers,
       'pickVehicle',
     ) as VehiclesCurrentVehicle
-
     return vehicle
   }
   if (
