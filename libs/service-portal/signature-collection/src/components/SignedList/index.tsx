@@ -84,7 +84,7 @@ const SignedList = () => {
                       : undefined
                   }
                   tag={
-                    list.isValid && new Date(list.endTime) < new Date()
+                    list.isValid && !list.active
                       ? {
                           label: formatMessage(m.collectionClosed),
                           variant: 'red',
