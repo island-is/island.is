@@ -13,11 +13,7 @@
     "cli": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          {
-            "command": "node -r esbuild-register ./infra/src/cli/cli.ts"
-          }
-        ]
+        "command": "node -r esbuild-register ./infra/src/cli/cli.ts"
       }
     },
     "test": {
