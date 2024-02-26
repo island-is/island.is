@@ -13,7 +13,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.js"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/{projectName}"

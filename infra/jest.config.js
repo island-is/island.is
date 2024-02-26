@@ -1,7 +1,7 @@
-import * as jestPreset from '../jest.preset'
+const jestPreset = require('../jest.preset')
 
 
-export default {
+module.exports = {
   ...jestPreset,
   coverageDirectory: '<rootDir>/coverage/<project>',
   displayName: 'Config DSL',
