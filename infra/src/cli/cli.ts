@@ -63,4 +63,5 @@ yargs(process.argv.slice(2))
     },
   )
   .demandCommand(1)
+  .strict()
   .parse()
