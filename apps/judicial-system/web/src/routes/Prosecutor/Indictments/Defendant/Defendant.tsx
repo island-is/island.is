@@ -32,13 +32,11 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
-  useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
-import { getIncidentDescription } from '../Indictment/IndictmentCount'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -112,7 +110,6 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
-  const { updateIndictmentCount } = useIndictmentCounts()
   const router = useRouter()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
