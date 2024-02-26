@@ -61,6 +61,11 @@ import * as styles from './PensionCalculator.css'
 
 const CURRENCY_INPUT_MAX_LENGTH = 15
 
+const lowercaseFirstLetter = (value: string | undefined) => {
+  if (!value) return value
+  return value[0].toLowerCase() + value.slice(1)
+}
+
 interface NumericInputFieldWrapperProps {
   heading: string
   description: string
@@ -441,6 +446,31 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ?.label ?? dateOfCalculationsOptions[0].label
   }`
 
+  const startMonthOptions = useMemo(() => {
+    if (
+      startYear === startYearOptions?.[0]?.value &&
+      typeof birthMonth === 'number' &&
+      typeof startMonth === 'number'
+    ) {
+      if (startMonth < birthMonth) {
+        methods.setValue('startMonth', birthMonth)
+      }
+      return monthOptions.slice(birthMonth)
+    }
+    return monthOptions
+  }, [
+    birthMonth,
+    methods,
+    monthOptions,
+    startMonth,
+    startYear,
+    startYearOptions,
+  ])
+
+  const selectedBirthMonthLabel = monthOptions.find(
+    (option) => option.value === birthMonth,
+  )?.label
+
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -598,10 +628,13 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 {formatMessage(
                                   translationStrings.startMonthAndYearDescription,
                                   {
-                                    month: monthOptions.find(
-                                      (option) => option.value === birthMonth,
-                                    )?.label,
-                                    year: startYearOptions?.[0]?.label,
+                                    month:
+                                      activeLocale !== 'en'
+                                        ? lowercaseFirstLetter(
+                                            selectedBirthMonthLabel,
+                                          )
+                                        : selectedBirthMonthLabel,
+                                    year: startYearOptions?.[2]?.label,
                                   },
                                 )}
                               </Text>
@@ -617,7 +650,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     name={
                                       'startMonth' as keyof CalculationInput
                                     }
-                                    options={monthOptions}
+                                    options={startMonthOptions}
                                     label={formatMessage(
                                       translationStrings.startMonthLabel,
                                     )}
