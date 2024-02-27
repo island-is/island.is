@@ -49,7 +49,6 @@ export function validateAnswers({
   isFullSchemaValidation?: boolean
   formatMessage: FormatMessage
 }): ValidationRecord | undefined {
-  console.log(answers.signature)
   try {
     if (dataSchema instanceof ZodEffects) {
       // cases where zod schema has a refinement on the schema object, needs to be defined partial
