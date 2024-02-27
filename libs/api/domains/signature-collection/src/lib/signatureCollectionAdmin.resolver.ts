@@ -25,10 +25,7 @@ import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionAdminService } from './signatureCollectionAdmin.service'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import {
-  SignatureCollectionListStatus,
-  SignatureCollectionStatus,
-} from './models/status.model'
+import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionManagerService } from './signatureCollectionManager.service'
 import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
@@ -121,18 +118,6 @@ export class SignatureCollectionAdminResolver {
     @Args('input') { nationalId }: SignatureCollectionNationalIdInput,
   ): Promise<SignatureCollectionCandidateLookUp> {
     return this.signatureCollectionService.signee(nationalId, user)
-  }
-
-  @Query(() => SignatureCollectionStatus)
-  @Scopes(
-    AdminPortalScope.signatureCollectionManage,
-    AdminPortalScope.signatureCollectionProcess,
-  )
-  @Audit()
-  async signatureCollectionAdminStatus(
-    @CurrentUser() user: User,
-  ): Promise<SignatureCollectionStatus> {
-    return this.signatureCollectionService.collectionStatus(user)
   }
 
   @Query(() => SignatureCollectionListStatus)
