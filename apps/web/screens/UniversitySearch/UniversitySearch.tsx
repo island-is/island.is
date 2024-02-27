@@ -153,7 +153,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (index !== -1) {
       const movedField = filterOptions.splice(index, 1)[0]
-      filterOptions.unshift(movedField)
+      filterOptions.splice(2, 0, movedField)
     }
   }, [filterOptions])
 
