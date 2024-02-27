@@ -31,7 +31,7 @@ import format from 'date-fns/format'
 import formatISO from 'date-fns/formatISO'
 import {
   applicationsToChildInformation,
-  getChildrenAndExistingApplications,
+  getChildren,
   getChildrenFromMockData,
 } from './children-utils'
 
@@ -311,7 +311,7 @@ export class ChildrenService {
         return true
       })
 
-    return getChildrenAndExistingApplications(
+    return getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParentHasApplied,
       pregnancyStatus,

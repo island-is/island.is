@@ -182,7 +182,7 @@ export const getChildrenFromMockData = (
   return child
 }
 
-export const getChildrenAndExistingApplications = (
+export const getChildren = (
   applicationsWhereApplicant: Application[],
   applicationsWhereOtherParent: Application[],
   pregnancyStatus?: PregnancyStatus | null,
