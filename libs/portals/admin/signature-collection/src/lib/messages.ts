@@ -9,7 +9,13 @@ export const m = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection:signatureLists',
-    defaultMessage: 'Yfirlit meðmælasafnanna',
+    defaultMessage: 'Meðmælasafnanir',
+    description: '',
+  },
+  signatureListsDescription: {
+    id: 'admin-portal.signature-collection:signatureListsDescription',
+    defaultMessage:
+      'Yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið.',
     description: '',
   },
   signatureListsIntro: {
@@ -45,6 +51,12 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:signatureCollectionActive',
     defaultMessage:
       'Söfnunin er opin. Til staðar eru listar sem hafa verið framlengdir. Einnig er hægt að framlengja fleiri lista.',
+    description: '',
+  },
+  signatureCollectionReviewDone: {
+    id: 'admin-portal.signature-collection:signatureCollectionReviewDone',
+    defaultMessage:
+      'Úrvinnslu er lokið á meðmælasöfnunum fyrir forsetaframboð 2024',
     description: '',
   },
   signatureCollectionInReview: {
@@ -135,7 +147,12 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engin meðmælasöfnun í gangi',
+    defaultMessage: 'Engin söfnun í gangi',
+    description: '',
+  },
+  noListsDescription: {
+    id: 'admin-portal.signature-collection:noListsDescription',
+    defaultMessage: 'Engin meðmælasöfnun hefur verið stöfnuð að því stöddu.',
     description: '',
   },
   noListsFoundBySearch: {
@@ -280,7 +297,7 @@ export const m = defineMessages({
     description: '',
   },
   listReviewedModalDescriptionToggleBack: {
-    id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
+    id: 'admin-portal.signature-collection:listReviewedModalDescriptionToggleBack#markdown',
     defaultMessage:
       'Þegar þörf eru á að fara yfir meðmælasöfnun aftur skal ýta á hnappinn.',
     description: '',

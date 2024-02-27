@@ -1,9 +1,9 @@
 import { IsDate } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
-import { SignatureCollectionIdInput } from './id.input'
+import { SignatureCollectionListIdInput } from './listId.input'
 
 @InputType()
-export class SignatureCollectionExtendDeadlineInput extends SignatureCollectionIdInput {
+export class SignatureCollectionExtendDeadlineInput extends SignatureCollectionListIdInput {
   @Field(() => Date)
   @IsDate()
   newEndDate!: Date

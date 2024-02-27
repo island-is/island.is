@@ -5,5 +5,5 @@ import { Field, InputType } from '@nestjs/graphql'
 export class SignatureCollectionIdInput {
   @Field()
   @IsString()
-  id!: string
+  collectionId!: string
 }
