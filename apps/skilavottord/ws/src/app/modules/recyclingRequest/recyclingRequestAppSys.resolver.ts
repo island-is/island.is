@@ -24,7 +24,6 @@ export class RecyclingRequestAppSysResolver {
       permno: input.permno,
       requestType: input.requestType,
     })
-
     user.name = input.fullName
 
     return this.recyclingRequestService.createRecyclingRequest(
