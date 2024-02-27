@@ -26,5 +26,5 @@ export class HnippTemplate {
   args!: string[]
 
   @ApiProperty({ example: 'Þjóðskrá' })
-  sender!: string
+  senderId!: string
 }

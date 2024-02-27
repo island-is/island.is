@@ -81,7 +81,7 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        sender: formattedTemplate.sender,
+        senderId: formattedTemplate.senderId,
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
@@ -261,7 +261,7 @@ export class NotificationsService {
               const newValue = value.replace(regexTarget, arg.value)
               // if templates are used by multiple organizations, sender should be set to organization.slug
               if (arg.key == 'organization') {
-                template.sender = slugify(arg.value)
+                template.senderId = arg.value
               }
 
               if (newValue !== value) {
@@ -345,6 +345,7 @@ export class NotificationsService {
     updateNotificationDto: UpdateNotificationDto,
     locale: string,
   ): Promise<RenderedNotificationDto> {
+    console.log("************ddd *****")
     const [numberOfAffectedRows, [updatedNotification]] =
       await this.notificationModel.update(updateNotificationDto, {
         where: {
@@ -395,7 +396,7 @@ export class NotificationsService {
   // }
 
   async markAllAsSeen(user: User): Promise<void> {
-    return 
+    console.log("************************************************************")
     try {
       console.log("User nationalId:", user.nationalId); // Debugging log
       await this.notificationModel.update(

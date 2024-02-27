@@ -91,7 +91,7 @@ export class RenderedNotificationDto {
 
   @ApiProperty({ example: 'Þjóðskrá' })
   @IsString()
-  sender!: string
+  senderId!: string
 
   @ApiProperty({ example: 'Catchy notification title' })
   @IsString()

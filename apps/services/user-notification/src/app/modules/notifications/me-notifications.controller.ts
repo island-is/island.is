@@ -90,6 +90,18 @@ export class MeNotificationsController {
     return this.notificationService.findOne(user, id, locale)
   }
 
+
+  @Patch('/mark-all-as-seen')
+  @Scopes(NotificationsScope.write)
+  @ApiSecurity('oauth2', [NotificationsScope.write])
+  @Documentation({
+    summary: 'Updates all of  current user notifications as seen',
+    response: { status: HttpStatus.NO_CONTENT },
+  })  async markAllAsSeen(@CurrentUser() user: User): Promise<void> {
+    await this.notificationService.markAllAsSeen(user);
+  }
+
+  
   @Documentation({
     summary: 'Updates current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
@@ -111,15 +123,7 @@ export class MeNotificationsController {
     )
   }
 
-  @Patch('/mark-all-as-seen')
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
-  @Documentation({
-    summary: 'Updates all of  current user notifications as seen',
-    response: { status: HttpStatus.NO_CONTENT },
-  })  async markAllAsSeen(@CurrentUser() user: User): Promise<void> {
-    await this.notificationService.markAllAsSeen(user);
-  }
+
 
   // @Patch('/mark-all-as-read')
   // @Scopes(NotificationsScope.write)
