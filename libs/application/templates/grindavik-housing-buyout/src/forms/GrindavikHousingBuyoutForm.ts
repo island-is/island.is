@@ -9,11 +9,7 @@ import {
   buildSubmitField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import {
-  Form,
-  FormModes,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
@@ -25,7 +21,12 @@ import {
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import { GrindavikHousingBuyout } from '../lib/dataSchema'
-import { calculateTotalLoanFromAnswers } from '../utils'
+import {
+  calculateBuyoutPrice,
+  calculateTotalLoanFromAnswers,
+  getFireInsuranceValue,
+  getPropertyOwners,
+} from '../utils'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -46,42 +47,35 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           title: m.application.propertyInformation.sectionTitle,
           description: m.application.propertyInformation.sectionDescription,
           children: [
-            // TODO: Add data provider for property information
             buildStaticTableField({
-              title: 'Vesturhóp 34, 240 Grindavík',
+              title: 'Vesturhóp 34, 240 Grindavík', // TODO
               header: [
-                'Þinglýstir eigendur',
-                'Kennitala',
-                'Heimild',
-                'Eignarhlutfall',
-                'Brunabótamat',
+                m.application.propertyInformation.propertyOwners,
+                m.application.propertyInformation.ownerNationalId,
+                m.application.propertyInformation.propertyPermit,
+                m.application.propertyInformation.ownershipRatio,
+                m.application.propertyInformation.fireInsuranceValue,
               ],
-              rows: (application) => {
-                const data = application.externalData.nationalRegistry
-                  .data as NationalRegistryIndividual
+              rows: ({ externalData }) => {
+                const owners = getPropertyOwners(externalData)
+                const fireInsuranceValue = getFireInsuranceValue(externalData)
 
-                return [
-                  [
-                    data.fullName,
-                    data.nationalId,
-                    'Afsal',
-                    '100%',
-                    formatCurrency('84500000'),
-                  ],
-                ]
+                return owners.map((owner) => [
+                  owner.nafn ?? '',
+                  owner.kennitala ?? '',
+                  owner.heimildBirting ?? '',
+                  `${(owner.eignarhlutfall ?? 0) * 100}%`,
+                  formatCurrency(fireInsuranceValue.toString()),
+                ])
               },
-              summary: (_application) => {
+              summary: (application) => {
+                const { buyoutPrice } = calculateBuyoutPrice(application)
+
                 return {
                   label: m.application.overview.buyoutPriceTitle,
-                  value: formatCurrency('80275000'),
+                  value: formatCurrency(buyoutPrice.toString()),
                 }
               },
-            }),
-            buildDescriptionField({
-              id: '',
-              title: '',
-              marginTop: 4,
-              description: m.application.propertyInformation.explaination,
             }),
           ],
         }),
@@ -114,6 +108,44 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               status: (v) => formatCurrency(v),
             },
           },
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'results',
+      title: m.application.results.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'resultsMultiField',
+          title: m.application.results.sectionTitle,
+          children: [
+            buildDescriptionField({
+              id: '',
+              title: '',
+              description: (application) => {
+                const {
+                  buyoutPrice,
+                  buyoutPriceWithLoans,
+                  totalLoans,
+                  closingPayment,
+                  result,
+                } = calculateBuyoutPrice(application)
+
+                return {
+                  ...m.application.propertyInformation.explaination,
+                  values: {
+                    buyoutPrice: formatCurrency(buyoutPrice.toString()),
+                    buyoutPriceWithLoans: formatCurrency(
+                      buyoutPriceWithLoans.toString(),
+                    ),
+                    totalLoans: formatCurrency(totalLoans.toString()),
+                    closingPayment: formatCurrency(closingPayment.toString()),
+                    result: formatCurrency(result.toString()),
+                  },
+                }
+              },
+            }),
+          ],
         }),
       ],
     }),
@@ -173,7 +205,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildKeyValueField({
               label: '',
-              value: 'Vesturhóp 34, 240 Grindavík',
+              value: 'Vesturhóp 34, 240 Grindavík', // TODO
             }),
             buildDividerField({}),
 
@@ -185,7 +217,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildKeyValueField({
               label: '',
-              value: formatCurrency('84500000'),
+              value: ({ externalData }) => {
+                const fireInsuranceValue = getFireInsuranceValue(externalData)
+                return formatCurrency(fireInsuranceValue.toString())
+              },
             }),
             buildDividerField({}),
 
@@ -197,7 +232,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildKeyValueField({
               label: '',
-              value: formatCurrency('80275000'),
+              value: (application) => {
+                const { buyoutPrice } = calculateBuyoutPrice(application)
+                return formatCurrency(buyoutPrice.toString())
+              },
             }),
             buildDividerField({}),
 
@@ -211,7 +249,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               label: '',
               value: ({ answers }) => {
                 const total = calculateTotalLoanFromAnswers(answers)
-                return formatCurrency(total?.toString() ?? '0')
+                return formatCurrency(total.toString())
               },
             }),
             buildDividerField({}),

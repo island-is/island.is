@@ -3,5 +3,5 @@ import { GrindavikHousingBuyout } from '../lib/dataSchema'
 
 export const calculateTotalLoanFromAnswers = (answers: FormValue) => {
   const loans = answers.loans as GrindavikHousingBuyout['loans']
-  return loans?.reduce((acc, loan) => acc + (Number(loan.status) || 0), 0)
+  return loans?.reduce((acc, loan) => acc + (Number(loan.status) || 0), 0) ?? 0
 }

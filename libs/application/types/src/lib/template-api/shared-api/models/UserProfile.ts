@@ -1,5 +1,5 @@
 export interface UserProfile {
-  mobilePhoneNumber: string
-  email: string
-  bankInfo: string
+  mobilePhoneNumber?: string
+  email?: string
+  bankInfo?: string
 }

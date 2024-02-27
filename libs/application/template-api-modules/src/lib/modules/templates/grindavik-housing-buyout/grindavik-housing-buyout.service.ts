@@ -21,7 +21,9 @@ import {
   GrindavikHousingBuyoutAnswers,
 } from '@island.is/application/templates/grindavik-housing-buyout'
 
-import { FasteignirApi } from '@island.is/clients/assets'
+import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
+import { isRunningInProduction } from '../parental-leave/constants'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 type CheckResidence = {
   realEstateId: string
@@ -78,14 +80,17 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const data = await this.nationalRegistryApi.getResidenceHistory(
       auth.nationalId,
     )
-
-    console.log('residence history : ', data)
+    // gervimaður færeyjar pass through2399
+    if (auth.nationalId === '0101302399') {
+      return {
+        realEstateId: 'F12345',
+      }
+    }
 
     let dateInQuestion = '2023-10-11'
     let postalCode = '240'
 
     const danmork = {
-      //Gervimaður danmörk pass through
       dateInQuestion: '2009-07-30',
       postalCode: '301',
     }
@@ -122,7 +127,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     }*/
 
     return {
-      realEstateId: grindavikDomicile.realEstateNumber ?? '12345',
+      realEstateId: grindavikDomicile?.realEstateNumber ?? '12345',
     }
   }
 
@@ -130,20 +135,56 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const result = ''
-
-    console.log(application.externalData)
     const { realEstateId } =
       (application.externalData.checkResidence.data as CheckResidence) ??
       undefined
 
+    // mock from checkResidence function
+
     console.log('Real estate id', realEstateId)
 
-    const property = await this.propertiesApi.fasteignirGetFasteign({
-      fasteignanumer: realEstateId,
-    })
+    let property: Fasteign | undefined
 
-    const fasteign = {
+    if (isRunningOnEnvironment('local')) {
+      property = this.mockGetFasteign(realEstateId)
+    } else {
+      property = await this.propertiesApi.fasteignirGetFasteign({
+        fasteignanumer: realEstateId,
+      })
+    }
+
+    if (!property) {
+      throw new TemplateApiError('No property found', 400)
+    }
+
+    const {
+      fasteignamat,
+      fasteignanumer,
+      landeign,
+      notkunareiningar,
+      sjalfgefidStadfang,
+      thinglystirEigendur,
+    } = property
+
+    const isOwner = thinglystirEigendur?.thinglystirEigendur?.some(
+      (eigandi) => {
+        return eigandi.kennitala === auth.nationalId
+      },
+    )
+
+    if (!isOwner) {
+      throw new TemplateApiError('Not an owner', 400)
+    }
+
+    const eining = notkunareiningar?.notkunareiningar?.find(
+      (x) => x.fasteignanumer === realEstateId,
+    )
+
+    return eining
+  }
+
+  mockGetFasteign(fasteignaNumer: string): Fasteign | undefined {
+    return {
       fasteignanumer: 'F12345',
       sjalfgefidStadfang: {
         stadfanganumer: 1234,
@@ -174,75 +215,53 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         thinglystirEigendur: [
           {
             nafn: 'Gervimaður Danmörk',
-            kennitala: '2222222222',
+            kennitala: '0101302479',
             eignarhlutfall: 0.5,
             kaupdagur: new Date(),
-            heimildBirting: 'A+',
+            heimildBirting: 'Afsal',
           },
           {
-            nafn: 'Jóna Jónasdóttir',
-            kennitala: '3333333333',
+            nafn: 'Gervimaður Færeyjar',
+            kennitala: '0101302399',
             eignarhlutfall: 0.5,
             kaupdagur: new Date(),
-            heimildBirting: 'A+',
+            heimildBirting: 'Afsal',
           },
         ],
       },
       notkunareiningar: {
-        brunabotamat: 1000000,
+        notkunareiningar: [
+          {
+            birtStaerdMaelieining: 'm²',
+            notkunareininganumer: '010101',
+            fasteignanumer: 'F12345',
+            stadfang: {
+              birtingStutt: 'RVK',
+              birting: 'Reykjavík',
+              landeignarnumer: 1234,
+              sveitarfelagBirting: 'Reykjavík',
+              postnumer: 113,
+              stadfanganumer: 1234,
+            },
+            merking: 'SomeValue',
+            notkunBirting: 'SomeUsage',
+            skyring: 'SomeDescription',
+            byggingararBirting: 'SomeYear',
+            birtStaerd: 100,
+            fasteignamat: {
+              gildandiFasteignamat: 50000000,
+              fyrirhugadFasteignamat: 55000000,
+              gildandiMannvirkjamat: 30000000,
+              fyrirhugadMannvirkjamat: 35000000,
+              gildandiLodarhlutamat: 20000000,
+              fyrirhugadLodarhlutamat: 25000000,
+              gildandiAr: 2024,
+              fyrirhugadAr: 2025,
+            },
+            brunabotamat: 100000000,
+          },
+        ],
       },
     }
-    /*
-
-
-
-
-    birtStaerdMaelieining?: string | null;
-
-    notkunareininganumer?: string | null;
-
-    fasteignanumer?: string | null;
-
-    stadfang?: Stadfang | null;
-
-    merking?: string | null;
-
-    notkunBirting?: string | null;
-
-    skyring?: string | null;
-    byggingararBirting?: string | null;
-
-    birtStaerd?: number;
-
-    fasteignamat?: Fasteignamat | null;
- 
-    brunabotamat?: number;
-
-    */
-
-    const {
-      fasteignamat,
-      fasteignanumer,
-      landeign,
-      notkunareiningar,
-      sjalfgefidStadfang,
-      thinglystirEigendur,
-    } = property
-
-    const isOwner = thinglystirEigendur?.thinglystirEigendur?.some(
-      (eigandi) => {
-        eigandi.kennitala
-      },
-    )
-
-    if (!isOwner) {
-      throw new TemplateApiError('Not an owner', 400)
-    }
-
-    const eining = notkunareiningar?.notkunareiningar?.find(
-      (x) => x.fasteignanumer === realEstateId,
-    )
-
-    return eining
   }
 }

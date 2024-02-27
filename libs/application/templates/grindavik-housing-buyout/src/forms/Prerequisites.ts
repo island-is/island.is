@@ -60,6 +60,11 @@ export const Prerequisites: Form = buildForm({
               title: prerequisites.dataProviders.userProfileTitle,
               subTitle: prerequisites.dataProviders.userProfileDescription,
             }),
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: prerequisites.dataProviders.nationalRegistryTitle,
+              subTitle: prerequisites.dataProviders.nationalRegistryDescription,
+            }),
           ],
         }),
       ],
