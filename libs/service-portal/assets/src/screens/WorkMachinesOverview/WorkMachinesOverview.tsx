@@ -230,6 +230,7 @@ const WorkMachinesOverview = () => {
         </GridColumn>
       </GridRow>
       {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && loading && <CardLoader />}
       {!error &&
         !loading &&
         !data?.workMachinesPaginatedCollection?.data?.length && (
