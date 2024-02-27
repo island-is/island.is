@@ -87,16 +87,8 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       }
     }
 
-    let dateInQuestion = '2023-10-11'
-    let postalCode = '240'
-
-    const danmork = {
-      dateInQuestion: '2009-07-30',
-      postalCode: '301',
-    }
-
-    dateInQuestion = danmork.dateInQuestion
-    postalCode = danmork.postalCode
+    const dateInQuestion = '2023-10-11'
+    const postalCode = '240'
 
     const grindavikDomicile = getDomicileAtPostalCodeOnDate(
       data,
@@ -139,10 +131,6 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       (application.externalData.checkResidence.data as CheckResidence) ??
       undefined
 
-    // mock from checkResidence function
-
-    console.log('Real estate id', realEstateId)
-
     let property: Fasteign | undefined
 
     if (isRunningOnEnvironment('local')) {
@@ -180,7 +168,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       (x) => x.fasteignanumer === realEstateId,
     )
 
-    return eining
+    return property
   }
 
   mockGetFasteign(fasteignaNumer: string): Fasteign | undefined {
