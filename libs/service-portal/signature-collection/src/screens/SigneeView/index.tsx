@@ -9,11 +9,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
-import {
-  useGetCurrentCollection,
-  useGetListsForUser,
-  useGetSignedList,
-} from '../../hooks'
+import { useGetListsForUser, useGetSignedList } from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import SignedList from '../../components/SignedList'
@@ -29,7 +25,6 @@ const SigneeView = ({
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
-  // const { currentCollection } = useGetCurrentCollection()
   const { signedLists, loadingSignedLists } = useGetSignedList()
   const { listsForUser, loadingUserLists } = useGetListsForUser(
     currentCollection?.id,

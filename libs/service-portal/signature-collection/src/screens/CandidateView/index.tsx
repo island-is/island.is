@@ -28,14 +28,10 @@ const CandidateView = ({
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const { userInfo: user } = useAuth()
-
   const { formatMessage } = useLocale()
-
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
-    currentCollection?.id,
+    currentCollection?.id || '',
   )
-
-  const collectionId = currentCollection?.id
 
   return (
     <Box>
@@ -152,7 +148,7 @@ const CandidateView = ({
           {listsForOwner?.length > 0 &&
             !user?.profile.actor &&
             currentCollection.isActive && (
-              <CancelCollection collectionId={collectionId} />
+              <CancelCollection collectionId={currentCollection?.id} />
             )}
         </Box>
       ) : (
