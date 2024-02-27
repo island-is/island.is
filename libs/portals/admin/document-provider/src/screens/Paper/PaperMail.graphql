@@ -1,9 +1,12 @@
-query GetPaperMailList {
-  getPaperMailList {
-    nationalId
-    origin
-    wantsPaper
-    dateAdded
-    dateUpdated
+query GetPaperMailList($input: DocumentProviderPaperMailInput!) {
+  getPaperMailList(input: $input) {
+    paperMail {
+      nationalId
+      origin
+      wantsPaper
+      dateAdded
+      dateUpdated
+    }
+    totalCount
   }
 }

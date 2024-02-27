@@ -11,7 +11,7 @@ import {
   UpdateHelpdeskInput,
   UpdateOrganisationInput,
 } from '../dto'
-import { DocumentProviderPaperMail } from '../models/PaperMail.model'
+import { DocumentProviderPaperMailResponse } from '../models/PaperMail.model'
 import {
   DocumentProviderTypes,
   DocumentProviderCategories,
@@ -20,6 +20,7 @@ import {
   CategoriesAndTypesPostInput,
   CategoriesAndTypesPutInput,
 } from '../dto/mutateCategoryOrType.input'
+import { DocumentProviderPaperMailInput } from '../dto/paperMail.input'
 
 const LOG_CATEGORY = 'document-provider-api'
 
@@ -163,18 +164,26 @@ export class AdminDocumentProviderService {
   }
 
   // Paper
-  async getPaperMailList(): Promise<DocumentProviderPaperMail[]> {
+  async getPaperMailList(
+    input?: DocumentProviderPaperMailInput,
+  ): Promise<DocumentProviderPaperMailResponse> {
     try {
       logger.debug('Getting paper mail list')
-      const res = await this.documentProviderClientProd.getPaperMailList()
+      const res = await this.documentProviderClientProd.getPaperMailList(input)
+      const paperMailArray = res.paperMail ?? []
 
-      return res.map((item) => ({
-        nationalId: item.kennitala,
-        origin: item.origin,
-        wantsPaper: item.wantsPaper,
-        dateAdded: item.dateAdded ? new Date(item.dateAdded) : undefined,
-        dateUpdated: item.dateUpdated ? new Date(item.dateUpdated) : undefined,
-      }))
+      return {
+        ...res,
+        paperMail: paperMailArray.map((item) => ({
+          nationalId: item.kennitala,
+          origin: item.origin,
+          wantsPaper: item.wantsPaper,
+          dateAdded: item.dateAdded ? new Date(item.dateAdded) : undefined,
+          dateUpdated: item.dateUpdated
+            ? new Date(item.dateUpdated)
+            : undefined,
+        })),
+      }
     } catch (e) {
       logger.error('Get paper mail list failed', {
         category: LOG_CATEGORY,

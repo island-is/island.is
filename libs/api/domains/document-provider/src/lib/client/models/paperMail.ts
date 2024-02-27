@@ -5,3 +5,13 @@ export interface PaperMail {
   dateUpdated?: string
   origin: string
 }
+
+export interface PaperMailResponse {
+  paperMail: PaperMail[]
+  totalCount: number
+}
+
+export interface PaperMailInput {
+  pageSize?: number
+  page?: number
+}

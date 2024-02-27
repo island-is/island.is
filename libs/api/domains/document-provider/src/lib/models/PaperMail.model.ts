@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class DocumentProviderPaperMail {
@@ -16,4 +16,13 @@ export class DocumentProviderPaperMail {
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateUpdated?: Date
+}
+
+@ObjectType()
+export class DocumentProviderPaperMailResponse {
+  @Field(() => [DocumentProviderPaperMail])
+  paperMail!: Array<DocumentProviderPaperMail>
+
+  @Field(() => Int)
+  totalCount!: number
 }

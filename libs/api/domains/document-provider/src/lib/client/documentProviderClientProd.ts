@@ -13,7 +13,7 @@ import {
   TestResult,
   Statistics,
 } from './models'
-import { PaperMail } from './models/paperMail'
+import { PaperMailInput, PaperMailResponse } from './models/paperMail'
 import {
   DocumentProvidedCategory,
   DocumentProvidedType,
@@ -143,8 +143,10 @@ export class DocumentProviderClientProd {
   }
 
   // Paper
-  async getPaperMailList(): Promise<PaperMail[]> {
-    const requestRoute = '/api/DocumentProvider/paper'
+  async getPaperMailList(input?: PaperMailInput): Promise<PaperMailResponse> {
+    const requestRoute = `/api/DocumentProvider/paper?pageSize=${
+      input?.pageSize ?? 10
+    }&page=${input?.page ?? 1}`
     return await this.getRequest(requestRoute)
   }
 

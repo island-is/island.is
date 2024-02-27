@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatNationalId } from 'kennitala'
@@ -10,6 +10,7 @@ import {
   Text,
   Table as T,
   SkeletonLoader,
+  Pagination,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -17,16 +18,27 @@ import { documentProviderNavigation } from '../../lib/navigation'
 import { useGetPaperMailListQuery } from './PaperMail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
+const DEFAULT_PAGE_SIZE = 10
+
 const PaperScreen = () => {
   const { formatMessage } = useLocale()
+  const [page, setPage] = useState(1)
 
-  const { data, loading, error } = useGetPaperMailListQuery()
+  const { data, loading, error } = useGetPaperMailListQuery({
+    variables: {
+      input: {
+        page: page,
+        pageSize: DEFAULT_PAGE_SIZE,
+      },
+    },
+  })
 
   if (error) {
     return <Problem error={error} />
   }
 
-  const paperMailArray = data?.getPaperMailList ?? []
+  const paperMailArray = data?.getPaperMailList.paperMail ?? []
+  const totalCount = data?.getPaperMailList.totalCount ?? 0
 
   return (
     <GridContainer>
@@ -103,11 +115,27 @@ const PaperScreen = () => {
                     ))}
                   </T.Body>
                 </T.Table>
+                {totalCount && totalCount > DEFAULT_PAGE_SIZE && (
+                  <Box marginTop={3}>
+                    <Pagination
+                      page={page}
+                      totalPages={Math.ceil(totalCount / DEFAULT_PAGE_SIZE)}
+                      renderLink={(page, className, children) => (
+                        <button
+                          className={className}
+                          onClick={() => setPage(page)}
+                        >
+                          {children}
+                        </button>
+                      )}
+                    />
+                  </Box>
+                )}
               </Box>
             ) : undefined}
             {loading && (
               <Box width="full">
-                <SkeletonLoader repeat={3} height={40} space={2} />
+                <SkeletonLoader repeat={8} height={40} space={2} />
               </Box>
             )}
             {!loading && !error && !paperMailArray.length && (

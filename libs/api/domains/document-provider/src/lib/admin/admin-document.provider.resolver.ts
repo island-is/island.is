@@ -20,7 +20,7 @@ import {
   UpdateOrganisationInput,
 } from '../dto'
 import { logger } from '@island.is/logging'
-import { DocumentProviderPaperMail } from '../models/PaperMail.model'
+import { DocumentProviderPaperMailResponse } from '../models/PaperMail.model'
 import {
   DocumentProviderCategories,
   DocumentProviderTypes,
@@ -29,6 +29,7 @@ import {
   CategoriesAndTypesPutInput,
   CategoriesAndTypesPostInput,
 } from '../dto/mutateCategoryOrType.input'
+import { DocumentProviderPaperMailInput } from '../dto/paperMail.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -192,9 +193,11 @@ export class AdminDocumentProviderResolver {
   }
 
   @Scopes(AdminPortalScope.documentProvider)
-  @Query(() => [DocumentProviderPaperMail])
-  async getPaperMailList(): Promise<DocumentProviderPaperMail[]> {
-    return this.documentProviderService.getPaperMailList()
+  @Query(() => DocumentProviderPaperMailResponse)
+  async getPaperMailList(
+    @Args('input', { nullable: true }) input: DocumentProviderPaperMailInput,
+  ): Promise<DocumentProviderPaperMailResponse> {
+    return this.documentProviderService.getPaperMailList(input)
   }
 
   // Types
