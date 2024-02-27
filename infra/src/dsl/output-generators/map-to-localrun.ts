@@ -143,14 +143,6 @@ const serializeService = async (
     addToErrors(errors)
   }
 
-  // Map all external URLs to localhost
-  // for (const [key, value] of Object.entries(result.env)) {
-  //   result.env[key] = value.replace(
-  //     /\b(?:(http|ftp|\w+)s?):\/\/[^/]+(?=$|\/)/g,
-  //     '$1://localhost',
-  //   )
-  // }
-
   const allErrors = getErrors()
   return allErrors.length === 0
     ? { type: 'success', serviceDef: [result] }
