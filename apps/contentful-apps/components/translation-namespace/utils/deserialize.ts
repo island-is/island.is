@@ -14,6 +14,7 @@ function plugin(opts?: OptionType) {
   const compiler = (node: { children: Array<MdastNode> }) =>
     node.children.map((c) => deserialize(c, opts))
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   this.Compiler = compiler
 }
@@ -34,8 +35,7 @@ const persistLeafFormats = (children: Array<MdastNode>) =>
         return
       }
 
-      // @ts-ignore
-      acc[key] = node[key]
+      acc[key] = node[key as keyof typeof node]
     })
 
     return acc
@@ -67,6 +67,7 @@ export const deserialize = (
     Array.isArray(node.children) &&
     node.children.length > 0
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     children = node.children.map((c: MdastNode) =>
       deserialize(
@@ -86,7 +87,7 @@ export const deserialize = (
     case 'list':
       return { type: node.ordered ? types.ol_list : types.ul_list, children }
 
-    case 'listItem':
+    case 'listItem': {
       const flattenChildren = flatMap(children, (value: BlockType) => {
         if (value?.children) {
           return value.children
@@ -101,6 +102,7 @@ export const deserialize = (
        * it to get the children child's props
        */
       return { type: types.listItem, children: flattenChildren }
+    }
 
     case 'paragraph':
       return { type: types.paragraph, children }

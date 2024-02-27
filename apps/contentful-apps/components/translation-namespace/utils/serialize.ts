@@ -21,7 +21,7 @@ const retainWhitespaceAndFormat = (string: string, format: string) => {
   const frozenString = string.trim()
 
   // children will be mutated
-  let children = frozenString
+  const children = frozenString
 
   // We reverse the right side formatting, to properly handle bold/italic
   // formats, so we can create ~~***FooBar***~~
@@ -59,7 +59,7 @@ export const serialize = (
       listDepth = 0,
     } = opts
 
-    let text = (chunk as LeafType).text || ''
+    const text = (chunk as LeafType).text || ''
     let type = (chunk as BlockType).type || ''
 
     const nodeTypes = {
@@ -196,15 +196,15 @@ export const serialize = (
           (chunk as BlockType).language || ''
         }\n${children}\n\`\`\`\n`
 
-      case nodeTypes.link:
+      case nodeTypes.link: {
         const url = (chunk as { url?: string })?.url
         return url ? `[${children}](${url})` : children
-
+      }
       case nodeTypes.ul_list:
       case nodeTypes.ol_list:
         return `\n${children}\n`
 
-      case nodeTypes.listItem:
+      case nodeTypes.listItem: {
         const isOL = chunk && chunk.parentType === nodeTypes.ol_list
         let spacer = ''
 
@@ -220,10 +220,9 @@ export const serialize = (
         return `${spacer}${
           isOL ? `${opts.olListItemIndex}.` : '-'
         } ${children}\n`
-
+      }
       case nodeTypes.paragraph:
         return `${children}\n\n`
-
       default:
         return escapeHtml(children)
     }
