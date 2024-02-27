@@ -16,7 +16,7 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   const { refetchListsForUser } = useGetListsForUser(collectionId)
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
-      variables: { input: { id: collectionId } },
+      variables: { input: { collectionId: collectionId } },
     })
 
   const onCancelCollection = async () => {
