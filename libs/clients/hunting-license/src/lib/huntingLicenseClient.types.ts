@@ -4,13 +4,14 @@ export type HuntingLicenseDto = {
   holderNationalId: string
   holderName: string
   holderAddress: string
+  holderCity: string
   category: string
   number: string
   isValid: boolean
   validFrom?: Date
   validTo?: Date
   permitFor?: Array<string>
-  benefits?: HuntingLicenseBenefitDto
+  benefits?: Array<HuntingLicenseBenefitDto>
   holderPhoto?: string
 }
 
@@ -29,38 +30,37 @@ export const mapHuntingLicenseDto = (
     !data.personid ||
     !data.personname ||
     !data.permitNumber ||
-    !data.permitValidity
+    !data.permitValidity ||
+    !data.address
   ) {
     return null
   }
 
-  let holderAddress = ''
-
-  if (data.address) {
-    holderAddress = data.address
+  let holderCity
+  if (data.postalCode) {
+    holderCity = data.postalCode
   }
-  if (data.postalCode || data.postalAddress) {
-    holderAddress += ','
-    if (data.postalCode) {
-      holderAddress += ` ${data.postalCode}`
-    }
-    if (data.postalAddress) {
-      holderAddress += ` ${data.postalAddress}`
+  if (data.postalAddress) {
+    if (holderCity) {
+      holderCity += ` ${data.postalAddress}`
+    } else {
+      holderCity = data.postalAddress
     }
   }
 
   return {
     holderNationalId: data.personid,
     holderName: data.personname,
-    holderAddress: holderAddress,
+    holderAddress: data.address,
+    holderCity: holderCity ?? '',
     category: data.permitCategory ?? '',
     number: data.permitNumber,
     isValid: data.permitValidity === PermitHuntingPermitValidityEnum.Gildi,
     permitFor: data.permitFor,
-    benefits: {
-      land: data.benefits?.benefitLand,
-      number: data.benefits?.benefitsNumber,
-    },
+    benefits: data.benefits?.map((b) => ({
+      land: b.benefitLand,
+      number: b.benefitsNumber,
+    })),
     validFrom: data.validFrom ? new Date(data.validFrom) : undefined,
     validTo: data.validTo ? new Date(data.validTo) : undefined,
     holderPhoto: data.personphoto,

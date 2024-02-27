@@ -224,6 +224,11 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      HUNTING_LICENSE_PASS_TEMPLATE_ID: {
+        dev: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        staging: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        prod: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+      },
       XROAD_RSK_PROCURING_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',

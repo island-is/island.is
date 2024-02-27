@@ -1,4 +1,3 @@
-import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
   DEFAULT_LICENSE_ID,
@@ -14,6 +13,7 @@ import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { format } from 'kennitala'
 import dateFormat from 'date-fns/format'
 import { isDefined } from '@island.is/shared/utils'
+import capitalize from 'lodash/capitalize'
 
 const formatDate = (date: Date) => dateFormat(date, 'dd.MM.yyyy')
 
@@ -32,6 +32,11 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
       (t) => {
+        let address = t.holderAddress
+        if (t.holderCity) {
+          address += `, ${t.holderCity}`
+        }
+
         const data: Array<GenericLicenseDataField> = [
           {
             name: getLabel('basicInfoLicense', locale, label),
@@ -47,7 +52,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('legalAddress', locale, label),
-            value: '',
+            value: address,
           },
           {
             type: GenericLicenseDataFieldType.Value,
@@ -71,7 +76,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('huntingPermitValidFor', locale, label),
-            value: t.permitFor?.join(' ,') ?? '',
+            value: t.permitFor?.map((p) => capitalize(p))?.join(', ') ?? '',
           },
         ].filter(isDefined)
 

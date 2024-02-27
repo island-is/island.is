@@ -83,17 +83,20 @@
             "readOnly": true
           },
           "valid_from": {
-            "type": "date-time",
+            "type": "string",
+            "format": "date-time",
             "example": "2023-04-01T00:00:00Z",
             "readOnly": true
           },
           "valid_to": {
-            "type": "date-time",
+            "type": "string",
+            "format": "date-time",
             "example": "2024-03-31T00:00:00Z",
             "readOnly": true
           },
           "permit_issued": {
-            "type": "date-time",
+            "type": "string",
+            "format": "date-time",
             "example": "2023-04-01T16:45:00Z",
             "readOnly": true
           },
@@ -102,15 +105,22 @@
             "items": { "type": "string", "example": "fuglum", "readOnly": true }
           },
           "benefits": {
-            "type": "object",
-            "properties": {
-              "benefit_land": { "type": "string", "example": "Brák" },
-              "benefits_number": { "type": "string", "example": "25225" }
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Benefit"
             }
           },
           "personphoto": { "type": "string", "format": "byte" }
         },
         "type": "object"
+      },
+      "Benefit": {
+        "title": "Benefit",
+        "type": "object",
+        "properties": {
+          "benefit_land": { "type": "string", "example": "Brák" },
+          "benefits_number": { "type": "string", "example": "25225" }
+        }
       }
     }
   }

@@ -134,7 +134,12 @@ export class HuntingLicenseClient implements LicenseClient<HuntingLicenseDto> {
     //Fetch template from api?
     return {
       inputFieldValues: inputValues,
-      expirationDate: data.validTo?.toString(),
+      expirationDate: data.validTo?.toISOString(),
+      thumbnail: data.holderPhoto
+        ? {
+            imageBase64String: data.holderPhoto ?? '',
+          }
+        : null,
     }
   }
 
