@@ -214,6 +214,16 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: 'rejectedByOrganization',
           }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.APPROVED]: {
@@ -231,6 +241,16 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: 'approvedByOrganization',
           }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
     },
