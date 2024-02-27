@@ -15,9 +15,7 @@ import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadline.inp
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
-import {
-  SignatureCollectionListStatus,
-} from './models/status.model'
+import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 
 @Injectable()
