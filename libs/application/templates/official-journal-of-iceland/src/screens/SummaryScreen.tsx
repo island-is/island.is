@@ -1,10 +1,17 @@
+import { useLocale } from '@island.is/localization'
+import { FormScreen } from '../components/form/FormScreen'
+import Summary from '../fields/Summary'
 import { OJOIFieldBaseProps } from '../lib/types'
+import { publishing } from '../lib/messages'
 
-export const SummaryScreen = ({ application }: OJOIFieldBaseProps) => {
+export const SummaryScreen = (props: OJOIFieldBaseProps) => {
+  const { formatMessage: f } = useLocale()
   return (
-    <div>
-      <h1>SummaryScreen</h1>
-      <p>Application id: {application.id}</p>
-    </div>
+    <FormScreen
+      title={f(publishing.general.title)}
+      intro={f(publishing.general.intro)}
+    >
+      <Summary {...props} />
+    </FormScreen>
   )
 }

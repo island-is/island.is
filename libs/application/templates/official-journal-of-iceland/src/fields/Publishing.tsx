@@ -28,6 +28,7 @@ import { ChannelList } from '../components/communicationChannels/ChannelList'
 import { AddChannel } from '../components/communicationChannels/AddChannel'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import debounce from 'lodash/debounce'
+import { useFormContext } from 'react-hook-form'
 
 type LocalState = Override<
   typeof INITIAL_ANSWERS['publishing'],
@@ -54,6 +55,8 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
 
   const today = new Date()
   const maxEndDate = addYears(today, 5)
+
+  const { setValue } = useFormContext()
 
   const [channelState, setChannelState] = useState<Channel>({
     email: '',
@@ -105,6 +108,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
         )
 
     setState({ ...state, contentCategories: updatedCategories })
+    setValue(InputFields.publishing.contentCategories, updatedCategories)
   }
 
   const onEditChannel = (channel: Channel) => {
