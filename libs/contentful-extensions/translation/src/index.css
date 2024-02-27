@@ -285,7 +285,9 @@ tbody tr:last-child .TableCell__TableCell___Wou8a {
 .Button__Button--muted___2Wair:hover:not(.Button__Button--disabled___1E20M) {
   background-color: #f7f9fa;
 }
-.Button__Button--muted___2Wair.Button__Button--is-active___iPvhW:not(.Button__Button--disabled___1E20M),
+.Button__Button--muted___2Wair.Button__Button--is-active___iPvhW:not(
+    .Button__Button--disabled___1E20M
+  ),
 .Button__Button--muted___2Wair:active:not(.Button__Button--disabled___1E20M) {
   -webkit-transition: none;
   transition: none;

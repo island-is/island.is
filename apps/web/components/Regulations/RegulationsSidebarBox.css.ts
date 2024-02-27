@@ -5,7 +5,7 @@ import { Colors, theme, spacing } from '@island.is/island-ui/theme'
 const { color, typography, border } = theme
 
 export type ColorScheme = 'purple' | 'blueberry' | 'blue' | 'dark'
-type ColorValue = typeof color[keyof typeof color]
+type ColorValue = (typeof color)[keyof typeof color]
 
 type ColorValues = {
   color: Colors

@@ -11,7 +11,7 @@ import {
 import * as styles from './GridColumn.css'
 import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
 
-type Breakpoint = keyof typeof theme['breakpoints']
+type Breakpoint = keyof (typeof theme)['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
 export interface GridColumnProps {

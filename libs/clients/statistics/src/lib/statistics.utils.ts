@@ -311,7 +311,7 @@ export const getMultipleStatistics = async (
     date: new Date(d),
   }))
 
-  const dropIncompleteEntries = (item: typeof result[number]) =>
+  const dropIncompleteEntries = (item: (typeof result)[number]) =>
     item.statisticsForDate.length !== query.sourceDataKeys.length
 
   // Trim from both ends results that do not have data for all keys

@@ -63,7 +63,7 @@ export class CmsElasticsearchService {
   async getCategoryPages(
     index: string,
     input: GetCategoryPagesInput,
-  ): Promise<typeof CategoryPage[]> {
+  ): Promise<(typeof CategoryPage)[]> {
     const query = {
       types: ['webArticle', 'webManual'],
       tags: [] as elasticTagField[],

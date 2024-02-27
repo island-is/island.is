@@ -45,10 +45,7 @@ import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
 Then you'll have access to the National Registry Client Service:
 
 ```typescript
-import {
-  NationalRegistryClientService,
-  IndividualDto,
-} from '@island.is/clients/tjodskra'
+import { NationalRegistryClientService, IndividualDto } from '@island.is/clients/tjodskra'
 
 @Injectable()
 export class SomeService {

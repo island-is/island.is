@@ -64,10 +64,7 @@ For the common use case of checking on a feature flag, there is `useFeatureFlag`
 import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 const MyComponent = () => {
-  const { value: showAwesome, loading } = useFeatureFlag(
-    'isAwesomeFeatureEnabled',
-    false,
-  )
+  const { value: showAwesome, loading } = useFeatureFlag('isAwesomeFeatureEnabled', false)
 
   return `You are ${showAwesome ? 'awesome' : 'not really that awesome'}.`
 }

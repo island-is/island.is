@@ -33,19 +33,20 @@ export const PersonalAllowance = ({
           />
         </GridColumn>
 
-        {usePersonalAllowance === YES && personalUseAsMuchAsPossible === YES && (
-          <GridColumn
-            paddingTop={[2, 2, 2, 0]}
-            span={['12/12', '12/12', '12/12', '5/12']}
-          >
-            <RadioValue
-              label={formatMessage(
-                parentalLeaveFormMessages.reviewScreen.usePersonalAllowance,
-              )}
-              value={personalUseAsMuchAsPossible}
-            />
-          </GridColumn>
-        )}
+        {usePersonalAllowance === YES &&
+          personalUseAsMuchAsPossible === YES && (
+            <GridColumn
+              paddingTop={[2, 2, 2, 0]}
+              span={['12/12', '12/12', '12/12', '5/12']}
+            >
+              <RadioValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.usePersonalAllowance,
+                )}
+                value={personalUseAsMuchAsPossible}
+              />
+            </GridColumn>
+          )}
 
         {usePersonalAllowance === YES && personalUseAsMuchAsPossible === NO && (
           <GridColumn

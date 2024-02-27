@@ -10,10 +10,7 @@ This library includes a utility to handle Problems on the client side:
 
 ```typescript
 import { useMutation } from '@apollo/client'
-import {
-  ProblemType,
-  findProblemInApolloError,
-} from '@island.is/shared/problem'
+import { ProblemType, findProblemInApolloError } from '@island.is/shared/problem'
 
 // In some component:
 const [callApi, { error }] = useMutation(MUTATION)

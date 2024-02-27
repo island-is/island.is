@@ -88,12 +88,8 @@ The element property should be a lazy-loaded component which is rendered when th
 An example of an implementation of a route property might be something like this:
 
 ```tsx
-const ApplicationList = lazy(
-  () => import('./screens/ApplicationList/ApplicationList'),
-)
-const ProtectedScreen = lazy(
-  () => import('./screens/ProtectedScreen/ProtectedScreen'),
-)
+const ApplicationList = lazy(() => import('./screens/ApplicationList/ApplicationList'))
+const ProtectedScreen = lazy(() => import('./screens/ProtectedScreen/ProtectedScreen'))
 
 routes: () => {
   const applicationRoutes = [
@@ -124,9 +120,7 @@ A portal library might then look something like this:
 import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 
-const ApplicationList = lazy(
-  () => import('./screens/ApplicationList/ApplicationList'),
-)
+const ApplicationList = lazy(() => import('./screens/ApplicationList/ApplicationList'))
 
 export const applicationsModule: PortalModule = {
   name: 'Applications',

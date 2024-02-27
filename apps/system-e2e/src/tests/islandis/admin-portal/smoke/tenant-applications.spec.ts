@@ -68,24 +68,21 @@ test.describe('Admin portal tenant applications', () => {
       )
     })
 
-    await test.step(
-      'To link to application page with env as query param',
-      async () => {
-        const applicationId = '@island.is/web'
-        const env = 'Development'
+    await test.step('To link to application page with env as query param', async () => {
+      const applicationId = '@island.is/web'
+      const env = 'Development'
 
-        // Arrange
-        await page.goto(homeUrl)
+      // Arrange
+      await page.goto(homeUrl)
 
-        // Act
-        await page.getByPlaceholder('Search').fill(applicationId)
-        await page.getByRole('button', { name: 'Development' }).click()
+      // Act
+      await page.getByPlaceholder('Search').fill(applicationId)
+      await page.getByRole('button', { name: 'Development' }).click()
 
-        // Assert
-        await expect(page).toHaveURL(
-          `${homeUrl}/${encodeURIComponent(applicationId)}?env=${env}`,
-        )
-      },
-    )
+      // Assert
+      await expect(page).toHaveURL(
+        `${homeUrl}/${encodeURIComponent(applicationId)}?env=${env}`,
+      )
+    })
   })
 })

@@ -309,56 +309,57 @@ export const AdditionalHeir = ({
       </GridRow>
 
       {/* ADVOCATE */}
-      {(currentHeir?.nationalId || hasForeignCitizenship) && requiresAdvocate && (
-        <Box
-          marginTop={2}
-          marginBottom={2}
-          paddingY={5}
-          paddingX={7}
-          borderRadius="large"
-          border="standard"
-        >
-          <GridRow>
-            <GridColumn span={['1/1']} paddingBottom={2}>
-              <Text variant="h4">
-                {formatMessage(m.inheritanceAdvocateLabel)}
-              </Text>
-            </GridColumn>
-            <GridColumn span={['1/1']} paddingBottom={2}>
-              <LookupPerson
-                nested
-                field={{
-                  id: `${fieldIndex}.advocate`,
-                }}
-                error={error}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                id={advocatePhoneField}
-                name={advocatePhoneField}
-                label={formatMessage(m.phone)}
-                backgroundColor="blue"
-                format="###-####"
-                error={(error?.advocate as unknown as ErrorValue)?.phone}
-                size="sm"
-                required
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                id={advocateEmailFeild}
-                name={advocateEmailFeild}
-                label={formatMessage(m.email)}
-                backgroundColor="blue"
-                error={(error?.advocate as unknown as ErrorValue)?.email}
-                size="sm"
-                required
-              />
-            </GridColumn>
-          </GridRow>
-        </Box>
-      )}
+      {(currentHeir?.nationalId || hasForeignCitizenship) &&
+        requiresAdvocate && (
+          <Box
+            marginTop={2}
+            marginBottom={2}
+            paddingY={5}
+            paddingX={7}
+            borderRadius="large"
+            border="standard"
+          >
+            <GridRow>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.inheritanceAdvocateLabel)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <LookupPerson
+                  nested
+                  field={{
+                    id: `${fieldIndex}.advocate`,
+                  }}
+                  error={error}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocatePhoneField}
+                  name={advocatePhoneField}
+                  label={formatMessage(m.phone)}
+                  backgroundColor="blue"
+                  format="###-####"
+                  error={(error?.advocate as unknown as ErrorValue)?.phone}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocateEmailFeild}
+                  name={advocateEmailFeild}
+                  label={formatMessage(m.email)}
+                  backgroundColor="blue"
+                  error={(error?.advocate as unknown as ErrorValue)?.email}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )}
       <GridColumn span="1/1" paddingBottom={2}>
         <Box width="half">
           <CheckboxController

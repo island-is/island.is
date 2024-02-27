@@ -19,7 +19,7 @@ interface Props {
 }
 
 interface LocProps {
-  loc: typeof localization['adviceCard']
+  loc: (typeof localization)['adviceCard']
 }
 
 interface RenderAdviceProps extends Props, LocProps {

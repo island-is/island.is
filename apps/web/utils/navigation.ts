@@ -3,7 +3,7 @@ import { Document, BLOCKS, Block, Text } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 
 const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
-type HeadingType = typeof headingLevels[number]
+type HeadingType = (typeof headingLevels)[number]
 interface NavLink {
   id: string
   text: string

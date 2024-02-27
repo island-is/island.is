@@ -9,7 +9,7 @@ interface TextLinkProps {
 }
 
 interface CaseStatusText {
-  sloc: typeof sharedLocalization['publishingRules']
+  sloc: (typeof sharedLocalization)['publishingRules']
   status: string
   advicePublishTypeId: number
   shouldDisplayHidden: boolean

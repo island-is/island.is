@@ -76,7 +76,7 @@ const calculateHiddenStackItemProps = (
 }
 
 export interface StackProps {
-  component?: typeof validStackComponents[number]
+  component?: (typeof validStackComponents)[number]
   children: ReactNodeNoStrings
   space: BoxProps['paddingTop']
   align?: ResponsiveProp<Align>

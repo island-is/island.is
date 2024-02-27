@@ -20,7 +20,7 @@ export class SubmitFeedbackInput {
   feedback?: string | null
 
   @Field(() => [GraphQLJSONObject])
-  assistantChatLog!: typeof GraphQLJSONObject[]
+  assistantChatLog!: (typeof GraphQLJSONObject)[]
 
   @Field(() => String, { nullable: true })
   url?: string | null

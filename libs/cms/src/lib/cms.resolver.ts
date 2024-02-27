@@ -620,7 +620,7 @@ export class CmsResolver {
   @Query(() => [CategoryPage], { nullable: true })
   async getCategoryPages(
     @Args('input') input: GetCategoryPagesInput,
-  ): Promise<typeof CategoryPage[] | null> {
+  ): Promise<(typeof CategoryPage)[] | null> {
     return this.cmsElasticsearchService.getCategoryPages(
       getElasticsearchIndex(input.lang),
       input,

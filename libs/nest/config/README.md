@@ -165,9 +165,7 @@ export class SomeClientService {
     @Inject(OtherConfig.Key)
     private otherConfig: ConfigType<typeof OtherConfig>,
   ) {
-    this.someProp = otherConfig.isConfigured
-      ? otherConfig.someProp
-      : 'Some default behaviour'
+    this.someProp = otherConfig.isConfigured ? otherConfig.someProp : 'Some default behaviour'
   }
 }
 ```
@@ -242,10 +240,7 @@ The module can then provide the injection key using existing global configuratio
 
 ```tsx
 @Module({
-  providers: [
-    SomeModuleService,
-    { provide: SomeModuleConfigKey, useExisting: featureFlagsConfig.KEY },
-  ],
+  providers: [SomeModuleService, { provide: SomeModuleConfigKey, useExisting: featureFlagsConfig.KEY }],
   exports: [SomeModuleService],
 })
 export class SomeModuleModule {

@@ -193,9 +193,9 @@ export const schema = {
 }
 
 export type MergedFormDataSchema =
-  typeof schema[ClientFormTypes.advancedSettings] &
-    typeof schema[ClientFormTypes.applicationUrls] &
-    typeof schema[ClientFormTypes.delegations] &
-    typeof schema[ClientFormTypes.lifeTime] &
-    typeof schema[ClientFormTypes.permissions] &
-    typeof schema[ClientFormTypes.translations]
+  (typeof schema)[ClientFormTypes.advancedSettings] &
+    (typeof schema)[ClientFormTypes.applicationUrls] &
+    (typeof schema)[ClientFormTypes.delegations] &
+    (typeof schema)[ClientFormTypes.lifeTime] &
+    (typeof schema)[ClientFormTypes.permissions] &
+    (typeof schema)[ClientFormTypes.translations]

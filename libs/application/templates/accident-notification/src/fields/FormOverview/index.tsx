@@ -318,147 +318,151 @@ export const FormOverview: FC<
           </>
         )}
 
-      {workplaceData && !isReportingOnBehalfOfEmployee(answers as FormValue) && (
-        <>
-          <Text variant="h4" paddingTop={6} paddingBottom={3}>
-            {formatText(
-              workplaceData.companyInfoMsg.general.title,
-              application,
-              formatMessage,
-            )}
-          </Text>
-          <ReviewGroup
-            isLast
-            editAction={() => changeScreens(workplaceData.screenId)}
-            isEditable={application.state === States.DRAFT}
-          >
-            <GridRow>
-              <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                <ValueLine
-                  label={workplaceData.companyInfoMsg.labels.name}
-                  value={workplaceData.companyInfo.name}
-                />
-              </GridColumn>
-              <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                <ValueLine
-                  label={workplaceData.companyInfoMsg.labels.nationalId}
-                  value={
-                    kennitala.format(
-                      workplaceData.companyInfo?.nationalRegistrationId,
-                    ) ?? ''
-                  }
-                />
-              </GridColumn>
-              {isProfessionalAthleteAccident(answers as FormValue) &&
-                workplaceData.companyInfo?.onPayRoll && (
-                  <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
-                    <ValueLine
-                      label={sportsClubInfo.employee.sectionTitle}
-                      value={
-                        workplaceData.companyInfo?.onPayRoll.answer === YES
-                          ? applicationMessages.general.yesOptionLabel
-                          : applicationMessages.general.noOptionLabel
-                      }
-                    />
-                  </GridColumn>
-                )}
-            </GridRow>
-          </ReviewGroup>
-          {isFishermanAccident(answers as FormValue) && (
-            <>
-              <Text variant="h4" paddingTop={6} paddingBottom={3}>
-                {formatMessage(
-                  fishingCompanyInfo.general.informationAboutShipTitle,
-                )}
-              </Text>
-              <ReviewGroup
-                isLast
-                editAction={() => changeScreens('fishingShipInfo')}
-                isEditable={application.state === States.DRAFT}
-              >
-                <GridRow>
-                  <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                    <ValueLine
-                      label={fishingCompanyInfo.labels.shipName}
-                      value={answers.fishingShipInfo.shipName}
-                    ></ValueLine>
-                  </GridColumn>
-                  <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                    <ValueLine
-                      label={fishingCompanyInfo.labels.shipCharacters}
-                      value={answers.fishingShipInfo.shipCharacters}
-                    ></ValueLine>
-                  </GridColumn>
-                </GridRow>
-                <GridRow>
-                  <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                    <ValueLine
-                      label={fishingCompanyInfo.labels.homePort}
-                      value={answers.fishingShipInfo.homePort}
-                    ></ValueLine>
-                  </GridColumn>
-                  <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                    <ValueLine
-                      label={fishingCompanyInfo.labels.shipRegisterNumber}
-                      value={answers.fishingShipInfo.shipRegisterNumber}
-                    ></ValueLine>
-                  </GridColumn>
-                </GridRow>
-              </ReviewGroup>
-            </>
-          )}
-
-          {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
-            <>
-              <Text variant="h4" paddingTop={6} paddingBottom={3}>
-                {formatText(
-                  workplaceData.companyInfoMsg.labels.descriptionField,
-                  application,
-                  formatMessage,
-                )}
-              </Text>
-              <ReviewGroup
-                isLast
-                editAction={() => changeScreens(workplaceData.screenId)}
-                isEditable={application.state === States.DRAFT}
-              >
-                <GridRow>
-                  <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                    <ValueLine
-                      label={workplaceData.representitiveMsg.labels.name}
-                      value={workplaceData.representitive.name}
-                    />
-                  </GridColumn>
-                  <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                    <ValueLine
-                      label={workplaceData.representitiveMsg.labels.nationalId}
-                      value={kennitala.format(
-                        workplaceData.representitive.nationalId,
-                      )}
-                    />
-                  </GridColumn>
-                  <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-                    <ValueLine
-                      label={workplaceData.representitiveMsg.labels.email}
-                      value={workplaceData.representitive.email}
-                    />
-                  </GridColumn>
-                  {workplaceData.representitive.phoneNumber && (
-                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+      {workplaceData &&
+        !isReportingOnBehalfOfEmployee(answers as FormValue) && (
+          <>
+            <Text variant="h4" paddingTop={6} paddingBottom={3}>
+              {formatText(
+                workplaceData.companyInfoMsg.general.title,
+                application,
+                formatMessage,
+              )}
+            </Text>
+            <ReviewGroup
+              isLast
+              editAction={() => changeScreens(workplaceData.screenId)}
+              isEditable={application.state === States.DRAFT}
+            >
+              <GridRow>
+                <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                  <ValueLine
+                    label={workplaceData.companyInfoMsg.labels.name}
+                    value={workplaceData.companyInfo.name}
+                  />
+                </GridColumn>
+                <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                  <ValueLine
+                    label={workplaceData.companyInfoMsg.labels.nationalId}
+                    value={
+                      kennitala.format(
+                        workplaceData.companyInfo?.nationalRegistrationId,
+                      ) ?? ''
+                    }
+                  />
+                </GridColumn>
+                {isProfessionalAthleteAccident(answers as FormValue) &&
+                  workplaceData.companyInfo?.onPayRoll && (
+                    <GridColumn span={['9/12', '9/12', '9/12', '10/12']}>
                       <ValueLine
-                        label={workplaceData.representitiveMsg.labels.tel}
-                        value={formatPhoneNumber(
-                          workplaceData.representitive.phoneNumber,
-                        )}
+                        label={sportsClubInfo.employee.sectionTitle}
+                        value={
+                          workplaceData.companyInfo?.onPayRoll.answer === YES
+                            ? applicationMessages.general.yesOptionLabel
+                            : applicationMessages.general.noOptionLabel
+                        }
                       />
                     </GridColumn>
                   )}
-                </GridRow>
-              </ReviewGroup>
-            </>
-          )}
-        </>
-      )}
+              </GridRow>
+            </ReviewGroup>
+            {isFishermanAccident(answers as FormValue) && (
+              <>
+                <Text variant="h4" paddingTop={6} paddingBottom={3}>
+                  {formatMessage(
+                    fishingCompanyInfo.general.informationAboutShipTitle,
+                  )}
+                </Text>
+                <ReviewGroup
+                  isLast
+                  editAction={() => changeScreens('fishingShipInfo')}
+                  isEditable={application.state === States.DRAFT}
+                >
+                  <GridRow>
+                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                      <ValueLine
+                        label={fishingCompanyInfo.labels.shipName}
+                        value={answers.fishingShipInfo.shipName}
+                      ></ValueLine>
+                    </GridColumn>
+                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                      <ValueLine
+                        label={fishingCompanyInfo.labels.shipCharacters}
+                        value={answers.fishingShipInfo.shipCharacters}
+                      ></ValueLine>
+                    </GridColumn>
+                  </GridRow>
+                  <GridRow>
+                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                      <ValueLine
+                        label={fishingCompanyInfo.labels.homePort}
+                        value={answers.fishingShipInfo.homePort}
+                      ></ValueLine>
+                    </GridColumn>
+                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                      <ValueLine
+                        label={fishingCompanyInfo.labels.shipRegisterNumber}
+                        value={answers.fishingShipInfo.shipRegisterNumber}
+                      ></ValueLine>
+                    </GridColumn>
+                  </GridRow>
+                </ReviewGroup>
+              </>
+            )}
+
+            {answers.isRepresentativeOfCompanyOrInstitue?.toString() !==
+              YES && (
+              <>
+                <Text variant="h4" paddingTop={6} paddingBottom={3}>
+                  {formatText(
+                    workplaceData.companyInfoMsg.labels.descriptionField,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
+                <ReviewGroup
+                  isLast
+                  editAction={() => changeScreens(workplaceData.screenId)}
+                  isEditable={application.state === States.DRAFT}
+                >
+                  <GridRow>
+                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                      <ValueLine
+                        label={workplaceData.representitiveMsg.labels.name}
+                        value={workplaceData.representitive.name}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                      <ValueLine
+                        label={
+                          workplaceData.representitiveMsg.labels.nationalId
+                        }
+                        value={kennitala.format(
+                          workplaceData.representitive.nationalId,
+                        )}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                      <ValueLine
+                        label={workplaceData.representitiveMsg.labels.email}
+                        value={workplaceData.representitive.email}
+                      />
+                    </GridColumn>
+                    {workplaceData.representitive.phoneNumber && (
+                      <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+                        <ValueLine
+                          label={workplaceData.representitiveMsg.labels.tel}
+                          value={formatPhoneNumber(
+                            workplaceData.representitive.phoneNumber,
+                          )}
+                        />
+                      </GridColumn>
+                    )}
+                  </GridRow>
+                </ReviewGroup>
+              </>
+            )}
+          </>
+        )}
 
       {isHomeActivitiesAccident(answers as FormValue) && (
         <>

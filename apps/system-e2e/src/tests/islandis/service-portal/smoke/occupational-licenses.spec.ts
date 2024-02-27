@@ -30,59 +30,53 @@ test.describe('Occupational licenses overview', () => {
     const page = await context.newPage()
     await disableI18n(page)
 
-    await test.step(
-      'Overview cards are displayed and cards can navigate to detail',
-      async () => {
-        // Arrange
-        await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
+    await test.step('Overview cards are displayed and cards can navigate to detail', async () => {
+      // Arrange
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
 
-        const hasHealthDirectorateLicense = page
-          .locator(`role=button[name="${label(m.view)}"]`)
-          .first()
+      const hasHealthDirectorateLicense = page
+        .locator(`role=button[name="${label(m.view)}"]`)
+        .first()
 
-        // Act
-        await hasHealthDirectorateLicense.click()
-        const healthDirectorateTitle = page.getByText('Sálfræðingur').first()
-        const healthDirectorateIsValid = page.getByText('Í gildi')
+      // Act
+      await hasHealthDirectorateLicense.click()
+      const healthDirectorateTitle = page.getByText('Sálfræðingur').first()
+      const healthDirectorateIsValid = page.getByText('Í gildi')
 
-        const regex =
-          /.*minarsidur\/starfsleyfi\/landlaeknir\/Sálfræðingur\/[0-9]+/
+      const regex =
+        /.*minarsidur\/starfsleyfi\/landlaeknir\/Sálfræðingur\/[0-9]+/
 
-        const pageUrl = decodeURI(page.url())
-        // Assert
-        expect(pageUrl).toMatch(regex)
+      const pageUrl = decodeURI(page.url())
+      // Assert
+      expect(pageUrl).toMatch(regex)
 
-        // Assert
-        await expect(healthDirectorateTitle).toBeVisible()
-        await expect(healthDirectorateIsValid).toBeVisible()
-      },
-    )
+      // Assert
+      await expect(healthDirectorateTitle).toBeVisible()
+      await expect(healthDirectorateIsValid).toBeVisible()
+    })
 
-    await test.step(
-      'Overview cards are displayed and cards can navigate to detail',
-      async () => {
-        // Arrange
-        await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
+    await test.step('Overview cards are displayed and cards can navigate to detail', async () => {
+      // Arrange
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
 
-        const license = page
-          .locator(`role=button[name="${label(m.view)}"]`)
-          .last()
+      const license = page
+        .locator(`role=button[name="${label(m.view)}"]`)
+        .last()
 
-        // Act
-        await license.click()
-        const title = page.getByText('Kennari').first()
-        const isValid = page.getByText('Í gildi').first()
+      // Act
+      await license.click()
+      const title = page.getByText('Kennari').first()
+      const isValid = page.getByText('Í gildi').first()
 
-        //regex that matches guid
-        const regex = /.*minarsidur\/starfsleyfi\/mms\/Kennari\/[0-9]+/
-        const pageUrl = decodeURI(page.url())
-        // Assert
-        expect(pageUrl).toMatch(regex)
+      //regex that matches guid
+      const regex = /.*minarsidur\/starfsleyfi\/mms\/Kennari\/[0-9]+/
+      const pageUrl = decodeURI(page.url())
+      // Assert
+      expect(pageUrl).toMatch(regex)
 
-        // Assert
-        await expect(title).toBeVisible()
-        await expect(isValid).toBeVisible()
-      },
-    )
+      // Assert
+      await expect(title).toBeVisible()
+      await expect(isValid).toBeVisible()
+    })
   })
 })

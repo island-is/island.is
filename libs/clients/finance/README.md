@@ -28,10 +28,7 @@ export class SomeService {
   constructor(private readonly financeService: FinanceClientService) {}
 
   async getStatus(): Promise<FinanceStatus> {
-    const financeStatus = await this.financeService.getFinanceStatus(
-      user.nationalId,
-      user,
-    )
+    const financeStatus = await this.financeService.getFinanceStatus(user.nationalId, user)
 
     if (financeStatus) {
       return financeStatus

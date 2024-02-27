@@ -99,16 +99,17 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   return (
     <Box>
       <GridRow>
-        {props?.alertWhenUnder18 && nationalId.info(personNationalId).age < 18 && (
-          <GridColumn span={['1/1']} paddingBottom={3}>
-            <AlertMessage
-              type="warning"
-              message={
-                message ? message : formatMessage(m.inheritanceUnder18Error)
-              }
-            />
-          </GridColumn>
-        )}
+        {props?.alertWhenUnder18 &&
+          nationalId.info(personNationalId).age < 18 && (
+            <GridColumn span={['1/1']} paddingBottom={3}>
+              <AlertMessage
+                type="warning"
+                message={
+                  message ? message : formatMessage(m.inheritanceUnder18Error)
+                }
+              />
+            </GridColumn>
+          )}
         <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
           <InputController
             id={`${id}.nationalId`}
