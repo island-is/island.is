@@ -1,3 +1,4 @@
+import { uuid } from 'uuidv4'
 import {
   setupWithAuth,
   setupWithoutAuth,
@@ -219,9 +220,13 @@ describe('PersonalRepresentativeController', () => {
       // Test delete personal rep
       await server.delete(`${path}/${personalRep.id}`).expect(204)
     })
-    it('DELETE /v1/personal-representatives should return NotFound when trying to delete non existing personal rep', async () => {
+    it('DELETE /v1/personal-representatives should return success when trying to delete non existing personal rep', async () => {
       // Test delete personal rep
-      await server.delete(`${path}/notexisting`).expect(204)
+      await server.delete(`${path}/${uuid()}`).expect(204)
+    })
+    it('DELETE /v1/personal-representatives should return BadRequest for invalid uuid', async () => {
+      // Test delete personal rep
+      await server.delete(`${path}/notexisting`).expect(400)
     })
   })
 
@@ -266,7 +271,11 @@ describe('PersonalRepresentativeController', () => {
   })
 
   it('Get v1/personal-representatives should return notfound for a connection id that does not exist', async () => {
-    await server.get(`${path}/notexisting`).expect(404)
+    await server.get(`${path}/${uuid()}`).expect(404)
+  })
+
+  it('Get v1/personal-representatives should return badrequest for a connection id that does not exist', async () => {
+    await server.get(`${path}/notexisting`).expect(400)
   })
 
   it('Get v1/personal-representatives should get all connections for a personal rep', async () => {
