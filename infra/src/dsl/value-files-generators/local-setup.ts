@@ -4,11 +4,12 @@ import {
   Services,
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
-import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
-import { readFile, writeFile, mkdir } from 'fs/promises'
+import { shouldIncludeEnv } from '../../cli/render-env-vars'
+import { readFile, writeFile } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
+import { logger } from '../../common'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
@@ -41,60 +42,91 @@ const mapServiceToNXname = async (serviceName: string) => {
     )
   return nxName.length === 1 ? nxName[0] : serviceName
 }
+
+/**
+ * This function `getLocalrunValueFile` is an asynchronous function that takes in a `runtime` object
+ * and a `services` object. It returns a promise that resolves to a `LocalrunValueFile` object.
+ *
+ * The function processes the `services` and `runtime` objects to create configurations for Docker
+ * and mock services. These configurations are then written to specific files in the root directory,
+ * of the form `.env.${service-name}`.
+ *
+ * @param {Localhost} runtime - The runtime object.
+ * @param {Services<LocalrunService>} services - The services object.
+ * @returns {Promise<LocalrunValueFile>}
+ */
 export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
+  options: { dryRun?: boolean } = { dryRun: false },
 ): Promise<LocalrunValueFile> => {
-  const dockerComposeServices = await Object.entries(services).reduce(
-    async (acc, [name, service]) => {
-      const portConfig = runtime.ports[name]
-        ? { PORT: runtime.ports[name].toString() }
-        : {}
-      const serviceNXName = await mapServiceToNXname(name)
-      return {
-        ...(await acc),
-        [name]: {
-          env: Object.assign(
-            {},
-            Object.entries(service.env)
-              .filter(
-                ([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name),
-              )
-              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
-            { PROD_MODE: 'true' },
-            portConfig,
-          ) as Record<string, string>,
-          command: `(source ${join(
-            rootDir,
-            '.env.' + serviceNXName,
-          )} && yarn start ${serviceNXName})`,
-        },
-      }
-    },
-    Promise.resolve(
-      {} as {
-        [name: string]: { env: Record<string, string>; command: string }
+  logger.debug('getLocalrunValueFile', { runtime, services })
+
+  logger.debug('Process services', { services })
+  const dockerComposeServices = {} as Services<LocalrunService>
+  for (const [name, service] of Object.entries(services)) {
+    const portConfig = runtime.ports[name]
+      ? { PORT: runtime.ports[name].toString() }
+      : {}
+    const serviceNXName = await mapServiceToNXname(name)
+    logger.debug('Process service', { name, service, serviceNXName })
+    dockerComposeServices[name] = {
+      env: Object.assign(
+        {},
+        Object.entries(service.env)
+          .filter(shouldIncludeEnv)
+          .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
+        { PROD_MODE: 'true' },
+        portConfig,
+      ) as Record<string, string>,
+      commands: [
+        `cd "${rootDir}"`,
+        `. ./.env.${serviceNXName}`, // `source` is bashism
+        `echo "Starting ${name} in $PWD"`,
+        `yarn nx serve ${serviceNXName}`,
+      ],
+    }
+  }
+
+  const firstService = Object.keys(dockerComposeServices)[0]
+  logger.debug('Dump all env values to files', {
+    dockerComposeServices,
+    [`${firstService}.env`]: dockerComposeServices[firstService]?.env,
+  })
+  await Promise.all(
+    Object.entries(dockerComposeServices).map(
+      async ([name, svc]: [string, LocalrunService]) => {
+        const serviceNXName = await mapServiceToNXname(name)
+        logger.debug(`Writing env to file for ${name}`, { name, serviceNXName })
+        if (options.dryRun) return
+        await writeFile(
+          join(rootDir, `.env.${serviceNXName}`),
+          Object.entries(svc.env)
+            .filter(([name, value]) => shouldIncludeEnv(name) && !!value)
+            .map(([name, value]) => {
+              // Basic shell sanitation
+              const escapedValue = value
+                .replace(/'/g, "'\\''")
+                .replace(/[\n\r]/g, '')
+              const localizedValue = escapedValue
+              //   .replace(
+              //   /^(https?:\/\/)[^/]+(?=$|\/)/g,
+              //   '$1localhost',
+              // )
+              const exportedKeyValue = `export ${name}='${localizedValue}'`
+              logger.debug('Env rewrite debug', {
+                escapedValue,
+                localizedValue,
+                exportedKeyValue,
+              })
+
+              return exportedKeyValue
+            })
+            .join('\n'),
+          { encoding: 'utf-8' },
+        )
       },
     ),
-  )
-
-  // dump all env values to files
-  await Promise.all(
-    Object.entries(dockerComposeServices).map(async ([name, svc]) => {
-      const serviceNXName = await mapServiceToNXname(name)
-      await writeFile(
-        join(rootDir, `.env.${serviceNXName}`),
-        Object.entries(svc.env)
-          .map(
-            ([name, value]) =>
-              `export ${name}='${value
-                .replace(/'/g, "'\\''")
-                .replace(/[\n\r]/g, '')}'`,
-          )
-          .join('\n'),
-        { encoding: 'utf-8' },
-      )
-    }),
   )
   const mocksConfigs = Object.entries(runtime.mocks).reduce(
     (acc, [name, target]) => {
@@ -114,7 +146,8 @@ export const getLocalrunValueFile = async (
                     proxy: {
                       to: target.replace('localhost', 'host.docker.internal'),
                       mode: 'proxyAlways',
-                      // soffia proxy service hack. need to get this proxy to forward host header but not really how to do it yet.
+                      // soffia proxy service hack. need to get this proxy to forward host header
+                      // but not really how to do it yet.
                       ...(target === 'https://localhost:8443'
                         ? {
                             injectHeaders: {
@@ -143,27 +176,51 @@ export const getLocalrunValueFile = async (
     },
     { ports: [] as number[], configs: [] as any[] },
   )
-  const mountebankConfigDir = `${rootDir}/dist`
-  const mountebankConfig = 'mountebank-imposter-config.json'
-  const mountebankPath = `${mountebankConfigDir}/${mountebankConfig}`
-  await mkdir(mountebankConfigDir, { recursive: true })
-  await writeFile(
-    mountebankPath,
-    JSON.stringify({ imposters: mocksConfigs.configs }),
-    { encoding: 'utf-8' },
-  )
+  const defaultMountebankConfig = 'mountebank-imposter-config.json'
+  logger.debug('Writing default mountebank config to file', {
+    defaultMountebankConfig,
+    mocksConfigs,
+  })
+  if (!options.dryRun)
+    await writeFile(
+      defaultMountebankConfig,
+      JSON.stringify({ imposters: mocksConfigs.configs }),
+      { encoding: 'utf-8' },
+    )
 
-  const mocks = `docker run -it --rm -p 2525:2525 ${mocksConfigs.ports
-    .map((port) => `-p ${port}:${port}`)
-    .join(
-      ' ',
-    )} -v ${mountebankPath}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
+  const mocksObj = {
+    containerer: 'docker',
+    containererCommand: 'run',
+    containererFlags: '-it --rm',
+    ports: ['2525', ...mocksConfigs.ports],
+    mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json:z`],
+    image: 'docker.io/bbyars/mountebank:2.8.1',
+    command: 'start --configfile=/app/default.json',
+  }
 
+  const mocks = [
+    mocksObj.containerer,
+    mocksObj.containererCommand,
+    `--name ${mocksObj.image.split(':')[0].split('/').pop()}`,
+    mocksObj.containererFlags,
+    mocksObj.ports.map((p) => `-p ${p}:${p}`).join(' '),
+    mocksObj.mounts.map((m) => `-v ${m}`).join(' '),
+    mocksObj.image,
+    mocksObj.command,
+  ]
+  const mocksStr = mocks.join(' ')
+  logger.debug(`Docker command for mocks:`, { mocks })
+
+  const renderedServices: Services<LocalrunService> = {}
+  logger.debug('Debugging dockerComposeServices', {
+    dockerComposeServices,
+  })
+  for (const [name, service] of Object.entries(dockerComposeServices)) {
+    renderedServices[name] = { commands: service.commands, env: service.env }
+    logger.debug(`Docker command for ${name}:`, { command: service.commands })
+  }
   return {
-    services: Object.entries(dockerComposeServices).reduce(
-      (acc, [name, service]) => ({ ...acc, [name]: service.command }),
-      {},
-    ),
-    mocks: mocks,
+    services: renderedServices,
+    mocks: mocksStr,
   }
 }

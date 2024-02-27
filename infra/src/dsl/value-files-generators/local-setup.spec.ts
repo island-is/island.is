@@ -28,6 +28,7 @@ describe('Local setup', () => {
   const sut = service('api').env({
     A: 'B',
     B: ref((ctx) => `${ctx.svc('https://www.visir.is')}/f/frettir`),
+    C: '[redis.cluster.1,redis.cluster.2]',
   })
   let serviceDef: Awaited<ReturnType<typeof getLocalrunValueFile>>
   beforeEach(async () => {
@@ -48,7 +49,19 @@ describe('Local setup', () => {
   })
   it('Should have mocks', async () => {
     expect(serviceDef.mocks).toStrictEqual(
-      `docker run -it --rm -p 2525:2525 -p 9453:9453 -v ${rootDir}/dist/mountebank-imposter-config.json:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
+      `docker run --name mountebank -it --rm -p 2525:2525 -p 9453:9453 -v ${path.resolve(
+        __dirname,
+        '..',
+        '..',
+        '..',
+      )}/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
     )
+  })
+
+  it('Should correctly hosts to localhost', async () => {
+    const svc = serviceDef.services['api']
+    expect(svc.env['A']).toEqual('B')
+    expect(svc.env['B']).toEqual('http://localhost:9453/f/frettir')
+    expect(svc.env['B']).toMatch(/http:\/\/localhost:\d+\/f\/frettir/)
   })
 })

@@ -194,6 +194,7 @@ export const AdditionalHeir = ({
                 requiredNationalId: true,
               },
             }}
+            backgroundColor="blue"
             error={error}
           />
         </Box>
@@ -243,7 +244,7 @@ export const AdditionalHeir = ({
               ) : null}
 
               {customField.id === 'relation' ? (
-                <GridColumn span="1/1" paddingBottom={2}>
+                <GridColumn span="1/2" paddingBottom={2}>
                   <SelectController
                     id={relationField}
                     name={relationField}
@@ -259,7 +260,7 @@ export const AdditionalHeir = ({
                   />
                 </GridColumn>
               ) : customField.id === 'heirsPercentage' ? (
-                <GridColumn span={['1/2']} paddingBottom={2}>
+                <GridColumn span="1/2" paddingBottom={2}>
                   <InputController
                     id={`${fieldIndex}.${customField.id}`}
                     name={`${fieldIndex}.${customField.id}`}
@@ -268,6 +269,7 @@ export const AdditionalHeir = ({
                     defaultValue={defaultValue ? defaultValue : '0'}
                     type="number"
                     suffix="%"
+                    backgroundColor="blue"
                     onChange={(
                       event: React.ChangeEvent<
                         HTMLInputElement | HTMLTextAreaElement
@@ -309,76 +311,78 @@ export const AdditionalHeir = ({
       </GridRow>
 
       {/* ADVOCATE */}
-      {(currentHeir?.nationalId || hasForeignCitizenship) &&
-        requiresAdvocate && (
-          <Box
-            marginTop={2}
-            marginBottom={2}
-            paddingY={5}
-            paddingX={7}
-            borderRadius="large"
-            border="standard"
-          >
-            <GridRow>
-              <GridColumn span={['1/1']} paddingBottom={2}>
-                <Text variant="h4">
-                  {formatMessage(m.inheritanceAdvocateLabel)}
-                </Text>
-              </GridColumn>
-              <GridColumn span={['1/1']} paddingBottom={2}>
-                <LookupPerson
-                  nested
-                  field={{
-                    id: `${fieldIndex}.advocate`,
-                  }}
-                  error={error}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={advocatePhoneField}
-                  name={advocatePhoneField}
-                  label={formatMessage(m.phone)}
-                  backgroundColor="blue"
-                  format="###-####"
-                  error={(error?.advocate as unknown as ErrorValue)?.phone}
-                  size="sm"
-                  required
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={advocateEmailFeild}
-                  name={advocateEmailFeild}
-                  label={formatMessage(m.email)}
-                  backgroundColor="blue"
-                  error={(error?.advocate as unknown as ErrorValue)?.email}
-                  size="sm"
-                  required
-                />
-              </GridColumn>
-            </GridRow>
-          </Box>
-        )}
-      <GridColumn span="1/1" paddingBottom={2}>
-        <Box width="half">
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: YES,
-              },
-            ]}
-            onSelect={(val) => {
-              setValue(foreignCitizenshipField, val)
-            }}
-          />
+      {(currentHeir?.nationalId || hasForeignCitizenship) && requiresAdvocate && (
+        <Box
+          marginTop={2}
+          marginBottom={2}
+          paddingY={5}
+          paddingX={7}
+          borderRadius="large"
+          border="standard"
+        >
+          <GridRow>
+            <GridColumn span={['1/1']} paddingBottom={2}>
+              <Text variant="h4">
+                {formatMessage(m.inheritanceAdvocateLabel)}
+              </Text>
+            </GridColumn>
+            <GridColumn span={['1/1']} paddingBottom={2}>
+              <LookupPerson
+                nested
+                field={{
+                  id: `${fieldIndex}.advocate`,
+                }}
+                backgroundColor="blue"
+                error={error}
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={advocatePhoneField}
+                name={advocatePhoneField}
+                label={formatMessage(m.phone)}
+                backgroundColor="blue"
+                format="###-####"
+                error={(error?.advocate as unknown as ErrorValue)?.phone}
+                size="sm"
+                required
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={advocateEmailFeild}
+                name={advocateEmailFeild}
+                label={formatMessage(m.email)}
+                backgroundColor="blue"
+                error={(error?.advocate as unknown as ErrorValue)?.email}
+                size="sm"
+                required
+              />
+            </GridColumn>
+          </GridRow>
         </Box>
-      </GridColumn>
+      )}
+      <GridRow>
+        <GridColumn span="1/1" paddingBottom={2}>
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
+            />
+          </Box>
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }

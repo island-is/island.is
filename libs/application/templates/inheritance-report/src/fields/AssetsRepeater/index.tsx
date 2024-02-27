@@ -125,7 +125,12 @@ export const AssetsRepeater: FC<
       fields.length === 0 &&
       extData.length
     ) {
-      replace(extData)
+      replace(
+        extData.map((x) => ({
+          ...x,
+          share: '100',
+        })),
+      )
       setValue(`assets.${assetKey}.hasModified`, true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

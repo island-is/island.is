@@ -5,10 +5,9 @@ import { renderSecretsCommand } from './render-secrets'
 import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
-import { renderLocalServices } from './render-local-mocks'
+import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
-yargs(process.argv.slice(2))
-  .scriptName('yarn infra')
+const cli = yargs(process.argv.slice(2))
   .command(
     'render-env',
     'Render a chart for environment',
@@ -57,11 +56,52 @@ yargs(process.argv.slice(2))
     'render-local-env',
     'Render environment variables needed by service.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
-      return yargs.option('service', { demandOption: true, array: true })
+      return yargs
+        .option('service', { demandOption: true, array: true, type: 'string' })
+        .option('json', { type: 'boolean', default: false })
+        .option('dry', { type: 'boolean', default: true })
+        .option('no-update-secrets', { type: 'boolean', default: false })
     },
-    async (argv) => {
-      console.log(await renderLocalServices(argv.service as string[]))
+    async (argv) =>
+      await renderLocalServices({
+        services: argv.service,
+        dryRun: argv.dry,
+        json: argv.json,
+        print: true,
+        noUpdateSecrets: argv['no-update-secrets'],
+      }),
+  )
+  .command(
+    'run-local-env',
+    'Render environment and run the local environment.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
+    (yargs) => {
+      return yargs
+        .option('service', { array: true, type: 'string', demandOption: true })
+        .option('dependencies', { array: true, type: 'string', default: [] })
+        .option('json', { type: 'boolean', default: false })
+        .option('dry', { type: 'boolean', default: false })
+        .option('no-update-secrets', {
+          type: 'boolean',
+          default: false,
+          alias: ['nosecrets', 'no-secrets'],
+        })
+        .option('print', { type: 'boolean', default: false })
+        .option('proxies', { type: 'boolean', default: false })
+        .option('never-fail', {
+          alias: 'nofail',
+          type: 'boolean',
+          default: false,
+        })
     },
+    async (argv) =>
+      await runLocalServices(argv.service, argv.dependencies, {
+        dryRun: argv.dry,
+        json: argv.json,
+        neverFail: argv['never-fail'],
+        noUpdateSecrets: argv['no-update-secrets'],
+        print: argv.print,
+        startProxies: argv.proxies,
+      }),
   )
   .demandCommand(1)
   .strict()
