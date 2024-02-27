@@ -103,7 +103,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
-
+  console.log(user)
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
 
