@@ -7,4 +7,16 @@ export class CreateVehicleInput {
 
   @Field()
   mileage!: number
+
+  @Field()
+  vin!: string
+
+  @Field()
+  make!: string
+
+  @Field()
+  firstRegistrationDate!: Date
+
+  @Field()
+  color!: string
 }
