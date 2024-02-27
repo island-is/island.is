@@ -56,7 +56,7 @@ export const useGetCurrentCollection = () => {
 }
 
 export const useGetOpenLists = (collectionId: string) => {
-  const { data, loading } = useQuery<Query>(GetOpenLists, {
+  const { data, loading: openListsLoading } = useQuery<Query>(GetOpenLists, {
     variables: {
       input: { collectionId: collectionId },
     },
@@ -64,5 +64,5 @@ export const useGetOpenLists = (collectionId: string) => {
   const openLists =
     data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
 
-  return { openLists, loading }
+  return { openLists, openListsLoading }
 }
