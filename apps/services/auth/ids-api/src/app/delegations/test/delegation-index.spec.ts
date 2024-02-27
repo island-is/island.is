@@ -76,7 +76,7 @@ describe('DelegationsIndexService', () => {
   })
 
   describe('indexDelegations', () => {
-    describe('should reindex logic', () => {
+    describe('delegation index meta logic', () => {
       it('should not index delegations if next reindex date is in the future', async () => {
         const nextReindex = new Date(testDate.getTime() + 1000) // future date
         const lastFullReindex = new Date(testDate.getTime() - 1000)
@@ -106,9 +106,7 @@ describe('DelegationsIndexService', () => {
         expect(meta?.lastFullReindex).toStrictEqual(lastFullReindex)
         expect(delegations).toHaveLength(0)
       })
-    })
 
-    describe('delegation index meta logic', () => {
       it('should set nextReindex to week in the future after a successful indexing', async () => {
         // Arrange
         // test when there is no meta
@@ -184,5 +182,42 @@ describe('DelegationsIndexService', () => {
         })
       },
     )
+
+    describe('Reindex (multiple indexing)', () => {
+      const testcase = indexingTestcases.custom
+
+      beforeAll(async () => {
+        await truncate(sequelize)
+
+        await factory.createDomain(testcase.domain)
+        await factory.createClient(testcase.client)
+
+        await Promise.all(
+          testcase.apiScopes.map((scope) => factory.createApiScope(scope)),
+        )
+
+        // create custom delegations
+        await Promise.all(
+          testcase.customDelegations.map((delegation) =>
+            factory.createCustomDelegation(delegation),
+          ),
+        )
+      })
+
+      it('should not duplicate delegations on reindex', async () => {
+        // Act
+        await delegationIndexService.indexDelegations(user)
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll()
+
+        expect(delegations.length).toBe(testcase.expectedFrom.length)
+        delegations.forEach((delegation) => {
+          expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+          expect(delegation.toNationalId).toBe(user.nationalId)
+        })
+      })
+    })
   })
 })

@@ -78,6 +78,9 @@ export class DelegationsIndexService {
       this.delegationsIncomingWardService.findAllIncoming(user),
     ])
 
+    // delete all existing delegations
+    await this.deleteDelegationIndexItems(user.nationalId)
+
     const delegations = delegationRes.flat().map(toDelegationIndexInfo)
 
     await this.delegationIndexModel.bulkCreate(delegations)
@@ -93,6 +96,30 @@ export class DelegationsIndexService {
           nationalId: user.nationalId,
         },
       },
+    )
+  }
+
+  /*
+   * Private methods
+   * */
+  private deleteDelegationIndexItems(
+    nationalId: string,
+    delegationTypesToDelete: DelegationType[] = [
+      DelegationType.Custom,
+      DelegationType.LegalGuardian,
+      DelegationType.ProcurationHolder,
+      DelegationType.PersonalRepresentative,
+    ],
+  ) {
+    return Promise.all(
+      delegationTypesToDelete.map((type) =>
+        this.delegationIndexModel.destroy({
+          where: {
+            toNationalId: nationalId,
+            type,
+          },
+        }),
+      ),
     )
   }
 }
