@@ -52,6 +52,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
     const attachedFiles = complaintAttachedFiles.concat(
       commissionsAttachedFiles,
     )
+
     const attachments = [pdf, ...attachedFiles]
     const caseRequest = await applicationToCaseRequest(application, attachments)
     const response = await this.caseApi
