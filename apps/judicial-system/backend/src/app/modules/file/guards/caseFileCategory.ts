@@ -9,6 +9,7 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
   CaseFileCategory.APPEAL_RULING,
+  CaseFileCategory.APPEAL_COURT_RECORD,
 ]
 
 export const defenderCaseFileCategoriesForIndictmentCases = [

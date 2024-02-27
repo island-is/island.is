@@ -6,7 +6,11 @@ import {
   Season,
   mapStringToEnum,
 } from '@island.is/university-gateway'
-import { InlineResponse2002 } from '../../../gen/fetch'
+import {
+  InlineResponse2002,
+  InlineResponse2002Data,
+  InlineResponse2002ExtraApplicationFields,
+} from '../../../gen/fetch'
 
 export const mapUglaPrograms = (
   res: InlineResponse2002,
@@ -50,11 +54,13 @@ export const mapUglaPrograms = (
         costInformationEn: program.costInformationEn,
         arrangementIs: undefined, //TODO missing in api
         arrangementEn: undefined, //TODO missing in api
-        allowException: false, //TODO missing in api
-        allowThirdLevelQualification: false, //TODO missing in api
+        allowException: program.extraApplicationSettings?.bannaUndanthagur
+          ? program.extraApplicationSettings?.bannaUndanthagur !== 't'
+          : true,
+        allowThirdLevelQualification: true, //TODO missing in api
         modeOfDelivery:
           program.modeOfDelivery?.map((m) => {
-            return mapStringToEnum(m, ModeOfDelivery, ModeOfDelivery.UNDEFINED)
+            return mapStringToEnum(m, ModeOfDelivery)
           }) || [],
         extraApplicationFields: program.extraApplicationFields?.map(
           (field) => ({
@@ -66,7 +72,7 @@ export const mapUglaPrograms = (
             required: field.required || false,
             fieldType: field.fieldType as unknown as FieldType,
             uploadAcceptedFileType: field.uploadAcceptedFileType,
-            options: undefined, //TODO missing in api
+            options: mapOptions(program, field),
           }),
         ),
         specializations: program.kjorsvid?.map((k) => ({
@@ -81,4 +87,18 @@ export const mapUglaPrograms = (
   }
 
   return mappedRes
+}
+
+const mapOptions = (
+  program: InlineResponse2002Data,
+  field: InlineResponse2002ExtraApplicationFields,
+): string | undefined => {
+  const type = field.fieldType as FieldType
+  // More fields can be added here
+  switch (type) {
+    case FieldType.TESTING_SITE:
+      return JSON.stringify(program?.simenntunarstodvar) ?? undefined
+    default:
+      return undefined
+  }
 }
