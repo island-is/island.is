@@ -9,7 +9,12 @@ import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { amountFormat, HMS_SLUG, m } from '@island.is/service-portal/core'
+import {
+  amountFormat,
+  HMS_SLUG,
+  IntroHeader,
+  m,
+} from '@island.is/service-portal/core'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import { ownersArray } from '../../utils/createUnits'
@@ -149,25 +154,34 @@ export const AssetsDetail = () => {
 
   const hasOwners = owners?.flat()?.length > 0
 
+  const title: string =
+    assetData?.defaultAddress?.displayShort && assetData?.propertyNumber
+      ? `${assetData?.defaultAddress?.displayShort} - ${assetData?.propertyNumber}`
+      : formatMessage(messages.realEstate)
+
   return (
     <>
-      <Box marginBottom={4}>
-        <Text variant="h3" marginBottom={5}>
-          {`${assetData?.defaultAddress?.displayShort} - ${assetData?.propertyNumber}`}
-        </Text>
-        <Button
-          colorScheme="default"
-          icon="print"
-          iconType="filled"
-          onClick={() => window.print()}
-          preTextIconType="filled"
-          size="default"
-          type="button"
-          variant="utility"
-        >
-          {formatMessage(m.print)}
-        </Button>
-      </Box>
+      <IntroHeader
+        title={title}
+        intro={formatMessage(messages.realEstateDetailIntro)}
+        serviceProviderSlug={'hms'}
+        serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
+      >
+        <Box marginTop={4}>
+          <Button
+            colorScheme="default"
+            icon="print"
+            iconType="filled"
+            onClick={() => window.print()}
+            preTextIconType="filled"
+            size="default"
+            type="button"
+            variant="utility"
+          >
+            {formatMessage(m.print)}
+          </Button>
+        </Box>
+      </IntroHeader>
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.assetsDetail && (
         <Problem

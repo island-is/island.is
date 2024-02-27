@@ -37,6 +37,11 @@ export const messages = defineMessages({
     id: 'sp.assets:real-estate',
     defaultMessage: 'Fasteign',
   },
+  realEstateDetailIntro: {
+    id: 'sp.assets:real-estate-detail-intro',
+    defaultMessage:
+      'Hér koma upplýsingar um fasteignina frá Húsnæðis og Mannvirkjastofnun.',
+  },
   appraisal: {
     id: 'sp.assets:appraisal',
     defaultMessage: 'Fasteignamat',
