@@ -1,10 +1,14 @@
 import { Icon, Table as T } from '@island.is/island-ui/core'
-import { CommunicationChannel } from './CommunicationChannels'
+
+export type Channel = {
+  email: string
+  phone: string
+}
 
 type Props = {
-  channel: CommunicationChannel
-  onEditChannel: (channel: CommunicationChannel) => void
-  onRemoveChannel: (channel: CommunicationChannel) => void
+  channel: Channel
+  onEditChannel: (channel: Channel) => void
+  onRemoveChannel: (channel: Channel) => void
 }
 
 export const Channel = ({ channel, onEditChannel, onRemoveChannel }: Props) => {
@@ -12,14 +16,14 @@ export const Channel = ({ channel, onEditChannel, onRemoveChannel }: Props) => {
     <T.Row>
       <T.Data>{channel.email}</T.Data>
       <T.Data>{channel.phone}</T.Data>
-      <T.Data>
+      <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
         <button type="button" onClick={() => onEditChannel(channel)}>
-          <Icon icon="pencil" />
+          <Icon color="blue400" icon="pencil" />
         </button>
       </T.Data>
-      <T.Data>
+      <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
         <button type="button" onClick={() => onRemoveChannel(channel)}>
-          <Icon icon="trash" />
+          <Icon color="blue400" icon="trash" />
         </button>
       </T.Data>
     </T.Row>

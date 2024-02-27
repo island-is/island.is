@@ -7,6 +7,11 @@ export const FILE_SIZE_LIMIT = 10000000
 export const VERDSKRA_LINK =
   'https://www.stjornartidindi.is/PdfVersions.aspx?recordId=0f574646-eb9d-430b-bbe7-936e7c9389a0'
 
+export enum AnswerOption {
+  YES = 'yes',
+  NO = 'no',
+}
+
 export enum Routes {
   TEST = 'test',
   REQUIREMENTS = 'requirements',
@@ -98,7 +103,7 @@ export const INITIAL_ANSWERS = {
   },
   [Routes.PUBLISHING]: {
     date: '',
-    fastTrack: false,
+    fastTrack: AnswerOption.NO,
     contentCategories: [],
     communicationChannels: [],
     message: '',

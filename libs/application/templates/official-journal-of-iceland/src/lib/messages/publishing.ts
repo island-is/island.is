@@ -18,42 +18,28 @@ export const publishing = {
       defaultMessage: 'Óskir um birtingu',
       description: 'Title of the publishing preferences section',
     },
-    communicationChannel: {
-      id: 'ojoi.application:publishing.general.communicationChannel',
-      defaultMessage: 'Samskiptaleið',
-      description: 'Title of the communication channel',
-    },
-  }),
-  dateChapter: defineMessages({
-    title: {
-      id: 'ojoi.application:publishing.dateChapter.title',
-      defaultMessage: 'Hvenær viltu að auglýsing birtist?',
-      description: 'Title of the date chapter',
-    },
-  }),
-  communicationChapter: defineMessages({
-    title: {
-      id: 'ojoi.application:publishing.communicationChapter.title',
-      defaultMessage: 'Samskiptaleiðir',
-      description: 'Title of the communication chapter',
-    },
-    intro: {
-      id: 'ojoi.application:publishing.communicationChapter.intro',
+    communicationIntro: {
+      id: 'ojoi.application:publishing.general.communicationIntro',
       defaultMessage:
-        'Hér birtast þeir málaflokkar sem auglýsigin verður sett undir við birtingu á stjornartidindi.is - Sendandi getur sjálfur valið málaflokka fyrir sínar auglýsingar sem hafa áhrif á málaflokkun á yfirlitssíðunni  Mínar birtingar.',
-      description: 'Intro of the communication chapter',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida.',
+      description: 'Intro of the communication section',
     },
   }),
-  messagesChapter: defineMessages({
-    title: {
-      id: 'ojoi.application:publishing.messagesChapter.title',
-      defaultMessage: 'Skilaboð',
-      description: 'Title of the messages chapter',
+  headings: defineMessages({
+    communications: {
+      id: 'ojoi.application:publishing.headings.communications',
+      defaultMessage: 'Samskiptaleiðir',
+      description: 'Title of the communications section',
     },
-    intro: {
-      id: 'ojoi.application:publishing.messagesChapter.intro',
-      defaultMessage: 'Lorem ipsum eitthvað hér?',
-      description: 'Intro of the messages chapter',
+    messages: {
+      id: 'ojoi.application:publishing.headings.messages',
+      defaultMessage: 'Skilaboð',
+      description: 'Title of the messages section',
+    },
+    date: {
+      id: 'ojoi.application:publishing.headings.date',
+      defaultMessage: 'Hvenær viltu að auglýsing birtist?',
+      description: 'Title of the date section',
     },
   }),
   inputs: {
@@ -62,6 +48,11 @@ export const publishing = {
         id: 'ojoi.application:publishing.inputs.datepicker.label',
         defaultMessage: 'Dagsetning',
         description: 'Label of the datepicker input',
+      },
+      placeholder: {
+        id: 'ojoi.application:publishing.inputs.datepicker.placeholder',
+        defaultMessage: '01.02.2024',
+        description: 'Placeholder of the datepicker input',
       },
     }),
     fastTrack: defineMessages({

@@ -111,11 +111,6 @@ export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 type StatusProvider = 'success' | 'failure'
 
-export enum AnswerOption {
-  YES = 'yes',
-  NO = 'no',
-}
-
 export type ErrorSchema = NestedType<answerSchemas>
 
 export interface ExternalData {

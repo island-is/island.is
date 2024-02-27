@@ -7,11 +7,7 @@ import { Button } from '@island.is/island-ui/core'
 import { Advert } from '../fields/Advert'
 import { Signatures } from '../fields/Signatures'
 
-export const AdvertScreen = ({
-  application,
-  errors,
-  field,
-}: OJOIFieldBaseProps) => {
+export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
 
   const [modalToggle, setModalToggle] = useState(false)
@@ -31,8 +27,8 @@ export const AdvertScreen = ({
         </Button>
       }
     >
-      <Advert field={field} application={application} errors={errors} />
-      <Signatures field={field} application={application} errors={errors} />
+      <Advert {...props} />
+      <Signatures {...props} />
     </FormScreen>
   )
 }

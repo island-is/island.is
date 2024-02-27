@@ -1,10 +1,11 @@
 import { useLocale } from '@island.is/localization'
 import { FormScreen } from '../components/form/FormScreen'
-import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../lib/types'
+import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { Checkbox } from '@island.is/island-ui/core'
 import { requirements } from '../lib/messages'
 import { Controller } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
+import { AnswerOption } from '../lib/constants'
 
 export const RequirementsScreen = ({
   application,

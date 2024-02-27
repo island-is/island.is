@@ -1,11 +1,12 @@
 import { z } from 'zod'
 import { error } from './messages'
-import { AnswerOption, InputFields } from './types'
+import { InputFields } from './types'
 import {
   TypeIds,
   INSTITUTION_INDEX,
   MEMBER_INDEX,
   FileNames,
+  AnswerOption,
 } from './constants'
 
 const FileSchema = z.object({
