@@ -30,8 +30,8 @@
             }
           },
           "400": { "description": "Invalid ID supplied" },
-          "404": { "description": "Not found" },
-          "405": { "description": "Validation exception" }
+          "404": { "description": "No permit found" },
+          "500": { "description": "Server Error" }
         }
       }
     }
@@ -52,6 +52,21 @@
             "example": "Gervimaður Bandaríkin",
             "readOnly": true
           },
+          "address": {
+            "type": "string",
+            "example": "Bandaríkin",
+            "readOnly": true
+          },
+          "postal_code": {
+            "type": "string",
+            "example": "000",
+            "readOnly": true
+          },
+          "postal_address": {
+            "type": "string",
+            "example": "Ótilgreint",
+            "readOnly": true
+          },
           "permit_category": {
             "type": "string",
             "example": "Almennt veiði- og hlunnindakort",
@@ -64,17 +79,22 @@
           },
           "permit_validity": {
             "type": "string",
-            "example": "Í gildi",
+            "enum": ["Í gildi", "Ekki í gildi"],
             "readOnly": true
           },
           "valid_from": {
-            "type": "string",
-            "example": "2023-04-01",
+            "type": "date-time",
+            "example": "2023-04-01T00:00:00Z",
             "readOnly": true
           },
           "valid_to": {
-            "type": "string",
-            "example": "2024-03-31",
+            "type": "date-time",
+            "example": "2024-03-31T00:00:00Z",
+            "readOnly": true
+          },
+          "permit_issued": {
+            "type": "date-time",
+            "example": "2023-04-01T16:45:00Z",
             "readOnly": true
           },
           "permit_for": {
