@@ -171,6 +171,14 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     return property
   }
 
+  async rejectedByOrganization({ application }: TemplateApiModuleActionProps) {
+    // Do something when rejected by syslumenn?
+  }
+
+  async approvedByOrganization({ application }: TemplateApiModuleActionProps) {
+    // Do something when approved by syslumenn?
+  }
+
   mockGetFasteign(fasteignaNumer: string): Fasteign | undefined {
     return {
       fasteignanumer: 'F12345',
