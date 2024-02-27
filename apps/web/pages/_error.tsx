@@ -1,6 +1,10 @@
 import React from 'react'
 import type { GetServerSidePropsContext, NextPageContext } from 'next'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import {
+  ApolloClient,
+  ApolloQueryResult,
+  NormalizedCacheObject,
+} from '@apollo/client'
 
 import {
   ErrorPageQuery,
@@ -71,20 +75,36 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         .replace(/\/\/+/g, '/')
         .replace(/\/+$/, '')
         .toLowerCase()
-        .split('?')[0]
 
-      const redirectProps = await props.apolloClient.query<
-        GetUrlQuery,
-        GetUrlQueryVariables
-      >({
-        query: GET_URL_QUERY,
-        variables: {
-          input: {
-            slug: path,
-            lang: locale as string,
-          },
-        },
-      })
+      const [redirectPropsWithQueryParams, redirectPropsWithoutQueryParams] =
+        await Promise.all([
+          props.apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
+            query: GET_URL_QUERY,
+            variables: {
+              input: {
+                slug: path,
+                lang: locale as string,
+              },
+            },
+          }),
+          props.apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
+            query: GET_URL_QUERY,
+            variables: {
+              input: {
+                slug: path.split('?')[0],
+                lang: locale as string,
+              },
+            },
+          }),
+        ])
+
+      let redirectProps: ApolloQueryResult<GetUrlQuery> | null = null
+
+      if (redirectPropsWithQueryParams?.data?.getUrl) {
+        redirectProps = redirectPropsWithQueryParams
+      } else if (redirectPropsWithoutQueryParams?.data?.getUrl) {
+        redirectProps = redirectPropsWithoutQueryParams
+      }
 
       if (redirectProps?.data?.getUrl) {
         const isBrowser = typeof window !== 'undefined'
