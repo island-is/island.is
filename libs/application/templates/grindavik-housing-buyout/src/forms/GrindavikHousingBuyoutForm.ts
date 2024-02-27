@@ -68,14 +68,14 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                   formatCurrency(fireInsuranceValue.toString()),
                 ])
               },
-              summary: (application) => {
+              /* summary: (application) => {
                 const { buyoutPrice } = calculateBuyoutPrice(application)
 
                 return {
                   label: m.application.overview.buyoutPriceTitle,
                   value: formatCurrency(buyoutPrice.toString()),
                 }
-              },
+              }, */
             }),
           ],
         }),
@@ -126,6 +126,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 const {
                   buyoutPrice,
                   buyoutPriceWithLoans,
+                  fireInsuranceValue,
                   totalLoans,
                   closingPayment,
                   result,
@@ -134,6 +135,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 return {
                   ...m.application.propertyInformation.explaination,
                   values: {
+                    fireInsuranceValue: formatCurrency(
+                      fireInsuranceValue.toString(),
+                    ),
                     buyoutPrice: formatCurrency(buyoutPrice.toString()),
                     buyoutPriceWithLoans: formatCurrency(
                       buyoutPriceWithLoans.toString(),

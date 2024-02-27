@@ -60,7 +60,7 @@ export const application = {
     explaination: {
       id: 'ghb.application.propertyInformation:explaination#markdown',
       defaultMessage:
-        'Kaupverð fasteignar er **{buyoutPrice}** Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **{closingPayment}**\n\n Útreikningur er (kaupverð) - (áhvílandi lán) - (5% af kaupverði).\n\nÚtgreitt við kaupsamning er þá (**{buyoutPrice}** - **{totalLoans}** - **{closingPayment}**) eða **{result}**\n\nAfhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
+        'Brunabótamat fasteignar er **{fireInsuranceValue}**\n\nKaupverð fasteignar er **{buyoutPrice}** Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **{closingPayment}**\n\n Útreikningur er (kaupverð) - (áhvílandi lán) - (5% af kaupverði).\n\nÚtgreitt við kaupsamning er þá (**{buyoutPrice}** - **{totalLoans}** - **{closingPayment}**) eða **{result}**\n\nAfhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
       description: 'Property information explaination',
     },
   }),
@@ -77,7 +77,7 @@ export const application = {
     },
     statusOfLoan: {
       id: 'ghb.application.loanStatus:statusOfLoan',
-      defaultMessage: 'Staða á láni',
+      defaultMessage: 'Uppgreiðsluvirði',
       description: 'Status of loan',
     },
     addLoanTitle: {
@@ -110,7 +110,7 @@ export const application = {
   results: defineMessages({
     sectionTitle: {
       id: 'ghb.application.results:section.title',
-      defaultMessage: 'Útreikingur',
+      defaultMessage: 'Útreikningur',
       description: 'Results section title',
     },
   }),
