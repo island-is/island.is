@@ -56,7 +56,7 @@
 /libs/application/templates/general-petition/                                                            @island-is/juni
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                                      @island-is/juni
 /libs/shared/connected/src/lib/SignatureLists                                                            @island-is/juni
-/libs/api/domains/communications/                                                                        @island-is/juni @island-is/stefna
+/libs/api/domains/communications/                                                                        @island-is/juni
 /apps/services/user-notification/                                                                        @island-is/juni
 /apps/air-discount-scheme/                                                                               @island-is/hugsmidjan
 /libs/air-discount-scheme/                                                                               @island-is/hugsmidjan
@@ -90,7 +90,6 @@
 /libs/api/domains/signature-collection                                                                   @island-is/juni
 /libs/clients/signature-collection                                                                       @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection                    @island-is/juni
-/libs/shared/connected/src/lib/SignatureLists                                                             @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
