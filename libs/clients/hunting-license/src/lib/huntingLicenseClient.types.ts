@@ -1,8 +1,9 @@
-import { PermitHunting } from '../../gen/fetch'
+import { PermitHunting, PermitHuntingPermitValidityEnum } from '../../gen/fetch'
 
 export type HuntingLicenseDto = {
   holderNationalId: string
   holderName: string
+  holderAddress: string
   category: string
   number: string
   isValid: boolean
@@ -33,12 +34,28 @@ export const mapHuntingLicenseDto = (
     return null
   }
 
+  let holderAddress = ''
+
+  if (data.address) {
+    holderAddress = data.address
+  }
+  if (data.postalCode || data.postalAddress) {
+    holderAddress += ','
+    if (data.postalCode) {
+      holderAddress += ` ${data.postalCode}`
+    }
+    if (data.postalAddress) {
+      holderAddress += ` ${data.postalAddress}`
+    }
+  }
+
   return {
     holderNationalId: data.personid,
     holderName: data.personname,
+    holderAddress: holderAddress,
     category: data.permitCategory ?? '',
     number: data.permitNumber,
-    isValid: data.permitValidity == 'Í gildi',
+    isValid: data.permitValidity === PermitHuntingPermitValidityEnum.Gildi,
     permitFor: data.permitFor,
     benefits: {
       land: data.benefits?.benefitLand,

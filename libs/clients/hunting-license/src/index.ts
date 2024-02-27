@@ -5,4 +5,4 @@ export * from '../gen/fetch/models'
 export {
   HuntingLicenseDto,
   HuntingLicenseBenefitDto,
-} from './lib/huntingLicense.types'
+} from './lib/huntingLicenseClient.types'

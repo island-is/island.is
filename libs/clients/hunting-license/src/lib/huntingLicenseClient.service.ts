@@ -1,7 +1,10 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { PermitsApi } from '../../gen/fetch'
-import { HuntingLicenseDto, mapHuntingLicenseDto } from './huntingLicense.types'
+import {
+  HuntingLicenseDto,
+  mapHuntingLicenseDto,
+} from './huntingLicenseClient.types'
 
 @Injectable()
 export class HuntingLicenseClientService {

@@ -19,11 +19,11 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'heimili',
-      value: '',
+      value: license.holderAddress ?? '',
     },
     {
       identifier: 'pnr_stadur',
-      value: '',
+      value: license.holderAddress ?? '',
     },
     {
       identifier: 'number',
