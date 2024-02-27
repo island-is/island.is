@@ -47,11 +47,6 @@ const getStatus = ({
   if (!hasActiveLists && !processed) {
     return CollectionStatus.InInitialReview
   }
-  // Initial opening time passed all lists have been reviewd
-  // Not in use for now check prosseced status in frontend
-  // if (!hasActiveLists && !processed && !hasInReview) {
-  //   return CollectionStatus.Processing
-  // }
   // Initial opening time passed, collection has been manually processed
   if (!hasActiveLists && processed && !hasExtendedLists) {
     return CollectionStatus.Processed

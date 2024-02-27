@@ -5,7 +5,7 @@ import {
   CreateListInput,
   BulkUploadInput,
 } from './signature-collection.types'
-import { Collection, CollectionStatus } from './types/collection.dto'
+import { Collection } from './types/collection.dto'
 import { List, ListStatus, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
@@ -71,7 +71,6 @@ export class SignatureCollectionAdminClientService {
   }
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
-    // const collectionStatus = await this.collectionStatus(auth)
     const collection = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
@@ -113,7 +112,6 @@ export class SignatureCollectionAdminClientService {
       throw new Error('Collection id input wrong')
     }
 
-    // const collectionAreas = collection.ar //await this.getAreas(id)
     const filteredAreas = areas
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
