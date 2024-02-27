@@ -76,7 +76,7 @@ describe('DelegationsIndexService', () => {
   })
 
   describe('indexDelegations', () => {
-    describe('should reindex', () => {
+    describe('should reindex logic', () => {
       it('should not index delegations if next reindex date is in the future', async () => {
         const nextReindex = new Date(testDate.getTime() + 1000) // future date
         const lastFullReindex = new Date(testDate.getTime() - 1000)
@@ -109,7 +109,7 @@ describe('DelegationsIndexService', () => {
     })
 
     describe('delegation index meta logic', () => {
-      it('should set nextReindex to week in the future after successful reindex', async () => {
+      it('should set nextReindex to week in the future after a successful indexing', async () => {
         // Arrange
         // test when there is no meta
 
