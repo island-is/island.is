@@ -52,13 +52,14 @@ export const ResidenceGrant: Form = buildForm({
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantAttachmentDescription,
           maxSize: FILE_SIZE_LIMIT,
-          maxSizeErrorText: '',
+          maxSizeErrorText: parentalLeaveFormMessages.fileUpload
+            .attachmentMaxSizeError,
           uploadAccept: '.pdf',
           uploadHeader: '',
           uploadDescription:
-            parentalLeaveFormMessages.selfEmployed.uploadDescription,
+            parentalLeaveFormMessages.fileUpload.uploadDescription,
           uploadButtonLabel:
-            parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            parentalLeaveFormMessages.fileUpload.attachmentButton,
         }),
         buildMultiField({
           title: parentalLeaveFormMessages.confirmation.title,

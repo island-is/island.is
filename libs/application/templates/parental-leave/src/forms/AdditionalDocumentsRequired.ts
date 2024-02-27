@@ -35,13 +35,13 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               title: '',
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader: '',
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
               uploadMultiple: true,
             }),
             buildSubmitField({

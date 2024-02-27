@@ -4,6 +4,7 @@ import {
   NO_ANSWER,
   buildCustomField,
   buildDateField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -15,8 +16,9 @@ import {
   buildTextField,
   formatText,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import { Application, DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import {
+  FILE_SIZE_LIMIT,
   NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -309,6 +311,55 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                         },
                       ],
                     }),
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'reviewUpload',
+          title:
+            parentalLeaveFormMessages.fileUpload
+            .additionalAttachmentTitle,
+          children: [
+            buildMultiField({
+              id: 'additionalDocumentsRequiredScreen',
+              title:
+                parentalLeaveFormMessages.fileUpload
+                  .additionalAttachmentTitle,
+              description:
+                parentalLeaveFormMessages.fileUpload
+                  .additionalAttachmentDescription,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+                  title: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                  uploadMultiple: true,
+                }),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title:
+                    parentalLeaveFormMessages.fileUpload
+                      .additionalDocumentsEditSubmit,
+                  refetchApplicationAfterSubmit: true,
+                  actions: [
+                    {
+                      event: DefaultEvents.SUBMIT,
+                      name: parentalLeaveFormMessages.fileUpload
+                        .additionalDocumentsEditSubmit,
+                      type: 'primary',
+                    },
                   ],
                 }),
               ],
