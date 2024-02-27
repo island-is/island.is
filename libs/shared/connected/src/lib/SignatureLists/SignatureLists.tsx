@@ -26,14 +26,18 @@ export const SignatureLists: FC<
   return (
     !loading && (
       <Box marginTop={7}>
-        <Box marginBottom={3}>
-          <Text variant="h4">
-            {t('title', 'Frambjóðendur sem hægt er að mæla með')}
-          </Text>
-        </Box>
+        {openLists?.length > 0 ||
+          (collection?.candidates.length > 0 && (
+            <Box marginBottom={3}>
+              <Text variant="h4">
+                {t('title', 'Frambjóðendur sem hægt er að mæla með')}
+              </Text>
+            </Box>
+          ))}
         <Stack space={4}>
           {/* if collection time is over yet there are still open lists, show them */}
-          {new Date() > new Date(collection.endTime) && openLists?.length ? (
+          {new Date() > new Date(collection.endTime) &&
+          openLists?.length > 0 ? (
             openLists?.map((list: SignatureCollectionListBase) => {
               return (
                 <ActionCard
@@ -104,7 +108,9 @@ export const SignatureLists: FC<
               },
             )
           ) : (
-            <Text variant="h4">{t('noLists', 'Engin söfnun er opin')}</Text>
+            <Text variant="h4">
+              {t('noLists', 'Engin meðmælasöfnun er í gangi í augnablikinu.')}
+            </Text>
           )}
         </Stack>
       </Box>
