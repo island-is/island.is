@@ -18,6 +18,7 @@ import { useLocale } from '@island.is/localization'
 import {
   CheckboxController,
   DatePickerController,
+  FieldDescription,
   InputController,
   RadioController,
   SelectController,
@@ -46,6 +47,9 @@ export const TableRepeaterFormField: FC<Props> = ({
     fields: rawItems,
     table,
     formTitle,
+    description,
+    marginTop = 6,
+    marginBottom,
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
@@ -103,134 +107,147 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   return (
-    <Box marginTop={6}>
-      <Stack space={4}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData></T.HeadData>
-              {tableHeader.map((item, index) => (
-                <T.HeadData key={index}>
-                  {formatText(item ?? '', application, formatMessage)}
-                </T.HeadData>
-              ))}
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {values &&
-              savedFields.map((field, index) => (
-                <T.Row key={field.id}>
-                  <T.Data>
-                    <Box display="flex" alignItems="center">
-                      <Tooltip
-                        placement="left"
-                        text={formatText(
-                          removeButtonTooltipText,
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
+      {description && (
+        <FieldDescription
+          description={formatText(description, application, formatMessage)}
+        />
+      )}
+      <Box marginTop={description ? 4 : 0}>
+        <Stack space={4}>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData></T.HeadData>
+                {tableHeader.map((item, index) => (
+                  <T.HeadData key={index}>
+                    {formatText(item ?? '', application, formatMessage)}
+                  </T.HeadData>
+                ))}
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {values &&
+                savedFields.map((field, index) => (
+                  <T.Row key={field.id}>
+                    <T.Data>
+                      <Box display="flex" alignItems="center">
+                        <Tooltip
+                          placement="left"
+                          text={formatText(
+                            removeButtonTooltipText,
+                            application,
+                            formatMessage,
+                          )}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem(index)}
+                          >
+                            <Icon icon="removeCircle" type="outline" />
+                          </button>
+                        </Tooltip>
+                      </Box>
+                    </T.Data>
+                    {tableRows.map((item, idx) => {
+                      const formatFn = table?.format?.[item]
+                      return (
+                        <T.Data key={`${item}-${idx}`}>
+                          {formatFn
+                            ? formatFn(values[index][item])
+                            : values[index][item]}
+                        </T.Data>
+                      )
+                    })}
+                  </T.Row>
+                ))}
+            </T.Body>
+          </T.Table>
+          {activeField ? (
+            <Stack space={2} key={activeField.id}>
+              {formTitle && (
+                <Text variant="h4">
+                  {formatText(formTitle, application, formatMessage)}
+                </Text>
+              )}
+              <GridRow rowGap={[2, 2, 2, 3]}>
+                {items.map((item) => {
+                  const {
+                    component,
+                    id: itemId,
+                    backgroundColor = 'blue',
+                    label = '',
+                    placeholder = '',
+                    options,
+                    width = 'full',
+                    condition,
+                    ...props
+                  } = item
+                  const isHalfColumn = component !== 'radio' && width === 'half'
+                  const span = isHalfColumn ? '1/2' : '1/1'
+                  const Component = componentMapper[component]
+                  const id = `${data.id}[${activeIndex}].${itemId}`
+
+                  const translatedOptions = options?.map((option) => ({
+                    ...option,
+                    label: formatText(option.label, application, formatMessage),
+                  }))
+
+                  if (condition && !condition(application)) {
+                    return null
+                  }
+
+                  return (
+                    <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
+                      <Component
+                        id={id}
+                        name={id}
+                        label={formatText(label, application, formatMessage)}
+                        options={translatedOptions}
+                        placeholder={formatText(
+                          placeholder,
                           application,
                           formatMessage,
                         )}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveItem(index)}
-                        >
-                          <Icon icon="removeCircle" type="outline" />
-                        </button>
-                      </Tooltip>
-                    </Box>
-                  </T.Data>
-                  {tableRows.map((item, idx) => {
-                    const formatFn = table?.format?.[item]
-                    return (
-                      <T.Data key={`${item}-${idx}`}>
-                        {formatFn
-                          ? formatFn(values[index][item])
-                          : values[index][item]}
-                      </T.Data>
-                    )
-                  })}
-                </T.Row>
-              ))}
-          </T.Body>
-        </T.Table>
-        {activeField ? (
-          <Stack space={2} key={activeField.id}>
-            {formTitle && (
-              <Text variant="h4">
-                {formatText(formTitle, application, formatMessage)}
-              </Text>
-            )}
-            <GridRow rowGap={[2, 2, 2, 3]}>
-              {items.map((item) => {
-                const {
-                  component,
-                  id: itemId,
-                  backgroundColor = 'blue',
-                  label = '',
-                  placeholder = '',
-                  options,
-                  width = 'full',
-                  ...props
-                } = item
-                const isHalfColumn = component !== 'radio' && width === 'half'
-                const span = isHalfColumn ? '1/2' : '1/1'
-                const Component = componentMapper[component]
-                const id = `${data.id}[${activeIndex}].${itemId}`
-
-                const translatedOptions = options?.map((option) => ({
-                  ...option,
-                  label: formatText(option.label, application, formatMessage),
-                }))
-
-                return (
-                  <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
-                    <Component
-                      id={id}
-                      name={id}
-                      label={formatText(label, application, formatMessage)}
-                      options={translatedOptions}
-                      placeholder={formatText(
-                        placeholder,
-                        application,
-                        formatMessage,
-                      )}
-                      error={getFieldError(itemId)}
-                      control={methods.control}
-                      backgroundColor={backgroundColor}
-                      onChange={() => {
-                        if (error) {
-                          methods.clearErrors(id)
-                        }
-                      }}
-                      {...props}
-                    />
-                  </GridColumn>
-                )
-              })}
-            </GridRow>
+                        split={width === 'half' ? '1/2' : '1/1'}
+                        error={getFieldError(itemId)}
+                        control={methods.control}
+                        backgroundColor={backgroundColor}
+                        onChange={() => {
+                          if (error) {
+                            methods.clearErrors(id)
+                          }
+                        }}
+                        {...props}
+                      />
+                    </GridColumn>
+                  )
+                })}
+              </GridRow>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => handleSaveItem(activeIndex)}
+                >
+                  {formatText(saveItemButtonText, application, formatMessage)}
+                </Button>
+              </Box>
+            </Stack>
+          ) : (
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 variant="ghost"
                 type="button"
-                onClick={() => handleSaveItem(activeIndex)}
+                onClick={handleNewItem}
+                icon="add"
               >
-                {formatText(saveItemButtonText, application, formatMessage)}
+                {formatText(addItemButtonText, application, formatMessage)}
               </Button>
             </Box>
-          </Stack>
-        ) : (
-          <Box display="flex" justifyContent="flexEnd">
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={handleNewItem}
-              icon="add"
-            >
-              {formatText(addItemButtonText, application, formatMessage)}
-            </Button>
-          </Box>
-        )}
-      </Stack>
+          )}
+        </Stack>
+      </Box>
     </Box>
   )
 }

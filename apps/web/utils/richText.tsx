@@ -68,6 +68,7 @@ import {
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
+import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
@@ -121,6 +122,8 @@ export const webRenderConnectedComponent = (
       return <KilometerFee slice={slice} />
     case 'SpecificHousingBenefitSupportCalculator':
       return <SpecificHousingBenefitSupportCalculator slice={slice} />
+    case 'GrindavikResidentialPropertyPurchaseCalculator':
+      return <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
     default:
       break
   }
@@ -163,9 +166,9 @@ const defaultRenderComponent = {
     <OverviewLinksSlice slice={slice} />
   ),
   Chart: (slice: ChartSchema) => <Chart slice={slice} />,
-  ChartNumberBox: (slice: ChartNumberBoxSchema) => (
-    <ChartNumberBox slice={slice} />
-  ),
+  ChartNumberBox: (
+    slice: ChartNumberBoxSchema & { chartNumberBoxId: string },
+  ) => <ChartNumberBox slice={slice} />,
   SectionWithImage: (slice: SectionWithImageSchema) => (
     <SectionWithImage
       title={slice.title}

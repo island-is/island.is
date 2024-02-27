@@ -2,7 +2,8 @@ import {
   ActionCard,
   CardLoader,
   IntroHeader,
-  NotFound,
+  MENNTAMALASTOFNUN_SLUG,
+  m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
@@ -10,6 +11,7 @@ import { EducationPaths } from '../../lib/paths'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { defineMessage } from 'react-intl'
 import { edMessage } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const EducationGraduationDetail = () => {
   useNamespaces('sp.education-secondary-school')
@@ -17,17 +19,8 @@ export const EducationGraduationDetail = () => {
   const { formatMessage } = useLocale()
 
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
+  const noData = !diplomaItems.length && !loading && !error
 
-  if ((!diplomaItems.length && !loading) || error) {
-    return (
-      <NotFound
-        title={defineMessage({
-          id: 'sp.education-secondary-school:not-found',
-          defaultMessage: 'Engin gögn fundust',
-        })}
-      />
-    )
-  }
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -37,6 +30,8 @@ export const EducationGraduationDetail = () => {
           defaultMessage:
             'Hér getur þú fundið yfirlit yfir þínar útskriftir úr framhaldsskóla.',
         })}
+        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
       <Box marginTop={4}>{loading && <CardLoader />}</Box>
       <Box marginBottom={3}>
@@ -65,6 +60,17 @@ export const EducationGraduationDetail = () => {
               />
             </Box>
           ))}
+
+        {error && <Problem noBorder={false} error={error} />}
+        {noData && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
       </Box>
     </Box>
   )

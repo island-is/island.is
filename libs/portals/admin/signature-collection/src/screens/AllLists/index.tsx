@@ -20,18 +20,30 @@ import { useEffect, useState } from 'react'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { Filters, countryAreas, pageSize } from '../../lib/utils'
+import {
+  CollectionStatus,
+  Filters,
+  countryAreas,
+  pageSize,
+} from '../../lib/utils'
 import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
 import CreateCollection from './components/createCollection'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
+import ListInfo from '../List/components/listInfoAlert'
+import EmptyState from './components/emptyState'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const allLists = useLoaderData() as SignatureCollectionList[]
+  const { allLists, collectionStatus } = useLoaderData() as {
+    allLists: SignatureCollectionList[]
+    collectionStatus: string
+  }
+
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<Filters>({
@@ -100,7 +112,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           />
         </GridColumn>
         <GridColumn
-          paddingTop={[5, 5, 5, 2]}
+          paddingTop={[5, 5, 5, 0]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
@@ -113,6 +125,21 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
+          {collectionStatus !== CollectionStatus.InitialActive && (
+            <ListInfo
+              message={formatMessage(
+                collectionStatus === CollectionStatus.InInitialReview
+                  ? m.signatureCollectionInInitialReview
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessing
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessed
+                  : collectionStatus === CollectionStatus.Active
+                  ? m.signatureCollectionActive
+                  : m.signatureCollectionInReview,
+              )}
+            />
+          )}
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
@@ -175,11 +202,15 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     }
                   />
                 </Filter>
-                {allowedToProcess && <CreateCollection />}
+                {lists?.length > 0 &&
+                  allowedToProcess &&
+                  (collectionStatus === CollectionStatus.InInitialReview ||
+                    collectionStatus === CollectionStatus.Processing) && (
+                    <CreateCollection />
+                  )}
               </Box>
             </GridColumn>
           </GridRow>
-
           {lists?.length > 0 ? (
             <>
               <Box marginBottom={2}>
@@ -216,24 +247,35 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        tag={{
-                          label: m.confirmListReviewed.defaultMessage,
-                          variant: 'mint',
-                          outlined: false,
-                        }}
-                        cta={{
-                          label: formatMessage(m.viewList),
-                          variant: 'text',
-                          icon: 'arrowForward',
-                          onClick: () => {
-                            navigate(
-                              SignatureCollectionPaths.SignatureList.replace(
-                                ':id',
-                                list.id,
-                              ),
-                            )
-                          },
-                        }}
+                        tag={
+                          list.reviewed
+                            ? {
+                                label: m.confirmListReviewed.defaultMessage,
+                                variant: 'mint',
+                                outlined: false,
+                              }
+                            : undefined
+                        }
+                        cta={
+                          (allowedToProcess &&
+                            collectionStatus !==
+                              CollectionStatus.InitialActive) ||
+                          !allowedToProcess
+                            ? {
+                                label: formatMessage(m.viewList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                onClick: () => {
+                                  navigate(
+                                    SignatureCollectionPaths.SignatureList.replace(
+                                      ':id',
+                                      list.id,
+                                    ),
+                                  )
+                                },
+                              }
+                            : undefined
+                        }
                       />
                     )
                   })}
@@ -247,26 +289,45 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               </Box>
             </Box>
           ) : (
-            <Text>{formatMessage(m.noLists)}</Text>
+            <Box marginTop={10}>
+              <EmptyState
+                title={formatMessage(m.noLists)}
+                description={formatMessage(m.noListsDescription)}
+              />
+            </Box>
           )}
-          <Box marginTop={5}>
-            <Pagination
-              totalItems={lists.length}
-              itemsPerPage={pageSize}
-              page={page}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => setPage(page)}
-                  component="button"
-                >
-                  {children}
-                </Box>
+          {lists?.length > 0 && (
+            <Box marginTop={5}>
+              <Pagination
+                totalItems={lists.length}
+                itemsPerPage={pageSize}
+                page={page}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                    component="button"
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
+          )}
+          {lists?.length > 0 && allowedToProcess && (
+            <Box>
+              {(collectionStatus === CollectionStatus.Processing ||
+                collectionStatus === CollectionStatus.InInitialReview ||
+                collectionStatus === CollectionStatus.InReview) && (
+                <CompareLists />
               )}
-            />
-          </Box>
-          {allowedToProcess && <CompareLists />}
+
+              {collectionStatus === CollectionStatus.Processing && (
+                <ActionCompleteCollectionProcessing />
+              )}
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

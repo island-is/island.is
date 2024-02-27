@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   Box,
   Button,
+  Hidden,
   Icon,
   Inline,
   Input,
@@ -411,7 +412,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   if (showLauncher) return null
 
   return (
-    <>
+    <Hidden print>
       {shouldDisplayFeedbackPanel && (
         <ChatFeedbackPanel
           pushUp={pushUp}
@@ -455,7 +456,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         />
       )}
       <ToastContainer />
-    </>
+    </Hidden>
   )
 }
 

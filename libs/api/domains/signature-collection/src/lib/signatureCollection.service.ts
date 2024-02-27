@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
-import { SignatureCollectionList } from './models/signatureList.model'
+import {
+  SignatureCollectionList,
+  SignatureCollectionSignedList,
+} from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import {
@@ -78,7 +81,9 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getList(listId, user)
   }
 
-  async signedList(user: User): Promise<SignatureCollectionList | null> {
+  async signedList(
+    user: User,
+  ): Promise<SignatureCollectionSignedList[] | null> {
     return await this.signatureCollectionClientService.getSignedList(user)
   }
 
