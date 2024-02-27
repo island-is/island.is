@@ -992,6 +992,11 @@ export const m = defineMessages({
       'Vinsamlegast tilgreindu heildar verðmæti séreignar hins látna.',
     description: '',
   },
+  totalSeparatePropertyDescription: {
+    id: 'ir.application:totalSeparatePropertyDescription',
+    defaultMessage: '[Nánari lýsing hér fyrir til að útskýra þessa upphæð]',
+    description: '',
+  },
   errorTotalSeparateProperty: {
     id: 'ir.application:errorTotalSeparateProperty',
     defaultMessage: 'Vantar að fylla út.',

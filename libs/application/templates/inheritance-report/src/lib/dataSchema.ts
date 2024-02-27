@@ -487,7 +487,7 @@ export const inheritanceReportSchema = z.object({
       },
     ),
 
-  totalDeduction: z.string(),
+  totalDeduction: z.number(),
 
   /* einkaskipti */
   confirmAction: z.array(z.enum([YES])).length(1),

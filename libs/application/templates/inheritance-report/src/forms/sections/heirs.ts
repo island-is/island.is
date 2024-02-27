@@ -73,8 +73,13 @@ export const heirs = buildSection({
             buildKeyValueField({
               label: m.totalDeduction,
               display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(Number(answers.totalDeduction ?? '0'))),
+              value: ({ answers }) => {
+                const spouseTotalDeduction = valueToNumber(
+                  getValueViaPath(answers, 'spouse.spouseTotalDeduction'),
+                )
+
+                return formatCurrency(String(spouseTotalDeduction ?? '0'))
+              },
             }),
             buildDescriptionField({
               id: 'space1',
@@ -259,17 +264,19 @@ export const heirs = buildSection({
             buildKeyValueField({
               label: m.netPropertyForExchange,
               display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
+              value: ({ answers }) => {
+                console.log('answers', answers)
+                return formatCurrency(
                   String(
                     Number(getValueViaPath(answers, 'assets.assetsTotal')) -
                       Number(getValueViaPath(answers, 'debts.debtsTotal')) +
                       Number(
                         getValueViaPath(answers, 'business.businessTotal'),
                       ) -
-                      Number(getValueViaPath(answers, 'totalDeduction')),
+                      Number(getValueViaPath(answers, 'totalDeduction') ?? '0'),
                   ),
-                ),
+                )
+              },
             }),
             buildDividerField({}),
             buildDescriptionField({

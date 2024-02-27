@@ -71,7 +71,11 @@ export const SpouseEstateShare: FC<
 
   const getUpdatedValues = useCallback(() => getValues(id), [getValues, id])
 
-  const [localSpouseTotalDeduction, setLocalSpouseTotalDeductionvalue] =
+  const [
+    localSpouseTotalSeparateProperty,
+    setLocalSpouseTotalSeparateProperty,
+  ] = useState<number>(getUpdatedValues()?.spouseTotalSeparateProperty ?? 0)
+  const [localSpouseTotalDeduction, setLocalSpouseTotalDeduction] =
     useState<number>(getUpdatedValues()?.spouseTotalDeduction ?? 0)
   const [wasInCohabitation, setWasInCohabitation] = useState<
     YesOrNo | undefined
@@ -110,19 +114,21 @@ export const SpouseEstateShare: FC<
     }
 
     if (wasInCohabitation === YES && hadSeparateProperty === YES) {
-      setValue(spouseTotalDeductionField, 0)
+      let deduction = assetsTotal * 0.5
+      deduction = (localSpouseTotalDeduction - deduction) / 2
+      setValue('totalDeduction', deduction > 0 ? deduction : 0)
     }
 
     if (wasInCohabitation === YES && hadSeparateProperty === NO) {
-      const value = assetsTotal * 0.5
-
-      setLocalSpouseTotalDeductionvalue(value)
-      setValue(spouseTotalDeductionField, value)
+      const deduction = assetsTotal * 0.5
+      setLocalSpouseTotalDeduction(deduction)
+      setValue(spouseTotalDeductionField, deduction)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     assetsTotal,
     hadSeparateProperty,
+    localSpouseTotalDeduction,
     spouseTotalDeductionField,
     wasInCohabitation,
   ])
@@ -238,6 +244,11 @@ export const SpouseEstateShare: FC<
               {formatMessage(m.totalSeparateProperty)}
             </Text>
           </GridColumn>
+          <GridColumn span="1/1">
+            <Text paddingBottom={3}>
+              {formatMessage(m.totalSeparatePropertyDescription)}
+            </Text>
+          </GridColumn>
           <GridColumn span={span}>
             <InputController
               id={spouseTotalSeparatePropertyField}
@@ -247,10 +258,11 @@ export const SpouseEstateShare: FC<
               error={getError('spouseTotalSeparateProperty')}
               backgroundColor="blue"
               onChange={(e) => {
+                clearErrors()
                 const value = e.target.value
 
                 setValue(spouseTotalSeparatePropertyField, valueToNumber(value))
-                clearErrors()
+                setLocalSpouseTotalDeduction(valueToNumber(value))
               }}
               currency
             />

@@ -81,7 +81,6 @@ export const valueToNumber = (value?: unknown): number => {
   if (typeof value === 'string') {
     const numStr = value.replace(/[^\d,]/g, '')
     const numStrDot = numStr.replace(',', '.')
-    // const numStr = value.replace(/[^0-9]/g, '')
     const num = parseFloat(numStrDot)
 
     return isNaN(num) ? 0 : num
