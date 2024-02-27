@@ -134,6 +134,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           />
           {collectionStatus !== CollectionStatus.InitialActive && (
             <ListInfo
+              type={
+                collectionStatus === CollectionStatus.InReview && !hasInReview
+                  ? 'success'
+                  : undefined
+              }
               message={formatMessage(
                 collectionStatus === CollectionStatus.InInitialReview
                   ? hasInReview
@@ -143,7 +148,10 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   ? m.signatureCollectionProcessed
                   : collectionStatus === CollectionStatus.Active
                   ? m.signatureCollectionActive
-                  : m.signatureCollectionInReview,
+                  : collectionStatus === CollectionStatus.InReview &&
+                    hasInReview
+                  ? m.signatureCollectionInReview
+                  : m.signatureCollectionReviewDone,
               )}
             />
           )}
