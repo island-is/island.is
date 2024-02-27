@@ -1,4 +1,3 @@
-import { SmartSolutionsApiConfigSchema } from '@island.is/clients/smartsolutions'
 import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
