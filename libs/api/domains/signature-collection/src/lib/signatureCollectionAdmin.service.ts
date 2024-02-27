@@ -17,7 +17,6 @@ import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
 import {
   SignatureCollectionListStatus,
-  SignatureCollectionStatus,
 } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 
@@ -123,13 +122,6 @@ export class SignatureCollectionAdminService {
       collectionId,
       user,
     )
-  }
-
-  async collectionStatus(user: User): Promise<SignatureCollectionStatus> {
-    const status = await this.signatureCollectionClientService.collectionStatus(
-      user,
-    )
-    return { status }
   }
 
   async processCollection(

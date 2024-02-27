@@ -3,11 +3,14 @@ import {
   FrambodApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
-  MedmaelasofnunExtendedDTO,
 } from '../../gen/fetch'
 import { CanCreateInput, GetListInput } from './signature-collection.types'
-import { Collection, mapCollection } from './types/collection.dto'
-import { List, mapList } from './types/list.dto'
+import {
+  Collection,
+  CollectionStatus,
+  mapCollection,
+} from './types/collection.dto'
+import { List, ListStatus, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { AdminCandidateApi, AdminCollectionApi, AdminListApi } from './apis'
 import { Success, mapReasons } from './types/success.dto'
@@ -87,14 +90,14 @@ export class SignatureCollectionSharedClientService {
       .filter((s) => s.valid)
   }
 
-  async canCreate({
+  canCreate({
     requirementsMet = false,
     canCreateInfo,
     isPresidential,
     isActive = true,
     ownedLists,
     areas,
-  }: CanCreateInput): Promise<Success> {
+  }: CanCreateInput): Success {
     // can create if requirements met and collection is active
     // if collection is presidential and user has no lists otherwise does not have lists for all areas of collection
     const alreadyOwnsAllLists = isPresidential
@@ -109,5 +112,40 @@ export class SignatureCollectionSharedClientService {
         notOwner: !alreadyOwnsAllLists,
       }) ?? []
     return { success: canCreate, reasons }
+  }
+
+  getListStatus(list: List, collectionStatus: CollectionStatus): ListStatus {
+    // Collection is open and list is active
+    // List has been extended and is active
+    if (list.active) {
+      return ListStatus.Active
+    }
+
+    // Initial collection time has passed and list is not active and has not been manually reviewed
+    // Extended list has expired in review
+    if (!list.reviewed) {
+      return ListStatus.InReview
+    }
+
+    if (!list.isExtended) {
+      // Check if all lists have been reviewed and list is extendable
+      // If collection is processed or if collection is active and not list
+      if (
+        collectionStatus === CollectionStatus.Processed ||
+        collectionStatus === CollectionStatus.Active
+      ) {
+        return ListStatus.Extendable
+      }
+      if (list.reviewed && collectionStatus === CollectionStatus.InReview) {
+        return ListStatus.Inactive
+      }
+    }
+
+    // Initial collection time has passed and list is not active and has been manually reviewed
+    // Extended list has expired and has been manually reviewed
+    if (list.reviewed) {
+      return ListStatus.Reviewed
+    }
+    return ListStatus.Inactive
   }
 }

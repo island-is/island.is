@@ -29,8 +29,8 @@ export const GetCurrentCollection = gql`
   }
 `
 export const GetOpenLists = gql`
-  query allOpenLists {
-    signatureCollectionAllOpenLists {
+  query allOpenLists($input: SignatureCollectionIdInput!) {
+    signatureCollectionAllOpenLists(input: $input) {
       id
       title
       area {

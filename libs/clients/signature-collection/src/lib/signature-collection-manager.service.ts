@@ -55,38 +55,7 @@ export class SignatureCollectionManagerClientService {
   }
   async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
     const list = await this.getList(listId, auth)
-    // Collection is open and list is active
-    // List has been extended and is active
-    if (list.endTime > new Date()) {
-      return ListStatus.Active
-    }
     const { status } = await this.currentCollection(auth)
-
-    // Initial collection time has passed and list is not active and has not been manually reviewed
-    // Extended list has expired in review
-    if (!list.reviewed) {
-      return ListStatus.InReview
-    }
-
-    if (!list.isExtended) {
-      // Check if all lists have been reviewed and list is extendable
-      // If collection is processed or if collection is active and not list
-      if (
-        status === CollectionStatus.Processed ||
-        status === CollectionStatus.Active
-      ) {
-        return ListStatus.Extendable
-      }
-      if (list.reviewed && status === CollectionStatus.InReview) {
-        return ListStatus.Inactive
-      }
-    }
-
-    // Initial collection time has passed and list is not active and has been manually reviewed
-    // Extended list has expired and has been manually reviewed
-    if (list.reviewed) {
-      return ListStatus.Reviewed
-    }
-    return ListStatus.Inactive
+    return this.sharedService.getListStatus(list, status)
   }
 }
