@@ -742,7 +742,7 @@ export const m = defineMessages({
   },
   funeralCostDescription: {
     id: 'ir.application:funeralCostDescription',
-    defaultMessage: 'Útfararkostnaður samkvæmt yfirlit um útfararkostnað.',
+    defaultMessage: 'Útfararkostnaður samkvæmt yfirliti um útfararkostnað.',
     description: '',
   },
   amount: {
@@ -989,7 +989,7 @@ export const m = defineMessages({
   totalSeparateProperty: {
     id: 'ir.application:totalSeparateProperty',
     defaultMessage:
-      'Vinsamlegast tilgreindu heildar verðmæti séreignar hins látna.',
+      'Vinsamlegast tilgreindu heildarverðmæti séreignar hins látna.',
     description: '',
   },
   totalSeparatePropertyDescription: {
@@ -1009,7 +1009,7 @@ export const m = defineMessages({
   },
   totalSeparatePropertyLabel: {
     id: 'ir.application:totalSeparatePropertyLabel',
-    defaultMessage: 'Heildar verðmæti séreignir hins látna',
+    defaultMessage: 'Heildarverðmæti séreignir hins látna',
     description: '',
   },
   propertyForExchange: {

@@ -265,7 +265,6 @@ export const heirs = buildSection({
               label: m.netPropertyForExchange,
               display: 'flex',
               value: ({ answers }) => {
-                console.log('answers', answers)
                 return formatCurrency(
                   String(
                     Number(getValueViaPath(answers, 'assets.assetsTotal')) -
