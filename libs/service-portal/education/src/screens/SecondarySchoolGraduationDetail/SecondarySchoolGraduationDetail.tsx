@@ -4,6 +4,7 @@ import {
   formatDate,
   IntroHeader,
   m,
+  MENNTAMALASTOFNUN_SLUG,
   NotFound,
   SortableTable,
 } from '@island.is/service-portal/core'
@@ -82,6 +83,8 @@ export const EducationGraduationDetail = () => {
           graduationItem.organisation ?? ''
         }`}
         intro={formatMessage(edMessage.careerIntro)}
+        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
         marginBottom={6}
       />
       {/* <GridRow marginTop={4}>
