@@ -78,12 +78,8 @@ const Child = () => {
         <Problem
           type="no_data"
           noBorder={false}
-          title={formatMessage(m.noDataFoundVariableSingular, {
-            arg: formatMessage(spmm.child).toLowerCase(),
-          })}
-          message={formatMessage(m.noDataFoundVariableDetailVariation, {
-            arg: formatMessage(spmm.child).toLowerCase(),
-          })}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
           imgSrc="./assets/images/sofa.svg"
         />
       )}
