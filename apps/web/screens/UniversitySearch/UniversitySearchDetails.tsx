@@ -337,7 +337,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
               {data.iscedCode && (
-                <Text variant="small">{`${n('isced', 'ISCED Flokkur')}: ${
+                <Text variant="small">{`${n('isced', 'ISCED Flokkun')}: ${
                   data.iscedCode
                 }`}</Text>
               )}

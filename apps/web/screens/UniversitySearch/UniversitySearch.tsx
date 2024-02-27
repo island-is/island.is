@@ -235,9 +235,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (searchQuery) {
       setQuery(searchQuery)
-
+      sessionStorage.setItem('query', searchQuery)
       //also set deep copy here
       setFilters(JSON.parse(JSON.stringify(initialFilters)))
+    } else if (sessionStorage.getItem('query')) {
+      setQuery(sessionStorage.getItem('query') || '')
     }
   }, [])
 
@@ -671,6 +673,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setSelectedPage(1)
                 searchTermHasBeenInitialized.current = true
                 setQuery(e.target.value)
+                sessionStorage.setItem('query', e.target.value)
               }}
             />
             <Box
