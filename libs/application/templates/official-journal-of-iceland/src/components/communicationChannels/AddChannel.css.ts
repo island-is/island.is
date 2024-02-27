@@ -9,7 +9,6 @@ export const addChannel = recipe({
     padding: theme.spacing[4],
     borderLeftColor: theme.color.blue400,
     background: blue100,
-    marginBottom: theme.spacing[3],
   },
   variants: {
     visible: {

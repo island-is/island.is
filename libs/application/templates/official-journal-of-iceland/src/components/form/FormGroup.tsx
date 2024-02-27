@@ -12,7 +12,7 @@ export const FormGroup = ({ title, intro, children }: Props) => {
       {(title || intro) && (
         <Box>
           {title && (
-            <Text marginBottom={intro ? 2 : 0} variant="h4">
+            <Text marginBottom={intro ? 1 : 0} variant="h4">
               {title}
             </Text>
           )}

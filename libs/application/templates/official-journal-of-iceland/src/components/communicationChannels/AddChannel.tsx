@@ -1,111 +1,86 @@
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useId, useRef } from 'react'
-import { general } from '../../lib/messages'
+import { useId, useRef, useState } from 'react'
+import { general, publishing } from '../../lib/messages'
 import * as styles from './AddChannel.css'
+import { Channel } from './Channel'
+import { FormGroup } from '../form/FormGroup'
 type Props = {
-  onPhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onEmailChange: (channel: React.ChangeEvent<HTMLInputElement>) => void
-  onClose: (visible: boolean) => void
-  onSave: () => void
-  phoneValue?: string
-  emailValue?: string
-  emailError?: string
-  phoneError?: string
-  alreadyExistsError?: string
-  visible?: boolean
+  onAdd: (channel: Channel) => void
+  state: Channel
+  setState: React.Dispatch<React.SetStateAction<Channel>>
 }
 
-export const AddChannel = ({
-  onPhoneChange,
-  onEmailChange,
-  onClose,
-  onSave,
-  phoneValue,
-  emailValue,
-  emailError,
-  phoneError,
-  alreadyExistsError,
-  visible = false,
-}: Props) => {
-  const localEmailId = useId()
-  const localPhoneId = useId()
-
-  const { formatMessage } = useLocale()
+export const AddChannel = ({ onAdd, state, setState }: Props) => {
+  const { formatMessage: f } = useLocale()
 
   const phoneRef = useRef<HTMLInputElement>(null)
 
+  const [isVisible, setIsVisible] = useState(false)
+
   return (
-    <Box
-      className={styles.addChannel({
-        visible,
-      })}
-      width="full"
-    >
-      <Box className={styles.contentWrap} marginBottom={5}>
-        <Box className={styles.emailWrap}>
-          <Input
-            size="xs"
-            id={localEmailId}
-            name="email"
-            type="email"
-            errorMessage={emailError}
-            label={formatMessage(general.email)}
-            value={emailValue}
-            onChange={(e) =>
-              onEmailChange(e as React.ChangeEvent<HTMLInputElement>)
-            }
-            onKeyDown={(e) => {
-              if (
-                e.key === 'Enter' &&
-                phoneRef.current &&
-                e.currentTarget.value
-              ) {
-                phoneRef.current.focus()
-              }
-            }}
-          />
-        </Box>
-        <Box className={styles.phoneWrap}>
-          <Input
-            ref={phoneRef}
-            size="xs"
-            id={localPhoneId}
-            name="tel"
-            errorMessage={phoneError}
-            value={phoneValue}
-            label={formatMessage(general.phoneNumber)}
-            onChange={(e) =>
-              onPhoneChange(e as React.ChangeEvent<HTMLInputElement>)
-            }
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                onSave()
-                e.stopPropagation()
-              }
-            }}
-          />
-        </Box>
-      </Box>
-      <Box className={styles.contentWrap}>
-        {alreadyExistsError && (
-          <Box width="full">
-            <Text>
-              <span className={styles.errorText}>{alreadyExistsError}</span>
-            </Text>
+    <FormGroup>
+      <Box
+        className={styles.addChannel({
+          visible: isVisible,
+        })}
+        width="full"
+      >
+        <Box className={styles.contentWrap} marginBottom={5}>
+          <Box className={styles.emailWrap}>
+            <Input
+              size="xs"
+              name="email"
+              type="email"
+              value={state.email}
+              label={f(general.email)}
+              onChange={(e) => setState({ ...state, email: e.target.value })}
+            />
           </Box>
-        )}
-        <Button size="small" variant="ghost" onClick={() => onClose(visible)}>
-          {formatMessage(general.cancel)}
-        </Button>
+          <Box className={styles.phoneWrap}>
+            <Input
+              ref={phoneRef}
+              size="xs"
+              name="tel"
+              value={state.phone}
+              label={f(general.phoneNumber)}
+              onChange={(e) => setState({ ...state, phone: e.target.value })}
+            />
+          </Box>
+        </Box>
+        <Box className={styles.contentWrap}>
+          <Button
+            size="small"
+            variant="ghost"
+            onClick={() => {
+              setIsVisible(!isVisible)
+              setState({ email: '', phone: '' })
+            }}
+          >
+            {f(general.cancel)}
+          </Button>
+          <Button
+            disabled={!state.email}
+            onClick={() => {
+              onAdd(state)
+              setState({ email: '', phone: '' })
+            }}
+            size="small"
+          >
+            {f(general.saveChanges)}
+          </Button>
+        </Box>
+      </Box>
+      <Box>
         <Button
-          disabled={!phoneValue || !emailValue}
-          size="small"
-          onClick={onSave}
+          size="default"
+          variant="primary"
+          onClick={() => setIsVisible(!isVisible)}
+          icon="add"
         >
-          {formatMessage(general.saveChanges)}
+          {f(publishing.buttons.addCommunicationChannel.label)}
         </Button>
       </Box>
-    </Box>
+    </FormGroup>
   )
 }

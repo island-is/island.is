@@ -3,11 +3,11 @@ import { Channel } from './Channel'
 import { useLocale } from '@island.is/localization'
 import { general } from '../../lib/messages'
 import * as styles from './ChannelList.css'
-import { CommunicationChannel } from './CommunicationChannels'
+
 type Props = {
-  channels: CommunicationChannel[]
-  onEditChannel: (channel: CommunicationChannel) => void
-  onRemoveChannel: (channel: CommunicationChannel) => void
+  channels: Channel[]
+  onEditChannel: (channel: Channel) => void
+  onRemoveChannel: (channel: Channel) => void
 }
 
 export const ChannelList = ({
