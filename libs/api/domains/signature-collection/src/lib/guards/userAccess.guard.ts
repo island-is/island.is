@@ -45,7 +45,6 @@ export class UserAccessGuard implements CanActivate {
       return isDelegatedUser ? false : true
     }
 
-    // const signee: SignatureCollectionSignee = request.body.signee
     const { candidate } = signee
 
     if (signee.isOwner && candidate) {
