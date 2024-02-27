@@ -1,19 +1,20 @@
-import { IBasicFilter } from 'powerbi-models'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { EventHandler, PowerBIEmbed } from 'powerbi-client-react'
-import { Embed, models, Report, VisualDescriptor } from 'powerbi-client'
-import { useApolloClient, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+import { Embed, models, Report, VisualDescriptor } from 'powerbi-client'
+import { EventHandler, PowerBIEmbed } from 'powerbi-client-react'
+import { IBasicFilter } from 'powerbi-models'
+import { useApolloClient, useQuery } from '@apollo/client'
+
+import { theme } from '@island.is/island-ui/theme'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   PowerBiSlice as PowerBiSliceSchema,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
-import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
-import { theme } from '@island.is/island-ui/theme'
 
 type EventType =
   | 'loaded'
@@ -381,6 +382,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           ...slice.powerBiEmbedPropsFromServer,
           tokenType: models.TokenType.Embed,
         }),
+        pageName: router.query.pageName,
       }}
       getEmbeddedComponent={getEmbeddedComponent}
       eventHandlers={eventHandlers}
