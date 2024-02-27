@@ -5,6 +5,7 @@ import {
   Disability,
   Firearm,
   DrivingLicense,
+  Hunting,
 } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
@@ -48,7 +49,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
     })
-    .xroad(Base, Client, Firearm, Disability, DrivingLicense)
+    .xroad(Base, Client, Firearm, Disability, DrivingLicense, Hunting)
     .ingress({
       primary: {
         host: {
