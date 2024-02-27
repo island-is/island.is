@@ -90,6 +90,7 @@
 /libs/api/domains/signature-collection                                                                   @island-is/juni
 /libs/clients/signature-collection                                                                       @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection                    @island-is/juni
+libs/shared/connected/src/lib/SignatureLists                                                             @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
