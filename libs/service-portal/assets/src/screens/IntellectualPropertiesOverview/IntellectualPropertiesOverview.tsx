@@ -45,26 +45,6 @@ const IntellectualPropertiesOverview = () => {
     </Box>
   )
 
-  if (error && !loading) {
-    return <Problem error={error} noBorder={false} />
-  }
-
-  if (!data?.intellectualProperties?.totalCount && !loading) {
-    return (
-      <Problem
-        type="no_data"
-        noBorder={false}
-        title={formatMessage(m.noDataFoundVariable, {
-          arg: formatMessage(m.intellectualProperties).toLowerCase(),
-        })}
-        message={formatMessage(m.noDataFoundVariableDetailVariation, {
-          arg: formatMessage(m.intellectualProperties).toLowerCase(),
-        })}
-        imgSrc="./assets/images/sofa.svg"
-      />
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -78,12 +58,19 @@ const IntellectualPropertiesOverview = () => {
           <CardLoader />
         </Box>
       )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {!loading && (data?.intellectualProperties?.totalCount ?? 0) < 1 && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            return <Problem type="no_data" />
-          </Box>
-        </Box>
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noDataFoundVariable, {
+            arg: formatMessage(m.intellectualProperties).toLowerCase(),
+          })}
+          message={formatMessage(m.noDataFoundVariableDetailVariation, {
+            arg: formatMessage(m.intellectualProperties).toLowerCase(),
+          })}
+          imgSrc="./assets/images/sofa.svg"
+        />
       )}
       {!loading &&
         !error &&
