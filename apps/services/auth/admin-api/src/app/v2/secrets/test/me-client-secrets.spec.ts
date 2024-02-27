@@ -209,6 +209,7 @@ describe('MeClientSecretsController', () => {
           AppModule,
           SequelizeConfigService,
           user: testCase.user,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 
