@@ -21,10 +21,14 @@ export class Url {
   explicitRedirect?: string
 }
 
-export const mapUrl = ({ fields, sys }: IUrl): Url => ({
-  id: sys.id,
-  title: fields.title ?? '',
-  page: fields.page ? mapReferenceLink(fields.page) : null,
-  explicitRedirect: fields.explicitRedirect ?? '',
-  urlsList: fields.urlsList ?? [],
-})
+export const mapUrl = ({ fields, sys }: IUrl): Url => {
+  const urlsList = (fields.urlsList ?? []).map((url) => url?.trim())
+
+  return {
+    id: sys.id,
+    title: fields.title ?? '',
+    page: fields.page ? mapReferenceLink(fields.page) : null,
+    explicitRedirect: fields.explicitRedirect ?? '',
+    urlsList,
+  }
+}
