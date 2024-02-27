@@ -3,7 +3,7 @@ import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Flex, Pill, TextInput } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
-const TrimWhitespaceShortTextListField = () => {
+const UrlsListField = () => {
   const [value, setValue] = useState('')
   const sdk = useSDK<FieldExtensionSDK>()
   const [tags, setTags] = useState<string[]>(sdk.field.getValue() ?? [])
@@ -54,4 +54,4 @@ const TrimWhitespaceShortTextListField = () => {
   )
 }
 
-export default TrimWhitespaceShortTextListField
+export default UrlsListField
