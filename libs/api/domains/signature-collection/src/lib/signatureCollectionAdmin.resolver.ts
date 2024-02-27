@@ -25,9 +25,7 @@ import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionAdminService } from './signatureCollectionAdmin.service'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import {
-  SignatureCollectionListStatus,
-} from './models/status.model'
+import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionManagerService } from './signatureCollectionManager.service'
 import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
