@@ -42,7 +42,7 @@ export class MeNotificationsController {
 
   @Get()
   @Documentation({
-    summary: 'Returns a paginated list of user notifications',
+    summary: 'Returns a paginated list of current user notifications',
     response: { status: HttpStatus.OK, type: PaginatedNotificationDto },
   })
   findMany(
@@ -52,22 +52,34 @@ export class MeNotificationsController {
     return this.notificationService.findMany(user, query)
   }
 
-  @Get('/unread-count')
+  @Get("/unread-count")
   @Documentation({
-    summary: 'Returns a count of unread notifications for the user',
+    summary: 'Returns a count of unread notifications for the current user',
     response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
   })
   async getUnreadNotificationsCount(
-    @CurrentUser() user: User,
+    @CurrentUser() user: User
   ): Promise<{ unreadCount: number }> {
-    const unreadCount =
-      await this.notificationService.getUnreadNotificationsCount(user)
-    return { unreadCount }
+    return await this.notificationService.getUnreadNotificationsCount(user);
   }
+
+  @Get("/unseen-count")
+  @Documentation({
+    summary: 'Returns a count of unread notifications for the current user',
+    response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
+  })
+  async getUnseenNotificationsCount(
+    @CurrentUser() user: User
+  ): Promise<{ unseenCount: number }> {
+    return await this.notificationService.getUnseenNotificationsCount(user);
+  }
+
+
+  
 
   @Get(':id')
   @Documentation({
-    summary: 'Returns a specific user notification',
+    summary: 'Returns current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
   })
   findOne(
@@ -79,7 +91,7 @@ export class MeNotificationsController {
   }
 
   @Documentation({
-    summary: 'Updates a specific user notification',
+    summary: 'Updates current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
   })
   @Patch(':id')
@@ -99,13 +111,25 @@ export class MeNotificationsController {
     )
   }
 
+  @Patch('/mark-all-as-seen')
+  @Scopes(NotificationsScope.write)
+  @ApiSecurity('oauth2', [NotificationsScope.write])
+  @Documentation({
+    summary: 'Updates all of  current user notifications as seen',
+    response: { status: HttpStatus.NO_CONTENT },
+  })  async markAllAsSeen(@CurrentUser() user: User): Promise<void> {
+    await this.notificationService.markAllAsSeen(user);
+  }
+
   // @Patch('/mark-all-as-read')
   // @Scopes(NotificationsScope.write)
   // @ApiSecurity('oauth2', [NotificationsScope.write])
   // @Documentation({
-  //   summary: 'Updates all user notifications as read',
+  //   summary: 'Updates all of  current user notifications as seen',
   //   response: { status: HttpStatus.NO_CONTENT },
   // })  async markAllAsRead(@CurrentUser() user: User): Promise<void> {
   //   await this.notificationService.markAllAsRead(user);
   // }
+
+ 
 }

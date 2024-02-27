@@ -1,3 +1,100 @@
+// import {
+//   Table,
+//   Column,
+//   Model,
+//   DataType,
+//   AutoIncrement,
+//   PrimaryKey,
+//   CreatedAt,
+//   UpdatedAt,
+//   Index,
+// } from 'sequelize-typescript'
+// import {
+//   CreationOptional,
+//   InferAttributes,
+//   InferCreationAttributes,
+// } from 'sequelize'
+
+// interface ArgItem {
+//   key: string
+//   value: string
+// }
+
+// export enum NotificationStatus {
+//   READ = 'read',
+//   UNREAD = 'unread',
+// }
+// @Table({
+//   tableName: 'user_notification', // Explicitly setting the table name
+// })
+// @Table
+// export class Notification extends Model<
+//   InferAttributes<Notification>,
+//   InferCreationAttributes<Notification>
+// > {
+//   @PrimaryKey
+//   @AutoIncrement
+//   @Column({
+//     type: DataType.INTEGER,
+//     allowNull: false,
+//     field: 'id',
+//   })
+//   id!: CreationOptional<number>
+
+//   @Index // Adding an index
+//   @Column({
+//     type: DataType.UUID,
+//     unique: true, // Adding the unique constraint
+//     field: 'message_id',
+//   })
+//   messageId!: string
+
+//   @Index // Adding an index
+//   @Column({
+//     type: DataType.STRING,
+//     allowNull: false,
+//     field: 'recipient',
+//   })
+//   recipient!: string
+
+//   @Column({
+//     type: DataType.STRING,
+//     allowNull: false,
+//     field: 'template_id',
+//   })
+//   templateId!: string
+
+//   @Column({
+//     type: DataType.JSON,
+//     allowNull: false,
+//     field: 'args',
+//   })
+//   args!: ArgItem[]
+
+//   @CreatedAt
+//   @Column({
+//     type: DataType.DATE,
+//     field: 'created',
+//   })
+//   created!: CreationOptional<Date>
+
+//   @UpdatedAt
+//   @Column({
+//     type: DataType.DATE,
+//     field: 'updated',
+//   })
+//   updated!: CreationOptional<Date>
+
+//   @Column({
+//     type: DataType.ENUM,
+//     values: [NotificationStatus.READ, NotificationStatus.UNREAD],
+//     defaultValue: NotificationStatus.UNREAD,
+//     allowNull: false,
+//     field: 'status',
+//   })
+//   status!: CreationOptional<NotificationStatus>
+// }
+
 import {
   Table,
   Column,
@@ -8,26 +105,21 @@ import {
   CreatedAt,
   UpdatedAt,
   Index,
-} from 'sequelize-typescript'
+} from 'sequelize-typescript';
 import {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
-} from 'sequelize'
+} from 'sequelize';
 
 interface ArgItem {
-  key: string
-  value: string
+  key: string;
+  value: string;
 }
 
-export enum NotificationStatus {
-  READ = 'read',
-  UNREAD = 'unread',
-}
 @Table({
   tableName: 'user_notification', // Explicitly setting the table name
 })
-@Table
 export class Notification extends Model<
   InferAttributes<Notification>,
   InferCreationAttributes<Notification>
@@ -39,7 +131,7 @@ export class Notification extends Model<
     allowNull: false,
     field: 'id',
   })
-  id!: CreationOptional<number>
+  id!: CreationOptional<number>;
 
   @Index // Adding an index
   @Column({
@@ -47,7 +139,7 @@ export class Notification extends Model<
     unique: true, // Adding the unique constraint
     field: 'message_id',
   })
-  messageId!: string
+  messageId!: string;
 
   @Index // Adding an index
   @Column({
@@ -55,42 +147,49 @@ export class Notification extends Model<
     allowNull: false,
     field: 'recipient',
   })
-  recipient!: string
+  recipient!: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
     field: 'template_id',
   })
-  templateId!: string
+  templateId!: string;
 
   @Column({
     type: DataType.JSON,
     allowNull: false,
     field: 'args',
   })
-  args!: ArgItem[]
+  args!: ArgItem[];
 
   @CreatedAt
   @Column({
     type: DataType.DATE,
     field: 'created',
   })
-  created!: CreationOptional<Date>
+  created!: CreationOptional<Date>;
 
   @UpdatedAt
   @Column({
     type: DataType.DATE,
     field: 'updated',
   })
-  updated!: CreationOptional<Date>
+  updated!: CreationOptional<Date>;
 
   @Column({
-    type: DataType.ENUM,
-    values: [NotificationStatus.READ, NotificationStatus.UNREAD],
-    defaultValue: NotificationStatus.UNREAD,
+    type: DataType.BOOLEAN,
+    defaultValue: false,
     allowNull: false,
-    field: 'status',
+    field: 'read',
   })
-  status!: CreationOptional<NotificationStatus>
+  read!: CreationOptional<boolean>;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+    field: 'seen',
+  })
+  seen!: CreationOptional<boolean>;
 }

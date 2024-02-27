@@ -10,9 +10,10 @@ import {
   ValidateNested,
   IsOptional,
   IsUUID,
+  IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { NotificationStatus } from '../notification.model'
+// import { NotificationStatus } from '../notification.model'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -66,9 +67,16 @@ export class NotificationDto {
   @IsDate()
   updated!: Date
 
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
-  @IsEnum(NotificationStatus)
-  status!: NotificationStatus
+  // @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
+  // @IsEnum(NotificationStatus)
+  // status!: NotificationStatus
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  read!: boolean;
+
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  seen!: boolean;
 }
 
 export class RenderedNotificationDto {
@@ -110,9 +118,17 @@ export class RenderedNotificationDto {
   @IsDate()
   updated!: Date
 
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
-  @IsEnum(NotificationStatus)
-  status!: NotificationStatus
+  // @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
+  // @IsEnum(NotificationStatus)
+  // status!: NotificationStatus
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  read!: boolean;
+
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  seen!: boolean;
+
 }
 
 export class Message {
@@ -163,10 +179,21 @@ export class PaginatedNotificationDto {
   pageInfo!: PageInfoDto
 }
 
+// export class UpdateNotificationDto {
+//   @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.READ })
+//   @IsEnum(NotificationStatus)
+//   status!: NotificationStatus
+// }
 export class UpdateNotificationDto {
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.READ })
-  @IsEnum(NotificationStatus)
-  status!: NotificationStatus
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  read?: boolean;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  seen?: boolean;
 }
 
 export class UnreadNotificationsCountDto {

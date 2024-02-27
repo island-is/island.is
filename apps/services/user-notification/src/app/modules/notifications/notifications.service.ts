@@ -15,7 +15,7 @@ import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 
-import { Notification, NotificationStatus } from './notification.model'
+import { Notification } from './notification.model'
 import axios from 'axios'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
@@ -25,6 +25,8 @@ import {
   RenderedNotificationDto,
   ExtendedPaginationDto,
 } from './dto/notification.dto'
+import slugify from '@sindresorhus/slugify'
+
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
 const CONTENTFUL_GQL_ENDPOINT =
@@ -74,20 +76,21 @@ export class NotificationsService {
         template,
       )
 
-      const sender = formattedTemplate.sender
 
       // Map to RenderedNotificationDto
       return {
         id: notification.id,
         messageId: notification.messageId,
-        sender: sender,
+        sender: formattedTemplate.sender,
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
         clickAction: formattedTemplate.clickAction,
         created: notification.created,
         updated: notification.updated,
-        status: notification.status,
+        // status: notification.status,
+        read: notification.read,
+        seen: notification.seen,
       }
     } catch (error) {
       this.logger.error('Error formatting notification:', error)
@@ -163,9 +166,9 @@ export class NotificationsService {
     for (const item of res.data.hnippTemplateCollection.items) {
       item.sender = item.organization.slug
       delete item.organization
-      if (item.templateId === 'HNIPP.POSTHOLF.NEW_DOCUMENT') {
-        item.sender = 'will-be-inherited-from args.organization-sluggified'
-      }
+      // if (item.templateId === 'HNIPP.POSTHOLF.NEW_DOCUMENT') {
+      //   item.sender = "ARGS.ORGANIZATION.SLUG"
+      // }
     }
     return res.data.hnippTemplateCollection.items
   }
@@ -258,10 +261,7 @@ export class NotificationsService {
               const newValue = value.replace(regexTarget, arg.value)
               // if templates are used by multiple organizations, sender should be set to organization.slug
               if (arg.key == 'organization') {
-                console.log(
-                  'organization found in args, setting sender to organization.slug',
-                )
-                template.sender = arg.value
+                template.sender = slugify(arg.value)
               }
 
               if (newValue !== value) {
@@ -365,18 +365,27 @@ export class NotificationsService {
     }
   }
 
-  async getUnreadNotificationsCount(user: User): Promise<number> {
+  async getUnreadNotificationsCount(user: User): Promise<{unreadCount:number}> {
     const count = await this.notificationModel.count({
       where: {
         recipient: user.nationalId,
-        status: 'unread',
+        read: false,
       },
     })
-
-    return count
+    return {unreadCount:count}
   }
 
-  // async markAllAsRead(user: User): Promise<void> {
+  async getUnseenNotificationsCount(user: User): Promise<{unseenCount:number}> {
+    const count = await this.notificationModel.count({
+      where: {
+        recipient: user.nationalId,
+        seen: false,
+      },
+    })
+    return {unseenCount:count}
+  }
+
+  // async markAllAsSeen(user: User): Promise<void> {
   //   console.log('markAllAsRead');
   //   const res = await this.notificationModel.update(
   //     { status: NotificationStatus.READ },
@@ -384,4 +393,24 @@ export class NotificationsService {
   //   );
   //   console.log(res);
   // }
+
+  async markAllAsSeen(user: User): Promise<void> {
+    return 
+    try {
+      console.log("User nationalId:", user.nationalId); // Debugging log
+      await this.notificationModel.update(
+        { seen: true },
+        { where: { recipient: user.nationalId, seen: false } }
+      );
+    } catch (error) {
+      console.error("Error in markAllAsSeen:", error);
+      // Handle error appropriately
+    }
+  }
+  
+  // async markAllAsRead(user: User): Promise<void> {
+  //   await this.notificationModel.update({ read: true }, { where: { recipient: user.nationalId, read: false } });
+  // }
+
+  
 }
