@@ -12,14 +12,26 @@ export const states = defineMessages({
       'Umsókn er í afgreiðsluferli hjá sýslumanni. Ef sýslumaður telur þörf á frekari upplýsingum mun hann hafa samband.',
     description: 'Description that displays on action card when in review',
   },
+  approvedTitle: {
+    id: 'ghb.application:states.approved.title',
+    defaultMessage: 'Umsókn samþykkt',
+    description:
+      'Title that displays on action card when application is approved',
+  },
   approvedText: {
     id: 'ghb.application:states.approved.text',
-    defaultMessage: 'Umsókn samþykkt',
+    defaultMessage: 'Umsókn þín hefur verið samþykkt.',
     description: 'Text that displays when application is approved',
+  },
+  rejectedTitle: {
+    id: 'ghb.application:states.rejected.title',
+    defaultMessage: 'Umsókn hafnað',
+    description:
+      'Title that displays on action card when application is rejected',
   },
   rejectedText: {
     id: 'ghb.application:states.rejected.text',
-    defaultMessage: 'Umsókn hafnað',
+    defaultMessage: 'Umsókn þinni hefur verið hafnað.',
     description: 'Text that displays when application is rejected',
   },
 })

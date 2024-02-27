@@ -207,6 +207,7 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               displayStatus: 'error',
+              title: states.rejectedTitle,
               content: states.rejectedText,
             },
           },
@@ -223,6 +224,7 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               displayStatus: 'success',
+              title: states.approvedTitle,
               content: states.approvedText,
             },
           },
