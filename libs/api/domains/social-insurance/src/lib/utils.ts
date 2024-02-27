@@ -99,11 +99,11 @@ export const mapPensionCalculationInput = (
     installmentClaims: input.installmentClaims,
     livingConditionRatio: input.livingConditionRatio,
     mobilityImpairment: false,
+    start: 1,
 
     // Fields that are calculated or mapped
     hurryPension,
     delayPension,
-    start: startPension,
     startPension,
     typeOfBasePension: input.typeOfBasePension
       ? basePensionTypeMapping[input.typeOfBasePension]
