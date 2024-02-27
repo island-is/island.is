@@ -71,8 +71,8 @@ export class FixtureFactory {
       organisationLogoKey: organisationLogoKey ?? faker.random.word(),
     })
     domain.scopes = await Promise.all(
-      apiScopes.map((apiScope) =>
-        this.createApiScope({ domainName: domain.name, ...apiScope }),
+      apiScopes.map((apiScope, order) =>
+        this.createApiScope({ domainName: domain.name, order, ...apiScope }),
       ),
     )
     return domain
