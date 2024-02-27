@@ -22,8 +22,6 @@ export class SamgongustofaService {
     try {
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
-      logger.info(`DEBUG# soapUrl ${soapUrl}`)
-
       const parser = new xml2js.Parser()
 
       // First soap call to get all vehicles own by person with nationalId in input
@@ -60,10 +58,6 @@ export class SamgongustofaService {
           `Failed on getUserVehiclesInformation request with status: ${allCarsResponse.statusText}`,
         )
       }
-
-      logger.info(`DEBUG# allCarsResponse data`, {
-        data: allCarsResponse.data,
-      })
 
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
       const vehicleInformationList: VehicleInformation[] = await parser
@@ -159,10 +153,6 @@ export class SamgongustofaService {
 
       const newVehicleArr = vehicleInformationList
 
-      logger.info(`DEBUG# newVehicleArr`, {
-        data: newVehicleArr,
-      })
-
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
       for (let i = 0; i < newVehicleArr.length; i++) {
         const carObj = newVehicleArr[i]
@@ -197,10 +187,6 @@ export class SamgongustofaService {
             )
           }
 
-          logger.info(`DEBUG# basicInforesponse data`, {
-            data: basicInforesponse.data,
-          })
-
           // parse xml to Json all Soap
           vehicleInformationList[i] = await parser
             .parseStringPromise(
@@ -228,8 +214,6 @@ export class SamgongustofaService {
                   ][0]['basicVehicleInformationReturn'][0]['_'],
                 )
                 .then(function (basicInfo) {
-                  logger.info(`DEBUG# basicInfo`, { basicInfo })
-
                   //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
                     typeof basicInfo.vehicle.ownerregistrationerrors[0]
@@ -291,10 +275,6 @@ export class SamgongustofaService {
         }
       }
 
-      logger.info(`DEBUG# vehicleInformationList`, {
-        vehicleInformationList,
-      })
-
       for (let i = 0; i < vehicleInformationList.length; i++) {
         const vehicle = vehicleInformationList[i]
         try {
@@ -314,6 +294,7 @@ export class SamgongustofaService {
           )
         }
       }
+
       return vehicleInformationList ?? []
     } catch (err) {
       logger.error(
@@ -331,11 +312,11 @@ export class SamgongustofaService {
     requireRecyclable = true,
   ): Promise<VehicleInformation> {
     const userVehicles = await this.getUserVehiclesInformation(nationalId)
+
     const car = userVehicles.find((car) => car && car.permno === permno)
 
-    logger.info(`DEBUG# Vehicle TO recycle`, { requireRecyclable, car })
-
     if (requireRecyclable && car) {
+      logger.info(`DEBUG# Vehicle TO recycle`, { requireRecyclable, car })
       return car.isRecyclable ? car : null
     }
     return car

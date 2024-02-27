@@ -102,7 +102,7 @@ export const ListViewCard = ({
               paddingBottom={1}
             >
               <Box paddingRight={2}>{item.icon}</Box>
-              <Text whiteSpace="nowrap" variant="small">
+              <Text whiteSpace="normal" variant="small">
                 {item.title}
               </Text>
             </Box>
