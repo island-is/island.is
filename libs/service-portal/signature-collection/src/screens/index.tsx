@@ -10,6 +10,7 @@ const SignatureLists = () => {
   const { isOwner, loadingIsOwner } = useIsOwner()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection()
+
   return (
     <div>
       {!loadingIsOwner && !loadingCurrentCollection && (

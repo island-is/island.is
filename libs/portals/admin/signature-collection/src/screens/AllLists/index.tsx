@@ -88,7 +88,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
     if (lists.length > 0) {
       const candidates = lists
         .map((list) => {
-          // mapping all llists so check if any are in review
+          // mapping all lists to check if any are in review
           if (!list.reviewed) {
             setHasInReview(true)
           }
@@ -139,9 +139,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   ? hasInReview
                     ? m.signatureCollectionInInitialReview
                     : m.signatureCollectionProcessing
-                  : // : collectionStatus === CollectionStatus.Processing
-                  // ? m.signatureCollectionProcessing
-                  collectionStatus === CollectionStatus.Processed
+                  : collectionStatus === CollectionStatus.Processed
                   ? m.signatureCollectionProcessed
                   : collectionStatus === CollectionStatus.Active
                   ? m.signatureCollectionActive
