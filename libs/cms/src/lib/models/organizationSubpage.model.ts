@@ -63,7 +63,7 @@ export const mapOrganizationSubpage = ({
 }: IOrganizationSubpage): OrganizationSubpage => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  slug: (fields.slug ?? '').trim(),
   url: [fields.organizationPage?.fields?.slug, fields.slug],
   intro: fields.intro ?? '',
   description:
