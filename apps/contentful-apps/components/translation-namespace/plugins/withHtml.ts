@@ -1,6 +1,6 @@
 import { Transforms } from 'slate'
-import { ReactEditor } from 'slate-react'
 import { jsx } from 'slate-hyperscript'
+import { ReactEditor } from 'slate-react'
 
 const ELEMENT_TAGS = {
   A: (el: HTMLElement) => ({ type: 'link', url: el.getAttribute('href') }),

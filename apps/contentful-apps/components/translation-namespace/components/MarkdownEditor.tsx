@@ -1,19 +1,18 @@
-import React, { useCallback, useMemo, KeyboardEvent, FC, useState } from 'react'
-import { Node, createEditor } from 'slate'
-import { Slate, Editable, withReact } from 'slate-react'
-import { withHistory } from 'slate-history'
+import React, { FC, KeyboardEvent, useCallback, useMemo, useState } from 'react'
 import { DialogsAPI } from 'contentful-ui-extensions-sdk/dist/types'
 import isHotkey from 'is-hotkey'
+import { createEditor, Node } from 'slate'
+import { withHistory } from 'slate-history'
+import { Editable, Slate, withReact } from 'slate-react'
 
 import { withHtml } from '../plugins/withHtml'
 import { withShortcuts } from '../plugins/withShortcuts'
-
-import { Toolbar } from './Toolbar'
-import { MarkButton, toggleMark } from './MarkButton'
 import { BlockButton } from './BlockButton'
-import { LinkButton, withLinks } from './LinkButton'
 import { Element } from './Element'
 import { Leaf } from './Leaf'
+import { LinkButton, withLinks } from './LinkButton'
+import { MarkButton, toggleMark } from './MarkButton'
+import { Toolbar } from './Toolbar'
 
 export type BaseProps = Record<string, unknown>
 export type OrNull<T> = T | null

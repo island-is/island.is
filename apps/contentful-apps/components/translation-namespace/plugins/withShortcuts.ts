@@ -1,11 +1,11 @@
-import { ReactEditor } from 'slate-react'
 import {
   Editor,
-  Transforms,
-  Range,
-  Point,
   Element as SlateElement,
+  Point,
+  Range,
+  Transforms,
 } from 'slate'
+import { ReactEditor } from 'slate-react'
 
 const SHORTCUTS = {
   '*': 'list_item',

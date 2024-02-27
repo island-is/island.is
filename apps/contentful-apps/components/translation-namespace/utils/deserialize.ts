@@ -1,7 +1,7 @@
+import flatMap from 'lodash/flatMap'
+import remarkParse from 'remark-parse'
 import { Node } from 'slate'
 import unified from 'unified'
-import remarkParse from 'remark-parse'
-import flatMap from 'lodash/flatMap'
 
 import { BlockType, MdastNode, OptionType } from '../types/types'
 import { DEFAULT_NODE_TYPES, EMPTY_STATE } from './constants'

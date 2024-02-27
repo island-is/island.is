@@ -1,7 +1,7 @@
 import escapeHtml from 'escape-html'
 
 import { BlockType, LeafType, NodeTypes } from '../types/types'
-import { DEFAULT_NODE_TYPES, BREAK_TAG, LIST_TYPES } from './constants'
+import { BREAK_TAG, DEFAULT_NODE_TYPES, LIST_TYPES } from './constants'
 
 interface Options {
   nodeTypes: NodeTypes

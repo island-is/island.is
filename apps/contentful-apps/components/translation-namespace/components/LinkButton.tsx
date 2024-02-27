@@ -1,8 +1,8 @@
 import React, { FC, KeyboardEvent } from 'react'
-import { ReactEditor, useSlate } from 'slate-react'
-import { Editor, Transforms, Element as SlateElement, Range } from 'slate'
-import isUrl from 'is-url'
 import { DialogsAPI } from 'contentful-ui-extensions-sdk/dist/types'
+import isUrl from 'is-url'
+import { Editor, Element as SlateElement, Range, Transforms } from 'slate'
+import { ReactEditor, useSlate } from 'slate-react'
 
 import { Button } from './Button'
 

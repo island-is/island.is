@@ -1,5 +1,5 @@
 import React, { FC, KeyboardEvent } from 'react'
-import { Editor, Transforms, Element as SlateElement } from 'slate'
+import { Editor, Element as SlateElement, Transforms } from 'slate'
 import { useSlate } from 'slate-react'
 
 import { LIST_TYPES } from '../utils/constants'
