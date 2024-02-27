@@ -16,7 +16,7 @@ import {
   SignatureCollectionListBase,
   SignatureCollectionSignedList,
 } from './models/signatureList.model'
-import { SignatureCollectionIdInput } from './dto/id.input'
+import { SignatureCollectionListIdInput } from './dto/listId.input'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { Audit } from '@island.is/nest/audit'
@@ -26,11 +26,11 @@ import {
   OwnerAccess,
   UserAccess,
 } from './decorators/acessRequirement.decorator'
-import { CollectionGuard } from './guards/collection.guard'
-import { CurrentCollection } from './decorators/current-collection.decorator'
 import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
-@UseGuards(IdsUserGuard, CollectionGuard, ScopesGuard, UserAccessGuard)
+import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
+import { SignatureCollectionIdInput } from './dto/collectionId.input'
+@UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
 export class SignatureCollectionResolver {
@@ -47,18 +47,16 @@ export class SignatureCollectionResolver {
 
   @BypassAuth()
   @Query(() => SignatureCollection)
-  async signatureCollectionCurrent(
-    @CurrentCollection() collection: SignatureCollection,
-  ): Promise<SignatureCollection> {
-    return collection
+  async signatureCollectionCurrent(): Promise<SignatureCollection> {
+    return this.signatureCollectionService.currentCollection()
   }
 
   @BypassAuth()
   @Query(() => [SignatureCollectionListBase])
   async signatureCollectionAllOpenLists(
-    @CurrentCollection() collection: SignatureCollection,
+    @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionListBase[]> {
-    return this.signatureCollectionService.allOpenLists(collection)
+    return this.signatureCollectionService.allOpenLists(input)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -67,14 +65,10 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionListsForOwner(
     @CurrentSignee() signee: SignatureCollectionSignee,
-    @CurrentCollection() collection: SignatureCollection,
+    @Args('input') input: SignatureCollectionIdInput,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList[]> {
-    return this.signatureCollectionService.listsForOwner(
-      collection,
-      signee,
-      user,
-    )
+    return this.signatureCollectionService.listsForOwner(input, signee, user)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -83,14 +77,10 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionListsForUser(
     @CurrentSignee() signee: SignatureCollectionSignee,
-    @CurrentCollection() collection: SignatureCollection,
+    @Args('input') input: SignatureCollectionIdInput,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionListBase[]> {
-    return this.signatureCollectionService.listsForUser(
-      collection,
-      signee,
-      user,
-    )
+    return this.signatureCollectionService.listsForUser(input, signee, user)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -99,9 +89,9 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionList(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionIdInput,
+    @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionList> {
-    return this.signatureCollectionService.list(input.id, user)
+    return this.signatureCollectionService.list(input.listId, user)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -120,9 +110,9 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionSignatures(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionIdInput,
+    @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionSignature[]> {
-    return this.signatureCollectionService.signatures(input.id, user)
+    return this.signatureCollectionService.signatures(input.listId, user)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -141,9 +131,9 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionUnsign(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionIdInput,
+    @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.unsign(input.id, user)
+    return this.signatureCollectionService.unsign(input.listId, user)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -152,7 +142,7 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionCancel(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionIdInput,
+    @Args('input') input: SignatureCollectionCancelListsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.cancel(input, user)
   }
