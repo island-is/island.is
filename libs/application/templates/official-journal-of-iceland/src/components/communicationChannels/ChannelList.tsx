@@ -1,4 +1,4 @@
-import { Box, Table as T } from '@island.is/island-ui/core'
+import { Table as T } from '@island.is/island-ui/core'
 import { Channel } from './Channel'
 import { useLocale } from '@island.is/localization'
 import { general } from '../../lib/messages'
