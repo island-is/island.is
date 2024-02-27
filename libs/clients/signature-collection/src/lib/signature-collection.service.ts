@@ -106,7 +106,6 @@ export class SignatureCollectionClientService {
       throw new Error('User is already owner of lists')
     }
 
-    // const collectionAreas = await this.getAreas(id)
     const filteredAreas = areas
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
