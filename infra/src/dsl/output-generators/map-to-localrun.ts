@@ -20,6 +20,7 @@ import {
 import { getSsmParams } from '../adapters/get-ssm-params'
 import { getPostgresExtensions } from './map-to-helm-values'
 import { getScaledValue } from '../utils/scale-value'
+import { logger } from '../../common'
 
 /**
  * Transforms our definition of a service to a definition for a local running serivce
@@ -31,26 +32,30 @@ const serializeService = async (
   service: ServiceDefinitionForEnv,
   deployment: ReferenceResolver,
   withSecrets: boolean,
-  env1: EnvironmentConfig,
+  env: EnvironmentConfig,
 ): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
+  logger.debug('Serializing service', {
+    service: service.name,
+    env,
+  })
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
   )
   const serviceDef = service
   const result: LocalrunService = {
     env: {
-      SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
+      SERVERSIDE_FEATURES_ON: env.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )}`,
     },
-    command: [],
+    commands: [],
   }
   let initContainers: { [name: string]: LocalrunService } = {}
 
   // command and args
   if (serviceDef.cmds) {
-    result.command = [serviceDef.cmds!].concat(serviceDef.args ?? [])
+    result.commands = [serviceDef.cmds!].concat(serviceDef.args ?? [])
   }
 
   // target port
@@ -64,13 +69,17 @@ const serializeService = async (
       service,
       deployment,
       serviceDef.env,
-      env1,
+      env,
     )
     mergeObjects(result.env, envs)
   }
 
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0 && withSecrets) {
+    logger.debug('Retrieving secrets', {
+      service: service.name,
+      env: env,
+    })
     const secrets = await retrieveSecrets(serviceDef.secrets)
     mergeObjects(result.env, secrets)
   }
@@ -82,7 +91,7 @@ const serializeService = async (
         ...acc,
         [initContainer.name!]: {
           env: {
-            SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
+            SERVERSIDE_FEATURES_ON: env.featuresOn.join(','),
           },
         },
       }),
@@ -95,7 +104,7 @@ const serializeService = async (
           service,
           deployment,
           serviceDef.initContainers.envs,
-          env1,
+          env,
         )
         Object.values(initContainers).forEach((initContainer) =>
           mergeObjects(initContainer.env, envs),
@@ -195,8 +204,8 @@ export enum SecretOptions {
   noSecrets,
 }
 
-export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
-  ({
+export function LocalrunOutput(options: { secrets: SecretOptions }) {
+  return {
     featureDeployment(
       service: ServiceDefinition,
       env: EnvironmentConfig,
@@ -218,4 +227,5 @@ export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
     serviceMockDef(options): LocalrunService {
       throw new Error('Not used')
     },
-  } as OutputFormat<LocalrunService>)
+  } as OutputFormat<LocalrunService>
+}
