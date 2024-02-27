@@ -46,4 +46,7 @@ export class User {
 
   @Field(() => Int, { nullable: true })
   readonly loginCount?: number
+
+  @Field({ nullable: true })
+  readonly canConfirmAppeal?: boolean
 }

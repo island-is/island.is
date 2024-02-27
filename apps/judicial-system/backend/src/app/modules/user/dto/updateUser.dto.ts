@@ -39,4 +39,9 @@ export class UpdateUserDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly active!: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly canConfirmAppeal!: boolean
 }
