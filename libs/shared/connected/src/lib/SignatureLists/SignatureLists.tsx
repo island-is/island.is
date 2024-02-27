@@ -20,7 +20,7 @@ export const SignatureLists: FC<
   React.PropsWithChildren<SignatureListsProps>
 > = ({ slice }) => {
   const { collection, loading } = useGetCurrentCollection()
-  const { openLists } = useGetOpenLists()
+  const { openLists } = useGetOpenLists(collection?.id || '')
   const t = useLocalization(slice.json)
 
   return (
@@ -78,7 +78,7 @@ export const SignatureLists: FC<
                     key={candidate.id}
                     backgroundColor="white"
                     heading={candidate.name}
-                    text={collection.name}
+                    text={t('collectionName', 'Forsetakosningar 2024')}
                     cta={
                       new Date() < new Date(collection.endTime)
                         ? {
