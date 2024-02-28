@@ -95,9 +95,7 @@ export class DelegationResourcesService {
       return this.resourceTranslationService.translateDomains(domains, language)
     }
 
-    return domains.sort((a, b) =>
-      a.displayName.localeCompare(b.displayName, 'is'),
-    )
+    return domains.sort((a, b) => a.name.localeCompare(b.name, 'is'))
   }
 
   async findOneDomain(
