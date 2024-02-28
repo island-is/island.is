@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -28,6 +29,7 @@ import {
   getPropertyAddress,
   getPropertyOwners,
 } from '../utils'
+import { format as formatNationalId } from 'kennitala'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -55,19 +57,23 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 m.application.propertyInformation.ownerNationalId,
                 m.application.propertyInformation.propertyPermit,
                 m.application.propertyInformation.ownershipRatio,
-                m.application.propertyInformation.fireInsuranceValue,
               ],
               rows: ({ externalData }) => {
                 const owners = getPropertyOwners(externalData)
-                const fireInsuranceValue = getFireInsuranceValue(externalData)
 
                 return owners.map((owner) => [
                   owner.nafn ?? '',
-                  owner.kennitala ?? '',
+                  formatNationalId(owner.kennitala ?? ''),
                   owner.heimildBirting ?? '',
                   `${(owner.eignarhlutfall ?? 0) * 100}%`,
-                  formatCurrency(fireInsuranceValue.toString()),
                 ])
+              },
+              summary: ({ externalData }) => {
+                const fireInsuranceValue = getFireInsuranceValue(externalData)
+                return {
+                  label: m.application.propertyInformation.fireInsuranceValue,
+                  value: formatCurrency(fireInsuranceValue.toString()),
+                }
               },
             }),
           ],
@@ -111,6 +117,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
         buildMultiField({
           id: 'resultsMultiField',
           title: m.application.results.sectionTitle,
+          space: 3,
           children: [
             buildDescriptionField({
               id: '',

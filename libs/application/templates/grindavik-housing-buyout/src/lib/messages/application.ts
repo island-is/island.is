@@ -60,7 +60,7 @@ export const application = {
     explaination: {
       id: 'ghb.application.propertyInformation:explaination#markdown',
       defaultMessage:
-        'Brunabótamat fasteignar er **{fireInsuranceValue}**\n\nKaupverð fasteignar er **{buyoutPrice}** Áhvílandi lán eru þá tekin af þessari upphæð ef um slíkt er að ræða.\n\n5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **{closingPayment}**\n\n Útreikningur er (kaupverð) - (áhvílandi lán) - (5% af kaupverði).\n\nÚtgreitt við kaupsamning er þá (**{buyoutPrice}** - **{totalLoans}** - **{closingPayment}**) eða **{result}**\n\nAfhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
+        'Brunabótamat fasteignar er **{fireInsuranceValue}**\n\nKaupverð 95% af brunabótamati fasteignar er **{buyoutPrice}**\n\n5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **{closingPayment}**\n\nÁhvílandi lán eru tekin af kaupverði ef um slíkt er að ræða.\n\nÚtreikningur er þá (kaupverð) - (áhvílandi lán) - (5% af kaupverði).\n\nÚtgreitt við kaupsamning er þá (**{buyoutPrice}** - **{totalLoans}** - **{closingPayment}**) eða **{result}**\n\nAfhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
       description: 'Property information explaination',
     },
   }),
@@ -88,7 +88,7 @@ export const application = {
     addLoanDescription: {
       id: 'ghb.application.loanStatus:addLoanDescription',
       defaultMessage:
-        'Bættu við núverandi stöðu á þínum lánum hjá banka eða lífeyrissjóði.',
+        'Upplýsingar um stöðu lána er að finna hjá lánveitenda. Uppgreiðsluverð láns er sú upphæð sem fylla skal inn.',
       description: 'Add loan description',
     },
     loanProvider: {
@@ -98,7 +98,7 @@ export const application = {
     },
     addNewLoan: {
       id: 'ghb.application.loanStatus:addNewLoan',
-      defaultMessage: 'Bæta við nýju láni',
+      defaultMessage: 'Bæta við láni',
       description: 'Add new loan',
     },
     saveNewLoan: {
