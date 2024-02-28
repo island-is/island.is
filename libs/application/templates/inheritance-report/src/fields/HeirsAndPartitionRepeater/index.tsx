@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -20,8 +21,13 @@ import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
-import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
+import { TAX_FREE_LIMIT } from '../../lib/constants'
+import DoubleColumnRow from '../../components/DoubleColumnRow'
 
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<
@@ -122,23 +128,22 @@ export const HeirsAndPartitionRepeater: FC<
       foreignCitizenship: [],
     })
 
-  const taxFreeLimitMessage = formatMessage(m.taxFreeLimit) ?? ''
-
   const updateValues = (updateIndex: string, value: number) => {
     const numValue = isNaN(value) ? 0 : value
     const percentage = numValue > 0 ? numValue / 100 : 0
-    const taxFreeLimit = Number(taxFreeLimitMessage.replace(/[^0-9]/, ''))
 
     const assetsTotal = Number(getValueViaPath(answers, 'assets.assetsTotal'))
     const debtsTotal = Number(getValueViaPath(answers, 'debts.debtsTotal'))
     const businessTotal = Number(
       getValueViaPath(answers, 'business.businessTotal'),
     )
-    const totalDeduction = Number(getValueViaPath(answers, 'totalDeduction'))
+    const totalDeduction = valueToNumber(
+      getValueViaPath(answers, 'totalDeduction'),
+    )
     const inheritanceValue = Math.round(
       (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
     )
-    const taxFreeInheritanceValue = Math.round(taxFreeLimit * percentage)
+    const taxFreeInheritanceValue = Math.round(TAX_FREE_LIMIT * percentage)
     const taxableInheritanceValue = Math.round(
       inheritanceValue - taxFreeInheritanceValue,
     )
@@ -150,10 +155,13 @@ export const HeirsAndPartitionRepeater: FC<
       String(taxFreeInheritanceValue),
     )
     setValue(`${updateIndex}.inheritance`, String(inheritanceValue))
-    setValue(`${updateIndex}.inheritanceTax`, String(inheritanceTaxValue))
+    setValue(
+      `${updateIndex}.inheritanceTax`,
+      String(inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue),
+    )
     setValue(
       `${updateIndex}.taxableInheritance`,
-      String(taxableInheritanceValue),
+      String(taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue),
     )
 
     calculateTotal()
@@ -179,7 +187,11 @@ export const HeirsAndPartitionRepeater: FC<
   }, [getValues, id, props.sumField, setValue])
 
   useEffect(() => {
-    calculateTotal()
+    fields.forEach((field: any, mainIndex: number) => {
+      const fieldIndex = `${id}[${mainIndex}]`
+      const heirsPercentage = getValues(`${fieldIndex}.heirsPercentage`)
+      updateValues(fieldIndex, heirsPercentage)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -340,7 +352,7 @@ export const HeirsAndPartitionRepeater: FC<
                       ) : null}
 
                       {customField.id === 'relation' ? (
-                        <GridColumn span="1/1" paddingBottom={2}>
+                        <GridColumn span="1/2" paddingBottom={2}>
                           <InputController
                             id={`${fieldIndex}.${customField.id}`}
                             name={`${fieldIndex}.${customField.id}`}
@@ -352,16 +364,16 @@ export const HeirsAndPartitionRepeater: FC<
                           />
                         </GridColumn>
                       ) : customField.id === 'heirsPercentage' ? (
-                        <GridColumn span={['1/2']} paddingBottom={2}>
+                        <GridColumn span="1/2" paddingBottom={2}>
                           <InputController
                             id={`${fieldIndex}.${customField.id}`}
                             name={`${fieldIndex}.${customField.id}`}
                             disabled={!member.enabled}
                             label={customField.title}
-                            defaultValue={defaultValue ? defaultValue : '0'}
+                            defaultValue={defaultValue ? defaultValue : 1}
                             type="number"
                             suffix="%"
-                            maxLength={3}
+                            backgroundColor="blue"
                             onChange={(
                               event: React.ChangeEvent<
                                 HTMLInputElement | HTMLTextAreaElement
@@ -528,9 +540,9 @@ export const HeirsAndPartitionRepeater: FC<
         </Box>
       ) : null}
       {!!fields.length && props.sumField && (
-        <Box marginTop={5}>
-          <GridRow>
-            <GridColumn span={['1/1', '1/2']}>
+        <GridRow>
+          <DoubleColumnRow pushRight span={['1/1', '1/2']}>
+            <Box marginTop={5}>
               <Input
                 id={`${id}.total`}
                 name={`${id}.total`}
@@ -554,9 +566,9 @@ export const HeirsAndPartitionRepeater: FC<
                 }
                 errorMessage={formatMessage(m.totalPercentageError)}
               />
-            </GridColumn>
-          </GridRow>
-        </Box>
+            </Box>
+          </DoubleColumnRow>
+        </GridRow>
       )}
     </Box>
   )

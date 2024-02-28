@@ -20,7 +20,6 @@ import {
   Icon,
   Inline,
   Input,
-  LinkV2,
   Navigation,
   NavigationItem,
   Pagination,
@@ -34,11 +33,11 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   ActionCategoryCard,
-  BackgroundImage,
   CTAProps,
   ListViewCard,
   OrganizationFooter,
   OrganizationHeader,
+  Webreader,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -61,11 +60,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_FILTERS,
   GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
@@ -73,12 +68,13 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
-const ITEMS_PER_PAGE = 9
+const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
@@ -89,7 +85,6 @@ interface UniversitySearchProps {
   locale: string
   universities: Array<UniversityGatewayUniversity>
   organizationPage?: Query['getOrganizationPage']
-  organization?: Query['getOrganization']
   searchQuery: string
 }
 
@@ -150,12 +145,36 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   searchQuery,
   locale,
   organizationPage,
-  organization,
   universities,
 }) => {
+  useEffect(() => {
+    // Re-ordering filters.
+    const index = filterOptions.findIndex(
+      (filter) => filter.field === 'universityId',
+    )
+
+    if (index !== -1) {
+      const movedField = filterOptions.splice(index, 1)[0]
+
+      movedField.options.sort((x, y) => {
+        const titleX =
+          universities.filter((uni) => uni.id === x)[0].contentfulTitle || ''
+        const titleY =
+          universities.filter((uni) => uni.id === y)[0].contentfulTitle || ''
+        return titleX.localeCompare(titleY)
+      })
+      filterOptions.splice(2, 0, movedField)
+      const lastElement = filterOptions[filterOptions.length - 1]
+      filterOptions[filterOptions.length - 1] =
+        filterOptions[filterOptions.length - 2]
+      filterOptions[filterOptions.length - 2] = lastElement
+    }
+  }, [filterOptions, universities])
+
   const router = useRouter()
   const { width } = useWindowSize()
   const n = useNamespace(namespace)
+  useSetZIndexOnHeader()
 
   const isMobileScreenWidth = width < theme.breakpoints.lg
   const isTabletScreenWidth = width < theme.breakpoints.xl
@@ -175,21 +194,24 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       : 'CLOSED'
   }
 
-  const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    data &&
-      [...data]
-        .sort((x, y) => {
-          if (x.nameIs > y.nameIs) return 1
-          return -1
-        })
-        .map((item: UniversityGatewayProgram, index: number) => {
-          const itemWithStatus = {
-            ...item,
-            applicationStatus: getApplicationStatus(item),
-          }
-          return { item: itemWithStatus, refIndex: index, score: 1 }
-        }),
+  // TODO Create proper types here
+  const [originalSortedResults, setOriginalSortedList] = useState<any>(
+    [...data]
+      // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
+      .sort(() => Math.random() - 0.5)
+      .map((item: UniversityGatewayProgram, index: number) => {
+        const itemWithStatus = {
+          ...item,
+          applicationStatus: getApplicationStatus(item),
+        }
+        return { item: itemWithStatus, refIndex: index, score: 1 }
+      }),
   )
+
+  const [filteredResults, setFilteredResults] = useState<Array<any>>(
+    originalSortedResults,
+  )
+
   const { linkResolver } = useLinkResolver()
 
   //creating a deep copy to avoid original being affected by changes to filters
@@ -197,7 +219,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     JSON.parse(JSON.stringify(initialFilters)),
   )
 
-  const [gridView, setGridView] = useState<boolean>(false)
+  const [gridView, setGridView] = useState<boolean>(true)
 
   const [totalPages, setTotalPages] = useState<number>(
     Math.ceil(data.length / ITEMS_PER_PAGE),
@@ -228,18 +250,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (searchQuery) {
       setQuery(searchQuery)
-
+      sessionStorage.setItem('query', searchQuery)
       //also set deep copy here
       setFilters(JSON.parse(JSON.stringify(initialFilters)))
+    } else if (sessionStorage.getItem('query')) {
+      setQuery(sessionStorage.getItem('query') || '')
     }
   }, [])
 
   const fuseOptions = {
-    threshold: 0.2,
+    threshold: 0.3,
+    findAllMatches: true,
+    ignoreLocation: true,
     keys: [
-      'nameIs',
-      'departmentNameIs',
-      'descriptionIs',
+      `name${locale === 'is' ? 'Is' : 'En'}`,
+      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
@@ -258,7 +283,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   useEffect(() => {
     const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
-    Object.keys(filters).forEach(function (key) {
+    Object.keys(filters).forEach((key) => {
       const str = key as keyof typeof filters
       if (filters[str].length > 0) {
         activeFiltersFound.push({ key, value: filters[str] })
@@ -272,6 +297,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         fuseInstance,
         query,
         activeFilters: activeFiltersFound,
+        locale,
       })
 
       setFilteredResults(results)
@@ -280,16 +306,32 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [filters, query])
 
   const resetFilteredList = () => {
-    const resultProducts: Array<any> = data.map(
-      (item: UniversityGatewayProgram, index: number) => {
-        return {
-          item: { ...item, applicationStatus: getApplicationStatus(item) },
-          refIndex: index,
-          score: 1,
-        }
-      },
-    )
-    setFilteredResults(resultProducts)
+    setFilteredResults(originalSortedResults)
+  }
+
+  const applicationUrlParser = (universityId: string) => {
+    const university =
+      universities.filter((uni) => uni.id === universityId)[0]
+        .contentfulTitle || ''
+
+    switch (university) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
   }
 
   const createPrimaryCTA = (item: UniversityGatewayProgramWithStatus) => {
@@ -300,6 +342,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
+      onClick: () => router.push(applicationUrlParser(item.universityId)),
     }
     return CTA
   }
@@ -386,6 +429,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     e: React.ChangeEvent<HTMLInputElement>,
     filterKey: string,
   ) => {
+    setSelectedPage(1)
     handleFilters(filterKey, e.target.value)
   }
 
@@ -406,6 +450,56 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         href: url,
       })),
     })) ?? []
+
+  const handleRemoveTag = (key: keyof FilterProps, tag: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: prevFilters[key].filter((existingTag) => existingTag !== tag),
+    }))
+  }
+
+  const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
+    const length = items.length
+
+    if (length === 0) {
+      return ''
+    }
+
+    if (length === 1) {
+      return n(items[0], TranslationDefaults[items[0]])
+    }
+
+    if (length === 2) {
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
+    }
+
+    const formattedList = items.map((item, index) => {
+      if (index === length - 1) {
+        return `${n('or', 'eða')} ${n(item, TranslationDefaults[item])}`
+      } else {
+        return `${n(item, TranslationDefaults[item])}, `
+      }
+    })
+
+    return formattedList.join('')
+  }
+
+  const formatFilterStrings = (tag: string, field: string) => {
+    if (field === 'universityId') {
+      return universities.filter((x) => x.id === tag)[0].contentfulTitle || ''
+    } else if (tag === 'OPEN') {
+      return `${n('openForApplication', 'Opið fyrir umsóknir')}`
+    } else {
+      return n(tag, TranslationDefaults[tag])
+    }
+  }
 
   return (
     <Box>
@@ -493,52 +587,41 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           >
                             <Stack space={[1, 1, 2]}>
                               {filter.options.map((option) => {
-                                let keyField = option
                                 const str = filter.field as keyof typeof filters
 
-                                if (str === 'universityId') {
-                                  keyField =
-                                    universities.filter(
-                                      (x) => x.id === option,
-                                    )[0].contentfulTitle || ''
+                                if (option === 'OTHER') {
+                                  return null
                                 }
-                                if (keyField !== 'OTHER') {
-                                  return (
-                                    <Checkbox
-                                      key={keyField}
-                                      label={
-                                        <Box
-                                          display="flex"
-                                          flexDirection="column"
-                                        >
+
+                                return (
+                                  <Checkbox
+                                    key={option}
+                                    label={
+                                      <Box
+                                        display="flex"
+                                        flexDirection="column"
+                                      >
+                                        <span>
+                                          {formatFilterStrings(option, str)}
+                                        </span>
+                                        {filter.field === 'degreeType' && (
                                           <span>
-                                            {filter.field ===
-                                            'applicationStatus'
-                                              ? n(
-                                                  'openForApplication',
-                                                  'opið fyrir umsóknir',
-                                                )
-                                              : n(keyField, keyField)}
+                                            {n(`${option}_EXTRA`, '')}
                                           </span>
-                                          <span>
-                                            {filter.field === 'degreeType'
-                                              ? `${n(`${keyField}_EXTRA`, '')}`
-                                              : ''}
-                                          </span>
-                                        </Box>
-                                      }
-                                      id={keyField}
-                                      value={option}
-                                      checked={
-                                        filters[str].filter((x) => x === option)
-                                          .length > 0
-                                      }
-                                      onChange={(e) =>
-                                        checkboxEventHandler(e, filter.field)
-                                      }
-                                    />
-                                  )
-                                }
+                                        )}
+                                      </Box>
+                                    }
+                                    id={option}
+                                    value={option}
+                                    checked={
+                                      filters[str].filter((x) => x === option)
+                                        .length > 0
+                                    }
+                                    onChange={(e) =>
+                                      checkboxEventHandler(e, filter.field)
+                                    }
+                                  />
+                                )
                               })}
                             </Stack>
                             <Box
@@ -611,6 +694,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             </Box>
           )}
           <Box minWidth={0} className={styles.mainContentWrapper}>
+            <Webreader />
             <Text
               marginTop={0}
               marginBottom={2}
@@ -630,8 +714,54 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setSelectedPage(1)
                 searchTermHasBeenInitialized.current = true
                 setQuery(e.target.value)
+                sessionStorage.setItem('query', e.target.value)
               }}
             />
+            <Box
+              paddingTop={2}
+              display={'flex'}
+              justifyContent={'spaceBetween'}
+            >
+              <Box display={'flex'} style={{ gap: '0.5rem' }}>
+                {Object.keys(filters).map((key) =>
+                  filters[key as keyof FilterProps].map((tag) => (
+                    <Tag key={tag}>
+                      <Box
+                        display={'flex'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        style={{ gap: '0.5rem' }}
+                      >
+                        {formatFilterStrings(tag, key)}
+                        <button
+                          aria-label="remove tag"
+                          style={{ alignSelf: 'end' }}
+                          onClick={() =>
+                            handleRemoveTag(key as keyof FilterProps, tag)
+                          }
+                        >
+                          <Icon icon={'close'} size="small" />
+                        </button>
+                      </Box>
+                    </Tag>
+                  )),
+                )}
+              </Box>
+              <Box style={{ flexShrink: 0 }}>
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => {
+                    setSelectedPage(1)
+                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                  }}
+                >
+                  {n('clearAllFilters', 'Hreinsa allar síur')}
+                </Button>
+              </Box>
+            </Box>
+
             <ContentBlock>
               <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
@@ -708,24 +838,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               filters: filter.options
                                 .filter((x) => x !== 'OTHER')
                                 .map((option) => {
-                                  let keyField = option
-
-                                  if (str === 'universityId') {
-                                    keyField =
-                                      universities.filter(
-                                        (x) => x.id === option,
-                                      )[0].contentfulTitle || ''
-                                  }
                                   return {
-                                    label: `${n(keyField, keyField)}${
-                                      filter.field === 'durationInYears'
-                                        ? locale === 'en'
-                                          ? keyField === '1'
-                                            ? ' year'
-                                            : ' years'
-                                          : ' ár'
-                                        : ''
-                                    }`,
+                                    label: formatFilterStrings(option, str),
                                     value: option,
                                   }
                                 }),
@@ -806,7 +920,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       const subHeading =
                         specializedName !== undefined
                           ? (locale === 'en'
-                              ? 'Field of study: '
+                              ? 'Specialization: '
                               : 'Kjörsvið: ') + specializedName
                           : undefined
                       return (
@@ -871,7 +985,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${dataItem.credits} ${n(
                                     'units',
                                     'einingar',
-                                  )}, ${dataItem.durationInYears} ${
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
@@ -887,30 +1003,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.modeOfDelivery.map(
-                                    (delivery: string, index: number) => {
-                                      const total =
-                                        dataItem.modeOfDelivery.length
-                                      //first item is always the same
-                                      if (index === 0) {
-                                        return `${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}`
-                                      }
-                                      //if there are more items than this one
-                                      else if (index > 0 && total > index + 1) {
-                                        return `, ${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}, `
-                                      }
-                                      return `${n('or', 'eða')} ${n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )}`
-                                    },
-                                  )}`,
+                                  title: formatModeOfDelivery(
+                                    dataItem.modeOfDelivery,
+                                  ),
                                 },
                                 {
                                   icon: (
@@ -973,7 +1068,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         const subHeading =
                           specializedName !== undefined
                             ? (locale === 'en'
-                                ? 'Field of study: '
+                                ? 'Specialization: '
                                 : 'Kjörsvið: ') + specializedName
                             : undefined
                         return (
@@ -1045,7 +1140,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${dataItem.credits} ${n(
                                     'units',
                                     'einingar',
-                                  )}, ${dataItem.durationInYears} ${
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
@@ -1061,31 +1158,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.modeOfDelivery.map(
-                                    (delivery: string, index: number) => {
-                                      const total =
-                                        dataItem.modeOfDelivery.length
-                                      //first item is always the same
-                                      if (index === 0) {
-                                        return `${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}`
-                                      }
-                                      //if there are more items than this one
-                                      else if (index > 0 && total > index + 1) {
-                                        return `, ${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}, `
-                                      }
-                                      //else it's the last item and should have an "or" before the item
-                                      return `${n('or', 'eða')} ${n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )}`
-                                    },
-                                  )}`,
+                                  title: formatModeOfDelivery(
+                                    dataItem.modeOfDelivery,
+                                  ),
                                 },
                                 {
                                   icon: (
@@ -1315,7 +1390,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   )
 }
 
-UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
+UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=3300, stale-while-revalidate=300',
+  )
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -1354,9 +1433,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
       data: { getOrganizationPage },
     },
     {
-      data: { getOrganization },
-    },
-    {
       data: { universityGatewayPrograms },
     },
     filters,
@@ -1366,15 +1442,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: locale === 'is' ? 'haskolanam' : 'university-studies',
@@ -1400,9 +1467,11 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     locale,
     namespace,
     organizationPage: getOrganizationPage,
-    organization: getOrganization,
     universities: universityGatewayUniversities,
   }
 }
 
-export default withMainLayout(UniversitySearch, { showFooter: false })
+export default withMainLayout(UniversitySearch, {
+  showFooter: false,
+  headerColorScheme: 'white',
+})
