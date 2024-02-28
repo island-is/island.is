@@ -24,6 +24,6 @@ export const notificationMapper = (
     body: notification.body,
     link: {
       uri: notification.clickAction,
-    },
+    }, 
   },
 })
