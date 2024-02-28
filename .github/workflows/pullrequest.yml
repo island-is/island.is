@@ -105,7 +105,7 @@ jobs:
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
-        if: ${{ steps.node-modules.outputs.cache-hit != "true" }}
+        if: ${{ steps.node-modules.outputs.cache-hit != "" }}
         run: ./scripts/ci/10_prepare-host-deps.sh
 
       - run: |
