@@ -150,10 +150,10 @@ export const getLocalrunValueFile = async (
                       // but not really how to do it yet.
                       ...(target === 'https://localhost:8443'
                         ? {
-                          injectHeaders: {
-                            Host: 'soffiaprufa.skra.is',
-                          },
-                        }
+                            injectHeaders: {
+                              Host: 'soffiaprufa.skra.is',
+                            },
+                          }
                         : {}),
                       predicateGenerators: [
                         {
