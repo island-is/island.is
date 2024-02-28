@@ -67,11 +67,11 @@ export class NotificationDto {
 
   @ApiProperty({ example: false })
   @IsBoolean()
-  read!: boolean;
+  read!: boolean
 
   @ApiProperty({ example: false })
   @IsBoolean()
-  seen!: boolean;
+  seen!: boolean
 }
 
 export class RenderedNotificationDto {
@@ -116,12 +116,11 @@ export class RenderedNotificationDto {
 
   @ApiProperty({ example: false })
   @IsBoolean()
-  read!: boolean;
+  read!: boolean
 
   @ApiProperty({ example: false })
   @IsBoolean()
-  seen!: boolean;
-
+  seen!: boolean
 }
 
 export class Message {
@@ -176,12 +175,12 @@ export class UpdateNotificationDto {
   @ApiPropertyOptional({ example: true })
   @IsOptional()
   @IsBoolean()
-  read?: boolean;
+  read?: boolean
 
   @ApiPropertyOptional({ example: true })
   @IsOptional()
   @IsBoolean()
-  seen?: boolean;
+  seen?: boolean
 }
 
 export class UnreadNotificationsCountDto {

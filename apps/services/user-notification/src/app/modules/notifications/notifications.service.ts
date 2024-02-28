@@ -76,12 +76,11 @@ export class NotificationsService {
         template,
       )
 
-
       // Map to RenderedNotificationDto
       return {
         id: notification.id,
         messageId: notification.messageId,
-        senderId: notification.senderId || "",
+        senderId: notification.senderId || '',
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
@@ -344,7 +343,9 @@ export class NotificationsService {
     }
   }
 
-  async getUnreadNotificationsCount(user: User): Promise<UnreadNotificationsCountDto> {
+  async getUnreadNotificationsCount(
+    user: User,
+  ): Promise<UnreadNotificationsCountDto> {
     try {
       const unreadCount = await this.notificationModel.count({
         where: {
@@ -355,11 +356,15 @@ export class NotificationsService {
       return { unreadCount }
     } catch (error) {
       this.logger.error('Error getting unread notifications count:', error)
-      throw new InternalServerErrorException('Error getting unread notifications count')
+      throw new InternalServerErrorException(
+        'Error getting unread notifications count',
+      )
     }
   }
 
-  async getUnseenNotificationsCount(user: User): Promise<UnseenNotificationsCountDto> {
+  async getUnseenNotificationsCount(
+    user: User,
+  ): Promise<UnseenNotificationsCountDto> {
     try {
       const unseenCount = await this.notificationModel.count({
         where: {
@@ -370,7 +375,9 @@ export class NotificationsService {
       return { unseenCount }
     } catch (error) {
       this.logger.error('Error getting unseen notifications count:', error)
-      throw new InternalServerErrorException('Error getting unseen notifications count')
+      throw new InternalServerErrorException(
+        'Error getting unseen notifications count',
+      )
     }
   }
 
@@ -378,13 +385,13 @@ export class NotificationsService {
     try {
       await this.notificationModel.update(
         { seen: true },
-        { where: { recipient: user.nationalId, seen: false } }
-      );
+        { where: { recipient: user.nationalId, seen: false } },
+      )
     } catch (error) {
       this.logger.error('Error marking all notifications as seen:', error)
-      throw new InternalServerErrorException('Error marking all notifications as seen')
+      throw new InternalServerErrorException(
+        'Error marking all notifications as seen',
+      )
     }
   }
 }
-
-

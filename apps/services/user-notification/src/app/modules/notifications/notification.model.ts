@@ -8,16 +8,16 @@ import {
   CreatedAt,
   UpdatedAt,
   Index,
-} from 'sequelize-typescript';
+} from 'sequelize-typescript'
 import {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
-} from 'sequelize';
+} from 'sequelize'
 
 interface ArgItem {
-  key: string;
-  value: string;
+  key: string
+  value: string
 }
 
 @Table({
@@ -34,7 +34,7 @@ export class Notification extends Model<
     allowNull: false,
     field: 'id',
   })
-  id!: CreationOptional<number>;
+  id!: CreationOptional<number>
 
   @Index // Adding an index
   @Column({
@@ -42,7 +42,7 @@ export class Notification extends Model<
     unique: true, // Adding the unique constraint
     field: 'message_id',
   })
-  messageId!: string;
+  messageId!: string
 
   @Index // Adding an index
   @Column({
@@ -50,7 +50,7 @@ export class Notification extends Model<
     allowNull: false,
     field: 'recipient',
   })
-  recipient!: string;
+  recipient!: string
 
   @Column({
     type: DataType.STRING,
@@ -58,7 +58,7 @@ export class Notification extends Model<
     allowNull: true, // initially nullable if it's optional during transition
     field: 'sender_id',
   })
-  senderId?: string;
+  senderId?: string
   // senderId!: CreationOptional<string>;
   // senderId!: string
 
@@ -67,28 +67,28 @@ export class Notification extends Model<
     allowNull: false,
     field: 'template_id',
   })
-  templateId!: string;
+  templateId!: string
 
   @Column({
     type: DataType.JSON,
     allowNull: false,
     field: 'args',
   })
-  args!: ArgItem[];
+  args!: ArgItem[]
 
   @CreatedAt
   @Column({
     type: DataType.DATE,
     field: 'created',
   })
-  created!: CreationOptional<Date>;
+  created!: CreationOptional<Date>
 
   @UpdatedAt
   @Column({
     type: DataType.DATE,
     field: 'updated',
   })
-  updated!: CreationOptional<Date>;
+  updated!: CreationOptional<Date>
 
   @Column({
     type: DataType.BOOLEAN,
@@ -96,7 +96,7 @@ export class Notification extends Model<
     allowNull: false,
     field: 'read',
   })
-  read!: CreationOptional<boolean>;
+  read!: CreationOptional<boolean>
 
   @Column({
     type: DataType.BOOLEAN,
@@ -104,5 +104,5 @@ export class Notification extends Model<
     allowNull: false,
     field: 'seen',
   })
-  seen!: CreationOptional<boolean>;
+  seen!: CreationOptional<boolean>
 }

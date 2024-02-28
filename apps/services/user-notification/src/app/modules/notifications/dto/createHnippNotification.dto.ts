@@ -21,7 +21,7 @@ export class CreateHnippNotificationDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ example: '1234567890' })
-  senderId?: string;
+  senderId?: string
 
   @IsString()
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })

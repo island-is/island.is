@@ -26,5 +26,5 @@ export class HnippTemplate {
   args!: string[]
 
   // @ApiProperty({ example: '1234567890' })
-  // senderId!: string 
+  // senderId!: string
 }

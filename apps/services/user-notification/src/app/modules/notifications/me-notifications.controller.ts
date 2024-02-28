@@ -53,30 +53,27 @@ export class MeNotificationsController {
     return this.notificationService.findMany(user, query)
   }
 
-  @Get("/unread-count")
+  @Get('/unread-count')
   @Documentation({
     summary: 'Returns a count of unread notifications for the current user',
     response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
   })
   async getUnreadNotificationsCount(
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<UnreadNotificationsCountDto> {
-    return await this.notificationService.getUnreadNotificationsCount(user);
+    return await this.notificationService.getUnreadNotificationsCount(user)
   }
 
-  @Get("/unseen-count")
+  @Get('/unseen-count')
   @Documentation({
     summary: 'Returns a count of unseen notifications for the current user',
     response: { status: HttpStatus.OK, type: UnseenNotificationsCountDto },
   })
   async getUnseenNotificationsCount(
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<UnseenNotificationsCountDto> {
-    return await this.notificationService.getUnseenNotificationsCount(user);
+    return await this.notificationService.getUnseenNotificationsCount(user)
   }
-
-
-  
 
   @Get(':id')
   @Documentation({
@@ -91,18 +88,17 @@ export class MeNotificationsController {
     return this.notificationService.findOne(user, id, locale)
   }
 
-
   @Patch('/mark-all-as-seen')
   @Scopes(NotificationsScope.write)
   @ApiSecurity('oauth2', [NotificationsScope.write])
   @Documentation({
     summary: 'Updates all of  current user notifications as seen',
     response: { status: HttpStatus.NO_CONTENT },
-  })  async markAllAsSeen(@CurrentUser() user: User): Promise<void> {
-    await this.notificationService.markAllAsSeen(user);
+  })
+  async markAllAsSeen(@CurrentUser() user: User): Promise<void> {
+    await this.notificationService.markAllAsSeen(user)
   }
 
-  
   @Documentation({
     summary: 'Updates current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
@@ -123,6 +119,4 @@ export class MeNotificationsController {
       locale,
     )
   }
-
- 
 }
