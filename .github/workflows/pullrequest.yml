@@ -28,7 +28,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       CHUNK_SIZE: 7
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: ""
 
     outputs:
       # Don't cause a syntax error during JSON parsing if the relevant steps fail producing outputs
@@ -56,7 +56,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18.8.0'
+          node-version: "18.8.0"
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -242,7 +242,7 @@ jobs:
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS != "" }}
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS != '' }}
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
@@ -260,7 +260,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -292,7 +292,7 @@ jobs:
 
       - uses: ./.github/actions/unit-test
         with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          dd-api-key: "${{ secrets.DD_API_KEY }}"
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -301,7 +301,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS != "" }}
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS != '' }}
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
@@ -310,9 +310,9 @@ jobs:
       AFFECTED_PROJECT: ${{ matrix.projects }}
       CYPRESS_PROJECT_ID: 4q7jz8
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      API_MOCKS: 'true'
+      API_MOCKS: "true"
       NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      E2E_BUILD_ID: "${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}"
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -321,7 +321,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -385,7 +385,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -430,7 +430,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
       - name: Setup yarn
         run: npm install -g yarn
 
@@ -462,7 +462,7 @@ jobs:
     container:
       image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
-    if: ${{ needs.prepare.outputs.LINT_CHUNKS != "" }}
+    if: ${{ needs.prepare.outputs.LINT_CHUNKS != '' }}
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
@@ -475,7 +475,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -521,13 +521,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS != "" }}
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS != '' }}
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Setup yarn
         run: npm install -g yarn
