@@ -1066,7 +1066,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         const subHeading =
                           specializedName !== undefined
                             ? (locale === 'en'
-                                ? 'Specalization: '
+                                ? 'Specialization: '
                                 : 'Kjörsvið: ') + specializedName
                             : undefined
                         return (

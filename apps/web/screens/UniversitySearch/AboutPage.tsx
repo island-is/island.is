@@ -217,7 +217,7 @@ const AboutPage: Screen<AboutPageProps> = ({
                   {' '}
                   {n('universities', 'Háskólar')}
                 </Text>
-                {universities.map((university) => {
+                {sortedUniversities.map((university) => {
                   return (
                     <Box
                       className={cn(styles.courseListItems)}
