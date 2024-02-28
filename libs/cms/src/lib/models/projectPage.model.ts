@@ -121,34 +121,33 @@ export class ProjectPage {
 export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
   const { sys, fields } = projectPage
   let hasFrontpageLink = false
-  const filteredItems: ILinkGroupModel[] = fields.sidebarLinks ?? []
-  // .filter(
-  //   (linkGroup) => {
-  //     const linkGroupContentType =
-  //       linkGroup.fields.primaryLink.sys.contentType.sys.id
+  const filteredItems: ILinkGroupModel[] = (fields.sidebarLinks ?? []).filter(
+    (linkGroup) => {
+      const linkGroupContentType =
+        linkGroup.fields.primaryLink.sys.contentType.sys.id
 
-  //     if (!fields.sidebarFrontpageLink && linkGroupContentType === 'link') {
-  //       const linkFields = linkGroup.fields.primaryLink.fields as ILinkFields
-  //       const linkUrl = linkFields.url.split('/')
-  //       if (linkUrl.at(-1) === projectPage.fields.slug) {
-  //         hasFrontpageLink = true
-  //       }
-  //     }
-  //     if (linkGroupContentType !== 'projectSubpage') {
-  //       return true
-  //     }
+      if (!fields.sidebarFrontpageLink && linkGroupContentType === 'link') {
+        const linkFields = linkGroup.fields.primaryLink.fields as ILinkFields
+        const linkUrl = linkFields.url.split('/')
+        if (linkUrl.at(-1) === projectPage.fields.slug) {
+          hasFrontpageLink = true
+        }
+      }
+      if (linkGroupContentType !== 'projectSubpage') {
+        return true
+      }
 
-  //     // if (
-  //     //   fieldssss.slug.substring(fieldssss.slug.lastIndexOf('/') + 1) ===
-  //     //   projectPage.fields.slug
-  //     // ) {
-  //     // }
+      // if (
+      //   fieldssss.slug.substring(fieldssss.slug.lastIndexOf('/') + 1) ===
+      //   projectPage.fields.slug
+      // ) {
+      // }
 
-  //     return fields.projectSubpages?.some((subpage) => {
-  //       return subpage.sys.id === linkGroup.fields.primaryLink?.sys.id
-  //     })
-  //   },
-  // )
+      return fields.projectSubpages?.some((subpage) => {
+        return subpage.sys.id === linkGroup.fields.primaryLink?.sys.id
+      })
+    },
+  )
 
   if (hasFrontpageLink) {
     filteredItems.unshift({
