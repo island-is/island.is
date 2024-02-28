@@ -172,9 +172,16 @@ jobs:
         id: check-permission
 
       - name: Set magic env if test-everything label is set
-        if: ${{ contains( github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
         run: |
           echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> $GITHUB_ENV
+
+      - name: Fail fast if user does not have the required permissions
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] != 'admin' }}
+        run: |
+          echo "## FATAL permissions" >> "$GITHUB_STEP_SUMMARY"
+          echo "User $GITHUB_ACTOR does not have the required permissions to 'test everything'" >> "$GITHUB_STEP_SUMMARY"
+          exit 1
 
       - name: Prepare lint targets
         id: lint_projects
