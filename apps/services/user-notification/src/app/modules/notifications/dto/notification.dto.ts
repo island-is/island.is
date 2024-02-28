@@ -2,7 +2,6 @@ import { PageInfoDto, PaginationDto } from '@island.is/nest/pagination'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
-  IsEnum,
   IsString,
   IsInt,
   IsDate,
@@ -13,7 +12,6 @@ import {
   IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-// import { NotificationStatus } from '../notification.model'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -67,9 +65,6 @@ export class NotificationDto {
   @IsDate()
   updated!: Date
 
-  // @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
-  // @IsEnum(NotificationStatus)
-  // status!: NotificationStatus
   @ApiProperty({ example: false })
   @IsBoolean()
   read!: boolean;

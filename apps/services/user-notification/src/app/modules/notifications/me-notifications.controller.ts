@@ -123,17 +123,5 @@ export class MeNotificationsController {
     )
   }
 
-
-
-  // @Patch('/mark-all-as-read')
-  // @Scopes(NotificationsScope.write)
-  // @ApiSecurity('oauth2', [NotificationsScope.write])
-  // @Documentation({
-  //   summary: 'Updates all of  current user notifications as seen',
-  //   response: { status: HttpStatus.NO_CONTENT },
-  // })  async markAllAsRead(@CurrentUser() user: User): Promise<void> {
-  //   await this.notificationService.markAllAsRead(user);
-  // }
-
  
 }

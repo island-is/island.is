@@ -31,7 +31,7 @@ const mockHnippTemplate: HnippTemplate = {
   clickAction: 'Demo click action {{arg2}}',
   category: 'Demo category',
   args: ['arg1', 'arg2'],
-  sender: 'Demo sender',
+  senderId: '1234567890',
 }
 
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]

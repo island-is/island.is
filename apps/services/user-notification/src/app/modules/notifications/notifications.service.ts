@@ -242,13 +242,6 @@ export class NotificationsService {
             for (const arg of args) {
               const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
               const newValue = value.replace(regexTarget, arg.value)
-              // ABORT THIS CRAP
-              // // for templates are used by multiple organizations, senderId should be set to organization.id
-              // // ISSUE legacy support for previous versions where name was used instead of id...............
-              // if (arg.key == 'organization') {
-              //   // try to get kennitala from organization name
-              //   template.senderId = slugify(arg.value)
-              // }
               if (newValue !== value) {
                 // finds {{key}} in string and replace with value
                 template[templateKey] = value.replace(regexTarget, arg.value)
