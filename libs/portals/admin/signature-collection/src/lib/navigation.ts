@@ -7,7 +7,7 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
   icon: {
     icon: 'settings',
   },
-  description: m.signatureListsIntro,
+  description: m.signatureListsDescription,
   path: SignatureCollectionPaths.SignatureLists,
   children: [
     {
