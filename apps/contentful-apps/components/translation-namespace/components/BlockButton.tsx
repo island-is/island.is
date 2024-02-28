@@ -26,7 +26,7 @@ const toggleBlock = (editor: Editor, format: string) => {
   Transforms.unwrapNodes(editor, {
     match: (n) =>
       LIST_TYPES.includes(
-        !Editor.isEditor(n) && SlateElement.isElement(n) && (n.type as any),
+        !Editor.isEditor(n) && SlateElement.isElement(n) && n.type,
       ),
     split: true,
   })
