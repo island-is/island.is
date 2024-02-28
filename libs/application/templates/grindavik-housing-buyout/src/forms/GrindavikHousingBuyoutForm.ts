@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -13,20 +14,23 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
-  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
 import {
   formatCurrency,
   formatPhoneNumber,
+  removeCountryCode,
 } from '@island.is/application/ui-components'
 import { GrindavikHousingBuyout } from '../lib/dataSchema'
 import {
   calculateBuyoutPrice,
   calculateTotalLoanFromAnswers,
   getFireInsuranceValue,
+  getPropertyAddress,
   getPropertyOwners,
 } from '../utils'
+import { format as formatNationalId } from 'kennitala'
+import { conclusionSection } from '../utils'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -48,34 +52,29 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           description: m.application.propertyInformation.sectionDescription,
           children: [
             buildStaticTableField({
-              title: 'Vesturhóp 34, 240 Grindavík', // TODO
+              title: ({ externalData }) => getPropertyAddress(externalData),
               header: [
                 m.application.propertyInformation.propertyOwners,
                 m.application.propertyInformation.ownerNationalId,
                 m.application.propertyInformation.propertyPermit,
                 m.application.propertyInformation.ownershipRatio,
-                m.application.propertyInformation.fireInsuranceValue,
               ],
               rows: ({ externalData }) => {
                 const owners = getPropertyOwners(externalData)
-                const fireInsuranceValue = getFireInsuranceValue(externalData)
-
                 return owners.map((owner) => [
                   owner.nafn ?? '',
-                  owner.kennitala ?? '',
+                  formatNationalId(owner.kennitala ?? ''),
                   owner.heimildBirting ?? '',
                   `${(owner.eignarhlutfall ?? 0) * 100}%`,
-                  formatCurrency(fireInsuranceValue.toString()),
                 ])
               },
-              /* summary: (application) => {
-                const { buyoutPrice } = calculateBuyoutPrice(application)
-
+              summary: ({ externalData }) => {
+                const fireInsuranceValue = getFireInsuranceValue(externalData)
                 return {
-                  label: m.application.overview.buyoutPriceTitle,
-                  value: formatCurrency(buyoutPrice.toString()),
+                  label: m.application.propertyInformation.fireInsuranceValue,
+                  value: formatCurrency(fireInsuranceValue.toString()),
                 }
-              }, */
+              },
             }),
           ],
         }),
@@ -118,6 +117,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
         buildMultiField({
           id: 'resultsMultiField',
           title: m.application.results.sectionTitle,
+          space: 3,
           children: [
             buildDescriptionField({
               id: '',
@@ -181,7 +181,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               label: applicantInformationMessages.labels.nationalId,
               colSpan: '6/12',
               value: ({ answers }) =>
-                (answers as GrindavikHousingBuyout).applicant.nationalId,
+                formatNationalId(
+                  (answers as GrindavikHousingBuyout).applicant.nationalId,
+                ),
             }),
             buildKeyValueField({
               label: applicantInformationMessages.labels.email,
@@ -196,7 +198,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 !!(answers as GrindavikHousingBuyout)?.applicant?.phoneNumber,
               value: ({ answers }) =>
                 formatPhoneNumber(
-                  (answers as GrindavikHousingBuyout).applicant.phoneNumber,
+                  removeCountryCode(
+                    (answers as GrindavikHousingBuyout).applicant.phoneNumber,
+                  ),
                 ),
             }),
             buildDividerField({}),
@@ -209,7 +213,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildKeyValueField({
               label: '',
-              value: 'Vesturhóp 34, 240 Grindavík', // TODO
+              value: ({ externalData }) => getPropertyAddress(externalData),
             }),
             buildDividerField({}),
 
@@ -274,6 +278,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
         }),
       ],
     }),
-    buildFormConclusionSection({}),
+    conclusionSection,
   ],
 })
