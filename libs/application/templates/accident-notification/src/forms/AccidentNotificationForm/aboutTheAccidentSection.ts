@@ -20,7 +20,6 @@ import {
   fatalAccident,
   fatalAccidentAttachment,
   fishingCompanyInfo,
-  hindrances,
   injuredPersonInformation,
   locationAndPurpose,
   rescueSquadInfo,
@@ -68,63 +67,6 @@ export const aboutTheAccidentSection = buildSection({
   id: 'accidentType.section',
   title: accidentType.general.sectionTitle,
   children: [
-    buildSubSection({
-      id: 'hindrances',
-      title: hindrances.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'timePassedHindrancesMultiField',
-          title: hindrances.timePassedHindrance.radioFieldTitle,
-          children: [
-            buildRadioField({
-              id: 'timePassedHindrance',
-              title: '',
-              options: [
-                { value: YES, label: application.general.yesOptionLabel },
-                { value: NO, label: application.general.noOptionLabel },
-              ],
-              width: 'half',
-              largeButtons: true,
-              required: true,
-            }),
-            buildAlertMessageField({
-              id: 'timePassedHindranceFielAlertMessage',
-              title: hindrances.timePassedHindrance.errorTitle,
-              message: hindrances.timePassedHindrance.errorDescription,
-              alertType: 'info',
-              doesNotRequireAnswer: true,
-              condition: (formValue) => formValue.timePassedHindrance === YES,
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'carHindrancesMultiField',
-          title: hindrances.carAccident.radioFieldTitle,
-          children: [
-            buildRadioField({
-              title: '',
-              id: 'carAccidentHindrance',
-              options: [
-                { value: YES, label: application.general.yesOptionLabel },
-                { value: NO, label: application.general.noOptionLabel },
-              ],
-              width: 'half',
-              largeButtons: true,
-              required: true,
-            }),
-            buildAlertMessageField({
-              id: 'carAccidentHindranceFielAlertMessage',
-              title: hindrances.carAccident.errorTitle,
-              message: hindrances.carAccident.errorDescription,
-              alertType: 'info',
-              doesNotRequireAnswer: true,
-              condition: (formValue) => formValue.carAccidentHindrance === YES,
-            }),
-          ],
-        }),
-      ],
-    }),
-
     buildSubSection({
       id: 'accidentType.section',
       title: accidentType.general.subsectionTitle,

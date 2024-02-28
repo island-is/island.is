@@ -92,8 +92,6 @@ export const AccidentNotificationSchema = z.object({
   info: z.object({
     onBehalf: z.enum([OnBehalf.MYSELF, OnBehalf.OTHERS]),
   }),
-  timePassedHindrance: z.enum([YES, NO]),
-  carAccidentHindrance: z.enum([YES, NO]),
   applicant: applicantInformationSchema(),
   whoIsTheNotificationFor: z.object({
     answer: z.enum([

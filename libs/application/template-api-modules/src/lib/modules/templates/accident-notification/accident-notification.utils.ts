@@ -175,9 +175,6 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
     banaslys: yesOrNoToNumber(
       getValueViaPath(answers, 'wasTheAccidentFatal') as YesOrNo,
     ),
-    bilslys: yesOrNoToNumber(
-      getValueViaPath(answers, 'carAccidentHindrance') as YesOrNo,
-    ),
     stadurslysseferindi:
       (getValueViaPath(answers, 'locationAndPurpose?.location') as string) ??
       '',

@@ -43,7 +43,6 @@ export interface Slys {
   timislys: string
   lysing: string
   banaslys: number
-  bilslys: number
   stadurslysseferindi?: string
   lysingerindis?: number
   undirtegund?: number
