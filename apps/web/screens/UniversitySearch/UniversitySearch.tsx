@@ -147,15 +147,28 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   universities,
 }) => {
   useEffect(() => {
+    // Re-ordering filters.
     const index = filterOptions.findIndex(
       (filter) => filter.field === 'universityId',
     )
 
     if (index !== -1) {
       const movedField = filterOptions.splice(index, 1)[0]
+
+      movedField.options.sort((x, y) => {
+        const titleX =
+          universities.filter((uni) => uni.id === x)[0].contentfulTitle || ''
+        const titleY =
+          universities.filter((uni) => uni.id === y)[0].contentfulTitle || ''
+        return titleX.localeCompare(titleY)
+      })
       filterOptions.splice(2, 0, movedField)
+      const lastElement = filterOptions[filterOptions.length - 1]
+      filterOptions[filterOptions.length - 1] =
+        filterOptions[filterOptions.length - 2]
+      filterOptions[filterOptions.length - 2] = lastElement
     }
-  }, [filterOptions])
+  }, [filterOptions, universities])
 
   const router = useRouter()
   const { width } = useWindowSize()
@@ -295,6 +308,31 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     setFilteredResults(originalSortedResults)
   }
 
+  const applicationUrlParser = (universityId: string) => {
+    const university =
+      universities.filter((uni) => uni.id === universityId)[0]
+        .contentfulTitle || ''
+
+    switch (university) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
+  }
+
   const createPrimaryCTA = (item: UniversityGatewayProgramWithStatus) => {
     const CTA: CTAProps = {
       label: n('apply', 'Sækja um'),
@@ -303,6 +341,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
+      onClick: () => router.push(applicationUrlParser(item.universityId)),
     }
     return CTA
   }
@@ -693,6 +732,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       >
                         {formatFilterStrings(tag, key)}
                         <button
+                          aria-label="remove tag"
                           style={{ alignSelf: 'end' }}
                           onClick={() =>
                             handleRemoveTag(key as keyof FilterProps, tag)
@@ -1026,7 +1066,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         const subHeading =
                           specializedName !== undefined
                             ? (locale === 'en'
-                                ? 'Field of study: '
+                                ? 'Specalization: '
                                 : 'Kjörsvið: ') + specializedName
                             : undefined
                         return (

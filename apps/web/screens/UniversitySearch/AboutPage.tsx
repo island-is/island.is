@@ -388,8 +388,9 @@ AboutPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'haskolanam' as string,
-          slug: 'um-haskolanam-is' as string,
+          organizationSlug:
+            locale === 'is' ? 'haskolanam' : 'university-studies',
+          slug: locale === 'is' ? 'um-haskolanam-is' : 'about-haskolanam-is',
           lang: locale as ContentLanguage,
         },
       },
