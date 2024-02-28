@@ -2020,10 +2020,10 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink
+  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
 
   /** Children Links */
-  childrenLinks?: ILink[] | undefined
+  childrenLinks?: (ILink | IOrganizationSubpage | IProjectSubpage)[] | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -2941,7 +2941,7 @@ export interface IOrganizationSubpageFields {
     | undefined
 
   /** Slice Custom Renderer */
-  sliceCustomRenderer?: 'SliceDropdown' | undefined
+  sliceCustomRenderer?: 'SliceDropdown' | 'SliceTableOfContents' | undefined
 
   /** Slice Extra Text */
   sliceExtraText?: string | undefined

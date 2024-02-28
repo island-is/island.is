@@ -126,6 +126,7 @@ describe('View Case File Guard', () => {
       const accessibleCaseAppealStates = [
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
       ]
 
       describe.each(accessibleCaseAppealStates)(

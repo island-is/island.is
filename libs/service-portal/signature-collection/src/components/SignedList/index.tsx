@@ -24,7 +24,7 @@ const SignedList = () => {
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        id:
+        listId:
           signedLists && signedLists?.length === 1
             ? signedLists[0].id
             : undefined,
@@ -59,7 +59,7 @@ const SignedList = () => {
       {!loadingSignedLists && !!signedLists?.length && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
-          {signedLists.map((list: SignatureCollectionSignedList) => {
+          {signedLists?.map((list: SignatureCollectionSignedList) => {
             return (
               <Box marginBottom={5} key={list.id}>
                 <ActionCard
@@ -84,7 +84,7 @@ const SignedList = () => {
                       : undefined
                   }
                   tag={
-                    list.isValid && new Date(list.endTime) < new Date()
+                    list.isValid && !list.active
                       ? {
                           label: formatMessage(m.collectionClosed),
                           variant: 'red',

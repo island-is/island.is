@@ -5,10 +5,8 @@ export const serviceSetup =
     return service('services-auth-personal-representative-public')
       .namespace('personal-representative')
       .image('services-auth-personal-representative-public')
-      .postgres({
-        username: 'servicesauth',
+      .db({
         name: 'servicesauth',
-        passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
       })
       .env({
         IDENTITY_SERVER_ISSUER_URL: {

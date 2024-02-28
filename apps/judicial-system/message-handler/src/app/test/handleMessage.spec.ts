@@ -835,4 +835,64 @@ describe('MessageHandlerService - Handle message', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe('send appeal case files updated notifications in appeal cases', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_APPEAL_CASE_FILES_UPDATED_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send appeal case files updated notification type', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.APPEAL_CASE_FILES_UPDATED,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send appeal withdrawn notification in appeal cases', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send appeal withdrawn notifications', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.APPEAL_WITHDRAWN,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
 })

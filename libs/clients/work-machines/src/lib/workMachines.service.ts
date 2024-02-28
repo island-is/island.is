@@ -17,6 +17,7 @@ import {
   ChangeMachineOwner,
   ConfirmOwnerChange,
   SupervisorChange,
+  MachinesWithTotalCount,
 } from './workMachines.types'
 import {
   apiChangeMachineOwnerToApiRequest,
@@ -76,25 +77,39 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
-  async getMachines(auth: User): Promise<MachineDto[]> {
+  async getMachines(auth: User): Promise<MachinesWithTotalCount> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
+      pageSize: 20,
+      pageNumber: 1,
     })
-    return (
-      result?.value?.map((machine) => {
-        return {
-          id: machine.id,
-          type: machine.type || '',
-          category: machine?.category || '',
-          regNumber: machine?.registrationNumber || '',
-          status: machine?.status || '',
-        }
-      }) || []
-    )
+    return {
+      machines:
+        result?.value?.map((machine) => {
+          return {
+            id: machine.id,
+            type: machine.type || '',
+            category: machine?.category || '',
+            regNumber: machine?.registrationNumber || '',
+            status: machine?.status || '',
+          }
+        }) || [],
+      totalCount: result?.pagination?.currentPage || 0,
+    }
+  }
+
+  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
+    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+      onlyShowOwnedMachines: true,
+      searchQuery: regNumber,
+    })
+
+    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '')
   }
 
   async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
+
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,

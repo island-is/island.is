@@ -3,17 +3,10 @@ import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userPr
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
-const postgresInfo = {
-  username: 'servicesauth',
-  name: 'servicesauth',
-  passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
-  extensions: ['uuid-ossp'],
-}
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
     .namespace('identity-server')
     .image('services-auth-ids-api')
-    .postgres(postgresInfo)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -98,21 +91,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .xroad(Base, Client, RskProcuring)
     .readiness('/health/check')
     .liveness('/liveness')
-    .initContainer({
-      postgres: postgresInfo,
-      containers: [
-        {
-          name: 'migrations',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:migrate'],
-        },
-        {
-          name: 'seed',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:seed:all'],
-        },
-      ],
-    })
+    .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
+    .migrations()
+    .seed()
     .resources({
       limits: {
         cpu: '800m',
