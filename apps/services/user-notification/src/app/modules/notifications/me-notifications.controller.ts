@@ -26,6 +26,7 @@ import {
   RenderedNotificationDto,
   ExtendedPaginationDto,
   UnreadNotificationsCountDto,
+  UnseenNotificationsCountDto,
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -59,18 +60,18 @@ export class MeNotificationsController {
   })
   async getUnreadNotificationsCount(
     @CurrentUser() user: User
-  ): Promise<{ unreadCount: number }> {
+  ): Promise<UnreadNotificationsCountDto> {
     return await this.notificationService.getUnreadNotificationsCount(user);
   }
 
   @Get("/unseen-count")
   @Documentation({
-    summary: 'Returns a count of unread notifications for the current user',
-    response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
+    summary: 'Returns a count of unseen notifications for the current user',
+    response: { status: HttpStatus.OK, type: UnseenNotificationsCountDto },
   })
   async getUnseenNotificationsCount(
     @CurrentUser() user: User
-  ): Promise<{ unseenCount: number }> {
+  ): Promise<UnseenNotificationsCountDto> {
     return await this.notificationService.getUnseenNotificationsCount(user);
   }
 

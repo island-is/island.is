@@ -189,3 +189,9 @@ export class UnreadNotificationsCountDto {
   @IsInt()
   unreadCount!: number
 }
+
+export class UnseenNotificationsCountDto {
+  @ApiProperty({ example: 42 })
+  @IsInt()
+  unseenCount!: number
+}

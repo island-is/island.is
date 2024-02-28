@@ -24,6 +24,8 @@ import {
   UpdateNotificationDto,
   RenderedNotificationDto,
   ExtendedPaginationDto,
+  UnseenNotificationsCountDto,
+  UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
@@ -342,7 +344,7 @@ export class NotificationsService {
     }
   }
 
-  async getUnreadNotificationsCount(user: User): Promise<{unreadCount:number}> {
+  async getUnreadNotificationsCount(user: User): Promise<UnreadNotificationsCountDto> {
     try {
       const unreadCount = await this.notificationModel.count({
         where: {
@@ -357,7 +359,7 @@ export class NotificationsService {
     }
   }
 
-  async getUnseenNotificationsCount(user: User): Promise<{unseenCount:number}> {
+  async getUnseenNotificationsCount(user: User): Promise<UnseenNotificationsCountDto> {
     try {
       const unseenCount = await this.notificationModel.count({
         where: {
