@@ -2,9 +2,7 @@ import {
   Box,
   Button,
   Input,
-  Text,
   ToggleSwitchButton,
-  toast,
 } from '@island.is/island-ui/core'
 import { Modal, ModalProps } from '@island.is/react/components'
 

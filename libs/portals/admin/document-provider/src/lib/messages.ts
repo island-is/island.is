@@ -770,6 +770,26 @@ export const m = defineMessages({
     defaultMessage:
       'Listi yfir einstaklinga og fyrirtæki sem vilja fá send skjöl á pappír.',
   },
+  paperOrigin: {
+    id: 'portals-admin.document-provider:paper-origin',
+    defaultMessage: 'Uppruni',
+  },
+  paperBooleanTitle: {
+    id: 'portals-admin.document-provider:paper-boolean-title',
+    defaultMessage: 'Pappír',
+  },
+  paperUpdated: {
+    id: 'portals-admin.document-provider:paper-updated',
+    defaultMessage: 'Uppfært',
+  },
+  active: {
+    id: 'portals-admin.document-provider:paper-active',
+    defaultMessage: 'Virkur',
+  },
+  inactive: {
+    id: 'portals-admin.document-provider:paper-inactive',
+    defaultMessage: 'Óvirkur',
+  },
 
   // Categories
   catAndTypeName: {

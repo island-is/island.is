@@ -47,12 +47,12 @@ const CategoriesAndTypesWrapper = ({
                 tag={
                   item.active
                     ? {
-                        label: 'Virkur',
+                        label: formatMessage(m.active),
                         variant: 'mint',
                         outlined: false,
                       }
                     : {
-                        label: 'Óvirkur',
+                        label: formatMessage(m.inactive),
                         variant: 'red',
                         outlined: false,
                       }

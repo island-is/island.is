@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatNationalId } from 'kennitala'
@@ -69,10 +69,16 @@ const PaperScreen = () => {
                 <T.Table>
                   <T.Head>
                     <T.Row>
-                      <T.HeadData>Kennitala</T.HeadData>
-                      <T.HeadData>Uppruni</T.HeadData>
-                      <T.HeadData>Pappír</T.HeadData>
-                      <T.HeadData>Uppfært</T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(
+                          m.SingleProviderInstitutionNationalIdLabel,
+                        )}
+                      </T.HeadData>
+                      <T.HeadData>{formatMessage(m.paperOrigin)}</T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(m.paperBooleanTitle)}
+                      </T.HeadData>
+                      <T.HeadData>{formatMessage(m.paperUpdated)}</T.HeadData>
                     </T.Row>
                   </T.Head>
                   <T.Body>
@@ -115,22 +121,6 @@ const PaperScreen = () => {
                     ))}
                   </T.Body>
                 </T.Table>
-                {totalCount && totalCount > DEFAULT_PAGE_SIZE && (
-                  <Box marginTop={3}>
-                    <Pagination
-                      page={page}
-                      totalPages={Math.ceil(totalCount / DEFAULT_PAGE_SIZE)}
-                      renderLink={(page, className, children) => (
-                        <button
-                          className={className}
-                          onClick={() => setPage(page)}
-                        >
-                          {children}
-                        </button>
-                      )}
-                    />
-                  </Box>
-                )}
               </Box>
             ) : undefined}
             {loading && (
@@ -140,6 +130,19 @@ const PaperScreen = () => {
             )}
             {!loading && !error && !paperMailArray.length && (
               <Problem type="no_data" noBorder={false} />
+            )}
+            {!error && (
+              <Box marginTop={3}>
+                <Pagination
+                  page={page}
+                  totalPages={Math.ceil(totalCount / DEFAULT_PAGE_SIZE)}
+                  renderLink={(page, className, children) => (
+                    <button className={className} onClick={() => setPage(page)}>
+                      {children}
+                    </button>
+                  )}
+                />
+              </Box>
             )}
           </Box>
         </GridColumn>
