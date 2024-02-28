@@ -14,6 +14,19 @@ export const prerequisites = {
       description: 'Checkbox label',
     },
   }),
+  intro: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:prerequisites.intro.section.title',
+      defaultMessage: 'Upplýsingar til umsækjanda',
+      description: 'Introduction section title',
+    },
+    text: {
+      id: 'ghb.application:prerequisites.intro.text#markdown',
+      defaultMessage:
+        '- Umsókn um kaup ríkisins á íbúðareign þinni skuldbindur þig ekki til að selja en með henni hefst söluferlið.\n- Nóg er að einn af eigendum fylli út umsóknina en þegar kemur að sölunni þurfa allir eigendur að undirrita.\n- Staðfesting umsóknar mun berast eigendum í Stafræna pósthólfið þeirra.\n- Gott er fyrir umsækjanda að þekkja öll lán eignar og uppgreiðsluverð þeirra því kallað er eftir þeim upphæðum í umsókninni.\n- Eftir að umsókn klárast hefst úrvinnsla hjá Þórkötlu en stefnt er að því að það ferli taki um 2-4 vikur.\n- Haft verður samband við eigendur ef einhver gögn vantar eða ef eitthvað stöðvar ferlið sem og til að fá staðfest formlega að óskað sé eftir að íbúðarhúsnæði verði keypt af ríkinu.',
+      description: 'Introduction text',
+    },
+  }),
   dataProviders: defineMessages({
     nationalRegistryTitle: {
       id: 'ghb.application:prerequisites.dataproviders.nationalregistry.title',

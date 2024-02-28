@@ -1,5 +1,6 @@
 import {
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildSection,
@@ -22,6 +23,18 @@ export const Prerequisites: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
+    buildSection({
+      id: 'prerequisitesIntro',
+      title: prerequisites.intro.sectionTitle,
+      children: [
+        buildDescriptionField({
+          id: 'prerequisitesIntroTitle',
+          title: prerequisites.intro.sectionTitle,
+          description: prerequisites.intro.text,
+          space: 2,
+        }),
+      ],
+    }),
     buildSection({
       id: 'prerequisites',
       title: prerequisites.general.sectionTitle,
