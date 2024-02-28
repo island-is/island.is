@@ -28,9 +28,9 @@ import {
   getFireInsuranceValue,
   getPropertyAddress,
   getPropertyOwners,
+  conclusionSection,
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
-import { conclusionSection } from '../utils'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
