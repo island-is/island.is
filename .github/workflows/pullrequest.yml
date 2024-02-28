@@ -167,6 +167,11 @@ jobs:
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
 
+      - name: Set magic env if test-everything label is set
+        if: ${{ contains( github.event.pull_request.labels.*.name, 'test everything')
+        run: |
+          echo "AFFECTED_ALL=7913-$GITHUB_BASE_REF" >> $GITHUB_ENV
+
       - name: Prepare lint targets
         id: lint_projects
         run: |
