@@ -23,6 +23,7 @@ import {
   TemporaryEventLicence,
   VehicleRegistration,
   RegistryPerson,
+  InheritanceTax,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -471,6 +472,20 @@ export class SyslumennService {
     })
 
     return mapDepartedToRegistryPerson(res)
+  }
+
+  async getInheritanceTax(dateOfDeath: Date): Promise<InheritanceTax> {
+    const { id, api } = await this.createApi()
+    const res = await api.erfdafjarskatturGet({
+      audkenni: id,
+      danardagur: dateOfDeath,
+    })
+
+    return {
+      validFrom: res.gildirFra,
+      inheritanceTax: res.erfdafjarskattur,
+      taxExemptionLimit: res.skattfrelsismorkUpphaed,
+    }
   }
 
   async changeEstateRegistrant(

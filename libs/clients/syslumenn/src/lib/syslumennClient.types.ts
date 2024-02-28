@@ -279,6 +279,12 @@ export interface EstateInfo extends EstateCommon {
   availableSettlements?: AvailableSettlements
 }
 
+export interface InheritanceTax {
+  validFrom: Date
+  inheritanceTax: number
+  taxExemptionLimit: number
+}
+
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
 export interface PropertyDetail {
   defaultAddress?: PropertyLocation
