@@ -43,11 +43,7 @@ import {
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
-import {
-  ResponsiveProp,
-  SpanType,
-  BoxProps,
-} from '@island.is/island-ui/core/types'
+import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (

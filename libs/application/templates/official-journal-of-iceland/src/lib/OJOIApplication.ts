@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { pruneAfterDays } from '@island.is/application/core'
 
 import {
   Application,
@@ -17,6 +14,7 @@ import {
 import { dataSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
+import { Features } from '@island.is/feature-flags'
 
 export enum ApplicationStates {
   REQUIREMENTS = 'requirements',
@@ -44,6 +42,7 @@ const OJOITemplate: ApplicationTemplate<
   type: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
   name: general.applicationName,
   institution: general.ministryOfJustice,
+  featureFlag: Features.officialJournalOfIceland,
   translationNamespaces: [
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],
@@ -56,7 +55,7 @@ const OJOITemplate: ApplicationTemplate<
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'draft',
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(90),
           progress: 0.33,
           roles: [
             {
@@ -84,7 +83,7 @@ const OJOITemplate: ApplicationTemplate<
           name: general.applicationName.defaultMessage,
           status: 'inprogress',
           progress: 0.66,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(90),
           onEntry: [
             defineTemplateApi({
               action: TemplateApiActions.departments,
@@ -130,10 +129,7 @@ const OJOITemplate: ApplicationTemplate<
           name: general.applicationName.defaultMessage,
           status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: pruneAfterDays(90),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.submitApplication,
             shouldPersistToExternalData: true,
@@ -156,22 +152,14 @@ const OJOITemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    return Roles.APPLICANT
-
-    // if (application.assignees.includes(nationalId)) {
-    //   return Roles.ASSIGNEE
-    // }
-    // if (application.applicant === nationalId) {
-    //   if (application.state === 'inReview') {
-    //     return Roles.ASSIGNEE
-    //   }
-
-    //   return Roles.APPLICANT
-    // }
+  mapUserToRole(id: string, application: Application) {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    if (application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
+    return undefined
   },
 }
 

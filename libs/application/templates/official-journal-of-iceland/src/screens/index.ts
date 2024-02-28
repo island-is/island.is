@@ -1,6 +1,5 @@
 export * from './AdvertScreen'
 export * from './AttachmentsScreen'
-export * from './CompleteScreen'
 export * from './OriginalScreen'
 export * from './RequirementsScreen'
 export * from './PreviewScreen'

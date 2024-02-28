@@ -179,8 +179,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
-    console.log('yeehaw')
-
     if (typeof beforeSubmitCallback.current === 'function') {
       const [canContinue, possibleError] = await beforeSubmitCallback.current()
 
@@ -232,8 +230,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         mergeAnswers(formValue, data),
         screen,
       )
-
-      console.log('extractedAnswers', extractedAnswers)
 
       response = await updateApplication({
         variables: {

@@ -7,19 +7,12 @@ export const complete = {
       defaultMessage: 'Mál hefur verið sent inn til yfirferðar',
       description: 'Title of the complete screen',
     },
-  }),
-  bullets: defineMessages({
-    first: {
-      id: 'ojoi.application:complete.bullets.first',
+    bullets: {
+      id: 'ojoi.application:complete.bullets',
       defaultMessage:
-        'Starfsfólk mun fara yfir auglýsinguna og þú færð staðfestingu þegar auglýsingin þín fer í birtingu',
-      description: 'First bullet of the complete screen',
-    },
-    second: {
-      id: 'ojoi.application:complete.bullets.second',
-      defaultMessage:
-        'Ef auglýsingin þarfnast einhverra breytinga færð þú tilkynningu um það.',
-      description: 'Second bullet of the complete screen',
+        `* Starfsfólk mun fara yfir auglýsinguna og þú færð staðfestingu þegar auglýsingin þín fer í birtingu\n` +
+        `* Ef auglýsingin þarfnast einhverra breytinga færð þú tilkynningu um það.`,
+      description: 'Bullets of the complete screen',
     },
   }),
 }

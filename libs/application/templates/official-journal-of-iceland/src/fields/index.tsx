@@ -1,11 +1,1 @@
-// export { AdditionsAndDocuments } from './AdditionsAndDocuments/AdditionsAndDocuments'
-// export { Complete } from './Complete/Complete'
-// export { Advert } from './Advert/Advert'
-// export { OriginalData } from './OriginalData/OriginalData'
-// export { Prerequisites } from './Prerequisites/Prerequisites'
-// export { Preview } from './Preview/Preview'
-// export { PublishingPreferences } from './PublishingPreferences/PublishingPreferences'
-// export { Summary } from './Summary/Summary'
-// export { Test } from './Test/Test'
-
 export * from '../screens'

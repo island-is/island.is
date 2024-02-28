@@ -15,6 +15,8 @@ import {
   publishing,
   summary,
 } from '../lib/messages'
+import { complete } from '../lib/messages/complete'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 export const Complete: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
   title: 'Skilyrði',
@@ -52,22 +54,9 @@ export const Complete: Form = buildForm({
       title: publishing.general.section,
       children: [],
     }),
-    buildSection({
-      id: Routes.COMPLETE,
-      title: summary.general.section,
-      children: [
-        buildMultiField({
-          id: 'complete',
-          title: '',
-          children: [
-            buildCustomField({
-              id: 'complete',
-              title: '',
-              component: 'CompleteScreen',
-            }),
-          ],
-        }),
-      ],
+    buildFormConclusionSection({
+      multiFieldTitle: complete.general.title,
+      expandableDescription: complete.general.bullets,
     }),
   ],
 })
