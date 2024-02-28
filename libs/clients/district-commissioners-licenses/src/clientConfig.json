@@ -1239,6 +1239,63 @@
         ]
       }
     },
+    "/{audkenni}": {
+      "get": {
+        "tags": ["Erfdafjarskattur"],
+        "operationId": "Erfdafjarskattur_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "danardagur",
+            "in": "query",
+            "format": "date-time",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ErfdafjarskatturSvar"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/SkiptaUmSkraningaradilaDanarbus": {
       "post": {
         "tags": ["SkiptaUmSkraningaradilaDanarbus"],
@@ -1459,6 +1516,59 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/UpplysingarUrDanarbuiSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/v1/Danarbu/UpplysingarUrDanarbuiErfdafjarskatt": {
+      "post": {
+        "tags": ["UpplysingarUrDanarbuiErfdafjarskatt"],
+        "operationId": "UpplysingarUrDanarbuiErfdafjarskatt_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "fyrirspurn",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Fyrirspurn"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/UpplysingarUrDanarbuiSkeytiErfdafjarskatt"
             }
           },
           "404": {
@@ -3992,6 +4102,24 @@
         }
       }
     },
+    "ErfdafjarskatturSvar": {
+      "type": "object",
+      "required": ["gildirFra", "erfdafjarskattur", "skattfrelsismorkUpphaed"],
+      "properties": {
+        "gildirFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "erfdafjarskattur": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "skattfrelsismorkUpphaed": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "SkiptaUmSkraningaradiliSkeyti": {
       "type": "object",
       "properties": {
@@ -4483,6 +4611,88 @@
         }
       }
     },
+    "UpplysingarUrDanarbuiSkeytiErfdafjarskatt": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "yfirlit": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DanarbuUpplErfdafjarskatt"
+          }
+        },
+        "texti": {
+          "type": "string"
+        }
+      }
+    },
+    "DanarbuUpplErfdafjarskatt": {
+      "type": "object",
+      "required": ["kaupmali", "erfdakraVitneskja"],
+      "properties": {
+        "malsnumer": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "danardagur": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "logheimili": {
+          "type": "string"
+        },
+        "erfingar": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Erfingar"
+          }
+        },
+        "erfdaskra": {
+          "type": "string"
+        },
+        "kaupmali": {
+          "type": "boolean"
+        },
+        "erfdakraVitneskja": {
+          "type": "boolean"
+        },
+        "eignir": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EignirDanarbusErfdafjarskatt"
+          }
+        }
+      }
+    },
+    "EignirDanarbusErfdafjarskatt": {
+      "type": "object",
+      "required": ["tegundAngalgs", "eignarhlutfall"],
+      "properties": {
+        "tegundAngalgs": {
+          "$ref": "#/definitions/TegundAndlags"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "lysing": {
+          "type": "string"
+        },
+        "eignarhlutfall": {
+          "type": "number",
+          "format": "float"
+        },
+        "fasteignamat": {
+          "type": "string"
+        }
+      }
+    },
     "Fasteignasalar": {
       "type": "object",
       "properties": {
@@ -4932,7 +5142,6 @@
     },
     "Leyfi": {
       "type": "object",
-      "required": ["utgafudagur"],
       "properties": {
         "audkenni": {
           "type": "string"
@@ -5023,6 +5232,9 @@
     "LeyfiStakt": {
       "type": "object",
       "properties": {
+        "nafn": {
+          "type": "string"
+        },
         "leyfi": {
           "$ref": "#/definitions/Leyfi"
         },

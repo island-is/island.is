@@ -1,5 +1,10 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { UserInfoLine, formatDate } from '@island.is/service-portal/core'
+import {
+  StackWithBottomDivider,
+  StackOrTableBlock,
+  UserInfoLine,
+  formatDate,
+} from '@island.is/service-portal/core'
 import { ipMessages } from '../../../lib/messages'
 import { m as coreMessages } from '@island.is/service-portal/core'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
@@ -7,9 +12,7 @@ import { useMemo } from 'react'
 import { IntellectualPropertiesSpc } from '@island.is/api/schema'
 import { orderTimelineData } from '../../../utils/timelineMapper'
 import Timeline from '../../../components/Timeline/Timeline'
-import { StackOrTableBlock } from '../../../components/StackOrTableBlock/StackOrTableBlock'
 import { AssetsPaths } from '../../../lib/paths'
-import { StackWithBottomDivider } from '../../../components/StackWithBottomDivider/StackWithBottomDivider'
 
 interface Props {
   data: IntellectualPropertiesSpc

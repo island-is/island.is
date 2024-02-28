@@ -1,12 +1,18 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
-import { RettindiFyrirIslandIsApi, Leyfi } from '../../gen/fetch'
-import { DistrictCommissionersLicenseDto } from './dto/districtCommissionersLicenseDto'
+import { RettindiFyrirIslandIsApi } from '../../gen/fetch'
+import {
+  DistrictCommissionersLicenseDto,
+  mapLicenseDto,
+} from './dto/districtCommissionersLicenseDto'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { LOG_CATEGORY } from './districtCommissionersLicenses.types'
-import { mapStatusToLiteral } from './util'
 import { isDefined } from '@island.is/shared/utils'
 import { handle404 } from '@island.is/clients/middlewares'
+import {
+  DistrictCommissionersLicenseInfoDto,
+  mapLicenseInfoDto,
+} from './dto/districtCommissionersLicenseInfoDto'
 
 @Injectable()
 export class DistrictCommissionersLicensesService {
@@ -18,28 +24,9 @@ export class DistrictCommissionersLicensesService {
   private apiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
-  private mapLicenseToDto = (license: Leyfi) => {
-    if (!license?.audkenni) {
-      this.logger.warn('Invalid district commissioners license,', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    return {
-      id: license?.audkenni,
-      title: license?.titill,
-      validFrom: license?.utgafudagur,
-      issuer: license?.utgefandi?.titill,
-      status: license?.stada?.kodi
-        ? mapStatusToLiteral(license?.stada?.kodi)
-        : undefined,
-    }
-  }
-
   async getLicenses(
     user: User,
-  ): Promise<Array<DistrictCommissionersLicenseDto>> {
+  ): Promise<Array<DistrictCommissionersLicenseInfoDto>> {
     const licenseInfo = await this.apiWithAuth(user)
       .rettindiFyrirIslandIsGet({
         kennitala: '0101303019',
@@ -48,7 +35,16 @@ export class DistrictCommissionersLicensesService {
 
     return (
       licenseInfo?.leyfi
-        ?.map((l) => this.mapLicenseToDto(l))
+        ?.map((l) => {
+          if (!l?.audkenni) {
+            this.logger.warn('Invalid district commissioners license,', {
+              category: LOG_CATEGORY,
+            })
+            return null
+          }
+
+          return mapLicenseInfoDto(l)
+        })
         .filter(isDefined) ?? []
     )
   }
@@ -70,6 +66,6 @@ export class DistrictCommissionersLicensesService {
       return null
     }
 
-    return this.mapLicenseToDto(license.leyfi)
+    return mapLicenseDto(license)
   }
 }

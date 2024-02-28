@@ -1,9 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import {
   FootNote,
   IntroHeader,
   UserInfoLine,
+  StackWithBottomDivider,
   formSubmit,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -37,7 +38,7 @@ const OccupationalLicenseDetail = () => {
           <IntroHeader
             marginBottom={2}
             title={license?.title ?? formatMessage(om.occupationalLicense)}
-            intro={formatMessage(om.educationIntro)}
+            intro={license.headerText ?? formatMessage(om.educationIntro)}
             serviceProviderSlug={
               license.serviceProviderOrganizationSlug as OrganizationSlugType
             }
@@ -62,7 +63,9 @@ const OccupationalLicenseDetail = () => {
           <IntroHeader
             marginBottom={2}
             title={license?.profession ?? formatMessage(om.occupationalLicense)}
-            intro={formatMessage(om.healthDirectorateIntro)}
+            intro={
+              license.headerText ?? formatMessage(om.healthDirectorateIntro)
+            }
             fixedImgWidth
             serviceProviderSlug={'landlaeknir'}
             serviceProviderTooltip={formatMessage(om.healthDirectorateTooltip)}
@@ -74,6 +77,7 @@ const OccupationalLicenseDetail = () => {
             marginBottom={2}
             fixedImgWidth
             title={license?.title ?? formatMessage(om.occupationalLicense)}
+            intro={license.headerText ?? ''}
             serviceProviderSlug={'syslumenn'}
           />
         )
@@ -86,97 +90,114 @@ const OccupationalLicenseDetail = () => {
     <>
       {introHeader}
       {error && !loading && <Problem noBorder={false} error={error} />}
-      <Stack dividers space={2}>
-        <UserInfoLine
-          loading={loading}
-          label={formatMessage(om.nameOfIndividual)}
-          content={license?.licenseHolderName ?? 'default nafn'}
-        />
-        {(license?.dateOfBirth || loading) && (
+      {!error && (loading || data?.occupationalLicenseV2) && (
+        <StackWithBottomDivider space={2}>
           <UserInfoLine
             loading={loading}
-            label={formatMessage(om.dateOfBirth)}
-            content={
-              license?.dateOfBirth
-                ? formatDateFns(license.dateOfBirth, 'dd.MM.yyyy')
-                : undefined
-            }
+            label={formatMessage(om.nameOfIndividual)}
+            content={license?.licenseHolderName ?? 'default nafn'}
           />
-        )}
-        {(license?.profession || loading) && (
-          <UserInfoLine
-            loading={loading}
-            label={formatMessage(om.profession)}
-            content={license?.profession ?? ''}
-          />
-        )}
-        {(license?.permit || loading) && (
-          <UserInfoLine
-            loading={loading}
-            label={formatMessage(om.typeofLicense)}
-            content={license?.permit ?? ''}
-          />
-        )}
-        {(license?.issuer || loading) && (
-          <UserInfoLine
-            loading={loading}
-            label={formatMessage(om.publisher)}
-            content={license?.issuer ?? ''}
-          />
-        )}
-        {(license?.validFrom || loading) && (
-          <UserInfoLine
-            loading={loading}
-            label={formatMessage(om.dateOfIssue)}
-            content={
-              license?.validFrom
-                ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
-                : undefined
-            }
-          />
-        )}
-        {(license?.status || loading) && (
-          <UserInfoLine
-            loading={loading}
-            label={formatMessage(om.licenseStatus)}
-            content={
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                columnGap="p1"
-              >
-                <Text>
-                  {formatMessage(
-                    license?.status === 'VALID'
-                      ? om.validLicense
-                      : license?.status === 'LIMITED'
-                      ? om.validWithLimitationsLicense
-                      : om.invalidLicense,
-                  )}
-                </Text>
-                <Icon
-                  icon={
-                    license?.status === 'VALID'
-                      ? 'checkmarkCircle'
-                      : license?.status === 'LIMITED'
-                      ? 'warning'
-                      : 'closeCircle'
-                  }
-                  color={
-                    license?.status === 'VALID'
-                      ? 'mint600'
-                      : license?.status === 'LIMITED'
-                      ? 'yellow600'
-                      : 'red600'
-                  }
-                  type="filled"
-                />
-              </Box>
-            }
-          />
-        )}
-      </Stack>
+          {(license?.dateOfBirth || loading) && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.dateOfBirth)}
+              content={
+                license?.dateOfBirth
+                  ? formatDateFns(license.dateOfBirth, 'dd.MM.yyyy')
+                  : undefined
+              }
+            />
+          )}
+          {(license?.profession || loading) && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.profession)}
+              content={license?.profession ?? ''}
+            />
+          )}
+          {(license?.permit || loading) && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.typeofLicense)}
+              content={license?.permit ?? ''}
+            />
+          )}
+          {(license?.issuer || loading) && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.publisher)}
+              content={license?.issuer ?? ''}
+            />
+          )}
+          {(license?.validFrom || loading) && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.dateOfIssue)}
+              content={
+                license?.validFrom
+                  ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
+                  : undefined
+              }
+            />
+          )}
+          {(license?.status || loading) && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.licenseStatus)}
+              content={
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  columnGap="p1"
+                >
+                  <Text>
+                    {formatMessage(
+                      license?.status === 'VALID'
+                        ? om.validLicense
+                        : license?.status === 'LIMITED'
+                        ? om.validWithLimitationsLicense
+                        : om.invalidLicense,
+                    )}
+                  </Text>
+                  <Icon
+                    icon={
+                      license?.status === 'VALID'
+                        ? 'checkmarkCircle'
+                        : license?.status === 'LIMITED'
+                        ? 'warning'
+                        : 'closeCircle'
+                    }
+                    color={
+                      license?.status === 'VALID'
+                        ? 'mint600'
+                        : license?.status === 'LIMITED'
+                        ? 'yellow600'
+                        : 'red600'
+                    }
+                    type="filled"
+                  />
+                </Box>
+              }
+            />
+          )}
+          {license?.genericFields?.length &&
+            license.genericFields.map((g) => (
+              <UserInfoLine
+                loading={loading}
+                label={g.title}
+                content={g.value}
+              />
+            ))}
+        </StackWithBottomDivider>
+      )}
+      {license?.footerText && (
+        <Box paddingTop={4}>
+          <Text variant="small" paddingBottom={2}>
+            {license.footerText}
+          </Text>
+        </Box>
+      )}
       <FootNote
         serviceProviderSlug={
           license?.__typename ===

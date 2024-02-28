@@ -76,7 +76,7 @@ export const OccupationalLicensesOverview = () => {
       />
 
       {error && !data && !loading && <Problem error={error} noBorder={false} />}
-      {error && !loading && (
+      {error && !loading && data && (
         <AlertMessage
           type="warning"
           title={formatMessage(olMessage.fetchOverviewError)}

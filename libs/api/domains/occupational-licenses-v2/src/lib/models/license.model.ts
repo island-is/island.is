@@ -4,6 +4,7 @@ import {
   GraphQLISODateTime,
   InterfaceType,
 } from '@nestjs/graphql'
+import { GenericField } from './genericField.model'
 
 export enum OccupationalLicenseStatusV2 {
   VALID = 'valid',
@@ -67,4 +68,13 @@ export abstract class License {
 
   @Field(() => OccupationalLicenseStatusV2)
   status!: OccupationalLicenseStatusV2
+
+  @Field(() => [GenericField], { nullable: true })
+  genericFields?: Array<GenericField>
+
+  @Field({ nullable: true })
+  headerText?: string
+
+  @Field({ nullable: true })
+  footerText?: string
 }

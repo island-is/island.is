@@ -12,6 +12,12 @@ query getOccupationalLicenseById($input: OccupationalLicensesV2LicenseInput!) {
     issuer
     permit
     title
+    genericFields {
+      title
+      value
+    }
+    headerText
+    footerText
     ... on OccupationalLicensesV2EducationLicense {
       downloadUrl
     }

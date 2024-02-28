@@ -79,28 +79,31 @@ export class OccupationalLicensesV2Service {
       return null
     }
 
-    if (
-      !license.id ||
-      !license.status ||
-      !license.title ||
-      !license.validFrom
-    ) {
+    if (!license.licenseInfo) {
       return null
     }
 
     const issuer: OrganizationSlugType = 'syslumenn'
 
     return {
-      licenseId: addLicenseTypePrefix(license.id, 'DistrictCommissioners'),
-      licenseNumber: license.id,
+      licenseId: addLicenseTypePrefix(
+        license.licenseInfo.id,
+        'DistrictCommissioners',
+      ),
+      licenseNumber: license.licenseInfo.id,
       serviceProviderOrganizationSlug: issuer,
       issuerOrganizationSlug: issuer,
-      issuer: license.issuer,
-      profession: license.title,
+      issuer: license.licenseInfo.issuer,
+      profession: license.licenseInfo.title,
       dateOfBirth: info(user.nationalId).birthday,
-      validFrom: license.validFrom,
-      status: mapDistrictCommissionersLicenseStatusToStatus(license.status),
-      title: license.title,
+      validFrom: license.licenseInfo.validFrom,
+      status: mapDistrictCommissionersLicenseStatusToStatus(
+        license.licenseInfo.status,
+      ),
+      title: license.licenseInfo.title,
+      genericFields: license.extraFields ?? [],
+      headerText: license.headerText,
+      footerText: license.footerText,
     }
   }
 
