@@ -264,7 +264,6 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
-
     const response = await api.syslMottakaGognPost(payload).catch((e) => {
       throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
     })
