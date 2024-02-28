@@ -19,6 +19,7 @@ import {
   PodDisruptionBudget,
 } from './types/input-types'
 import { logger } from '../logging'
+import { COMMON_SECRETS } from './consts'
 
 /**
  * Allows you to make some properties of a type optional.
@@ -63,7 +64,7 @@ export class ServiceBuilder<ServiceType extends string> {
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
-      secrets: { CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY' },
+      secrets: COMMON_SECRETS,
       ingress: {},
       namespace: 'islandis',
       serviceAccountEnabled: false,
@@ -505,8 +506,7 @@ export class ServiceBuilder<ServiceType extends string> {
         ),
       passwordSecret:
         postgres.passwordSecret ??
-        `/k8s/${this.stripPostfix(defaultName)}${
-          postgres.readOnly ? '/readonly' : ''
+        `/k8s/${this.stripPostfix(defaultName)}${postgres.readOnly ? '/readonly' : ''
         }/DB_PASSWORD`,
       //These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host

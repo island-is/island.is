@@ -1,16 +1,17 @@
 import {
   formatDate,
   IntroHeader,
-  NotFound,
+  m,
+  MENNTAMALASTOFNUN_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
-import { defineMessage } from 'react-intl'
 import { EducationPaths } from '../../lib/paths'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { useParams } from 'react-router-dom'
 import { edMessage } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -27,16 +28,22 @@ export const EducationGraduationDetail = () => {
   const singleGraduation = diplomaItems.filter(
     (item) => String(item.diplomaId) === id,
   )
+  const noData = !singleGraduation.length && !loading && !error
 
-  if ((!singleGraduation.length && !loading) || error) {
+  if (noData) {
     return (
-      <NotFound
-        title={defineMessage({
-          id: 'sp.education-secondary-school:not-found',
-          defaultMessage: 'Engin gögn fundust',
-        })}
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(m.noData)}
+        message={formatMessage(m.noDataFoundDetail)}
+        imgSrc="./assets/images/sofa.svg"
       />
     )
+  }
+
+  if (error) {
+    return <Problem noBorder={false} error={error} />
   }
 
   const graduationItem = singleGraduation[0]
@@ -45,6 +52,8 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={graduationItem?.organisation ?? ''}
         intro={formatMessage(edMessage.graduationData)}
+        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
       {/* <GridRow marginTop={4}>
         <GridColumn span="1/1">

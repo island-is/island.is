@@ -10,6 +10,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Inline,
   LinkV2,
   Option,
@@ -122,15 +123,17 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                     </Text>
                   )}
                   {!highlightedItem && <Box />}
-                  <LinkV2
-                    href={`${
-                      linkResolver('pensioncalculator').href
-                    }?${queryParamString}`}
-                  >
-                    <Button unfocusable={true} size="small">
-                      {formatMessage(translationStrings.changeAssumptions)}
-                    </Button>
-                  </LinkV2>
+                  <Hidden print>
+                    <LinkV2
+                      href={`${
+                        linkResolver('pensioncalculator').href
+                      }?${queryParamString}`}
+                    >
+                      <Button unfocusable={true} size="small">
+                        {formatMessage(translationStrings.changeAssumptions)}
+                      </Button>
+                    </LinkV2>
+                  </Hidden>
                 </Inline>
                 {highlightedItem && (
                   <Box display="flex" paddingLeft={5}>
@@ -173,15 +176,17 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                       <Box paddingBottom={3}>
                         <Stack space={3}>
                           <Box display="flex" justifyContent="flexEnd">
-                            <Button
-                              icon="print"
-                              variant="utility"
-                              onClick={() => {
-                                window.print()
-                              }}
-                            >
-                              {formatMessage(translationStrings.print)}
-                            </Button>
+                            <Hidden print>
+                              <Button
+                                icon="print"
+                                variant="utility"
+                                onClick={() => {
+                                  window.print()
+                                }}
+                              >
+                                {formatMessage(translationStrings.print)}
+                              </Button>
+                            </Hidden>
                           </Box>
                           <Table.Table>
                             {calculation.groups?.map((group, groupIndex) => (
@@ -269,7 +274,6 @@ PensionCalculatorResults.getProps = async ({
 }) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
   const slug = extractSlug(locale, customPageData)
-
   const [
     {
       data: { getOrganizationPage },

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 
+import { coreErrorMessages } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
@@ -10,7 +11,6 @@ import {
 } from '@island.is/clients/car-recycling'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { coreErrorMessages } from '@island.is/application/core'
 
 import {
   VehicleDto,
@@ -79,6 +79,10 @@ export class CarRecyclingService extends BaseTemplateApiService {
         auth,
         vehicle.permno,
         mileage,
+        vehicle.vin || '',
+        vehicle.make || '',
+        vehicle.firstRegistrationDate || new Date(),
+        vehicle.color || '',
       )
     }
   }

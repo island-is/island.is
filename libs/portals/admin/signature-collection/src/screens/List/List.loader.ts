@@ -29,7 +29,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          id: params.id,
+          listId: params.id,
         },
       },
     })
@@ -39,7 +39,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          id: params.id,
+          listId: params.id,
         },
       },
     })
@@ -49,7 +49,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          id: params.id,
+          listId: params.id,
         },
       },
     })
@@ -57,7 +57,7 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
     const list = data?.signatureCollectionAdminList ?? {}
     const allSignees = signeesData?.signatureCollectionAdminSignatures ?? []
     const listStatus =
-      listStatusData?.signatureCollectionAdminListStatus.status ?? ''
+      listStatusData?.signatureCollectionAdminListStatus?.status ?? ''
 
     return { list, allSignees, listStatus }
   }

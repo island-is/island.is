@@ -42,5 +42,9 @@ export const mapBulkResponse = (
       nationalId,
       reason: 'Ekki með íslenskt ríkisfang',
     })) ?? []),
+    ...(signatures.ekkiBuseta?.map((nationalId) => ({
+      nationalId,
+      reason: 'Ekki með íslenska búsetu',
+    })) ?? []),
   ],
 })

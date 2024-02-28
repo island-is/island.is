@@ -137,7 +137,17 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
       { type: [...restrictionCases, ...investigationCases] },
       { state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED] },
       {
-        appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+        [Op.or]: [
+          {
+            appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+          },
+          {
+            [Op.and]: [
+              { appeal_state: [CaseAppealState.WITHDRAWN] },
+              { appeal_received_by_court_date: { [Op.not]: null } },
+            ],
+          },
+        ],
       },
     ],
   }
