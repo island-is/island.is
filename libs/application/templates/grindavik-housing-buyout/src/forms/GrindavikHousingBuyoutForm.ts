@@ -14,7 +14,6 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
-  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
 import {
@@ -31,6 +30,7 @@ import {
   getPropertyOwners,
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
+import { conclusionSection } from '../utils'
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -61,7 +61,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               ],
               rows: ({ externalData }) => {
                 const owners = getPropertyOwners(externalData)
-
                 return owners.map((owner) => [
                   owner.nafn ?? '',
                   formatNationalId(owner.kennitala ?? ''),
@@ -279,6 +278,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
         }),
       ],
     }),
-    buildFormConclusionSection({}),
+    conclusionSection,
   ],
 })

@@ -318,7 +318,7 @@ export const ApplicationConfigurations = {
     translation: 'uni.application',
   },
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
-    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
+    slug: 'kaup-rikis-a-ibudarhusnaedi-i-grindavik',
     translation: 'ghb.application',
   },
 }

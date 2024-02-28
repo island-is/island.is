@@ -3,13 +3,13 @@ import { defineMessages } from 'react-intl'
 export const states = defineMessages({
   inReviewTitle: {
     id: 'ghb.application:states.inReview.title',
-    defaultMessage: 'Beðið eftir sýslumanni',
+    defaultMessage: 'Beðið eftir Þórkötlu',
     description: 'Title that displays on action card when in review',
   },
   inReviewDescription: {
     id: 'ghb.application:states.inReview.description',
     defaultMessage:
-      'Umsókn er í afgreiðsluferli hjá sýslumanni. Ef sýslumaður telur þörf á frekari upplýsingum mun hann hafa samband.',
+      'Umsókn þín um kaup ríkisins á íbúðarhúsnæði þínu er móttekin og er í vinnslu hjá fasteignafélaginu Þórkötlu.',
     description: 'Description that displays on action card when in review',
   },
   approvedTitle: {
