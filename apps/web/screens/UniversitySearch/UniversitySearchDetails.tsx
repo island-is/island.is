@@ -56,6 +56,7 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { TranslationDefaults } from './TranslationDefaults'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -76,6 +77,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
+  useSetZIndexOnHeader()
   const [sortedCourses, setSortedCourses] = useState<
     Array<UniversityGatewayProgramCourse>
   >([])
@@ -641,4 +643,7 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(UniversityDetails, { showFooter: false })
+export default withMainLayout(UniversityDetails, {
+  showFooter: false,
+  headerColorScheme: 'white',
+})
