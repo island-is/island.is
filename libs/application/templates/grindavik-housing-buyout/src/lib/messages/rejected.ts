@@ -9,7 +9,7 @@ export const rejected = defineMessages({
   text: {
     id: 'ghb.application:rejected.text',
     defaultMessage:
-      'Hér ætti kannski að koma einhver texti um hvað notandi getur gert nú þegar umsókn hefur verið hafnað. Líklega er einhver hlekkur hér á [vefsíðu sýslumanns](https://island.is/s/syslumenn/sudurnes).',
+      'Umsókn þinni um kaup ríkis á íbúðarhúsnæði í Grindavík hefur verið hafnað.',
     description: 'Text of the section when the application is rejected',
   },
 })

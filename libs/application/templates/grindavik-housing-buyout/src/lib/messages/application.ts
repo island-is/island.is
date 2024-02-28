@@ -15,144 +15,185 @@ export const application = {
   }),
   applicant: defineMessages({
     sectionTitle: {
-      id: 'ghb.application.applicant:section.title',
+      id: 'ghb.application:applicant:section.title',
       defaultMessage: 'Upplýsingar um þig',
       description: 'Applicant information section title',
     },
   }),
   propertyInformation: defineMessages({
     sectionTitle: {
-      id: 'ghb.application.propertyInformation:section.title',
+      id: 'ghb.application:propertyInformation.section.title',
       defaultMessage: 'Upplýsingar um eign',
       description: 'Property information section title',
     },
     sectionDescription: {
-      id: 'ghb.application.propertyInformation:section.description',
+      id: 'ghb.application:propertyInformation.section.description',
       defaultMessage:
         'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
       description: 'Property information section description',
     },
     propertyOwners: {
-      id: 'ghb.application.propertyInformation:propertyOwners',
+      id: 'ghb.application:propertyInformation.propertyOwners',
       defaultMessage: 'Þinglýstir eigendur',
       description: 'Property owners',
     },
     propertyPermit: {
-      id: 'ghb.application.propertyInformation:propertyPermit',
+      id: 'ghb.application:propertyInformation.propertyPermit',
       defaultMessage: 'Heimild',
       description: 'Property permit',
     },
     ownershipRatio: {
-      id: 'ghb.application.propertyInformation:ownershipRatio',
+      id: 'ghb.application:propertyInformation.ownershipRatio',
       defaultMessage: 'Eignarhlutfall',
       description: 'Ownership ratio',
     },
     ownerNationalId: {
-      id: 'ghb.application.propertyInformation:ownerNationalid',
+      id: 'ghb.application:propertyInformation.ownerNationalid',
       defaultMessage: 'Kennitala',
       description: 'Owner national id',
     },
     fireInsuranceValue: {
-      id: 'ghb.application.propertyInformation:fireInsuranceValue',
-      defaultMessage: 'Brunabótamat',
+      id: 'ghb.application:propertyInformation.fireInsuranceValue',
+      defaultMessage: 'Brunabótamat fasteignar',
       description: 'Fire insurance value',
-    },
-    explaination: {
-      id: 'ghb.application.propertyInformation:explaination#markdown',
-      defaultMessage:
-        'Brunabótamat fasteignar er **{fireInsuranceValue}**\n\nKaupverð 95% af brunabótamati fasteignar er **{buyoutPrice}**\n\n5% af kaupverði fasteignar sem er haldið eftir fram að afsali er **{closingPayment}**\n\nÁhvílandi lán eru tekin af kaupverði ef um slíkt er að ræða **{totalLoans}**\n\nÚtreikningur er þá (kaupverð) - (áhvílandi lán) - (5% af kaupverði).\n\nÚtgreitt við kaupsamning er þá (**{buyoutPrice}** - **{totalLoans}** - **{closingPayment}**) eða **{result}**\n\nAfhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
-      description: 'Property information explaination',
     },
   }),
   loanStatus: defineMessages({
     sectionTitle: {
-      id: 'ghb.application.loanStatus:section.title',
+      id: 'ghb.application:loanStatus.section.title',
       defaultMessage: 'Staða á láni',
       description: 'Loan status section title',
     },
     sectionDescription: {
-      id: 'ghb.application.loanStatus:section.description',
+      id: 'ghb.application:loanStatus.section.description',
       defaultMessage: 'Hér birtast upplýsingar um stöðu á láni fasteignar.',
       description: 'Loan status section description',
     },
     statusOfLoan: {
-      id: 'ghb.application.loanStatus:statusOfLoan',
+      id: 'ghb.application:loanStatus.statusOfLoan',
       defaultMessage: 'Uppgreiðsluvirði',
       description: 'Status of loan',
     },
     addLoanTitle: {
-      id: 'ghb.application.loanStatus:addLoanTitle',
+      id: 'ghb.application:loanStatus.addLoanTitle',
       defaultMessage: 'Bættu við núverandi stöðu á lánum fasteignar',
       description: 'Add loan title',
     },
     addLoanDescription: {
-      id: 'ghb.application.loanStatus:addLoanDescription',
+      id: 'ghb.application:loanStatus.addLoanDescription',
       defaultMessage:
         'Upplýsingar um stöðu lána er að finna hjá lánveitenda. Uppgreiðsluverð láns er sú upphæð sem fylla skal inn.',
       description: 'Add loan description',
     },
     loanProvider: {
-      id: 'ghb.application.loanStatus:loanProvider',
+      id: 'ghb.application:loanStatus.loanProvider',
       defaultMessage: 'Lánveitandi',
       description: 'Loan provider',
     },
     addNewLoan: {
-      id: 'ghb.application.loanStatus:addNewLoan',
+      id: 'ghb.application:loanStatus.addNewLoan',
       defaultMessage: 'Bæta við láni',
       description: 'Add new loan',
     },
     saveNewLoan: {
-      id: 'ghb.application.loanStatus:saveNewLoan',
+      id: 'ghb.application:loanStatus.saveNewLoan',
       defaultMessage: 'Vista lán',
       description: 'Save new loan',
     },
   }),
   results: defineMessages({
     sectionTitle: {
-      id: 'ghb.application.results:section.title',
+      id: 'ghb.application:results.section.title',
       defaultMessage: 'Útreikningur',
       description: 'Results section title',
+    },
+    explaination: {
+      id: 'ghb.application:results.explaination#markdown',
+      defaultMessage:
+        'Kaupverð er 95% af brunabótamati fasteignar.\n\n5% af kaupverði fasteignar er haldið eftir fram að afsali.\n\nÁhvílandi lán eru tekin af kaupverði fasteignar ef um slíkt er að ræða.',
+      description: 'Property information explaination',
+    },
+    infoText: {
+      id: 'ghb.application:results.infoText',
+      defaultMessage:
+        'Afhending fer fram eigi síðar en 3 mánuðum eftir kaupsamning og afsal eigi síðar en 4 mánuðum eftir kaupsamning.',
+      description: 'Property information info text',
+    },
+    tableDescription: {
+      id: 'ghb.application:results.tableDescription',
+      defaultMessage: 'Lýsing',
+      description: 'Results table description',
+    },
+    tableValue: {
+      id: 'ghb.application:results.tableValue',
+      defaultMessage: 'Upphæð',
+      description: 'Results table value',
+    },
+    payment: {
+      id: 'ghb.application:results.payment',
+      defaultMessage: 'Útgreitt við kaupsamning',
+      description: 'Payment text',
+    },
+    fireAssessment: {
+      id: 'ghb.application:results.fireAssessment',
+      defaultMessage: 'Brunabótamat fasteignar',
+      description: 'Fire assessment text',
+    },
+    buyoutPrice: {
+      id: 'ghb.application:results.buyoutPrice',
+      defaultMessage: 'Kaupverð 95% af brunabótamati',
+      description: 'Buyout price text',
+    },
+    totalLoan: {
+      id: 'ghb.application:results.totalLoan',
+      defaultMessage: 'Áhvílandi lán',
+      description: 'Total loan text',
+    },
+    closingPayment: {
+      id: 'ghb.application:results.closingPayment',
+      defaultMessage: '5% af kaupverði sem er haldið eftir fram að afsali',
+      description: 'Closing payment text',
     },
   }),
   overview: defineMessages({
     sectionTitle: {
-      id: 'ghb.application.overview:section.title',
+      id: 'ghb.application:overview.section.title',
       defaultMessage: 'Yfirlit',
       description: 'Overview section title',
     },
     sectionDescription: {
-      id: 'ghb.application.overview:section.description',
+      id: 'ghb.application:overview.section.description',
       defaultMessage:
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Overview section description',
     },
     applicantTitle: {
-      id: 'ghb.application.overview:applicantTitle',
+      id: 'ghb.application:overview.applicantTitle',
       defaultMessage: 'Persónu upplýsingar',
       description: 'Applicant information title',
     },
     propertyTitle: {
-      id: 'ghb.application.overview:propertyTitle',
+      id: 'ghb.application:overview.propertyTitle',
       defaultMessage: 'Fasteign',
       description: 'Property information title',
     },
     compensationAssessmentTitle: {
-      id: 'ghb.application.overview:compensationAssessmentTitle',
+      id: 'ghb.application:overview.compensationAssessmentTitle',
       defaultMessage: 'Brunabótamat',
       description: 'Compensation assessment title',
     },
     buyoutPriceTitle: {
-      id: 'ghb.application.overview:buyoutPriceTitle',
+      id: 'ghb.application:overview.buyoutPriceTitle',
       defaultMessage: 'Kaupverð 95% af brunabótamati',
       description: 'Buyout Price title',
     },
     totalLoanTitle: {
-      id: 'ghb.application.overview:totalLoanTitle',
+      id: 'ghb.application:overview.totalLoanTitle',
       defaultMessage: 'Lán á fasteign',
       description: 'Total loan title',
     },
     loanStatusTitle: {
-      id: 'ghb.application.overview:loanStatusTitle',
+      id: 'ghb.application:overview.loanStatusTitle',
       defaultMessage: 'Staða á láni',
       description: 'Loan status title',
     },

@@ -122,32 +122,52 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             buildDescriptionField({
               id: '',
               title: '',
-              description: (application) => {
+              description: m.application.results.explaination,
+            }),
+            buildStaticTableField({
+              title: '',
+              header: [
+                m.application.results.tableDescription,
+                m.application.results.tableValue,
+              ],
+              rows: (application) => {
                 const {
-                  buyoutPrice,
-                  buyoutPriceWithLoans,
                   fireInsuranceValue,
+                  buyoutPrice,
                   totalLoans,
                   closingPayment,
-                  result,
                 } = calculateBuyoutPrice(application)
-
+                return [
+                  [
+                    m.application.results.fireAssessment,
+                    formatCurrency(fireInsuranceValue.toString()),
+                  ],
+                  [
+                    m.application.results.buyoutPrice,
+                    formatCurrency(buyoutPrice.toString()),
+                  ],
+                  [
+                    m.application.results.totalLoan,
+                    formatCurrency((-totalLoans).toString()),
+                  ],
+                  [
+                    m.application.results.closingPayment,
+                    formatCurrency((-closingPayment).toString()),
+                  ],
+                ]
+              },
+              summary: (application) => {
+                const { result } = calculateBuyoutPrice(application)
                 return {
-                  ...m.application.propertyInformation.explaination,
-                  values: {
-                    fireInsuranceValue: formatCurrency(
-                      fireInsuranceValue.toString(),
-                    ),
-                    buyoutPrice: formatCurrency(buyoutPrice.toString()),
-                    buyoutPriceWithLoans: formatCurrency(
-                      buyoutPriceWithLoans.toString(),
-                    ),
-                    totalLoans: formatCurrency(totalLoans.toString()),
-                    closingPayment: formatCurrency(closingPayment.toString()),
-                    result: formatCurrency(result.toString()),
-                  },
+                  label: m.application.results.payment,
+                  value: formatCurrency(result.toString()),
                 }
               },
+            }),
+            buildDescriptionField({
+              id: 'infoText',
+              title: '',
+              description: m.application.results.infoText,
             }),
           ],
         }),
