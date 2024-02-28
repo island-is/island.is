@@ -7,6 +7,7 @@ module.exports = {
   ...nxPresetRest,
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   resolver: customResolver,
+  testEnvironment: 'jsdom',
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],
   collectCoverageFrom: [
