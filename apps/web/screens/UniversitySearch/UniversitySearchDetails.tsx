@@ -56,6 +56,7 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { TranslationDefaults } from './TranslationDefaults'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -76,6 +77,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
+  useSetZIndexOnHeader()
   const [sortedCourses, setSortedCourses] = useState<
     Array<UniversityGatewayProgramCourse>
   >([])
@@ -236,6 +238,39 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       default:
         return '/'
     }
+  }
+
+  const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
+    const length = items.length
+
+    if (length === 0) {
+      return ''
+    }
+
+    if (length === 1) {
+      return n(items[0], TranslationDefaults[items[0]])
+    }
+
+    if (length === 2) {
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
+    }
+
+    const formattedList = items.map((item, index) => {
+      if (index === length - 1) {
+        return `${n('or', 'eða')} ${n(item, TranslationDefaults[item])}`
+      } else {
+        return `${n(item, TranslationDefaults[item])}, `
+      }
+    })
+
+    return formattedList.join('')
   }
 
   return (
@@ -447,15 +482,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       <Text variant="medium">{`${n(
                         'modeOfDelivery',
                         'Námsform',
-                      )}: ${data.modeOfDelivery.map((delivery, index) => {
-                        if (index !== 0) {
-                          return `, ${n(
-                            delivery,
-                            TranslationDefaults[delivery],
-                          )}`
-                        } else {
-                          return n(delivery, TranslationDefaults[delivery])
-                        }
+                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}
                       })}`}</Text>
                     </Box>
                   </GridColumn>
@@ -616,4 +643,7 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(UniversityDetails, { showFooter: false })
+export default withMainLayout(UniversityDetails, {
+  showFooter: false,
+  headerColorScheme: 'white',
+})
