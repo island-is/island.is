@@ -65,7 +65,6 @@ import {
 } from '../lib/directorateOfLabour.utils'
 import {
   ChildInformation,
-  ChildrenAndExistingApplications,
   EmployerRow,
   Files,
   OtherParentObj,
@@ -424,6 +423,9 @@ export const getOtherParentOptions = (application: Application) => {
   const spouse = getSpouse(application)
 
   if (spouse) {
+    options.forEach((o) => {
+      o.disabled = true
+    })
     options.unshift({
       value: SPOUSE,
       label: {
@@ -501,12 +503,11 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const { dataProvider, children, existingApplications } =
-    getApplicationExternalData(externalData)
+  const { dataProvider, children } = getApplicationExternalData(externalData)
 
   return (
     dataProvider?.hasActivePregnancy &&
-    (children.length > 0 || existingApplications.length > 0) &&
+    children.length > 0 &&
     dataProvider?.remainingDays > 0
   )
 }
@@ -545,13 +546,7 @@ export const getApplicationExternalData = (
     externalData,
     'children.data.children',
     [],
-  ) as ChildrenAndExistingApplications['children']
-
-  const existingApplications = getValueViaPath(
-    externalData,
-    'children.data.existingApplications',
-    [],
-  ) as ChildrenAndExistingApplications['existingApplications']
+  ) as ChildInformation[]
 
   const userEmail = getValueViaPath(
     externalData,
@@ -594,7 +589,6 @@ export const getApplicationExternalData = (
     applicationFundId,
     dataProvider,
     children,
-    existingApplications,
     navId,
     userEmail,
     userPhoneNumber,

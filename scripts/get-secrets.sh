@@ -61,7 +61,7 @@ function main {
     shift
   done
   post_total=$(wc -l <"$env_secret_file")
-  echo "Got $(expr $post_total - $pre_total) total new secret lines"
+  echo "Got $((post_total - pre_total)) total new secret lines (now total of $(wc -l <"$env_secret_file"))"
 }
 
 if [ -z "${1-}" ]; then

@@ -20,6 +20,7 @@ import {
   SignLanguageButton,
   SliceDropdown,
   SliceMachine,
+  SliceTableOfContents,
   TOC,
   Webreader,
 } from '@island.is/web/components'
@@ -272,6 +273,8 @@ const renderSlices = (
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
+    case 'SliceTableOfContents':
+      return <SliceTableOfContents slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
         if (slice.__typename === 'AnchorPageListSlice') {

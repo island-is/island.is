@@ -114,7 +114,7 @@ export class ProjectPage {
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  slug: (fields.slug ?? '').trim(),
   theme: fields.theme ?? 'default',
   sidebar: fields.sidebar ?? false,
   sidebarLinks: (fields.sidebarLinks ?? [])
