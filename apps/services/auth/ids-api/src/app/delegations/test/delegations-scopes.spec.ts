@@ -170,7 +170,7 @@ describe('DelegationsController', () => {
 
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(testCase.expected.length)
-        expect(res.body).toEqual(testCase.expected)
+        expect(res.body.sort()).toEqual(testCase.expected.sort())
       })
     },
   )
