@@ -46,6 +46,7 @@ import {
   mapMasterLicence,
   mapVehicle,
   mapDepartedToRegistryPerson,
+  mapInheritanceTax,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -481,11 +482,7 @@ export class SyslumennService {
       danardagur: dateOfDeath,
     })
 
-    return {
-      validFrom: res.gildirFra,
-      inheritanceTax: res.erfdafjarskattur,
-      taxExemptionLimit: res.skattfrelsismorkUpphaed,
-    }
+    return mapInheritanceTax(res)
   }
 
   async changeEstateRegistrant(

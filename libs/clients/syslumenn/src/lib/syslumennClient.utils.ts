@@ -23,6 +23,7 @@ import {
   Meistaraleyfi,
   Okutaeki,
   ThjodskraSvarSkeyti,
+  ErfdafjarskatturSvar,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -54,6 +55,7 @@ import {
   EstateInfo,
   AvailableSettlements,
   RegistryPerson,
+  InheritanceTax,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -485,5 +487,15 @@ export const mapDepartedToRegistryPerson = (
     name: departed.nafn ?? '',
     nationalId: departed.kennitala ?? '',
     postalCode: departed.postaritun?.split('-')[0] ?? '',
+  }
+}
+
+export const mapInheritanceTax = (
+  inheritance: ErfdafjarskatturSvar,
+): InheritanceTax => {
+  return {
+    inheritanceTax: inheritance.erfdafjarskattur,
+    taxExemptionLimit: inheritance.skattfrelsismorkUpphaed,
+    validFrom: inheritance.gildirFra,
   }
 }
