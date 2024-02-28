@@ -9,7 +9,7 @@ export const Element = ({
   switch (element.type) {
     case 'link':
       return (
-        <a href={element.url as string} {...attributes}>
+        <a href={(element as { url?: string }).url} {...attributes}>
           {children}
         </a>
       )

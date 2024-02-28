@@ -1,8 +1,8 @@
 import React, { FC, KeyboardEvent } from 'react'
-import { DialogsAPI } from 'contentful-ui-extensions-sdk/dist/types'
 import isUrl from 'is-url'
 import { Editor, Element as SlateElement, Range, Transforms } from 'slate'
-import { ReactEditor, useSlate } from 'slate-react'
+import { useSlate } from 'slate-react'
+import { DialogsAPI } from '@contentful/app-sdk'
 
 import { Button } from './Button'
 
@@ -10,7 +10,7 @@ interface LinkButtonProps {
   dialogs: DialogsAPI
 }
 
-const isLinkActive = (editor: ReactEditor) => {
+const isLinkActive = (editor: Editor) => {
   const [link] = Editor.nodes(editor, {
     match: (n) =>
       !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'link',
@@ -19,7 +19,7 @@ const isLinkActive = (editor: ReactEditor) => {
   return !!link
 }
 
-const wrapLink = (editor: ReactEditor, url: string) => {
+const wrapLink = (editor: Editor, url: string) => {
   if (isLinkActive(editor)) {
     unwrapLink(editor)
   }
@@ -40,20 +40,20 @@ const wrapLink = (editor: ReactEditor, url: string) => {
   }
 }
 
-const unwrapLink = (editor: ReactEditor) => {
+const unwrapLink = (editor: Editor) => {
   Transforms.unwrapNodes(editor, {
     match: (n) =>
       !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'link',
   })
 }
 
-const insertLink = (editor: ReactEditor, url: string) => {
+const insertLink = (editor: Editor, url: string) => {
   if (editor.selection) {
     wrapLink(editor, url)
   }
 }
 
-export const withLinks = (editor: ReactEditor) => {
+export const withLinks = (editor: Editor) => {
   const { insertData, insertText, isInline } = editor
 
   editor.isInline = (element) => {

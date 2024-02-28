@@ -8,15 +8,39 @@ interface ButtonProps extends BaseProps {
 }
 
 export const ICONS = [
-  { id: 'format_bold', src: require('../assets/bold.png') },
-  { id: 'format_italic', src: require('../assets/italic.png') },
-  { id: 'format_underlined', src: require('../assets/underlined.png') },
-  { id: 'insert_link', src: require('../assets/insert_link.png') },
-  { id: 'looks_two', src: require('../assets/looks_two.png') },
-  { id: 'looks_three', src: require('../assets/looks_three.png') },
-  { id: 'looks_four', src: require('../assets/looks_four.png') },
-  { id: 'format_list_numbered', src: require('../assets/list_numbered.png') },
-  { id: 'format_list_bulleted', src: require('../assets/list_bulleted.png') },
+  { id: 'format_bold', src: '/translation-namespace-assets/bold.png' },
+  {
+    id: 'format_italic',
+    src: '/translation-namespace-assets/italic.png',
+  },
+  {
+    id: 'format_underlined',
+    src: '/translation-namespace-assets/underlined.png',
+  },
+  {
+    id: 'insert_link',
+    src: '/translation-namespace-assets/insert_link.png',
+  },
+  {
+    id: 'looks_two',
+    src: '/translation-namespace-assets/looks_two.png',
+  },
+  {
+    id: 'looks_three',
+    src: '/translation-namespace-assets/looks_three.png',
+  },
+  {
+    id: 'looks_four',
+    src: '/translation-namespace-assets/looks_four.png',
+  },
+  {
+    id: 'format_list_numbered',
+    src: '/translation-namespace-assets/list_numbered.png',
+  },
+  {
+    id: 'format_list_bulleted',
+    src: '/translation-namespace-assets/list_bulleted.png',
+  },
 ]
 
 export const Button: FC<React.PropsWithChildren<ButtonProps>> = ({
@@ -24,7 +48,8 @@ export const Button: FC<React.PropsWithChildren<ButtonProps>> = ({
   icon,
   ...props
 }) => {
-  const getIcon = ICONS.find((item) => item.id === icon)?.src ?? ICONS[0].src
+  const displayedIcon =
+    ICONS.find((item) => item.id === icon)?.src ?? ICONS[0].src
 
   return (
     <button
@@ -49,11 +74,13 @@ export const Button: FC<React.PropsWithChildren<ButtonProps>> = ({
       }}
     >
       <img
-        src={getIcon}
+        src={displayedIcon}
         style={{
           width: '18px',
           height: '18px',
+          maxWidth: 'unset',
         }}
+        alt={icon}
       />
     </button>
   )

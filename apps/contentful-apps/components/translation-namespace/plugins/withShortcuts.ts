@@ -5,7 +5,6 @@ import {
   Range,
   Transforms,
 } from 'slate'
-import { ReactEditor } from 'slate-react'
 
 const SHORTCUTS = {
   '*': 'list_item',
@@ -23,7 +22,7 @@ const SHORTCUTS = {
 /**
  * This plugin allow markdown shortcuts to format the content
  */
-export const withShortcuts = (editor: ReactEditor) => {
+export const withShortcuts = (editor: Editor) => {
   const { deleteBackward, insertText } = editor
 
   editor.insertText = (text) => {

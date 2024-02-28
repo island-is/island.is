@@ -1,9 +1,9 @@
 import React, { FC, KeyboardEvent, useCallback, useMemo, useState } from 'react'
-import { DialogsAPI } from 'contentful-ui-extensions-sdk/dist/types'
 import isHotkey from 'is-hotkey'
-import { createEditor, Node } from 'slate'
+import { createEditor, Editor, Node } from 'slate'
 import { withHistory } from 'slate-history'
 import { Editable, Slate, withReact } from 'slate-react'
+import { DialogsAPI } from '@contentful/app-sdk'
 
 import { withHtml } from '../plugins/withHtml'
 import { withShortcuts } from '../plugins/withShortcuts'
@@ -37,7 +37,7 @@ export const MarkdownEditor: FC<
   const [internalValue, setInternalValue] = useState<Node[]>(value) // We keep track of the original Slate Nodes
   const renderElement = useCallback((props) => <Element {...props} />, [])
   const renderLeaf = useCallback((props) => <Leaf {...props} />, [])
-  const editor = useMemo(
+  const editor = useMemo<Editor>(
     () =>
       // Allow copy/paste of html and format it automatically
       withHtml(

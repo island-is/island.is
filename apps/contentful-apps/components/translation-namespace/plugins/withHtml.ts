@@ -1,6 +1,5 @@
-import { Transforms } from 'slate'
+import { Editor, Transforms } from 'slate'
 import { jsx } from 'slate-hyperscript'
-import { ReactEditor } from 'slate-react'
 
 const ELEMENT_TAGS = {
   A: (el: HTMLElement) => ({ type: 'link', url: el.getAttribute('href') }),
@@ -63,7 +62,7 @@ const deserialize = (el: any): any => {
 /**
  * This plugin allow the copy/paste of HTML into the editor to keep the formatting to markdown
  */
-export const withHtml = (editor: ReactEditor) => {
+export const withHtml = (editor: Editor) => {
   const { insertData, isInline, isVoid } = editor
 
   editor.isInline = (element) => {

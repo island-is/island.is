@@ -16,6 +16,20 @@ import { MarkdownEditor } from './components/MarkdownEditor'
 import { unifyAndDeserialize } from './utils/deserialize'
 import { serializeAndFormat } from './utils/serialize'
 
+/**
+ * The content model has two fields:
+ *
+ * Namespace:
+ * Which is the id of the namespace. e.g. `application.system`
+ *
+ * Defaults:
+ * Which contains the `defaultMessage`, `description` and `deprecated` boolean.
+ * We use the local values extracted from formatjs to populate these fields.
+ *
+ * Strings:
+ * Which is used to store the translations for each locales.
+ */
+
 export const App = () => {
   const extension = useSDK<FieldExtensionSDK>()
 
@@ -577,17 +591,3 @@ export const App = () => {
     </>
   )
 }
-
-/**
- * The content model has two fields:
- *
- * Namespace:
- * Which is the id of the namespace. e.g. `application.system`
- *
- * Defaults:
- * Which contains the `defaultMessage`, `description` and `deprecated` boolean.
- * We use the local values extracted from formatjs to populate these fields.
- *
- * Strings:
- * Which is used to store the translations for each locales.
- */

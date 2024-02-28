@@ -1,3 +1,19 @@
+// This example is for an Editor with `ReactEditor` and `HistoryEditor`
+import { BaseEditor } from 'slate'
+import { HistoryEditor } from 'slate-history'
+import { ReactEditor } from 'slate-react'
+
+type CustomElement = { type: 'paragraph'; children: LeafType[] }
+type CustomText = LeafType
+
+declare module 'slate' {
+  interface CustomTypes {
+    Editor: BaseEditor & ReactEditor & HistoryEditor
+    Element: BlockType
+    Text: LeafType
+  }
+}
+
 export interface NodeTypes {
   paragraph?: string
   block_quote?: string
@@ -41,11 +57,13 @@ export interface MdastNode {
 }
 
 export interface LeafType {
-  text?: string
+  text: string
   strikeThrough?: boolean
   bold?: boolean
   italic?: boolean
   parentType?: string
+  underline?: boolean
+  code?: boolean
 }
 
 export interface BlockType {
