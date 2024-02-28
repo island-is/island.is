@@ -147,15 +147,28 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   universities,
 }) => {
   useEffect(() => {
+    // Re-ordering filters.
     const index = filterOptions.findIndex(
       (filter) => filter.field === 'universityId',
     )
 
     if (index !== -1) {
       const movedField = filterOptions.splice(index, 1)[0]
-      filterOptions.unshift(movedField)
+
+      movedField.options.sort((x, y) => {
+        const titleX =
+          universities.filter((uni) => uni.id === x)[0].contentfulTitle || ''
+        const titleY =
+          universities.filter((uni) => uni.id === y)[0].contentfulTitle || ''
+        return titleX.localeCompare(titleY)
+      })
+      filterOptions.splice(2, 0, movedField)
+      const lastElement = filterOptions[filterOptions.length - 1]
+      filterOptions[filterOptions.length - 1] =
+        filterOptions[filterOptions.length - 2]
+      filterOptions[filterOptions.length - 2] = lastElement
     }
-  }, [filterOptions])
+  }, [filterOptions, universities])
 
   const router = useRouter()
   const { width } = useWindowSize()
@@ -204,7 +217,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     JSON.parse(JSON.stringify(initialFilters)),
   )
 
-  const [gridView, setGridView] = useState<boolean>(false)
+  const [gridView, setGridView] = useState<boolean>(true)
 
   const [totalPages, setTotalPages] = useState<number>(
     Math.ceil(data.length / ITEMS_PER_PAGE),
@@ -235,14 +248,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (searchQuery) {
       setQuery(searchQuery)
-
+      sessionStorage.setItem('query', searchQuery)
       //also set deep copy here
       setFilters(JSON.parse(JSON.stringify(initialFilters)))
+    } else if (sessionStorage.getItem('query')) {
+      setQuery(sessionStorage.getItem('query') || '')
     }
   }, [])
 
   const fuseOptions = {
-    threshold: 0.4,
+    threshold: 0.3,
     findAllMatches: true,
     ignoreLocation: true,
     keys: [
@@ -293,6 +308,31 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     setFilteredResults(originalSortedResults)
   }
 
+  const applicationUrlParser = (universityId: string) => {
+    const university =
+      universities.filter((uni) => uni.id === universityId)[0]
+        .contentfulTitle || ''
+
+    switch (university) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
+  }
+
   const createPrimaryCTA = (item: UniversityGatewayProgramWithStatus) => {
     const CTA: CTAProps = {
       label: n('apply', 'Sækja um'),
@@ -301,6 +341,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
+      onClick: () => router.push(applicationUrlParser(item.universityId)),
     }
     return CTA
   }
@@ -416,6 +457,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
     const length = items.length
 
     if (length === 0) {
@@ -427,10 +472,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
 
     if (length === 2) {
-      return `${n(items[0], TranslationDefaults[items[0]])} or ${n(
-        items[0],
-        TranslationDefaults[items[0]],
-      )}`
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
     }
 
     const formattedList = items.map((item, index) => {
@@ -667,6 +712,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setSelectedPage(1)
                 searchTermHasBeenInitialized.current = true
                 setQuery(e.target.value)
+                sessionStorage.setItem('query', e.target.value)
               }}
             />
             <Box
@@ -686,6 +732,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       >
                         {formatFilterStrings(tag, key)}
                         <button
+                          aria-label="remove tag"
                           style={{ alignSelf: 'end' }}
                           onClick={() =>
                             handleRemoveTag(key as keyof FilterProps, tag)
@@ -1019,7 +1066,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         const subHeading =
                           specializedName !== undefined
                             ? (locale === 'en'
-                                ? 'Field of study: '
+                                ? 'Specalization: '
                                 : 'Kjörsvið: ') + specializedName
                             : undefined
                         return (
@@ -1091,7 +1138,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${dataItem.credits} ${n(
                                     'units',
                                     'einingar',
-                                  )}, ${dataItem.durationInYears} ${
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'

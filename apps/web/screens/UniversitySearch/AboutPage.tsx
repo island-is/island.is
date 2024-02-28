@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -66,6 +67,21 @@ const AboutPage: Screen<AboutPageProps> = ({
   const n = useNamespace(namespace)
   const router = useRouter()
   const { activeLocale } = useI18n()
+
+  const [sortedUniversities, setSortedUniversities] = useState<
+    UniversityGatewayUniversity[]
+  >([])
+
+  useEffect(() => {
+    const newArray = [...universities]
+    newArray.sort((x, y) => {
+      const titleX = x.contentfulTitle || ''
+      const titleY = y.contentfulTitle || ''
+      return titleX.localeCompare(titleY)
+    })
+
+    setSortedUniversities(newArray)
+  }, [universities])
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -161,7 +177,7 @@ const AboutPage: Screen<AboutPageProps> = ({
                       <Text variant="eyebrow" color="blueberry600">
                         {n('universities', 'Háskólar')}
                       </Text>
-                      {universities.map((university) => {
+                      {sortedUniversities.map((university) => {
                         return (
                           <Box
                             className={cn(styles.courseListItems)}
