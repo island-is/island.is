@@ -91,7 +91,7 @@ export class RenderedNotificationDto {
 
   @ApiProperty({ example: 'Þjóðskrá' })
   @IsString()
-  senderId!: string
+  senderId!: string | null | undefined
 
   @ApiProperty({ example: 'Catchy notification title' })
   @IsString()
@@ -118,9 +118,6 @@ export class RenderedNotificationDto {
   @IsDate()
   updated!: Date
 
-  // @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
-  // @IsEnum(NotificationStatus)
-  // status!: NotificationStatus
   @ApiProperty({ example: false })
   @IsBoolean()
   read!: boolean;
@@ -179,11 +176,6 @@ export class PaginatedNotificationDto {
   pageInfo!: PageInfoDto
 }
 
-// export class UpdateNotificationDto {
-//   @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.READ })
-//   @IsEnum(NotificationStatus)
-//   status!: NotificationStatus
-// }
 export class UpdateNotificationDto {
   @ApiPropertyOptional({ example: true })
   @IsOptional()

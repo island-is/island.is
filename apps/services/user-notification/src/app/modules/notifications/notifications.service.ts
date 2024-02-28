@@ -25,7 +25,6 @@ import {
   RenderedNotificationDto,
   ExtendedPaginationDto,
 } from './dto/notification.dto'
-import slugify from '@sindresorhus/slugify'
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
 const CONTENTFUL_GQL_ENDPOINT =
@@ -80,7 +79,7 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        senderId: formattedTemplate.senderId,
+        senderId: notification.senderId,
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
@@ -118,12 +117,9 @@ export class NotificationsService {
     )
 
     const contentfulHnippTemplatesQuery = {
-      query: ` {
+      query: `{
       hnippTemplateCollection(locale: "${mappedLocale}") {
         items {
-          organization{
-            kennitala
-          }
           templateId
           notificationTitle
           notificationBody
@@ -134,8 +130,7 @@ export class NotificationsService {
           args
         }
       }
-    }
-    `,
+    }`,
     }
 
     const res = await axios
@@ -159,15 +154,6 @@ export class NotificationsService {
           throw new BadRequestException('Bad Request')
         }
       })
-    // mix it here to save headaches
-    // loop items and add property sender with value organization.slug and remove organization
-    for (const item of res.data.hnippTemplateCollection.items) {
-      item.senderId = item.organization.kennitala
-      delete item.organization
-      // if (item.templateId === 'HNIPP.POSTHOLF.NEW_DOCUMENT') {
-      //   item.sender = "ARGS.ORGANIZATION.SLUG"
-      // }
-    }
     return res.data.hnippTemplateCollection.items
   }
 
@@ -256,12 +242,13 @@ export class NotificationsService {
             for (const arg of args) {
               const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
               const newValue = value.replace(regexTarget, arg.value)
-              // for templates are used by multiple organizations, senderId should be set to organization.id
-              // ISSUE legacy support for previous versions where name was used instead of id...............
-              if (arg.key == 'organization') {
-                // try to get kennitala from organization name
-                template.senderId = slugify(arg.value)
-              }
+              // ABORT THIS CRAP
+              // // for templates are used by multiple organizations, senderId should be set to organization.id
+              // // ISSUE legacy support for previous versions where name was used instead of id...............
+              // if (arg.key == 'organization') {
+              //   // try to get kennitala from organization name
+              //   template.senderId = slugify(arg.value)
+              // }
               if (newValue !== value) {
                 // finds {{key}} in string and replace with value
                 template[templateKey] = value.replace(regexTarget, arg.value)
@@ -404,3 +391,5 @@ export class NotificationsService {
     }
   }
 }
+
+

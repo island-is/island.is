@@ -1,4 +1,4 @@
-import { IsArray, IsString, ValidateNested } from 'class-validator'
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNationalId } from '@island.is/nest/core'
 import { Type } from 'class-transformer'
@@ -17,6 +17,11 @@ export class CreateHnippNotificationDto {
   @IsNationalId()
   @ApiProperty({ example: '1234567890' })
   recipient!: string
+
+  @IsString()
+  @IsOptional() // optional while transitioning
+  @ApiProperty({ example: '1234567890' })
+  senderId?: string
 
   @IsString()
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
