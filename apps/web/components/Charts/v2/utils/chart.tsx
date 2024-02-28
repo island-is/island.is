@@ -2,10 +2,15 @@ import { CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 import type { Locale } from '@island.is/shared/types'
-import { ChartComponent } from '@island.is/web/graphql/schema'
+import { Chart, ChartComponent } from '@island.is/web/graphql/schema'
 
+import {
+  BASE_ACCORDION_HEIGHT,
+  CHART_HEIGHT,
+  DEFAULT_XAXIS_KEY,
+} from '../constants'
 import { ChartComponentType, ChartType } from '../types'
-import { formatDate, formatValueForPresentation } from './format'
+import { formatValueForPresentation } from './format'
 
 const KNOWN_COMPONENT_TYPES: ChartComponentType[] = [
   ChartComponentType.line,
@@ -47,39 +52,64 @@ export const decideChartBase = (
   return ChartType.mixed
 }
 
-export const getCartesianGridComponents = (
-  activeLocale: Locale,
-  chartUsesGrid: boolean,
-) =>
-  chartUsesGrid
-    ? [
-        <CartesianGrid
-          stroke="rgb(0, 97, 255, 0.2)"
-          strokeDasharray="4 4"
-          vertical={false}
-        />,
+interface GetCartesianGridComponents {
+  activeLocale: Locale
+  chartUsesGrid: boolean
+  slice: Chart
+  tickFormatter: (value: unknown) => string
+}
 
-        <XAxis
-          axisLine={{ stroke: theme.color.blue200 }}
-          aria-hidden="true"
-          dataKey="date"
-          tickFormatter={formatDate}
-          style={{
-            fontSize: theme.typography.baseFontSize,
-            fontFamily: theme.typography.fontFamily,
-            color: 'red',
-          }}
-          dy={theme.spacing.p2}
-        />,
-        <YAxis
-          axisLine={{ stroke: theme.color.blue200 }}
-          aria-hidden="true"
-          type="number"
-          style={{
-            fontSize: theme.typography.baseFontSize,
-            fontFamily: theme.typography.fontFamily,
-          }}
-          tickFormatter={(v) => formatValueForPresentation(activeLocale, v)}
-        />,
-      ]
-    : null
+export const getCartesianGridComponents = ({
+  activeLocale,
+  chartUsesGrid,
+  slice,
+  tickFormatter,
+}: GetCartesianGridComponents) => {
+  if (!chartUsesGrid) {
+    return null
+  }
+
+  const xAxisKey = slice.xAxisKey || DEFAULT_XAXIS_KEY
+
+  return [
+    <CartesianGrid
+      stroke="rgb(0, 97, 255, 0.2)"
+      strokeDasharray="4 4"
+      vertical={false}
+    />,
+    <XAxis
+      axisLine={{ stroke: theme.color.blue200 }}
+      aria-hidden="true"
+      dataKey={xAxisKey || undefined}
+      tickFormatter={tickFormatter}
+      style={{
+        fontSize: theme.typography.baseFontSize,
+        fontFamily: theme.typography.fontFamily,
+      }}
+      dy={theme.spacing.p2}
+    />,
+    <YAxis
+      axisLine={{ stroke: theme.color.blue200 }}
+      aria-hidden="true"
+      type="number"
+      style={{
+        fontSize: theme.typography.baseFontSize,
+        fontFamily: theme.typography.fontFamily,
+      }}
+      tickFormatter={(v) => formatValueForPresentation(activeLocale, v)}
+    />,
+  ]
+}
+
+export const calculateChartSkeletonLoaderHeight = (
+  isCard: boolean,
+  isExpanded: boolean,
+) => {
+  if (!isCard) {
+    return CHART_HEIGHT
+  }
+
+  return isExpanded
+    ? CHART_HEIGHT + BASE_ACCORDION_HEIGHT
+    : BASE_ACCORDION_HEIGHT
+}

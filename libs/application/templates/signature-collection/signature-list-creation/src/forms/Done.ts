@@ -63,7 +63,7 @@ export const Done: Form = buildForm({
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
               title: '',
-              url: '/minarsidur/umsoknir',
+              url: '/minarsidur/min-gogn/listar/medmaelalistar',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
             }),

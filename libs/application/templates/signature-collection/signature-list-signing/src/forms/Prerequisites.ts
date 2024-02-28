@@ -16,10 +16,11 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
+import { CanSignApi, GetListApi } from '../dataProviders/index'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
-  title: m.applicationName,
+  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -70,9 +71,14 @@ export const Prerequisites: Form = buildForm({
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
+              provider: CanSignApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: GetListApi,
+              title: '',
+              subTitle: '',
             }),
           ],
         }),
@@ -85,7 +91,7 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'screen4',
-      title: m.listSigned,
+      title: m.listSignedShort,
       children: [],
     }),
   ],

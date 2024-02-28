@@ -8,19 +8,21 @@ import {
 
 import {
   CaseFileCategory,
-  completedCaseStates,
-  defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
-  indictmentCases,
-  investigationCases,
+  isCompletedCase,
   isDefenceUser,
+  isIndictmentCase,
+  isInvestigationCase,
   isPrisonSystemUser,
-  restrictionCases,
+  isRestrictionCase,
   User,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 import { CaseFile } from '../models/file.model'
+import {
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+} from './caseFileCategory'
 
 @Injectable()
 export class LimitedAccessViewCaseFileGuard implements CanActivate {
@@ -45,10 +47,11 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (completedCaseStates.includes(theCase.state) && caseFile.category) {
+    if (isCompletedCase(theCase.state) && caseFile.category) {
       if (isDefenceUser(user)) {
         if (
-          [...restrictionCases, ...investigationCases].includes(theCase.type) &&
+          (isRestrictionCase(theCase.type) ||
+            isInvestigationCase(theCase.type)) &&
           defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
             caseFile.category,
           )
@@ -57,7 +60,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
         }
 
         if (
-          indictmentCases.includes(theCase.type) &&
+          isIndictmentCase(theCase.type) &&
           defenderCaseFileCategoriesForIndictmentCases.includes(
             caseFile.category,
           )

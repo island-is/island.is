@@ -18,7 +18,7 @@ export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
   ) {}
   clientSupportsPkPass = false
 
-  async getLicense(user: User): Promise<Result<EhicCardResponse | null>> {
+  async getLicenses(user: User): Promise<Result<Array<EhicCardResponse>>> {
     try {
       const api = this.ehicApi.withMiddleware(new AuthMiddleware(user as Auth))
 
@@ -27,24 +27,26 @@ export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
       if (data.hasTempCard) {
         const pdfData = await api.getEhicPdfCard().catch(handle404)
 
-        if (pdfData?.data) {
-          return {
-            ok: true,
-            data: {
-              ...data,
-              tempCardPdf: pdfData.data,
-            },
-          }
+        return {
+          ok: true,
+          data: pdfData?.data
+            ? [
+                {
+                  ...data,
+                  tempCardPdf: pdfData.data,
+                },
+              ]
+            : [],
         }
       }
 
-      return { ok: true, data }
+      return { ok: true, data: [data] }
     } catch (e) {
       let error
       if (e instanceof FetchError) {
         //404 - no license for user, still ok!
         if (e.status === 404) {
-          return { ok: true, data: null }
+          return { ok: true, data: [] }
         } else {
           error = {
             code: 13,

@@ -19,7 +19,7 @@ const UserSchemaBase = z.object({
   email: z.string().min(1),
   phone: z.string().min(1),
   citizenship: z.string().min(1),
-  residenceInIcelandLastChangeDate: z.string().optional(),
+  residenceInIcelandLastChangeDateStr: z.string().optional(),
   birthCountry: z.string().optional(),
 })
 
@@ -98,6 +98,8 @@ export const RemoveableCountrySchema = z
   .object({
     countryId: z.string(),
     wasRemoved: z.string().min(1),
+    dateTo: z.string().optional(),
+    dateFrom: z.string().optional(),
   })
   .refine(
     ({ wasRemoved, countryId }) => {
@@ -105,6 +107,21 @@ export const RemoveableCountrySchema = z
     },
     {
       path: ['countryId'],
+    },
+  )
+  .refine(
+    ({ dateTo, dateFrom }) => {
+      const to = dateTo ? new Date(dateTo).getTime() : null
+      const from = dateFrom ? new Date(dateFrom).getTime() : null
+
+      if (from && to) {
+        return to > from
+      }
+
+      return true
+    },
+    {
+      path: ['dateRange'],
     },
   )
 
@@ -143,8 +160,8 @@ const ParentsSchema = z.object({
 })
 
 const FileDocumentSchema = z.object({
-  filename: z.string(),
-  base64: z.string(),
+  name: z.string(),
+  key: z.string(),
 })
 
 const PassportSchema = z.object({
@@ -153,7 +170,7 @@ const PassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema),
 })
 
 const ChildrenPassportSchema = z.object({
@@ -163,7 +180,7 @@ const ChildrenPassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const MaritalStatusSchema = z.object({
@@ -177,8 +194,8 @@ const MaritalStatusSchema = z.object({
 })
 
 const CriminalRecordSchema = z.object({
-  countryId: z.string().min(1).optional(),
-  file: z.array(FileDocumentSchema).optional(),
+  countryId: z.string().min(1),
+  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const SupportingDocumentsSchema = z.object({
@@ -187,7 +204,7 @@ const SupportingDocumentsSchema = z.object({
   subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
   certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
   icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
-  criminalRecordList: z.array(CriminalRecordSchema).optional(),
+  criminalRecord: z.array(CriminalRecordSchema).optional(),
 })
 
 const ChildrenSupportingDocumentsSchema = z.object({
@@ -218,9 +235,10 @@ export const SelectedChildSchema = z
     },
   )
   .refine(
-    ({ wasRemoved, otherParentBirtDate }) => {
+    ({ wasRemoved, otherParentBirtDate, otherParentNationalId }) => {
       return (
         wasRemoved === 'true' ||
+        otherParentNationalId ||
         (otherParentBirtDate && otherParentBirtDate.length > 0)
       )
     },

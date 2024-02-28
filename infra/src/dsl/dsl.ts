@@ -16,8 +16,10 @@ import {
   Secrets,
   ServiceDefinition,
   XroadConfig,
+  PodDisruptionBudget,
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
+import { COMMON_SECRETS } from './consts'
 
 export class ServiceBuilder<ServiceType> {
   serviceDef: ServiceDefinition
@@ -31,7 +33,7 @@ export class ServiceBuilder<ServiceType> {
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
-      secrets: { CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY' },
+      secrets: COMMON_SECRETS,
       ingress: {},
       namespace: 'islandis',
       serviceAccountEnabled: false,
@@ -52,6 +54,7 @@ export class ServiceBuilder<ServiceType> {
       xroadConfig: [],
       files: [],
       volumes: [],
+      // podDisruptionBudget: {},
     }
   }
 
@@ -162,6 +165,15 @@ export class ServiceBuilder<ServiceType> {
    */
   volumes(...volumes: PersistentVolumeClaim[]) {
     this.serviceDef.volumes = [...this.serviceDef.volumes, ...volumes]
+    return this
+  }
+
+  /**
+   * PodDisruptionBudget is a Kubernetes resource that ensures that a minimum number of pods are available at any given time. It is used to prevent Kubernetes from killing all pods of a service at once. Mapped to a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
+   * @param pdb PodDisruptionBudget definitions
+   */
+  podDisruption(pdb: PodDisruptionBudget) {
+    this.serviceDef.podDisruptionBudget = pdb
     return this
   }
 

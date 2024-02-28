@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   getFilesToUpdate,

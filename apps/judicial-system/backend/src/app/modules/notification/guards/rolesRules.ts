@@ -6,7 +6,19 @@ export const prosecutorNotificationRule: RolesRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT],
+  dtoFieldValues: [
+    NotificationType.HEADS_UP,
+    NotificationType.READY_FOR_COURT,
+    NotificationType.APPEAL_CASE_FILES_UPDATED,
+  ],
+} as RolesRule
+
+// Allows defenders to send notifications
+export const defenderNotificationRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'type',
+  dtoFieldValues: [NotificationType.APPEAL_CASE_FILES_UPDATED],
 } as RolesRule
 
 // Allows district court judges to send notifiications

@@ -88,22 +88,22 @@ const useDefendants = () => {
       update: UpdateDefendantInput,
       setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
     ) => {
-      setWorkingCase((theCase: Case) => {
-        if (!theCase.defendants) {
-          return theCase
+      setWorkingCase((prevWorkingCase: Case) => {
+        if (!prevWorkingCase.defendants) {
+          return prevWorkingCase
         }
-        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+        const indexOfDefendantToUpdate = prevWorkingCase.defendants.findIndex(
           (defendant) => defendant.id === update.defendantId,
         )
 
-        const newDefendants = [...theCase.defendants]
+        const newDefendants = [...prevWorkingCase.defendants]
 
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
         } as Defendant
 
-        return { ...theCase, defendants: newDefendants }
+        return { ...prevWorkingCase, defendants: newDefendants }
       })
     },
     [],
@@ -111,8 +111,6 @@ const useDefendants = () => {
 
   const setAndSendDefendantToServer = useCallback(
     (
-      caseId: string,
-      defendantId: string,
       update: UpdateDefendantInput,
       setWorkingCase: React.Dispatch<SetStateAction<Case>>,
     ) => {

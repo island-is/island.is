@@ -7,10 +7,10 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseListEntry,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
 import { useFilter as m } from './useFilter.strings'
 
@@ -37,10 +37,10 @@ const filterOptions = (
   },
 ]
 
-function myCasesFilter(
+const myCasesFilter = (
   theCase: CaseListEntry,
   user: User | undefined,
-): boolean {
+): boolean => {
   if (!user) {
     return false
   }
@@ -53,11 +53,11 @@ function myCasesFilter(
   )
 }
 
-export function filterCases(
+export const filterCases = (
   filter: Filter,
   cases: CaseListEntry[],
   user?: User,
-): CaseListEntry[] {
+): CaseListEntry[] => {
   if (filter === 'MY_CASES') {
     return cases.filter((c) => myCasesFilter(c, user))
   }
@@ -74,10 +74,10 @@ export function filterCases(
   return cases
 }
 
-export function filterOptionsForUser(
+export const filterOptionsForUser = (
   options: FilterOption[],
   user?: User | undefined,
-) {
+) => {
   return options.filter((option) => {
     if (
       user?.role === UserRole.PROSECUTOR_REPRESENTATIVE ||

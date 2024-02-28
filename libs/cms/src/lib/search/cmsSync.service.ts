@@ -12,6 +12,7 @@ import { ArticleSyncService } from './importers/article.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { ContentfulService } from './contentful.service'
 import { AnchorPageSyncService } from './importers/anchorPage.service'
+import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { Entry } from 'contentful'
@@ -32,6 +33,7 @@ import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
 import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
+import { CustomPageSyncService } from './importers/customPage.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -59,6 +61,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly articleSyncService: ArticleSyncService,
     private readonly subArticleSyncService: SubArticleSyncService,
     private readonly anchorPageSyncService: AnchorPageSyncService,
+    private readonly lifeEventPageSyncService: LifeEventPageSyncService,
     private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
     private readonly menuSyncService: MenuSyncService,
@@ -76,11 +79,13 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly eventSyncService: EventSyncService,
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
+    private readonly customPageSyncService: CustomPageSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
       this.subArticleSyncService,
       this.anchorPageSyncService,
+      this.lifeEventPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
       this.adgerdirPageSyncService,
@@ -98,6 +103,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.eventSyncService,
       this.manualSyncService,
       this.manualChapterItemSyncService,
+      this.customPageSyncService,
     ]
   }
 

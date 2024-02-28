@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { applyCase } from 'beygla'
+import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'framer-motion'
 import router from 'next/router'
 
@@ -26,13 +26,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  UpdateIndictmentCount,
   useCase,
   useDeb,
+  useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useIndictmentCounts, {
-  UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { IndictmentCount } from './IndictmentCount'
@@ -120,8 +119,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
 
     setDriversLicenseSuspensionRequest(indictmentCounts)
 
-    setWorkingCase((theCase) => ({
-      ...theCase,
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
       indictmentCounts,
     }))
   }, [
@@ -183,8 +182,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
 
         setDriversLicenseSuspensionRequest(indictmentCounts)
 
-        setWorkingCase((theCase) => ({
-          ...theCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           indictmentCounts,
         }))
       }
@@ -207,7 +206,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
       indictmentIntroductionAutofill = [
-        workingCase.prosecutor?.institution?.name.toUpperCase(),
+        workingCase.prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
@@ -282,7 +281,6 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'indictmentIntroduction',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 indictmentIntroductionErrorMessage,
                 setIndictmentIntroductionErrorMessage,
@@ -353,7 +351,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
               <Checkbox
                 name="requestDriversLicenseSuspension"
                 label={formatMessage(strings.demandsRequestSuspension)}
-                checked={workingCase.requestDriversLicenseSuspension}
+                checked={Boolean(workingCase.requestDriversLicenseSuspension)}
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
@@ -386,7 +384,6 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'demands',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   demandsErrorMessage,
                   setDemandsErrorMessage,

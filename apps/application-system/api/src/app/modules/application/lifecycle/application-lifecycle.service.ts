@@ -33,6 +33,7 @@ export class ApplicationLifeCycleService {
 
   public async run() {
     this.logger.info(`Starting application pruning...`)
+
     await this.fetchApplicationsToBePruned()
     await this.pruneAttachments()
     await this.pruneApplicationCharge()

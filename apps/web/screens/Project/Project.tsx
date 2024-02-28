@@ -19,8 +19,10 @@ import {
   Stepper,
   stepperUtils,
   TabSectionSlice,
+  TOC,
   Webreader,
 } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   OneColumnText,
@@ -41,7 +43,6 @@ import { Screen } from '../../types'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { ProjectFooter } from './components/ProjectFooter'
 import { ProjectWrapper } from './components/ProjectWrapper'
-import { TOC } from './ProjectTableOfContents'
 import { getThemeConfig } from './utils'
 
 interface PageProps {
@@ -135,6 +136,8 @@ const ProjectPage: Screen<PageProps> = ({
   const shouldDisplayWebReader =
     projectNamespace?.shouldDisplayWebReader ?? true
 
+  const pageSlices = (subpage ?? projectPage)?.slices ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -176,7 +179,7 @@ const ProjectPage: Screen<PageProps> = ({
               />
             )}
             {subpage.showTableOfContents && (
-              <Box className="rs_read">
+              <Box marginY={6} className="rs_read">
                 <TOC slices={subpage.slices} title={navigationTitle} />
               </Box>
             )}
@@ -225,8 +228,8 @@ const ProjectPage: Screen<PageProps> = ({
             </Text>
           </Box>
         )}
-        {content && (
-          <Box className="rs_read" paddingBottom={3}>
+        {content?.length > 0 && (
+          <Box className="rs_read" paddingBottom={SLICE_SPACING}>
             {webRichText(content, {
               renderComponent: {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -255,23 +258,11 @@ const ProjectPage: Screen<PageProps> = ({
             />
           </Box>
         )}
-        {!renderSlicesAsTabs && (
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-
-          <Stack space={3}>
-            {(subpage ?? projectPage)?.slices.map((slice: Slice) =>
-              slice.__typename === 'OneColumnText' ? (
-                <Box paddingTop={3} className="rs_read">
-                  <SliceMachine
-                    key={slice.id}
-                    slice={slice}
-                    namespace={namespace}
-                    fullWidth={true}
-                    slug={projectPage?.slug}
-                  />
-                </Box>
-              ) : (
+        {!renderSlicesAsTabs && pageSlices.length > 0 && (
+          <Stack space={SLICE_SPACING}>
+            {pageSlices.map((slice: Slice, index) => {
+              const sliceCount = pageSlices.length
+              return (
                 <Box className="rs_read">
                   <SliceMachine
                     key={slice.id}
@@ -279,48 +270,57 @@ const ProjectPage: Screen<PageProps> = ({
                     namespace={namespace}
                     fullWidth={true}
                     slug={projectPage?.slug}
+                    marginBottom={
+                      typeof sliceCount === 'number' && index === sliceCount - 1
+                        ? 8
+                        : 0
+                    }
                   />
                 </Box>
-              ),
-            )}
+              )
+            })}
           </Stack>
         )}
       </ProjectWrapper>
 
-      {bottomSlices.map((slice, index) => {
-        if (
-          slice.__typename === 'OneColumnText' &&
-          index === bottomSlices.length - 1
-        ) {
+      <Stack
+        space={bottomSlices && bottomSlices.length > 0 ? SLICE_SPACING : 0}
+      >
+        {bottomSlices.map((slice, index) => {
+          if (
+            slice.__typename === 'OneColumnText' &&
+            index === bottomSlices.length - 1
+          ) {
+            return (
+              <Box paddingBottom={6}>
+                <OneColumnTextSlice slice={slice} />
+              </Box>
+            )
+          }
           return (
-            <Box paddingBottom={6} paddingTop={2}>
-              <OneColumnTextSlice slice={slice} />
-            </Box>
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={projectPage?.slug}
+              fullWidth={true}
+              params={{
+                linkType: 'projectnews',
+                overview: 'projectnewsoverview',
+                containerPaddingBottom: 0,
+                containerPaddingTop: 0,
+                contentPaddingTop: 0,
+                contentPaddingBottom: 0,
+              }}
+              wrapWithGridContainer={
+                slice.__typename === 'ConnectedComponent' ||
+                slice.__typename === 'TabSection' ||
+                slice.__typename === 'PowerBiSlice'
+              }
+            />
           )
-        }
-        return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={projectPage?.slug}
-            fullWidth={true}
-            params={{
-              linkType: 'projectnews',
-              overview: 'projectnewsoverview',
-              containerPaddingBottom: 0,
-              containerPaddingTop: 0,
-              contentPaddingTop: 0,
-              contentPaddingBottom: 0,
-            }}
-            wrapWithGridContainer={
-              slice.__typename === 'ConnectedComponent' ||
-              slice.__typename === 'TabSection' ||
-              slice.__typename === 'PowerBiSlice'
-            }
-          />
-        )
-      })}
+        })}
+      </Stack>
       <ProjectFooter
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
@@ -408,6 +408,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,
+    customAlertBanner: getProjectPage?.alertBanner,
     ...getThemeConfig(getProjectPage),
   }
 }

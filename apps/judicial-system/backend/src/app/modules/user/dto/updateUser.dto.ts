@@ -8,35 +8,35 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly name?: string
+  readonly name!: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly title?: string
+  readonly title!: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly mobileNumber?: string
+  readonly mobileNumber!: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly email?: string
+  readonly email!: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly role?: UserRole
+  readonly role!: UserRole
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly institutionId?: string
+  readonly institutionId!: string
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly active?: boolean
+  readonly active!: boolean
 }

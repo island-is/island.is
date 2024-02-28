@@ -30,6 +30,7 @@ import {
   CourtDocument,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -633,7 +634,7 @@ export class Case extends Model {
   /**********
    * The ruling expiration date and time - example: the end of custody in custody cases -
    * autofilled from requestedValidToDate - possibly modified by the court - only used for
-   * custody and travel ban cases
+   * custody, admission to facility and travel ban cases
    **********/
   @Column({
     type: DataType.DATE,
@@ -644,7 +645,7 @@ export class Case extends Model {
 
   /**********
    * Indicates whether the judge imposes isolation - prefilled from
-   * requestedCustodyRestrictions - only used for custody cases
+   * requestedCustodyRestrictions - only used for custody and admission to facility cases
    **********/
   @Column({
     type: DataType.BOOLEAN,
@@ -655,7 +656,7 @@ export class Case extends Model {
 
   /**********
    * Expiration date and time for isolation - prefilled from requestedValidToDate - only used
-   * for custody cases and only relevant if the judge imposes isolation
+   * for custody and admission to facility cases and only relevant if the judge imposes isolation
    **********/
   @Column({
     type: DataType.DATE,
@@ -1134,4 +1135,67 @@ export class Case extends Model {
   @HasMany(() => EventLog, 'caseId')
   @ApiPropertyOptional({ type: EventLog, isArray: true })
   eventLogs?: EventLog[]
+
+  /**********
+   * The appeal ruling expiration date and time - example: the end of custody in custody cases -
+   * autofilled from validToDate - possibly modified by the court of appeals - only used for
+   * custody, admission to facility and travel ban cases
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealValidToDate?: Date
+
+  /**********
+   * Indicates whether the judge imposes isolation - prefilled from
+   * isCustodyIsolation - only used for custody and admission to facility cases
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  isAppealCustodyIsolation?: boolean
+
+  /**********
+   * Expiration date and time for isolation - prefilled from isolationToDate - only used
+   * for custody and admission to facility cases and only relevant if the judge imposes isolation
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealIsolationToDate?: Date
+
+  /**********
+   * Indicates whether someone requested that the appeals court's ruling should not
+   * be published immediately.
+   **********/
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(UserRole),
+  })
+  @ApiPropertyOptional({ enum: UserRole, isArray: true })
+  requestAppealRulingNotToBePublished?: UserRole[]
+
+  /**********
+   * The surrogate key of the prosecutors office that created the case
+   **********/
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  prosecutorsOfficeId?: string
+
+  /**********
+   * The prosecutors office that created the case
+   **********/
+  @BelongsTo(() => Institution, 'prosecutorsOfficeId')
+  @ApiPropertyOptional({ type: () => Institution })
+  prosecutorsOffice?: Institution
 }

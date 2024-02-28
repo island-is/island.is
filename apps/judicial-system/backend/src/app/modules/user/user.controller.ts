@@ -4,8 +4,8 @@ import {
   Get,
   Inject,
   Param,
-  Patch,
   Post,
+  Put,
   Query,
   UseGuards,
   UseInterceptors,
@@ -27,6 +27,7 @@ import { adminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { UserInterceptor } from './interceptors/user.interceptor'
+import { UserValidator } from './interceptors/user.validator'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
@@ -40,6 +41,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
+  @UseInterceptors(UserValidator)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
   create(@Body() userToCreate: CreateUserDto): Promise<User> {
@@ -50,7 +52,8 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
-  @Patch('user/:userId')
+  @UseInterceptors(UserValidator)
+  @Put('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
   update(
     @Param('userId') userId: string,
@@ -62,13 +65,13 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(UserInterceptor)
   @Get('users')
   @ApiOkResponse({
     type: User,
     isArray: true,
     description: 'Gets all existing users',
   })
-  @UseInterceptors(UserInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<User[]> {
     this.logger.debug('Getting all users')
 

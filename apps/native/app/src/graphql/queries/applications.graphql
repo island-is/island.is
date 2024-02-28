@@ -1,0 +1,11 @@
+query ListApplications {
+  applicationApplications {
+    ...ApplicationFragment
+  }
+}
+
+query GetApplication($input: ApplicationApplicationInput!) {
+  applicationApplication(input: $input) {
+    ...ApplicationFragment
+  }
+}

@@ -2,8 +2,8 @@ import { useIntl } from 'react-intl'
 import useSWR from 'swr'
 
 import { toast } from '@island.is/island-ui/core'
+import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
-import type { Lawyer } from '@island.is/judicial-system-web/src/types'
 
 export const useGetLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
@@ -27,7 +27,7 @@ export const useGetLawyers = (): Lawyer[] => {
 }
 
 export const useGetLawyer = (
-  nationalId?: string,
+  nationalId?: string | null,
   shouldFetch?: boolean,
 ): Lawyer | undefined => {
   const fetchWithNationalId = (url: string, nationalId: string) =>

@@ -67,7 +67,7 @@
       "failure": "Ekki tókst á afskrá áskrift fyrir mál"
     },
     "loginCardSkeleton": {
-      "text": "Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.",
+      "text": "Þú þarft að skrá þig inn á island.is til þess að geta skráð þig í eða úr áskrift.",
       "button": "Skrá mig inn"
     },
     "setEmailCardSkeleton": {
@@ -143,7 +143,7 @@
     "allowedFilesText": "Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er 10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.",
     "loginActionBox": {
       "heading": "Senda umsögn",
-      "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
+      "text": "Þú þarft að skrá þig inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
     },
     "privateLabel": "Viltu að þessi umsögn verði ekki birt í Samráðsgáttinni?"

@@ -1,11 +1,8 @@
 import { lazy } from 'react'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import {
-  ServicePortalModule,
-  ServicePortalPath,
-  m,
-} from '@island.is/service-portal/core'
+import { ServicePortalModule, m } from '@island.is/service-portal/core'
+import { EducationDegreePaths } from './lib/paths'
 
 const EducationDegree = lazy(() =>
   import('./screens/EducationDegree/EducationDegree'),
@@ -17,7 +14,7 @@ export const educationDegreeModule: ServicePortalModule = {
   routes: ({ userInfo }) => [
     {
       name: m.educationDegree,
-      path: ServicePortalPath.EducationDegree,
+      path: EducationDegreePaths.EducationDegree,
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <EducationDegree />,
     },

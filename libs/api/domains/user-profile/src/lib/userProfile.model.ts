@@ -32,8 +32,15 @@ export class UserProfile {
   @Field(() => Date, { nullable: true })
   modified?: Date
 
-  // Temporary merge with islyklar service
   @Field(() => Boolean, { nullable: true })
+  emailNotifications?: boolean
+
+  // Temporary merge with islyklar service
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Deprecated due to new field "EmailNotification" from UserProfile V2',
+  })
   canNudge?: boolean
 
   @Field(() => String, { nullable: true })

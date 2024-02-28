@@ -144,15 +144,10 @@ export const supportingDocuments = {
         defaultMessage: 'Staðfesting á íslenskuprófi eða gögn vegna undanþágu',
         description: 'Icelandic test title',
       },
-      criminalRecordItaly: {
-        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.criminalRecordItaly',
-        defaultMessage: 'Sakarvottorð - Ítalía',
-        description: 'Criminal record Italy title',
-      },
-      criminalRecordUS: {
-        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.criminalRecordUS',
-        defaultMessage: 'Sakarvottorð - Bandaríkin',
-        description: 'Criminal record USA title',
+      criminalRecord: {
+        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.criminalRecord',
+        defaultMessage: 'Sakavottorð',
+        description: 'Criminal record title',
       },
     }),
     otherDocumentsChildren: defineMessages({

@@ -4,4 +4,6 @@ export class IslyklarUpsertDto {
   email?: string
 
   phoneNumber?: string
+
+  canNudge?: boolean
 }

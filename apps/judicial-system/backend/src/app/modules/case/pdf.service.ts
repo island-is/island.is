@@ -11,7 +11,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseState,
-  completedCaseStates,
+  isCompletedCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -170,7 +170,7 @@ export class PDFService {
         theCase.state,
       )
     ) {
-      if (completedCaseStates.includes(theCase.state)) {
+      if (isCompletedCase(theCase.state)) {
         try {
           return await this.awsS3Service.getObject(
             `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,

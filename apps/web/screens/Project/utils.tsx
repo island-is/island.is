@@ -15,6 +15,7 @@ const lightThemes = [
   'default',
   'opinbernyskopun',
   'grindavik',
+  'default-v2',
 ]
 
 export const getThemeConfig = (
@@ -111,6 +112,8 @@ export const getSidebarNavigationComponent = (
   projectPage: ProjectPage,
   baseRouterPath: string,
   navigationTitle: string,
+  mobileNavigationButtonOpenLabel: string,
+  mobileNavigationButtonCloseLabel: string,
 ) => {
   const navigationList = assignNavigationActive(
     convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
@@ -140,6 +143,8 @@ export const getSidebarNavigationComponent = (
         items={navigationList}
         activeItemTitle={activeNavigationItemTitle}
         title={navigationTitle}
+        mobileNavigationButtonOpenLabel={mobileNavigationButtonOpenLabel}
+        mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
         renderLink={(link, item) => {
           return item?.href ? (
             <Link href={item.href} legacyBehavior>

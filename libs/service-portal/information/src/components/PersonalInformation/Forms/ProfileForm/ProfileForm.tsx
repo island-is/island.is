@@ -1,18 +1,17 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { LoadModal, m, parseNumber } from '@island.is/service-portal/core'
 import {
-  GridRow,
   GridColumn,
   GridContainer,
+  GridRow,
   Input,
   PhoneInput,
 } from '@island.is/island-ui/core'
-import { parseNumber, LoadModal } from '@island.is/service-portal/core'
 import {
-  useUserProfile,
-  useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUpdateOrCreateUserProfile,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { OnboardingIntro } from './components/Intro'
 import { InputSection } from './components/InputSection'
@@ -22,7 +21,7 @@ import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../../lib/messages'
-import { DropModalType, DataStatus } from './types/form'
+import { DataStatus, DropModalType } from './types/form'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { diffModifiedOverMaxDate } from '../../../../utils/showUserOnboardingModal'
 import { PaperMail } from './components/Inputs/PaperMail'
@@ -99,11 +98,9 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
    * By setting the continue_onboarding to false, the user won´t be forced to finish the onboarding.
    */
   const getIDSLink = (linkPath: IdsUserProfileLinks) => {
-    const returnUrl = encodeURIComponent(
-      `${window.location}&continue_onboarding=false`,
-    )
-
-    return `${authority}${linkPath}?returnUrl=${returnUrl}`
+    return `${authority}${linkPath}?continue_onboarding=false&returnUrl=${encodeURIComponent(
+      window.location.toString(),
+    )}`
   }
 
   const isFlagEnabled = async () => {
@@ -296,8 +293,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                      * This checkbox block is being displayed as the opposite of canNudge.
                      * Details inside <Nudge />
                      */
-                    typeof userProfile?.canNudge === 'boolean'
-                      ? !userProfile.canNudge
+                    typeof userProfile?.emailNotifications === 'boolean'
+                      ? !userProfile.emailNotifications
                       : true
                   }
                 />

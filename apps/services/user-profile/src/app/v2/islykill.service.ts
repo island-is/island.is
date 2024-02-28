@@ -15,7 +15,6 @@ import { IslyklarUpsertDto } from './dto/islyklar-upsert.dto'
 export class IslykillService {
   constructor(
     private readonly islyklarApi: IslyklarApi,
-
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -75,6 +74,7 @@ export class IslykillService {
     nationalId,
     email,
     phoneNumber,
+    canNudge,
   }: IslyklarUpsertDto): Promise<PublicUser> {
     const { userNotFound, ...publicUser } = await this.getIslykillSettings(
       nationalId,
@@ -85,12 +85,14 @@ export class IslykillService {
         ssn: nationalId,
         email,
         mobile: phoneNumber,
+        canNudge,
       })
     } else {
       return this.updateIslykillSettings({
         ...publicUser,
         ...(isDefined(email) && { email }),
         ...(isDefined(phoneNumber) && { mobile: phoneNumber }),
+        ...(isDefined(canNudge) && { canNudge }),
       })
     }
   }

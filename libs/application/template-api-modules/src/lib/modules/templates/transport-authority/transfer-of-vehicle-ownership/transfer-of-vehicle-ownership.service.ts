@@ -66,6 +66,25 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   async getCurrentVehiclesWithOwnerchangeChecks({
     auth,
   }: TemplateApiModuleActionProps) {
+    // Check total vehicles
+    const countResult =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+        })
+      ).totalRecords || 0
+    if (countResult && countResult > 20) {
+      return {
+        totalRecords: countResult,
+        vehicles: [],
+      }
+    }
     const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -84,40 +103,47 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       )
     }
 
-    return await Promise.all(
-      result?.map(async (vehicle) => {
-        let validation: OwnerChangeValidation | undefined
-        let debtStatus: VehicleDebtStatus | undefined
+    return {
+      totalRecords: countResult,
+      vehicles: await Promise.all(
+        result?.map(async (vehicle) => {
+          let validation: OwnerChangeValidation | undefined
+          let debtStatus: VehicleDebtStatus | undefined
 
-        // Only validate if fewer than 5 items
-        if (result.length <= 5) {
-          // Get debt status
-          debtStatus =
-            await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-              auth,
-              vehicle.permno || '',
-            )
+          // Only validate if fewer than 5 items
+          if (result.length <= 5) {
+            // Get debt status
+            debtStatus =
+              await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+                auth,
+                vehicle.permno || '',
+              )
 
-          // Get validation
-          validation =
-            await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
-              auth,
-              vehicle.permno || '',
-            )
-        }
+            // Get validation
+            validation =
+              await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+                auth,
+                vehicle.permno || '',
+              )
+          }
 
-        return {
-          permno: vehicle.permno || undefined,
-          make: vehicle.make || undefined,
-          color: vehicle.color || undefined,
-          role: vehicle.role || undefined,
-          isDebtLess: debtStatus?.isDebtLess,
-          validationErrorMessages: validation?.hasError
-            ? validation.errorMessages
-            : null,
-        }
-      }),
-    )
+          const electricFuelCodes =
+            this.vehicleCodetablesClient.getElectricFueldCodes()
+
+          return {
+            permno: vehicle.permno || undefined,
+            make: vehicle.make || undefined,
+            color: vehicle.color || undefined,
+            role: vehicle.role || undefined,
+            requireMileage: electricFuelCodes.includes(vehicle.fuelCode || ''),
+            isDebtLess: debtStatus?.isDebtLess,
+            validationErrorMessages: validation?.hasError
+              ? validation.errorMessages
+              : null,
+          }
+        }),
+      ),
+    }
   }
 
   async validateApplication({
@@ -150,6 +176,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       (x) => x.type === 'operator',
     )
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(auth, {
         permno: answers?.pickVehicle?.plate,
@@ -164,17 +192,15 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
-        mileage: answers?.vehicle?.mileage
-          ? Number(answers?.vehicle?.mileage) || 0
-          : null,
+        mileage: mileage ? Number(mileage) || 0 : null,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
-          ssn: coOwner.nationalId!,
-          email: coOwner.email!,
+          ssn: coOwner.nationalId || '',
+          email: coOwner.email || '',
         })),
         operators: buyerOperators?.map((operator) => ({
-          ssn: operator.nationalId!,
-          email: operator.email!,
+          ssn: operator.nationalId || '',
+          email: operator.email || '',
           isMainOperator:
             buyerOperators.length > 1
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
@@ -315,8 +341,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerCoOwners[i].nationalId!,
-            name: buyerCoOwners[i].name!,
+            ssn: buyerCoOwners[i].nationalId || '',
+            name: buyerCoOwners[i].name || '',
             email: emailChanged ? buyerCoOwners[i].email : undefined,
             phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
             role: EmailRole.buyerCoOwner,
@@ -343,8 +369,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerOperators[i].nationalId!,
-            name: buyerOperators[i].name!,
+            ssn: buyerOperators[i].nationalId || '',
+            name: buyerOperators[i].name || '',
             email: emailChanged ? buyerOperators[i].email : undefined,
             phone: phoneChanged ? buyerOperators[i].phone : undefined,
             role: EmailRole.buyerOperator,
@@ -497,6 +523,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       (x) => x.type === 'operator',
     )
 
+    const mileage = answers?.vehicleMileage?.value
+
     await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
       permno: answers?.pickVehicle?.plate,
       seller: {
@@ -510,17 +538,15 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       dateOfPurchase: new Date(answers?.vehicle?.date),
       dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
-      mileage: answers?.vehicle?.mileage
-        ? Number(answers?.vehicle?.mileage) || 0
-        : null,
+      mileage: mileage ? Number(mileage) || 0 : null,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId!,
-        email: coOwner.email!,
+        ssn: coOwner.nationalId || '',
+        email: coOwner.email || '',
       })),
       operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId!,
-        email: operator.email!,
+        ssn: operator.nationalId || '',
+        email: operator.email || '',
         isMainOperator:
           buyerOperators.length > 1
             ? operator.nationalId === answers.buyerMainOperator?.nationalId

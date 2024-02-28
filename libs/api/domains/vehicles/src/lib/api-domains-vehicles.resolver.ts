@@ -14,14 +14,17 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { VehiclesList } from '../models/usersVehicles.model'
+import { VehiclesList, VehiclesListV2 } from '../models/usersVehicles.model'
 import { VehiclesService } from './api-domains-vehicles.service'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
-import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import {
+  GetVehiclesForUserInput,
+  GetVehiclesListV2Input,
+} from '../dto/getVehiclesForUserInput'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
@@ -70,18 +73,34 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.vehicles)
+  @Query(() => VehiclesListV2, { name: 'vehiclesListV2', nullable: true })
+  @Audit()
+  async getVehicleListV2(
+    @CurrentUser() user: User,
+    @Args('input', { nullable: true }) input: GetVehiclesListV2Input,
+  ) {
+    const res = await this.vehiclesService.getVehiclesListV2(user, input)
+    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+    return {
+      vehicleList: res.data,
+      downloadServiceURL,
+      paging: {
+        pageNumber: res.pageNumber,
+        pageSize: res.pageSize,
+        totalPages: res.totalPages,
+        totalRecords: res.totalRecords,
+      },
+    }
+  }
+
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesExcel, { name: 'getExcelVehicles', nullable: true })
   async getExcelVehicles(@CurrentUser() user: User) {
     const res = await this.vehiclesService.getExcelVehiclesForUser(user)
     return { ...res }
   }
 
-  @Scopes(
-    ApiScope.vehicles,
-    ApiScope.internal,
-    ApiScope.internalProcuring,
-    ApiScope.samgongustofaVehicles,
-  )
+  @Scopes(ApiScope.vehicles, ApiScope.samgongustofaVehicles)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(

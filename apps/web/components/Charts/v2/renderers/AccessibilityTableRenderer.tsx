@@ -1,3 +1,4 @@
+import type { Locale } from '@island.is/shared/types'
 import { Chart } from '@island.is/web/graphql/schema'
 
 import { DEFAULT_XAXIS_KEY } from '../constants'
@@ -7,6 +8,7 @@ import { formatDate } from '../utils'
 
 interface AccessibilityTableRendererProps {
   id: string
+  activeLocale: Locale
   chart: Chart
   componentsWithAddedProps: ChartComponentWithRenderProps[]
   data: ReturnType<typeof useGetChartData>['data']
@@ -14,6 +16,7 @@ interface AccessibilityTableRendererProps {
 
 export const AccessibilityTableRenderer = ({
   id,
+  activeLocale,
   chart,
   componentsWithAddedProps,
   data,
@@ -24,46 +27,50 @@ export const AccessibilityTableRenderer = ({
   const xAxisValueType = chart.xAxisValueType ?? DEFAULT_XAXIS_KEY
 
   return (
-    <table className="visually-hidden" id={id}>
-      <caption>
-        {chart.title}
-        <br />
-        {chart.alternativeDescription}
-      </caption>
-      {tableSettings !== null && (
-        <>
-          <thead>
-            <tr>
-              {tableSettings.tableHeadWithAxis.map((th) => (
-                <th scope="col" key={th}>
-                  {componentsWithAddedProps.find((c) => c.sourceDataKey === th)
-                    ?.label ?? th}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => {
-              const xAxisValue = row[xAxisKey]
-
-              return (
-                <tr key={xAxisValue}>
-                  <th scope="row">
-                    {xAxisValueType === 'date' && xAxisValue !== null
-                      ? formatDate(xAxisValue)
-                      : xAxisValue}
+    // Apply this class on a div rather than the table to avoid layout issues
+    <div className="visually-hidden">
+      <table id={id}>
+        <caption>
+          {chart.title}
+          <br />
+          {chart.alternativeDescription}
+        </caption>
+        {tableSettings !== null && (
+          <>
+            <thead>
+              <tr>
+                {tableSettings.tableHeadWithAxis.map((th) => (
+                  <th scope="col" key={th}>
+                    {componentsWithAddedProps.find(
+                      (c) => c.sourceDataKey === th,
+                    )?.label ?? th}
                   </th>
-                  {tableSettings.tableHead.map((key) => {
-                    const rowValue = row[key]
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((row) => {
+                const xAxisValue = row[xAxisKey]
 
-                    return <td>{rowValue}</td>
-                  })}
-                </tr>
-              )
-            })}
-          </tbody>
-        </>
-      )}
-    </table>
+                return (
+                  <tr key={xAxisValue}>
+                    <th scope="row">
+                      {xAxisValueType === 'date' && xAxisValue !== null
+                        ? formatDate(activeLocale, xAxisValue)
+                        : xAxisValue}
+                    </th>
+                    {tableSettings.tableHead.map((key) => {
+                      const rowValue = row[key]
+
+                      return <td>{rowValue}</td>
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </>
+        )}
+      </table>
+    </div>
   )
 }

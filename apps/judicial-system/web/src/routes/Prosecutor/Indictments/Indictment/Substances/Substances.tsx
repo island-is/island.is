@@ -11,7 +11,7 @@ import {
   ReactSelectOption,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substance } from '../Substance/Substance'
 import { substances as strings } from './Substances.strings'

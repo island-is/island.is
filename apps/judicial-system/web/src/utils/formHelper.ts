@@ -1,20 +1,17 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { replaceTabs } from './formatters'
+import { UpdateCase } from './hooks'
 import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -26,8 +23,7 @@ export const removeTabsValidateAndSet = (
     field,
     value,
     validations,
-    theCase,
-    setCase,
+    setWorkingCase,
     errorMessage,
     setErrorMessage,
   )
@@ -63,17 +59,16 @@ export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
   removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: value,
-  })
+  }))
 }
 
 export const validateAndSendToServer = (
@@ -94,7 +89,7 @@ export const validateAndSendToServer = (
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
-export function toggleInArray<T>(values: T[] | undefined, entry: T) {
+export function toggleInArray<T>(values: T[] | undefined | null, entry: T) {
   if (!values) return [entry]
 
   return values.includes(entry)
@@ -106,7 +101,7 @@ export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]
@@ -119,10 +114,10 @@ export const setCheckboxAndSendToServer = (
     checks.splice(checks.indexOf(value), 1)
   }
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: checks,
-  })
+  }))
 
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })

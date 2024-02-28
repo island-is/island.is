@@ -1,63 +1,60 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useMutation, useQuery } from '@apollo/client'
 
 import { AlertBanner, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Skeleton } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  PageHeader,
+  Skeleton,
+} from '@island.is/judicial-system-web/src/components'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  UpdateUserMutation,
-  UserQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
 
 import UserForm from '../UserForm/UserForm'
+import { useUpdateUserMutation } from './updateUser.generated'
+import { useUserQuery } from './user.generated'
 import { adminStrings as strings } from '../Admin.strings'
 import * as styles from '../Users/Users.css'
 
-interface UserData {
-  user: User
-}
-
-interface SaveData {
-  user: User
-}
-
 export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
-  const id = router.query.id
+  const id = router.query.id as string // We know it is a string
   const { formatMessage } = useIntl()
-  const { data: userData, loading: userLoading } = useQuery<UserData>(
-    UserQuery,
-    {
-      variables: { input: { id: id } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-
   const {
     allInstitutions,
-    loading: institutionLoading,
-    loaded: institutionLoaded,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
   } = useInstitution()
+  const { data: userData, loading: userLoading } = useUserQuery({
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
-  const [updateUserMutation, { loading: saveLoading }] =
-    useMutation<SaveData>(UpdateUserMutation)
+  const [updateUserMutation, { loading: userUpdating }] =
+    useUpdateUserMutation()
 
   const saveUser = async (user: User) => {
-    if (saveLoading === false && user) {
+    if (
+      !userUpdating &&
+      user.name &&
+      user.role &&
+      user.title &&
+      user.mobileNumber &&
+      user.email &&
+      user.active !== undefined &&
+      user.active !== null &&
+      user.institution
+    ) {
       await updateUserMutation({
         variables: {
           input: {
             id: user.id,
             name: user.name,
             role: user.role,
-            institutionId: user.institution?.id,
+            institutionId: user.institution.id,
             title: user.title,
             mobileNumber: user.mobileNumber,
             email: user.email,
@@ -70,9 +67,9 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(constants.USERS_ROUTE)
   }
 
-  return institutionLoading || userLoading ? (
+  return institutionsLoading || userLoading ? (
     <Skeleton />
-  ) : !userData?.user || !institutionLoaded ? (
+  ) : !userData?.user || !institutionsLoaded ? (
     <AlertBanner
       title={formatMessage(strings.alertTitle)}
       description={formatMessage(strings.alertMessage)}
@@ -87,7 +84,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
           user={userData?.user}
           institutions={allInstitutions}
           onSave={saveUser}
-          loading={saveLoading}
+          loading={userUpdating}
         />
       </div>
     </Box>

@@ -14,6 +14,7 @@ import {
   numberOfProcessEntries,
   numberOfLinks,
   removeEntryHyperlinkFields,
+  pruneNonSearchableSliceUnionFields,
 } from './utils'
 
 interface MetaData {
@@ -146,7 +147,9 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
   }
 
   doMapping(entries: (IArticle & MetaData)[]) {
-    logger.info('Mapping articles', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping articles', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {
@@ -159,10 +162,14 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
         try {
           mapped = mapArticle(entry)
           // get the searchable content of this article
-          const parentContent = extractStringsFromObject(mapped.body)
+          const parentContent = extractStringsFromObject(
+            mapped.body.map(pruneNonSearchableSliceUnionFields),
+          )
           // get searchable content of all sub articles
           const searchableContent = mapped.subArticles.map((subArticle) =>
-            extractStringsFromObject(subArticle.body),
+            extractStringsFromObject(
+              subArticle.body.map(pruneNonSearchableSliceUnionFields),
+            ),
           )
           searchableContent.push(parentContent)
 

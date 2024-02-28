@@ -147,7 +147,7 @@ export const GalleryModal: FC<Props> = ({
           paddingLeft={1}
           paddingRight={1}
         >
-          <Swiper width={70}>
+          <Swiper itemWidth={70}>
             {thumbnailsArray
               .map((thumbnail, i) => {
                 if (!thumbnail) {

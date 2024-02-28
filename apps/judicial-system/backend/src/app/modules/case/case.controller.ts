@@ -36,12 +36,16 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
+  CaseDecision,
   CaseState,
   CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
   isIndictmentCase,
+  isRestrictionCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -172,13 +176,8 @@ export class CaseController {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
-        theCase.creatingProsecutor?.institutionId,
+        theCase.prosecutorsOfficeId,
       )
-
-      // If the case was created via xRoad, then there may not have been a creating prosecutor
-      if (!theCase.creatingProsecutor) {
-        update.creatingProsecutorId = update.prosecutorId
-      }
     }
 
     if (update.judgeId) {
@@ -336,6 +335,42 @@ export class CaseController {
         break
       case CaseTransition.RECEIVE_APPEAL:
         update.appealReceivedByCourtDate = nowFactory()
+        break
+      case CaseTransition.COMPLETE_APPEAL:
+        if (
+          isRestrictionCase(theCase.type) &&
+          theCase.state === CaseState.ACCEPTED &&
+          (theCase.decision === CaseDecision.ACCEPTING ||
+            theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
+        ) {
+          if (
+            theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
+            theCase.appealRulingDecision ===
+              CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+          ) {
+            // The court of appeals has modified the ruling of a restriction case
+            update.validToDate = theCase.appealValidToDate
+            update.isCustodyIsolation = theCase.isAppealCustodyIsolation
+            update.isolationToDate = theCase.appealIsolationToDate
+          } else if (
+            theCase.appealRulingDecision === CaseAppealRulingDecision.REPEAL
+          ) {
+            // The court of appeals has repealed the ruling of a restriction case
+            update.validToDate = nowFactory()
+          }
+        }
+        break
+      case CaseTransition.WITHDRAW_APPEAL:
+        // We only want to set the appeal ruling decision if the
+        // case has already been received.
+        // Otherwise the court of appeals never knew of the appeal in
+        // the first place so it remains withdrawn without a decision.
+        if (
+          !theCase.appealRulingDecision &&
+          theCase.appealState === CaseAppealState.RECEIVED
+        ) {
+          update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
+        }
         break
     }
 

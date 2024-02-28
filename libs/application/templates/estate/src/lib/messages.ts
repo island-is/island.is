@@ -19,7 +19,47 @@ export const m = defineMessages({
   },
   // Application end
 
+  // Pre-data collection
+  preDataCollectionHeading: {
+    id: 'es.application:preDataCollectionHeading',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Heading for pre-collection',
+  },
+  preDataCollectionInfo: {
+    id: 'es.application:preDataCollectionInfo',
+    defaultMessage:
+      'Til þess að geta hafið umsókn þarf fyrst að sækja til sýslumanns hvort viðkomandi eigi einhver dánarbú á skrá.',
+    description: 'Info for pre-collection',
+  },
+  preDataCollectionTitle: {
+    id: 'es.application:preDataCollectionTitle',
+    defaultMessage: 'Upplýsingar um dánarbú',
+    description: 'Title of provider for pre-collection',
+  },
+
+  preDataCollectionDescription: {
+    id: 'es.application:preDataCollectionDescription',
+    defaultMessage: 'Sóttar verða upplýsingar frá sýslumanni um dánarbú',
+    description: 'Description of provider for pre-collection',
+  },
+
   // Prereqs title
+  chooseEstate: {
+    id: 'es.application:chooseEstate',
+    defaultMessage: 'Valið dánarbú',
+    description: '',
+  },
+  chooseEstateDescription: {
+    id: 'es.application:chooseEstateDescription',
+    defaultMessage:
+      'Eftirfarandi dánarbú eru skráð fyrir þinni kennitölu hjá Sýslumanni. Vinsamlegast veldu það sem við á.',
+    description: '',
+  },
+  chooseEstateSelectTitle: {
+    id: 'es.application:chooseEstateSelectTitle',
+    defaultMessage: 'Dánarbú',
+    description: '',
+  },
   prerequisitesTitle: {
     id: 'es.application:prerequisitesTitle',
     defaultMessage: 'Ákvörðun um skipti dánarbús',
@@ -65,6 +105,55 @@ export const m = defineMessages({
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
+
+  applicationDescriptionSectionTitle: {
+    id: 'es.application:applicationDescriptionSectionTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Titill fyrir hliðastiku',
+  },
+
+  applicationDescriptionTitleEstateWithoutAssets: {
+    id: 'es.application:applicationDescriptionTitleEstateWithoutAssets',
+    defaultMessage: 'Upplýsingar fyrir eingnalaust dánarbú',
+    description: 'Upplýsingar skjár titill fyrir eignalaust dánarbú',
+  },
+  applicationDescriptionTitleOfficialDivision: {
+    id: 'es.application:applicationDescriptionTitleOfficialDivision',
+    defaultMessage: 'Upplýsingar fyrir opinber skipti',
+    description: 'Upplýsingar skjár titill fyrir opinber skipti',
+  },
+  applicationDescriptionTitleUndividedEstate: {
+    id: 'es.application:applicationDescriptionTitleUndividedEstate',
+    defaultMessage: 'Upplýsingar',
+    description: 'Upplýsingar skjár titill fyrir setu í óskiptu búi',
+  },
+  applicationDescriptionTitleDivisionOfEstateByHeirs: {
+    id: 'es.application:applicationDescriptionTitleDivisionOfEstateByHeirs',
+    defaultMessage: 'Upplýsingar',
+    description: 'Upplýsinga skjár titill fyrir Einkaskipti',
+  },
+
+  applicationDescriptionTextEstateWithoutAssets: {
+    id: 'es.application:applicationDescriptionTextEstateWithoutAssets#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir eignalaust dánarbú',
+    description: 'Upplýsingar skjár titill fyrir eignalust dánarbú',
+  },
+  applicationDescriptionTextOfficialDivision: {
+    id: 'es.application:applicationDescriptionTextOfficialDivision#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir opinber skipti',
+    description: 'Upplýsingar skjár titill fyrir opinber skipti',
+  },
+  applicationDescriptionTextUndividedEstate: {
+    id: 'es.application:applicationDescriptionTextUndividedEstate#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir setu í óskiptu búi',
+    description: 'Upplýsingar skjár titill fyrir setu í óskiptu búi',
+  },
+  applicationDescriptionTextDivisionOfEstateByHeirs: {
+    id: 'es.application:applicationDescriptionTextDivisionOfEstateByHeirs#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir einkaskipti',
+    description: 'Upplýsingar skjár titill fyrir Einkaskipti',
+  },
+
   deceasedInfoProviderTitle: {
     id: 'es.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',
@@ -253,6 +342,11 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl við hinn látna',
     description: 'Relation label',
   },
+  applicantAutonomous: {
+    id: 'es.application:applicantAutonomous',
+    defaultMessage: 'Er umsækjandi lögráða',
+    description: 'Autonomous label',
+  },
 
   // Estate members, assets, vehicles
   estateMembersTitle: {
@@ -411,6 +505,21 @@ export const m = defineMessages({
   realEstateRepeaterHeader: {
     id: 'es.application:realEstateRepeaterHeader',
     defaultMessage: 'Fasteign',
+    description: '',
+  },
+  vehicleRepeaterHeader: {
+    id: 'es.application:vehicleRepeaterHeader',
+    defaultMessage: 'Farartæki',
+    description: '',
+  },
+  vehicleMarketLabel: {
+    id: 'es.application:vehicleMarketLabel',
+    defaultMessage: 'Markaðsverð á dánardegi',
+    description: '',
+  },
+  vehicleNameLabel: {
+    id: 'es.application:vehicleNameLabel',
+    defaultMessage: 'Heiti',
     description: '',
   },
   realEstateDescription: {
@@ -620,19 +729,25 @@ export const m = defineMessages({
     description: '',
   },
   acceptAssets: {
-    id: 'es.application:acceptExistenceAssets',
+    id: 'es.application:acceptExistenceAssets#markdown',
     defaultMessage:
       'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
     description: '',
   },
   acceptNoAssets: {
-    id: 'es.application:acceptNoAssets',
+    id: 'es.application:acceptNoAssets#markdown',
+    defaultMessage:
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
+    description: '',
+  },
+  acceptNoAssetsNoDebts: {
+    id: 'es.application:acceptNoAssetsNoDebts#markdown',
     defaultMessage:
       'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
     description: '',
   },
   acceptCorrectAssets: {
-    id: 'es.application:acceptCorrectAssets',
+    id: 'es.application:acceptCorrectAssets#markdown',
     defaultMessage:
       'Ég staðfesti hér með að eftir minni bestu vitund eru upplýsingarnar um eignir réttar.',
     description: '',
@@ -745,6 +860,16 @@ export const m = defineMessages({
     defaultMessage: 'Eru eignir til staðar?',
     description: '',
   },
+  doAssetsExistSidebarTitle: {
+    id: 'es.application:doAssetsExistSidebarTitle',
+    defaultMessage: 'Átti látni eignir á dánardegi?',
+    description: '',
+  },
+  doAssetsExistSelect: {
+    id: 'es.application:doAssetsExistSelect',
+    defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
   doDebtsExist: {
     id: 'es.application:doDebtsExist',
     defaultMessage: 'Eru skuldir til staðar?',
@@ -818,7 +943,7 @@ export const m = defineMessages({
     description: '',
   },
   divisionOfEstateByHeirsSubmissionCheckbox: {
-    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox#markdown',
     defaultMessage: 'Ég hef lesið skilmálana',
     description: '',
   },
@@ -892,6 +1017,17 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
+  errorNotAutonmous: {
+    id: 'es.application:error.errorNotAutonmous',
+    defaultMessage:
+      'Umsækjandi er ekki lögráða og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'Applicant not autonomous',
+  },
+  errorPropertyNumber: {
+    id: 'es.application:error.errorPropertyNumber',
+    defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
+    description: 'Property number is invalid',
+  },
 
   // Inheritance step
   inheritanceAddMember: {
@@ -951,13 +1087,31 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'es.application:inheritanceAdvocateLabel',
-    defaultMessage: 'Málsvari',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
   inheritanceUnder18Error: {
     id: 'es.application:inheritanceUnder18Error',
     defaultMessage:
       'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceUnder18ErrorAdvocate: {
+    id: 'es.application:inheritanceUnder18ErrorAdvocate',
+    defaultMessage:
+      'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceAgeValidation: {
+    id: 'es.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
+    description: '',
+  },
+  heirAdvocateAgeValidation: {
+    id: 'es.application:heirAdvocateAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
     description: '',
   },
 

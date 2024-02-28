@@ -46,3 +46,4 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
         paths: ['/app/skilavottord/api/graphql'],
       },
     })
+    .grantNamespaces('application-system')

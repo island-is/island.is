@@ -12,7 +12,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../..'
+import { Case } from '../../models/case.model'
 import { canUserAccessCase } from '../case.filter'
 import { verifyNoAccess, verifyReadAccess } from './verify'
 
@@ -20,7 +20,7 @@ const continueFromCreatingProsecutor = (
   user: User,
   type: CaseType,
   state: CaseState,
-  creatingProsecutorInstitutionId?: string,
+  prosecutorsOfficeId?: string,
 ) => {
   describe('hightened security', () => {
     describe('user is neither creating prosecutor nor assigned prosecutor', () => {
@@ -28,11 +28,9 @@ const continueFromCreatingProsecutor = (
         type,
         state,
         creatingProsecutorId: uuid(),
-        creatingProsecutor: {
-          institutionId: creatingProsecutorInstitutionId,
-        },
         prosecutorId: uuid(),
         isHeightenedSecurityLevel: true,
+        prosecutorsOfficeId,
       } as Case
 
       let hasReadAccess: boolean
@@ -54,11 +52,9 @@ const continueFromCreatingProsecutor = (
         type,
         state,
         creatingProsecutorId: user.id,
-        creatingProsecutor: {
-          institutionId: creatingProsecutorInstitutionId,
-        },
         prosecutorId: uuid(),
         isHeightenedSecurityLevel: true,
+        prosecutorsOfficeId,
       } as Case
 
       let hasReadAccess: boolean
@@ -70,8 +66,8 @@ const continueFromCreatingProsecutor = (
       })
 
       it('should have full access', () => {
-        expect(hasReadAccess).toBe(true)
-        expect(hasWriteAccess).toBe(true)
+        expect(hasReadAccess).toBe(Boolean(prosecutorsOfficeId) && true)
+        expect(hasWriteAccess).toBe(Boolean(prosecutorsOfficeId) && true)
       })
     })
 
@@ -80,11 +76,9 @@ const continueFromCreatingProsecutor = (
         type,
         state,
         creatingProsecutorId: uuid(),
-        creatingProsecutor: {
-          institutionId: creatingProsecutorInstitutionId,
-        },
         prosecutorId: user.id,
         isHeightenedSecurityLevel: true,
+        prosecutorsOfficeId,
       } as Case
 
       let hasReadAccess: boolean
@@ -96,8 +90,8 @@ const continueFromCreatingProsecutor = (
       })
 
       it('should have full access', () => {
-        expect(hasReadAccess).toBe(true)
-        expect(hasWriteAccess).toBe(true)
+        expect(hasReadAccess).toBe(Boolean(prosecutorsOfficeId) && true)
+        expect(hasWriteAccess).toBe(Boolean(prosecutorsOfficeId) && true)
       })
     })
   })
@@ -106,7 +100,7 @@ const continueFromCreatingProsecutor = (
     const theCase = {
       type,
       state,
-      creatingProsecutor: { institutionId: creatingProsecutorInstitutionId },
+      prosecutorsOfficeId,
     } as Case
 
     let hasReadAccess: boolean
@@ -118,8 +112,8 @@ const continueFromCreatingProsecutor = (
     })
 
     it('should have full access', () => {
-      expect(hasReadAccess).toBe(true)
-      expect(hasWriteAccess).toBe(true)
+      expect(hasReadAccess).toBe(Boolean(prosecutorsOfficeId) && true)
+      expect(hasWriteAccess).toBe(Boolean(prosecutorsOfficeId) && true)
     })
   })
 }
@@ -152,7 +146,7 @@ const continueFromType = (user: User, type: CaseType) => {
           const theCase = {
             type,
             state,
-            creatingProsecutor: { institutionId: uuid() },
+            prosecutorsOfficeId: uuid(),
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -162,8 +156,8 @@ const continueFromType = (user: User, type: CaseType) => {
           const theCase = {
             type,
             state,
-            creatingProsecutor: { institutionId: uuid() },
             sharedWithProsecutorsOfficeId: user.institution?.id,
+            prosecutorsOfficeId: uuid(),
           } as Case
 
           verifyReadAccess(theCase, user)

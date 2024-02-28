@@ -1,4 +1,9 @@
-import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
+import {
+  Hash,
+  ServiceDefinition,
+  ServiceDefinitionForEnv,
+  PodDisruptionBudget,
+} from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
 
 // Output types
@@ -18,6 +23,7 @@ export type ContainerRunHelm = {
     }
   }
 }
+
 export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
 export type OutputPersistentVolumeClaim = {
   name?: string
@@ -114,6 +120,9 @@ export interface HelmService {
     }
   }
   pvcs?: OutputPersistentVolumeClaim[]
+
+  podDisruptionBudget?: PodDisruptionBudget
+
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
@@ -130,7 +139,7 @@ export interface HelmService {
 
 export interface LocalrunService {
   env: ContainerEnvironmentVariables
-  command?: string[]
+  commands?: string[]
   port?: number
 }
 

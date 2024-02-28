@@ -104,4 +104,4 @@ export const testIDs = {
   // finance
   SCREEN_FINANCE: 'SCREEN_FINANCE',
   SCREEN_FINANCE_DETAIL: 'SCREEN_FINANCE_DETAIL',
-};
+}

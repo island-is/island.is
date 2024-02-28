@@ -9,6 +9,7 @@ auth-admin-web:
   env:
     BASE_URL: 'https://identity-server.staging01.devland.is/admin'
     IDENTITYSERVER_DOMAIN: 'identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://identity-server.staging01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -51,6 +52,8 @@ auth-admin-web:
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -92,7 +95,7 @@ identity-server:
     ASPNETCORE_URLS: 'http://*:5000'
     AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log'
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
-    Application__AllowedRedirectUris: 'https://beta.staging01.devland.is/minarsidur'
+    Application__AllowedRedirectUris: 'https://beta.staging01.devland.is/minarsidur,https://beta.staging01.devland.is/umsoknir'
     Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
     CORECLR_ENABLE_PROFILING: '1'
@@ -102,12 +105,14 @@ identity-server:
     ContentfulSettings__BaseAddress: 'https://cdn.contentful.com'
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
+    DD_TRACE_DEBUG: 'true'
     Datadog__Metrics__Port: '5003'
     IdentityServer__ConsentsScope: '@island.is/auth/consents'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
     IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
+    LOG_LEVEL: 'info'
     MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     NODE_OPTIONS: '--max-old-space-size=1843'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
@@ -153,6 +158,8 @@ identity-server:
           paths:
             - '/'
   namespace: 'identity-server'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -183,6 +190,8 @@ identity-server:
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
     IdentityServer__SigningCertificate__Passphrase: '/k8s/identity-server/SigningCertificatePassphrase'
     PersistenceSettings__AccessTokenManagementSettings__ClientSecret: '/k8s/identity-server/ClientSecret'
+    Redaction__UserIdentifiers__Key: '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY'
+    Redaction__UserIdentifiers__KeyId: '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID'
     Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList'
   securityContext:
     allowPrivilegeEscalation: false
@@ -210,6 +219,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://identity-server.staging01.devland.is","https://innskra.island.is"]'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -224,7 +234,7 @@ services-auth-admin-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/backend/liveness'
+      path: '/backend/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -247,6 +257,8 @@ services-auth-admin-api:
           paths:
             - '/backend'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -275,6 +287,7 @@ services-auth-delegation-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -299,7 +312,7 @@ services-auth-delegation-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -321,6 +334,8 @@ services-auth-delegation-api:
           paths:
             - '/'
   namespace: 'identity-server-delegation'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -353,10 +368,12 @@ services-auth-ids-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     SERVERSIDE_FEATURES_ON: ''
+    USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -378,7 +395,7 @@ services-auth-ids-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -428,6 +445,8 @@ services-auth-ids-api:
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -458,6 +477,7 @@ services-auth-personal-representative:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -469,7 +489,7 @@ services-auth-personal-representative:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -491,6 +511,8 @@ services-auth-personal-representative:
           paths:
             - '/'
   namespace: 'personal-representative'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -517,6 +539,7 @@ services-auth-personal-representative-public:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -528,7 +551,7 @@ services-auth-personal-representative-public:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -558,6 +581,8 @@ services-auth-personal-representative-public:
           paths:
             - '/'
   namespace: 'personal-representative'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -585,6 +610,7 @@ services-auth-public-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=345'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     SERVERSIDE_FEATURES_ON: ''
@@ -613,7 +639,7 @@ services-auth-public-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -639,6 +665,8 @@ services-auth-public-api:
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2

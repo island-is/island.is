@@ -55,6 +55,9 @@ const previewLinkHandler = {
 
     return `${DEV_WEB_BASE_URL}/${middlePart}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
+  lifeEventPage: (entry: EntryProps<KeyValueMap>) => {
+    return `${DEV_WEB_BASE_URL}/lifsvidburdir/${entry.fields.slug[DEFAULT_LOCALE]}`
+  },
   news: (entry: EntryProps<KeyValueMap>) => {
     return `${DEV_WEB_BASE_URL}/frett/${entry.fields.slug[DEFAULT_LOCALE]}`
   },

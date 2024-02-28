@@ -71,6 +71,7 @@ const GenericLicensesQuery = gql`
         }
         rawData
         metadata {
+          licenseId
           licenseNumber
           expired
           expireDate

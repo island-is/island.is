@@ -1,6 +1,6 @@
-import * as color from './colors';
+import * as color from './colors'
 
-export const UNIT = 8;
+export const UNIT = 8
 
 const spacing = {
   0: UNIT * 0,
@@ -37,7 +37,7 @@ const spacing = {
   p3: 14,
   p4: 16,
   p5: 18,
-};
+}
 
 export const theme = {
   mode: 'light',
@@ -105,9 +105,9 @@ export const theme = {
   },
   color,
   grid: {
-    gutter: {desktop: 24, mobile: 12},
+    gutter: { desktop: 24, mobile: 12 },
   },
-};
+}
 
-export type Theme = typeof theme;
-export type Colors = keyof typeof color;
+export type Theme = typeof theme
+export type Colors = keyof typeof color

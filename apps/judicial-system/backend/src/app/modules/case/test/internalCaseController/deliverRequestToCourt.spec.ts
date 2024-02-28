@@ -1,7 +1,7 @@
 import format from 'date-fns/format'
 import { uuid } from 'uuidv4'
 
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseType,
   investigationCases,
@@ -94,8 +94,11 @@ describe('InternalCaseController - Deliver requst to court', () => {
           courtId,
           courtCaseNumber,
           CourtDocumentFolder.REQUEST_DOCUMENTS,
-          `Krafa um ${caseTypes[type]} ${format(now, 'yyyy-MM-dd HH:mm')}`,
-          `Krafa um ${caseTypes[type]} ${format(now, 'yyyy-MM-dd HH:mm')}.pdf`,
+          `Krafa um ${formatCaseType(type)} ${format(now, 'yyyy-MM-dd HH:mm')}`,
+          `Krafa um ${formatCaseType(type)} ${format(
+            now,
+            'yyyy-MM-dd HH:mm',
+          )}.pdf`,
           'application/pdf',
           pdf,
         )

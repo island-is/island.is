@@ -14,6 +14,7 @@ import { Application } from '@island.is/application/types'
 import { getSelectedIndividualName } from '../../../utils'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
+import { FILE_TYPES_ALLOWED } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -113,6 +114,7 @@ export const ChildrenPassportSubSection = (index: number) =>
             id: `${Routes.CHILDRENPASSPORT}[${index}].attachment`,
             title: supportingDocuments.labels.passport.uploadTitlePlaceholder,
             introduction: '',
+            uploadAccept: FILE_TYPES_ALLOWED,
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.passport.uploadTitlePlaceholder,

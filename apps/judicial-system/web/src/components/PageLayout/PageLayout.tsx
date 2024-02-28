@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -28,9 +28,9 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { stepValidationsType } from '../../utils/formHelper'
-import useSections from '../../utils/hooks/useSections'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -193,10 +193,6 @@ const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
 }) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
 
   return isLoading ? (
     <Skeleton />

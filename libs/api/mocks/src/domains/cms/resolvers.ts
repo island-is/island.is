@@ -62,9 +62,16 @@ export const resolvers: Resolvers = {
         (anchorPage) => anchorPage.slug === args.input.slug,
       ) || null,
 
-    getAnchorPagesInCategory: (parent, args) => {
-      return store.anchorPages.filter(
-        (anchorPage) => anchorPage.category?.slug === args.input.slug,
+    getLifeEvents: () => store.lifeEventsPages,
+
+    getLifeEventPage: (parent, args) =>
+      store.lifeEventsPages.find(
+        (lifeEventPage) => lifeEventPage.slug === args.input.slug,
+      ) || null,
+
+    getLifeEventsInCategory: (parent, args) => {
+      return store.lifeEventsPages.filter(
+        (lifeEventPage) => lifeEventPage.category?.slug === args.input.slug,
       )
     },
 

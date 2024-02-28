@@ -51,8 +51,7 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+            { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
@@ -106,8 +105,7 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+            { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
@@ -257,7 +255,20 @@ describe('getCasesQueryFilter', () => {
             ],
           },
           {
-            appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+            [Op.or]: [
+              {
+                appeal_state: [
+                  CaseAppealState.RECEIVED,
+                  CaseAppealState.COMPLETED,
+                ],
+              },
+              {
+                [Op.and]: [
+                  { appeal_state: [CaseAppealState.WITHDRAWN] },
+                  { appeal_received_by_court_date: { [Op.not]: null } },
+                ],
+              },
+            ],
           },
         ],
       })

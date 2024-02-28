@@ -47,6 +47,7 @@ export class ChildCustodyResolver {
     return this.service.getChildDetails(
       childCustody.nationalId ?? '0',
       childCustody.api,
+      childCustody.api === 'v3' ? childCustody.useFakeData : false,
     )
   }
 }

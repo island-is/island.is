@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  completedCaseStates,
+  isCompletedCase,
   isDefenceUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -14,17 +14,16 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  IndictmentCaseFilesList,
+  IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
+  useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import IndictmentsLawsBrokenAccordionItem, {
-  useIndictmentsLawsBroken,
-} from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
-import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 
 import { strings } from './IndictmentOverview.strings'
 
@@ -36,7 +35,7 @@ const IndictmentOverview = () => {
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
-  const caseIsClosed = completedCaseStates.includes(workingCase.state)
+  const caseIsClosed = isCompletedCase(workingCase.state)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),

@@ -14,10 +14,10 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
@@ -30,7 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
-export const formatInstitutionName = (name: string | undefined) => {
+export const formatInstitutionName = (name?: string | null) => {
   if (!name) return ''
 
   if (name.startsWith('Lögreglustjórinn')) {
@@ -120,7 +120,7 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
+      const courtClaim = workingCase.type && courtClaimPrefill[workingCase.type]
       const courtClaimText = courtClaim
         ? formatMessage(courtClaim.text, {
             ...(courtClaim.format?.accused && {
@@ -144,7 +144,7 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
             }),
             ...(courtClaim.format?.institution && {
               institution: formatInstitutionName(
-                workingCase.creatingProsecutor?.institution?.name,
+                workingCase.prosecutorsOffice?.name,
               ),
             }),
             ...(courtClaim.format?.live && {
@@ -213,7 +213,6 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'demands',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 demandsEM,
                 setDemandsEM,
@@ -258,7 +257,6 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'lawsBroken',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 lawsBrokenEM,
                 setLawsBrokenEM,
@@ -301,7 +299,6 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'legalBasis',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 legalBasisEM,
                 setLegalBasisEM,

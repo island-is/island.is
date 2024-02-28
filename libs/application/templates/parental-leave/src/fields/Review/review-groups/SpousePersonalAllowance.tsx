@@ -4,10 +4,11 @@ import {
   ReviewGroup,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { NO, YES, parentalLeaveFormMessages } from '../../..'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { NO, YES } from '../../../constants'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 
 export const SpousePersonalAllowance = ({
   application,
@@ -15,16 +16,18 @@ export const SpousePersonalAllowance = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [
-    { usePersonalAllowanceFromSpouse, spouseUseAsMuchAsPossible, spouseUsage },
-  ] = useStatefulAnswers(application)
+  const {
+    usePersonalAllowanceFromSpouse,
+    spouseUseAsMuchAsPossible,
+    spouseUsage,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('personalAllowanceFromSpouse')}
     >
-      <GridRow marginBottom={2}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <RadioValue
             label={formatMessage(
@@ -36,7 +39,10 @@ export const SpousePersonalAllowance = ({
 
         {usePersonalAllowanceFromSpouse === YES &&
           spouseUseAsMuchAsPossible === YES && (
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '5/12']}
+              paddingTop={[2, 2, 2, 0]}
+            >
               <RadioValue
                 label={formatMessage(
                   parentalLeaveFormMessages.reviewScreen
@@ -49,7 +55,10 @@ export const SpousePersonalAllowance = ({
 
         {usePersonalAllowanceFromSpouse === YES &&
           spouseUseAsMuchAsPossible === NO && (
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '5/12']}
+              paddingTop={[2, 2, 2, 0]}
+            >
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.personalAllowance.allowanceUsage,

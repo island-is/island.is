@@ -5,22 +5,24 @@ import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  IndictmentCaseFilesList,
+  IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
   Modal,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
-} from '@island.is/judicial-system-web/src/components'
-import IndictmentsLawsBrokenAccordionItem, {
   useIndictmentsLawsBroken,
-} from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
-import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+} from '@island.is/judicial-system-web/src/components'
+import {
+  CaseState,
+  CaseTransition,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as strings from './Overview.strings'

@@ -13,6 +13,7 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
+  requireMileage?: boolean | null
 }
 
 type VehicleValidationErrorMessage = {
@@ -25,8 +26,14 @@ export type VehiclesCurrentVehicleWithOperatorChangeChecks = {
   make?: string
   color?: string
   role?: string
+  requireMileage?: boolean | null
   isDebtLess?: boolean | null
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
+}
+
+export type CurrentVehiclesAndRecords = {
+  totalRecords: number
+  vehicles: VehiclesCurrentVehicle[]
 }
 
 export type OperatorField = {

@@ -13,7 +13,7 @@ export class PostBulkMailActionInput {
 
   @Field()
   @IsString()
-  action!: 'bookmark' | 'archive'
+  action!: 'bookmark' | 'archive' | 'read'
 
   @Field({
     description:

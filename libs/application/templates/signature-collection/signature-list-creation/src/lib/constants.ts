@@ -17,7 +17,7 @@ export type SubmitResponse = {
 }
 
 export enum ApiActions {
-  submitApplication = 'submitApplication',
+  submitApplication = 'createLists',
 }
 
 export const CountryAreas = [

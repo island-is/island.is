@@ -1,7 +1,7 @@
 import { Column, Columns, GridContainer, Text } from '@island.is/island-ui/core'
 
 interface Props {
-  text: string
+  text: React.ReactNode
 }
 const FinanceIntro = ({ text }: Props) => {
   return (

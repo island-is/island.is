@@ -157,7 +157,7 @@ Known users:
 
 ### Testing strategy
 
-This project uses two types of automated tests, unit tests and e2e tests. We use [Jest](https://jestjs.io/) to write unit tests against code like utility functions. If we need to test custom components in isolation, we use [React testing library](https://testing-library.com/docs/react-testing-library/intro/). Finally, to test entire screens in our project we use [Cypress](https://www.cypress.io/).
+This project uses two types of automated tests, unit tests and e2e tests. We use [Jest](https://jestjs.io/) to write unit tests against code like utility functions. If we need to test custom components in isolation, we use [React testing library](https://testing-library.com/docs/react-testing-library/intro/). Finally, to test entire screens in our project we use [Playwright](https://playwright.dev/).
 
 #### Running the tests
 
@@ -169,9 +169,7 @@ yarn test judicial-system-web
 
 ##### e2e tests
 
-```bash
-yarn nx e2e judicial-system-web-e2e --watch
-```
+The e2e test can be run within VSCode, from the "Testing" panel.
 
 ## Message Extraction from Contentful
 
@@ -228,6 +226,30 @@ You can serve this service locally by running:
 yarn start judicial-system-xrd-api
 ```
 
+## Robot API
+
+This service is for access through xRoad.
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-robot-api
+```
+
+## Digital Mailbox API
+
+This service is for access through xRoad.
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-digital-mailbox-api
+```
+
 ## Scheduler
 
 This service is for running scheduled tasks. Currently, archiving old cases is the only task.
@@ -276,7 +298,7 @@ Then you need to update the Helm charts. Add `SECRET_FEATURE` to `HIDDEN_FEATURE
 Then run the script
 
 ```
-./infra/scripts/generate-chart-values.sh judicial-system
+yarn charts
 ```
 
 You can now use the `FeatureContext` to hide `SECRET_FEATURE` in the UI.

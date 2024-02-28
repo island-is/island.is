@@ -10,7 +10,7 @@ There are a couple of guards available.
 - `IdsAuthGuard`: same as `IdsUserGuard` but does not verify the `nationalId` claim. Information from the JWT can be accessed using the CurrentAuth parameter decorator.
 - `ScopesGuard`: checks if the access token has required scopes. These can be configured using the Scopes decorator.
 
-You should generally add `IdsUserGuard` and `ScopesGuard` to endpoints that return user resources for the authenticated user. You can use `IdsAuthGuard` for endpoints that need to be available for clients authenticating with client credentials.
+You should generally add `IdsUserGuard` to endpoints that return user resources for the authenticated user and `IdsAuthGuard` for endpoints that need to be available for clients authenticating with client credentials. You should always use `ScopesGuard` and the `@Scopes` decorator to protect endpoints, without it the API would authorise all valid access tokens issued by IAS.
 
 ### Configuration
 
@@ -20,12 +20,22 @@ Import and configure the AuthModule, example:
 @Module({
   imports: [
     AuthModule.register({
-      audience: 'protected_resource',
-      issuer: 'https://localhost:6001',
+      issuer: 'https://localhost:6001'
     }),
 ```
 
-where `audience` is the name your resource was registered under in IdS and `issuer` the IdS url.
+where `issuer` is the IdS url.
+
+Some older APIs use `audience` for access control.Using `audience` is no longer recommended, instead use scopes to guard individual methods as shown in the sections below. Only use `audience` after consulting with the IDS team, in which case you can do it like this:
+
+```typescript
+@Module({
+  imports: [
+    AuthModule.register({
+      issuer: 'https://localhost:6001'
+      audience: '@island.is'
+    }),
+```
 
 ### Using in REST controller
 

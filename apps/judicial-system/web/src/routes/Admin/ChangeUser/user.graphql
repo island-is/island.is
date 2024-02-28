@@ -1,0 +1,22 @@
+query User($input: UserQueryInput!) {
+  user(input: $input) {
+    id
+    created
+    modified
+    name
+    nationalId
+    mobileNumber
+    role
+    title
+    email
+    institution {
+      id
+      created
+      modified
+      type
+      name
+      active
+    }
+    active
+  }
+}

@@ -5,12 +5,3 @@ export enum EventType {
   LOGIN_BYPASS = 'LOGIN_BYPASS',
   LOGIN_BYPASS_UNAUTHORIZED = 'LOGIN_BYPASS_UNAUTHORIZED',
 }
-
-export interface EventLog {
-  id: string
-  created: string
-  caseId?: string
-  eventType: EventType
-  nationalId?: string
-  userRole?: string
-}

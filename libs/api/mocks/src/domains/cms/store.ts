@@ -6,6 +6,7 @@ import {
   groupedMenu as createGroupedMenu,
   news,
   anchorPage,
+  lifeEventPage,
   articleGroup,
   articleSubgroup,
   genericPage,
@@ -53,6 +54,10 @@ export const store = createStore(() => {
     category: () => faker.random.arrayElement(articleCategories),
   })
 
+  const lifeEventsPages = lifeEventPage.list(6, {
+    category: () => faker.random.arrayElement(articleCategories),
+  })
+
   const frontpage = {
     ...createFrontpage(),
     ...{ namespace: { namespace: 'homepage', fields: '{}' } },
@@ -63,6 +68,7 @@ export const store = createStore(() => {
   return {
     frontpage,
     anchorPages,
+    lifeEventsPages,
     newsList,
     alertBanner,
     menu,

@@ -34,7 +34,7 @@ const FiskistofaFooter = ({
   const isMobile = width < theme.breakpoints.md
 
   return (
-    <footer aria-labelledby="fiskistofa-footer">
+    <footer>
       <Box className={styles.container}>
         <GridContainer className={styles.mainColumn}>
           <GridColumn>

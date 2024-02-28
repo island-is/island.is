@@ -40,7 +40,9 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "safer-buffer"
+    "safer-buffer",
+    "path-scurry",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

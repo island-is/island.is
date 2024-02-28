@@ -26,8 +26,8 @@ export class InternalCreateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
-  readonly prosecutorNationalId?: string
+  @ApiProperty()
+  readonly prosecutorNationalId!: string
 
   @IsNotEmpty()
   @IsString()

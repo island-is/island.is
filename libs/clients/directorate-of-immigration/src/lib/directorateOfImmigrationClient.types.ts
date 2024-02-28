@@ -34,6 +34,8 @@ export interface CitizenshipApplication {
   }[]
   countriesOfResidence: {
     countryId: string
+    dateFrom?: Date
+    dateTo?: Date
   }[]
   staysAbroad: {
     countryId: string
@@ -55,7 +57,7 @@ export interface CitizenshipApplication {
     subsistenceCertificateForTown: { filename: string; base64: string }[]
     certificateOfLegalResidenceHistory: { filename: string; base64: string }[]
     icelandicTestCertificate: { filename: string; base64: string }[]
-    criminalRecordList: {
+    criminalRecord: {
       filename: string
       base64: string
       countryId: string

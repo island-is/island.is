@@ -217,6 +217,7 @@ export const slices = gql`
     id
     title
     url
+    thumbnailImageUrl
   }
 
   fragment SectionWithImageFields on SectionWithImage {
@@ -226,8 +227,9 @@ export const slices = gql`
     image {
       ...ImageFields
     }
-    html {
+    content {
       ...HtmlFields
+      ...FaqListFields
     }
   }
 
@@ -605,27 +607,6 @@ export const slices = gql`
     }
   }
 
-  fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
-    id
-    title
-    lifeEventPageList {
-      id
-      title
-      shortTitle
-      slug
-      pageType
-      tinyThumbnail {
-        url
-        title
-      }
-      thumbnail {
-        url
-        title
-      }
-      intro
-    }
-  }
-
   fragment SidebarCardFields on SidebarCard {
     id
     title
@@ -686,8 +667,47 @@ export const slices = gql`
     __typename
     id
     dropdownLabel
+    alphabeticallyOrdered
     slices {
       ...OneColumnTextFields
+    }
+  }
+
+  fragment FeaturedEventsFields on FeaturedEvents {
+    __typename
+    id
+    namespace
+    noEventsFoundText {
+      ...HtmlFields
+    }
+    resolvedEventList {
+      total
+      items {
+        id
+        title
+        slug
+        startDate
+        time {
+          startTime
+          endTime
+        }
+        location {
+          streetAddress
+          floor
+          postalCode
+          useFreeText
+          freeText
+        }
+        thumbnailImage {
+          url
+          title
+          width
+          height
+        }
+        organization {
+          slug
+        }
+      }
     }
   }
 
@@ -805,12 +825,15 @@ export const slices = gql`
       stackId
     }
     sourceData
+    flipAxis
     xAxisKey
+    xAxisFormat
     xAxisValueType
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {
     __typename
+    chartNumberBoxId: id
     title
     numberBoxDescription
     sourceDataKey
@@ -835,7 +858,6 @@ export const slices = gql`
     ...ImageFields
     ...AssetFields
     ...EmbeddedVideoFields
-    ...SectionWithImageFields
     ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
@@ -854,7 +876,6 @@ export const slices = gql`
     ...StepperFields
     ...GraphCardFields
     ...AnchorPageListSliceFields
-    ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
     ...TableSliceFields
@@ -864,11 +885,13 @@ export const slices = gql`
     ...LatestEventsSliceFields
     ...ChartFields
     ...ChartNumberBoxFields
+    ...FeaturedEventsFields
   }
 
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+    ...SectionWithImageFields
     ...FeaturedSupportQNAsFields
   }
   ${processEntryFields}

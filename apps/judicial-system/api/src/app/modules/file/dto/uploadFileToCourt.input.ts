@@ -2,10 +2,8 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { UploadFileToCourt } from '@island.is/judicial-system/types'
-
 @InputType()
-export class UploadFileToCourtInput implements UploadFileToCourt {
+export class UploadFileToCourtInput {
   @Allow()
   @Field()
   readonly id!: string

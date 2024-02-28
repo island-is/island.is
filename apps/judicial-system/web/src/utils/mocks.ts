@@ -1,11 +1,14 @@
+import faker from 'faker'
+
+import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
   CaseAppealState,
+  CaseFile,
+  CaseFileCategory,
+  CaseFileState,
+  CaseOrigin,
   CaseState,
   CaseTransition,
-} from '@island.is/judicial-system/types'
-import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
-import {
-  CaseOrigin,
   CaseType,
   Gender,
   InstitutionType,
@@ -14,7 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { TransitionCaseMutation } from './hooks/useCase/mutations'
+import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
 
 export const mockCourt = {
   id: 'court_id',
@@ -72,7 +75,7 @@ export const mockPrisonUser = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -82,10 +85,10 @@ export const mockJudgeQuery = [
   },
 ]
 
-export const mockCourtOfAppealsQuery = [
+export const mockCourtOfAppealsJudgeQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -98,7 +101,7 @@ export const mockCourtOfAppealsQuery = [
 export const mockPrisonUserQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -111,7 +114,7 @@ export const mockPrisonUserQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -124,7 +127,7 @@ export const mockProsecutorQuery = [
 export const mockTransitonCaseMutation = (caseId: string) => [
   {
     request: {
-      query: TransitionCaseMutation,
+      query: TransitionCaseDocument,
       variables: {
         input: {
           id: caseId,
@@ -168,5 +171,53 @@ export const mockCase = (caseType: CaseType): Case => {
       },
     ],
     defendantWaivesRightToCounsel: false,
+  }
+}
+
+export const mockUser = (userRole: UserRole): User => {
+  return {
+    active: true,
+    created: '',
+    email: '',
+    id: '',
+    mobileNumber: '',
+    modified: '',
+    name: '',
+    nationalId: '',
+    title: '',
+    role: userRole,
+    institution: {
+      id: '',
+      created: '',
+      modified: '',
+      type:
+        // TODO: Add more institutions if we use more user roles
+        userRole === UserRole.PROSECUTOR
+          ? InstitutionType.PROSECUTORS_OFFICE
+          : InstitutionType.DISTRICT_COURT,
+      name: '',
+      active: true,
+    },
+  }
+}
+
+export const mockCaseFile = (category?: CaseFileCategory): CaseFile => {
+  return {
+    caseId: faker.datatype.uuid(),
+    category: category ?? CaseFileCategory.CASE_FILE,
+    chapter: null,
+    created: faker.date.past().toISOString(),
+    displayDate: faker.date.past().toISOString(),
+    id: faker.datatype.uuid(),
+    key: faker.lorem.paragraph(3).replace(' ', ''),
+    modified: faker.date.past().toISOString(),
+    name: faker.random.word(),
+    orderWithinChapter: null,
+    policeCaseNumber: '123123213',
+    policeFileId: '123123123',
+    size: 123,
+    state: CaseFileState.STORED_IN_RVG,
+    type: '??',
+    userGeneratedFilename: '',
   }
 }

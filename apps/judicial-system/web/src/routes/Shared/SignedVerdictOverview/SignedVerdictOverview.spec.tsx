@@ -1,9 +1,9 @@
 import { createIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CaseDecision,
+  CaseState,
   CaseType,
   InstitutionType,
   User,

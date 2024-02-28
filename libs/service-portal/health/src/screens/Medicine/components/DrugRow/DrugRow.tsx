@@ -1,14 +1,8 @@
-import { Table as T, Icon } from '@island.is/island-ui/core'
+import { Table as T, Icon, Hidden } from '@island.is/island-ui/core'
 import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 import { useState } from 'react'
 import { amountFormat } from '@island.is/service-portal/core'
-
-type DrugRowDrug = {
-  name?: string | null
-  strength?: string | null
-  totalPrice?: number | null
-  totalPaidIndividual?: number | null
-}
+import { DrugRowDrug } from '../../MedicineCalculator'
 
 type Props = {
   drug: DrugRowDrug
@@ -37,21 +31,27 @@ export const DrugRow: React.FC<Props> = ({
 
   return (
     <>
-      <T.Data>{drug.name}</T.Data>
-      <T.Data>{drug.strength}</T.Data>
-      <T.Data>
+      <T.Data text={{ variant: 'medium' }}>{drug.name}</T.Data>
+      <T.Data text={{ variant: 'medium' }}>{drug.strength}</T.Data>
+      <T.Data text={{ variant: 'medium' }}>
         <QuantityCounter
           quantity={quantity}
           handleDecrement={handleDecrement}
           handleIncrement={handleIncrement}
         />
       </T.Data>
-      <T.Data>{amountFormat(drug.totalPrice ?? 0)}</T.Data>
-      <T.Data>{amountFormat(drug.totalPaidIndividual ?? 0)}</T.Data>
-      <T.Data>
-        <button onClick={handleRemove}>
-          <Icon icon="trash" color="blue400" type="outline" size="small" />
-        </button>
+      <T.Data text={{ variant: 'medium' }}>
+        {amountFormat(drug.totalPrice ?? 0)}
+      </T.Data>
+      <T.Data text={{ variant: 'medium' }}>
+        {amountFormat(drug.totalPaidIndividual ?? 0)}
+      </T.Data>
+      <T.Data text={{ variant: 'medium' }} align="center">
+        <Hidden print>
+          <button onClick={handleRemove}>
+            <Icon icon="trash" color="blue400" type="outline" size="small" />
+          </button>
+        </Hidden>
       </T.Data>
     </>
   )

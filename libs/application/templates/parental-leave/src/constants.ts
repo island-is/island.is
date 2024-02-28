@@ -1,3 +1,5 @@
+import { DefaultEvents } from '@island.is/application/types'
+
 export const YES = 'yes'
 export const NO = 'no'
 export const MANUAL = 'manual'
@@ -17,6 +19,29 @@ export const NO_PRIVATE_PENSION_FUND = 'X000'
 export const NO_UNEMPLOYED_BENEFITS = 'B000'
 export const NO_MULTIPLE_BIRTHS = '1'
 export const MINIMUM_PERIOD_LENGTH = 14
+
+export enum PLEvents {
+  MODIFY = 'MODIFY',
+  CLOSED = 'CLOSED',
+  ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
+}
+
+export type Events =
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.EDIT }
+  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
+  | { type: 'CLOSED' } // Ex: Close application
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
+
+export enum Roles {
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
+  ORGINISATION_REVIEWER = 'vmst',
+}
 
 export enum UnEmployedBenefitTypes {
   vmst = 'Vinnumálastofnun (atvinnuleysisbætur)',
@@ -74,7 +99,6 @@ export enum States {
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
-  INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED = 'inReviewAdditionalDocumentsRequired',
 
   APPROVED = 'approved',
   CLOSED = 'closed',
@@ -90,20 +114,14 @@ export enum States {
   VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
-  RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',
-  RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
+  RESIDENCE_GRANT_APPLICATION = 'residenceGrantApplication',
+  RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
 }
 
 export enum AnswerValidationConstants {
   EMPLOYER = 'employer',
-  FILEUPLOAD = 'fileUpload',
-  PAYMENTS = 'payments',
-  OTHER_PARENT = 'otherParentObj',
-  OTHER_PARENT_EMAIL = 'otherParentEmail',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
-  // Check Multiple_Births
-  MULTIPLE_BIRTHS = 'multipleBirths',
   // When attempting to continue from the periods repeater main screen
   // this validator will get called to validate all of the periods
   VALIDATE_PERIODS = 'validatedPeriods',
@@ -111,7 +129,6 @@ export enum AnswerValidationConstants {
   // the repeater sends all the periods saved in 'periods'
   // to this validator, which will validate the latest one
   VALIDATE_LATEST_PERIOD = 'periods',
-  RESIDENCE_GRANT = 'residenceGrant',
   EMPLOYERS = 'employers',
 }
 
@@ -123,4 +140,9 @@ export enum FileType {
   DOCUMENTPERIOD = 'documentPeriod',
   EMPPER = 'empper',
   EMPLOYER = 'employer',
+}
+
+export enum Languages {
+  IS = 'IS',
+  EN = 'EN',
 }

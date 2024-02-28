@@ -6,7 +6,7 @@ export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
   path: AssetsPaths.AssetsRoot,
   icon: {
-    icon: 'home',
+    icon: 'homeWithCar',
   },
   children: [
     {
@@ -51,6 +51,27 @@ export const assetsNavigation: PortalNavigationItem = {
         {
           name: m.vehiclesHistory,
           path: AssetsPaths.AssetsVehiclesHistory,
+        },
+      ],
+    },
+    {
+      name: m.intellectualProperties,
+      path: AssetsPaths.AssetsIntellectualProperties,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesDesign,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesPatent,
         },
       ],
     },

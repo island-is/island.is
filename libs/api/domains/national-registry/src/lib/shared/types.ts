@@ -17,6 +17,13 @@ export enum Gender {
   UNKNOWN = 'unknown',
 }
 
+export enum NationalIdType {
+  NATIONAL_REGISTRY_NATIONAL_ID = 'national-registry-national-id',
+  SYSTEM_NATIONAL_ID = 'system-national-id',
+  DECEASED = 'deceased',
+  UNKNOWN = 'unknown',
+}
+
 export enum MaritalStatus {
   UNMARRIED = 'unmarried',
   MARRIED = 'married',
@@ -31,11 +38,13 @@ export enum MaritalStatus {
 }
 
 registerEnumType(Gender, { name: 'NationalRegistryGender' })
+registerEnumType(NationalIdType, { name: 'NationalRegistryNationalIdType' })
 registerEnumType(MaritalStatus, {
   name: 'NationalRegistryMaritalStatus',
 })
 export type PersonV3 = Person & {
   api: 'v3'
+  useFakeData?: boolean
   rawData?: EinstaklingurDTOAllt | null
 }
 
@@ -45,6 +54,7 @@ export type V1RawData = ISLEinstaklingur & {
 
 export type PersonV1 = Person & {
   api: 'v1'
+  useFakeData?: boolean
   rawData?: V1RawData
 }
 
@@ -52,10 +62,12 @@ export type SharedPerson = PersonV1 | PersonV3
 
 export type ChildCustodyV1 = ChildCustody & {
   api: 'v1'
+  useFakeData?: boolean
 }
 
 export type ChildCustodyV3 = ChildCustody & {
   api: 'v3'
+  useFakeData?: boolean
 }
 
 export type SharedChildCustody = ChildCustodyV1 | ChildCustodyV3

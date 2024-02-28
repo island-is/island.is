@@ -41,6 +41,26 @@ export const information = {
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
       },
+      findPlatePlaceholder: {
+        id: 'ta.cov.application:information.labels.pickVehicle.findPlatePlaceholder',
+        defaultMessage: 'Sláðu inn plötunúmer',
+        description: 'Pick vehicle find plate placeholder',
+      },
+      findButton: {
+        id: 'ta.cov.application:information.labels.pickVehicle.findButton',
+        defaultMessage: 'Leita',
+        description: 'Pick vehicle find button',
+      },
+      notFoundTitle: {
+        id: 'ta.cov.application:information.labels.pickVehicle.notFoundTitle',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
+        description: 'vehicle not found',
+      },
+      notFoundMessage: {
+        id: 'ta.cov.application:information.labels.pickVehicle.notFoundMessage',
+        defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
+        description: 'vehicle not found',
+      },
       hasErrorTitle: {
         id: 'ta.cov.application:information.labels.pickVehicle.hasErrorTitle',
         defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
@@ -218,6 +238,39 @@ export const information = {
         id: 'ta.cov.application:information.labels.mainOperator.radioFieldLabel',
         defaultMessage: 'Skráðir umráðamenn',
         description: 'Main operator radio field label',
+      },
+    }),
+    vehicle: defineMessages({
+      sectionTitle: {
+        id: 'ta.cov.application:information.labels.vehicle.sectionTitle',
+        defaultMessage: 'Ökutæki',
+        description: 'Vehicle section title',
+      },
+      title: {
+        id: 'ta.cov.application:information.labels.vehicle.title',
+        defaultMessage: 'Ökutæki',
+        description: 'Vehicle title',
+      },
+      description: {
+        id: 'ta.cov.application:information.labels.vehicle.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Vehicle description',
+      },
+      plate: {
+        id: 'ta.cov.application:information.labels.vehicle.plate',
+        defaultMessage: 'Númer ökutækis',
+        description: 'Vehicle plate number label',
+      },
+      type: {
+        id: 'ta.cov.application:information.labels.vehicle.type',
+        defaultMessage: 'Tegund ökutækis',
+        description: 'Vehicle type label',
+      },
+      mileage: {
+        id: 'ta.cov.application:information.labels.vehicle.mileage',
+        defaultMessage: 'Kílómetrar',
+        description: 'Mileage for vehicle label',
       },
     }),
   },

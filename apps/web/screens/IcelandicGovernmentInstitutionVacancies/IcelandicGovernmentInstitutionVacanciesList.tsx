@@ -13,6 +13,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Hyphen,
   Inline,
   Pagination,
   Stack,
@@ -560,7 +561,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                               </Text>
                               <Box className="rs_read">
                                 <Text color="blue400" variant="h3">
-                                  {vacancy.title}
+                                  <Hyphen>{vacancy.title ?? ''}</Hyphen>
                                 </Text>
                               </Box>
                               <Box className="rs_read">

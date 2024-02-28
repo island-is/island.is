@@ -46,8 +46,7 @@ function canProsecutionUserAccessCase(
 
   // Check prosecutors office access
   if (
-    theCase.creatingProsecutor?.institutionId &&
-    user.institution?.id !== theCase.creatingProsecutor?.institutionId &&
+    user.institution?.id !== theCase.prosecutorsOfficeId &&
     (forUpdate ||
       user.institution?.id !== theCase.sharedWithProsecutorsOfficeId)
   ) {
@@ -131,9 +130,18 @@ function canAppealsCourtUserAccessCase(theCase: Case): boolean {
   // Check appeal state access
   if (
     !theCase.appealState ||
-    ![CaseAppealState.RECEIVED, CaseAppealState.COMPLETED].includes(
-      theCase.appealState,
-    )
+    ![
+      CaseAppealState.RECEIVED,
+      CaseAppealState.COMPLETED,
+      CaseAppealState.WITHDRAWN,
+    ].includes(theCase.appealState)
+  ) {
+    return false
+  }
+
+  if (
+    theCase.appealState === CaseAppealState.WITHDRAWN &&
+    !theCase.appealReceivedByCourtDate
   ) {
     return false
   }

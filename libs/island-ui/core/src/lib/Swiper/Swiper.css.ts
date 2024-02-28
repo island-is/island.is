@@ -43,3 +43,5 @@ export const slide = style({
   marginTop: theme.spacing[2],
   marginBottom: theme.spacing[2],
 })
+
+export const noMargin = style({ marginLeft: 0 })

@@ -32,6 +32,7 @@ TODO
 *.todo
 .env
 .env.*
+!.env.podman
 .envrc.*
 .nvmrc
 .node-version
@@ -41,6 +42,7 @@ TODO
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+*.code-workspace
 
 # misc
 /.sass-cache
@@ -71,7 +73,7 @@ libs/localization/messages.json
 
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
 /generated_files.tar.gz
-openapi.yaml
+*openapi.yaml
 api.graphql
 schema.d.ts
 schema.tsx
@@ -98,3 +100,5 @@ apps/**/index.html
 .next
 
 .nx/
+
+

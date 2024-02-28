@@ -122,7 +122,7 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
   const { width } = useWindowSize()
 
   return (
-    <footer aria-labelledby="heilbrigdisstofnun-austurlands-footer">
+    <footer>
       <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>

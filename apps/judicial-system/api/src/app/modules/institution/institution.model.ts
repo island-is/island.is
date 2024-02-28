@@ -9,20 +9,20 @@ export class Institution {
   @Field(() => ID)
   readonly id!: string
 
-  @Field()
-  readonly created!: string
+  @Field({ nullable: true })
+  readonly created?: string
 
-  @Field()
-  readonly modified!: string
+  @Field({ nullable: true })
+  readonly modified?: string
 
-  @Field(() => InstitutionType)
-  readonly type!: InstitutionType
+  @Field(() => InstitutionType, { nullable: true })
+  readonly type?: InstitutionType
 
-  @Field()
-  readonly name!: string
+  @Field({ nullable: true })
+  readonly name?: string
 
-  @Field()
-  readonly active!: boolean
+  @Field({ nullable: true })
+  readonly active?: boolean
 
   @Field({ nullable: true })
   readonly defaultCourtId?: string

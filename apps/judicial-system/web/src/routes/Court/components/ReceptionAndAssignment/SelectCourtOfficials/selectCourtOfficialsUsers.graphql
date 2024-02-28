@@ -1,0 +1,32 @@
+query SelectCourtOfficialsUsers {
+  users(
+    input: {
+      role: [
+        DISTRICT_COURT_REGISTRAR
+        DISTRICT_COURT_ASSISTANT
+        DISTRICT_COURT_JUDGE
+      ]
+    }
+  ) {
+    id
+    name
+    created
+    modified
+    nationalId
+    mobileNumber
+    role
+    title
+    email
+    institution {
+      id
+      created
+      modified
+      type
+      name
+      active
+    }
+    active
+    latestLogin
+    loginCount
+  }
+}

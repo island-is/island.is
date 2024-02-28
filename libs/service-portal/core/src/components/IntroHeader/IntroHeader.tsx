@@ -21,6 +21,7 @@ interface Props {
   span?: GridColumnProps['span']
   narrow?: boolean
   loading?: boolean
+  fixedImgWidth?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
   introComponent?: ReactNode
   tooltipVariant?: 'light' | 'dark' | 'white'
@@ -59,13 +60,14 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
         )}
         {props.children}
       </GridColumn>
-      {!isMobile && organization && (
+      {!isMobile && props.serviceProviderSlug && organization && (
         <GridColumn span={'2/8'} offset={'1/8'}>
           <InstitutionPanel
             loading={loading}
             linkHref={organization.link ?? ''}
             img={organization.logo?.url ?? ''}
             imgContainerDisplay={isMobile ? 'block' : 'flex'}
+            fixedImageWidth={props.fixedImgWidth}
             tooltipText={props.serviceProviderTooltip}
             backgroundColor={props.backgroundColor}
             tooltipVariant={props.tooltipVariant ?? 'light'}

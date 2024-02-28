@@ -22,7 +22,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
-          pageType
         }
         ... on News {
           id
@@ -204,7 +203,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             width
             height
           }
-          pageType
         }
 
         ... on News {
@@ -290,6 +288,14 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title
           slug
+          category {
+            id
+            title
+            slug
+          }
+          group {
+            title
+          }
         }
         ... on ManualChapterItem {
           id

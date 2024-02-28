@@ -23,14 +23,14 @@ const defaultBottomIcons = [
     imageHeight: '74px',
     imageSrc:
       'https://images.ctfassets.net/8k0h54kbe6bj/3g66Km5MwmHHyunZJi8J1g/fcad4851f7027eda367766058513ca76/shh30.svg',
-    imageAlt: '',
+    imageAlt: 'ssh-30',
   },
   {
     imageWidth: '28px',
     imageHeight: '64px',
     imageSrc:
       'https://images.ctfassets.net/8k0h54kbe6bj/4G9gpPv9GYfrhlL3BJ9dRQ/9ec3829abe8c7a4c55b9ee58d3d57536/Signwiki.png',
-    imageAlt: '',
+    imageAlt: 'sign-wiki',
     linkHref: 'https://is.signwiki.org/index.php/Fors%C3%AD%C3%B0a',
     linkTarget: '_blank',
   },
@@ -39,7 +39,7 @@ const defaultBottomIcons = [
     imageHeight: '40px',
     imageSrc:
       'https://images.ctfassets.net/8k0h54kbe6bj/1JuoLu1WST48ZUeQKqQXdr/0fcf8b9186d46157d47c609ec25235fa/Facebook-Logo-Dark_1.png',
-    imageAlt: '',
+    imageAlt: 'facebook-logo',
     linkHref:
       'https://www.facebook.com/people/Samskiptami%C3%B0st%C3%B6%C3%B0-heyrnarlausra-og-heyrnarskertra/100071230093497',
     linkTarget: '_blank',
@@ -49,7 +49,7 @@ const defaultBottomIcons = [
     imageHeight: '33px',
     imageSrc:
       'https://images.ctfassets.net/8k0h54kbe6bj/3gLnhPbOCSNlZ2Uv0W46r4/51296f30167591987acc58db3e406b33/youtube_logo_SHH__1_.png',
-    imageAlt: '',
+    imageAlt: 'youtube-logo',
     linkHref: 'https://www.youtube.com/channel/UC8D3i7ZRjiMLM3vmQZQPsUw',
     linkTarget: '_blank',
   },
@@ -71,7 +71,7 @@ const ShhFooter = ({ title, namespace, footerItems }: ShhFooterProps) => {
   return (
     <>
       <Box className={styles.topBorder} />
-      <footer className={styles.container} aria-labelledby="shh-footer">
+      <footer className={styles.container}>
         <GridContainer>
           <Inline flexWrap="wrap" alignY="center">
             <img

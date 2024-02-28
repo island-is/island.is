@@ -6,9 +6,9 @@ import { displayFirstPlusRemaining } from '@island.is/judicial-system/formatters
 import * as styles from './CourtCaseNumber.css'
 
 interface Props {
-  courtCaseNumber?: string
-  policeCaseNumbers: string[]
-  appealCaseNumber?: string
+  courtCaseNumber?: string | null
+  policeCaseNumbers?: string[] | null
+  appealCaseNumber?: string | null
 }
 
 const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = ({
@@ -41,13 +41,13 @@ const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = ({
         as="span"
         variant="small"
         color="dark400"
-        title={policeCaseNumbers.join(', ')}
+        title={policeCaseNumbers?.join(', ')}
       >
         {displayFirstPlusRemaining(policeCaseNumbers)}
       </Text>
     </>
   ) : (
-    <Text as="span" title={policeCaseNumbers.join(', ')}>
+    <Text as="span" title={policeCaseNumbers?.join(', ')}>
       {displayFirstPlusRemaining(policeCaseNumbers) || '-'}
     </Text>
   )

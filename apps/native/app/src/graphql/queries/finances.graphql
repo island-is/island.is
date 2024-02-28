@@ -1,0 +1,13 @@
+query GetFinanceStatus {
+  getFinanceStatus
+  getDebtStatus {
+    myDebtStatus {
+      approvedSchedule
+      possibleToSchedule
+    }
+  }
+}
+
+query GetFinanceStatusDetails($input: GetFinancialOverviewInput!) {
+  getFinanceStatusDetails(input: $input)
+}

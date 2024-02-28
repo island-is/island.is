@@ -61,6 +61,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/s/haskolanam',
+        destination: '/haskolanam',
+        permanent: true,
+      },
+      {
+        source: '/en/o/university-studies',
+        destination: '/university-studies',
+        permanent: true,
+      },
+      {
         source: '/stofnanir/:slug',
         destination: '/s/:slug',
         permanent: true,
@@ -78,6 +88,26 @@ const nextConfig = {
       {
         source: '/en/manuals',
         destination: '/en/search?q=*&type=webManual',
+        permanent: true,
+      },
+      {
+        source: '/en/o/icelandic-health-insurance',
+        destination: '/en/o/iceland-health',
+        permanent: true,
+      },
+      {
+        source: '/en/help/icelandic-health-insurance',
+        destination: '/en/help/iceland-health',
+        permanent: true,
+      },
+      {
+        source: '/en/o/icelandic-health-insurance/:subSlug*',
+        destination: '/en/o/iceland-health/:subSlug*',
+        permanent: true,
+      },
+      {
+        source: '/en/help/icelandic-health-insurance/:subSlug*',
+        destination: '/en/help/iceland-health/:subSlug*',
         permanent: true,
       },
     ]

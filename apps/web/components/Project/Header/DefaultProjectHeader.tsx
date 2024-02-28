@@ -1,16 +1,18 @@
 import React, { useMemo, useRef } from 'react'
+
 import {
   Box,
-  Text,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
   Link,
+  Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
+
 import * as styles from './DefaultProjectHeader.css'
 
 const getTextBackgroundColor = (projectPage: ProjectPage) => {
@@ -99,7 +101,7 @@ export const DefaultProjectHeader = ({
               objectFit: headerImageObjectFit,
             }}
             src={projectPage.defaultHeaderImage?.url}
-            alt="header"
+            alt=""
           />
         </Box>
       )}

@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import {
   IntroHeader,
+  LinkButton,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
@@ -26,22 +27,6 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
           serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
           serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
-        <LinkV2
-          href={formatMessage(
-            messages.readAboutPaymentParticipationSystemsLink,
-          )}
-        >
-          <Button
-            size="small"
-            variant="text"
-            icon="open"
-            iconType="outline"
-            as="span"
-            unfocusable
-          >
-            {formatMessage(messages.readAboutPaymentParticipationSystems)}
-          </Button>
-        </LinkV2>
       </Box>
 
       <TabNavigation
@@ -55,6 +40,10 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
 
       <Box paddingY={4} background="white">
         {children}
+        <LinkButton
+          to={formatMessage(messages.readAboutPaymentParticipationSystemsLink)}
+          text={formatMessage(messages.readAboutPaymentParticipationSystems)}
+        />
       </Box>
     </Box>
   )

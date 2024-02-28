@@ -3,17 +3,17 @@ import parseISO from 'date-fns/parseISO'
 
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export function getDurationDate(
-  state: CaseState,
+  state?: CaseState | null,
   validToDate?: string | null,
   initialRulingDate?: string | null,
   rulingDate?: string | null,
 ): string | null {
   if (
-    [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
+    (state && [CaseState.REJECTED, CaseState.DISMISSED].includes(state)) ||
     !validToDate
   ) {
     return null

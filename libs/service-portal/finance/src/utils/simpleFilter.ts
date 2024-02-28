@@ -2,6 +2,7 @@ import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTr
 import { DocumentsListItemTypes } from '../components/DocumentScreen/DocumentScreen.types'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
+import { GetChargeTypesDetailsByYearQuery } from '../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 
 export const transactionFilter = (
   data: CustomerRecordsDetails[],
@@ -29,6 +30,32 @@ export const transactionFilter = (
         item.createDate &&
         format(new Date(item.createDate), dateFormat.is).includes(query))
     ) {
+      return true
+    }
+    return false
+  })
+  return filteredArray
+}
+
+export const transactionPeriodFilter = (
+  data: GetChargeTypesDetailsByYearQuery['getChargeTypesDetailsByYear']['chargeType'],
+  query: string,
+  select: string[],
+) => {
+  if (!query && !select.length) return data
+
+  const q = query.toLowerCase()
+  const filteredArray = data.filter((item) => {
+    const foundInQuery = query
+      ? item.name.toLowerCase().includes(q) ||
+        item.chargeItemSubjects.toLowerCase().includes(q) ||
+        item.chargeItemSubjectDescription.includes(q) ||
+        format(new Date(item.lastMovementDate), dateFormat.is).includes(q)
+      : true
+
+    const foundInSelect = select.length ? select.includes(item.name) : true
+
+    if (foundInQuery && foundInSelect) {
       return true
     }
     return false

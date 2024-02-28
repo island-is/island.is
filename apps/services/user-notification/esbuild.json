@@ -45,7 +45,10 @@
     "jsonwebtoken",
     "buffer-equal-constant-time",
     "safer-buffer",
-    "jwa"
+    "jwa",
+    "sequelize",
+    "path-scurry",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

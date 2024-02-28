@@ -2,14 +2,16 @@ import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
 
-import { PREDEFINED_LINE_DASH_PATTERNS } from '../constants'
 import {
   ChartComponentType,
   ChartComponentWithRenderProps,
   ChartData,
   ChartType,
 } from '../types'
-import { formatValueForPresentation } from '../utils'
+import {
+  formatPercentageForPresentation,
+  formatValueForPresentation,
+} from '../utils'
 
 interface ChartComponentRendererProps {
   component: ChartComponentWithRenderProps
@@ -28,11 +30,10 @@ export const renderChartComponent = ({
     return (
       <Bar
         {...commonProps}
-        fill={component.fill}
+        fill={component.patternId ?? component.color}
         radius={component.shouldRenderBorderRadius ? [6, 6, 0, 0] : undefined}
         barSize={25}
         stackId={component.stackId?.toString()}
-        stroke={component.color}
         color={component.color}
       />
     )
@@ -42,15 +43,19 @@ export const renderChartComponent = ({
         {...commonProps}
         stroke={component.color}
         strokeWidth={3}
-        strokeDasharray={
-          component.renderIndex === 0
-            ? undefined // First line is solid
-            : PREDEFINED_LINE_DASH_PATTERNS[component.renderIndex - 1] // The rest gets a pattern
-        }
+        strokeDasharray={component.pattern}
       />
     )
   } else if (component.type === ChartComponentType.area) {
-    return <Area {...commonProps} fill={component.fill} fillOpacity={1} />
+    return (
+      <Area
+        {...commonProps}
+        fill={component.patternId ?? component.color}
+        fillOpacity={1}
+        stroke="rgba(0,0,0,0)"
+        color={component.color}
+      />
+    )
   }
 
   return null
@@ -78,9 +83,10 @@ const renderCustomizedLabel = ({
   outerRadius,
   innerRadius,
   payload,
+  percent,
   activeLocale,
 }: CustomLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 1.6
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.8
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
@@ -88,17 +94,17 @@ const renderCustomizedLabel = ({
 
   return (
     <g>
-      <text
-        x={x}
-        y={y}
-        fill="#00003C"
-        textAnchor={x > outerRadius ? 'middle' : 'end'}
-        dominantBaseline="central"
-        fontSize="12px"
-        fontWeight={500}
-      >
-        {`${value ? formatValueForPresentation(activeLocale, value) : ''}`}{' '}
-        {payload?.name?.toLowerCase()}
+      <text x={x} y={y} fill="#00003C" textAnchor="middle" fontSize="14px">
+        <tspan x={x} dy="0" fontWeight={500}>{`${
+          percent
+            ? formatPercentageForPresentation(percent)
+            : value
+            ? formatValueForPresentation(activeLocale, value)
+            : ''
+        }`}</tspan>
+        <tspan x={x} dy="1.2em">
+          {payload?.name}
+        </tspan>
       </text>
     </g>
   )
@@ -109,7 +115,11 @@ export const renderPieChartComponents = (
   data: ChartData,
   activeLocale: Locale,
 ) => {
-  const pieData = data?.[0]?.statisticsForDate
+  const pieData = data?.[0]?.statisticsForDate ?? []
+  const total = pieData.reduce(
+    (total, { value }) => total + (value ? value : 0),
+    0,
+  )
 
   return (
     <Pie
@@ -124,24 +134,17 @@ export const renderPieChartComponents = (
         renderCustomizedLabel({
           ...props,
           activeLocale,
+          total,
         })
       }
       startAngle={90}
       endAngle={360 + 90}
     >
-      <Label
-        fontSize={24}
-        fontWeight="bold"
-        value={pieData.reduce(
-          (total, { value }) => total + (value ? value : 0),
-          0,
-        )}
-        position="center"
-      />
+      <Label fontSize={24} fontWeight="bold" value={total} position="center" />
       {components.map((c, i) => (
         <Cell
           key={i}
-          fill={c.fill}
+          fill={c.patternId ?? c.color}
           name={c.label}
           stroke="white"
           strokeWidth={3}

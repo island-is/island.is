@@ -4,7 +4,7 @@ import parseISO from 'date-fns/parseISO'
 
 import { Text } from '@island.is/island-ui/core'
 
-const CreatedDate = ({ created }: { created: string | null }) => {
+const CreatedDate = ({ created }: { created?: string | null }) => {
   if (!created) {
     return null
   }

@@ -14,9 +14,9 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseOrigin,
   CaseType,
@@ -30,9 +30,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
+  useDefendants,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
@@ -56,22 +56,22 @@ export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
-      setWorkingCase((theCase: Case) => {
-        if (!theCase.defendants) {
-          return theCase
+      setWorkingCase((prevWorkingCase: Case) => {
+        if (!prevWorkingCase.defendants) {
+          return prevWorkingCase
         }
-        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+        const indexOfDefendantToUpdate = prevWorkingCase.defendants.findIndex(
           (defendant) => defendant.id === update.defendantId,
         )
 
-        const newDefendants = [...theCase.defendants]
+        const newDefendants = [...prevWorkingCase.defendants]
 
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
         } as TDefendant
 
-        return { ...theCase, defendants: newDefendants }
+        return { ...prevWorkingCase, defendants: newDefendants }
       })
     },
     [setWorkingCase],
@@ -205,7 +205,6 @@ export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                         'leadInvestigator',
                         evt.target.value,
                         ['empty'],
-                        workingCase,
                         setWorkingCase,
                         leadInvestigatorErrorMessage,
                         setLeadInvestigatorErrorMessage,

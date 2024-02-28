@@ -1,42 +1,42 @@
-import {ApolloLink} from '@apollo/client';
-import perf, {FirebasePerformanceTypes} from '@react-native-firebase/perf';
-import {OperationDefinitionNode} from 'graphql';
+import { ApolloLink } from '@apollo/client'
+import perf, { FirebasePerformanceTypes } from '@react-native-firebase/perf'
+import { OperationDefinitionNode } from 'graphql'
 
 export const performanceLink = new ApolloLink((operation, forward) => {
   if (!forward) {
-    return null;
+    return null
   }
 
-  const perfObj = perf();
+  const perfObj = perf()
 
   if (!perfObj || !perfObj.isPerformanceCollectionEnabled) {
-    return forward(operation);
+    return forward(operation)
   }
 
-  let trace: FirebasePerformanceTypes.Trace | undefined;
+  let trace: FirebasePerformanceTypes.Trace | undefined
 
   try {
     const operationType = (
       operation?.query?.definitions?.[0] as OperationDefinitionNode
-    )?.operation;
+    )?.operation
 
     if (operationType !== 'subscription' && operation) {
-      let traceName = `${operation.operationName ?? ''}`.trim();
+      let traceName = `${operation.operationName ?? ''}`.trim()
 
       if (traceName.charAt(0) === '_') {
-        traceName = traceName.substr(1, traceName.length - 1).trim();
+        traceName = traceName.substr(1, traceName.length - 1).trim()
       }
 
       if (traceName.charAt(traceName.length - 1) === '_') {
-        traceName = traceName.substr(0, traceName.length - 1).trim();
+        traceName = traceName.substr(0, traceName.length - 1).trim()
       }
 
       if (traceName.length === 0 || traceName === '_') {
-        traceName = 'unknown';
+        traceName = 'unknown'
       }
 
-      trace = perfObj.newTrace(`graphql:${traceName.substr(0, 24)}`);
-      trace.start();
+      trace = perfObj.newTrace(`graphql:${traceName.substr(0, 24)}`)
+      trace.start()
     }
   } catch (e) {
     // Swallow?
@@ -44,9 +44,9 @@ export const performanceLink = new ApolloLink((operation, forward) => {
 
   return forward(operation).map((result: any) => {
     if (trace !== undefined) {
-      trace.stop();
-      trace = undefined;
+      trace.stop()
+      trace = undefined
     }
-    return result;
-  });
-});
+    return result
+  })
+})

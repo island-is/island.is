@@ -129,6 +129,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:title',
     defaultMessage: 'Vinnuvélar',
   },
+  workMachineSingular: {
+    id: 'sp.work-machines:work-machine-singular',
+    defaultMessage: 'Vinnuvél',
+  },
   workMachinesDescription: {
     id: 'sp.work-machines:description',
     defaultMessage:
@@ -188,6 +192,10 @@ export const vehicleMessage = defineMessages({
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
     defaultMessage: 'Hreinsa síu',
+  },
+  vehiclesRequireMileageRegistration: {
+    id: 'sp.vehicles:vehicles-require-mileage-registration',
+    defaultMessage: 'Skráningarskyld ökutæki',
   },
   notFound: {
     id: 'sp.vehicles:not-found',
@@ -844,15 +852,319 @@ export const vehicleMessage = defineMessages({
   },
   mileageTagText: {
     id: 'sp.vehicles:mileage-tag-text',
-    defaultMessage: 'Skrá kílómetrastöðu',
+    defaultMessage: 'Kílómetragjald',
   },
   mileageAlreadyRegistered: {
     id: 'sp.vehicles:mileage-already-registered',
     defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð.',
   },
+  mileageYouAreNotAllowed: {
+    id: 'sp.vehicles:mileage-you-are-not-allowed',
+    defaultMessage:
+      'Eingöngu aðaleigandi eða umráðamaður yfir bifreið lánastofnunnar geta skráð kílómetrastöðu.',
+  },
   mileageExtLink: {
     id: 'sp.vehicles:mileage-external-link',
     defaultMessage: '/kilometragjald-a-vetnis-og-rafmagnsbila',
+  },
+})
+
+export const ipMessages = defineMessages({
+  basePatent: {
+    id: 'sp.intellectual-property:base-patent',
+    defaultMessage: 'Grunneinkaleyfi',
+  },
+  title: {
+    id: 'sp.intellectual-property:title',
+    defaultMessage: 'Hugverkaréttindin mín',
+  },
+  description: {
+    id: 'sp.intellectual-property:description',
+    defaultMessage: 'Lýsing',
+  },
+  baseInfo: {
+    id: 'sp.intellectual-property:base-info',
+    defaultMessage: 'Grunnupplýsingar',
+  },
+  text: {
+    id: 'sp.intellectual-property:text',
+    defaultMessage: 'Texti',
+  },
+  image: {
+    id: 'sp.intellectual-property:image',
+    defaultMessage: 'Mynd',
+  },
+  images: {
+    id: 'sp.intellectual-property:images',
+    defaultMessage: 'Myndir',
+  },
+  audio: {
+    id: 'sp.intellectual-property:audio',
+    defaultMessage: 'Hljóðskrá',
+  },
+  video: {
+    id: 'sp.intellectual-property:video',
+    defaultMessage: 'Myndband',
+  },
+  animation: {
+    id: 'sp.intellectual-property:animation',
+    defaultMessage: 'Hreyfimynd',
+  },
+  name: {
+    id: 'sp.intellectual-property:name',
+    defaultMessage: 'Nafn',
+  },
+  type: {
+    id: 'sp.intellectual-property:type',
+    defaultMessage: 'Tegund',
+  },
+  make: {
+    id: 'sp.intellectual-property:make',
+    defaultMessage: 'Gerð',
+  },
+  internationalApplication: {
+    id: 'sp.intellectual-property:international-application',
+    defaultMessage: 'Alþjóðleg umsókn',
+  },
+  internationalRegistration: {
+    id: 'sp.intellectual-property:international-registration',
+    defaultMessage: 'Alþjóðleg skráning',
+  },
+  internationalRegistrationDate: {
+    id: 'sp.intellectual-property:international-registration-date',
+    defaultMessage: 'Alþjóðlegur skráningardagur',
+  },
+  publish: {
+    id: 'sp.intellectual-property:publish',
+    defaultMessage: 'Birting',
+  },
+  publishDate: {
+    id: 'sp.intellectual-property:publish-date',
+    defaultMessage: 'Birtingardagur',
+  },
+  translationSubmitted: {
+    id: 'sp.intellectual-property:translation-submitted',
+    defaultMessage: 'Þýðing lögð inn',
+  },
+  provisionPublishedInGazette: {
+    id: 'sp.intellectual-property:provision-published-in-gazette',
+    defaultMessage: 'Veiting birt',
+  },
+  registration: {
+    id: 'sp.intellectual-property:registration',
+    defaultMessage: 'Skráning',
+  },
+  registrationNumber: {
+    id: 'sp.intellectual-property:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+  },
+  registrationDate: {
+    id: 'sp.intellectual-property:registration-date',
+    defaultMessage: 'Skráningardagur',
+  },
+  expires: {
+    id: 'sp.intellectual-property:expires',
+    defaultMessage: 'Gildir til',
+  },
+  application: {
+    id: 'sp.intellectual-property:application',
+    defaultMessage: 'Umsókn',
+  },
+  epApplication: {
+    id: 'sp.intellectual-property:ep-application',
+    defaultMessage: 'EP umsókn',
+  },
+  applicationNumber: {
+    id: 'sp.intellectual-property:application-number',
+    defaultMessage: 'Umsóknarnúmer',
+  },
+  epApplicationNumber: {
+    id: 'sp.intellectual-property:ep-application-number',
+    defaultMessage: 'EP umsóknarnúmer',
+  },
+  maxValidDate: {
+    id: 'sp.intellectual-property:max-valid-date',
+    defaultMessage: 'Hámarksgilditími',
+  },
+  maxValidObjectionDate: {
+    id: 'sp.intellectual-property:max-valid-objection-date',
+    defaultMessage: 'Andmælafrestur',
+  },
+  productsAndServices: {
+    id: 'sp.intellectual-property:products-and-services',
+    defaultMessage: 'Vörur og þjónusta',
+  },
+  imageCategories: {
+    id: 'sp.intellectual-property:image-categories',
+    defaultMessage: 'Myndflokkar',
+  },
+  colorMark: {
+    id: 'sp.intellectual-property:color-mark',
+    defaultMessage: 'Merkið er í lit',
+  },
+  owner: {
+    id: 'sp.intellectual-property:owner',
+    defaultMessage: 'Eigandi',
+  },
+  owners: {
+    id: 'sp.intellectual-property:owners',
+    defaultMessage: 'Eigendur',
+  },
+  address: {
+    id: 'sp.intellectual-property:address',
+    defaultMessage: 'Heimilisfang',
+  },
+  agent: {
+    id: 'sp.intellectual-property:agent',
+    defaultMessage: 'Umboðsmaður',
+  },
+  agents: {
+    id: 'sp.intellectual-property:agents',
+    defaultMessage: 'Umboðsmenn',
+  },
+  designer: {
+    id: 'sp.intellectual-property:designer',
+    defaultMessage: 'Hönnuður',
+  },
+  designers: {
+    id: 'sp.intellectual-property:designers',
+    defaultMessage: 'Hönnuðir',
+  },
+  inventor: {
+    id: 'sp.intellectual-property:inventor',
+    defaultMessage: 'Uppfinningamaður',
+  },
+  inventors: {
+    id: 'sp.intellectual-property:inventors',
+    defaultMessage: 'Uppfinningamenn',
+  },
+  category: {
+    id: 'sp.intellectual-property:category',
+    defaultMessage: 'Flokkur',
+  },
+  classification: {
+    id: 'sp.intellectual-property:classification',
+    defaultMessage: 'Flokkun',
+  },
+  information: {
+    id: 'sp.intellectual-property:information',
+    defaultMessage: 'Upplýsingar',
+  },
+  registrationCertificate: {
+    id: 'sp.intellectual-property:registration-certificate',
+    defaultMessage: 'Skráningarskírteini',
+  },
+  timeline: {
+    id: 'sp.intellectual-property:timeline',
+    defaultMessage: 'Tímalína',
+  },
+  invalidation: {
+    id: 'sp.intellectual-property:invalidation',
+    defaultMessage: 'Ógilding',
+  },
+  mortgage: {
+    id: 'sp.intellectual-property:mortgage',
+    defaultMessage: 'Veðsetning',
+  },
+  usagePermit: {
+    id: 'sp.intellectual-property:usage-permit',
+    defaultMessage: 'Nytjaleyfi',
+  },
+  revocation: {
+    id: 'sp.intellectual-property:revocation',
+    defaultMessage: 'Afturköllun',
+  },
+  otherInformation: {
+    id: 'sp.intellectual-property:other-information',
+    defaultMessage: 'Aðrar upplýsingar',
+  },
+  applicationDate: {
+    id: 'sp.intellectual-property:application-date',
+    defaultMessage: 'Umsóknardagur',
+  },
+  epApplicationDate: {
+    id: 'sp.intellectual-property:ep-application-date',
+    defaultMessage: 'EP umsóknardagur',
+  },
+  epApplicationDateShort: {
+    id: 'sp.intellectual-property:ep-application-date-short',
+    defaultMessage: 'EP ums.dags',
+  },
+  applicationDatePublishedAsAvailable: {
+    id: 'sp.intellectual-property:application-date-published-as-available',
+    defaultMessage: 'Umsókn birt',
+  },
+  epApplicationDatePublishedAsAvailable: {
+    id: 'sp.intellectual-property:ep-application-date-published-as-available',
+    defaultMessage: 'EP veiting',
+  },
+  epApplicationDatePublishedAsAvailableShort: {
+    id: 'sp.intellectual-property:ep-application-date-published-as-available-short',
+    defaultMessage: 'EP veitt.dags',
+  },
+  applicationRegistrationDate: {
+    id: 'sp.intellectual-property:application-registration-date',
+    defaultMessage: 'Dags. veitingar',
+  },
+  applicationRegistration: {
+    id: 'sp.intellectual-property:application-registration',
+    defaultMessage: 'Veiting',
+  },
+  titleInEnglish: {
+    id: 'sp.intellectual-property:title-in-english',
+    defaultMessage: 'Titill á ensku',
+  },
+  originalPatentLanguage: {
+    id: 'sp.intellectual-property:original-patent-language',
+    defaultMessage: 'Tungumál veitts einkaleyfis',
+  },
+  patentNumber: {
+    id: 'sp.intellectual-property:patent-number',
+    defaultMessage: 'Einkaleyfisnúmer',
+  },
+  medicineTitle: {
+    id: 'sp.intellectual-property:medicine-title',
+    defaultMessage: 'Heiti lyfs',
+  },
+  medicineForChildren: {
+    id: 'sp.intellectual-property:medicine-for-children',
+    defaultMessage: 'Lyf fyrir börn',
+  },
+  marketingAuthorization: {
+    id: 'sp.intellectual-property:marketing-authorization',
+    defaultMessage: 'Markaðsleyfi',
+  },
+  marketingAuthorizationNumber: {
+    id: 'sp.intellectual-property:marketing-authorization-number',
+    defaultMessage: 'Númer íslensks markaðsleyfis',
+  },
+  foreignMarketingAuthorizationNumber: {
+    id: 'sp.intellectual-property:foreign-marketing-authorization-number',
+    defaultMessage: 'Númer erlends markaðsleyfis',
+  },
+  epoInfoLink: {
+    id: 'sp.intellectual-property:epo-info-link',
+    defaultMessage: 'Upplýsingar hjá EPO',
+  },
+  priority: {
+    id: 'sp.intellectual-property:priority',
+    defaultMessage: 'Forgangsréttur',
+  },
+  pctNumber: {
+    id: 'sp.intellectual-property:pct-number',
+    defaultMessage: 'PCT númer',
+  },
+  pctDate: {
+    id: 'sp.intellectual-property:pct-date',
+    defaultMessage: 'PCT dagsetning',
+  },
+  supplementaryProtection: {
+    id: 'sp.intellectual-property:supplementary-protection',
+    defaultMessage: 'Viðbótarvernd',
+  },
+  spcNumber: {
+    id: 'sp.intellectual-property:spc-number',
+    defaultMessage: 'SPC númer',
   },
 })
 
@@ -884,6 +1196,10 @@ export const urls = defineMessages({
   hideName: {
     id: 'sp.vehicles:url-hide-private-name',
     defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
+  },
+  recycleCar: {
+    id: 'sp.vehicles:url-recycle-car',
+    defaultMessage: 'http://island.is/umsoknir/skilavottord',
   },
   instructorApplication: {
     id: 'sp.vehicles:url-instructor-application',

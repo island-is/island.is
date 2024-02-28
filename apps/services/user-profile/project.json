@@ -52,6 +52,13 @@
         "buildTarget": "services-user-profile:build"
       }
     },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-user-profile:build",
+        "args": ["--job", "worker"]
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {

@@ -4,6 +4,8 @@ import {
   buildForm,
   buildSubmitField,
   buildSection,
+  buildMultiField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -14,14 +16,32 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
+import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
-  title: m.applicationName,
+  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
+    buildSection({
+      id: 'intro',
+      title: m.intro,
+      children: [
+        buildMultiField({
+          id: 'intro',
+          title: m.introTitle,
+          description: m.introDescription,
+          children: [
+            buildDescriptionField({
+              id: 'introText',
+              title: '',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'approveExternalData',
       title: m.dataCollection,
@@ -46,14 +66,24 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
+              provider: UserProfileApi,
+              title: m.userProfileProviderTitle,
+              subTitle: m.userProfileProviderSubtitle,
+            }),
+            buildDataProviderItem({
               provider: NationalRegistryUserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
+              provider: OwnerRequirementsApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: CurrentCollectionApi,
+              title: '',
+              subTitle: '',
             }),
           ],
         }),

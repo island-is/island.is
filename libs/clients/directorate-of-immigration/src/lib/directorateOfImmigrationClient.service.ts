@@ -130,6 +130,8 @@ export class DirectorateOfImmigrationClient {
           addressCity: application.address,
           countryOfResidence: application.countriesOfResidence.map((x) => ({
             countryId: parseInt(x.countryId),
+            dateFrom: x.dateFrom,
+            dateTo: x.dateTo,
           })),
         },
         residenceAbroads: application.staysAbroad.map((x) => ({
@@ -228,7 +230,7 @@ export class DirectorateOfImmigrationClient {
       },
       {
         attachmentType: AttachmentType.CriminalRecord,
-        fileList: application.supportingDocuments.criminalRecordList || [],
+        fileList: application.supportingDocuments.criminalRecord || [],
       },
     ]
     for (let j = 0; j < attachmentList.length; j++) {
@@ -269,6 +271,7 @@ export class DirectorateOfImmigrationClient {
         auth,
       ).apiApplicationCitizenshipChildCompletePost({
         applicationCitizenshipChildCompleteNewModel: {
+          parentApplicationId: applicationId,
           applicant: {
             icelandicIDNO: childInfo.nationalId,
             givenName: childInfo.givenName,

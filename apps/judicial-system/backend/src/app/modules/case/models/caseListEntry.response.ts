@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { Institution } from '../../institution'
 import { User } from '../../user'
 
 export class CaseListEntry {
@@ -70,26 +71,14 @@ export class CaseListEntry {
   @ApiPropertyOptional()
   accusedPostponedAppealDate?: Date
 
-  @ApiPropertyOptional()
-  judgeId?: string
-
   @ApiPropertyOptional({ type: () => User })
   judge?: User
-
-  @ApiPropertyOptional()
-  prosecutorId?: string
 
   @ApiPropertyOptional({ type: () => User })
   prosecutor?: User
 
-  @ApiPropertyOptional()
-  registrarId?: string
-
   @ApiPropertyOptional({ type: () => User })
   registrar?: User
-
-  @ApiPropertyOptional()
-  creatingProsecutorId?: string
 
   @ApiPropertyOptional({ type: () => User })
   creatingProsecutor?: User
@@ -105,4 +94,7 @@ export class CaseListEntry {
 
   @ApiPropertyOptional()
   appealRulingDecision?: CaseAppealRulingDecision
+
+  @ApiPropertyOptional()
+  prosecutorsOffice?: Institution
 }

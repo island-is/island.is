@@ -3,11 +3,11 @@ import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import {
   Box,
-  CategoryCard,
   SkeletonLoader,
   AlertMessage,
   Bullet,
   BulletList,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { PlateOwnership } from '../../shared'
 import { information } from '../../lib/messages'
@@ -86,24 +86,19 @@ export const PlateSelectField: FC<
         ) : (
           <Box>
             {selectedPlate && (
-              <CategoryCard
-                colorScheme={disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={disabled ? 'red' : 'blue'}
                 heading={selectedPlate.regno || ''}
                 text=""
-                tags={[
-                  {
-                    label: formatMessage(
-                      information.labels.pickPlate.expiresTag,
-                      {
-                        date: formatDateFns(
-                          new Date(selectedPlate.endDate),
-                          'do MMM yyyy',
-                        ),
-                      },
-                    ),
-                    disabled: true,
-                  },
-                ]}
+                focused={true}
+                tag={{
+                  label: formatMessage(
+                    information.labels.pickPlate.expiresTag,
+                    {
+                      date: formatDateFns(new Date(selectedPlate.endDate)),
+                    },
+                  ),
+                }}
               />
             )}
             {selectedPlate && disabled && (

@@ -6,10 +6,14 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { format as formatNationalId } from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+import { AllDebts, ApplicationDebts } from '../../types'
 
 export const debts = buildSection({
   id: 'debts',
@@ -52,6 +56,10 @@ export const debts = buildSection({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
                     required: true,
@@ -59,7 +67,6 @@ export const debts = buildSection({
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
                 sumField: 'balance',
               },
             ),
@@ -86,28 +93,12 @@ export const debts = buildSection({
               id: 'debts.publicCharges.total',
               title: '',
             }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'debts.publicCharges.data',
-                component: 'ReportFieldsRepeater',
-              },
-              {
-                fields: [
-                  {
-                    title: m.amount.defaultMessage,
-                    id: 'publicChargesAmount',
-                    width: 'full',
-                    required: true,
-                    currency: true,
-                  },
-                ],
-                repeaterButtonText:
-                  m.publicChargesRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.publicChargeHeader.defaultMessage,
-                sumField: 'publicChargesAmount',
-              },
-            ),
+            buildTextField({
+              title: m.amount.defaultMessage,
+              id: 'debts.publicCharges',
+              width: 'half',
+              variant: 'currency',
+            }),
           ],
         }),
       ],
@@ -129,6 +120,37 @@ export const debts = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estateDebtsCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) => {
+                  const allDebts = (
+                    answers.debts as unknown as ApplicationDebts
+                  ).domesticAndForeignDebts.data
+                  return (
+                    allDebts.map((debt: AllDebts) => ({
+                      title: debt.creditorName,
+                      description: [
+                        `${m.nationalId.defaultMessage}: ${formatNationalId(
+                          debt.nationalId ?? '',
+                        )}`,
+                        `${m.debtsLoanIdentity.defaultMessage}: ${
+                          debt.loanIdentity ?? ''
+                        }`,
+                        `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                          debt.balance ?? '0',
+                        )}`,
+                      ],
+                    })) ?? []
+                  )
+                },
+              },
+            ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',
@@ -150,13 +172,37 @@ export const debts = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'chargesCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) => {
+                  const publicCharges = (
+                    answers.debts as unknown as ApplicationDebts
+                  ).publicCharges
+                  return publicCharges
+                    ? [
+                        {
+                          title: m.publicChargesTitle.defaultMessage,
+                          description: [`${formatCurrency(publicCharges)}`],
+                        },
+                      ]
+                    : []
+                },
+              },
+            ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(getValueViaPath(answers, 'debts.publicCharges.total')),
-                ),
+              value: ({ answers }) => {
+                const value =
+                  getValueViaPath<string>(answers, 'debts.publicCharges') || '0'
+                return formatCurrency(value)
+              },
             }),
             buildDividerField({}),
             buildCustomField({

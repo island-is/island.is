@@ -24,6 +24,7 @@ export function generateAidOrNutrition(
     iso: data.iso,
     name: data.name,
     maxUnitRefund: data.maxUnitRefund ?? undefined,
+    maxMonthlyAmount: data.maxMonthlyAmount ?? undefined,
     refund: {
       type: data.refund.type,
       value: data.refund.value,

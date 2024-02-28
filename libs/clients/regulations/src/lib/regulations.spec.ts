@@ -87,7 +87,7 @@ const getNestModule = async (condition: ExpectedResult) => {
     ],
   }).compile()
 
-  return moduleRef.get<RegulationsService>(RegulationsService)
+  return moduleRef.resolve<RegulationsService>(RegulationsService)
 }
 
 describe('getRegulation', () => {

@@ -56,14 +56,14 @@ const ShareCase: React.FC<React.PropsWithChildren<Props>> = ({
               }
               options={prosecutorsOffices
                 .map((prosecutorsOffice) => ({
-                  label: prosecutorsOffice.name,
+                  label: prosecutorsOffice.name ?? '',
                   value: prosecutorsOffice.id,
                 }))
                 .filter((t) => t.value !== user?.institution?.id)}
               value={
                 workingCase.sharedWithProsecutorsOffice
                   ? {
-                      label: workingCase.sharedWithProsecutorsOffice.name,
+                      label: workingCase.sharedWithProsecutorsOffice.name ?? '',
                       value: workingCase.sharedWithProsecutorsOffice.id,
                     }
                   : selectedSharingInstitutionId

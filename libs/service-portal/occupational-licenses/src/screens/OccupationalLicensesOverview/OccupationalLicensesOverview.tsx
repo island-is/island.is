@@ -98,14 +98,19 @@ const OccupationalLicensesOverview = () => {
             <AlertMessage type="info" message={formatMessage(om.noLicenses)} />
           ) : (
             data?.occupationalLicenses?.items.map((license, index) => {
+              const isEducation =
+                license.__typename === 'OccupationalLicensesEducationalLicense'
               return (
                 <LicenceActionCard
                   key={index}
-                  type={license.profession}
+                  type={
+                    isEducation
+                      ? license.profession
+                      : `${license.profession} - ${license.type}`
+                  }
                   validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
                   url={generateUrl(
-                    license.__typename ===
-                      'OccupationalLicensesEducationalLicense'
+                    isEducation
                       ? OccupationalLicensesPaths.OccupationalLicensesEducationDetail
                       : OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
                     license.id,

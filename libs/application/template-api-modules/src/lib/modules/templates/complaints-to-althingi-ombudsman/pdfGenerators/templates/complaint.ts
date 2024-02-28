@@ -81,6 +81,18 @@ export async function generateComplaintPdf(application: Application) {
     )
     doc.moveDown()
   }
+  addSubheader('Kvörtunin varðar', doc)
+  addValue(
+    `${
+      answers.complaintType === OmbudsmanComplaintTypeEnum.DECISION
+        ? 'Kvörtunin varðar ákvörðun eða úrskurð stjórnvalds'
+        : 'Kvörtunin varðar málsmeðferð eða aðra athöfn stjórnvalds'
+    }`,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.NORMAL_LINE_GAP,
+  )
+
   addSubheader('Kvörtunin beinist að', doc)
   addValue(
     `${
@@ -108,20 +120,16 @@ export async function generateComplaintPdf(application: Application) {
     PdfConstants.NORMAL_LINE_GAP,
   )
 
-  addSubheader('Kvörtunin varðar', doc)
+  addSubheader('Lýsing', doc)
   addValue(
-    `${
-      answers.complaintType === OmbudsmanComplaintTypeEnum.DECISION
-        ? 'Kvörtunin varðar ákvörðun eða úrskurð stjórnvalds'
-        : 'Kvörtunin varðar málsmeðferð eða aðra athöfn stjórnvalds'
-    }`,
+    answers.complaintDescription.complaintDescription ?? '',
     doc,
     PdfConstants.NORMAL_FONT,
     PdfConstants.NORMAL_LINE_GAP,
   )
 
-  if (answers.complaintType === OmbudsmanComplaintTypeEnum.DECISION) {
-    addSubheader('Dagsetning ákvörðunar', doc)
+  if (answers.complaintDescription.decisionDate) {
+    addSubheader('Dagsetning', doc)
     addValue(
       answers.complaintDescription.decisionDate ?? '',
       doc,
@@ -145,6 +153,24 @@ export async function generateComplaintPdf(application: Application) {
     PdfConstants.NORMAL_FONT,
     PdfConstants.NORMAL_LINE_GAP,
   )
+
+  addSubheader('Leitað áður til Umboðsmanns Alþingis', doc)
+  addValue(
+    `${answers.previousOmbudsmanComplaint.Answer === YES ? 'Já' : 'Nei'}`,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.NORMAL_LINE_GAP,
+  )
+
+  if (answers.previousOmbudsmanComplaint.Answer === YES) {
+    addSubheader('Lýsing', doc)
+    addValue(
+      `${answers.previousOmbudsmanComplaint.moreInfo}`,
+      doc,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.NORMAL_LINE_GAP,
+    )
+  }
 
   addSubheader('Rökstuðningur kvörtunar og önnur fylgiskjöl', doc)
   if (

@@ -1,5 +1,7 @@
 import React, { FC, ReactNode, useContext } from 'react'
-import { FooterItem } from '@island.is/web/graphql/schema'
+import { BLOCKS } from '@contentful/rich-text-types'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
@@ -12,12 +14,11 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
-import { BLOCKS } from '@contentful/rich-text-types'
-import { webRichText } from '@island.is/web/utils/richText'
+import { FooterItem } from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './SyslumennFooter.css'
 

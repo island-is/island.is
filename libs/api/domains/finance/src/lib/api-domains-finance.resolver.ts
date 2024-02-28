@@ -233,7 +233,9 @@ export class FinanceResolver {
   @Query(() => AssessmentYears)
   @Audit()
   async getAssessmentYears(@CurrentUser() user: User) {
-    return this.financeServiceV2.getAssessmentYears(user)
+    return this.financeServiceV2.getAssessmentYears(user, {
+      nationalId: user.nationalId,
+    })
   }
 
   @Query(() => ChargeTypesByYear, { nullable: true })
@@ -242,7 +244,10 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetChargeTypesByYearInput,
   ) {
-    return this.financeServiceV2.getChargeTypesByYear(user, input.year)
+    return this.financeServiceV2.getChargeTypesByYear(user, {
+      nationalId: user.nationalId,
+      assessmentYear: input.year,
+    })
   }
 
   @Query(() => FinanceChargeTypeDetails)
@@ -251,11 +256,11 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetChargeTypesDetailsByYearInput,
   ) {
-    return this.financeServiceV2.getChargeTypesDetailsByYear(
-      user,
-      input.year,
-      input.typeId,
-    )
+    return this.financeServiceV2.getChargeTypesDetailsByYear(user, {
+      nationalId: user.nationalId,
+      assessmentYear: input.year,
+      chargeTypeID: input.typeId,
+    })
   }
 
   @Query(() => ChargeItemSubjectsByYear)
@@ -264,12 +269,12 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetChargeItemSubjectsByYearInput,
   ) {
-    return this.financeServiceV2.getChargeItemSubjectsByYear(
-      user,
-      input.year,
-      input.typeId,
-      input.nextKey,
-    )
+    return this.financeServiceV2.getChargeItemSubjectsByYear(user, {
+      nationalId: user.nationalId,
+      assessmentYear: input.year,
+      chargeTypeID: input.typeId,
+      nextKey: input.nextKey,
+    })
   }
 
   @Query(() => ChargeTypePeriodSubject)
@@ -278,12 +283,12 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetChargeTypePeriodSubjectInput,
   ) {
-    return this.financeServiceV2.getChargeTypePeriodSubject(
-      user,
-      input.year,
-      input.typeId,
-      input.subject,
-      input.period,
-    )
+    return this.financeServiceV2.getChargeTypePeriodSubject(user, {
+      nationalId: user.nationalId,
+      assessmentYear: input.year,
+      chargeTypeID: input.typeId,
+      chargeItemSubject: input.subject,
+      period: input.period,
+    })
   }
 }

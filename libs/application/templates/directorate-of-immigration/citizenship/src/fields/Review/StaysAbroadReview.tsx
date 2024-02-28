@@ -54,7 +54,7 @@ export const StaysAbroadReview: FC<Props> = ({
           answers?.staysAbroad?.selectedAbroadCountries &&
           answers?.staysAbroad?.selectedAbroadCountries?.length > 0 ? (
             answers?.staysAbroad?.selectedAbroadCountries
-              ?.filter((x) => !x.wasRemoved)
+              ?.filter((x) => x.wasRemoved === 'false')
               ?.map((country) => {
                 const countryInfo = countryOptions.filter(
                   (z) => z.id?.toString() === country.countryId,
