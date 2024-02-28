@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ContentTypeProps } from 'contentful-management'
+import { ContentTypeProps, EntryProps } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
   CombinedLinkActions,
@@ -21,6 +21,7 @@ const LinkGroupLinkField = () => {
     useState<ContentTypeProps>()
   const [projectSubpageContentType, setprojectSubpageContentType] =
     useState<ContentTypeProps>()
+  const [parentProject, setParentProject] = useState<EntryProps>()
 
   useEffect(() => {
     const unregister = sdk.field.onValueChanged((items) => {
@@ -53,6 +54,7 @@ const LinkGroupLinkField = () => {
             setParentItemId(response.items[0].sys.id)
             setContentType(contentType)
             setContentTypeId(contentTypeId)
+            setParentProject(response.items[0])
           }
         })
     }
@@ -92,6 +94,7 @@ const LinkGroupLinkField = () => {
         },
       }
     }
+
     try {
       const entry = await cma.entry.create(
         {
@@ -103,11 +106,30 @@ const LinkGroupLinkField = () => {
           fields: fields,
         },
       )
+
       props.onCreated(entry)
       sdk.navigator.openEntry(entry.sys.id, { slideIn: true })
+
+      await cma.entry
+        .get({
+          contentTypeId: parentProject.sys.id,
+          entryId: parentProject.sys.id,
+        })
+        .then((data) => {
+          data.fields.projectSubpages['is-IS'].push({
+            sys: {
+              id: entry.sys.id,
+              linkType: 'Entry',
+              type: 'Link',
+            },
+          })
+          cma.entry.update({ entryId: data.sys.id }, data)
+        })
     } catch (error) {
       console.error('Error creating entry:', error)
     }
+
+    //console.log(bla)
   }
 
   const handleLinkExisting = (props) => {

@@ -2,7 +2,14 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import GraphQLJSON from 'graphql-type-json'
 import { CacheField } from '@island.is/nest/graphql'
 
-import { IProjectPage } from '../generated/contentfulTypes'
+import {
+  ILink,
+  ILinkFields,
+  ILinkGroup,
+  IProjectPage,
+  IProjectSubpage,
+  IProjectSubpageFields,
+} from '../generated/contentfulTypes'
 import {
   mapDocument,
   safelyMapSliceUnion,
@@ -12,7 +19,7 @@ import { GenericTag, mapGenericTag } from './genericTag.model'
 import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
 import { mapStepper, Stepper } from './stepper.model'
 import { mapImage, Image } from './image.model'
-import { LinkGroup, mapLinkGroup } from './linkGroup.model'
+import { ILinkGroupModel, LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { Link, mapLink } from './link.model'
 import { mapNamespace, Namespace } from './namespace.model'
@@ -111,45 +118,128 @@ export class ProjectPage {
   alertBanner?: AlertBanner
 }
 
-export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
-  id: sys.id,
-  title: fields.title ?? '',
-  slug: fields.slug ?? '',
-  theme: fields.theme ?? 'default',
-  sidebar: fields.sidebar ?? false,
-  sidebarLinks: (fields.sidebarLinks ?? [])
-    .map(mapLinkGroup)
-    .filter((link) => Boolean(link.primaryLink)),
-  secondarySidebar: fields.secondarySidebar
-    ? mapLinkGroup(fields.secondarySidebar)
-    : null,
-  subtitle: fields.subtitle ?? '',
-  intro: fields.intro ?? '',
-  content: fields.content
-    ? mapDocument(fields.content, sys.id + ':content')
-    : [],
-  stepper: fields.stepper ? mapStepper(fields.stepper) : null,
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
-  bottomSlices: (fields.bottomSlices ?? [])
-    .map(safelyMapSliceUnion)
-    .filter(Boolean),
-  newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
-  projectSubpages: (fields.projectSubpages ?? [])
-    .filter((p) => p.fields?.title)
-    .map(mapProjectSubpage),
-  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-  defaultHeaderImage: fields.defaultHeaderImage
-    ? mapImage(fields.defaultHeaderImage)
-    : null,
-  defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
-  featuredDescription: fields.featuredDescription ?? '',
-  footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
-  footerConfig: fields.footerConfig,
-  backLink: fields.backLink ? mapLink(fields.backLink) : null,
-  contentIsFullWidth: fields.contentIsFullWidth ?? false,
-  namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
-  themeProperties: mapProjectPageThemeProperties(fields),
-  alertBanner: fields.alertBanner
-    ? mapAlertBanner(fields.alertBanner)
-    : undefined,
-})
+export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
+  const { sys, fields } = projectPage
+  let hasFrontpageLink = false
+  const filteredItems: ILinkGroupModel[] = fields.sidebarLinks ?? []
+  // .filter(
+  //   (linkGroup) => {
+  //     const linkGroupContentType =
+  //       linkGroup.fields.primaryLink.sys.contentType.sys.id
+
+  //     if (!fields.sidebarFrontpageLink && linkGroupContentType === 'link') {
+  //       const linkFields = linkGroup.fields.primaryLink.fields as ILinkFields
+  //       const linkUrl = linkFields.url.split('/')
+  //       if (linkUrl.at(-1) === projectPage.fields.slug) {
+  //         hasFrontpageLink = true
+  //       }
+  //     }
+  //     if (linkGroupContentType !== 'projectSubpage') {
+  //       return true
+  //     }
+
+  //     // if (
+  //     //   fieldssss.slug.substring(fieldssss.slug.lastIndexOf('/') + 1) ===
+  //     //   projectPage.fields.slug
+  //     // ) {
+  //     // }
+
+  //     return fields.projectSubpages?.some((subpage) => {
+  //       return subpage.sys.id === linkGroup.fields.primaryLink?.sys.id
+  //     })
+  //   },
+  // )
+
+  console.log({ filteredItems })
+  if (hasFrontpageLink) {
+    filteredItems.unshift({
+      sys: {
+        ...projectPage.sys,
+        contentType: {
+          sys: {
+            id: 'linkGroup',
+            linkType: 'ContentType',
+            type: 'Link',
+          },
+        },
+      },
+
+      fields: {
+        primaryLink: {
+          ...projectPage,
+          sys: {
+            ...projectPage.sys,
+            contentType: {
+              sys: {
+                id: 'link',
+                linkType: 'ContentType',
+                type: 'Link',
+              },
+            },
+          },
+          fields: { text: 'test', url: 'testUrl' },
+        },
+      },
+    })
+    //console.log({ linkGroupPrimaryLinkFields })
+  }
+
+  for (const item of filteredItems) {
+    item.fields.childrenLinks =
+      item.fields.childrenLinks?.filter((childLink) => {
+        if (childLink.sys.contentType.sys.id !== 'projectSubpage') {
+          return true
+        }
+        return fields.projectSubpages?.some(
+          (subpage) => subpage.sys.id === childLink.sys.id,
+        )
+      }) ?? []
+  }
+
+  return {
+    id: sys.id,
+    title: fields.title ?? '',
+    slug: fields.slug ?? '',
+    theme: fields.theme ?? 'default',
+    sidebar: fields.sidebar ?? false,
+    sidebarLinks: filteredItems
+      .map((linkGroup) =>
+        mapLinkGroup({ ...linkGroup, entryAbove: projectPage }),
+      )
+      .filter((link) => Boolean(link.primaryLink)),
+    secondarySidebar: fields.secondarySidebar
+      ? mapLinkGroup(fields.secondarySidebar)
+      : null,
+    subtitle: fields.subtitle ?? '',
+    intro: fields.intro ?? '',
+    content: fields.content
+      ? mapDocument(fields.content, sys.id + ':content')
+      : [],
+    stepper: fields.stepper ? mapStepper(fields.stepper) : null,
+    slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+    bottomSlices: (fields.bottomSlices ?? [])
+      .map(safelyMapSliceUnion)
+      .filter(Boolean),
+    newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+    projectSubpages: (fields.projectSubpages ?? [])
+      .filter((p) => p.fields?.title)
+      .map(mapProjectSubpage),
+    featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+    defaultHeaderImage: fields.defaultHeaderImage
+      ? mapImage(fields.defaultHeaderImage)
+      : null,
+    defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
+    featuredDescription: fields.featuredDescription ?? '',
+    footerItems: fields.footerItems
+      ? fields.footerItems.map(mapFooterItem)
+      : [],
+    footerConfig: fields.footerConfig,
+    backLink: fields.backLink ? mapLink(fields.backLink) : null,
+    contentIsFullWidth: fields.contentIsFullWidth ?? false,
+    namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
+    themeProperties: mapProjectPageThemeProperties(fields),
+    alertBanner: fields.alertBanner
+      ? mapAlertBanner(fields.alertBanner)
+      : undefined,
+  }
+}
