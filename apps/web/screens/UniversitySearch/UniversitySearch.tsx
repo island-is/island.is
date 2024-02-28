@@ -68,12 +68,13 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
-const ITEMS_PER_PAGE = 9
+const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
@@ -173,6 +174,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const n = useNamespace(namespace)
+  useSetZIndexOnHeader()
 
   const isMobileScreenWidth = width < theme.breakpoints.lg
   const isTabletScreenWidth = width < theme.breakpoints.xl
@@ -263,7 +265,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     keys: [
       `name${locale === 'is' ? 'Is' : 'En'}`,
       `specializationName${locale === 'is' ? 'Is' : 'En'}`,
-      `description${locale === 'is' ? 'Is' : 'En'}`,
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
@@ -428,6 +429,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     e: React.ChangeEvent<HTMLInputElement>,
     filterKey: string,
   ) => {
+    setSelectedPage(1)
     handleFilters(filterKey, e.target.value)
   }
 
@@ -1469,4 +1471,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   }
 }
 
-export default withMainLayout(UniversitySearch, { showFooter: false })
+export default withMainLayout(UniversitySearch, {
+  showFooter: false,
+  headerColorScheme: 'white',
+})
