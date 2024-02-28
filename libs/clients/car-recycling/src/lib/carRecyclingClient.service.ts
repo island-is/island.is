@@ -66,7 +66,15 @@ export class CarRecyclingClientService {
     return await response.json()
   }
 
-  async createVehicle(user: User, permno: string, mileage: number) {
+  async createVehicle(
+    user: User,
+    permno: string,
+    mileage: number,
+    vin: string,
+    make: string,
+    firstRegistrationDate: Date,
+    color: string,
+  ) {
     try {
       const response = await this.gqlRequestWithAuth(user, {
         query: print(SkilavottordVehicleDocument),
@@ -74,6 +82,10 @@ export class CarRecyclingClientService {
           input: {
             permno,
             mileage,
+            vin,
+            make,
+            firstRegistrationDate,
+            color,
           },
         } as SkilavottordVehicleMutationVariables,
       })

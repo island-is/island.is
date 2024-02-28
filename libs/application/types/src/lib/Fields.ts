@@ -185,6 +185,7 @@ export enum FieldTypes {
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  STATIC_TABLE = 'STATIC_TABLE',
 }
 
 export enum FieldComponents {
@@ -215,6 +216,7 @@ export enum FieldComponents {
   TABLE_REPEATER = 'TableRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  STATIC_TABLE = 'StaticTableFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -393,6 +395,8 @@ export interface MessageWithLinkButtonField extends BaseField {
   url: string
   buttonTitle: FormText
   message: FormText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 export interface ExpandableDescriptionField extends BaseField {
@@ -487,9 +491,11 @@ export type TableRepeaterField = BaseField & {
   formTitle?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
   table?: {
     /**
@@ -538,6 +544,19 @@ export interface HiddenInputField extends BaseField {
   valueModifier?: never
 }
 
+export interface StaticTableField extends BaseField {
+  readonly type: FieldTypes.STATIC_TABLE
+  component: FieldComponents.STATIC_TABLE
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  summary?:
+    | { label: StaticText; value: StaticText }
+    | ((application: Application) => { label: StaticText; value: StaticText })
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -568,3 +587,4 @@ export type Field =
   | HiddenInputWithWatchedValueField
   | HiddenInputField
   | FindVehicleField
+  | StaticTableField

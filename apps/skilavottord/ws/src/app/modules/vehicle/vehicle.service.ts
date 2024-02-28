@@ -51,7 +51,6 @@ export class VehicleService {
   }
 
   async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
-    console.log('vehicle find by id...')
     try {
       return await VehicleModel.findOne({
         where: { vehicleId },
