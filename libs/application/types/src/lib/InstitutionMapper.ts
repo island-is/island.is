@@ -251,4 +251,8 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.HASKOLARADUNEYTI,
     slug: InstitutionTypes.HASKOLARADUNEYTI,
   },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+  },
 }
