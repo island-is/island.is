@@ -85,7 +85,7 @@ export class PersonalRepresentativeService {
     return result
   }
 
-  /** Get's all personal repreasentative connections for personal representative  */
+  /** Gets all personal representative connections for personal representative  */
   async getByPersonalRepresentative({
     nationalIdPersonalRepresentative,
     includeInactive = false,
