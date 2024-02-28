@@ -2,7 +2,6 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import {
   ILink,
-  ILinkFields,
   ILinkGroup,
   ILinkGroupFields,
   IOrganizationSubpage,
@@ -33,7 +32,7 @@ type LinkType = Omit<
 >
 
 export type ILinkGroupModel = {
-  fields: ILinkGroupFields & {
+  fields: Omit<ILinkGroupFields, 'primaryLink' | 'childrenLinks'> & {
     /** Primary Link */
     primaryLink: LinkType
 
@@ -107,7 +106,7 @@ export const mapLinkGroup = ({
 }
 
 const doMapLink = (
-  link: ILink | IOrganizationSubpage | IProjectSubpage,
+  link: LinkType,
   locale: string,
   entryAbove: EntryAbove | undefined,
 ) => {

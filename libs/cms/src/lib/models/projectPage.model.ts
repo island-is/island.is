@@ -150,7 +150,6 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
   //   },
   // )
 
-  console.log({ filteredItems })
   if (hasFrontpageLink) {
     filteredItems.unshift({
       sys: {
@@ -163,8 +162,9 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
           },
         },
       },
-
       fields: {
+        name: '',
+        childrenLinks: [],
         primaryLink: {
           ...projectPage,
           sys: {
