@@ -1137,7 +1137,6 @@ describe('getApplicationExternalData', () => {
         children: {
           data: {
             children: 'Mock child',
-            existingApplications: 'Mock application',
           },
           date: new Date(),
           status: 'success',
@@ -1160,6 +1159,7 @@ describe('getApplicationExternalData', () => {
         },
       },
     })
+
     expect(getApplicationExternalData(application.externalData)).toEqual({
       applicantGenderCode: 'Mock gender code',
       applicantName: 'Mock name',
@@ -1167,9 +1167,7 @@ describe('getApplicationExternalData', () => {
       children: 'Mock child',
       dataProvider: {
         children: 'Mock child',
-        existingApplications: 'Mock application',
       },
-      existingApplications: 'Mock application',
       navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',

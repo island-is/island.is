@@ -25,7 +25,6 @@ export const convertQueryParametersToCalculationInput = (
     capitalIncome: parseAsInteger.parseServerSide(query.capitalIncome),
     childCount: parseAsInteger.parseServerSide(query.childCount),
     childSupportCount: parseAsInteger.parseServerSide(query.childSupportCount),
-
     foreignBasicPension: parseAsInteger.parseServerSide(
       query.foreignBasicPension,
     ),
@@ -39,9 +38,6 @@ export const convertQueryParametersToCalculationInput = (
       query.livingConditionAbroadInYears,
     ),
     taxCard: parseAsInteger.parseServerSide(query.taxCard),
-    mobilityImpairment: parseAsBoolean.parseServerSide(
-      query.mobilityImpairment,
-    ),
     ageOfFirst75DisabilityAssessment: parseAsInteger.parseServerSide(
       query.ageOfFirst75DisabilityAssessment,
     ),
@@ -60,8 +56,10 @@ export const convertQueryParametersToCalculationInput = (
       query.livingConditionRatio,
     ),
     installmentClaims: parseAsInteger.parseServerSide(query.installmentClaims),
-    birthdate: parseAsString.parseServerSide(query.birthdate),
-    startDate: parseAsString.parseServerSide(query.startDate),
+    birthMonth: parseAsInteger.parseServerSide(query.birthMonth),
+    birthYear: parseAsInteger.parseServerSide(query.birthYear),
+    startMonth: parseAsInteger.parseServerSide(query.startMonth),
+    startYear: parseAsInteger.parseServerSide(query.startYear),
     dateOfCalculations: parseAsString.parseServerSide(query.dateOfCalculations),
   }
 }
