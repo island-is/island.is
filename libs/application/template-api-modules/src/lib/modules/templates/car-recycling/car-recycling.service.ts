@@ -199,6 +199,12 @@ export class CarRecyclingService extends BaseTemplateApiService {
           error,
         },
       )
+
+      return Promise.reject(
+        new Error(
+          `Error occurred when recycling vehicle(s) for ${applicantName}`,
+        ),
+      )
     }
   }
 }
