@@ -1,18 +1,12 @@
 import { formatText } from '@island.is/application/core'
-import {
-  AccordionCard,
-  Box,
-  Bullet,
-  BulletList,
-  Text,
-} from '@island.is/island-ui/core'
+import { AccordionCard, Box, BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import {
   ExpandableDescriptionField,
   FieldBaseProps,
 } from '@island.is/application/types'
-import Markdown from 'markdown-to-jsx'
+import { Markdown } from '@island.is/shared/components'
 interface Props extends FieldBaseProps {
   field: ExpandableDescriptionField
 }
@@ -38,15 +32,7 @@ export const ExpandableDescriptionFormField: FC<
           </Box>
         )}
         <BulletList space="gutter" type="ul">
-          <Markdown
-            options={{
-              overrides: {
-                li: {
-                  component: Bullet,
-                },
-              },
-            }}
-          >
+          <Markdown>
             {formatText(field.description, application, formatMessage)}
           </Markdown>
         </BulletList>
