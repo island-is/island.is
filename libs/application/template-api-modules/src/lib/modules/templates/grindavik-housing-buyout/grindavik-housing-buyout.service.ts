@@ -40,7 +40,6 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const { nationalRegistry, userProfile } = application.externalData
     const answers = application.answers as GrindavikHousingBuyoutAnswers
 
     const applicant: Person = {
@@ -187,8 +186,8 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         landeignarnumer: 567,
         postnumer: 113,
         sveitarfelagBirting: 'Reykjavík',
-        birting: 'Reykjavík',
-        birtingStutt: 'RVK',
+        birting: 'Vesturhóp 34, 240 Grindavík',
+        birtingStutt: 'Vesturhóp 34',
       },
       fasteignamat: {
         gildandiFasteignamat: 50000000,
