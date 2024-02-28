@@ -46,5 +46,5 @@ export const modules: PortalModule[] = [
   sessionsModule,
   socialInsuranceMaintenanceModule,
   signatureCollectionModule,
-  petitionsModule
+  petitionsModule,
 ]
