@@ -486,7 +486,7 @@ export function buildPaymentPendingField(data: {
 export function buildMessageWithLinkButtonField(
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField {
-  const { id, title, url, message, buttonTitle } = data
+  const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
     children: undefined,
     id,
@@ -494,6 +494,8 @@ export function buildMessageWithLinkButtonField(
     url,
     message,
     buttonTitle,
+    marginTop,
+    marginBottom,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
   }
