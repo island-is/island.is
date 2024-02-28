@@ -6,7 +6,7 @@ module.exports = {
   preset: '../jest.preset.js',
   // rootDir: '../../..',
   // roots: [__dirname],
-  // testEnvironment: 'node',
+  testEnvironment: 'node',
   // // transform: { '^.+\\.[tj]sx?$': 'esbuild-jest', },
   transform: {
     '^.+\\.[tj]sx?$': [
