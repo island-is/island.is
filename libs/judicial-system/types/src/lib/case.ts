@@ -102,6 +102,7 @@ export enum CaseAppealState {
 
 export enum CaseTransition {
   OPEN = 'OPEN',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
