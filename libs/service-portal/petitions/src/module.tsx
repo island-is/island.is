@@ -18,6 +18,11 @@ export const petitionsModule: PortalModule = {
     const applicationRoutes: PortalRoute[] = [
       {
         name: m.generalPetitions,
+        path: PetitionPaths.RootPath,
+        element: <Navigate to={PetitionPaths.Petitions} replace />,
+      },
+      {
+        name: m.generalPetitions,
         path: PetitionPaths.Petitions,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <Petitions />,

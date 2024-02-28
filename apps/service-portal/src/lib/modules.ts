@@ -42,9 +42,9 @@ export const modules: PortalModule[] = [
   informationModule,
   licensesModule,
   occupationalLicensesModule,
-  petitionsModule,
   restrictionsModule,
   sessionsModule,
   socialInsuranceMaintenanceModule,
   signatureCollectionModule,
+  petitionsModule
 ]
