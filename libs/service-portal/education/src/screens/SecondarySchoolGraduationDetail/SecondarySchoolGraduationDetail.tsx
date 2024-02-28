@@ -1,11 +1,9 @@
-import React from 'react'
 import {
   addArray,
   formatDate,
   IntroHeader,
   m,
   MENNTAMALASTOFNUN_SLUG,
-  NotFound,
   SortableTable,
 } from '@island.is/service-portal/core'
 import {
@@ -20,7 +18,6 @@ import { useParams } from 'react-router-dom'
 import { useGetInnaPeriodsQuery } from '../SecondarySchoolCareer/Periods.generated'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { tagSelector } from '../../utils/tagSelector'
-import { defineMessage } from 'react-intl'
 import { edMessage } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 
