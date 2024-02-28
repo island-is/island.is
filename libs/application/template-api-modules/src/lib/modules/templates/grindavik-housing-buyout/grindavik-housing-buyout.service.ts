@@ -86,7 +86,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       }
     }
 
-    const dateInQuestion = '2023-10-11'
+    const dateInQuestion = '2023-11-10'
     const domicileOn10nov = getDomicileOnDate(data, dateInQuestion)
 
     if (domicileOn10nov?.postalCode !== '240') {
