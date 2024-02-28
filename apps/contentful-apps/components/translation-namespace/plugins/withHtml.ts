@@ -5,7 +5,6 @@ const ELEMENT_TAGS = {
   A: (el: HTMLElement) => ({ type: 'link', url: el.getAttribute('href') }),
   H1: () => ({ type: 'heading_one' }),
   H2: () => ({ type: 'heading_two' }),
-  // IMG: el => ({ type: 'image', url: el.getAttribute('src') }),
   LI: () => ({ type: 'list_item' }),
   OL: () => ({ type: 'ol_list' }),
   P: () => ({ type: 'paragraph' }),
