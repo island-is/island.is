@@ -165,7 +165,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
             updatedIndictmentCount.policeCaseNumber,
         )?.licencePlate
 
-        updatedIndictmentCount.vehicleRegistrationNumber = vehicleNumber
+        if (vehicleNumber)
+          updatedIndictmentCount.vehicleRegistrationNumber = vehicleNumber
       }
 
       const returnedIndictmentCount = await updateIndictmentCount(
