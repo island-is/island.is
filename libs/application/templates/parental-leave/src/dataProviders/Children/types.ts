@@ -51,10 +51,3 @@ export type ChildInformationWithoutRights = DistributiveOmit<
   ChildInformation,
   'hasRights' | 'remainingDays'
 >
-
-export type ChildrenWithoutRightsAndExistingApplications = Pick<
-  ChildrenAndExistingApplications,
-  'existingApplications'
-> & {
-  children: ChildInformationWithoutRights[]
-}

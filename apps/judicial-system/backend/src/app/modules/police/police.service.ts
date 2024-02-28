@@ -305,7 +305,7 @@ export class PoliceService {
               brotFra?: string
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
-              const place = info.vettvangur
+              const place = (info.vettvangur || '').trim()
               const date = info.brotFra ? new Date(info.brotFra) : undefined
 
               const foundCase = cases.find(

@@ -47,12 +47,6 @@ export class DelegationIndex extends Model<
   type!: string
 
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: true,
-  })
-  customDelegationScopes?: CreateOptional<string[]>
-
-  @Column({
     type: DataType.DATE,
     allowNull: true,
   })

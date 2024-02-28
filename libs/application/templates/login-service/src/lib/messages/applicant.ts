@@ -35,11 +35,6 @@ export const applicant = {
       defaultMessage: 'Kennitala lögaðila',
       description: 'Applicant national id label',
     },
-    invalidIsat: {
-      id: `ls.application:section.applicant.invalidIsat`,
-      defaultMessage: 'Isat númer er ógilt',
-      description: 'Applicant isat is invalid label',
-    },
     typeOfOperation: {
       id: `ls.application:section.applicant.typeOfOperation`,
       defaultMessage: 'Rekstrartegund',
