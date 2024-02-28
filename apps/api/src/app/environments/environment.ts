@@ -1,3 +1,4 @@
+import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import {
   ServerSideFeature,
   ServerSideFeatureClient,
@@ -114,6 +115,9 @@ const prodConfig = () => ({
     cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+  },
+  licenseService: {
+    barcodeSecretKey: process.env.LICENSE_SERVICE_BARCODE_SECRET_KEY,
   },
 })
 const devConfig = () => ({
@@ -248,6 +252,9 @@ const devConfig = () => ({
     cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+  },
+  licenseService: {
+    barcodeSecretKey: process.env.LICENSE_SERVICE_BARCODE_SECRET_KEY,
   },
 })
 export const getConfig =

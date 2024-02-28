@@ -14,6 +14,7 @@ import {
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
+  VerifyExtraDataInput,
 } from '../../../licenseClient.type'
 import {
   Pass,
@@ -335,5 +336,20 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
         }),
       },
     }
+  }
+
+  async verifyExtraData({ nationalId, licenseId }: VerifyExtraDataInput) {
+    const license = await this.drivingApi.getCurrentLicenseV4({
+      nationalId,
+    })
+
+    if (!license) {
+      const errorMsg = `No license found for national id: ${nationalId}`
+      this.logger.warn(errorMsg, { category: LOG_CATEGORY })
+
+      throw new BadRequestException(errorMsg)
+    }
+
+    return license
   }
 }

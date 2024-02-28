@@ -358,6 +358,8 @@ export const serviceSetup = (services: {
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
       WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY:
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
+      LICENSE_SERVICE_BARCODE_SECRET_KEY:
+        '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
     })
     .xroad(
       AdrAndMachine,

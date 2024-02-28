@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
+import { TokenService } from './token.service'
 import { MainResolver } from '../../../license-service/src/lib/graphql/main.resolver'
 import {
   GenericLicenseMetadata,
@@ -9,6 +10,8 @@ import {
   GenericLicenseOrganizationSlug,
   LICENSE_MAPPER_FACTORY,
   GenericLicenseMapper,
+  LicenseServiceConfig,
+  TOKEN_SERVICE_PROVIDER,
 } from '../../../license-service/src/lib/licenceService.type'
 import { AdrLicensePayloadMapper } from '../../../license-service/src/lib/mappers/adrLicenseMapper'
 import { DisabilityLicensePayloadMapper } from '../../../license-service/src/lib/mappers/disabilityLicenseMapper'
@@ -103,60 +106,70 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.Passport,
   },
 ]
-@Module({
-  imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
-  providers: [
-    MainResolver,
-    LicenseServiceService,
-    {
-      provide: LOGGER_PROVIDER,
-      useValue: logger,
-    },
-    {
-      provide: LICENSE_MAPPER_FACTORY,
-      useFactory:
-        (
-          adr: AdrLicensePayloadMapper,
-          disability: DisabilityLicensePayloadMapper,
-          machine: MachineLicensePayloadMapper,
-          firearm: FirearmLicensePayloadMapper,
-          driving: DrivingLicensePayloadMapper,
-          pCard: PCardPayloadMapper,
-          ehic: EHICCardPayloadMapper,
-        ) =>
-        async (
-          type: GenericLicenseType,
-        ): Promise<GenericLicenseMapper | null> => {
-          switch (type) {
-            case GenericLicenseType.AdrLicense:
-              return adr
-            case GenericLicenseType.DisabilityLicense:
-              return disability
-            case GenericLicenseType.MachineLicense:
-              return machine
-            case GenericLicenseType.FirearmLicense:
-              return firearm
-            case GenericLicenseType.DriversLicense:
-              return driving
-            case GenericLicenseType.PCard:
-              return pCard
-            case GenericLicenseType.Ehic:
-              return ehic
-            default:
-              return null
-          }
+
+@Module({})
+export class LicenseServiceModule {
+  static register(config: LicenseServiceConfig): DynamicModule {
+    return {
+      module: LicenseServiceModule,
+      imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
+      providers: [
+        MainResolver,
+        LicenseServiceService,
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
         },
-      inject: [
-        AdrLicensePayloadMapper,
-        DisabilityLicensePayloadMapper,
-        MachineLicensePayloadMapper,
-        FirearmLicensePayloadMapper,
-        DrivingLicensePayloadMapper,
-        PCardPayloadMapper,
-        EHICCardPayloadMapper,
+        {
+          provide: TOKEN_SERVICE_PROVIDER,
+          useValue: new TokenService(config.barcodeSecretKey),
+        },
+        {
+          provide: LICENSE_MAPPER_FACTORY,
+          useFactory:
+            (
+              adr: AdrLicensePayloadMapper,
+              disability: DisabilityLicensePayloadMapper,
+              machine: MachineLicensePayloadMapper,
+              firearm: FirearmLicensePayloadMapper,
+              driving: DrivingLicensePayloadMapper,
+              pCard: PCardPayloadMapper,
+              ehic: EHICCardPayloadMapper,
+            ) =>
+            async (
+              type: GenericLicenseType,
+            ): Promise<GenericLicenseMapper | null> => {
+              switch (type) {
+                case GenericLicenseType.AdrLicense:
+                  return adr
+                case GenericLicenseType.DisabilityLicense:
+                  return disability
+                case GenericLicenseType.MachineLicense:
+                  return machine
+                case GenericLicenseType.FirearmLicense:
+                  return firearm
+                case GenericLicenseType.DriversLicense:
+                  return driving
+                case GenericLicenseType.PCard:
+                  return pCard
+                case GenericLicenseType.Ehic:
+                  return ehic
+                default:
+                  return null
+              }
+            },
+          inject: [
+            AdrLicensePayloadMapper,
+            DisabilityLicensePayloadMapper,
+            MachineLicensePayloadMapper,
+            FirearmLicensePayloadMapper,
+            DrivingLicensePayloadMapper,
+            PCardPayloadMapper,
+            EHICCardPayloadMapper,
+          ],
+        },
       ],
-    },
-  ],
-  exports: [LicenseServiceService],
-})
-export class LicenseServiceModule {}
+      exports: [LicenseServiceService],
+    }
+  }
+}

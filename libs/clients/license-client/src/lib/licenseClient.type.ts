@@ -60,6 +60,11 @@ export type VerifyInputData = {
   passTemplateId?: string
 }
 
+export type VerifyExtraDataInput = {
+  nationalId: string
+  licenseId?: string
+}
+
 export type PassVerificationData = {
   valid: boolean
   passIdentity?: {
@@ -131,6 +136,8 @@ export interface LicenseClient<ResultType> {
     data: string,
     passTemplateId: string,
   ) => Promise<Result<PkPassVerification>>
+
+  verifyExtraData?: (input: VerifyExtraDataInput) => Promise<ResultType>
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'

@@ -194,7 +194,9 @@ const environment = getConfig
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
-    LicenseServiceModule,
+    LicenseServiceModule.register({
+      barcodeSecretKey: environment.licenseService.barcodeSecretKey!,
+    }),
     DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule.register({

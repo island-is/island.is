@@ -8,6 +8,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
+import ShortUniqueId from 'short-unique-id'
+import { TokenService } from './token.service'
 import {
   GenericLicenseTypeType,
   GenericLicenseType,
@@ -21,6 +23,8 @@ import {
   LICENSE_MAPPER_FACTORY,
   GenericLicenseMapper,
   DEFAULT_LICENSE_ID,
+  TOKEN_SERVICE_PROVIDER,
+  LicenseTokenData,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -42,12 +46,18 @@ export type GetGenericLicenseOptions = {
   force?: boolean
   onlyList?: boolean
 }
+
+const { randomUUID } = new ShortUniqueId({ length: 10 })
+
 @Injectable()
 export class LicenseServiceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(TOKEN_SERVICE_PROVIDER)
+    private readonly tokenService: TokenService<LicenseTokenData>,
     private readonly licenseClient: LicenseClientService,
     private readonly cmsContentfulService: CmsContentfulService,
+
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
@@ -473,5 +483,25 @@ export class LicenseServiceService {
       throw new Error(`Unable to verify pkpass for user`)
     }
     return verification.data
+  }
+
+  async createBarcodeJWT(user: User, genericUserLicense: GenericUserLicense) {
+    const code = randomUUID()
+
+    console.log(user)
+    console.log(genericUserLicense.license.type)
+
+    // TODO create license type client and call verifyExtraData
+
+    // TODO store in redis verifyExtraData response and license data needed
+
+    return this.tokenService.createToken(
+      {
+        v: '2',
+        t: genericUserLicense.license.type,
+        c: code,
+      },
+      { expiresIn: 60 },
+    )
   }
 }
