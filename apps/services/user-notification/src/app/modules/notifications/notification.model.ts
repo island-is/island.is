@@ -54,6 +54,7 @@ export class Notification extends Model<
 
   @Column({
     type: DataType.STRING,
+    defaultValue: null,
     allowNull: true, // initially nullable if it's optional during transition
     field: 'sender_id',
   })

@@ -86,11 +86,12 @@ export class RenderedNotificationDto {
 
   @ApiProperty({ example: '1234567890', nullable: true, type: 'string or null' })
   @IsString()
-  senderId!: string | null
+  senderId?: string
 
   @ApiProperty({ example: 'Catchy notification title' })
   @IsString()
   title!: string
+
   @ApiProperty({ example: 'Compelling nofication body' })
   @IsString()
   body!: string
