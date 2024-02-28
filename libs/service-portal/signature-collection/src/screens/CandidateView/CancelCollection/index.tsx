@@ -13,10 +13,10 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { refetchIsOwner } = useIsOwner()
-  const { refetchListsForUser } = useGetListsForUser()
+  const { refetchListsForUser } = useGetListsForUser(collectionId)
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
-      variables: { input: { id: collectionId } },
+      variables: { input: { collectionId: collectionId } },
     })
 
   const onCancelCollection = async () => {
