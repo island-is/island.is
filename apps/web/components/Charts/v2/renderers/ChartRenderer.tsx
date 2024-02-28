@@ -138,6 +138,9 @@ export const Chart = ({ slice }: ChartProps) => {
         <Box width="full" height="full" marginTop={2}>
           <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
             <BaseChartComponent
+              data={data}
+              layout={slice.flipAxis ? 'vertical' : 'horizontal'}
+            >
               {cartesianGridComponents}
               {renderLegend({
                 componentsWithAddedProps,

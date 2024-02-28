@@ -1,6 +1,7 @@
 import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
+import { Chart } from '@island.is/web/graphql/schema'
 
 import {
   ChartComponentType,
@@ -120,6 +121,7 @@ export const renderPieChartComponents = (
     (total, { value }) => total + (value ? value : 0),
     0,
   )
+  const formattedTotal = formatValueForPresentation(activeLocale, total)
 
   return (
     <Pie
@@ -140,7 +142,12 @@ export const renderPieChartComponents = (
       startAngle={90}
       endAngle={360 + 90}
     >
-      <Label fontSize={24} fontWeight="bold" value={total} position="center" />
+      <Label
+        fontSize={24}
+        fontWeight="bold"
+        value={formattedTotal}
+        position="center"
+      />
       {components.map((c, i) => (
         <Cell
           key={i}
