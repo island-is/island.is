@@ -307,7 +307,7 @@ export class PoliceService {
               licencePlate?: string
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
-              const place = info.vettvangur
+              const place = (info.vettvangur || '').trim()
               const date = info.brotFra ? new Date(info.brotFra) : undefined
               const licencePlate = info.licencePlate
 
