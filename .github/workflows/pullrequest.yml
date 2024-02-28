@@ -167,8 +167,12 @@ jobs:
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
 
+      - name: Check user permissions
+        uses: actions-cool/check-user-permission@v2
+        id: check-permission
+
       - name: Set magic env if test-everything label is set
-        if: ${{ contains( github.event.pull_request.labels.*.name, 'test everything')
+        if: ${{ contains( github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin'" }}
         run: |
           echo "AFFECTED_ALL=7913-$GITHUB_BASE_REF" >> $GITHUB_ENV
 
