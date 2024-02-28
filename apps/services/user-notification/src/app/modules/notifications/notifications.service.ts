@@ -27,7 +27,6 @@ import {
 } from './dto/notification.dto'
 import slugify from '@sindresorhus/slugify'
 
-
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
 const CONTENTFUL_GQL_ENDPOINT =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
@@ -88,7 +87,6 @@ export class NotificationsService {
         clickAction: formattedTemplate.clickAction,
         created: notification.created,
         updated: notification.updated,
-        // status: notification.status,
         read: notification.read,
         seen: notification.seen,
       }
@@ -124,7 +122,7 @@ export class NotificationsService {
       hnippTemplateCollection(locale: "${mappedLocale}") {
         items {
           organization{
-            slug
+            kennitala
           }
           templateId
           notificationTitle
@@ -164,7 +162,7 @@ export class NotificationsService {
     // mix it here to save headaches
     // loop items and add property sender with value organization.slug and remove organization
     for (const item of res.data.hnippTemplateCollection.items) {
-      item.sender = item.organization.slug
+      item.senderId = item.organization.kennitala
       delete item.organization
       // if (item.templateId === 'HNIPP.POSTHOLF.NEW_DOCUMENT') {
       //   item.sender = "ARGS.ORGANIZATION.SLUG"
@@ -257,13 +255,13 @@ export class NotificationsService {
           if (value && ARG_REPLACE_REGEX.test(value)) {
             for (const arg of args) {
               const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
-              console.log(arg, 'regexTarget', regexTarget)
               const newValue = value.replace(regexTarget, arg.value)
-              // if templates are used by multiple organizations, sender should be set to organization.slug
+              // for templates are used by multiple organizations, senderId should be set to organization.id
+              // ISSUE legacy support for previous versions where name was used instead of id...............
               if (arg.key == 'organization') {
-                template.senderId = arg.value
+                // try to get kennitala from organization name
+                template.senderId = slugify(arg.value)
               }
-
               if (newValue !== value) {
                 // finds {{key}} in string and replace with value
                 template[templateKey] = value.replace(regexTarget, arg.value)
@@ -334,7 +332,6 @@ export class NotificationsService {
         }
       }),
     )
-
     paginatedListResponse.data = formattedNotifications.filter((n) => n) // Filter out nulls if any
     return paginatedListResponse
   }
@@ -345,7 +342,6 @@ export class NotificationsService {
     updateNotificationDto: UpdateNotificationDto,
     locale: string,
   ): Promise<RenderedNotificationDto> {
-    console.log("************ddd *****")
     const [numberOfAffectedRows, [updatedNotification]] =
       await this.notificationModel.update(updateNotificationDto, {
         where: {
@@ -367,51 +363,44 @@ export class NotificationsService {
   }
 
   async getUnreadNotificationsCount(user: User): Promise<{unreadCount:number}> {
-    const count = await this.notificationModel.count({
-      where: {
-        recipient: user.nationalId,
-        read: false,
-      },
-    })
-    return {unreadCount:count}
+    try {
+      const unreadCount = await this.notificationModel.count({
+        where: {
+          recipient: user.nationalId,
+          read: false,
+        },
+      })
+      return { unreadCount }
+    } catch (error) {
+      this.logger.error('Error getting unread notifications count:', error)
+      throw new InternalServerErrorException('Error getting unread notifications count')
+    }
   }
 
   async getUnseenNotificationsCount(user: User): Promise<{unseenCount:number}> {
-    const count = await this.notificationModel.count({
-      where: {
-        recipient: user.nationalId,
-        seen: false,
-      },
-    })
-    return {unseenCount:count}
+    try {
+      const unseenCount = await this.notificationModel.count({
+        where: {
+          recipient: user.nationalId,
+          seen: false,
+        },
+      })
+      return { unseenCount }
+    } catch (error) {
+      this.logger.error('Error getting unseen notifications count:', error)
+      throw new InternalServerErrorException('Error getting unseen notifications count')
+    }
   }
 
-  // async markAllAsSeen(user: User): Promise<void> {
-  //   console.log('markAllAsRead');
-  //   const res = await this.notificationModel.update(
-  //     { status: NotificationStatus.READ },
-  //     { where: { recipient: user.nationalId, status: NotificationStatus.UNREAD } }
-  //   );
-  //   console.log(res);
-  // }
-
   async markAllAsSeen(user: User): Promise<void> {
-    console.log("************************************************************")
     try {
-      console.log("User nationalId:", user.nationalId); // Debugging log
       await this.notificationModel.update(
         { seen: true },
         { where: { recipient: user.nationalId, seen: false } }
       );
     } catch (error) {
-      console.error("Error in markAllAsSeen:", error);
-      // Handle error appropriately
+      this.logger.error('Error marking all notifications as seen:', error)
+      throw new InternalServerErrorException('Error marking all notifications as seen')
     }
   }
-  
-  // async markAllAsRead(user: User): Promise<void> {
-  //   await this.notificationModel.update({ read: true }, { where: { recipient: user.nationalId, read: false } });
-  // }
-
-  
 }
