@@ -191,17 +191,13 @@ jobs:
         id: lint_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
 
       - name: Prepare test targets
         id: test_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
           echo "Got test project chunks: $CHUNKS"
 
       - name: Prepare e2e targets
@@ -210,9 +206,7 @@ jobs:
           CHUNK_SIZE: 1
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
           echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> $GITHUB_OUTPUT
 
       - name: Prepare build targets
@@ -221,9 +215,7 @@ jobs:
           CHUNK_SIZE: 4
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
       - name: Check release-manager approval
         id: check-release-manager-approval
         if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && contains(github.event.pull_request.head.ref, '/pre-release/') }}
@@ -242,7 +234,6 @@ jobs:
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS != '' }}
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
@@ -252,7 +243,9 @@ jobs:
       MAX_JOBS: 3
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -301,7 +294,6 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS != '' }}
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
@@ -315,7 +307,9 @@ jobs:
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
 
@@ -462,14 +456,15 @@ jobs:
     container:
       image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
-    if: ${{ needs.prepare.outputs.LINT_CHUNKS != '' }}
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 3
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
 
@@ -520,8 +515,9 @@ jobs:
       MAX_JOBS: 2
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS != '' }}
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
 
