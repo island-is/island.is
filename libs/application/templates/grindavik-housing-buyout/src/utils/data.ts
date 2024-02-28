@@ -39,3 +39,8 @@ export const calculateBuyoutPrice = (application: Application) => {
     result,
   }
 }
+
+export const getPropertyAddress = (externalData: ExternalData) => {
+  const housingData = getHousingDataFromExternalData(externalData)
+  return housingData.sjalfgefidStadfang?.birting ?? ''
+}

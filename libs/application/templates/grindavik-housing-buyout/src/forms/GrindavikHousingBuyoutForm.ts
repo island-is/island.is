@@ -25,6 +25,7 @@ import {
   calculateBuyoutPrice,
   calculateTotalLoanFromAnswers,
   getFireInsuranceValue,
+  getPropertyAddress,
   getPropertyOwners,
 } from '../utils'
 
@@ -48,7 +49,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           description: m.application.propertyInformation.sectionDescription,
           children: [
             buildStaticTableField({
-              title: 'Vesturhóp 34, 240 Grindavík', // TODO
+              title: ({ externalData }) => getPropertyAddress(externalData),
               header: [
                 m.application.propertyInformation.propertyOwners,
                 m.application.propertyInformation.ownerNationalId,
@@ -68,14 +69,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                   formatCurrency(fireInsuranceValue.toString()),
                 ])
               },
-              /* summary: (application) => {
-                const { buyoutPrice } = calculateBuyoutPrice(application)
-
-                return {
-                  label: m.application.overview.buyoutPriceTitle,
-                  value: formatCurrency(buyoutPrice.toString()),
-                }
-              }, */
             }),
           ],
         }),
@@ -209,7 +202,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildKeyValueField({
               label: '',
-              value: 'Vesturhóp 34, 240 Grindavík', // TODO
+              value: ({ externalData }) => getPropertyAddress(externalData),
             }),
             buildDividerField({}),
 
