@@ -1,5 +1,7 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
+import { Area } from './types/area.dto'
 import { ListBase } from './types/list.dto'
+import { Signature } from './types/signature.dto'
 
 export enum ListState {
   Open = 'open',
@@ -44,22 +46,25 @@ export interface CanCreateInput {
   isPresidential: boolean
   isActive?: boolean
   ownedLists: ListBase[]
+  areas: Area[]
 }
 
 export interface CanSignInput {
   requirementsMet?: boolean
   canSignInfo?: EinstaklingurMaFrambodInfo
-  isActive: boolean
   activeSignature?: MedmaeliDTO
+  signatures?: Signature[]
 }
 
 export enum Requirement {
   aldur = 'aldur',
   rikisfang = 'rikisfang',
   buseta = 'buseta',
+  ekkiBuseta = 'ekkiBuseta',
   active = 'active',
   notOwner = 'notOwner',
   notSigned = 'notSigned',
+  noInvalidSignature = 'noInvalidSignature',
 }
 
 export enum ReasonKey {
@@ -74,4 +79,5 @@ export enum ReasonKey {
   AlreadyOwner = 'alreadyOwner',
   AlreadySigned = 'alreadySigned',
   NotOwner = 'notOwner',
+  noInvalidSignature = 'noInvalidSignature',
 }

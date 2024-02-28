@@ -454,6 +454,65 @@ describe('Transition Case', () => {
     })
   })
 
+  describe('withdraw appeal', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [
+      CaseAppealState.APPEALED,
+      CaseAppealState.RECEIVED,
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.WITHDRAW_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ appealState: CaseAppealState.WITHDRAWN })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
   describe('receive appeal', () => {
     const allowedFromStates = [
       CaseState.ACCEPTED,
@@ -525,7 +584,10 @@ describe('Transition Case', () => {
       CaseState.REJECTED,
       CaseState.DISMISSED,
     ]
-    const allowedFromAppealStates = [CaseAppealState.RECEIVED]
+    const allowedFromAppealStates = [
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+    ]
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
       it.each(allowedFromAppealStates)(

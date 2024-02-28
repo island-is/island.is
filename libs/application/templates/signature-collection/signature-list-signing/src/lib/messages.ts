@@ -61,16 +61,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
     description: '',
   },
-  userProfileProviderTitle: {
-    id: 'sls.application:userProfileProviderTitle',
-    defaultMessage: 'Stillingar frá Ísland.is',
-    description: '',
-  },
-  userProfileProviderSubtitle: {
-    id: 'sls.application:userProfileProviderSubtitle',
-    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
-    description: '',
-  },
 
   /* Signee Information */
   information: {

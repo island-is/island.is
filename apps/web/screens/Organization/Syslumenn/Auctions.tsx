@@ -1091,6 +1091,7 @@ Auctions.getProps = async ({ apolloClient, locale, req, res }) => {
     }),
     apolloClient.query<Query>({
       query: GET_SYSLUMENN_AUCTIONS_QUERY,
+      fetchPolicy: 'no-cache',
     }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

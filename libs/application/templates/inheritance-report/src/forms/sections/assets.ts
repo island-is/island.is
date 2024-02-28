@@ -35,22 +35,37 @@ export const assets = buildSection({
               id: 'assets.realEstate.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'assets.realEstate.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
                 id: 'assets.realEstate.data',
                 doesNotRequireAnswer: true,
-                component: 'ReportFieldsRepeater',
+                component: 'AssetsRepeater',
               },
               {
                 fields: [
                   {
                     title: m.assetNumber.defaultMessage,
                     id: 'assetNumber',
+                    placeholder: 'F1234567',
                   },
                   {
                     title: m.assetAddress.defaultMessage,
                     id: 'description',
+                    backgroundColor: 'white',
+                    readOnly: true,
+                  },
+                  {
+                    title: m.propertyShare.defaultMessage,
+                    id: 'share',
+                    type: 'number',
+                    defaultValue: '100',
+                    suffix: '%',
+                    required: true,
                   },
                   {
                     title: m.propertyValuation.defaultMessage,
@@ -59,11 +74,49 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
+                assetKey: 'realEstate',
+                calcWithShareValue: true,
                 repeaterButtonText: m.addRealEstate.defaultMessage,
                 fromExternalData: 'assets',
                 sumField: 'propertyValuation',
               },
             ),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
+      id: 'inventory',
+      title: m.inventoryTitle,
+      children: [
+        buildMultiField({
+          id: 'inventory',
+          title: m.propertiesTitle,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutInnventory.defaultMessage,
+          children: [
+            buildDescriptionField({
+              id: 'inventoryTitle',
+              title: m.inventoryTitle,
+              description: m.inventoryDescription,
+              titleVariant: 'h3',
+              marginBottom: 2,
+            }),
+            buildTextField({
+              id: 'assets.inventory.info',
+              title: m.inventoryTextField,
+              placeholder: m.inventoryTextField,
+              variant: 'textarea',
+              rows: 7,
+            }),
+            buildTextField({
+              id: 'assets.inventory.value',
+              title: m.inventoryValueTitle,
+              width: 'half',
+              variant: 'currency',
+            }),
           ],
         }),
       ],
@@ -90,22 +143,30 @@ export const assets = buildSection({
               id: 'assets.vehicles.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'assets.vehicles.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
                 id: 'assets.vehicles.data',
                 doesNotRequireAnswer: true,
-                component: 'ReportFieldsRepeater',
+                component: 'AssetsRepeater',
               },
               {
                 fields: [
                   {
                     title: m.vehicleNumberLabel.defaultMessage,
                     id: 'assetNumber',
+                    placeholder: 'ABC12',
+                    required: true,
                   },
                   {
                     title: m.vehicleType.defaultMessage,
                     id: 'description',
+                    backgroundColor: 'white',
+                    readOnly: true,
                   },
                   {
                     title: m.vehicleValuation.defaultMessage,
@@ -114,9 +175,11 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
+                assetKey: 'vehicles',
                 repeaterButtonText: m.addVehicle.defaultMessage,
-                fromExternalData: 'vehicles',
+                fromExternalData: 'vehicles.data',
                 sumField: 'propertyValuation',
+                calcWithShareValue: false,
               },
             ),
           ],
@@ -169,48 +232,13 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
+                assetKey: 'guns',
+                calcWithShareValue: false,
                 repeaterButtonText: m.addGun.defaultMessage,
                 fromExternalData: 'guns',
                 sumField: 'propertyValuation',
               },
             ),
-          ],
-        }),
-      ],
-    }),
-
-    buildSubSection({
-      id: 'inventory',
-      title: m.inventoryTitle,
-      children: [
-        buildMultiField({
-          id: 'inventory',
-          title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutInnventory.defaultMessage,
-          children: [
-            buildDescriptionField({
-              id: 'inventoryTitle',
-              title: m.inventoryTitle,
-              description: m.inventoryDescription,
-              titleVariant: 'h3',
-              marginBottom: 2,
-            }),
-            buildTextField({
-              id: 'assets.inventory.info',
-              title: m.inventoryTextField,
-              placeholder: m.inventoryTextField,
-              variant: 'textarea',
-              rows: 7,
-            }),
-            buildTextField({
-              id: 'assets.inventory.value',
-              title: m.inventoryValueTitle,
-              width: 'half',
-              variant: 'currency',
-            }),
           ],
         }),
       ],
@@ -249,6 +277,9 @@ export const assets = buildSection({
                   {
                     title: m.bankAccount.defaultMessage,
                     id: 'accountNumber',
+                    required: true,
+                    format: '####-##-######',
+                    placeholder: '0000-00-000000',
                   },
                   {
                     title: m.bankAccountBalance.defaultMessage,
@@ -256,7 +287,14 @@ export const assets = buildSection({
                     required: true,
                     currency: true,
                   },
+                  {
+                    title: m.bankAccountForeign.defaultMessage,
+                    id: 'foreignBankAccount',
+                  },
                 ],
+                assetKey: 'bankAccounts',
+                calcWithShareValue: false,
+                skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
                 sumField: 'balance',
               },
@@ -301,17 +339,19 @@ export const assets = buildSection({
                     id: 'issuer',
                   },
                   {
+                    title: m.nationalId.defaultMessage,
+                    id: 'nationalId',
+                    format: '######-####',
+                  },
+                  {
                     title: m.claimsAmount.defaultMessage,
                     id: 'value',
                     required: true,
                     currency: true,
                   },
-                  {
-                    title: m.nationalId.defaultMessage,
-                    id: 'nationalId',
-                    format: '######-####',
-                  },
                 ],
+                assetKey: 'claims',
+                calcWithShareValue: false,
                 repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
                 sumField: 'value',
               },
@@ -378,6 +418,8 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
+                calcWithShareValue: false,
+                assetKey: 'stocks',
                 repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
                 sumField: 'value',
               },

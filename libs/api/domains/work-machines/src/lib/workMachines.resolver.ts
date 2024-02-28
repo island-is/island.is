@@ -113,4 +113,14 @@ export class WorkMachinesResolver {
   ) {
     return this.workMachinesService.isPaymentRequired(auth, regNumber)
   }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => MachineDetails)
+  @Audit()
+  async getWorkerMachineByRegno(
+    @CurrentUser() auth: User,
+    @Args('regno') regno: string,
+  ) {
+    return this.workMachinesService.getMachineByRegno(auth, regno)
+  }
 }

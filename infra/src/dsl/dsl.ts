@@ -19,6 +19,7 @@ import {
   PodDisruptionBudget,
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
+import { COMMON_SECRETS } from './consts'
 
 export class ServiceBuilder<ServiceType> {
   serviceDef: ServiceDefinition
@@ -32,7 +33,7 @@ export class ServiceBuilder<ServiceType> {
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
-      secrets: { CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY' },
+      secrets: COMMON_SECRETS,
       ingress: {},
       namespace: 'islandis',
       serviceAccountEnabled: false,
