@@ -1,5 +1,5 @@
-query allLists {
-  signatureCollectionAdminLists {
+query allLists($input: SignatureCollectionIdInput!) {
+  signatureCollectionAdminLists(input: $input) {
     id
     title
     area {

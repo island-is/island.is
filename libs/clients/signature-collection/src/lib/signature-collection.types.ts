@@ -1,4 +1,5 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
+import { Area } from './types/area.dto'
 import { ListBase } from './types/list.dto'
 import { Signature } from './types/signature.dto'
 
@@ -45,6 +46,7 @@ export interface CanCreateInput {
   isPresidential: boolean
   isActive?: boolean
   ownedLists: ListBase[]
+  areas: Area[]
 }
 
 export interface CanSignInput {
@@ -58,6 +60,7 @@ export enum Requirement {
   aldur = 'aldur',
   rikisfang = 'rikisfang',
   buseta = 'buseta',
+  ekkiBuseta = 'ekkiBuseta',
   active = 'active',
   notOwner = 'notOwner',
   notSigned = 'notSigned',

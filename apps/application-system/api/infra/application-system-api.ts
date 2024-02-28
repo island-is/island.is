@@ -1,13 +1,4 @@
-import {
-  json,
-  ref,
-  service,
-  ServiceBuilder,
-} from '../../../../infra/src/dsl/dsl'
-import {
-  PostgresInfo,
-  RedisInfo,
-} from '../../../../infra/src/dsl/types/input-types'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   ChargeFjsV2,
@@ -39,11 +30,6 @@ import {
   ArborgWorkpoint,
 } from '../../../../infra/src/dsl/xroad'
 
-const postgresInfo: PostgresInfo = {
-  passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
-  name: 'application_system_api',
-  username: 'application_system_api',
-}
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
 const namespace = 'application-system'
@@ -53,7 +39,7 @@ export const workerSetup =
     service('application-system-api-worker')
       .namespace(namespace)
       .image('application-system-api')
-      .postgres(postgresInfo)
+      .db()
       .serviceAccount('application-system-api-worker')
       .redis()
       .env({
@@ -327,11 +313,8 @@ export const serviceSetup = (services: {
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
     })
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-    })
-    .postgres(postgresInfo)
+    .db()
+    .migrations()
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({
