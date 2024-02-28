@@ -81,7 +81,7 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        senderId: notification.senderId,
+        senderId: notification.senderId || "",
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,

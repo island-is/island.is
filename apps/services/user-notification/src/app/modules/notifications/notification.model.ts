@@ -59,6 +59,8 @@ export class Notification extends Model<
     field: 'sender_id',
   })
   senderId?: string;
+  // senderId!: CreationOptional<string>;
+  // senderId!: string
 
   @Column({
     type: DataType.STRING,

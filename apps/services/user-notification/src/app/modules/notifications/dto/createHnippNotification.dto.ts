@@ -20,7 +20,7 @@ export class CreateHnippNotificationDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ example: 'sender-id-example' })
+  @ApiPropertyOptional({ example: '1234567890' })
   senderId?: string;
 
   @IsString()
