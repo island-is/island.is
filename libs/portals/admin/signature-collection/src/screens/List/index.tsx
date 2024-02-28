@@ -15,13 +15,17 @@ import Signees from './components/signees'
 import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
-import ListReviewedAlert from './components/listReviewedAlert'
+import ListInfo from './components/listInfoAlert'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
+import { ListStatus } from '../../lib/utils'
 
 export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
-  const { list } = useLoaderData() as { list: SignatureCollectionList }
+  const { list, listStatus } = useLoaderData() as {
+    list: SignatureCollectionList
+    listStatus: string
+  }
   const { formatMessage } = useLocale()
 
   return (
@@ -37,7 +41,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           />
         </GridColumn>
         <GridColumn
-          paddingTop={[5, 5, 5, 2]}
+          paddingTop={[5, 5, 5, 0]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
@@ -58,30 +62,58 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              {/*<ListReviewedAlert />*/}
-              {list.collectors?.length &&
-                list.collectors.map((collector) => (
-                  <Box key={collector.name} marginBottom={5}>
-                    <Text variant="eyebrow">{formatMessage(m.collectors)}</Text>
-                    <Text>
+
+              <ListInfo
+                message={
+                  listStatus === ListStatus.Extendable
+                    ? formatMessage(m.listStatusExtendableAlert)
+                    : listStatus === ListStatus.InReview
+                    ? formatMessage(m.listStatusInReviewAlert)
+                    : listStatus === ListStatus.Reviewed
+                    ? formatMessage(m.listStatusReviewedStatusAlert)
+                    : listStatus === ListStatus.Inactive
+                    ? formatMessage(m.listStatusReviewedStatusAlert)
+                    : formatMessage(m.listStatusActiveAlert)
+                }
+                type={
+                  listStatus === ListStatus.Reviewed ? 'success' : undefined
+                }
+              />
+              {!!list.collectors?.length && (
+                <Box marginBottom={5}>
+                  <Text variant="h5">{formatMessage(m.collectors)}</Text>
+                  {list.collectors?.map((collector) => (
+                    <Text variant="medium" key={collector.name}>
                       {collector.name +
                         ' ' +
                         '(' +
                         formatNationalId(collector.nationalId) +
                         ')'}
                     </Text>
-                  </Box>
-                ))}
+                  ))}
+                </Box>
+              )}
+              <Box marginBottom={5}>
+                <Text variant="h5">{formatMessage(m.candidateNationalId)}</Text>
+                <Text variant="medium">
+                  {formatNationalId(list.candidate.nationalId)}
+                </Text>
+              </Box>
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
-                allowedToProcess={allowedToProcess}
+                allowedToProcess={
+                  allowedToProcess && listStatus === ListStatus.Extendable
+                }
               />
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
               {allowedToProcess && (
                 <>
-                  <PaperUpload listId={list.id} />
-                  {/*<ActionReviewComplete />*/}
+                  <PaperUpload listId={list.id} listStatus={listStatus} />
+                  <ActionReviewComplete
+                    listId={list.id}
+                    listStatus={listStatus}
+                  />
                 </>
               )}
             </>

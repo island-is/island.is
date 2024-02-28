@@ -23,7 +23,7 @@ export class Link {
   date!: string
 }
 
-export const mapLink = ({ sys, fields }: ILink): Link => {
+export const mapLink = ({ sys, fields }: Omit<ILink, 'update'>): Link => {
   return {
     id: sys.id,
     text: fields?.text ?? '',

@@ -44,8 +44,8 @@ import { ProgramModeOfDelivery } from '../modules/program/model/programModeOfDel
 import { Program } from '../modules/program/model/program'
 import { ProgramExtraApplicationField } from '../modules/program/model/programExtraApplicationField'
 import { LoggingModule } from '@island.is/logging'
-import { ApplicationService } from '../modules/application/application.service'
-import { ApplicationModule } from '../modules/application/application.module'
+import { UniversityApplicationService } from '../modules/application/universityApplication.service'
+import { UniversityApplicationModule } from '../modules/application/universityApplication.module'
 import { Application } from '../modules/application/model/application'
 
 @Module({
@@ -71,7 +71,7 @@ import { Application } from '../modules/application/model/application'
     IcelandUniversityOfTheArtsApplicationClientModule,
     AgriculturalUniversityOfIcelandApplicationClientModule,
     HolarUniversityApplicationClientModule,
-    ApplicationModule,
+    UniversityApplicationModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -92,7 +92,7 @@ import { Application } from '../modules/application/model/application'
     InternalCourseService,
     InternalApplicationService,
     UniversityGatewayWorkerService,
-    ApplicationService,
+    UniversityApplicationService,
   ],
 })
 export class UniversityGatewayWorkerModule {}

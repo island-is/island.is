@@ -14,6 +14,7 @@ import { m } from '../../../../lib/messages'
 import { useState } from 'react'
 import { format as formatNationalId } from 'kennitala'
 import {
+  ListStatus,
   createFileList,
   downloadFile,
   getFileData,
@@ -21,7 +22,13 @@ import {
 import { useBulkUploadMutation } from './paperUpload.generated'
 import { useRevalidator } from 'react-router-dom'
 
-const PaperUpload = ({ listId }: { listId: string }) => {
+const PaperUpload = ({
+  listId,
+  listStatus,
+}: {
+  listId: string
+  listStatus: string
+}) => {
   const { formatMessage } = useLocale()
   const [withPaperUpload, setWithPaperUpload] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
@@ -80,11 +87,18 @@ const PaperUpload = ({ listId }: { listId: string }) => {
           borderRadius="large"
         >
           <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-            <Box onClick={() => setWithPaperUpload(!withPaperUpload)}>
+            <Box
+              onClick={() =>
+                listStatus === ListStatus.InReview
+                  ? setWithPaperUpload(!withPaperUpload)
+                  : undefined
+              }
+            >
               <Checkbox
                 label={formatMessage(m.uploadFile)}
                 checked={withPaperUpload}
                 onChange={() => setWithPaperUpload(!withPaperUpload)}
+                disabled={listStatus !== ListStatus.InReview}
               />
             </Box>
             {withPaperUpload && (

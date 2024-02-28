@@ -23,6 +23,7 @@ export default {
     'event',
     'manual',
     'manualChapter',
+    'customPage',
   ],
   nestedContentTypes: [
     'alertBanner',

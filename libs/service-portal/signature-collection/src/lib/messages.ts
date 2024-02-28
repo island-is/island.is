@@ -63,6 +63,11 @@ export const m = defineMessages({
     defaultMessage: 'Skrifað undir:',
     description: '',
   },
+  uploadedTime: {
+    id: 'sp.signatureCollection:uploadedTime',
+    defaultMessage: 'Lesið inn:',
+    description: '',
+  },
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',
@@ -83,8 +88,18 @@ export const m = defineMessages({
     defaultMessage: 'Meðmæli lesin inn',
     description: '',
   },
+  signatureIsInvalid: {
+    id: 'sp.signatureCollection:signatureIsInvalid',
+    defaultMessage: 'Ógilt meðmæli',
+    description: '',
+  },
 
   /* Signee View */
+  noCollectionIsActive: {
+    id: 'sp.signatureCollection:noCollectionIsActive',
+    defaultMessage: 'Engin söfnun í gangi',
+    description: '',
+  },
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
     defaultMessage: 'Frambjóðandi sem þú hefur mælt með: ',
@@ -187,11 +202,6 @@ export const m = defineMessages({
   signeesHeader: {
     id: 'sp.signatureCollection:signeesHeader',
     defaultMessage: 'Yfirlit meðmæla',
-    description: '',
-  },
-  downloadList: {
-    id: 'sp.signatureCollection:downloadList',
-    defaultMessage: 'Sækja lista',
     description: '',
   },
   searchInListPlaceholder: {

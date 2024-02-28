@@ -169,6 +169,9 @@ export class RecyclingRequestService {
     const nameOfRequestor = user.name
     const partnerId = user.partnerId
     const errors = new RequestErrors()
+
+    console.time('Timer-CreateRecyclingRequest')
+
     try {
       // nameOfRequestor and partnerId are not required arguments
       // But nameOfRequestor and partnerId could not both be null at the same time
@@ -303,6 +306,8 @@ export class RecyclingRequestService {
 
         // 3. deregistered vehicle from Samgongustofa
         try {
+          console.time('Timer-Samgongustofa-deregistered-total')
+          console.time('Timer-Samgongustofa-deregistered')
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
           this.logger.info(
@@ -333,6 +338,8 @@ export class RecyclingRequestService {
           return errors
         }
 
+        console.timeEnd('Timer-Samgongustofa-deregistered')
+
         // 4. Update requestType to 'deregistered'
         let getGuId = new RecyclingRequestModel()
         try {
@@ -348,9 +355,13 @@ export class RecyclingRequestService {
             `Failed on inserting requestType 'deregistered' for vehicle's number: ${permno} in database with error: ${err} but we continue to payment.`,
           )
         }
+        console.timeEnd('Timer-Samgongustofa-deregistered-total')
 
         // 5. Call Fjarsysla for payment
         try {
+          console.time('Timer-Payment-total')
+          console.time('Timer-Payment')
+
           // Need to send vehicleOwner's nationalId on fjarsysla API
           const vehicle = await this.vehicleService.findByVehicleId(permno)
           if (!vehicle) {
@@ -409,6 +420,8 @@ export class RecyclingRequestService {
           return errors
         }
 
+        console.timeEnd('Timer-Payment')
+
         // 6. Update requestType to 'paymentInitiated'
         try {
           const req = new RecyclingRequestModel()
@@ -423,6 +436,7 @@ export class RecyclingRequestService {
             `Failed on inserting requestType 'paymentInitiated' for vehicle's number: ${permno} in database with error: ${err} but payment has succeed.`,
           )
         }
+        console.timeEnd('Timer-Payment-total')
       }
       // requestType: 'pendingRecycle' or 'cancelled'
       else {
@@ -431,6 +445,9 @@ export class RecyclingRequestService {
 
       const status = new RequestStatus()
       status.status = true
+
+      console.timeEnd('Timer-CreateRecyclingRequest')
+
       return status
     } catch (err) {
       this.logger.error(`Something went wrong.`, {
@@ -439,6 +456,7 @@ export class RecyclingRequestService {
 
       errors.operation = 'general'
       errors.message = `Something went wrong. Please try again later.`
+      console.timeEnd('Timer-CreateRecyclingRequest')
       return errors
     }
   }

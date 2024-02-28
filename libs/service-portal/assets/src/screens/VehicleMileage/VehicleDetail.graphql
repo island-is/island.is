@@ -26,6 +26,8 @@ mutation PostVehicleMileage($input: PostVehicleMileageInput!) {
 
 mutation PutVehicleMileage($input: PutVehicleMileageInput!) {
   vehicleMileagePut(input: $input) {
-    ...VehicleMileageDetailFragment
+    permno
+    internalId
+    mileageNumber
   }
 }
