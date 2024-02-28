@@ -7,7 +7,6 @@ import {
   LocalrunOutput,
   SecretOptions,
 } from '../output-generators/map-to-localrun'
-import path from 'path'
 import { rootDir } from '../consts'
 
 const Staging: EnvironmentConfig = {
@@ -41,6 +40,7 @@ describe('Local setup', () => {
         outputFormat: LocalrunOutput({ secrets: SecretOptions.noSecrets }),
         env: Staging,
       }),
+      { noWrite: true },
     )
   })
 
@@ -49,12 +49,7 @@ describe('Local setup', () => {
   })
   it('Should have mocks', async () => {
     expect(serviceDef.mocks).toStrictEqual(
-      `docker run --name mountebank -it --rm -p 2525:2525 -p 9453:9453 -v ${path.resolve(
-        __dirname,
-        '..',
-        '..',
-        '..',
-      )}/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
+      `docker run --name mountebank -it --rm -p 2525:2525 -p 9453:9453 -v ${rootDir}/dist/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
     )
   })
 

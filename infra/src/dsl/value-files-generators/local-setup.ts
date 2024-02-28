@@ -5,7 +5,7 @@ import {
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
 import { shouldIncludeEnv } from '../../cli/render-env-vars'
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, writeFile, mkdir } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
@@ -58,7 +58,7 @@ const mapServiceToNXname = async (serviceName: string) => {
 export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
-  options: { dryRun?: boolean } = { dryRun: false },
+  { dryRun = false, noWrite = false } = {},
 ): Promise<LocalrunValueFile> => {
   logger.debug('getLocalrunValueFile', { runtime, services })
 
@@ -98,7 +98,7 @@ export const getLocalrunValueFile = async (
       async ([name, svc]: [string, LocalrunService]) => {
         const serviceNXName = await mapServiceToNXname(name)
         logger.debug(`Writing env to file for ${name}`, { name, serviceNXName })
-        if (options.dryRun) return
+        if (dryRun) return
         await writeFile(
           join(rootDir, `.env.${serviceNXName}`),
           Object.entries(svc.env)
@@ -150,10 +150,10 @@ export const getLocalrunValueFile = async (
                       // but not really how to do it yet.
                       ...(target === 'https://localhost:8443'
                         ? {
-                            injectHeaders: {
-                              Host: 'soffiaprufa.skra.is',
-                            },
-                          }
+                          injectHeaders: {
+                            Host: 'soffiaprufa.skra.is',
+                          },
+                        }
                         : {}),
                       predicateGenerators: [
                         {
@@ -176,24 +176,27 @@ export const getLocalrunValueFile = async (
     },
     { ports: [] as number[], configs: [] as any[] },
   )
-  const defaultMountebankConfig = 'mountebank-imposter-config.json'
+  const defaultMountebankConfigDir = `${rootDir}/dist`
+  const defaultMountebankConfig = `${defaultMountebankConfigDir}/mountebank-imposter-config.json`
   logger.debug('Writing default mountebank config to file', {
     defaultMountebankConfig,
     mocksConfigs,
   })
-  if (!options.dryRun)
+  if (!dryRun && noWrite) {
+    await mkdir(defaultMountebankConfigDir, { recursive: true })
     await writeFile(
       defaultMountebankConfig,
       JSON.stringify({ imposters: mocksConfigs.configs }),
       { encoding: 'utf-8' },
     )
+  }
 
   const mocksObj = {
     containerer: 'docker',
     containererCommand: 'run',
     containererFlags: '-it --rm',
     ports: ['2525', ...mocksConfigs.ports],
-    mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json:z`],
+    mounts: [`${defaultMountebankConfig}:/app/default.json:z`],
     image: 'docker.io/bbyars/mountebank:2.8.1',
     command: 'start --configfile=/app/default.json',
   }
