@@ -45,7 +45,7 @@ export const mapSubArticle = ({
     typename: 'SubArticle',
     id: sys.id,
     title: fields.title ?? '',
-    slug,
+    slug: slug.trim(),
     parent: fields.parent?.fields && mapArticleReference(fields.parent),
     body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
     showTableOfContents: fields.showTableOfContents ?? false,
