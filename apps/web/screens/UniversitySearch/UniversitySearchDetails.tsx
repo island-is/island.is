@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
@@ -28,6 +28,7 @@ import {
   IconTitleCard,
   OrganizationFooter,
   OrganizationHeader,
+  Webreader,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -55,7 +56,6 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { TranslationDefaults } from './TranslationDefaults'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -86,7 +86,8 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     false,
     false,
   ])
-  useSetZIndexOnHeader()
+
+  console.log(data)
 
   const toggleIsOpen = (index: number) => {
     const newIsOpen = isOpen.map((x, i) => {
@@ -208,6 +209,16 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       })),
     })) ?? []
 
+  const universityData = useMemo(() => {
+    return universities.filter((x) => x.id === data.universityId)[0] || {}
+  }, [universities, data.universityId])
+
+  const htmlParser = (dataEn: string | undefined, dataIs: string) => {
+    return locale === 'en'
+      ? ReactHtmlParser(dataEn ? dataEn : '')
+      : ReactHtmlParser(dataIs ? dataIs : '')
+  }
+
   return (
     <>
       {organizationPage && (
@@ -233,17 +244,11 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               }}
             />
             <IconTitleCard
-              heading={
-                universities.filter((x) => x.id === data.universityId)[0]
-                  .contentfulTitle || ''
-              }
+              heading={universityData.contentfulTitle || ''}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
-              href="/"
-              imgSrc={
-                universities.filter((x) => x.id === data.universityId)[0]
-                  .contentfulLogoUrl || ''
-              }
+              href={universityData.contentfulLink || ''}
+              imgSrc={universityData.contentfulLogoUrl || ''}
               alt="University infomation"
             />
             <Box width="full">
@@ -273,9 +278,27 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 </Button>
               </LinkV2>
             </Hidden>
-            <Text variant="h1" as="h1">
-              {locale === 'en' ? data.nameEn : data.nameIs}
-            </Text>
+            <Box
+              display={'flex'}
+              flexDirection={'column'}
+              style={{ gap: '1rem' }}
+            >
+              <Box style={{ marginBottom: '-24px' }}>
+                <Webreader />
+              </Box>
+              <Text variant="h1" as="h2">
+                {locale === 'en' ? data.nameEn : data.nameIs}
+              </Text>
+              {data.specializationNameIs && data.specializationNameEn && (
+                <Text variant="h3" as="h3">
+                  {`${locale === 'en' ? 'Specialization: ' : 'Kjörsvið: '}${
+                    locale === 'en'
+                      ? data.specializationNameEn
+                      : data.specializationNameIs
+                  }`}
+                </Text>
+              )}
+            </Box>
             <Box
               width="full"
               display={'flex'}
@@ -285,7 +308,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               style={{ backgroundColor: '#F2F7FF' }}
               padding={3}
             >
-              <Text variant={'h3'} color={'blue600'}>
+              <Text variant={'h3'} as="h3" color={'blue600'}>
                 {n('applyForProgram', 'Umsókn í háskólanám')}
               </Text>
 
@@ -302,14 +325,11 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               ) : (
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
+              {data.iscedCode && (
+                <Text variant="default">{`ISCED-F-2023: ${data.iscedCode}`}</Text>
+              )}
               <Text marginTop={3} marginBottom={3} variant="default">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.descriptionEn ? data.descriptionEn : '',
-                    )
-                  : ReactHtmlParser(
-                      data.descriptionIs ? data.descriptionIs : '',
-                    )}
+                {htmlParser(data.descriptionEn, data.descriptionIs)}
               </Text>
               {data.externalUrlIs && (
                 <LinkV2
@@ -447,17 +467,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(0)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.admissionRequirementsEn
-                              ? data.admissionRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.admissionRequirementsIs
-                              ? data.admissionRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.admissionRequirementsEn || '',
+                        data.admissionRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}
@@ -472,17 +485,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(1)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.studyRequirementsEn
-                              ? data.studyRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.studyRequirementsIs
-                              ? data.studyRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.studyRequirementsEn || '',
+                        data.studyRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}

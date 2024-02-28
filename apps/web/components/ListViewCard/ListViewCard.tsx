@@ -76,7 +76,6 @@ export const ListViewCard = ({
             variant="h4"
             color="blue400"
             truncate={false}
-            title={heading}
             paddingBottom={subHeading ? 0 : 3}
             lineHeight="sm"
           >
@@ -103,7 +102,7 @@ export const ListViewCard = ({
               paddingBottom={1}
             >
               <Box paddingRight={2}>{item.icon}</Box>
-              <Text whiteSpace="nowrap" variant="small">
+              <Text whiteSpace="normal" variant="small">
                 {item.title}
               </Text>
             </Box>

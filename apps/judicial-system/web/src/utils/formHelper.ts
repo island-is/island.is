@@ -11,8 +11,7 @@ export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -22,10 +21,9 @@ export const removeTabsValidateAndSet = (
 
   validateAndSet(
     field,
-    value,
+    value.trim(),
     validations,
-    theCase,
-    setCase,
+    setWorkingCase,
     errorMessage,
     setErrorMessage,
   )
@@ -61,17 +59,16 @@ export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
   removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: value,
-  })
+  }))
 }
 
 export const validateAndSendToServer = (
@@ -104,7 +101,7 @@ export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]
@@ -117,10 +114,10 @@ export const setCheckboxAndSendToServer = (
     checks.splice(checks.indexOf(value), 1)
   }
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: checks,
-  })
+  }))
 
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })

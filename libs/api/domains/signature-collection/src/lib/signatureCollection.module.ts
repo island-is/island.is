@@ -4,6 +4,7 @@ import { SignatureCollectionService } from './signatureCollection.service'
 import { SignatureCollectionClientModule } from '@island.is/clients/signature-collection'
 import { SignatureCollectionAdminService } from './signatureCollectionAdmin.service'
 import { SignatureCollectionAdminResolver } from './signatureCollectionAdmin.resolver'
+import { SignatureCollectionManagerService } from './signatureCollectionManager.service'
 
 @Module({
   imports: [SignatureCollectionClientModule],
@@ -12,6 +13,7 @@ import { SignatureCollectionAdminResolver } from './signatureCollectionAdmin.res
     SignatureCollectionResolver,
     SignatureCollectionAdminService,
     SignatureCollectionAdminResolver,
+    SignatureCollectionManagerService,
   ],
 })
 export class SignatureCollectionModule {}

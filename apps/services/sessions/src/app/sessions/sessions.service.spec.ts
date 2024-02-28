@@ -1,5 +1,3 @@
-import { Job } from 'bull'
-
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
@@ -7,6 +5,7 @@ import { FixtureFactory } from '../../../test/fixture.factory'
 import { setupWithoutAuth } from '../../../test/setup'
 import { Session } from '../sessions/session.model'
 import { SessionsService } from './sessions.service'
+import { USER_AGENT_MAX_LENGTH } from './constants'
 
 const mockSession = {
   sessionId: '1',
@@ -18,6 +17,10 @@ const mockSession = {
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
   ip: '127.0.0.1',
 } as Session
+
+const userAgentLong = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 ${'a'.repeat(
+  USER_AGENT_MAX_LENGTH,
+)}`
 
 describe('SessionsService', () => {
   let app: TestApp
@@ -40,12 +43,17 @@ describe('SessionsService', () => {
     })
   })
 
+  afterAll(async () => {
+    await app?.cleanUp()
+  })
+
   it.each`
     session        | userAgent                                                                                                                  | device
     ${mockSession} | ${'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'} | ${'Chrome (Mac OS)'}
     ${mockSession} | ${'Chrome/109.0.0.0'}                                                                                                      | ${'Chrome'}
     ${mockSession} | ${'Macintosh; Intel Mac OS X 10_15_7'}                                                                                     | ${'Mac OS'}
     ${mockSession} | ${'Bogus User Agent'}                                                                                                      | ${null}
+    ${mockSession} | ${userAgentLong}                                                                                                           | ${'Chrome (Mac OS)'}
   `(
     'should create session with matching user agent parsing to $device',
     async ({ session, userAgent, device }) => {
@@ -60,7 +68,7 @@ describe('SessionsService', () => {
       expect(sessions).toHaveLength(1)
       expect(sessions[0]).toMatchObject({
         ...session,
-        userAgent,
+        userAgent: userAgent.substring(0, USER_AGENT_MAX_LENGTH),
         device,
       })
     },

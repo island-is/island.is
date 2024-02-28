@@ -21,6 +21,10 @@ import {
   Domain,
   IdentityResource,
   Language,
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
   Translation,
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
@@ -41,6 +45,7 @@ import {
   CreateClientUri,
   CreateCustomDelegation,
   CreateIdentityResource,
+  CreatePersonalRepresentativeDelegation,
 } from './types'
 
 export class FixtureFactory {
@@ -323,6 +328,57 @@ export class FixtureFactory {
     })
 
     return delegation
+  }
+
+  async createPersonalRepresentativeDelegation({
+    toNationalId,
+    fromNationalId,
+    validTo,
+    type,
+    rightType,
+  }: CreatePersonalRepresentativeDelegation) {
+    const [personalRepresentativeType] = await this.get(
+      PersonalRepresentativeType,
+    ).findCreateFind({
+      where: { code: type?.code ?? faker.random.word() },
+      defaults: {
+        validTo: type?.validTo ?? addYears(new Date(), 1),
+        name: type?.name ?? faker.random.word(),
+        description: type?.description ?? faker.random.words(3),
+      },
+    })
+
+    const personalRepresentative = await this.get(
+      PersonalRepresentative,
+    ).create({
+      id: faker.datatype.uuid(),
+      nationalIdRepresentedPerson: fromNationalId ?? createNationalId(),
+      nationalIdPersonalRepresentative:
+        toNationalId ?? createNationalId('person'),
+      validTo: validTo ?? addYears(new Date(), 1),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
+      contractId: 'data_for_tests',
+      externalUserId: 'data_for_tests',
+    })
+
+    const [personalRepresentativeRightType] = await this.get(
+      PersonalRepresentativeRightType,
+    ).findCreateFind({
+      where: {
+        code: rightType?.code ?? faker.random.word(),
+      },
+      defaults: {
+        validFrom: rightType?.validFrom ?? startOfDay(new Date()),
+        validTo: rightType?.validTo ?? addYears(new Date(), 1),
+        description: rightType?.description ?? faker.random.words(3),
+      },
+    })
+
+    await this.get(PersonalRepresentativeRight).create({
+      id: faker.datatype.uuid(),
+      personalRepresentativeId: personalRepresentative.id,
+      rightTypeCode: personalRepresentativeRightType.code,
+    })
   }
 
   async createTranslations(

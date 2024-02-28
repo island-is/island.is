@@ -565,6 +565,9 @@ export interface IChartFields {
   /** Source Data */
   sourceData?: Record<string, any> | undefined
 
+  /** Flip Axis */
+  flipAxis?: boolean | undefined
+
   /** X Axis Key */
   xAxisKey?: string | undefined
 
@@ -720,6 +723,40 @@ export interface IContactUs extends Entry<IContactUsFields> {
     contentType: {
       sys: {
         id: 'contactUs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICustomPageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Unique Identifier */
+  uniqueIdentifier: 'PensionCalculator'
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Translation Namespace */
+  translationNamespace?: INamespace | undefined
+
+  /** Configuration */
+  configJson?: Record<string, any> | undefined
+}
+
+export interface ICustomPage extends Entry<ICustomPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'customPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1983,10 +2020,10 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink
+  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
 
   /** Children Links */
-  childrenLinks?: ILink[] | undefined
+  childrenLinks?: (ILink | IOrganizationSubpage | IProjectSubpage)[] | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -2904,7 +2941,7 @@ export interface IOrganizationSubpageFields {
     | undefined
 
   /** Slice Custom Renderer */
-  sliceCustomRenderer?: 'SliceDropdown' | undefined
+  sliceCustomRenderer?: 'SliceDropdown' | 'SliceTableOfContents' | undefined
 
   /** Slice Extra Text */
   sliceExtraText?: string | undefined
@@ -4757,6 +4794,7 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'customPage'
   | 'districts'
   | 'emailSignup'
   | 'embed'

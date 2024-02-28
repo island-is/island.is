@@ -6,6 +6,7 @@ import {
   CreateClient,
   CreateCustomDelegation,
   CreateDomain,
+  CreatePersonalRepresentativeDelegation,
 } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
@@ -111,6 +112,13 @@ export class TestCase {
         name: '',
       })),
     }
+  }
+
+  get personalRepresentativeDelegation(): CreatePersonalRepresentativeDelegation[] {
+    return this.fromRepresentative.map((d: string) => ({
+      toNationalId: this.user.nationalId,
+      fromNationalId: d,
+    }))
   }
 
   get apiScopeUserAccess(): CreateApiScopeUserAccess[] {
