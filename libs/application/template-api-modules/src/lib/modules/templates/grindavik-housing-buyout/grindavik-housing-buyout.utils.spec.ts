@@ -1,7 +1,10 @@
 // domicileCheck.test.ts
 
 import { ResidenceHistoryEntryDto } from '@island.is/clients/national-registry-v2'
-import hasDomicileAtPostalCodeOnDate from './grindavik-housing-buyout.utils'
+import {
+  getDomicileOnDate,
+  getDomicileAtPostalCodeOnDate,
+} from './grindavik-housing-buyout.utils'
 
 // Mock data for testing
 const mockDomicileData = [
@@ -29,7 +32,7 @@ const mockDomicileData = [
 
 describe('hasDomicileAtPostalCodeOnDate', () => {
   it('should return true for a postal code and date matching an entry', () => {
-    const result = hasDomicileAtPostalCodeOnDate(
+    const result = getDomicileAtPostalCodeOnDate(
       mockDomicileData,
       '1000',
       '2023-01-02',
@@ -38,7 +41,7 @@ describe('hasDomicileAtPostalCodeOnDate', () => {
   })
 
   it('should return false for a postal code not matching any entry', () => {
-    const result = hasDomicileAtPostalCodeOnDate(
+    const result = getDomicileAtPostalCodeOnDate(
       mockDomicileData,
       '9999',
       '2023-01-02',
@@ -47,7 +50,7 @@ describe('hasDomicileAtPostalCodeOnDate', () => {
   })
 
   it('should return false for a date before the domicile start date', () => {
-    const result = hasDomicileAtPostalCodeOnDate(
+    const result = getDomicileAtPostalCodeOnDate(
       mockDomicileData,
       '1000',
       '2022-12-31',
@@ -71,9 +74,33 @@ describe('hasDomicileAtPostalCodeOnDate', () => {
       },
     ] as ResidenceHistoryEntryDto[]
 
-    const result = hasDomicileAtPostalCodeOnDate(
+    const result = getDomicileAtPostalCodeOnDate(
       dataWithNullPostalCode,
       '3000',
+      '2023-08-01',
+    )
+    expect(result).toBeFalsy()
+  })
+
+  it('should handle null dates correctly', () => {
+    // Adding an entry with a null date for this test
+    const dataWithNullDate = [
+      ...mockDomicileData,
+      {
+        city: 'CityD',
+        postalCode: '4000',
+        streetName: 'StreetD',
+        municipalityCode: '400',
+        houseIdentificationCode: '400000000004',
+        realEstateNumber: '4',
+        country: 'CountryD',
+        dateOfChange: null,
+      },
+    ] as ResidenceHistoryEntryDto[]
+
+    const result = getDomicileAtPostalCodeOnDate(
+      dataWithNullDate,
+      '4000',
       '2023-08-01',
     )
     expect(result).toBeFalsy()

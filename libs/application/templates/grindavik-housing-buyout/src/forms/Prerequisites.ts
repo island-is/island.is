@@ -46,18 +46,21 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: checkResidence,
+              provider: NationalRegistryUserApi,
               title: prerequisites.dataProviders.nationalRegistryTitle,
               subTitle: prerequisites.dataProviders.nationalRegistryDescription,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: '',
+              provider: checkResidence,
+              title: prerequisites.dataProviders.getResidenceHistoryTitle,
+              subTitle:
+                prerequisites.dataProviders.getResidenceHistoryDescription,
             }),
             buildDataProviderItem({
               provider: grindaVikHousing,
-              title: 'Grindavík Housing',
-              subTitle: 'Get grindavik housing',
+              title: prerequisites.dataProviders.getGrindavikHousingTitle,
+              subTitle:
+                prerequisites.dataProviders.getGrindavikHousingDescription,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
