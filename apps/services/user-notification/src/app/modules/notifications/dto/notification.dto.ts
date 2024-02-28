@@ -84,9 +84,9 @@ export class RenderedNotificationDto {
   @IsUUID()
   messageId!: string
 
-  @ApiProperty({ example: '1234567890' })
+  @ApiProperty({ example: '1234567890', nullable: true, type: 'string or null' })
   @IsString()
-  senderId!: string | null | undefined
+  senderId!: string | null
 
   @ApiProperty({ example: 'Catchy notification title' })
   @IsString()
