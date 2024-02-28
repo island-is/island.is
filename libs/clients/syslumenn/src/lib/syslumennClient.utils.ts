@@ -24,6 +24,8 @@ import {
   Okutaeki,
   ThjodskraSvarSkeyti,
   ErfdafjarskatturSvar,
+  DanarbuUpplErfdafjarskatt,
+  EignirDanarbusErfdafjarskatt,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -56,6 +58,9 @@ import {
   AvailableSettlements,
   RegistryPerson,
   InheritanceTax,
+  InheritanceReportAsset,
+  InheritanceEstateMember,
+  InheritanceReportInfo,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -497,5 +502,145 @@ export const mapInheritanceTax = (
     inheritanceTax: inheritance.erfdafjarskattur,
     taxExemptionLimit: inheritance.skattfrelsismorkUpphaed,
     validFrom: inheritance.gildirFra,
+  }
+}
+
+const mapInheritanceReportAsset = (
+  iAsset: EignirDanarbusErfdafjarskatt,
+): InheritanceReportAsset => {
+  return {
+    description: iAsset.lysing,
+    assetNumber: iAsset.fastanumer,
+    share: iAsset.eignarhlutfall,
+    evaluation: iAsset.fasteignamat,
+  }
+}
+
+const mapInheritanceReportHeirs = (
+  heirs: Array<Erfingar>,
+): Array<InheritanceEstateMember> => {
+  return heirs.map((heir) => ({
+    name: heir.nafn ?? '',
+    nationalId: heir.kennitala ?? '',
+    relation: heir.tengsl ?? 'Annað',
+    advocate: heir.malsvari ? mapAdvocate(heir.malsvari) : undefined,
+    email: heir.netfang,
+    phone: heir.simi,
+    relationWithApplicant: heir.tengsl,
+    address: heir.heimilisfang,
+  }))
+}
+
+const mapInheritanceReportAssets = (
+  iAssets: DanarbuUpplErfdafjarskatt['eignir'],
+) => {
+  const assets: Array<InheritanceReportAsset> = []
+  const vehicles: Array<InheritanceReportAsset> = []
+  const ships: Array<InheritanceReportAsset> = []
+  const cash: Array<InheritanceReportAsset> = []
+  const flyers: Array<InheritanceReportAsset> = []
+  const otherAssets: Array<InheritanceReportAsset> = []
+  const stocks: Array<InheritanceReportAsset> = []
+  const bankBalances: Array<InheritanceReportAsset> = []
+  const depositsAndMoney: Array<InheritanceReportAsset> = []
+  const guns: Array<InheritanceReportAsset> = []
+  const sharesAndClaims: Array<InheritanceReportAsset> = []
+  const funeralCosts: Array<InheritanceReportAsset> = []
+  const officialFees: Array<InheritanceReportAsset> = []
+  const otherDebts: Array<InheritanceReportAsset> = []
+  const assetsInBusiness: Array<InheritanceReportAsset> = []
+  const debtsInBusiness: Array<InheritanceReportAsset> = []
+
+  iAssets?.forEach((iAsset) => {
+    const asset = mapInheritanceReportAsset(iAsset)
+    switch (iAsset.tegundAngalgs) {
+      case TegundAndlags.NUMBER_0:
+        assets.push(asset)
+        break
+      case TegundAndlags.NUMBER_1:
+        vehicles.push(asset)
+        break
+      case TegundAndlags.NUMBER_2:
+        ships.push(asset)
+        break
+      case TegundAndlags.NUMBER_3:
+        cash.push(asset)
+        break
+      case TegundAndlags.NUMBER_4:
+        flyers.push(asset)
+        break
+      // NUMBER_5 represents unregistered assets so this is skipped
+      case TegundAndlags.NUMBER_6:
+        otherAssets.push(asset)
+        break
+      case TegundAndlags.NUMBER_7:
+        stocks.push(asset)
+        break
+      case TegundAndlags.NUMBER_8:
+        bankBalances.push(asset)
+        break
+      case TegundAndlags.NUMBER_9:
+        depositsAndMoney.push(asset)
+        break
+      case TegundAndlags.NUMBER_10:
+        guns.push(asset)
+        break
+      case TegundAndlags.NUMBER_11:
+        sharesAndClaims.push(asset)
+        break
+      case TegundAndlags.NUMBER_12:
+        funeralCosts.push(asset)
+        break
+      case TegundAndlags.NUMBER_13:
+        officialFees.push(asset)
+        break
+      case TegundAndlags.NUMBER_14:
+        otherDebts.push(asset)
+        break
+      case TegundAndlags.NUMBER_15:
+        assetsInBusiness.push(asset)
+        break
+      case TegundAndlags.NUMBER_16:
+        debtsInBusiness.push(asset)
+        break
+      default:
+        break
+    }
+  })
+
+  return {
+    assets,
+    vehicles,
+    ships,
+    cash,
+    flyers,
+    otherAssets,
+    stocks,
+    bankBalances,
+    depositsAndMoney,
+    guns,
+    sharesAndClaims,
+    funeralCosts,
+    officialFees,
+    otherDebts,
+    assetsInBusiness,
+    debtsInBusiness,
+  }
+}
+
+export const mapEstateToInheritanceReportInfo = (
+  estate: DanarbuUpplErfdafjarskatt,
+): InheritanceReportInfo => {
+  return {
+    caseNumber: estate.malsnumer,
+    dateOfDeath: estate.danardagur,
+    will: estate.erfdaskra,
+    knowledgeOfOtherWill: estate.erfdakraVitneskja,
+    settlement: estate.kaupmali,
+    nameOfDeceased: estate.nafn,
+    nationalId: estate.kennitala,
+    addressOfDeceased: estate.logheimili,
+    heirs: mapInheritanceReportHeirs(estate.erfingar ?? []),
+    ...mapInheritanceReportAssets(estate.eignir),
   }
 }

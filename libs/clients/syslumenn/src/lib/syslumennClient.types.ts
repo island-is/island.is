@@ -228,6 +228,10 @@ export type EstateMember = {
   advocate?: Advocate
 }
 
+export type InheritanceEstateMember = EstateMember & {
+  address?: string
+}
+
 export type EstateAsset = {
   description: string
   assetNumber: string
@@ -283,6 +287,41 @@ export interface InheritanceTax {
   validFrom: Date
   inheritanceTax: number
   taxExemptionLimit: number
+}
+
+export interface InheritanceReportAsset {
+  description?: string
+  assetNumber?: string
+  share: number
+  evaluation?: string
+}
+
+export interface InheritanceReportInfo {
+  assets: Array<InheritanceReportAsset>
+  vehicles: Array<InheritanceReportAsset>
+  ships: Array<InheritanceReportAsset>
+  cash: Array<InheritanceReportAsset>
+  flyers: Array<InheritanceReportAsset>
+  otherAssets: Array<InheritanceReportAsset>
+  stocks: Array<InheritanceReportAsset>
+  bankBalances: Array<InheritanceReportAsset>
+  depositsAndMoney: Array<InheritanceReportAsset>
+  guns: Array<InheritanceReportAsset>
+  sharesAndClaims: Array<InheritanceReportAsset>
+  funeralCosts: Array<InheritanceReportAsset>
+  officialFees: Array<InheritanceReportAsset>
+  otherDebts: Array<InheritanceReportAsset>
+  assetsInBusiness: Array<InheritanceReportAsset>
+  debtsInBusiness: Array<InheritanceReportAsset>
+  heirs: Array<EstateMember>
+  caseNumber?: string
+  dateOfDeath?: Date
+  will?: string
+  settlement?: boolean
+  knowledgeOfOtherWill?: boolean
+  nationalId?: string
+  addressOfDeceased?: string
+  nameOfDeceased?: string
 }
 
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
