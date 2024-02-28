@@ -99,8 +99,8 @@ const PaperScreen = () => {
                             <Text>
                               {typeof item.wantsPaper === 'boolean'
                                 ? item.wantsPaper === true
-                                  ? 'Já'
-                                  : 'Nei'
+                                  ? formatMessage(m.yes)
+                                  : formatMessage(m.no)
                                 : ''}
                             </Text>
                           </Box>

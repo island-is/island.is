@@ -790,6 +790,14 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:paper-inactive',
     defaultMessage: 'Óvirkur',
   },
+  yes: {
+    id: 'portals-admin.document-provider:paper-yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'portals-admin.document-provider:paper-no',
+    defaultMessage: 'Nei',
+  },
 
   // Categories
   catAndTypeName: {
