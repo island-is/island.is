@@ -23,7 +23,7 @@ export class UserProfileByNationalIdPipe
       nationalId,
     )
     if (!userProfile) {
-      this.userProfileService.logger.info(
+      this.logger.info(
         `A user profile with nationalId ${nationalId} does not exist`,
       )
     } else {
