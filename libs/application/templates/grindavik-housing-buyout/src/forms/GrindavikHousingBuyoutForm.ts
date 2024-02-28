@@ -20,6 +20,7 @@ import * as m from '../lib/messages'
 import {
   formatCurrency,
   formatPhoneNumber,
+  removeCountryCode,
 } from '@island.is/application/ui-components'
 import { GrindavikHousingBuyout } from '../lib/dataSchema'
 import {
@@ -181,7 +182,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               label: applicantInformationMessages.labels.nationalId,
               colSpan: '6/12',
               value: ({ answers }) =>
-                (answers as GrindavikHousingBuyout).applicant.nationalId,
+                formatNationalId(
+                  (answers as GrindavikHousingBuyout).applicant.nationalId,
+                ),
             }),
             buildKeyValueField({
               label: applicantInformationMessages.labels.email,
@@ -196,7 +199,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 !!(answers as GrindavikHousingBuyout)?.applicant?.phoneNumber,
               value: ({ answers }) =>
                 formatPhoneNumber(
-                  (answers as GrindavikHousingBuyout).applicant.phoneNumber,
+                  removeCountryCode(
+                    (answers as GrindavikHousingBuyout).applicant.phoneNumber,
+                  ),
                 ),
             }),
             buildDividerField({}),
