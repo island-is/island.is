@@ -1,18 +1,10 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const postgresInfo = {
-  username: 'skilavottord',
-  name: 'skilavottord',
-  passwordSecret: '/k8s/skilavottord/DB_PASSWORD',
-}
 export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
   service('skilavottord-ws')
     .namespace('skilavottord')
-    .postgres(postgresInfo)
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-    })
+    .db({ name: 'skilavottord' })
+    .migrations()
     .secrets({
       SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL',
       SAMGONGUSTOFA_REST_AUTH_URL:

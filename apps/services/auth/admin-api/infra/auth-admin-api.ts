@@ -4,10 +4,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
     .image('services-auth-admin-api')
-    .postgres({
-      username: 'servicesauth',
+    .db({
       name: 'servicesauth',
-      passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
