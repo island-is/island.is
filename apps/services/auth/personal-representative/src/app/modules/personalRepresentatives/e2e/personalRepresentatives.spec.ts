@@ -274,7 +274,7 @@ describe('PersonalRepresentativeController', () => {
     await server.get(`${path}/${uuid()}`).expect(404)
   })
 
-  it('Get v1/personal-representatives should return badrequest for a connection id that does not exist', async () => {
+  it('Get v1/personal-representatives should return badrequest for invalid uuids', async () => {
     await server.get(`${path}/notexisting`).expect(400)
   })
 
