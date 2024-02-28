@@ -4,7 +4,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { Configuration} from '../../gen/fetch'
+import { Configuration } from '../../gen/fetch'
 import { ReykjavikUniversityApplicationClientConfig } from './reykjavikUniversityClient.config'
 
 const configFactory = (
@@ -17,12 +17,12 @@ const configFactory = (
     name: 'clients-university-application-reykjavik-university',
     autoAuth: idsClientConfig.isConfigured
       ? {
-        mode: 'auto',
-        issuer: idsClientConfig.issuer,
-        clientId: idsClientConfig.clientId,
-        clientSecret: idsClientConfig.clientSecret,
-        scope: config.scope,
-      }
+          mode: 'auto',
+          issuer: idsClientConfig.issuer,
+          clientId: idsClientConfig.clientId,
+          clientSecret: idsClientConfig.clientSecret,
+          scope: config.scope,
+        }
       : undefined,
     timeout: config.fetchTimeout,
   }),
@@ -42,12 +42,12 @@ export const ApiConfiguration = {
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
     return new Configuration(
-        configFactory(
-          xRoadConfig,
-          config,
-          idsClientConfig,
-          `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
-        )
+      configFactory(
+        xRoadConfig,
+        config,
+        idsClientConfig,
+        `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+      ),
     )
   },
   inject: [
