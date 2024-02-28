@@ -153,7 +153,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (index !== -1) {
       const movedField = filterOptions.splice(index, 1)[0]
-      filterOptions.splice(2, 0, movedField)
+      filterOptions.unshift(movedField)
     }
   }, [filterOptions])
 
@@ -179,12 +179,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       : 'CLOSED'
   }
 
-<<<<<<< HEAD
   // TODO Create proper types here
   const [originalSortedResults, setOriginalSortedList] = useState<any>(
-=======
-  const [originalSortedResults, setOriginalSortedList] = useState(
->>>>>>> 7590ff0841 (Updating search ordering code)
     [...data]
       // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
       .sort(() => Math.random() - 0.5)
@@ -208,7 +204,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     JSON.parse(JSON.stringify(initialFilters)),
   )
 
-  const [gridView, setGridView] = useState<boolean>(true)
+  const [gridView, setGridView] = useState<boolean>(false)
 
   const [totalPages, setTotalPages] = useState<number>(
     Math.ceil(data.length / ITEMS_PER_PAGE),
@@ -239,21 +235,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (searchQuery) {
       setQuery(searchQuery)
-      sessionStorage.setItem('query', searchQuery)
+
       //also set deep copy here
       setFilters(JSON.parse(JSON.stringify(initialFilters)))
-    } else if (sessionStorage.getItem('query')) {
-      setQuery(sessionStorage.getItem('query') || '')
     }
   }, [])
 
   const fuseOptions = {
-    threshold: 0.3,
+    threshold: 0.4,
     findAllMatches: true,
-<<<<<<< HEAD
     ignoreLocation: true,
-=======
->>>>>>> 7590ff0841 (Updating search ordering code)
     keys: [
       `name${locale === 'is' ? 'Is' : 'En'}`,
       `specializationName${locale === 'is' ? 'Is' : 'En'}`,
@@ -425,10 +416,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const formatModeOfDelivery = (items: string[]): string => {
-    items = items.filter((item) => {
-      return item !== 'UNDEFINED' ? true : false
-    })
-
     const length = items.length
 
     if (length === 0) {
@@ -440,10 +427,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
 
     if (length === 2) {
-      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
-        'or',
-        'eða',
-      )} ${n(items[1], TranslationDefaults[items[1]])}`
+      return `${n(items[0], TranslationDefaults[items[0]])} or ${n(
+        items[0],
+        TranslationDefaults[items[0]],
+      )}`
     }
 
     const formattedList = items.map((item, index) => {
@@ -457,7 +444,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     return formattedList.join('')
   }
 
-<<<<<<< HEAD
   const formatFilterStrings = (tag: string, field: string) => {
     if (field === 'universityId') {
       return universities.filter((x) => x.id === tag)[0].contentfulTitle || ''
@@ -468,8 +454,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }
 
-=======
->>>>>>> 9ab50e9c71 (Remove duplicate code and fixing formatting of mode of delivery)
   return (
     <Box>
       {organizationPage && (
@@ -683,10 +667,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setSelectedPage(1)
                 searchTermHasBeenInitialized.current = true
                 setQuery(e.target.value)
-                sessionStorage.setItem('query', e.target.value)
               }}
             />
-<<<<<<< HEAD
             <Box
               paddingTop={2}
               display={'flex'}
@@ -731,32 +713,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Box>
 
-=======
-            <Box paddingTop={1} display={'flex'} style={{ gap: '0.5rem' }}>
-              {Object.keys(filters).map((key) =>
-                filters[key as keyof FilterProps].map((tag) => (
-                  <Tag>
-                    <Box
-                      display={'flex'}
-                      justifyContent={'center'}
-                      alignItems={'center'}
-                      style={{ gap: '0.5rem' }}
-                    >
-                      {n(tag, TranslationDefaults[tag])}
-                      <button
-                        style={{ alignSelf: 'end' }}
-                        onClick={() =>
-                          handleRemoveTag(key as keyof FilterProps, tag)
-                        }
-                      >
-                        <Icon icon={'close'} size="small" />
-                      </button>
-                    </Box>
-                  </Tag>
-                )),
-              )}
-            </Box>
->>>>>>> 9ab50e9c71 (Remove duplicate code and fixing formatting of mode of delivery)
             <ContentBlock>
               <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
@@ -1135,9 +1091,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${dataItem.credits} ${n(
                                     'units',
                                     'einingar',
-                                  )}, ${dataItem.durationInYears.toLocaleString(
-                                    locale === 'is' ? 'de' : 'en',
-                                  )} ${
+                                  )}, ${dataItem.durationInYears} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
