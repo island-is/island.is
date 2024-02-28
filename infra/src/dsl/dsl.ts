@@ -506,7 +506,8 @@ export class ServiceBuilder<ServiceType extends string> {
         ),
       passwordSecret:
         postgres.passwordSecret ??
-        `/k8s/${this.stripPostfix(defaultName)}${postgres.readOnly ? '/readonly' : ''
+        `/k8s/${this.stripPostfix(defaultName)}${
+          postgres.readOnly ? '/readonly' : ''
         }/DB_PASSWORD`,
       //These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host
