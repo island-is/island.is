@@ -8,7 +8,6 @@ import {
   buildCheckboxField,
   buildCompanySearchField,
   getValueViaPath,
-  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -26,7 +25,6 @@ import {
   overview,
   submitted,
   selectCompany,
-  errorMessages,
 } from '../lib/messages'
 import { YES } from '../shared/constants'
 
