@@ -1,13 +1,18 @@
 import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
-import { Chart } from '@island.is/web/graphql/schema'
 
+import {
+  DEFAULT_PIE_INNER_RADIUS,
+  DEFAULT_PIE_LABEL_FONT_SIZE,
+  PIE_CHART_MAX_RADIUS,
+} from '../constants'
 import {
   ChartComponentType,
   ChartComponentWithRenderProps,
   ChartData,
   ChartType,
+  CustomStyleConfig,
 } from '../types'
 import {
   formatPercentageForPresentation,
@@ -74,6 +79,7 @@ type CustomLabelProps = {
     value?: string | number
   }
   activeLocale: Locale
+  customStyleConfig: CustomStyleConfig
 }
 
 const RADIAN = Math.PI / 180
@@ -86,6 +92,7 @@ const renderCustomizedLabel = ({
   payload,
   percent,
   activeLocale,
+  customStyleConfig,
 }: CustomLabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.8
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
@@ -95,7 +102,15 @@ const renderCustomizedLabel = ({
 
   return (
     <g>
-      <text x={x} y={y} fill="#00003C" textAnchor="middle" fontSize="14px">
+      <text
+        x={x}
+        y={y}
+        fill="#00003C"
+        textAnchor="middle"
+        fontSize={`${
+          customStyleConfig?.pie?.fontSize ?? DEFAULT_PIE_LABEL_FONT_SIZE
+        }px`}
+      >
         <tspan x={x} dy="0" fontWeight={500}>{`${
           percent
             ? formatPercentageForPresentation(percent)
@@ -115,6 +130,7 @@ export const renderPieChartComponents = (
   components: ChartComponentWithRenderProps[],
   data: ChartData,
   activeLocale: Locale,
+  customStyleConfig: CustomStyleConfig,
 ) => {
   const pieData = data?.[0]?.statisticsForHeader ?? []
   const total = pieData.reduce(
@@ -123,6 +139,23 @@ export const renderPieChartComponents = (
   )
   const formattedTotal = formatValueForPresentation(activeLocale, total)
 
+  const userDefinedInnerRadius = customStyleConfig?.pie?.innerRadius
+  const userDefinedOuterRadius = customStyleConfig?.pie?.outerRadius
+
+  if (
+    typeof userDefinedOuterRadius === 'number' &&
+    typeof userDefinedInnerRadius === 'number' &&
+    userDefinedOuterRadius < userDefinedInnerRadius
+  ) {
+    console.log(
+      'Outer radius is larger than inner radius, this will result in a pie chart with no visible segments',
+    )
+  }
+
+  const innerRadius = userDefinedInnerRadius ?? DEFAULT_PIE_INNER_RADIUS
+  const outerRadius =
+    userDefinedOuterRadius ?? PIE_CHART_MAX_RADIUS - innerRadius
+
   return (
     <Pie
       data={pieData}
@@ -130,13 +163,14 @@ export const renderPieChartComponents = (
       isAnimationActive={false}
       cx="50%"
       cy="50%"
-      innerRadius="30%"
-      outerRadius="60%"
+      innerRadius={`${innerRadius}%`}
+      outerRadius={`${outerRadius}%`}
       label={(props) =>
         renderCustomizedLabel({
           ...props,
           activeLocale,
           total,
+          customStyleConfig,
         })
       }
       startAngle={90}
@@ -166,6 +200,7 @@ interface ChartComponentsRendererProps {
   chartType: ChartType
   data: ChartData
   activeLocale: Locale
+  customStyleConfig: CustomStyleConfig
 }
 
 export const renderChartComponents = ({
@@ -173,12 +208,14 @@ export const renderChartComponents = ({
   chartType,
   data,
   activeLocale,
+  customStyleConfig,
 }: ChartComponentsRendererProps) => {
   if (chartType === ChartType.pie) {
     return renderPieChartComponents(
       componentsWithAddedProps,
       data,
       activeLocale,
+      customStyleConfig,
     )
   }
 

@@ -22,7 +22,7 @@ import {
   useGetChartData,
 } from '../hooks'
 import { messages } from '../messages'
-import { ChartType } from '../types'
+import { ChartType, CustomStyleConfig } from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
   createTickFormatter,
@@ -40,6 +40,14 @@ type ChartProps = {
 }
 
 export const Chart = ({ slice }: ChartProps) => {
+  const customStyleConfig = useMemo(() => {
+    if (!slice.customStyleConfig) {
+      return {}
+    }
+
+    return JSON.parse(slice.customStyleConfig)
+  }, [slice.customStyleConfig]) as CustomStyleConfig
+
   const chartType = decideChartBase(slice.components)
   const queryResult = useGetChartData({
     ...slice,
@@ -68,8 +76,9 @@ export const Chart = ({ slice }: ChartProps) => {
         chartUsesGrid,
         slice,
         tickFormatter,
+        customStyleConfig,
       }),
-    [activeLocale, chartUsesGrid, slice, tickFormatter],
+    [activeLocale, chartUsesGrid, slice, tickFormatter, customStyleConfig],
   )
 
   if (BaseChartComponent === null || chartType === null) {
@@ -140,11 +149,13 @@ export const Chart = ({ slice }: ChartProps) => {
             <BaseChartComponent
               data={data}
               layout={slice.flipAxis ? 'vertical' : 'horizontal'}
+              margin={customStyleConfig.chart?.margin ?? undefined}
             >
               {cartesianGridComponents}
               {renderLegend({
                 componentsWithAddedProps,
-                data: data,
+                data,
+                customStyleConfig,
               })}
               {renderTooltip({
                 slice,
@@ -157,8 +168,9 @@ export const Chart = ({ slice }: ChartProps) => {
               {renderChartComponents({
                 componentsWithAddedProps,
                 chartType,
-                data: data,
+                data,
                 activeLocale,
+                customStyleConfig,
               })}
             </BaseChartComponent>
           </ResponsiveContainer>
