@@ -132,7 +132,10 @@ export class CarRecyclingService extends BaseTemplateApiService {
             RecyclingRequestTypes.cancelled,
           )
 
-          if (cancelResponse && cancelResponse.errors) {
+          if (
+            cancelResponse &&
+            !cancelResponse.data.createSkilavottordRecyclingRequestAppSys.status
+          ) {
             isError = true
             this.logger.error(
               `Error canceling recycling vehicle ${vehicle.permno} `,
@@ -169,7 +172,10 @@ export class CarRecyclingService extends BaseTemplateApiService {
               RecyclingRequestTypes.pendingRecycle,
             )
 
-            if (response && response.errors) {
+            if (
+              response &&
+              !response.data.createSkilavottordRecyclingRequestAppSys.status
+            ) {
               isError = true
               this.logger.error(`Error recycling vehicle ${vehicle.permno}`, {
                 error: response.errors,

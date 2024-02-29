@@ -159,6 +159,16 @@ export class RecyclingRequestService {
     }
   }
 
+  endTimers = () => {
+    console.timeEnd('Timer-Samgongustofa-deregistered-total')
+    console.timeEnd('Timer-Samgongustofa-deregistered')
+
+    console.timeEnd('Timer-Payment-total')
+    console.timeEnd('Timer-Payment')
+
+    console.timeEnd('Timer-CreateRecyclingRequest')
+  }
+
   // Create new RecyclingRequest for citizen and recyclingPartner.
   // partnerId could be null, when it's the request is for citizen
   async createRecyclingRequest(
@@ -335,6 +345,8 @@ export class RecyclingRequestService {
           })
           errors.operation = 'deregistered'
           errors.message = `deregistered process failed. Please try again later.`
+
+          this.endTimers()
           return errors
         }
 
@@ -417,6 +429,8 @@ export class RecyclingRequestService {
 
           errors.operation = 'paymentFailed'
           errors.message = `Vehicle has been successful deregistered but payment process failed. Please contact admin.`
+
+          this.endTimers()
           return errors
         }
 
@@ -456,7 +470,7 @@ export class RecyclingRequestService {
 
       errors.operation = 'general'
       errors.message = `Something went wrong. Please try again later.`
-      console.timeEnd('Timer-CreateRecyclingRequest')
+      this.endTimers()
       return errors
     }
   }
