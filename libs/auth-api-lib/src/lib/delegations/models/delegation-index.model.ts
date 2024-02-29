@@ -25,24 +25,28 @@ export class DelegationIndex extends Model<
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   fromNationalId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   toNationalId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   provider!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   type!: string
 
@@ -50,7 +54,7 @@ export class DelegationIndex extends Model<
     type: DataType.DATE,
     allowNull: true,
   })
-  validTo?: CreateOptional<Date>
+  validTo?: CreateOptional<Date> | null
 
   @CreatedAt
   readonly created!: CreationOptional<Date>
