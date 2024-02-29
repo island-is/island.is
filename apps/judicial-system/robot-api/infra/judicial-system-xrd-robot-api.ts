@@ -21,9 +21,9 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'judicial-system-robot-api',
-          staging: 'judicial-system-robot-api',
-          prod: 'judicial-system-robot-api',
+          dev: 'judicial-system-robot-api-xrd',
+          staging: 'judicial-system-robot-api-xrd',
+          prod: 'judicial-system-robot-api-xrd',
         },
         paths: ['/'],
         public: false,

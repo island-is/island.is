@@ -21,9 +21,9 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'judicial-system-digital-mailbox-api',
-          staging: 'judicial-system-digital-mailbox-api',
-          prod: 'judicial-system-digital-mailbox-api',
+          dev: 'judicial-system-digital-mailbox-api-xrd',
+          staging: 'judicial-system-digital-mailbox-api-xrd',
+          prod: 'judicial-system-digital-mailbox-api-xrd',
         },
         paths: ['/'],
         public: false,
