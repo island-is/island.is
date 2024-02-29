@@ -73,7 +73,7 @@ const OccupationalLicenseDetail = () => {
                   if (a.type === OccupationalLicensesV2LinkType.FILE) {
                     return (
                       <Button
-                        key={index}
+                        key={`button-file-${index}`}
                         variant="utility"
                         iconType="outline"
                         onClick={() => {
@@ -90,6 +90,7 @@ const OccupationalLicenseDetail = () => {
 
                   return (
                     <LinkButton
+                      key={`button-link-${index}`}
                       variant="button"
                       to={a.url}
                       text={a.text}
