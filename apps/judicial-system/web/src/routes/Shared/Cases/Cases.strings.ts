@@ -106,7 +106,7 @@ export const cases = {
         },
       }),
     },
-    casesWaitingForConfirmationTitle: defineMessage({
+    casesAwaitingConfirmationTitle: defineMessage({
       id: 'judicial.system.core:cases.active_requests.cases_waiting_for_confirmation_title',
       defaultMessage: 'Mál sem bíða staðfestingar',
       description: 'Notaður sem titill í fyrsta málalista á heimaskjá.',
@@ -122,7 +122,7 @@ export const cases = {
       description:
         'Notaður sem titill í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá.',
     }),
-    casesWaitingForConfirmationInfoContainerTitle: defineMessage({
+    casesAwaitingConfirmationInfoContainerTitle: defineMessage({
       id: 'judicial.system.core:cases.active_requests.case_waiting_for_confirmation_info_container_title',
       defaultMessage: 'Engin mál bíða staðfestingar.',
       description:
@@ -134,7 +134,7 @@ export const cases = {
       description:
         'Notaður sem texti í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá fangelsisstarfsmanna.',
     }),
-    casesWaitingForConfirmationInfoContainerText: defineMessage({
+    casesAwaitingConfirmationInfoContainerText: defineMessage({
       id: 'judicial.system.core:cases.active_requests.cases_waiting_for_confirmation_info_container_text',
       defaultMessage: 'Engin mál hafa verið send til staðfestingar.',
       description:

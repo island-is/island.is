@@ -1,13 +1,5 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import flatten from 'lodash/flatten'
-import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -131,7 +123,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [isFiltering])
 
-  const [casesWaitingForConfirmation, allActiveCases, allPastCases] =
+  const [casesAwaitingConfirmation, allActiveCases, allPastCases] =
     useMemo(() => {
       if (!resCases) {
         return [[], [], []]
@@ -140,7 +132,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
         resCases.filter(predicate)
 
-      const casesWaitingForConfirmation = filterCases(
+      const casesAwaitingConfirmation = filterCases(
         (c) => c.state === CaseState.WAITING_FOR_CONFIRMATION,
       )
 
@@ -161,7 +153,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       const pastCases = filterCases((c) => !activeCases.includes(c))
 
       return [
-        casesWaitingForConfirmation as CaseListEntry[],
+        casesAwaitingConfirmation as CaseListEntry[],
         activeCases as CaseListEntry[],
         pastCases as CaseListEntry[],
       ]
@@ -226,15 +218,15 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             <>
               <SectionHeading
                 title={formatMessage(
-                  m.activeRequests.casesWaitingForConfirmationTitle,
+                  m.activeRequests.casesAwaitingConfirmationTitle,
                 )}
               />
               <Box marginBottom={[5, 5, 12]}>
                 {loading || isFiltering ? (
                   <TableSkeleton />
-                ) : casesWaitingForConfirmation.length > 0 ? (
+                ) : casesAwaitingConfirmation.length > 0 ? (
                   <ActiveCases
-                    cases={casesWaitingForConfirmation}
+                    cases={casesAwaitingConfirmation}
                     isDeletingCase={
                       isTransitioningCase || isSendingNotification
                     }
@@ -246,11 +238,11 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
                       type="info"
                       title={formatMessage(
                         m.activeRequests
-                          .casesWaitingForConfirmationInfoContainerTitle,
+                          .casesAwaitingConfirmationInfoContainerTitle,
                       )}
                       message={formatMessage(
                         m.activeRequests
-                          .casesWaitingForConfirmationInfoContainerText,
+                          .casesAwaitingConfirmationInfoContainerText,
                       )}
                     />
                   </div>
