@@ -1,5 +1,12 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
+import flatten from 'lodash/flatten'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
@@ -112,6 +119,8 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     errorPolicy: 'all',
   })
 
+  const resCases = data?.cases
+
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
       setIsFiltering(false)
@@ -122,25 +131,41 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [isFiltering])
 
-  const resCases = data?.cases
-
-  const [allActiveCases, allPastCases] = useMemo(() => {
-    if (!resCases) {
-      return [[], []]
-    }
-
-    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-      return c.state !== CaseState.DELETED
-    })
-
-    return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
-        return !isCompletedCase(c.state)
-      } else {
-        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+  const [casesWaitingForConfirmation, allActiveCases, allPastCases] =
+    useMemo(() => {
+      if (!resCases) {
+        return [[], [], []]
       }
-    })
-  }, [resCases, user])
+
+      const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
+        resCases.filter(predicate)
+
+      const casesWaitingForConfirmation = filterCases(
+        (c) => c.state === CaseState.WAITING_FOR_CONFIRMATION,
+      )
+
+      const activeCases = filterCases((c) => {
+        if (
+          c.state === CaseState.DELETED ||
+          c.state === CaseState.WAITING_FOR_CONFIRMATION
+        ) {
+          return false
+        }
+        if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
+          return !isCompletedCase(c.state)
+        } else {
+          return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+        }
+      })
+
+      const pastCases = filterCases((c) => !activeCases.includes(c))
+
+      return [
+        casesWaitingForConfirmation as CaseListEntry[],
+        activeCases as CaseListEntry[],
+        pastCases as CaseListEntry[],
+      ]
+    }, [resCases, user])
 
   const {
     filter,
@@ -155,7 +180,8 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
       caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED
+      caseToDelete.state === CaseState.RECEIVED ||
+      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
     ) {
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
@@ -196,6 +222,42 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
         </div>
       ) : (
         <>
+          {isProsecutionUser(user) && (
+            <>
+              <SectionHeading
+                title={formatMessage(
+                  m.activeRequests.casesWaitingForConfirmationTitle,
+                )}
+              />
+              <Box marginBottom={[5, 5, 12]}>
+                {loading || isFiltering ? (
+                  <TableSkeleton />
+                ) : casesWaitingForConfirmation.length > 0 ? (
+                  <ActiveCases
+                    cases={casesWaitingForConfirmation}
+                    isDeletingCase={
+                      isTransitioningCase || isSendingNotification
+                    }
+                    onDeleteCase={deleteCase}
+                  />
+                ) : (
+                  <div className={styles.infoContainer}>
+                    <AlertMessage
+                      type="info"
+                      title={formatMessage(
+                        m.activeRequests
+                          .casesWaitingForConfirmationInfoContainerTitle,
+                      )}
+                      message={formatMessage(
+                        m.activeRequests
+                          .casesWaitingForConfirmationInfoContainerText,
+                      )}
+                    />
+                  </div>
+                )}
+              </Box>
+            </>
+          )}
           <SectionHeading title={formatMessage(m.activeRequests.title)} />
           <Box marginBottom={[5, 5, 12]}>
             {loading || isFiltering ? (
@@ -216,24 +278,23 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
               </div>
             )}
           </Box>
+          <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
+          {loading || pastCases.length > 0 ? (
+            <PastCasesTable
+              cases={pastCases}
+              loading={loading || isFiltering}
+              testid="pastCasesTable"
+            />
+          ) : (
+            <div className={styles.infoContainer}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.pastRequests.infoContainerTitle)}
+                message={formatMessage(m.pastRequests.infoContainerText)}
+              />
+            </div>
+          )}
         </>
-      )}
-
-      <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
-      {loading || pastCases.length > 0 ? (
-        <PastCasesTable
-          cases={pastCases}
-          loading={loading || isFiltering}
-          testid="pastCasesTable"
-        />
-      ) : (
-        <div className={styles.infoContainer}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(m.pastRequests.infoContainerTitle)}
-            message={formatMessage(m.pastRequests.infoContainerText)}
-          />
-        </div>
       )}
     </SharedPageLayout>
   )
