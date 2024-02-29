@@ -37,6 +37,50 @@ export const prerequisites = {
         'Samkvæmt **húsnæðis og mannvirkjastofnun** varst þú ekki þinglýstur eigandi að **{streetName}** þar sem þú varst með lögheimili þann 10.nóvember 2023.',
       description: 'Noteligible description',
     },
+    noRealEstateNumberWasFoundTitle: {
+      id: 'ghb.application:errors.noRealEstateNumberWasFound.title',
+      defaultMessage: 'Fasteignanúmer vantar í skráningu',
+      description: 'Not eligible section title',
+    },
+    noRealEstateNumberWasFoundDescription: {
+      id: 'ghb.application:errors.noRealEstateNumberWasFound.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Þjóðskrá** fannst ekkert fasteignanúmer fyrir **{streetName}** þar sem þú varst með skráningu sem löghemili þann 10.nóvember 2023.',
+      description: 'Not eligible description',
+    },
+    residendHistoryNotFoundTitle: {
+      id: 'ghb.application:errors.residendHistoryNotFound.title',
+      defaultMessage: 'Engin upplýsingar um lögheimili',
+      description: 'Residence history not found section title',
+    },
+    residendHistoryNotFoundDescription: {
+      id: 'ghb.application:errors.residendHistoryNotFound.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Þjóðskrá** eru engar upplýsingar skráðar um lögheimili. Vinsamlegast hafðu samband við **Þjóðskrá**.',
+      description: 'Residence history not found description',
+    },
+    noResidenceRecordForDateTitle: {
+      id: 'ghb.application:errors.noResidenceRecordForDate.title',
+      defaultMessage: 'Engin upplýsingar um lögheimili',
+      description: 'No residnce record found section title',
+    },
+    noResidenceRecordForDateDescription: {
+      id: 'ghb.application:errors.noResidenceRecordForDate.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Þjóðskrá** eru engar upplýsingar skráðar um lögheimili þann 10. nóvember 2023. Vinsamlegast hafðu samband við **Þjóðskrá**.',
+      description: 'No residnce record found description',
+    },
+    propertyNotFoundTitle: {
+      id: 'ghb.application:errors.propertyNotFound.title',
+      defaultMessage: 'Engin fasteign finnst',
+      description: 'Property not found section title',
+    },
+    propertyNotFoundDescription: {
+      id: 'ghb.application:errors.propertyNotFound.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Húsnæðis- og mannvirkjastofnun** fannst engin fasteign fyrir **{streetName}** í fasteignaskrá. Vinsamlegast hafðu samband við **Húsnæðis- og mannvirkjastofnun**.',
+      description: 'Property not found  description',
+    },
   }),
   intro: defineMessages({
     sectionTitle: {

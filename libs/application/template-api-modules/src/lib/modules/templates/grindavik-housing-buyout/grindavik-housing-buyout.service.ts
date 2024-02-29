@@ -8,7 +8,10 @@ import {
   PersonType,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  NationalRegistryClientService,
+  ResidenceHistoryEntryDto,
+} from '@island.is/clients/national-registry-v2'
 import { getDomicileOnDate } from './grindavik-housing-buyout.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
@@ -21,6 +24,7 @@ import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 type CheckResidence = {
+  residenceHistory: ResidenceHistoryEntryDto[]
   realEstateId: string
   realEstateAddress: string
 }
@@ -52,6 +56,17 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
 
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
+      residenceData: JSON.stringify(
+        application.externalData.checkResidence.data,
+        null,
+        2,
+      ),
+      propertyData: JSON.stringify(
+        application.externalData.getGrindavikHousing.data,
+        null,
+        2,
+      ),
+      loans: JSON.stringify(answers.loans, null, 2),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
@@ -71,9 +86,21 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<CheckResidence> {
-    const data = await this.nationalRegistryApi.getResidenceHistory(
+    let data = await this.nationalRegistryApi.getResidenceHistory(
       auth.nationalId,
     )
+
+    data = []
+
+    if (data.length === 0) {
+      throw new TemplateApiError(
+        {
+          summary: prerequisites.errors.residendHistoryNotFoundDescription,
+          title: prerequisites.errors.residendHistoryNotFoundTitle,
+        },
+        400,
+      )
+    }
 
     // gervimaður færeyjar pass through
     if (
@@ -81,6 +108,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       auth.nationalId === '0101302399'
     ) {
       return {
+        residenceHistory: data,
         realEstateId: 'F12345',
         realEstateAddress: 'Vesturhóp 34, 240 Grindavík',
       }
@@ -89,7 +117,17 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const dateInQuestion = '2023-11-10'
     const domicileOn10nov = getDomicileOnDate(data, dateInQuestion)
 
-    if (domicileOn10nov?.postalCode !== '240') {
+    if (!domicileOn10nov) {
+      throw new TemplateApiError(
+        {
+          summary: prerequisites.errors.noResidenceRecordForDateDescription,
+          title: prerequisites.errors.noResidenceRecordForDateTitle,
+        },
+        400,
+      )
+    }
+
+    if (domicileOn10nov.postalCode !== '240') {
       throw new TemplateApiError(
         {
           summary: {
@@ -106,9 +144,20 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       )
     }
 
+    if (!domicileOn10nov.realEstateNumber) {
+      throw new TemplateApiError(
+        {
+          summary: prerequisites.errors.noRealEstateNumberWasFoundDescription,
+          title: prerequisites.errors.noRealEstateNumberWasFoundTitle,
+        },
+        400,
+      )
+    }
+
     return {
-      realEstateId: domicileOn10nov?.realEstateNumber ?? '12345',
-      realEstateAddress: domicileOn10nov?.streetName ?? '',
+      residenceHistory: data,
+      realEstateId: domicileOn10nov.realEstateNumber,
+      realEstateAddress: domicileOn10nov.streetName,
     }
   }
 
@@ -122,7 +171,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
 
     if (application.externalData.checkResidence.status === 'failure') {
       // Since the checkResidence step failed and there is currently no way to stop the propogation of dataprovider calls,
-      // we dont want to display any further errors or try any other calls so we return a "success" with an error indicator.
+      // as have no residence information we dont want to display any further errors or try any other calls so we return a "success" with an error indicator.
       return { error: 'noResidence' }
     }
 
@@ -137,7 +186,20 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     }
 
     if (!property) {
-      throw new TemplateApiError('No property found', 404)
+      throw new TemplateApiError(
+        {
+          summary: {
+            ...prerequisites.errors.propertyNotFoundDescription,
+            defaultMessage:
+              prerequisites.errors.propertyNotFoundDescription.defaultMessage.replace(
+                '{streetName}',
+                realEstateAddress,
+              ),
+          },
+          title: prerequisites.errors.propertyNotFoundTitle,
+        },
+        400,
+      )
     }
 
     const {
