@@ -2,14 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import GraphQLJSON from 'graphql-type-json'
 import { CacheField } from '@island.is/nest/graphql'
 
-import {
-  ILink,
-  ILinkFields,
-  ILinkGroup,
-  IProjectPage,
-  IProjectSubpage,
-  IProjectSubpageFields,
-} from '../generated/contentfulTypes'
+import { ILinkFields, IProjectPage } from '../generated/contentfulTypes'
 import {
   mapDocument,
   safelyMapSliceUnion,
@@ -126,7 +119,7 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
       const linkGroupContentType =
         linkGroup.fields.primaryLink.sys.contentType.sys.id
 
-      if (!fields.sidebarFrontpageLink && linkGroupContentType === 'link') {
+      if (fields.sidebarFrontpageLink && linkGroupContentType === 'link') {
         const linkFields = linkGroup.fields.primaryLink.fields as ILinkFields
         const linkUrl = linkFields.url.split('/')
         if (linkUrl.at(-1) === projectPage.fields.slug) {
@@ -137,19 +130,18 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
         return true
       }
 
-      // if (
-      //   fieldssss.slug.substring(fieldssss.slug.lastIndexOf('/') + 1) ===
-      //   projectPage.fields.slug
-      // ) {
-      // }
-
       return fields.projectSubpages?.some((subpage) => {
         return subpage.sys.id === linkGroup.fields.primaryLink?.sys.id
       })
     },
   )
 
-  if (hasFrontpageLink) {
+  if (!hasFrontpageLink && fields.sidebarFrontpageLink) {
+    const localeIs = projectPage.sys.locale === 'is-IS'
+    const frontpageText = localeIs ? 'Forsíða' : 'Frontpage'
+    const frontpageUrlWithPrefix = localeIs
+      ? '/v/' + projectPage.fields.slug
+      : '/en/p/' + projectPage.fields.slug
     filteredItems.unshift({
       sys: {
         ...projectPage.sys,
@@ -176,11 +168,10 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
               },
             },
           },
-          fields: { text: 'test', url: 'testUrl' },
+          fields: { text: frontpageText, url: frontpageUrlWithPrefix },
         },
       },
     })
-    //console.log({ linkGroupPrimaryLinkFields })
   }
 
   for (const item of filteredItems) {
