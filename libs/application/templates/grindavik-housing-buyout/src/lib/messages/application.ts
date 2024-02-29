@@ -58,6 +58,24 @@ export const application = {
       description: 'Fire insurance value',
     },
   }),
+  additionalOwners: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:additionalOwners.section.title',
+      defaultMessage: 'Aðrir eigendur',
+      description: 'Additional owners section title',
+    },
+    sectionDescription: {
+      id: 'ghb.application:additionalOwners.section.description',
+      defaultMessage:
+        'Hér þarf að slá inn tengiupplýsingar fyrir aðra eigendur fasteignarinnar.',
+      description: 'Additional owners section description',
+    },
+    owner: {
+      id: 'ghb.application:additionalOwners.owner',
+      defaultMessage: 'Eigandi',
+      description: 'Owner',
+    },
+  }),
   loanStatus: defineMessages({
     sectionTitle: {
       id: 'ghb.application:loanStatus.section.title',

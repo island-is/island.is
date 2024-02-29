@@ -1,5 +1,6 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -81,8 +82,34 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'additionalOwnersSection',
+      title: m.application.additionalOwners.sectionTitle,
+      condition: (_, externalData) => {
+        const owners = getPropertyOwners(externalData)
+        return owners.length > 1
+      },
+      children: [
+        buildMultiField({
+          id: 'additionalOwnersMultiField',
+          title: m.application.additionalOwners.sectionTitle,
+          description: m.application.additionalOwners.sectionDescription,
+          children: [
+            buildCustomField({
+              id: 'additionalOwners',
+              title: '',
+              component: 'AdditionalOwnersRepeater',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'loanStatusSection',
       title: m.application.loanStatus.sectionTitle,
+      condition: (app) => {
+        console.log(app)
+        return true
+      },
       children: [
         buildTableRepeaterField({
           id: 'loans',
