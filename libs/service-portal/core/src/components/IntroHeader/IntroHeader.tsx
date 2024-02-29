@@ -21,7 +21,6 @@ interface Props {
   span?: GridColumnProps['span']
   narrow?: boolean
   loading?: boolean
-  fixedImgWidth?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
   introComponent?: ReactNode
   tooltipVariant?: 'light' | 'dark' | 'white'
@@ -41,6 +40,8 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   if (props.loading) {
     return <LoadingDots />
   }
+
+  console.log(organization)
 
   return (
     <GridRow marginBottom={marginBottom ?? 4}>
@@ -67,7 +68,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             linkHref={organization.link ?? ''}
             img={organization.logo?.url ?? ''}
             imgContainerDisplay={isMobile ? 'block' : 'flex'}
-            fixedImageWidth={props.fixedImgWidth}
+            isSvg={organization.logo?.contentType === 'image/svg+xml'}
             tooltipText={props.serviceProviderTooltip}
             backgroundColor={props.backgroundColor}
             tooltipVariant={props.tooltipVariant ?? 'light'}
