@@ -6,6 +6,7 @@ import {
   UserInfoLine,
   StackWithBottomDivider,
   formSubmit,
+  LinkButton,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { olMessage as om } from '../../lib/messages'
@@ -14,7 +15,10 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useMemo } from 'react'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useOrganization } from '@island.is/service-portal/graphql'
-import { OccupationalLicenseV2LicenseResponseType } from '@island.is/api/schema'
+import {
+  OccupationalLicenseV2LicenseResponseType,
+  OccupationalLicensesV2LinkType,
+} from '@island.is/api/schema'
 
 type UseParams = {
   id: string
@@ -61,24 +65,36 @@ const OccupationalLicenseDetail = () => {
           <Box paddingTop={3}>
             {
               <Inline space={1} collapseBelow="sm">
-                {res.actions.map((a) => {
+                {res.actions.map((a, index) => {
                   if (!a) {
                     return null
                   }
 
+                  if (a.type === OccupationalLicensesV2LinkType.FILE) {
+                    return (
+                      <Button
+                        key={index}
+                        variant="utility"
+                        iconType="outline"
+                        onClick={() => {
+                          if (a.url) {
+                            formSubmit(a.url)
+                          }
+                        }}
+                        icon={'download'}
+                      >
+                        {a.text}
+                      </Button>
+                    )
+                  }
+
                   return (
-                    <Button
-                      variant="utility"
-                      iconType="outline"
-                      onClick={() => {
-                        if (a.url) {
-                          formSubmit(a.url)
-                        }
-                      }}
-                      icon={'download'}
-                    >
-                      {a.text}
-                    </Button>
+                    <LinkButton
+                      variant="button"
+                      to={a.url}
+                      text={a.text}
+                      icon="open"
+                    />
                   )
                 })}
               </Inline>
