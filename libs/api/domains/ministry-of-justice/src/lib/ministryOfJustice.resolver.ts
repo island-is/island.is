@@ -18,9 +18,12 @@ import {
   AdvertsResponse,
   AdvertTypeResponse,
 } from './models/advert.response'
+import { Features } from '@island.is/feature-flags'
+import { FeatureFlag } from '@island.is/nest/feature-flags'
 
 @UseGuards(IdsUserGuard)
 @Scopes(ApiScope.internal)
+@FeatureFlag(Features.officialJournalOfIceland)
 @Resolver()
 export class MinistryOfJusticeResolver {
   constructor(private readonly mojService: MinistryOfJusticeService) {}
