@@ -1,6 +1,7 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import { errors } from './messages'
+import { NO, YES } from '@island.is/application/types'
 
 export const GrindavikHousingBuyoutSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -43,6 +44,9 @@ export const GrindavikHousingBuyoutSchema = z.object({
       }),
     )
     .optional(),
+  userConfirmation: z
+    .array(z.enum([YES]))
+    .refine((v) => v.includes(YES), { params: errors.fields.requiredCheckbox }),
 })
 
 export type GrindavikHousingBuyout = z.TypeOf<
