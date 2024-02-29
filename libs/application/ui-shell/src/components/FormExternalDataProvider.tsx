@@ -115,7 +115,6 @@ const ProviderItem: FC<
 
   const getAlertMessage = (reason: ProviderErrorReason) => {
     const { title: errorTitle, summary } = getErrorReasonIfPresent(reason)
-    console.log('errorTitle', errorTitle, 'summary', summary)
     return (
       <AlertMessage
         type={errorType}

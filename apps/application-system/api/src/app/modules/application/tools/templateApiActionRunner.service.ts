@@ -188,7 +188,6 @@ export class TemplateApiActionRunner {
 
     const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
 
-    console.log('summary runner ', summary)
     const reason = {
       summary:
         isTranslationObject(summary) && typeof summary === 'object'
@@ -199,7 +198,7 @@ export class TemplateApiActionRunner {
           : summary,
       title: isTranslationObject(title) ? this.formatMessage(title) : title,
     }
-    console.log('reason runner ', reason)
+
     return {
       [externalDataId || action]: {
         status: 'failure',
