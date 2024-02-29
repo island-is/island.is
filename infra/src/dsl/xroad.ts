@@ -755,6 +755,17 @@ export const UniversityGatewayHolarUniversity = new XroadConf({
   },
 })
 
+
+export const UniversityGatewayReykjavikUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10062/RvkUni-Hvin-Protected/umsoknir-v1',
+      staging: 'IS-TEST/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
+    },
+  },
+})
+
 export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
