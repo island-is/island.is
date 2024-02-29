@@ -133,6 +133,9 @@ export class OccupationalLicensesV2Service {
             case 'WAIVED':
               status = OccupationalLicenseStatusV2.WAIVED
               break
+            case 'INVALID':
+              status = OccupationalLicenseStatusV2.INVALID
+              break
             default:
               status = OccupationalLicenseStatusV2.UNKNOWN
           }
