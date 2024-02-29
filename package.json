@@ -333,6 +333,7 @@
     "@nestjs/testing": "10.0.5",
     "@nx/cypress": "16.9.0",
     "@nx/devkit": "18.0.5",
+    "@nx/esbuild": "18.0.5",
     "@nx/eslint-plugin": "16.9.0",
     "@nx/express": "16.9.0",
     "@nx/jest": "16.9.0",
