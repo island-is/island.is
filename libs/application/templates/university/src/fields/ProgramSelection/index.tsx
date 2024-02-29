@@ -24,44 +24,65 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
 }) => {
   const answers = application.answers as UniversityApplication
   const externalData = application.externalData
-
-  const { formatMessage, lang } = useLocale()
-
-  const { setValue } = useFormContext()
-
   const universities = externalData.universities
     .data as Array<UniversityExternalData>
   const programs = externalData.programs.data as Array<Program>
+  const sortedProgramsDeepCopy = JSON.parse(
+    JSON.stringify(programs),
+  ) as Array<Program>
 
+  const { formatMessage, lang } = useLocale()
+  const { setValue } = useFormContext()
+
+  const preChosenProgram = getValueViaPath(answers, `initialQuery`, '')
   const programAnswer = getValueViaPath(
     answers,
     `${Routes.PROGRAMINFORMATION}.program`,
+    '',
   )
-
   const universityAnswer = getValueViaPath(
     answers,
     `${Routes.PROGRAMINFORMATION}.university`,
+    '',
   )
 
-  const [chosenProgram, setChosenProgram] = useState(programAnswer)
-  const [chosenUniversity, setChosenUniversity] = useState(universityAnswer)
+  const [chosenProgram, setChosenProgram] = useState<string>()
+  const [chosenUniversity, setChosenUniversity] = useState<string>()
   const [loadingUniversities, setLoadingUniversities] = useState(true)
+  const [loadingPreAnswer, setLoadingPreAnswer] = useState(true)
   const [contentfulUniversities, setContentfulUniversities] = useState<
     Array<UniversityGatewayUniversity>
   >([])
+
+  useEffect(() => {
+    //Get university information from contentful
+    getUniversityInformationCallback().then((response) => {
+      setContentfulUniversities(response.universityGatewayUniversities)
+      setLoadingUniversities(false)
+    })
+
+    //We have a predetermined choice and no answer already in application
+    if (preChosenProgram && programAnswer === '' && universityAnswer === '') {
+      setChosenProgram(preChosenProgram)
+      const programUniversityId = programs.find(
+        (x) => x.id === preChosenProgram,
+      )?.universityId
+      setChosenUniversity(
+        universities.find((x) => x.id === programUniversityId)?.id || '',
+      )
+    } else {
+      // Otherwise apply the answers we already have
+      setChosenProgram(programAnswer)
+      setChosenUniversity(universityAnswer)
+    }
+    setLoadingPreAnswer(false)
+  }, [])
 
   const getUniversities = useLazyUniversityQuery()
   const getUniversityInformationCallback = useCallback(async () => {
     const { data } = await getUniversities({})
     return data
   }, [getUniversities])
-
-  useEffect(() => {
-    getUniversityInformationCallback().then((response) => {
-      setContentfulUniversities(response.universityGatewayUniversities)
-      setLoadingUniversities(false)
-    })
-  }, [])
 
   const ChooseUniversity = (value: string) => {
     setChosenUniversity(value)
@@ -95,7 +116,7 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
     setValue(`${Routes.PROGRAMINFORMATION}.programName`, programName)
   }
 
-  return !loadingUniversities ? (
+  return !loadingUniversities && !loadingPreAnswer ? (
     <Box>
       <Box marginTop={2}>
         <SelectController
@@ -126,11 +147,12 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
             )}
             defaultValue={chosenProgram}
             onSelect={(value) => ChooseProgram(value.value as string)}
-            options={programs
-              // .sort((x, y) => {
-              //   if (x > y) return 1
-              //   else return -1
-              // })
+            options={sortedProgramsDeepCopy
+              .sort((x, y) => {
+                if (lang === 'is' && x.nameIs > y.nameIs) return 1
+                else if (lang === 'en' && x.nameEn > y.nameEn) return 1
+                else return -1
+              })
               .filter((program) => program.universityId === chosenUniversity)
               .map((program) => {
                 const extra =

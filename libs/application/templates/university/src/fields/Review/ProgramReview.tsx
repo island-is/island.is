@@ -23,7 +23,7 @@ export const ProgramReview: FC<Props> = ({
     <GenericReview
       application={application}
       leftColumnItems={[
-        // answers?.programInformation.programName,
+        answers?.programInformation.programName,
         answers?.programInformation.universityName,
       ]}
       leftDescription={formatMessage(review.labels.chosenProgram)}

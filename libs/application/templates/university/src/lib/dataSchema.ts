@@ -37,24 +37,36 @@ const ProgramSchema = z.object({
   universityName: z.string(),
   program: z.string(),
   programName: z.string(),
-  modeOfDelivery: z.string().optional(), //z.enum(['Online', 'OnSite']), // TODO have dyncamic or static or just have a string?
+  modeOfDelivery: z.string().optional(),
   examLocation: z.string().optional(), // TODO make conditional requirement if the mode of delivery Online is chosen
+})
+
+export const EducationNotFinishedSchema = z.object({
+  school: z.string(),
+  degreeLevel: z.string(),
+  moreDetails: z.string().optional(),
+})
+
+export const ExemptionEducationSchema = z.object({
+  degreeAttachments: z.array(FileDocumentSchema).optional(), // TODO not optional
+  moreDetails: z.string().optional(),
 })
 
 export const RepeateableEducationDetailsSchema = z
   .object({
-    school: z.string(),
-    degreeLevel: z.string(),
+    school: z.string().optional(),
+    degreeLevel: z.string().optional(),
     degreeMajor: z.string().optional(),
-    finishedUnits: z.number().optional(),
-    averageGrade: z.number().optional(),
-    degreeCountry: z.string(),
+    finishedUnits: z.string().optional(),
+    averageGrade: z.string().optional(),
+    degreeCountry: z.string().optional(),
     beginningDate: z.string().optional(),
-    endDate: z.string(),
-    degreeFinished: z.array(z.enum([YES])).optional(),
+    endDate: z.string().optional(),
+    degreeFinished: z.string().optional(),
     moreDetails: z.string().optional(),
     degreeAttachments: z.array(FileDocumentSchema).optional(),
     wasRemoved: z.string(),
+    readOnly: z.string(),
   })
   .refine(
     ({ wasRemoved, school }) => {
@@ -82,16 +94,16 @@ export const RepeateableEducationDetailsSchema = z
       path: ['degreeCountry'],
     },
   )
-  // .refine(
-  //   ({ wasRemoved, beginningDate }) => {
-  //     return (
-  //       wasRemoved === 'true' || (beginningDate && beginningDate.length > 0)
-  //     )
-  //   },
-  //   {
-  //     path: ['beginningDate'],
-  //   },
-  // )
+  .refine(
+    ({ wasRemoved, beginningDate }) => {
+      return (
+        wasRemoved === 'true' || (beginningDate && beginningDate.length > 0)
+      )
+    },
+    {
+      path: ['beginningDate'],
+    },
+  )
   .refine(
     ({ wasRemoved, endDate }) => {
       return wasRemoved === 'true' || (endDate && endDate.length > 0)
@@ -100,6 +112,13 @@ export const RepeateableEducationDetailsSchema = z
       path: ['endDate'],
     },
   )
+
+const EducationDetailsSchema = z.object({
+  finishedDetails: z.array(RepeateableEducationDetailsSchema).optional(),
+  exemptionDetails: ExemptionEducationSchema.optional(),
+  notFinishedDetails: EducationNotFinishedSchema.optional(),
+  thirdLevelDetails: RepeateableEducationDetailsSchema.optional(),
+})
 
 const otherDocumentsSchema = z.object({
   degreeAttachments: FileDocumentSchema.optional(),
@@ -113,7 +132,7 @@ export const UniversitySchema = z.object({
   educationOptions: z
     .enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
     .optional(),
-  educationDetails: z.array(RepeateableEducationDetailsSchema),
+  educationDetails: EducationDetailsSchema,
   otherDocuments: otherDocumentsSchema.optional(),
 })
 

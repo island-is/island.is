@@ -62,7 +62,7 @@ export const Overview: FC<FieldBaseProps> = ({
       <Divider />
       <ApplicantReview field={field} application={application} />
       <Divider />
-      {educationList &&
+      {/* {educationList &&
         educationList.length > 0 &&
         educationList.map((educationItem) => {
           return (
@@ -74,7 +74,7 @@ export const Overview: FC<FieldBaseProps> = ({
               goToScreen={goToScreen}
             />
           )
-        })}
+        })} */}
       <Divider />
       <OtherDocumentsReview
         field={field}

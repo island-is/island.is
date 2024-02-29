@@ -32,6 +32,7 @@ interface DetailsRepeaterItemProps extends FieldBaseProps {
   handleRemove: (index: number) => void
   addDataToEducationList: (field: string, value: string, index: number) => void
   readOnly?: boolean
+  removeable: boolean
 }
 
 export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
@@ -45,6 +46,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
   handleRemove,
   addDataToEducationList,
   readOnly,
+  removeable,
 }) => {
   const { formatMessage } = useLocale()
   const countries = getAllCountryCodes()
@@ -63,6 +65,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
   const degreeAttachmentsField = `${fieldIndex}.degreeAttachments`
   const moreDetailsField = `${fieldIndex}.moreDetails`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
+  const readOnlyField = `${fieldIndex}.readOnly`
 
   useEffect(() => {
     setValue(schoolField, repeaterField.school)
@@ -111,6 +114,11 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
   }, [repeaterField.wasRemoved, setValue, wasRemovedField])
+
+  useEffect(() => {
+    setValue(readOnlyField, repeaterField.readOnly)
+  }, [repeaterField.readOnly, setValue, readOnlyField])
+
   return (
     <Box
       position="relative"
@@ -124,7 +132,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
           })}
         </Text>
       )}
-      {itemNumber > 0 && !readOnly && (
+      {removeable && (
         <Box display="flex" flexDirection="row" justifyContent="flexEnd">
           <Button
             variant="text"
@@ -156,52 +164,66 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
             }
           />
         </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <SelectController
-            id={degreeLevelField}
-            label={formatMessage(
-              formerEducation.labels.educationDetails.degreeLevelLabel,
-            )}
-            backgroundColor="blue"
-            required
-            disabled={readOnly}
-            onSelect={(value) =>
-              addDataToEducationList(
-                'degreeLevel',
-                value.value as string,
-                index,
-              )
-            }
-            options={[
-              {
-                label: formatMessage(
-                  formerEducation.labels.educationDetails
-                    .framhaldsskoliSelectionLabel,
-                ),
-                value: 'framhaldsskoli',
-              },
-              {
-                label: formatMessage(
-                  formerEducation.labels.educationDetails
-                    .bachelorsSelectionLabel,
-                ),
-                value: 'bachelors',
-              },
-              {
-                label: formatMessage(
-                  formerEducation.labels.educationDetails.mastersSelectionLabel,
-                ),
-                value: 'masters',
-              },
-              {
-                label: formatMessage(
-                  formerEducation.labels.educationDetails.doctorsSelectionLabel,
-                ),
-                value: 'doctors',
-              },
-            ]}
-          />
-        </GridColumn>
+        {!readOnly ? (
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <SelectController
+              id={degreeLevelField}
+              label={formatMessage(
+                formerEducation.labels.educationDetails.degreeLevelLabel,
+              )}
+              backgroundColor="blue"
+              required={repeaterField.wasRemoved === 'true' ? false : true}
+              onSelect={(value) =>
+                addDataToEducationList(
+                  'degreeLevel',
+                  value.value as string,
+                  index,
+                )
+              }
+              options={[
+                {
+                  label: formatMessage(
+                    formerEducation.labels.educationDetails
+                      .framhaldsskoliSelectionLabel,
+                  ),
+                  value: 'framhaldsskoli',
+                },
+                {
+                  label: formatMessage(
+                    formerEducation.labels.educationDetails
+                      .bachelorsSelectionLabel,
+                  ),
+                  value: 'bachelors',
+                },
+                {
+                  label: formatMessage(
+                    formerEducation.labels.educationDetails
+                      .mastersSelectionLabel,
+                  ),
+                  value: 'masters',
+                },
+                {
+                  label: formatMessage(
+                    formerEducation.labels.educationDetails
+                      .doctorsSelectionLabel,
+                  ),
+                  value: 'doctors',
+                },
+              ]}
+            />
+          </GridColumn>
+        ) : (
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <InputController
+              id={degreeLevelField}
+              defaultValue={repeaterField.degreeLevel}
+              label={formatMessage(
+                formerEducation.labels.educationDetails.degreeLevelLabel,
+              )}
+              readOnly={readOnly}
+            />
+          </GridColumn>
+        )}
       </GridRow>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
@@ -224,7 +246,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={finishedUnitsField}
-            type="number"
+            type="text"
             label={formatMessage(
               formerEducation.labels.educationDetails.finishedUnitsLabel,
             )}
@@ -245,7 +267,8 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
           <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
             <InputController
               id={averageGradeField}
-              type="number"
+              type="text"
+              format="####"
               label={formatMessage(
                 formerEducation.labels.educationDetails.averageGradeLabel,
               )}
@@ -262,65 +285,100 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
           </GridColumn>
         )}
 
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <SelectController
-            id={degreeCountryField}
-            label={formatMessage(
-              formerEducation.labels.educationDetails.degreeCountryLabel,
-            )}
-            required
-            options={countries.map((country) => {
-              return {
-                label: country.name_is || country.name,
-                value: country.code,
+        {!readOnly ? (
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <SelectController
+              id={degreeCountryField}
+              label={formatMessage(
+                formerEducation.labels.educationDetails.degreeCountryLabel,
+              )}
+              options={countries.map((country) => {
+                return {
+                  label: country.name_is || country.name,
+                  value: country.code,
+                }
+              })}
+              required={repeaterField.wasRemoved === 'true' ? false : true}
+              backgroundColor="blue"
+              onSelect={(value) =>
+                addDataToEducationList(
+                  'degreeCountry',
+                  value.value as string,
+                  index,
+                )
               }
-            })}
-            backgroundColor="blue"
-            disabled={readOnly}
-            onSelect={(value) =>
-              addDataToEducationList(
-                'degreeCountry',
-                value.value as string,
-                index,
-              )
-            }
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <DatePickerController
-            id={beginningDateField}
-            label={formatMessage(
-              formerEducation.labels.educationDetails.beginningDateLabel,
-            )}
-            backgroundColor="blue"
-            readOnly={readOnly}
-            onChange={(value) =>
-              addDataToEducationList('beginningDate', value as string, index)
-            }
-          />
-        </GridColumn>
+            />
+          </GridColumn>
+        ) : (
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <InputController
+              id={degreeCountryField}
+              label={formatMessage(
+                formerEducation.labels.educationDetails.degreeCountryLabel,
+              )}
+            />
+          </GridColumn>
+        )}
 
-        <GridColumn
-          span={['1/1', '1/1', '1/2']}
-          paddingTop={2}
-          paddingBottom={2}
-        >
-          <DatePickerController
-            id={endDateField}
-            required
-            label={formatMessage(
-              formerEducation.labels.educationDetails.endDateLabel,
-            )}
-            readOnly={readOnly}
-            backgroundColor="blue"
-            onChange={(value) =>
-              addDataToEducationList('endDate', value as string, index)
-            }
-          />
-        </GridColumn>
+        {readOnly && (
+          <GridColumn
+            span={['1/1', '1/1', '1/2']}
+            paddingTop={2}
+            paddingBottom={2}
+          >
+            <DatePickerController
+              id={endDateField}
+              required
+              label={formatMessage(
+                formerEducation.labels.educationDetails.endDateLabel,
+              )}
+              readOnly={readOnly}
+              backgroundColor="blue"
+              onChange={(value) =>
+                addDataToEducationList('endDate', value as string, index)
+              }
+            />
+          </GridColumn>
+        )}
       </GridRow>
+
+      {!readOnly && (
+        <GridRow>
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <DatePickerController
+              id={beginningDateField}
+              label={formatMessage(
+                formerEducation.labels.educationDetails.beginningDateLabel,
+              )}
+              backgroundColor="blue"
+              readOnly={readOnly}
+              onChange={(value) =>
+                addDataToEducationList('beginningDate', value as string, index)
+              }
+            />
+          </GridColumn>
+
+          <GridColumn
+            span={['1/1', '1/1', '1/2']}
+            paddingTop={2}
+            paddingBottom={2}
+          >
+            <DatePickerController
+              id={endDateField}
+              required
+              label={formatMessage(
+                formerEducation.labels.educationDetails.endDateLabel,
+              )}
+              readOnly={readOnly}
+              backgroundColor="blue"
+              onChange={(value) =>
+                addDataToEducationList('endDate', value as string, index)
+              }
+            />
+          </GridColumn>
+        </GridRow>
+      )}
+
       {!readOnly && (
         <CheckboxController
           id={degreeFinishedField}
@@ -337,7 +395,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
             },
           ]}
           onSelect={(value) =>
-            addDataToEducationList('degreeLevel', value[0] as string, index)
+            addDataToEducationList('degreeFinished', value[0] as string, index)
           }
         />
       )}
@@ -362,6 +420,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
         <InputController
           id={moreDetailsField}
           textarea
+          backgroundColor="blue"
           label={formatMessage(
             formerEducation.labels.educationDetails.moreDetailsLabel,
           )}

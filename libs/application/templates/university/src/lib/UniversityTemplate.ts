@@ -37,6 +37,7 @@ const template: ApplicationTemplate<
   name: applicationMessage.name,
   institution: applicationMessage.institutionName,
   translationNamespaces: [ApplicationConfigurations.University.translation],
+  initialQueryParameter: 'program',
   dataSchema: UniversitySchema,
   featureFlag: Features.university,
   stateMachineConfig: {

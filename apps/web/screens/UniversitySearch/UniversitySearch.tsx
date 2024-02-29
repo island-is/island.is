@@ -303,6 +303,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
+      onClick: () => router.push(`/umsoknir/haskolanam?program=${item.id}`),
     }
     return CTA
   }

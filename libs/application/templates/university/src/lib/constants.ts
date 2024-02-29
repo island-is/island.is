@@ -20,6 +20,10 @@ export enum Routes {
   PROGRAMINFORMATION = 'programInformation',
   MODEOFDELIVERYINFORMATION = 'modeOfDeliveryInformation',
   EDUCATIONDETAILS = 'educationDetails',
+  EDUCATIONDETAILSFINISHED = 'educationDetails.finishedDetails',
+  EDUCATIONDETAILSEXEMPTION = 'educationDetails.exemptionDetails',
+  EDUCATIONDETAILSTHIRDLEVEL = 'educationDetails.thirdLevelDetails',
+  EDUCATIONDETAILSNOTFINISHED = 'educationDetails.notFinishedDetails',
   EDUCATIONOPTIONS = 'educationOptions',
   OTHERDOCUMENTS = 'otherDocuments',
 }

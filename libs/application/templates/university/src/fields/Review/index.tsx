@@ -6,7 +6,11 @@ import { UniversityApplication } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
 import { ProgramReview } from './ProgramReview'
 import { SchoolCareerReview } from './SchoolCareerReview'
-import { OtherDocumentsReview } from './OtherDocumentsReview'
+import {
+  EducationDetailsItem,
+  EducationDetailsItemExemption,
+  EducationDetailsItemNotFinished,
+} from '../../shared/types'
 
 export const Review: FC<FieldBaseProps> = ({
   application,
@@ -14,7 +18,17 @@ export const Review: FC<FieldBaseProps> = ({
   goToScreen,
 }) => {
   const answers = application.answers as UniversityApplication
-  const educationList = answers.educationDetails
+  const educationListFinished =
+    answers.educationDetails.finishedDetails?.filter(
+      (x) => x.wasRemoved === 'false',
+    ) as Array<EducationDetailsItem>
+  const educationOptionChosen = answers.educationOptions
+  const educationExemption = answers.educationDetails
+    .exemptionDetails as EducationDetailsItemExemption
+  const educationThirdLevel = answers.educationDetails
+    .thirdLevelDetails as EducationDetailsItem
+  const educationNotFinished = answers.educationDetails
+    .notFinishedDetails as EducationDetailsItemNotFinished
 
   return (
     <Box>
@@ -33,21 +47,42 @@ export const Review: FC<FieldBaseProps> = ({
         goToScreen={goToScreen}
       />
       <Divider />
-      {educationList &&
-        educationList.length > 0 &&
-        educationList.map((educationItem) => {
-          if (educationItem.wasRemoved !== 'true') {
-            return (
-              <SchoolCareerReview
-                educationItem={educationItem}
-                field={field}
-                application={application}
-                route={Routes.EDUCATIONOPTIONS}
-                goToScreen={goToScreen}
-              />
-            )
-          }
-        })}
+      {educationOptionChosen && educationOptionChosen === 'exemption' && (
+        <SchoolCareerReview
+          educationItemExemption={educationExemption}
+          field={field}
+          application={application}
+          route={Routes.EDUCATIONDETAILSFINISHED}
+          goToScreen={goToScreen}
+        />
+      )}
+      {educationOptionChosen && educationOptionChosen === 'thirdLevel' && (
+        <SchoolCareerReview
+          educationItemThirdLevel={educationThirdLevel}
+          field={field}
+          application={application}
+          route={Routes.EDUCATIONDETAILSTHIRDLEVEL}
+          goToScreen={goToScreen}
+        />
+      )}
+      {educationOptionChosen && educationOptionChosen === 'notFinished' && (
+        <SchoolCareerReview
+          educationItemNotFinished={educationNotFinished}
+          field={field}
+          application={application}
+          route={Routes.EDUCATIONDETAILSNOTFINISHED}
+          goToScreen={goToScreen}
+        />
+      )}
+      {educationListFinished && educationListFinished.length > 0 && (
+        <SchoolCareerReview
+          educationItemsFinished={educationListFinished}
+          field={field}
+          application={application}
+          route={Routes.EDUCATIONDETAILSFINISHED}
+          goToScreen={goToScreen}
+        />
+      )}
       <Divider />
     </Box>
   )

@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildRadioField,
   buildSubSection,
   getValueViaPath,
@@ -9,7 +8,6 @@ import { Routes } from '../../../lib/constants'
 import { Program } from '@island.is/clients/university-gateway-api'
 import { FormValue } from '@island.is/application/types'
 
-import { UniversityApplication } from '../../../lib/dataSchema'
 import { InlineResponse200Items } from '@island.is/clients/inna'
 
 export const EducationOptionsSubSection = buildSubSection({

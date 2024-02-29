@@ -124,24 +124,27 @@ export class UniversityService extends BaseTemplateApiService {
       phone: userFromAnswers.phone,
     }
 
-    const predefinedInnaData = externalData.innaEducation
-      .data as Array<InlineResponse200Items>
+    //all possible types of education data from the application answers
+    const notFinishedData = answers.educationDetails.notFinishedDetails
+    const exemptionData = answers.educationDetails.exemptionDetails
+    const thirdLevelData = answers.educationDetails.thirdLevelDetails
+    const finishedData = answers.educationDetails.finishedDetails || []
 
     const combinedEducationLists = [
-      ...predefinedInnaData.map((i) => {
-        return {
-          school: i.organisation || '',
-          degreeLevel: 'framhaldsskoli',
-          degreeCountry: 'IS',
-          degreeMajor: i.diplomaLongName || '',
-          finishedUnits: i.diplomaCreditsTotal || 0,
-          beginningDate: '',
-          endDate: i.diplomaDate || '',
-          degreeAttachments: [],
-        }
-      }),
-      ...answers.educationDetails.filter((x) => x.wasRemoved !== 'true'),
+      ...finishedData.filter((x) => x && x.wasRemoved !== 'true'),
+      notFinishedData && {
+        school: notFinishedData.school,
+        degreeLevel: notFinishedData.degreeLevel,
+        moreDetails: notFinishedData.moreDetails,
+      },
+      exemptionData && {
+        degreeAttachments: exemptionData.degreeAttachments,
+        moreDetails: exemptionData.moreDetails,
+      },
+      thirdLevelData && thirdLevelData,
     ]
+
+    console.log('combinedEducationLists', combinedEducationLists)
 
     const createApplicationDto = {
       createApplicationDto: {
@@ -153,22 +156,23 @@ export class UniversityService extends BaseTemplateApiService {
           CreateApplicationDtoModeOfDeliveryEnum,
         ),
         applicant: user,
-        educationList: combinedEducationLists.map((education) => {
-          return {
-            schoolName: education.school,
-            degree: education.degreeLevel,
-            degreeName: education.degreeMajor,
-            degreeCountry: education.degreeCountry,
-            finishedUnits: education.finishedUnits?.toString(),
-            degreeEndDate: education.endDate,
-          }
-        }),
+        // educationList: combinedEducationLists.map((education) => {
+        //   return {
+        //     schoolName: education.school,
+        //     degree: education.degreeLevel,
+        //     degreeName: education.degreeMajor,
+        //     degreeCountry: education.degreeCountry,
+        //     finishedUnits: education.finishedUnits?.toString(),
+        //     degreeEndDate: education.endDate,
+        //   }
+        // }),
         workExperienceList: [],
         extraFieldList: [],
       },
     }
-    await this.universityApplicationApiWithAuth(
-      auth,
-    ).universityApplicationControllerCreateApplication(createApplicationDto)
+    console.log('createApplicationDto', createApplicationDto)
+    // await this.universityApplicationApiWithAuth(
+    //   auth,
+    // ).universityApplicationControllerCreateApplication(createApplicationDto)
   }
 }
