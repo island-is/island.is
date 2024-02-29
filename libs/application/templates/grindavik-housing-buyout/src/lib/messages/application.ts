@@ -118,6 +118,12 @@ export const application = {
       defaultMessage: 'Vista lán',
       description: 'Save new loan',
     },
+    additionalInfo: {
+      id: 'ghb.application:loanStatus.additionalInfo#markdown',
+      defaultMessage:
+        'Ef þú ert ekki með lán hjá neinum lánveitanda hér fyrir ofan þá getur þú xxx ...',
+      description: 'Loan status info',
+    },
   }),
   results: defineMessages({
     sectionTitle: {

@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
@@ -32,6 +31,8 @@ import {
   conclusionSection,
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
+
+const banks = ['Arion banki', 'Landsbankinn', 'Íslandsbanki']
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -106,34 +107,43 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
     buildSection({
       id: 'loanStatusSection',
       title: m.application.loanStatus.sectionTitle,
-      condition: (app) => {
-        console.log(app)
-        return true
-      },
       children: [
-        buildTableRepeaterField({
-          id: 'loans',
-          marginTop: 2,
+        buildMultiField({
+          id: 'loanStatusMultiField',
           title: m.application.loanStatus.sectionTitle,
           description: m.application.loanStatus.addLoanDescription,
-          addItemButtonText: m.application.loanStatus.addNewLoan,
-          saveItemButtonText: m.application.loanStatus.saveNewLoan,
-          fields: {
-            status: {
-              component: 'input',
-              label: m.application.loanStatus.statusOfLoan,
-              currency: true,
-            },
-            provider: {
-              component: 'input',
-              label: m.application.loanStatus.loanProvider,
-            },
-          },
-          table: {
-            format: {
-              status: (v) => formatCurrency(v),
-            },
-          },
+          children: [
+            buildTableRepeaterField({
+              id: 'loans',
+              marginTop: 2,
+              title: '',
+              addItemButtonText: m.application.loanStatus.addNewLoan,
+              saveItemButtonText: m.application.loanStatus.saveNewLoan,
+              fields: {
+                provider: {
+                  component: 'select',
+                  label: m.application.loanStatus.loanProvider,
+                  options: banks.map((bank) => ({ value: bank, label: bank })),
+                },
+                status: {
+                  component: 'input',
+                  label: m.application.loanStatus.statusOfLoan,
+                  currency: true,
+                },
+              },
+              table: {
+                format: {
+                  status: (v) => formatCurrency(v),
+                },
+              },
+            }),
+            buildDescriptionField({
+              id: 'loanStatusAdditionalInfo',
+              title: '',
+              marginTop: [4, 6],
+              description: m.application.loanStatus.additionalInfo,
+            }),
+          ],
         }),
       ],
     }),
