@@ -166,7 +166,7 @@ export class DocumentService {
     nationalId: string,
   ): Promise<DocumentPageResponse> {
     const defaultRes = {
-      documentPage: 1,
+      messagePage: 1,
     }
     try {
       const res = await this.documentClient.getDocumentPageNumber({

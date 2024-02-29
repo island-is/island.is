@@ -6,7 +6,7 @@ import { pageSize } from './Overview/Overview'
 export const GET_PAGE_NUMBER_QUERY = gql`
   query GetDocumentPageNumber($input: GetDocumentPageInput!) {
     getDocumentPageNumber(input: $input) {
-      documentPage
+      messagePage
     }
   }
 `
@@ -27,7 +27,7 @@ export const documentLoader: WrappedLoaderFn =
             },
           },
         })
-        return data?.getDocumentPageNumber.documentPage ?? 1
+        return data?.getDocumentPageNumber.messagePage ?? 1
       }
       return 1
     } catch {

@@ -1,3 +1,3 @@
 export interface DocumentPageNumberRes {
-  documentPage: number
+  messagePage: number
 }
