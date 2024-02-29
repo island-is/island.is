@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
@@ -28,6 +28,7 @@ import {
   IconTitleCard,
   OrganizationFooter,
   OrganizationHeader,
+  Webreader,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -76,6 +77,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
+  useSetZIndexOnHeader()
   const [sortedCourses, setSortedCourses] = useState<
     Array<UniversityGatewayProgramCourse>
   >([])
@@ -86,7 +88,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     false,
     false,
   ])
-  useSetZIndexOnHeader()
 
   const toggleIsOpen = (index: number) => {
     const newIsOpen = isOpen.map((x, i) => {
@@ -208,6 +209,70 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       })),
     })) ?? []
 
+  const universityData = useMemo(() => {
+    return universities.filter((x) => x.id === data.universityId)[0] || {}
+  }, [universities, data.universityId])
+
+  const htmlParser = (dataEn: string | undefined, dataIs: string) => {
+    return locale === 'en'
+      ? ReactHtmlParser(dataEn ? dataEn : '')
+      : ReactHtmlParser(dataIs ? dataIs : '')
+  }
+
+  const applicationUrlParser = () => {
+    switch (universityData.contentfulTitle) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
+  }
+
+  const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
+    const length = items.length
+
+    if (length === 0) {
+      return ''
+    }
+
+    if (length === 1) {
+      return n(items[0], TranslationDefaults[items[0]])
+    }
+
+    if (length === 2) {
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
+    }
+
+    const formattedList = items.map((item, index) => {
+      if (index === length - 1) {
+        return `${n('or', 'eða')} ${n(item, TranslationDefaults[item])}`
+      } else {
+        return `${n(item, TranslationDefaults[item])}, `
+      }
+    })
+
+    return formattedList.join('')
+  }
+
   return (
     <>
       {organizationPage && (
@@ -233,27 +298,13 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               }}
             />
             <IconTitleCard
-              heading={
-                universities.filter((x) => x.id === data.universityId)[0]
-                  .contentfulTitle || ''
-              }
+              heading={universityData.contentfulTitle || ''}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
-              href="/"
-              imgSrc={
-                universities.filter((x) => x.id === data.universityId)[0]
-                  .contentfulLogoUrl || ''
-              }
+              href={universityData.contentfulLink || ''}
+              imgSrc={universityData.contentfulLogoUrl || ''}
               alt="University infomation"
             />
-            <Box width="full">
-              <Button fluid>
-                <Box display={'flex'} style={{ gap: '0.5rem' }}>
-                  {n('applyToUniversityProgram', 'Sækja um háskólanám')}
-                  <Icon icon="open" type="outline" />
-                </Box>
-              </Button>
-            </Box>
           </Stack>
         }
       >
@@ -273,9 +324,27 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 </Button>
               </LinkV2>
             </Hidden>
-            <Text variant="h1" as="h1">
-              {locale === 'en' ? data.nameEn : data.nameIs}
-            </Text>
+            <Box
+              display={'flex'}
+              flexDirection={'column'}
+              style={{ gap: '0.5rem' }}
+            >
+              <Box style={{ marginBottom: '-16px' }}>
+                <Webreader />
+              </Box>
+              <Text variant="h1" as="h2">
+                {locale === 'en' ? data.nameEn : data.nameIs}
+              </Text>
+              {data.specializationNameIs && data.specializationNameEn && (
+                <Text variant="h3" as="h3">
+                  {`${locale === 'en' ? 'Specialization: ' : 'Kjörsvið: '}${
+                    locale === 'en'
+                      ? data.specializationNameEn
+                      : data.specializationNameIs
+                  }`}
+                </Text>
+              )}
+            </Box>
             <Box
               width="full"
               display={'flex'}
@@ -285,11 +354,11 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               style={{ backgroundColor: '#F2F7FF' }}
               padding={3}
             >
-              <Text variant={'h3'} color={'blue600'}>
+              <Text variant={'h3'} as="h3" color={'blue600'}>
                 {n('applyForProgram', 'Umsókn í háskólanám')}
               </Text>
 
-              <Button>
+              <Button onClick={() => router.push(applicationUrlParser())}>
                 <Box display={'flex'} style={{ gap: '0.5rem' }}>
                   {n('apply', 'Sækja um')}
                   <Icon icon="open" type="outline" />
@@ -302,14 +371,13 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               ) : (
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
+              {data.iscedCode && (
+                <Text variant="small">{`${n('isced', 'ISCED Flokkun')}: ${
+                  data.iscedCode
+                }`}</Text>
+              )}
               <Text marginTop={3} marginBottom={3} variant="default">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.descriptionEn ? data.descriptionEn : '',
-                    )
-                  : ReactHtmlParser(
-                      data.descriptionIs ? data.descriptionIs : '',
-                    )}
+                {htmlParser(data.descriptionEn, data.descriptionIs)}
               </Text>
               {data.externalUrlIs && (
                 <LinkV2
@@ -414,15 +482,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       <Text variant="medium">{`${n(
                         'modeOfDelivery',
                         'Námsform',
-                      )}: ${data.modeOfDelivery.map((delivery, index) => {
-                        if (index !== 0) {
-                          return `, ${n(
-                            delivery,
-                            TranslationDefaults[delivery],
-                          )}`
-                        } else {
-                          return n(delivery, TranslationDefaults[delivery])
-                        }
+                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}
                       })}`}</Text>
                     </Box>
                   </GridColumn>
@@ -447,17 +507,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(0)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.admissionRequirementsEn
-                              ? data.admissionRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.admissionRequirementsIs
-                              ? data.admissionRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.admissionRequirementsEn || '',
+                        data.admissionRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}
@@ -472,17 +525,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(1)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.studyRequirementsEn
-                              ? data.studyRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.studyRequirementsIs
-                              ? data.studyRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.studyRequirementsEn || '',
+                        data.studyRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}
@@ -597,4 +643,7 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(UniversityDetails, { showFooter: false })
+export default withMainLayout(UniversityDetails, {
+  showFooter: false,
+  headerColorScheme: 'white',
+})

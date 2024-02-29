@@ -27,6 +27,12 @@
           "codeCoverage": true
         }
       }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/home-support/src/lib/messages/*.ts'"
+      }
     }
   }
 }

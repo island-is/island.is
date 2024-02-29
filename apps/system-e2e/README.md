@@ -177,6 +177,28 @@ await page.waitForFunction(async () => {
 })
 ```
 
+## 🎩 Testing with Mountebank
+
+If you want to mock your API response, you can do that with mountebank.
+
+### Setup
+
+You will need a few things to set up your test so it can run with mountebank.
+
+- Add a `setup-xroad.mocks.ts` file to your `/acceptance` folder.
+- Within `setup-xroad.mocks.ts` you will be replicating the response from the service you are mocking. Examples of this setup can be found in `apps/system-e2e/src/tests/islandis/service-portal/acceptance/setup-xroad.mocks.ts` and `apps/system-e2e/src/tests/islandis/application-system/acceptance/setup-xroad.mocks.ts`
+- Within your test file you will need something to activate the mocking process. That would be `await setupXroadMocks()` placed within `test('', async () => {`. Example within `apps/system-e2e/src/tests/islandis/service-portal/acceptance/assets.spec.ts`
+
+### Running the test
+
+Now that you are set up. You need to run a couple of commands.
+
+- In your terminal run `yarn infra render-local-env --service=service-portal --service=api` .
+  - This would show you commands how to start the mocking for `service-portal` and `api`. Replace with the services you want to test.
+- In the output you will see a docker output it will look something like this: `docker run -it --rm -p ...` copy that line and run in a new terminal window. Now your Mountebank impostor should be running.
+- Now start your services, but make sure your services ports have been replaced by the ports provided by Mountebank. In this examples case that would be `XROAD_BASE_PATH=http://localhost:9388 yarn start api`
+- Run the test with Playwright and you should see your mocked data replace the API's data.
+
 # 🙋 Troubleshooting/FAQ
 
 ## 🫀 500: Internal Server Error

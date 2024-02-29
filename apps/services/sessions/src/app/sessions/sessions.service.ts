@@ -12,6 +12,7 @@ import { CreateSessionDto } from './create-session.dto'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
+import { USER_AGENT_MAX_LENGTH } from './constants'
 
 @Injectable()
 export class SessionsService {
@@ -86,7 +87,7 @@ export class SessionsService {
   }
 
   create(session: CreateSessionDto): Promise<Session> {
-    const { id, sessionId, ...rest } = session
+    const { id, sessionId, userAgent, ...rest } = session
 
     // Todo: Remove this when we have migrated IDS to use sessionId
     const sid = sessionId || id
@@ -97,8 +98,9 @@ export class SessionsService {
 
     return this.sessionModel.create({
       ...rest,
+      userAgent: userAgent.substring(0, USER_AGENT_MAX_LENGTH),
       sessionId: sid,
-      device: this.formatUserAgent(session.userAgent),
+      device: this.formatUserAgent(userAgent),
       ipLocation: this.formatIp(session.ip),
     })
   }

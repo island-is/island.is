@@ -506,6 +506,7 @@ describe('MeScopesController', () => {
           AppModule,
           SequelizeConfigService,
           user: testCase.user,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 
@@ -541,6 +542,7 @@ describe('MeScopesController', () => {
           AppModule,
           SequelizeConfigService,
           user: testCase.user,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 
@@ -600,6 +602,7 @@ describe('MeScopesController', () => {
           AppModule,
           SequelizeConfigService,
           user: testCase.user,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 
@@ -675,6 +678,7 @@ describe('MeScopesController', () => {
           AppModule,
           SequelizeConfigService,
           user: testCase.user,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 

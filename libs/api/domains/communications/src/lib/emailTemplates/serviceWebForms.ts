@@ -331,7 +331,7 @@ const grindavikEmails = {
 }
 
 const transportAuthorityEmails = {
-  umferd: 'adstod@samgongustofa.is',
+  umferd: 'afgreidsla@samgongustofa.is',
   siglingar: 'sigling@samgongustofa.is',
 }
 

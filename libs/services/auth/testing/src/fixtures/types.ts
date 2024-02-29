@@ -8,6 +8,8 @@ import {
   DelegationDTO,
   DelegationScopeDTO,
   IdentityResource,
+  PersonalRepresentativeRightTypeDTO,
+  PersonalRepresentativeTypeDTO,
 } from '@island.is/auth-api-lib'
 
 export type CreateClientClaim = Optional<
@@ -33,4 +35,30 @@ export type CreateCustomDelegation = Optional<
 > & {
   domainName: string
   scopes?: CreateCustomDelegationScope[]
+}
+
+export type CreatePersonalRepresentativeType = Optional<
+  Pick<PersonalRepresentativeTypeDTO, 'validTo' | 'name' | 'description'>,
+  'validTo' | 'name' | 'description'
+> & {
+  code: string
+}
+
+export type CreatePersonalRepresentativeRightType = Optional<
+  Pick<
+    PersonalRepresentativeRightTypeDTO,
+    'validFrom' | 'validTo' | 'description' | 'code'
+  >,
+  'validFrom' | 'validTo' | 'description' | 'code'
+>
+
+export type CreatePersonalRepresentativeDelegation = Optional<
+  Pick<
+    DelegationDTO,
+    'toNationalId' | 'fromNationalId' | 'fromName' | 'validTo'
+  >,
+  'toNationalId' | 'fromNationalId' | 'fromName' | 'validTo'
+> & {
+  type?: CreatePersonalRepresentativeType
+  rightType?: CreatePersonalRepresentativeRightType
 }

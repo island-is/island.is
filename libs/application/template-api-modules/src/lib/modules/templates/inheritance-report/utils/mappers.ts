@@ -15,7 +15,7 @@ const initialMapper = <T>(element: T) => {
     initial: true,
     enabled: true,
     propertyValuation: '0',
-    propertyShare: '0',
+    share: '0',
   }
 }
 
@@ -62,6 +62,7 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
     },
     vehicles: {
       data: vehicles,
+      hasModified: false,
     },
     guns: {
       data: guns,
@@ -95,6 +96,7 @@ export const expandAnswers = (
           return {
             accountNumber: account.accountNumber ?? '',
             balance: account.balance ?? '',
+            foreignBankAccount: account?.foreignBankAccount ?? [],
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -137,7 +139,7 @@ export const expandAnswers = (
             assetNumber: realEstate.assetNumber ?? '',
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
-            propertyShare: realEstate.propertyShare ?? '0',
+            share: realEstate.share ?? '0',
           }
         }),
         hasModified: answers.assets.realEstate?.hasModified ?? false,
@@ -163,6 +165,7 @@ export const expandAnswers = (
             propertyValuation: vehicle.propertyValuation ?? '',
           }
         }),
+        hasModified: answers.assets.vehicles?.hasModified ?? false,
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
@@ -207,7 +210,20 @@ export const expandAnswers = (
       },
       publicCharges: (answers.debts.publicCharges ?? 0).toString(),
     },
-    funeralCostAmount: answers.funeralCostAmount ?? '',
+    funeralCost: {
+      build: answers?.funeralCost?.build ?? '',
+      cremation: answers?.funeralCost?.cremation ?? '',
+      print: answers?.funeralCost?.print ?? '',
+      flowers: answers?.funeralCost?.flowers ?? '',
+      music: answers?.funeralCost?.music ?? '',
+      rent: answers?.funeralCost?.rent ?? '',
+      food: answers?.funeralCost?.food ?? '',
+      tombstone: answers?.funeralCost?.tombstone ?? '',
+      hasOther: answers?.funeralCost?.hasOther ?? [],
+      other: answers?.funeralCost?.other ?? '',
+      otherDetails: answers?.funeralCost?.otherDetails ?? '',
+      total: answers?.funeralCost?.total ?? '',
+    },
     heirs: {
       data: (answers.heirs?.data ?? []).map((heir) => {
         return {
@@ -234,6 +250,13 @@ export const expandAnswers = (
         }
       }),
       total: answers.heirs?.total ?? 0,
+    },
+    spouse: {
+      wasInCohabitation: answers?.spouse?.wasInCohabitation,
+      hadSeparateProperty: answers?.spouse?.hadSeparateProperty,
+      spouseTotalDeduction: answers?.spouse?.spouseTotalDeduction ?? 0,
+      spouseTotalSeparateProperty:
+        answers?.spouse?.spouseTotalSeparateProperty ?? 0,
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',
