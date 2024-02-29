@@ -2,7 +2,6 @@ import {
   Field,
   registerEnumType,
   GraphQLISODateTime,
-  InterfaceType,
   ObjectType,
 } from '@nestjs/graphql'
 import { GenericField } from './genericField.model'
