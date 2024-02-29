@@ -31,12 +31,14 @@ import {
   conclusionSection,
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
+import Logo from '../assets/Logo'
 
 const banks = ['Arion banki', 'Landsbankinn', 'Íslandsbanki']
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
   title: m.application.general.name,
+  logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -170,6 +172,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               rows: (application) => {
                 const {
                   fireInsuranceValue,
+                  buyoutPriceWithLoans,
                   buyoutPrice,
                   totalLoans,
                   closingPayment,
@@ -186,6 +189,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                   [
                     m.application.results.totalLoan,
                     formatCurrency((-totalLoans).toString()),
+                  ],
+                  [
+                    m.application.results.total,
+                    formatCurrency(buyoutPriceWithLoans.toString()),
                   ],
                   [
                     m.application.results.closingPayment,
