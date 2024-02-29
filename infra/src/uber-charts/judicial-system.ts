@@ -19,7 +19,34 @@ const jsRobotApi = jsRobotApiSetup({ backend: jsBack })
 const jsDigitalInboxRobotApi = jsDigitalInboxRobotApiSetup({ backend: jsBack })
 
 export const Services: EnvironmentServices = {
-  prod: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler, jsMessageHandler, jsRobotApi, jsDigitalInboxRobotApi],
-  staging: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler, jsMessageHandler, jsRobotApi, jsDigitalInboxRobotApi],
-  dev: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler, jsMessageHandler, jsRobotApi, jsDigitalInboxRobotApi],
+  prod: [
+    jsApi,
+    jsBack,
+    jsWeb,
+    jsXrdApi,
+    jsScheduler,
+    jsMessageHandler,
+    jsRobotApi,
+    jsDigitalInboxRobotApi,
+  ],
+  staging: [
+    jsApi,
+    jsBack,
+    jsWeb,
+    jsXrdApi,
+    jsScheduler,
+    jsMessageHandler,
+    jsRobotApi,
+    jsDigitalInboxRobotApi,
+  ],
+  dev: [
+    jsApi,
+    jsBack,
+    jsWeb,
+    jsXrdApi,
+    jsScheduler,
+    jsMessageHandler,
+    jsRobotApi,
+    jsDigitalInboxRobotApi,
+  ],
 }
