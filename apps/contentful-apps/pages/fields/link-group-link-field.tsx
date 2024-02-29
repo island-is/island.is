@@ -128,8 +128,6 @@ const LinkGroupLinkField = () => {
     } catch (error) {
       console.error('Error creating entry:', error)
     }
-
-    //console.log(bla)
   }
 
   const handleLinkExisting = (props) => {
