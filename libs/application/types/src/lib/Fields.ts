@@ -182,7 +182,10 @@ export enum FieldTypes {
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
+  HIDDEN_INPUT = 'HIDDEN_INPUT',
+  HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  STATIC_TABLE = 'STATIC_TABLE',
 }
 
 export enum FieldComponents {
@@ -211,7 +214,9 @@ export enum FieldComponents {
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
+  HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  STATIC_TABLE = 'StaticTableFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -390,6 +395,8 @@ export interface MessageWithLinkButtonField extends BaseField {
   url: string
   buttonTitle: FormText
   message: FormText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 export interface ExpandableDescriptionField extends BaseField {
@@ -484,9 +491,11 @@ export type TableRepeaterField = BaseField & {
   formTitle?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
   table?: {
     /**
@@ -508,7 +517,7 @@ export interface FindVehicleField extends BaseField {
   disabled?: boolean
   required?: boolean
   additionalErrors: boolean
-  getVehicleDetails?: (plate: string) => Promise<unknown>
+  getDetails?: (plate: string) => Promise<unknown>
   findVehicleButtonText?: FormText
   findPlatePlaceholder?: FormText
   notFoundErrorMessage?: FormText
@@ -518,6 +527,34 @@ export interface FindVehicleField extends BaseField {
   isNotDebtLessTag?: FormText
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
+  isMachine?: boolean
+}
+
+export interface HiddenInputWithWatchedValueField extends BaseField {
+  watchValue: string
+  type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
+  component: FieldComponents.HIDDEN_INPUT
+  valueModifier?: (value: unknown) => unknown
+}
+
+export interface HiddenInputField extends BaseField {
+  watchValue?: never
+  type: FieldTypes.HIDDEN_INPUT
+  component: FieldComponents.HIDDEN_INPUT
+  valueModifier?: never
+}
+
+export interface StaticTableField extends BaseField {
+  readonly type: FieldTypes.STATIC_TABLE
+  component: FieldComponents.STATIC_TABLE
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  summary?:
+    | { label: StaticText; value: StaticText }
+    | ((application: Application) => { label: StaticText; value: StaticText })
 }
 
 export type Field =
@@ -547,4 +584,7 @@ export type Field =
   | NationalIdWithNameField
   | ActionCardListField
   | TableRepeaterField
+  | HiddenInputWithWatchedValueField
+  | HiddenInputField
   | FindVehicleField
+  | StaticTableField

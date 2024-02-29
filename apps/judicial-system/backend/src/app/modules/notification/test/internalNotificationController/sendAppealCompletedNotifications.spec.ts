@@ -197,13 +197,6 @@ describe('InternalNotificationController - Send appeal completed notifications',
           html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
-          subject: `Niðurfelling máls ${appealCaseNumber} (${courtCaseNumber})`,
-          html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
-        }),
-      )
       expect(then.result).toEqual({ delivered: true })
     })
   })

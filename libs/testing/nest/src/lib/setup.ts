@@ -38,11 +38,12 @@ export const setupApp = ({
 export const setupAppWithoutAuth = async ({
   AppModule,
   SequelizeConfigService,
+  dbType = 'sqlite',
   override = (builder) => builder,
 }: SetupOptions): Promise<TestApp> =>
   testServer({
     appModule: AppModule,
     enableVersioning: true,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [useDatabase({ type: dbType, provider: SequelizeConfigService })],
     override: (builder: TestingModuleBuilder) => override(builder),
   })

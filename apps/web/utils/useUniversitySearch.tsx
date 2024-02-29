@@ -9,6 +9,7 @@ interface SearchProductsProps {
   fuseInstance: Fuse<any>
   query?: string
   activeFilters: Array<FilterProps>
+  locale: string
 }
 
 interface QueryMakerProps {
@@ -18,22 +19,22 @@ export const SearchProducts = ({
   fuseInstance,
   query,
   activeFilters,
+  locale,
 }: SearchProductsProps) => {
   const queryMaker: QueryMakerProps = { $and: [] }
 
   if (query) {
     queryMaker.$and.push({
       $or: [
-        { nameIs: query },
-        { departmentNameIs: query },
-        { descriptionIs: query },
+        { [`name${locale === 'is' ? 'Is' : 'En'}`]: query },
+        { [`specializationName${locale === 'is' ? 'Is' : 'En'}`]: query },
       ],
     })
   }
 
-  activeFilters.map((filter) => {
+  activeFilters.forEach((filter) => {
     const orFilters: Array<any> = []
-    filter.value.map((searchParam) => {
+    filter.value.forEach((searchParam) => {
       orFilters.push({ [filter.key]: searchParam })
     })
     queryMaker.$and.push({ $or: orFilters })
