@@ -48,6 +48,7 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
   name: application.general.name,
   dataSchema: GrindavikHousingBuyoutSchema,
   translationNamespaces: [configuration.translation],
+  institution: application.general.institutionName,
   featureFlag: Features.grindavikHousingBuyout,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {

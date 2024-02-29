@@ -7,6 +7,11 @@ export const application = {
       defaultMessage: 'Kaup ríkis á íbúðarhúsnæði í Grindavík',
       description: 'Grindavik Housing Buyout application name',
     },
+    institutionName: {
+      id: 'ghb.application:general.institutionName',
+      defaultMessage: 'Sýslumenn',
+      description: 'Institution name',
+    },
     submit: {
       id: 'ghb.application:general.submit',
       defaultMessage: 'Senda inn umsókn',
@@ -172,6 +177,11 @@ export const application = {
       id: 'ghb.application:results.totalLoan',
       defaultMessage: 'Áhvílandi lán',
       description: 'Total loan text',
+    },
+    total: {
+      id: 'ghb.application:results.total',
+      defaultMessage: 'Samtals',
+      description: 'Total text',
     },
     closingPayment: {
       id: 'ghb.application:results.closingPayment',
