@@ -28,7 +28,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
+import { useLoaderData, useLocation, useSearchParams } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -51,6 +51,7 @@ import {
   useDocumentTypesQuery,
 } from './DocumentExtra.generated'
 import { DocumentsPaths } from '../../lib/paths'
+import { useGetDocumentInboxLineQueryDetailsLazyQuery } from './DocumentDetail.generated'
 
 const pageSize = 10
 
@@ -58,7 +59,8 @@ export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const [page, setPage] = useState(1)
+  const loaderNumber = useLoaderData() as number
+  const [page, setPage] = useState(loaderNumber)
   const [selectedLines, setSelectedLines] = useState<Array<string>>([])
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
   const [docLoading, setDocLoading] = useState(false)
