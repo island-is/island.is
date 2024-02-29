@@ -18,6 +18,7 @@ import {
   Post,
   Inject,
   Query,
+  ParseUUIDPipe,
 } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
@@ -82,8 +83,9 @@ export class PersonalRepresentativesController {
   @Audit<PersonalRepresentativeDTO>({
     resources: (pr) => pr.id ?? '',
   })
-  async get(@Param('id') id: string): Promise<PersonalRepresentativeDTO> {
-    console.log(id)
+  async get(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<PersonalRepresentativeDTO> {
     const personalRepresentative =
       await this.prService.getPersonalRepresentative(id)
 
@@ -111,7 +113,7 @@ export class PersonalRepresentativesController {
     },
   })
   async remove(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentAuth() user: Auth,
   ): Promise<void> {
     if (!id) {

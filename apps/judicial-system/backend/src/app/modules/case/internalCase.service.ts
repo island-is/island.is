@@ -473,7 +473,7 @@ export class InternalCaseService {
               nationalId: caseToCreate.accusedNationalId,
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
-              address: caseToCreate.accusedAddress,
+              address: (caseToCreate.accusedAddress || '').trim(),
               citizenship: caseToCreate.citizenship,
             },
             transaction,

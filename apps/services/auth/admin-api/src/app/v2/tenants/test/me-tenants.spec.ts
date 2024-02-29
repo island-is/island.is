@@ -105,6 +105,7 @@ describe('MeTenantsController', () => {
           AppModule,
           SequelizeConfigService,
           user: testCase.user,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 
@@ -135,6 +136,7 @@ describe('MeTenantsController', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 
@@ -180,6 +182,7 @@ describe('MeTenantsController', () => {
           AppModule,
           SequelizeConfigService,
           user: superUser,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 

@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCustomField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
   buildDateField,
@@ -632,12 +631,6 @@ export const PrerequisitesForm: Form = buildForm({
 
                     return hasMultipleBirths === YES && selectedChild
                   },
-                }),
-                buildCustomField({
-                  id: 'exisitingApplications',
-                  title:
-                    parentalLeaveFormMessages.selectChild.activeApplication,
-                  component: 'ExistingApplications',
                 }),
                 buildSubmitField({
                   id: 'toDraft',
