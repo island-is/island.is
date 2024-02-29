@@ -41,8 +41,6 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
     return <LoadingDots />
   }
 
-  console.log(organization)
-
   return (
     <GridRow marginBottom={marginBottom ?? 4}>
       <GridColumn span={props.span ? props.span : columnSpan}>
