@@ -122,8 +122,6 @@ const extractDetails = function (
   ) {
     return {
       ...response,
-      vehicleGrant: 600000,
-      vehicleGrantItemCode: '123456',
     }
   } else {
     // Handle unexpected response types
