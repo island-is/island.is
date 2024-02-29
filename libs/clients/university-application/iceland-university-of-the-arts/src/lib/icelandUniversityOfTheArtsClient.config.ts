@@ -22,7 +22,7 @@ export const IcelandUniversityOfTheArtsApplicationClientConfig = defineConfig<
       fetchTimeout:
         env.optionalJSON(
           'XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_TIMEOUT',
-        ) ?? 20000,
+        ) ?? 10000,
     }
   },
 })

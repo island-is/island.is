@@ -22,7 +22,7 @@ export const UniversityOfAkureyriApplicationClientConfig = defineConfig<
       fetchTimeout:
         env.optionalJSON(
           'XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_TIMEOUT',
-        ) ?? 20000,
+        ) ?? 10000,
     }
   },
 })

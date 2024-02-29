@@ -22,7 +22,7 @@ export const ReykjavikUniversityApplicationClientConfig = defineConfig<
       fetchTimeout:
         env.optionalJSON(
           'XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_TIMEOUT',
-        ) ?? 20000,
+        ) ?? 10000,
     }
   },
 })
