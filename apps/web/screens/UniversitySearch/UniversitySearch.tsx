@@ -710,7 +710,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               {n('searchResults', 'Leitarniðurstöður')}
             </Text>
             <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
               value={query}
