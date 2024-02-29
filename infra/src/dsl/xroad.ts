@@ -755,7 +755,6 @@ export const UniversityGatewayHolarUniversity = new XroadConf({
   },
 })
 
-
 export const UniversityGatewayReykjavikUniversity = new XroadConf({
   env: {
     XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: {
