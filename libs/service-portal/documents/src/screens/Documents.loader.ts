@@ -1,6 +1,7 @@
 import { Query } from '@island.is/api/schema'
 import { gql } from '@apollo/client'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
+import { pageSize } from './Overview/Overview'
 
 export const GET_PAGE_NUMBER_QUERY = gql`
   query GetDocumentPageNumber($input: GetDocumentPageInput!) {
@@ -21,7 +22,7 @@ export const documentLoader: WrappedLoaderFn =
           query: GET_PAGE_NUMBER_QUERY,
           variables: {
             input: {
-              pageSize: 10,
+              pageSize: pageSize,
               messageId: idParam,
             },
           },
@@ -30,6 +31,6 @@ export const documentLoader: WrappedLoaderFn =
       }
       return 1
     } catch {
-      return null
+      return 1
     }
   }

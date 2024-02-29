@@ -28,7 +28,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLoaderData, useLocation, useSearchParams } from 'react-router-dom'
+import { useLoaderData, useLocation } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -51,9 +51,8 @@ import {
   useDocumentTypesQuery,
 } from './DocumentExtra.generated'
 import { DocumentsPaths } from '../../lib/paths'
-import { useGetDocumentInboxLineQueryDetailsLazyQuery } from './DocumentDetail.generated'
 
-const pageSize = 10
+export const pageSize = 10
 
 export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
