@@ -88,41 +88,28 @@ export const LicensesOverview = () => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
-  const featureFlagClient = useFeatureFlagClient()
-
   const [includedTypes, setIncludedTypes] = useState([
     GenericLicenseType.DriversLicense,
     GenericLicenseType.AdrLicense,
     GenericLicenseType.MachineLicense,
     GenericLicenseType.FirearmLicense,
     GenericLicenseType.DisabilityLicense,
-    GenericLicenseType.HuntingLicense,
+    GenericLicenseType.Ehic,
+    GenericLicenseType.PCard,
   ])
 
+  const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
-    const checkIncluded = async () => {
-      const ehicEnabled = await featureFlagClient.getValue(
-        'isEHICCardEnabled',
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isHuntingCardEnabled`,
         false,
       )
-      const pcardEnabled = await featureFlagClient.getValue(
-        'isPcardEnabled',
-        false,
-      )
-
-      let included = includedTypes
-      if (ehicEnabled) {
-        included = [...included, GenericLicenseType.Ehic]
+      if (ffEnabled) {
+        setIncludedTypes([...includedTypes, GenericLicenseType.HuntingLicense])
       }
-
-      if (pcardEnabled) {
-        included = [...included, GenericLicenseType.PCard]
-      }
-
-      setIncludedTypes(included)
     }
-
-    checkIncluded()
+    isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
