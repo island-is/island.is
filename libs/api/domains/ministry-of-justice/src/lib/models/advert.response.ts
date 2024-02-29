@@ -30,10 +30,16 @@ export class AdvertDepartmentResponse {
 }
 
 @ObjectType('MinistryOfJusticeAdvertsResponse')
-export class AdvertResponse {
+export class AdvertsResponse {
   @Field(() => [Advert])
   adverts!: Advert[]
 
   @Field(() => AdvertPaging)
   paging!: AdvertPaging
+}
+
+@ObjectType('MinistryOfJusticeAdvertResponse')
+export class AdvertResponse {
+  @Field(() => Advert)
+  advert?: Advert
 }

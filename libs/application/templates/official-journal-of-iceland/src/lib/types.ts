@@ -151,9 +151,12 @@ export type OJOIFieldBaseProps = Override<
 export type CreateParentKey<Key extends string> =
   `ministryOfJustice${Capitalize<Key>}`
 
-export type MinistryOfJusticeGraphqlResponse<Key extends string> = {
+export type MinistryOfJusticeGraphqlResponse<
+  Key extends string,
+  Value = MinistryOfJusticeAdvertEntity[],
+> = {
   [key in CreateParentKey<Key>]: {
-    [key in Key]: MinistryOfJusticeAdvertEntity[]
+    [key in Key]: Value
   } & {
     paging: MinistryOfJusticePaging
   }

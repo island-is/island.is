@@ -6,11 +6,13 @@ import { useState } from 'react'
 import { Button } from '@island.is/island-ui/core'
 import { Advert } from '../fields/Advert'
 import { Signatures } from '../fields/Signatures'
+import { AdvertModal } from '../fields/AdvertModal'
 
 export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
 
   const [modalToggle, setModalToggle] = useState(false)
+  const [selectedAdvertId, setSelectedAdvertId] = useState<string | null>(null)
 
   return (
     <FormScreen
@@ -27,8 +29,13 @@ export const AdvertScreen = (props: OJOIFieldBaseProps) => {
         </Button>
       }
     >
-      <Advert {...props} />
+      <Advert {...props} selectedAdvertId={selectedAdvertId} />
       <Signatures {...props} />
+      <AdvertModal
+        setSelectedAdvertId={setSelectedAdvertId}
+        visible={modalToggle}
+        setVisibility={setModalToggle}
+      />
     </FormScreen>
   )
 }

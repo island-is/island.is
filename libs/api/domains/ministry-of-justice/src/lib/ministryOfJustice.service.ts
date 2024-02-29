@@ -6,6 +6,7 @@ import {
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
+  AdvertQueryParams,
   QueryParams,
   SubmitApplicationInput,
   TypeQueryParams,
@@ -14,6 +15,7 @@ import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
   AdvertResponse,
+  AdvertsResponse,
   AdvertTypeResponse,
 } from './models/advert.response'
 
@@ -42,10 +44,20 @@ export class MinistryOfJusticeService {
     return await this.dmrService.types(auth, params)
   }
 
+  async advert(auth: User, params: AdvertQueryParams): Promise<AdvertResponse> {
+    const data = await this.dmrService.advert(auth, params)
+    return {
+      advert: {
+        ...data,
+        status: mapAdvertStatus(data.status),
+      },
+    }
+  }
+
   async adverts(
     auth: User,
     input: JournalControllerAdvertsRequest,
-  ): Promise<AdvertResponse> {
+  ): Promise<AdvertsResponse> {
     const adverts = await this.dmrService.adverts(auth, input)
 
     const mappedAdverts = adverts.adverts.map((advert) => {
@@ -55,7 +67,7 @@ export class MinistryOfJusticeService {
       }
     })
 
-    const response: AdvertResponse = {
+    const response: AdvertsResponse = {
       adverts: mappedAdverts,
       paging: adverts.paging,
     }

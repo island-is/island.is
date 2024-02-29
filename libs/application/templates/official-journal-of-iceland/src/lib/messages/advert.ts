@@ -33,6 +33,18 @@ export const advert = {
       description: 'Label for the copy old advert button',
     },
   }),
+  modal: defineMessages({
+    title: {
+      id: 'ojoi.application:advert.modal.title',
+      defaultMessage: 'Mál til afritunar',
+      description: 'Title of the advert modal',
+    },
+    search: {
+      id: 'ojoi.application:advert.modal.search',
+      defaultMessage: 'Sláðu inn leitarorð',
+      description: 'Search button in the advert modal',
+    },
+  }),
   inputs: {
     department: defineMessages({
       label: {

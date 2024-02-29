@@ -3,6 +3,7 @@ import { AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   DefaultApi as DmrApi,
+  JournalControllerAdvertRequest,
   JournalControllerAdvertsRequest,
   JournalControllerApplicationRequest,
   JournalControllerCategoriesRequest,
@@ -10,6 +11,7 @@ import {
   JournalControllerTypesRequest,
 } from '../../gen/fetch/apis'
 import {
+  JournalAdvert,
   JournalAdvertCategoriesResponse,
   JournalAdvertDepartmentsResponse,
   JournalAdvertTypesResponse,
@@ -21,6 +23,14 @@ import {
 export class DmrClientService {
   constructor(private readonly dmrApi: DmrApi) {}
 
+  public async advert(
+    auth: User,
+    params: JournalControllerAdvertRequest,
+  ): Promise<JournalAdvert> {
+    return await this.dmrApi
+      .withMiddleware(new AuthMiddleware(auth as User))
+      .journalControllerAdvert(params)
+  }
   public async adverts(
     auth: User,
     input: JournalControllerAdvertsRequest,

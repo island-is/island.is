@@ -6,6 +6,7 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { MinistryOfJusticeService } from './ministryOfJustice.service'
 import {
+  AdvertQueryParams,
   AdvertsInput,
   QueryParams,
   TypeQueryParams,
@@ -14,6 +15,7 @@ import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
   AdvertResponse,
+  AdvertsResponse,
   AdvertTypeResponse,
 } from './models/advert.response'
 
@@ -24,6 +26,14 @@ export class MinistryOfJusticeResolver {
   constructor(private readonly mojService: MinistryOfJusticeService) {}
 
   @Query(() => AdvertResponse, {
+    name: 'ministryOfJusticeAdvert',
+  })
+  @Audit()
+  advert(@CurrentUser() user: User, @Args('params') params: AdvertQueryParams) {
+    return this.mojService.advert(user, params)
+  }
+
+  @Query(() => AdvertsResponse, {
     name: 'ministryOfJusticeAdverts',
   })
   @Audit()

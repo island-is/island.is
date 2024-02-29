@@ -2,7 +2,7 @@ import { useMutation, useLazyQuery } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { useCallback, useEffect, useState } from 'react'
-import { TYPES_QUERY } from '../graphql/queries'
+import { ADVERT_QUERY, TYPES_QUERY } from '../graphql/queries'
 import { DEBOUNCE_INPUT_TIMER, INITIAL_ANSWERS } from '../lib/constants'
 import {
   InputFields,
@@ -20,11 +20,22 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
+import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
+import { useFormContext } from 'react-hook-form'
 
 type LocalState = typeof INITIAL_ANSWERS['advert']
 type TypeResonse = MinistryOfJusticeGraphqlResponse<'types'>
 
-export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
+type SelectedAdvertResponse = MinistryOfJusticeGraphqlResponse<
+  'advert',
+  MinistryOfJusticeAdvert
+>
+
+type Props = OJOIFieldBaseProps & {
+  selectedAdvertId: string | null
+}
+
+export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
   const { formatMessage: f, locale } = useLocale()
   const { answers, externalData } = application
 
@@ -37,9 +48,14 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
     }
   })
 
+  const { setValue } = useFormContext()
+
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const [lazyTypesQuery, { loading: loadingTypes }] =
     useLazyQuery<TypeResonse>(TYPES_QUERY)
+
+  const [lazyAdvertQuery, { loading: loadingAdvert }] =
+    useLazyQuery<SelectedAdvertResponse>(ADVERT_QUERY)
 
   const [types, setTypes] = useState<{ label: string; value: string }[]>([])
 
@@ -101,11 +117,59 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
     fetchTypes()
   }, [lazyTypesQuery, state.department])
 
+  useEffect(() => {
+    const fetchAdvert = async () => {
+      if (selectedAdvertId) {
+        const { data } = await lazyAdvertQuery({
+          variables: {
+            params: {
+              id: selectedAdvertId,
+            },
+          },
+        })
+
+        if (data) {
+          const { advert } = data.ministryOfJusticeAdvert
+          setState({
+            department: advert.department.id,
+            type: advert.type.id,
+            title: advert.title,
+            document: advert.document.html,
+            subType: '',
+            template: '',
+          })
+
+          setValue(InputFields.advert.department, advert.department.id)
+          setValue(InputFields.advert.type, advert.type.id)
+          setValue(InputFields.advert.title, advert.title)
+          setValue(InputFields.advert.document, advert.document.html)
+        }
+      }
+    }
+
+    if (selectedAdvertId) {
+      fetchAdvert()
+    }
+  }, [lazyAdvertQuery, selectedAdvertId, setValue])
+
+  if (loadingAdvert) {
+    return (
+      <SkeletonLoader
+        space={2}
+        repeat={5}
+        borderRadius="standard"
+        display="block"
+        height={inputHeight}
+      />
+    )
+  }
+
   return (
     <>
       <FormGroup>
         <Box width="half">
           <SelectController
+            key={state.department}
             id={InputFields.advert.department}
             name={InputFields.advert.department}
             label={f(advert.inputs.department.label)}

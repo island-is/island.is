@@ -18,6 +18,12 @@ export class TypeQueryParams {
   page?: number
 }
 
+@InputType('MinistryOfJusticeAdvertQuery')
+export class AdvertQueryParams {
+  @Field(() => String)
+  id!: string
+}
+
 @InputType('MinistryOfJusticeQueryInput')
 export class QueryParams {
   @Field(() => String, { nullable: true })

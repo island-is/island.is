@@ -61,6 +61,58 @@ export const ADVERTS_QUERY = gql`
   }
 `
 
+export const ADVERT_QUERY = gql`
+  query Advert($params: MinistryOfJusticeAdvertQuery!) {
+    ministryOfJusticeAdvert(params: $params) {
+      advert {
+        id
+        department {
+          id
+          title
+          slug
+        }
+        type {
+          id
+          title
+          slug
+          department {
+            id
+            title
+            slug
+          }
+        }
+        status
+        title
+        subject
+        publicationNumber {
+          number
+          year
+          full
+        }
+        createdDate
+        updatedDate
+        signatureDate
+        publicationDate
+        categories {
+          id
+          title
+          slug
+        }
+        involvedParty {
+          id
+          title
+          slug
+        }
+        document {
+          isLegacy
+          html
+          pdfUrl
+        }
+      }
+    }
+  }
+`
+
 export const TYPES_QUERY = gql`
   query AdvertTypes($params: MinistryOfJusticeTypesInput!) {
     ministryOfJusticeTypes(params: $params) {

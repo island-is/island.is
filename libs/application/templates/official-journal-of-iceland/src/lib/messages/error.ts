@@ -71,4 +71,9 @@ export const error = defineMessages({
     defaultMessage: 'Ekki tókst að senda umsókn',
     description: 'Error message when submit application fails',
   },
+  noResults: {
+    id: 'ojoi.application:error.noResults',
+    defaultMessage: 'Engar niðurstöður fundust',
+    description: 'Error message when no results are found',
+  },
 })
