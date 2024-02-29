@@ -119,8 +119,6 @@ export const Chart = ({ slice }: ChartProps) => {
 
   const skipId = `skip-chart_${slice.id}`
 
-  console.log({ data })
-
   return (
     <Box width="full" height="full">
       <a href={`#${skipId}`} className="visually-hidden">
