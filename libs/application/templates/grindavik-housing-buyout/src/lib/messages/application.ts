@@ -180,7 +180,7 @@ export const application = {
     },
     total: {
       id: 'ghb.application:results.total',
-      defaultMessage: 'Samtals',
+      defaultMessage: 'Útgreitt samtals',
       description: 'Total text',
     },
     closingPayment: {
@@ -230,6 +230,16 @@ export const application = {
       id: 'ghb.application:overview.loanStatusTitle',
       defaultMessage: 'Staða á láni',
       description: 'Loan status title',
+    },
+    resultTitle: {
+      id: 'ghb.application:overview.resultTitle',
+      defaultMessage: 'Útreikningur',
+      description: 'Result title',
+    },
+    checkboxText: {
+      id: 'ghb.application:overview.checkboxText',
+      defaultMessage: 'Ég skil að...',
+      description: 'Checkbox text',
     },
   }),
 }
