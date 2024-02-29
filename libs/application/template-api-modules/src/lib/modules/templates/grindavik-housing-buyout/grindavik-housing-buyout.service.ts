@@ -53,6 +53,19 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       type: PersonType.Plaintiff,
     }
 
+    const counterParties: Person[] =
+      answers.additionalOwners?.map((owner) => ({
+        name: owner.name ?? '',
+        ssn: owner.nationalId ?? '',
+        phoneNumber: owner.phone ?? '',
+        email: owner.email ?? '',
+        homeAddress: '',
+        postalCode: '',
+        city: '',
+        signed: false,
+        type: PersonType.CounterParty,
+      })) ?? []
+
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
       residenceData: JSON.stringify(
@@ -68,7 +81,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const uploadDataId = 'grindavik-umsokn-1'
 
     const response = await this.syslumennService.uploadData(
-      [applicant],
+      [applicant, ...counterParties],
       [],
       extraData,
       uploadDataName,
