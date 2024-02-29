@@ -11,19 +11,21 @@ export class DelegationIndexMeta extends Model<
 > {
   @Column({
     type: DataType.STRING,
+    primaryKey: true,
     allowNull: false,
   })
   nationalId!: string
 
   @Column({
     type: DataType.DATE,
-    allowNull: false,
+    allowNull: true,
+    defaultValue: null,
   })
-  lastFullReindex!: string
+  lastFullReindex!: Date | null
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
   })
-  nextReindex!: string
+  nextReindex!: Date
 }
