@@ -15,7 +15,6 @@ import {
 import { getDomicileOnDate } from './grindavik-housing-buyout.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
-  notEligible,
   GrindavikHousingBuyoutAnswers,
   prerequisites,
 } from '@island.is/application/templates/grindavik-housing-buyout'
@@ -58,15 +57,11 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       applicationId: application.id,
       residenceData: JSON.stringify(
         application.externalData.checkResidence.data,
-        null,
-        2,
       ),
       propertyData: JSON.stringify(
         application.externalData.getGrindavikHousing.data,
-        null,
-        2,
       ),
-      loans: JSON.stringify(answers.loans, null, 2),
+      loans: JSON.stringify(answers.loans),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
@@ -86,11 +81,9 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<CheckResidence> {
-    let data = await this.nationalRegistryApi.getResidenceHistory(
+    const data = await this.nationalRegistryApi.getResidenceHistory(
       auth.nationalId,
     )
-
-    data = []
 
     if (data.length === 0) {
       throw new TemplateApiError(
@@ -131,14 +124,10 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           summary: {
-            ...notEligible.noResidenceDescription,
-            defaultMessage:
-              notEligible.noResidenceDescription.defaultMessage.replace(
-                '{locality}',
-                domicileOn10nov?.city ?? '',
-              ),
+            ...prerequisites.errors.noResidenceDescription,
+            values: { locality: domicileOn10nov?.city ?? 'fannst ekki' },
           },
-          title: notEligible.noResidenceTitle,
+          title: prerequisites.errors.noResidenceTitle,
         },
         400,
       )
@@ -147,7 +136,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     if (!domicileOn10nov.realEstateNumber) {
       throw new TemplateApiError(
         {
-          summary: prerequisites.errors.noRealEstateNumberWasFoundDescription,
+          summary: {
+            ...prerequisites.errors.noRealEstateNumberWasFoundDescription,
+            values: {
+              streetName: domicileOn10nov?.streetName ?? 'fannst ekki',
+            },
+          },
           title: prerequisites.errors.noRealEstateNumberWasFoundTitle,
         },
         400,
@@ -190,11 +184,9 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         {
           summary: {
             ...prerequisites.errors.propertyNotFoundDescription,
-            defaultMessage:
-              prerequisites.errors.propertyNotFoundDescription.defaultMessage.replace(
-                '{streetName}',
-                realEstateAddress,
-              ),
+            values: {
+              streetName: realEstateAddress,
+            },
           },
           title: prerequisites.errors.propertyNotFoundTitle,
         },
@@ -202,14 +194,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       )
     }
 
-    const {
-      fasteignamat,
-      fasteignanumer,
-      landeign,
-      notkunareiningar,
-      sjalfgefidStadfang,
-      thinglystirEigendur,
-    } = property
+    const { thinglystirEigendur } = property
 
     const isOwner = thinglystirEigendur?.thinglystirEigendur?.some(
       (eigandi) => {
@@ -222,22 +207,15 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         {
           summary: {
             ...prerequisites.errors.youAreNotTheOwnerDescription,
-            defaultMessage:
-              prerequisites.errors.youAreNotTheOwnerDescription.defaultMessage.replace(
-                '{streetName}',
-                realEstateAddress,
-              ),
+            values: {
+              streetName: realEstateAddress,
+            },
           },
           title: prerequisites.errors.youAreNotTheOwnerTitle,
         },
         400,
       )
     }
-
-    const eining = notkunareiningar?.notkunareiningar?.find(
-      (x) => x.fasteignanumer === realEstateId,
-    )
-
     return property
   }
 

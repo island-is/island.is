@@ -39,8 +39,8 @@ export interface AttemptFailedProblem extends BaseProblem {
 }
 
 export interface ProviderErrorReason {
-  title: StaticText
-  summary: StaticText
+  title: StaticText & { values?: Record<string, string> }
+  summary: StaticText & { values?: Record<string, string> }
 }
 
 export interface TemplateApiErrorProblem extends BaseProblem {
