@@ -10,7 +10,7 @@ export const notificationMapper = (
     sent: notification.created,
     created: notification.created,
     updated: notification.updated,
-    status: notification.status,
+    // status: "read",
   },
   sender: {
     name: '',
