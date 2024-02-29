@@ -3,9 +3,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "sourceMap": true
   },
   "references": [
