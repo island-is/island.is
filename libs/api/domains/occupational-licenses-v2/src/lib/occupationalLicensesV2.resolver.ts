@@ -9,15 +9,13 @@ import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { License } from './models/license.model'
 import { OccupationalLicensesV2Service } from './occupationalLicensesV2.service'
-import { EducationLicense } from './models/educationLicense.model'
-import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
 import { LicenseInput } from './dto/licenseInput.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { LicensesCollection } from './models/licenseCollectionResponse.model'
 import { getLicenseTypeByIdPrefix } from './utils'
-import { DistrictCommissionersLicense } from './models/districtCommissionersLicense.model'
+import { LicenseResponse } from './models/licenseResponse.model'
+import { License } from './models/license.model'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Scopes(ApiScope.internal)
@@ -39,37 +37,37 @@ export class OccupationalLicensesV2Resolver {
     return {}
   }
 
-  @ResolveField('education', () => [EducationLicense], { nullable: true })
+  @ResolveField('education', () => [License], { nullable: true })
   async educationLicense(
     @CurrentUser() user: User,
-  ): Promise<Array<EducationLicense> | null> {
+  ): Promise<Array<License> | null> {
     return this.service.getEducationLicenses(user)
   }
 
-  @ResolveField('health', () => [HealthDirectorateLicense], { nullable: true })
+  @ResolveField('health', () => [License], { nullable: true })
   async healthLicense(
     @CurrentUser() user: User,
-  ): Promise<Array<HealthDirectorateLicense> | null> {
+  ): Promise<Array<License> | null> {
     return this.service.getHealthDirectorateLicenses(user)
   }
 
-  @ResolveField('districtCommissioners', () => [DistrictCommissionersLicense], {
+  @ResolveField('districtCommissioners', () => [License], {
     nullable: true,
   })
   async districtCommissionersLicense(
     @CurrentUser() user: User,
-  ): Promise<Array<DistrictCommissionersLicense> | null> {
+  ): Promise<Array<License> | null> {
     return this.service.getDistrictCommissionerLicenses(user)
   }
 
-  @Query(() => License, {
+  @Query(() => LicenseResponse, {
     name: 'occupationalLicenseV2',
     nullable: true,
   })
   async license(
     @CurrentUser() user: User,
     @Args('input') input: LicenseInput,
-  ): Promise<License | null> {
+  ): Promise<LicenseResponse | null> {
     const licenseType = getLicenseTypeByIdPrefix(input.id)
 
     if (!licenseType) {
@@ -83,7 +81,11 @@ export class OccupationalLicensesV2Resolver {
           licenseType.licenseId,
         )
       case 'Education':
-        return this.service.getEducationLicenseById(user, licenseType.licenseId)
+        return this.service.getEducationLicenseById(
+          user,
+          input.locale,
+          licenseType.licenseId,
+        )
       case 'Health':
         return this.service.getHealthDirectorateLicenseById(
           user,

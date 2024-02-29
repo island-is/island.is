@@ -11,12 +11,14 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 import { MMSApi } from '@island.is/clients/mms'
+import { DistrictCommissionersLicensesService } from '@island.is/clients/district-commissioners-licenses'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Controller('occupational-licenses')
-export class OccupationalLicensesEducationController {
+export class OccupationalLicensesController {
   constructor(
+    private readonly dcApi: DistrictCommissionersLicensesService,
     private readonly mmsApi: MMSApi,
     private readonly auditService: AuditService,
   ) {}

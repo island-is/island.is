@@ -1,28 +1,22 @@
 query getOccupationalLicenses {
   occupationalLicensesV2 {
     districtCommissioners {
-      __typename
       licenseId
-      issuerOrganizationSlug
-      serviceProviderOrganizationSlug
+      issuer
       validFrom
       status
       title
     }
     education {
-      __typename
       licenseId
-      issuerOrganizationSlug
-      serviceProviderOrganizationSlug
+      issuer
       validFrom
       status
       title
     }
     health {
-      __typename
       licenseId
-      issuerOrganizationSlug
-      serviceProviderOrganizationSlug
+      issuer
       validFrom
       status
       title

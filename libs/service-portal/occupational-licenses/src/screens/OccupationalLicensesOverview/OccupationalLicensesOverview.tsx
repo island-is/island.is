@@ -90,9 +90,8 @@ export const OccupationalLicensesOverview = () => {
         {loading && !error && <CardLoader />}
         <Stack space={2}>
           {licenses.map((license, index) => {
-            const image = organizations.find(
-              (o) => o.slug === license.issuerOrganizationSlug,
-            )?.logo?.url
+            const image = organizations.find((o) => o.slug === license.issuer)
+              ?.logo?.url
             return (
               <LicenceActionCard
                 key={index}

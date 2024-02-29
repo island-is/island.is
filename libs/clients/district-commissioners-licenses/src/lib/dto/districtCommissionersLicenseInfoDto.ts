@@ -1,12 +1,14 @@
+import { OrganizationSlugType } from '@island.is/shared/constants'
 import { Leyfi } from '../../../gen/fetch'
 import { DistrictCommissionersLicenseStatus } from '../districtCommissionersLicenses.types'
-import { mapStatusToLiteral } from '../util'
+import { mapIssuerIdToOrganizationSlugType, mapStatusToLiteral } from '../util'
 
 export interface DistrictCommissionersLicenseInfoDto {
   id: string
   title: string
   validFrom: Date
-  issuer: string
+  issuerId: OrganizationSlugType
+  issuerTitle: string
   status: DistrictCommissionersLicenseStatus
 }
 
@@ -17,6 +19,7 @@ export const mapLicenseInfoDto = (
     !license.audkenni ||
     !license.titill ||
     !license.utgafudagur ||
+    !license.utgefandi?.audkenni ||
     !license.utgefandi?.titill ||
     !license.stada?.kodi
   ) {
@@ -26,7 +29,8 @@ export const mapLicenseInfoDto = (
     id: license.audkenni,
     title: license?.titill,
     validFrom: license?.utgafudagur,
-    issuer: license?.utgefandi?.titill,
+    issuerId: mapIssuerIdToOrganizationSlugType(license.utgefandi.audkenni),
+    issuerTitle: license?.utgefandi?.titill,
     status: mapStatusToLiteral(license?.stada?.kodi),
   }
 }

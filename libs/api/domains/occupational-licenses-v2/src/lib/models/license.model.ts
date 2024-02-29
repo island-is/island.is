@@ -3,6 +3,7 @@ import {
   registerEnumType,
   GraphQLISODateTime,
   InterfaceType,
+  ObjectType,
 } from '@nestjs/graphql'
 import { GenericField } from './genericField.model'
 
@@ -18,18 +19,8 @@ registerEnumType(OccupationalLicenseStatusV2, {
   name: 'OccupationalLicenseStatusV2',
 })
 
-@InterfaceType('OccupationalLicenseV2', {
-  resolveType(license) {
-    if (license.downloadUrl) {
-      return 'OccupationalLicensesV2EducationLicense'
-    }
-    if (license.legalEntityId) {
-      return 'OccupationalLicensesV2HealthDirectorateLicense'
-    }
-    return 'OccupationalLicensesV2DistrictCommissionersLicense'
-  },
-})
-export abstract class License {
+@ObjectType()
+export class License {
   @Field()
   licenseId!: string
 
@@ -39,11 +30,8 @@ export abstract class License {
   @Field({ nullable: true })
   issuer?: string
 
-  @Field()
-  issuerOrganizationSlug!: string
-
-  @Field()
-  serviceProviderOrganizationSlug!: string
+  @Field({ nullable: true })
+  issuerTitle?: string
 
   @Field()
   profession!: string
@@ -71,10 +59,4 @@ export abstract class License {
 
   @Field(() => [GenericField], { nullable: true })
   genericFields?: Array<GenericField>
-
-  @Field({ nullable: true })
-  headerText?: string
-
-  @Field({ nullable: true })
-  footerText?: string
 }

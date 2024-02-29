@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Inline, Text } from '@island.is/island-ui/core'
 import {
   FootNote,
   IntroHeader,
@@ -13,6 +13,8 @@ import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail
 import { Problem } from '@island.is/react-spa/shared'
 import { useMemo } from 'react'
 import { OrganizationSlugType } from '@island.is/shared/constants'
+import { useOrganization } from '@island.is/service-portal/graphql'
+import { OccupationalLicenseV2LicenseResponseType } from '@island.is/api/schema'
 
 type UseParams = {
   id: string
@@ -21,74 +23,67 @@ type UseParams = {
 const OccupationalLicenseDetail = () => {
   const { id } = useParams() as UseParams
   useNamespaces('sp.occupational-licenses')
-  const { formatDateFns, formatMessage } = useLocale()
+  const { formatDateFns, formatMessage, locale } = useLocale()
 
   const { data, loading, error } = useGetOccupationalLicenseByIdQuery({
     variables: {
-      input: { id },
+      input: { id, locale },
     },
   })
 
-  const license = data?.occupationalLicenseV2
+  const { data: organization } = useOrganization(
+    data?.occupationalLicenseV2?.license.issuer ?? undefined,
+  )
 
-  const introHeader = useMemo(() => {
-    switch (license?.__typename) {
-      case 'OccupationalLicensesV2EducationLicense':
-        return (
-          <IntroHeader
-            marginBottom={2}
-            title={license?.title ?? formatMessage(om.occupationalLicense)}
-            intro={license.headerText ?? formatMessage(om.educationIntro)}
-            serviceProviderSlug={
-              license.serviceProviderOrganizationSlug as OrganizationSlugType
-            }
-          >
-            <Box paddingTop={3}>
-              <Button
-                variant="utility"
-                onClick={() => {
-                  if (license.downloadUrl) {
-                    formSubmit(license.downloadUrl)
-                  }
-                }}
-                icon="download"
-              >
-                {formatMessage(om.fetchLicense)}
-              </Button>
-            </Box>
-          </IntroHeader>
-        )
-      case 'OccupationalLicensesV2HealthDirectorateLicense':
-        return (
-          <IntroHeader
-            marginBottom={2}
-            title={license?.profession ?? formatMessage(om.occupationalLicense)}
-            intro={
-              license.headerText ?? formatMessage(om.healthDirectorateIntro)
-            }
-            fixedImgWidth
-            serviceProviderSlug={'landlaeknir'}
-            serviceProviderTooltip={formatMessage(om.healthDirectorateTooltip)}
-          />
-        )
-      case 'OccupationalLicensesV2DistrictCommissionersLicense':
-        return (
-          <IntroHeader
-            marginBottom={2}
-            fixedImgWidth
-            title={license?.title ?? formatMessage(om.occupationalLicense)}
-            intro={license.headerText ?? ''}
-            serviceProviderSlug={'syslumenn'}
-          />
-        )
+  const res = data?.occupationalLicenseV2
+  const license = res?.license
+
+  const introHeaderFallbackIntro = useMemo(() => {
+    switch (data?.occupationalLicenseV2?.type) {
+      case OccupationalLicenseV2LicenseResponseType.HEALTH_DIRECTORATE:
+        return formatMessage(om.healthDirectorateIntro)
+      case OccupationalLicenseV2LicenseResponseType.EDUCATION:
+        return formatMessage(om.educationIntro)
+      default:
+        return undefined
     }
-  }, [license, formatMessage])
-
-  console.log(license)
+  }, [data?.occupationalLicenseV2?.type, formatMessage])
 
   return (
     <>
-      {introHeader}
+      <IntroHeader
+        marginBottom={2}
+        title={license?.title ?? formatMessage(om.occupationalLicense)}
+        intro={res?.headerText ?? introHeaderFallbackIntro}
+        serviceProviderSlug={license?.issuer as OrganizationSlugType}
+      >
+        {res?.actions && (
+          <Box paddingTop={3}>
+            {
+              <Inline space={2}>
+                {res.actions.map((a) => {
+                  if (!a) {
+                    return null
+                  }
+                  return (
+                    <Button
+                      variant="utility"
+                      onClick={() => {
+                        if (a.url) {
+                          formSubmit(a.url)
+                        }
+                      }}
+                      icon={'download'}
+                    >
+                      {a.text}
+                    </Button>
+                  )
+                })}
+              </Inline>
+            }
+          </Box>
+        )}
+      </IntroHeader>
       {error && !loading && <Problem noBorder={false} error={error} />}
       {!error && (loading || data?.occupationalLicenseV2) && (
         <StackWithBottomDivider space={2}>
@@ -122,11 +117,11 @@ const OccupationalLicenseDetail = () => {
               content={license?.permit ?? ''}
             />
           )}
-          {(license?.issuer || loading) && (
+          {(license?.issuerTitle || organization?.title || loading) && (
             <UserInfoLine
               loading={loading}
               label={formatMessage(om.publisher)}
-              content={license?.issuer ?? ''}
+              content={license?.issuerTitle ?? organization?.title ?? ''}
             />
           )}
           {(license?.validFrom || loading) && (
@@ -182,8 +177,9 @@ const OccupationalLicenseDetail = () => {
             />
           )}
           {license?.genericFields?.length &&
-            license.genericFields.map((g) => (
+            license.genericFields.map((g, index) => (
               <UserInfoLine
+                key={index}
                 loading={loading}
                 label={g.title}
                 content={g.value}
@@ -191,21 +187,16 @@ const OccupationalLicenseDetail = () => {
             ))}
         </StackWithBottomDivider>
       )}
-      {license?.footerText && (
+      {res?.footerText && (
         <Box paddingTop={4}>
           <Text variant="small" paddingBottom={2}>
-            {license.footerText}
+            {res.footerText}
           </Text>
         </Box>
       )}
       <FootNote
         serviceProviderSlug={
-          license?.__typename ===
-          'OccupationalLicensesV2DistrictCommissionersLicense'
-            ? 'syslumenn'
-            : license?.__typename === 'OccupationalLicensesV2EducationLicense'
-            ? 'menntamalastofnun'
-            : 'landlaeknir'
+          license?.issuer ? (license.issuer as OrganizationSlugType) : undefined
         }
       />
     </>
