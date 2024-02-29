@@ -75,6 +75,7 @@ export class PoliceService {
     vettvangur: z.optional(z.string()),
     brotFra: z.optional(z.string()),
     upprunalegtMalsnumer: z.string(),
+    licencePlate: z.optional(z.string()),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -303,10 +304,12 @@ export class PoliceService {
               upprunalegtMalsnumer: string
               vettvangur?: string
               brotFra?: string
+              licencePlate?: string
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
               const place = (info.vettvangur || '').trim()
               const date = info.brotFra ? new Date(info.brotFra) : undefined
+              const licencePlate = info.licencePlate
 
               const foundCase = cases.find(
                 (item) => item.policeCaseNumber === policeCaseNumber,
@@ -317,6 +320,7 @@ export class PoliceService {
               } else if (date && (!foundCase.date || date > foundCase.date)) {
                 foundCase.place = place
                 foundCase.date = date
+                foundCase.licencePlate = licencePlate
               }
             },
           )
