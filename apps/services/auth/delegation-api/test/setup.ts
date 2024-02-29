@@ -51,7 +51,7 @@ export const setupWithAuth = ({
         }),
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 }
@@ -60,7 +60,9 @@ export const setupWithoutAuth = (): Promise<TestApp> => {
   return testServer({
     appModule: AppModule,
     enableVersioning: true,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+    ],
   })
 }
 
@@ -72,7 +74,7 @@ export const setupWithoutPermission = ({
     enableVersioning: true,
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 }
