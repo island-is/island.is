@@ -44,22 +44,21 @@ export class InheritanceReportService extends BaseTemplateApiService {
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
-    const [relationOptions, inheritanceReportInfo] = await Promise.all([
+    const [relationOptions, inheritanceReportInfos] = await Promise.all([
       this.syslumennService.getEstateRelations(),
       // Get estate info from syslumenn or fakedata depending on application.applicant
-      //application.applicant.startsWith('010130') &&
-      //application.applicant.endsWith('2399')
-      //  ? [getFakeData()]
-      //  : this.syslumennService.getEstateInfo(application.applicant),
+      application.applicant.startsWith('010130') &&
+      application.applicant.endsWith('2399')
+        ? [getFakeData()]
+        : this.syslumennService.getEstateInfo(application.applicant),
       this.syslumennService.getEstateInfoForInheritanceReport(
         application.applicant,
       ),
     ])
-    //const estate = estateTransformer(estateResponse[0])
 
     return {
       success: true,
-      inheritanceReportInfo,
+      inheritanceReportInfos,
       relationOptions: relationOptions.relations,
     }
   }
