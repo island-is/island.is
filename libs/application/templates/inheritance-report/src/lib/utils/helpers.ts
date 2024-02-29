@@ -79,11 +79,19 @@ export const valueToNumber = (value?: unknown): number => {
   }
 
   if (typeof value === 'string') {
-    const numStr = value.replace(/[^0-9]/g, '')
-    const num = parseFloat(numStr)
+    const numStr = value.replace(/[^\d,]/g, '')
+    const numStrDot = numStr.replace(',', '.')
+    const num = parseFloat(numStrDot)
 
     return isNaN(num) ? 0 : num
   }
 
   return 0
+}
+
+export const isValidRealEstate = (value: string) => {
+  const lotRegex = /^[Ll]\d{6}$/
+  const houseRegex = /^[Ff]\d{7}$/
+
+  return lotRegex.test(value) || houseRegex.test(value)
 }

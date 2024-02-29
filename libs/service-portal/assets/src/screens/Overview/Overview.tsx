@@ -181,7 +181,7 @@ const VehiclesOverview = () => {
           </Box>
           <Box marginRight={2} marginBottom={[1]}>
             <a
-              href="/app/skilavottord/my-cars"
+              href={formatMessage(urls.recycleCar)}
               target="_blank"
               rel="noopener noreferrer"
             >

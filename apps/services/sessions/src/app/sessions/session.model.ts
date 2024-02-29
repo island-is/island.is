@@ -67,7 +67,7 @@ export class Session extends Model<
 
   @ApiProperty()
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: false,
   })
   userAgent!: string

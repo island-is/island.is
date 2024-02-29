@@ -72,7 +72,7 @@ export const headerBorder = style({
 })
 
 export const headerWrapper = style({
-  marginTop: 20,
+  marginTop: -30,
 })
 
 export const headerLogo = style({
@@ -81,6 +81,7 @@ export const headerLogo = style({
 })
 
 export const footerLogo = style({
+  marginBottom: -30,
   width: 180,
   maxHeight: 180,
   padding: '2rem 0',
@@ -92,10 +93,6 @@ export const footerContainer = style({
       maxWidth: '1440px',
     },
   }),
-})
-
-export const footerLogoContainer = style({
-  borderBottom: '1px solid #0B0F66',
 })
 
 export const footerLinksContainer = style({

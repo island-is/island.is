@@ -76,22 +76,23 @@ export const ListViewCard = ({
             variant="h4"
             color="blue400"
             truncate={false}
-            title={heading}
             paddingBottom={subHeading ? 0 : 3}
             lineHeight="sm"
           >
             {heading}
           </Text>
-          <Text
-            variant="eyebrow"
-            color="blue400"
-            truncate={false}
-            title={subHeading}
-            paddingBottom={3}
-            lineHeight="sm"
-          >
-            {subHeading}
-          </Text>
+          <Box style={{ paddingTop: '4px' }}>
+            <Text
+              variant="eyebrow"
+              color="blue400"
+              truncate={false}
+              title={subHeading}
+              paddingBottom={3}
+              lineHeight="sm"
+            >
+              {subHeading}
+            </Text>
+          </Box>
         </LinkV2>
         {infoItems.map((item) => {
           return (
@@ -103,7 +104,7 @@ export const ListViewCard = ({
               paddingBottom={1}
             >
               <Box paddingRight={2}>{item.icon}</Box>
-              <Text whiteSpace="nowrap" variant="small">
+              <Text whiteSpace="normal" variant="small">
                 {item.title}
               </Text>
             </Box>

@@ -8,20 +8,27 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
 import { useGetListsForUser, useGetSignedList } from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import SignedList from '../../components/SignedList'
 import { useAuth } from '@island.is/auth/react'
+import { SignatureCollection } from '../../types/schema'
 
-const SigneeView = () => {
+const SigneeView = ({
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   useNamespaces('sp.signatureCollection')
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
   const { signedLists, loadingSignedLists } = useGetSignedList()
-  const { listsForUser, loadingUserLists } = useGetListsForUser()
+  const { listsForUser, loadingUserLists } = useGetListsForUser(
+    currentCollection?.id,
+  )
 
   return (
     <Box>
@@ -31,19 +38,28 @@ const SigneeView = () => {
       />
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
-          <Button
-            icon="open"
-            iconType="outline"
-            onClick={() =>
-              window.open(
-                `${document.location.origin}/umsoknir/medmaelasofnun/`,
-              )
-            }
-            size="small"
-          >
-            {formatMessage(m.createListButton)}
-          </Button>
-
+          {currentCollection?.isActive && (
+            <Button
+              icon="open"
+              iconType="outline"
+              onClick={() =>
+                window.open(
+                  `${document.location.origin}/umsoknir/medmaelasofnun/`,
+                )
+              }
+              size="small"
+            >
+              {formatMessage(m.createListButton)}
+            </Button>
+          )}
+          {listsForUser.length === 0 && signedLists.length === 0 && (
+            <Box marginTop={10}>
+              <EmptyState
+                title={m.noCollectionIsActive}
+                description={m.noCollectionIsActiveDescription}
+              />
+            </Box>
+          )}
           <Box marginTop={[2, 7]}>
             {/* Signed list */}
             <SignedList />
