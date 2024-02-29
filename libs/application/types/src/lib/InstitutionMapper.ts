@@ -251,6 +251,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.HASKOLARADUNEYTI,
     slug: InstitutionTypes.HASKOLARADUNEYTI,
   },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+  },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
     slug: InstitutionTypes.DOMSMALARADUNEYTID,

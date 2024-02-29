@@ -38,6 +38,7 @@ import {
   NationalIdWithNameField,
   ActionCardListField,
   TableRepeaterField,
+  StaticTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
 } from '@island.is/application/types'
@@ -494,7 +495,7 @@ export function buildPaymentPendingField(data: {
 export function buildMessageWithLinkButtonField(
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField {
-  const { id, title, url, message, buttonTitle } = data
+  const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
     children: undefined,
     id,
@@ -502,6 +503,8 @@ export function buildMessageWithLinkButtonField(
     url,
     message,
     buttonTitle,
+    marginTop,
+    marginBottom,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
   }
@@ -735,9 +738,11 @@ export function buildTableRepeaterField(
     formTitle,
     marginTop,
     marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
   } = data
 
   return {
@@ -750,8 +755,57 @@ export function buildTableRepeaterField(
     formTitle,
     marginTop,
     marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
+  }
+}
+
+export function buildStaticTableField(
+  data: Omit<
+    StaticTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  >,
+): StaticTableField {
+  const {
+    header,
+    condition,
+    dataTestId,
+    title,
+    description,
+    rows,
+    summary,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+  } = data
+
+  return {
+    id: '',
+    title,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.STATIC_TABLE,
+    component: FieldComponents.STATIC_TABLE,
+    header,
+    rows,
+    summary,
+    marginTop,
+    marginBottom,
+    titleVariant,
   }
 }

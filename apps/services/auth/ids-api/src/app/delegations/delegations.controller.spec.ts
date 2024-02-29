@@ -159,7 +159,7 @@ describe('DelegationsController', () => {
         [0, 1, 1, 0, 2],
         [1, 1, 1, 0, 0],
       ])(
-        'and given user has %d active representees with valid rights, %d active representees with outdate rights and %d active representees with unactivated',
+        'and given user has %d active representees with valid rights, %d active representees with outdated rights and %d active representees with unactivated',
         (
           valid: number,
           outdated: number,

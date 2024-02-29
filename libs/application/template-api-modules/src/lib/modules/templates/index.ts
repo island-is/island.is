@@ -117,6 +117,8 @@ import { SignatureListSigningModule } from './signature-collection/signature-lis
 import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 import { HomeSupportModule } from './home-support/home-support.module'
 import { HomeSupportService } from './home-support/home-support.service'
+import { GrindavikHousingBuyoutModule } from './grindavik-housing-buyout/grindavik-housing-buyout.module'
+import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grindavik-housing-buyout.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -178,6 +180,7 @@ export const modules = [
   HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
   UniversityModule,
+  GrindavikHousingBuyoutModule,
   OfficialJournalOfIcelandModule,
 ]
 
@@ -241,5 +244,6 @@ export const services = [
   HomeSupportService,
   ChangeMachineSupervisorTemplateService,
   UniversityService,
+  GrindavikHousingBuyoutService,
   OfficialJournalOfIcelandService,
 ]

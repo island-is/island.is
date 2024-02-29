@@ -25,3 +25,4 @@ export { HiddenInputFormField } from './HiddenInputFormField/HiddenInputFormFiel
 export { ActionCardListFormField } from './ActionCardListFormField/ActionCardListFormField'
 export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFormField'
 export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'
+export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'

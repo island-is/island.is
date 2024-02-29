@@ -61,6 +61,7 @@ export enum ApplicationTypes {
   UNIVERSITY = 'University',
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
 }
 
@@ -316,6 +317,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNIVERSITY]: {
     slug: 'haskolanam',
     translation: 'uni.application',
+  },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
+    translation: 'ghb.application',
   },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',
