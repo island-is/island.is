@@ -1397,6 +1397,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       employerLastSixMonths,
       employers,
     } = getApplicationAnswers(application.answers)
+    console.log("===> SEND")
     // if (
     //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
     //   previousState === States.VINNUMALASTOFNUN_APPROVAL ||

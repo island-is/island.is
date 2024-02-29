@@ -532,6 +532,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
+            triggerEvent: DefaultEvents.SUBMIT,
             action: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
@@ -1060,12 +1061,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               cond: (application) =>
-                goToState(application, States.VINNUMALASTOFNUN_APPROVAL) ||
-                goToState(
-                  application,
-                  States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
-                ),
-              target: States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL), //||
+                // goToState(
+                //   application,
+                //   States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
+                // ),
+              target: States.VINNUMALASTOFNUN_APPROVAL, //_ABORT_CHANGE,
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
