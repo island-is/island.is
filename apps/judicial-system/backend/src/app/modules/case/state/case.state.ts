@@ -56,6 +56,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       fromStates: [
         CaseState.NEW,
         CaseState.DRAFT,
+        CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
       ],
