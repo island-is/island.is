@@ -83,6 +83,7 @@ export class WorkMachinesClientService {
       pageSize: 20,
       pageNumber: 1,
     })
+
     return {
       machines:
         result?.value?.map((machine) => {
@@ -94,7 +95,7 @@ export class WorkMachinesClientService {
             status: machine?.status || '',
           }
         }) || [],
-      totalCount: result?.pagination?.currentPage || 0,
+      totalCount: result.pagination?.totalCount || 0,
     }
   }
 

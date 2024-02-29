@@ -128,11 +128,6 @@ export interface PregnancyStatus {
   expectedDateOfBirth: string
 }
 
-export interface ChildrenAndExistingApplications {
-  children: ChildInformation[]
-  existingApplications: ExistingChildApplication[]
-}
-
 // Has rights and remaining rights is calculated at the end
 // of the data provider. This is to be able to use
 // the same type until the end when we calculate the missing fields
@@ -142,15 +137,8 @@ export type ChildInformationWithoutRights = DistributiveOmit<
   'hasRights' | 'remainingDays'
 >
 
-export type ChildrenWithoutRightsAndExistingApplications = Pick<
-  ChildrenAndExistingApplications,
-  'existingApplications'
-> & {
-  children: ChildInformationWithoutRights[]
-}
-
 export interface PregnancyStatusAndRightsResults {
-  childrenAndExistingApplications: ChildrenAndExistingApplications
+  children: ChildInformation
   remainingDays: number
   hasRights: boolean
   hasActivePregnancy: boolean
