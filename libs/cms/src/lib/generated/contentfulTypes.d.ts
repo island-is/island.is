@@ -175,8 +175,6 @@ export interface IAnchorPageListFields {
   pages?: IAnchorPage[] | undefined
 }
 
-/** !!DO NOT USE!! - This is part of the life events data migration */
-
 export interface IAnchorPageList extends Entry<IAnchorPageListFields> {
   sys: {
     id: string
