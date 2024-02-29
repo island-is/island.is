@@ -29,6 +29,8 @@ export type HealthDirectorateLicenseStatus =
   | 'LIMITED'
   | 'INVALID'
   | 'UNKNOWN'
+  | 'REVOKED'
+  | 'WAIVED'
 
 export interface HealthDirectorateLicenseToPractice {
   id: number

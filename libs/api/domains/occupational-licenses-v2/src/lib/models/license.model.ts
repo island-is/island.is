@@ -8,9 +8,11 @@ import { GenericField } from './genericField.model'
 
 export enum OccupationalLicenseStatusV2 {
   VALID = 'valid',
-  ERROR = 'error',
+  INVALID = 'invalid',
   LIMITED = 'limited',
   IN_PROGRESS = 'in-progress',
+  REVOKED = 'revoked',
+  WAIVED = 'waived',
   UNKNOWN = 'unknown',
 }
 

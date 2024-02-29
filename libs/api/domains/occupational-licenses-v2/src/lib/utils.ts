@@ -43,7 +43,7 @@ export const mapDistrictCommissionersLicenseStatusToStatus = (
 ): OccupationalLicenseStatusV2 => {
   switch (status) {
     case 'expired':
-      return OccupationalLicenseStatusV2.ERROR
+      return OccupationalLicenseStatusV2.INVALID
 
     case 'in-progress':
       return OccupationalLicenseStatusV2.IN_PROGRESS

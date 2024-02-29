@@ -70,6 +70,12 @@ export class HealthDirectorateClientService {
             case 'Ógilt':
               status = 'INVALID'
               break
+            case 'Svipting':
+              status = 'REVOKED'
+              break
+            case 'Afsal':
+              status = 'WAIVED'
+              break
             default:
               status = 'UNKNOWN'
           }

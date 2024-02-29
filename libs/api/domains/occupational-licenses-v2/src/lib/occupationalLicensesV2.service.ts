@@ -127,8 +127,14 @@ export class OccupationalLicensesV2Service {
             case 'VALID':
               status = OccupationalLicenseStatusV2.VALID
               break
+            case 'REVOKED':
+              status = OccupationalLicenseStatusV2.REVOKED
+              break
+            case 'WAIVED':
+              status = OccupationalLicenseStatusV2.WAIVED
+              break
             default:
-              status = OccupationalLicenseStatusV2.ERROR
+              status = OccupationalLicenseStatusV2.UNKNOWN
           }
           return {
             licenseId: addLicenseTypePrefix(l.licenseNumber, 'Health'),
@@ -191,7 +197,7 @@ export class OccupationalLicensesV2Service {
             status:
               new Date(l.issued) < new Date()
                 ? OccupationalLicenseStatusV2.VALID
-                : OccupationalLicenseStatusV2.ERROR,
+                : OccupationalLicenseStatusV2.INVALID,
           }
         })
         .filter(isDefined) ?? []
