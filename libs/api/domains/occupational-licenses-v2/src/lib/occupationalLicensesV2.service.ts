@@ -24,6 +24,7 @@ import {
   LicenseResponse,
   OccupationalLicenseV2LicenseResponseType,
 } from './models/licenseResponse.model'
+import { LinkType } from './models/link'
 
 export class OccupationalLicensesV2Service {
   constructor(
@@ -98,7 +99,7 @@ export class OccupationalLicensesV2Service {
         genericFields: license.extraFields ?? [],
       },
       actions: license.actions?.map((a) => ({
-        type: a.type,
+        type: a.type === 'file' ? LinkType.FILE : LinkType.LINK,
         text: a.title,
         url: a.url,
       })),
@@ -218,7 +219,7 @@ export class OccupationalLicensesV2Service {
       type: OccupationalLicenseV2LicenseResponseType.EDUCATION,
       actions: [
         {
-          type: 'file',
+          type: LinkType.FILE,
           text,
           url: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${license.licenseId}`,
         },

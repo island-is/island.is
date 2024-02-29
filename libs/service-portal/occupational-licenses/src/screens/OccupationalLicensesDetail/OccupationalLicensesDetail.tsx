@@ -65,6 +65,7 @@ const OccupationalLicenseDetail = () => {
                   if (!a) {
                     return null
                   }
+
                   return (
                     <Button
                       variant="utility"
