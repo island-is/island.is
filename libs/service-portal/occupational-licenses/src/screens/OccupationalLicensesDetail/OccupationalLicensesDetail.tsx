@@ -60,7 +60,7 @@ const OccupationalLicenseDetail = () => {
         {res?.actions && (
           <Box paddingTop={3}>
             {
-              <Inline space={2}>
+              <Inline space={1} collapseBelow="sm">
                 {res.actions.map((a) => {
                   if (!a) {
                     return null
@@ -68,6 +68,7 @@ const OccupationalLicenseDetail = () => {
                   return (
                     <Button
                       variant="utility"
+                      iconType="outline"
                       onClick={() => {
                         if (a.url) {
                           formSubmit(a.url)
@@ -86,7 +87,7 @@ const OccupationalLicenseDetail = () => {
       </IntroHeader>
       {error && !loading && <Problem noBorder={false} error={error} />}
       {!error && (loading || data?.occupationalLicenseV2) && (
-        <StackWithBottomDivider space={2}>
+        <StackWithBottomDivider space={2} box={{ marginTop: [2, 3, 6] }}>
           <UserInfoLine
             loading={loading}
             label={formatMessage(om.nameOfIndividual)}
