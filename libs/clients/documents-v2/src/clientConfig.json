@@ -415,7 +415,10 @@
           }
         ],
         "responses": {
-          "200": { "description": "OK", "schema": { "type": "object" } }
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/PaperMailDTO" }
+          }
         }
       },
       "post": {
@@ -442,7 +445,10 @@
           }
         ],
         "responses": {
-          "200": { "description": "OK", "schema": { "type": "object" } }
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/PaperMailDTO" }
+          }
         }
       }
     },
@@ -551,7 +557,10 @@
           }
         ],
         "responses": {
-          "200": { "description": "OK", "schema": { "type": "object" } }
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/MessagePageDTO" }
+          }
         }
       }
     }
@@ -677,6 +686,10 @@
         "kennitala": { "type": "string" },
         "wantsPaper": { "type": "boolean" }
       }
+    },
+    "MessagePageDTO": {
+      "type": "object",
+      "properties": { "messagePage": { "format": "int32", "type": "integer" } }
     }
   }
 }
