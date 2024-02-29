@@ -8,6 +8,7 @@ import {
   UniversityGatewayIcelandUniversityOfTheArts,
   UniversityGatewayAgriculturalUniversityOfIceland,
   UniversityGatewayHolarUniversity,
+  UniversityGatewayReykjavikUniversity,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-university-gateway'
@@ -47,6 +48,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       UniversityGatewayIcelandUniversityOfTheArts,
       UniversityGatewayAgriculturalUniversityOfIceland,
       UniversityGatewayHolarUniversity,
+      UniversityGatewayReykjavikUniversity,
     )
     .db()
     .migrations()
@@ -104,6 +106,7 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
       UniversityGatewayIcelandUniversityOfTheArts,
       UniversityGatewayAgriculturalUniversityOfIceland,
       UniversityGatewayHolarUniversity,
+      UniversityGatewayReykjavikUniversity,
     )
     .db()
     .extraAttributes({
