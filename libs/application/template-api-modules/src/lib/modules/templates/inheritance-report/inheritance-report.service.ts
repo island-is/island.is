@@ -49,7 +49,10 @@ export class InheritanceReportService extends BaseTemplateApiService {
       // Get estate info from syslumenn or fakedata depending on application.applicant
       application.applicant.startsWith('010130') &&
       application.applicant.endsWith('2399')
-        ? [getFakeData()]
+        ? [
+            getFakeData('2022-14-14', 'Gervimaður Útlönd', '0101307789'),
+            getFakeData('2020-15-04', 'Gervimaður Danmörk', '0101302479'),
+          ]
         : this.syslumennService.getEstateInfo(application.applicant),
       this.syslumennService.getEstateInfoForInheritanceReport(
         application.applicant,
