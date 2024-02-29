@@ -12,11 +12,11 @@ import {
   PaginatedResponse,
   PaginationInput,
 } from '@island.is/nest/pagination'
-import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
+// import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
 
-registerEnumType(RenderedNotificationDtoStatusEnum, {
-  name: 'NotificationStatus',
-})
+// registerEnumType(RenderedNotificationDtoStatusEnum, {
+//   name: 'NotificationStatus',
+// })
 
 @ObjectType()
 export class NotificationMetadata {
@@ -32,8 +32,8 @@ export class NotificationMetadata {
   @Field(() => GraphQLISODateTime, { nullable: true })
   read?: Date
 
-  @Field(() => RenderedNotificationDtoStatusEnum)
-  status!: RenderedNotificationDtoStatusEnum
+  // @Field(() => RenderedNotificationDtoStatusEnum)
+  // status!: RenderedNotificationDtoStatusEnum
 }
 
 @ObjectType()

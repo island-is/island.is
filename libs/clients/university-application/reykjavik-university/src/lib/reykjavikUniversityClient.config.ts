@@ -2,21 +2,27 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
 const schema = z.object({
-  url: z.string(),
-  fetch: z.object({
-    timeout: z.number().int(),
-  }),
+  xroadPath: z.string(),
+  scope: z.array(z.string()),
+  fetchTimeout: z.number().int(),
 })
 
-export const ReykjavikUniversityApplicationClientConfig = defineConfig({
+export const ReykjavikUniversityApplicationClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
   name: 'ReykjavikUniversityApplicationApi',
   schema,
   load(env) {
     return {
-      url: 'https://api.ru.is/custom',
-      fetch: {
-        timeout: env.optionalJSON('REYKJAVIK_UNIVERSITY_TIMEOUT') ?? 20000,
-      },
+      xroadPath: env.required(
+        'XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH',
+        'IS-DEV/EDU/10062/RvkUni-Hvin-Protected/umsoknir-v1',
+      ),
+      scope: [],
+      fetchTimeout:
+        env.optionalJSON(
+          'XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_TIMEOUT',
+        ) ?? 10000,
     }
   },
 })
