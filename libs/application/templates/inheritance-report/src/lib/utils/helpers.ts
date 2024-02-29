@@ -1,5 +1,5 @@
 import { Application, FormValue } from '@island.is/application/types'
-import { EstateInfo } from '@island.is/clients/syslumenn'
+import { EstateInfo, InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
@@ -17,24 +17,14 @@ export const isValidString = (string: string | undefined) =>
 
 export const getEstateDataFromApplication = (
   application: Application<FormValue>,
-): { estate?: EstateInfo } => {
+): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
   let estateData = (
     application.externalData.syslumennOnEntry?.data as {
-      estates?: Array<EstateInfo>
+      inheritanceReportInfos?: Array<InheritanceReportInfo>
     }
   ).estates?.find((estate) => estate.caseNumber === selectedEstate)
-
-  // TODO: remove singular estate property when legacy applications
-  //       have cleared out of the system
-  if (!estateData) {
-    estateData = (
-      application.externalData.syslumennOnEntry?.data as {
-        estate: EstateInfo
-      }
-    ).estate
-  }
 
   return {
     estate: estateData,
