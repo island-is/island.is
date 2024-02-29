@@ -84,7 +84,7 @@ export class MainResolver {
       )
     }
 
-    return this.licenseServiceService.createBarcodeJWT(user, genericUserLicense)
+    return this.licenseServiceService.createBarcode(user, genericUserLicense)
   }
 
   @Query(() => UserLicensesResponse)

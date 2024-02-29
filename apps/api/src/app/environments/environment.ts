@@ -118,6 +118,10 @@ const prodConfig = () => ({
   },
   licenseService: {
     barcodeSecretKey: process.env.LICENSE_SERVICE_BARCODE_SECRET_KEY,
+    barcodeCacheTTL: process.env.LICENSE_SERVICE_BARCODES_CACHE_TTL,
+  },
+  redis: {
+    urls: [process.env.REDIS_URL_NODE_01!],
   },
 })
 const devConfig = () => ({
@@ -255,6 +259,17 @@ const devConfig = () => ({
   },
   licenseService: {
     barcodeSecretKey: process.env.LICENSE_SERVICE_BARCODE_SECRET_KEY,
+    barcodeCacheTTL: process.env.LICENSE_SERVICE_BARCODES_CACHE_TTL,
+  },
+  redis: {
+    urls: [
+      'localhost:7000',
+      'localhost:7001',
+      'localhost:7002',
+      'localhost:7003',
+      'localhost:7004',
+      'localhost:7005',
+    ],
   },
 })
 export const getConfig =

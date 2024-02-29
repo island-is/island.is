@@ -1,5 +1,15 @@
 import { User } from '@island.is/auth-nest-tools'
+import { VinnuvelaDto } from '@island.is/clients/adr-and-machine-license'
+
+import { OrorkuSkirteini } from '@island.is/clients/disability-license'
+import { DriverLicenseDto } from '@island.is/clients/driving-license'
+import { BasicCardInfoDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { Staediskortamal } from '@island.is/clients/p-card'
+import { Passport } from '@island.is/clients/passports'
 import { Locale } from '@island.is/shared/types'
+import { FlattenedAdrDto } from './clients/adr-license-client'
+import { FirearmLicenseDto } from './clients/firearm-license-client'
+import { DrivingLicenseVerifyExtraDataResult } from './clients/driving-license-client/types'
 
 export type LicenseLabelsObject = {
   [x: string]: string
@@ -15,6 +25,35 @@ export enum LicenseType {
   Ehic = 'Ehic',
   Passport = 'Passport',
 }
+
+export interface LicenseResults {
+  [LicenseType.FirearmLicense]: FirearmLicenseDto
+  [LicenseType.AdrLicense]: FlattenedAdrDto
+  [LicenseType.MachineLicense]: VinnuvelaDto
+  [LicenseType.DisabilityLicense]: OrorkuSkirteini
+  [LicenseType.DrivingLicense]: DriverLicenseDto
+  [LicenseType.PCard]: Staediskortamal
+  [LicenseType.Ehic]: BasicCardInfoDTO
+  [LicenseType.Passport]: Passport
+}
+
+export interface VerifyExtraDataResult {
+  FirearmLicense: void
+  AdrLicense: void
+  MachineLicense: void
+  DisabilityLicense: void
+  DrivingLicense: DrivingLicenseVerifyExtraDataResult
+  PCard: void
+  Ehic: string
+  Passport: void
+}
+
+export type LicenseResult<T extends LicenseType> = T extends LicenseType
+  ? LicenseResults[T]
+  : never
+
+export type LicenseVerifyExtraDataResult<T extends LicenseType> =
+  T extends LicenseType ? VerifyExtraDataResult[T] : never
 
 export type LicenseTypeType = keyof typeof LicenseType
 
@@ -121,23 +160,19 @@ export type ServiceErrorCode =
   /** Generic error code / Unknown */
   | 99
 
-export interface LicenseClient<ResultType> {
+export interface LicenseClient<Type extends LicenseType> {
   clientSupportsPkPass: boolean
-
-  getLicenses: (user: User) => Promise<Result<Array<ResultType>>>
-
+  getLicenses: (user: User) => Promise<Result<Array<LicenseResult<Type>>>>
   licenseIsValidForPkPass?: (payload: unknown) => LicensePkPassAvailability
-
   getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
-
   getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
-
   verifyPkPass?: (
     data: string,
     passTemplateId: string,
   ) => Promise<Result<PkPassVerification>>
-
-  verifyExtraData?: (input: VerifyExtraDataInput) => Promise<ResultType>
+  verifyExtraData?: (
+    input: VerifyExtraDataInput,
+  ) => Promise<LicenseVerifyExtraDataResult<Type>>
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'

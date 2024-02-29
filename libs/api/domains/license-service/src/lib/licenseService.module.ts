@@ -1,118 +1,67 @@
-import { DynamicModule, Module } from '@nestjs/common'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { createRedisCluster } from '@island.is/cache'
+import { LicenseClientModule } from '@island.is/clients/license-client'
 import { CmsModule } from '@island.is/cms'
-import { TokenService } from './token.service'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
+import { CacheModule } from '@nestjs/cache-manager'
+import { DynamicModule, Module } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
+import { redisInsStore } from 'cache-manager-ioredis-yet'
+
 import { MainResolver } from '../../../license-service/src/lib/graphql/main.resolver'
-import {
-  GenericLicenseMetadata,
-  GenericLicenseProviderId,
-  GenericLicenseType,
-  GenericLicenseOrganizationSlug,
-  LICENSE_MAPPER_FACTORY,
-  GenericLicenseMapper,
-  LicenseServiceConfig,
-  TOKEN_SERVICE_PROVIDER,
-} from '../../../license-service/src/lib/licenceService.type'
+import { LicenseServiceService } from '../../../license-service/src/lib/licenseService.service'
 import { AdrLicensePayloadMapper } from '../../../license-service/src/lib/mappers/adrLicenseMapper'
 import { DisabilityLicensePayloadMapper } from '../../../license-service/src/lib/mappers/disabilityLicenseMapper'
-import { MachineLicensePayloadMapper } from '../../../license-service/src/lib/mappers/machineLicenseMapper'
-import { FirearmLicensePayloadMapper } from '../../../license-service/src/lib/mappers/firearmLicenseMapper'
-import { LicenseServiceService } from '../../../license-service/src/lib/licenseService.service'
-import { LicenseMapperModule } from '../../../license-service/src/lib/mappers/licenseMapper.module'
 import { DrivingLicensePayloadMapper } from '../../../license-service/src/lib/mappers/drivingLicenseMapper'
-import { LicenseClientModule } from '@island.is/clients/license-client'
-import { PCardPayloadMapper } from '../../../license-service/src/lib/mappers/pCardMapper'
 import { EHICCardPayloadMapper } from '../../../license-service/src/lib/mappers/ehicCardMapper'
-
-export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
-  {
-    type: GenericLicenseType.FirearmLicense,
-    provider: {
-      id: GenericLicenseProviderId.NationalPoliceCommissioner,
-    },
-    pkpass: true,
-    pkpassVerify: true,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
-  },
-  {
-    type: GenericLicenseType.DriversLicense,
-    provider: {
-      id: GenericLicenseProviderId.NationalPoliceCommissioner,
-    },
-    pkpass: true,
-    pkpassVerify: true,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.DriversLicense,
-  },
-  {
-    type: GenericLicenseType.AdrLicense,
-    provider: {
-      id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
-    },
-    pkpass: true,
-    pkpassVerify: true,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.AdrLicense,
-  },
-  {
-    type: GenericLicenseType.MachineLicense,
-    provider: {
-      id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
-    },
-    pkpass: true,
-    pkpassVerify: true,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
-  },
-  {
-    type: GenericLicenseType.DisabilityLicense,
-    provider: {
-      id: GenericLicenseProviderId.SocialInsuranceAdministration,
-    },
-    pkpass: true,
-    pkpassVerify: true,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
-  },
-  {
-    type: GenericLicenseType.PCard,
-    provider: {
-      id: GenericLicenseProviderId.DistrictCommissioners,
-    },
-    pkpass: false,
-    pkpassVerify: false,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.PCard,
-  },
-  {
-    type: GenericLicenseType.Ehic,
-    provider: {
-      id: GenericLicenseProviderId.IcelandicHealthInsurance,
-    },
-    pkpass: false,
-    pkpassVerify: false,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.EHIC,
-  },
-  {
-    type: GenericLicenseType.Passport,
-    provider: {
-      id: GenericLicenseProviderId.RegistersIceland,
-    },
-    pkpass: false,
-    pkpassVerify: false,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.Passport,
-  },
-]
+import { FirearmLicensePayloadMapper } from '../../../license-service/src/lib/mappers/firearmLicenseMapper'
+import { LicenseMapperModule } from '../../../license-service/src/lib/mappers/licenseMapper.module'
+import { MachineLicensePayloadMapper } from '../../../license-service/src/lib/mappers/machineLicenseMapper'
+import { PCardPayloadMapper } from '../../../license-service/src/lib/mappers/pCardMapper'
+import {
+  GenericLicenseMapper,
+  GenericLicenseType,
+  LicenseConfig,
+} from './licenceService.type'
+import { LicenseServiceConfig } from './licenseService.config'
+import {
+  LICENSE_MAPPER_FACTORY,
+  TOKEN_SERVICE_PROVIDER,
+} from './licenseService.constants'
+import { TokenService } from './services/token.service'
 
 @Module({})
 export class LicenseServiceModule {
-  static register(config: LicenseServiceConfig): DynamicModule {
+  static register(config: LicenseConfig): DynamicModule {
     return {
       module: LicenseServiceModule,
-      imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
+      imports: [
+        LicenseClientModule,
+        LicenseMapperModule,
+        CmsModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [LicenseServiceConfig],
+        }),
+        CacheModule.register({
+          imports: [ConfigModule],
+          useFactory: (
+            licenseServiceConfig: ConfigType<typeof LicenseServiceConfig>,
+          ) => {
+            console.log('TODO fix me - Hello Snaer why are you not logging')
+            return {
+              store: redisInsStore(
+                createRedisCluster({
+                  name: 'license_service_cache',
+                  ssl: licenseServiceConfig.redis.ssl,
+                  nodes: licenseServiceConfig.redis.nodes,
+                }),
+              ),
+            }
+          },
+          inject: [LicenseServiceConfig],
+        }),
+      ],
       providers: [
         MainResolver,
         LicenseServiceService,

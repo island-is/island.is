@@ -288,7 +288,7 @@ export interface GenericLicenseMapper {
   ) => Array<GenericUserLicensePayload>
 }
 
-export interface LicenseServiceConfig {
+export interface LicenseConfig {
   barcodeSecretKey: string
 }
 
@@ -310,15 +310,3 @@ export type LicenseTokenData = {
    */
   c: string
 }
-
-export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
-
-export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
-
-export const TOKEN_SERVICE_PROVIDER = 'token_service_provider'
-
-export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
-
-export const CONFIG_PROVIDER = 'config_provider'
-
-export const DEFAULT_LICENSE_ID = 'default'

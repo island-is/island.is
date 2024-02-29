@@ -11,6 +11,7 @@ import {
 import {
   LicenseClient,
   LicensePkPassAvailability,
+  LicenseType,
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
@@ -27,7 +28,9 @@ import { createPkPassDataInput } from '../drivingLicenseMapper'
 const LOG_CATEGORY = 'drivinglicense-service'
 
 @Injectable()
-export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
+export class DrivingLicenseClient
+  implements LicenseClient<LicenseType.DrivingLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private drivingApi: DrivingLicenseApi,
@@ -344,12 +347,16 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     })
 
     if (!license) {
-      const errorMsg = `No license found for national id: ${nationalId}`
+      const errorMsg = 'No license found for national id'
       this.logger.warn(errorMsg, { category: LOG_CATEGORY })
 
       throw new BadRequestException(errorMsg)
     }
 
-    return license
+    return {
+      nationalId,
+      name: license.name ?? null,
+      photo: license.photo?.image ?? null,
+    }
   }
 }

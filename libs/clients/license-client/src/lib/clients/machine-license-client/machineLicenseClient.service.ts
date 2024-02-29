@@ -20,6 +20,7 @@ import { Locale } from 'locale'
 import {
   LicenseClient,
   LicensePkPassAvailability,
+  LicenseType,
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
@@ -29,7 +30,9 @@ import {
 const LOG_CATEGORY = 'machinelicense-service'
 
 @Injectable()
-export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
+export class MachineLicenseClient
+  implements LicenseClient<LicenseType.MachineLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,

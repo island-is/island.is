@@ -9,7 +9,7 @@ The license service returns a generic license that consists of the following par
 - License type: A license type comes from an exhaustive list of types.
   - e.g. DriversLicense, FirearmLicense, MachineLicense etc...
 - Provider: What issuer provides the license.
-  - e.g National police commisioner
+  - e.g National police commissioner
 - Fetch: A status object containing all relevant info about the fetch itself.
 - Payload: The actual payload, i.e. the license itself. Might be empty if the user doesn't have a license!
 

@@ -3,11 +3,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { PCardService, Staediskortamal } from '@island.is/clients/p-card'
-import { LicenseClient, Result } from '../../licenseClient.type'
+import { LicenseClient, LicenseType, Result } from '../../licenseClient.type'
 import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
-export class PCardClient implements LicenseClient<Staediskortamal> {
+export class PCardClient implements LicenseClient<LicenseType.PCard> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private pCardService: PCardService,

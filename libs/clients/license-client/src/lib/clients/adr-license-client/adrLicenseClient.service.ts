@@ -16,6 +16,7 @@ import { parseAdrLicenseResponse } from './adrLicenseClientMapper'
 import {
   LicenseClient,
   LicensePkPassAvailability,
+  LicenseType,
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
@@ -26,7 +27,7 @@ import { FlattenedAdrDto } from './adrLicenseClient.type'
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
+export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,

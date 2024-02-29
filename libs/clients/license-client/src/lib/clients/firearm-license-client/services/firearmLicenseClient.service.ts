@@ -13,6 +13,7 @@ import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
   LicensePkPassAvailability,
+  LicenseType,
   PkPassVerification,
   PkPassVerificationInputData,
 } from '../../../licenseClient.type'
@@ -21,7 +22,9 @@ import { createPkPassDataInput } from '../firearmLicenseMapper'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 @Injectable()
-export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
+export class FirearmLicenseClient
+  implements LicenseClient<LicenseType.FirearmLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,

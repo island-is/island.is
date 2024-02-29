@@ -17,6 +17,7 @@ import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
   LicensePkPassAvailability,
+  LicenseType,
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
@@ -26,7 +27,9 @@ import {
 const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
-export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
+export class DisabilityLicenseClient
+  implements LicenseClient<LicenseType.DisabilityLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private disabilityLicenseApi: DisabilityLicenseService,

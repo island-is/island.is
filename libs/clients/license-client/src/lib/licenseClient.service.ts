@@ -13,7 +13,7 @@ export class LicenseClientService {
     @Inject(LICENSE_CLIENT_FACTORY)
     private licenseClientFactory: (
       type: LicenseType,
-    ) => Promise<LicenseClient<unknown | null>>,
+    ) => Promise<LicenseClient<LicenseType>>,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}
 

@@ -1,42 +1,49 @@
+import { User } from '@island.is/auth-nest-tools'
+import {
+  LicenseClient,
+  LicenseClientService,
+  LicenseType,
+  LicenseVerifyExtraDataResult,
+} from '@island.is/clients/license-client'
+import { CmsContentfulService } from '@island.is/cms'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Locale } from '@island.is/shared/types'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/auth-nest-tools'
-import { CmsContentfulService } from '@island.is/cms'
+import { Cache as CacheManager } from 'cache-manager/dist/caching'
+
+import pick from 'lodash/pick'
 import ShortUniqueId from 'short-unique-id'
-import { TokenService } from './token.service'
 import {
-  GenericLicenseTypeType,
-  GenericLicenseType,
-  GenericUserLicenseFetchStatus,
-  GenericUserLicenseStatus,
-  PkPassVerification,
-  GenericUserLicensePkPassStatus,
-  GenericLicenseOrganizationSlug,
-  GenericLicenseUserdata,
-  GenericLicenseFetchResult,
-  LICENSE_MAPPER_FACTORY,
-  GenericLicenseMapper,
-  DEFAULT_LICENSE_ID,
-  TOKEN_SERVICE_PROVIDER,
-  LicenseTokenData,
-} from './licenceService.type'
-import { Locale } from '@island.is/shared/types'
-import {
-  LicenseClient,
-  LicenseClientService,
-  LicenseType,
-} from '@island.is/clients/license-client'
-import { AVAILABLE_LICENSES } from './licenseService.module'
-import {
-  UserLicensesResponse,
   GenericUserLicense,
+  UserLicensesResponse,
 } from './graphql/genericLicense.model'
+import {
+  GenericLicenseFetchResult,
+  GenericLicenseMapper,
+  GenericLicenseOrganizationSlug,
+  GenericLicenseType,
+  GenericLicenseTypeType,
+  GenericLicenseUserdata,
+  GenericUserLicenseFetchStatus,
+  GenericUserLicensePkPassStatus,
+  GenericUserLicenseStatus,
+  LicenseTokenData,
+  PkPassVerification,
+} from './licenceService.type'
+import {
+  AVAILABLE_LICENSES,
+  DEFAULT_LICENSE_ID,
+  LICENSE_MAPPER_FACTORY,
+  TOKEN_SERVICE_PROVIDER,
+} from './licenseService.constants'
+import { TokenService } from './services/token.service'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -53,6 +60,7 @@ const { randomUUID } = new ShortUniqueId({ length: 10 })
 export class LicenseServiceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
     @Inject(TOKEN_SERVICE_PROVIDER)
     private readonly tokenService: TokenService<LicenseTokenData>,
     private readonly licenseClient: LicenseClientService,
@@ -68,15 +76,10 @@ export class LicenseServiceService {
     slug: GenericLicenseOrganizationSlug,
     locale: Locale,
   ) {
-    const organization = await this.cmsContentfulService.getOrganization(
-      slug,
-      locale,
-    )
-
-    return organization
+    return this.cmsContentfulService.getOrganization(slug, locale)
   }
 
-  //backwards compatibilty hax
+  //backwards compatibility hax
   private mapLicenseType = (type: GenericLicenseType) =>
     this.licenseClient.getClientByLicenseType(
       type === GenericLicenseType.DriversLicense
@@ -99,7 +102,7 @@ export class LicenseServiceService {
 
   private async fetchLicenses(
     user: User,
-    licenseClient: LicenseClient<unknown>,
+    licenseClient: LicenseClient<LicenseType>,
   ): Promise<GenericLicenseFetchResult> {
     if (!licenseClient) {
       throw new InternalServerErrorException('License service failed')
@@ -312,21 +315,26 @@ export class LicenseServiceService {
     )
   }
 
+  async getClient(type: GenericLicenseType) {
+    const client = await this.mapLicenseType(type)
+
+    if (!client) {
+      const msg = `Invalid license type. "${type}"`
+      this.logger.warn(msg, { category: LOG_CATEGORY })
+
+      throw new InternalServerErrorException(msg)
+    }
+
+    return client
+  }
+
   async generatePkPassUrl(
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<string> {
-    const client = await this.mapLicenseType(licenseType)
+    const client = await this.getClient(licenseType)
 
-    if (!client) {
-      this.logger.warn(`Invalid license type. type: ${licenseType}`, {
-        category: LOG_CATEGORY,
-      })
-      throw new InternalServerErrorException(
-        `Invalid license type. type: ${licenseType}`,
-      )
-    }
     if (!client.clientSupportsPkPass) {
       this.logger.warn('client does not support pkpass', {
         category: LOG_CATEGORY,
@@ -383,16 +391,7 @@ export class LicenseServiceService {
     locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<string> {
-    const client = await this.mapLicenseType(licenseType)
-
-    if (!client) {
-      this.logger.warn(`Invalid license type. type: ${licenseType}`, {
-        category: LOG_CATEGORY,
-      })
-      throw new InternalServerErrorException(
-        `Invalid license type. type: ${licenseType}`,
-      )
-    }
+    const client = await this.getClient(licenseType)
 
     if (!client.clientSupportsPkPass) {
       this.logger.warn('client does not support pkpass', {
@@ -446,7 +445,7 @@ export class LicenseServiceService {
      * PkPass barcodes provide a PassTemplateId that we can use to
      * map barcodes to license types.
      * Drivers licenses do NOT return a barcode so if the pass template
-     * id is missing, then it's a drivers license.
+     * id is missing, then it's a driver's license.
      * Otherwise, map the id to its corresponding license type
      */
     const licenseService = await this.licenseClient.getClientByPassTemplateId(
@@ -485,23 +484,54 @@ export class LicenseServiceService {
     return verification.data
   }
 
-  async createBarcodeJWT(user: User, genericUserLicense: GenericUserLicense) {
+  async createBarcode(
+    { nationalId }: User,
+    genericUserLicense: GenericUserLicense,
+  ) {
     const code = randomUUID()
+    const licenseType = genericUserLicense.license.type
+    const client = await this.getClient(licenseType)
+    let extraData: LicenseVerifyExtraDataResult<LicenseType> | undefined
 
-    console.log(user)
-    console.log(genericUserLicense.license.type)
+    if (client?.verifyExtraData) {
+      extraData = await client.verifyExtraData({
+        licenseId: genericUserLicense.payload?.metadata?.licenseId,
+        nationalId,
+      })
 
-    // TODO create license type client and call verifyExtraData
+      if (!extraData) {
+        const msg = `Unable to verify extra data for license: ${licenseType}`
+        this.logger.warn(msg, { category: LOG_CATEGORY })
 
-    // TODO store in redis verifyExtraData response and license data needed
+        throw new InternalServerErrorException(msg)
+      }
+    }
 
-    return this.tokenService.createToken(
+    // Create a token with the version, license type and a server reference (Redis key) code
+    const createTokenPromise = this.tokenService.createToken(
       {
         v: '2',
         t: genericUserLicense.license.type,
         c: code,
       },
-      { expiresIn: 60 },
+      { expiresIn: '1m' },
     )
+
+    // Store license data in cache so that we can fetch data quickly in the verify endpoint
+    const redisPromise = this.cacheManager.set(
+      code,
+      {
+        nationalId,
+        extraData,
+        ...pick(genericUserLicense, ['license', 'payload']),
+        license: genericUserLicense.license,
+        payload: genericUserLicense.payload,
+      },
+      60 * 1000,
+    )
+
+    const [token] = await Promise.all([createTokenPromise, redisPromise])
+
+    return token
   }
 }
