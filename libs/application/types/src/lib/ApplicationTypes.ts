@@ -62,6 +62,7 @@ export enum ApplicationTypes {
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
   DEREGISTER_MACHINE = 'DeregisterMachine',
+  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
 }
 
 export const ApplicationConfigurations = {
@@ -320,5 +321,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DEREGISTER_MACHINE]: {
     slug: 'afskraning-taekis',
     translation: 'aosh.drm.application',
+  },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
+    translation: 'ghb.application',
   },
 }

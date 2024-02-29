@@ -90,6 +90,7 @@ export class WorkMachinesClientService {
       pageSize: 20,
       pageNumber: 1,
     })
+
     return {
       machines:
         result?.value?.map((machine) => {

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 
+import { coreErrorMessages } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
@@ -10,7 +11,6 @@ import {
 } from '@island.is/clients/car-recycling'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { coreErrorMessages } from '@island.is/application/core'
 
 import {
   VehicleDto,
@@ -79,6 +79,10 @@ export class CarRecyclingService extends BaseTemplateApiService {
         auth,
         vehicle.permno,
         mileage,
+        vehicle.vin || '',
+        vehicle.make || '',
+        vehicle.firstRegistrationDate || new Date(),
+        vehicle.color || '',
       )
     }
   }
@@ -113,7 +117,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       if (ownerResponse && ownerResponse.errors) {
         isError = true
-        this.logger.error(`Error create owner ${applicantName}`, {
+        this.logger.error(`Error creating owner`, {
           error: ownerResponse.errors,
         })
       }
@@ -180,20 +184,19 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       if (isError) {
         return Promise.reject(
-          new Error(
-            `Error occurred when recycling vehicle(s) for ${applicantName}`,
-          ),
+          new Error(`Error occurred when recycling vehicle(s)`),
         )
       }
 
       return Promise.resolve(true)
     } catch (error) {
       isError = true
-      this.logger.error(
-        `Error occurred when recycling vehicle(s) for ${applicantName}`,
-        {
-          error,
-        },
+      this.logger.error(`Error occurred when recycling vehicle(s)`, {
+        error,
+      })
+
+      return Promise.reject(
+        new Error(`Error occurred when recycling vehicle(s)`),
       )
     }
   }

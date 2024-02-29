@@ -31,6 +31,7 @@ export enum Features {
   homeSupport = 'isHomeSupportEnabled',
   ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
   DeregisterMachine = 'isDeregisterMachineEnabled',
+  grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

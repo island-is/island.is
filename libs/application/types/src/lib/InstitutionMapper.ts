@@ -255,4 +255,8 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+  },
 }
