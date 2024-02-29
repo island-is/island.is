@@ -24,4 +24,4 @@ import { FilesApi, FormsApi, GroupsApi, InputsApi, OrganizationsApi, ServicesApi
     StepsApi,
   ],
 })
-export class FormSystemModule { }
+export class FormSystemClientModule { }

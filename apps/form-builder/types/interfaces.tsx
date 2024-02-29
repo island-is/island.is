@@ -5,7 +5,7 @@ import { Action as ListsAction } from '../hooks/listsReducer'
 import { FormAction } from '../hooks/formReducer'
 import { FormHeaderAction } from '../hooks/headerInfoReducer'
 
-export interface IFormBuilderContext {
+export type IFormBuilderContext = {
   formBuilder: IFormBuilder
   formDispatch: Dispatch<FormAction>
   lists: {
