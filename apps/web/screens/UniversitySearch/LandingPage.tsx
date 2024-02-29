@@ -342,4 +342,5 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
 export default withMainLayout(LandingPage, {
   showFooter: false,
   headerColorScheme: 'white',
+  headerButtonColorScheme: 'white',
 })
