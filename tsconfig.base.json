@@ -376,6 +376,9 @@
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
       ],
+      "@island.is/application/templates/grindavik-housing-buyout": [
+        "libs/application/templates/grindavik-housing-buyout/src/index.ts"
+      ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
