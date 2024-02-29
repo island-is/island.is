@@ -7,7 +7,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
+      "executor": "nx:esbuild",
       "options": {
         "commands": [
           "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs) --external:@nestjs/microservices --external:@nestjs/websockets --external:fsevents --external:class-transformer --external:canvas",
@@ -18,28 +18,46 @@
       },
       "configurations": {
         "production": {}
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/system-e2e"]
+      }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/system-e2e/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
-    "smoke": {
+    "smoke:old": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn playwright test apps/system-e2e/src/tests/*/smoke -c apps/system-e2e/src"
       }
     },
-    "acceptance": {
+    "acceptance:old": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
+        "command": "playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
+      }
+    },
+    "smoke": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "grep": "/smoke/"
+      },
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "acceptance": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "grep": "/acceptance/"
       }
     },
     "docker-playwright": {}
   },
-  "tags": ["scope:e2e"]
+  "tags": [
+    "scope:e2e"
+  ]
 }

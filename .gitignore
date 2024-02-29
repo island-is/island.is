@@ -56,6 +56,11 @@ testem.log
 /debug.log
 *.log
 
+# Playwright
+test-results/
+playwright-report/
+tmp-sessions/
+
 # System Files
 .DS_Store
 Thumbs.db

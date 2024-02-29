@@ -3,13 +3,17 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "types": ["node"],
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "target": "ESNext",
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "types": [
+      "node"
+    ],
     "sourceMap": true
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "global.d.ts"]
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }
