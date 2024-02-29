@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -47,6 +48,7 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 interface AboutPageProps {
@@ -66,6 +68,21 @@ const AboutPage: Screen<AboutPageProps> = ({
   const n = useNamespace(namespace)
   const router = useRouter()
   const { activeLocale } = useI18n()
+  useSetZIndexOnHeader()
+  const [sortedUniversities, setSortedUniversities] = useState<
+    UniversityGatewayUniversity[]
+  >([])
+
+  useEffect(() => {
+    const newArray = [...universities]
+    newArray.sort((x, y) => {
+      const titleX = x.contentfulTitle || ''
+      const titleY = y.contentfulTitle || ''
+      return titleX.localeCompare(titleY)
+    })
+
+    setSortedUniversities(newArray)
+  }, [universities])
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -201,7 +218,7 @@ const AboutPage: Screen<AboutPageProps> = ({
                   {' '}
                   {n('universities', 'Háskólar')}
                 </Text>
-                {universities.map((university) => {
+                {sortedUniversities.map((university) => {
                   return (
                     <Box
                       className={cn(styles.courseListItems)}
@@ -388,8 +405,9 @@ AboutPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'haskolanam' as string,
-          slug: 'um-haskolanam-is' as string,
+          organizationSlug:
+            locale === 'is' ? 'haskolanam' : 'university-studies',
+          slug: locale === 'is' ? 'um-haskolanam-is' : 'about-haskolanam-is',
           lang: locale as ContentLanguage,
         },
       },
@@ -427,4 +445,7 @@ AboutPage.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(AboutPage, { showFooter: false })
+export default withMainLayout(AboutPage, {
+  showFooter: false,
+  headerColorScheme: 'white',
+})
