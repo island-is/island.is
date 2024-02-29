@@ -7,6 +7,11 @@ export const prerequisites = {
       defaultMessage: 'Gagnaöflun',
       description: 'Data collection section title',
     },
+    subTitle: {
+      id: 'ghb.application:prerequisites.general.subTitle',
+      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+      description: 'Data collection section subtitle',
+    },
     checkboxLabel: {
       id: 'ghb.application:prerequisites.general.checkbox.label',
       defaultMessage:
