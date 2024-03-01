@@ -6,6 +6,7 @@ export const serviceSetup = (services: {
   service('judicial-system-digital-mailbox-api')
     .namespace('judicial-system')
     .serviceAccount('judicial-system-digital-mailbox-api')
+    .image('judicial-system-digital-mailbox-api')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
