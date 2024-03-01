@@ -73,7 +73,7 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
             <Label>
               {formatMessage(parentalLeaveFormMessages.employer.title)}
             </Label>
-            {employers?.length > 0 && (
+            {employersArray?.length > 0 && (
               <Box paddingTop={3}>
                 <StaticTableFormField
                   application={application}
