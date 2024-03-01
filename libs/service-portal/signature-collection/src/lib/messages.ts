@@ -100,6 +100,12 @@ export const m = defineMessages({
     defaultMessage: 'Engin söfnun í gangi',
     description: '',
   },
+  noCollectionIsActiveDescription: {
+    id: 'sp.signatureCollection:noCollectionIsActiveDescription#markdown',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við Þjóðskrá Íslands.',
+    description: '',
+  },
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
     defaultMessage: 'Frambjóðandi sem þú hefur mælt með: ',

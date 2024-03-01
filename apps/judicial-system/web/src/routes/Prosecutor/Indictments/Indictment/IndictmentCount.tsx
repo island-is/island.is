@@ -35,6 +35,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
+import { policeCaseInfo } from '../Defendant/PoliceCaseInfo/PoliceCaseInfo.strings'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'

@@ -1,6 +1,6 @@
 export const formatCurrency = (
   answer: number | null | undefined,
-  suffix = 'kr.',
+  suffix = ' kr.',
 ) => {
   if (typeof answer !== 'number') return answer
   return (

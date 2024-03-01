@@ -53,6 +53,12 @@ export const m = defineMessages({
       'Söfnunin er opin. Til staðar eru listar sem hafa verið framlengdir. Einnig er hægt að framlengja fleiri lista.',
     description: '',
   },
+  signatureCollectionReviewDone: {
+    id: 'admin-portal.signature-collection:signatureCollectionReviewDone',
+    defaultMessage:
+      'Úrvinnslu er lokið á meðmælasöfnunum fyrir forsetaframboð 2024',
+    description: '',
+  },
   signatureCollectionInReview: {
     id: 'admin-portal.signature-collection:signatureCollectionInReview',
     defaultMessage:

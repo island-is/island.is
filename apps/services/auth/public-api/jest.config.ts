@@ -5,6 +5,8 @@ export default {
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {},
+  globalSetup: `${__dirname}/test/globalSetup.ts`,
+  globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',

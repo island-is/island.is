@@ -10,7 +10,7 @@ const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/listar/medmaelalistar/', '')
+  const listId = pathname.replace('/min-gogn/listar/medmaelasofnun/', '')
   const { listInfo, loadingList } = useGetSignatureList(listId)
 
   return (
