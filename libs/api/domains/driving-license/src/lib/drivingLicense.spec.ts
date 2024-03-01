@@ -26,9 +26,7 @@ import { ConfigModule } from '@island.is/nest/config'
 
 import { getDayCountThisYear } from '@island.is/shared/utils'
 
-
-const daysOfResidency = getDayCountThisYear();
-
+const daysOfResidency = getDayCountThisYear()
 
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
