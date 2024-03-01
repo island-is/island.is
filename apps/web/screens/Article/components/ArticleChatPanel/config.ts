@@ -237,6 +237,19 @@ export const watsonConfig: Record<
       },
     },
 
+    // Kaup ríkisins á íbúðarhúsnæði í Grindavík
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2r6181rqgbxScVvCOUb4k8
+    '2r6181rqgbxScVvCOUb4k8': {
+      ...defaultWatsonConfig.en,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kaupaibudarhusnaedum',
+          defaultWatsonConfig.en.integrationID,
+        )
+      },
+    },
+
     // Samgöngustofa - Organization
     '6IZT17s7stKJAmtPutjpD7': {
       integrationID: '1e649a3f-9476-4995-ba24-0e72040b0cc0',
@@ -266,6 +279,19 @@ export const watsonConfig: Record<
         setupOneScreenWatsonChatBot(
           instance,
           'kilometragjald',
+          defaultWatsonConfig.is.integrationID,
+        )
+      },
+    },
+
+    // Kaup ríkisins á íbúðarhúsnæði í Grindavík
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2r6181rqgbxScVvCOUb4k8
+    '2r6181rqgbxScVvCOUb4k8': {
+      ...defaultWatsonConfig.is,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kaupaibudarhusnaedum',
           defaultWatsonConfig.is.integrationID,
         )
       },
