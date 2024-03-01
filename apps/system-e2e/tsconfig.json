@@ -2,8 +2,3 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {}
 }
-
-
-
-
-

@@ -1,6 +1,5 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
 
-
 export const parentalLeaveFormMessages = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
