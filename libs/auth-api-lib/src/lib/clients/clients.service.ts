@@ -88,7 +88,7 @@ export class ClientsService {
       return this.clientsTranslationService.translateClients(clients, lang)
     }
 
-    return clients
+    return clients.sort((a, b) => a.clientId.localeCompare(b.clientId, 'is'))
   }
 
   /** Gets all clients with paging */

@@ -24,6 +24,7 @@ import {
   IndictmentCountOffense,
   Institution,
   Maybe,
+  PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
@@ -39,6 +40,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
 
@@ -94,6 +96,21 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
     setIndictmentIntroductionErrorMessage,
   ] = useState<string>('')
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
+
+  const { data: policeCaseData } = usePoliceCaseInfoQuery({
+    variables: {
+      input: {
+        caseId: workingCase.id,
+      },
+    },
+    skip: !workingCase.id,
+    fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      if (!data.policeCaseInfo) {
+        return undefined
+      } else return data as PoliceCaseInfo[]
+    },
+  })
 
   const stepIsValid = isTrafficViolationStepValidIndictments(workingCase)
 
@@ -172,6 +189,20 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
       indictmentCountId: string,
       updatedIndictmentCount: UpdateIndictmentCount,
     ) => {
+      if (
+        updatedIndictmentCount.policeCaseNumber &&
+        policeCaseData?.policeCaseInfo
+      ) {
+        const vehicleNumber = policeCaseData.policeCaseInfo?.find(
+          (policeCase) =>
+            policeCase?.policeCaseNumber ===
+            updatedIndictmentCount.policeCaseNumber,
+        )?.licencePlate
+
+        if (vehicleNumber)
+          updatedIndictmentCount.vehicleRegistrationNumber = vehicleNumber
+      }
+
       const returnedIndictmentCount = await updateIndictmentCount(
         workingCase.id,
         indictmentCountId,
@@ -195,6 +226,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
       )
     },
     [
+      policeCaseData,
       setDriversLicenseSuspensionRequest,
       setWorkingCase,
       updateIndictmentCount,

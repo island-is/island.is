@@ -24,7 +24,7 @@ const SignedList = () => {
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        id:
+        listId:
           signedLists && signedLists?.length === 1
             ? signedLists[0].id
             : undefined,
@@ -84,7 +84,7 @@ const SignedList = () => {
                       : undefined
                   }
                   tag={
-                    list.isValid && new Date(list.endTime) < new Date()
+                    list.isValid && !list.active
                       ? {
                           label: formatMessage(m.collectionClosed),
                           variant: 'red',

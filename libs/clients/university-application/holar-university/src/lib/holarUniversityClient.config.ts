@@ -21,7 +21,7 @@ export const HolarUniversityApplicationClientConfig = defineConfig<
       scope: [],
       fetchTimeout:
         env.optionalJSON('XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_TIMEOUT') ??
-        120000,
+        10000,
     }
   },
 })
