@@ -371,6 +371,7 @@ export class DelegationResourcesService {
     const delegationScopes = await this.delegationScopeModel.findAll({
       attributes: ['scopeName'],
       include: {
+        attributes: [],
         model: Delegation,
         where: {
           fromNationalId: user.nationalId,
