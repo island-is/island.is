@@ -5,4 +5,5 @@ export const conclusionSection = buildFormConclusionSection({
   alertMessage: inReview.alertMessage,
   expandableDescription: inReview.nextSteps,
   expandableIntro: '',
+  bottomButtonLabel: inReview.buttonText,
 })
