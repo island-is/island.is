@@ -1,7 +1,12 @@
+import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 // eslint-disable-next-line
 import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userProfile.scope'
-import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
@@ -88,7 +93,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
     })
-    .xroad(Base, Client, RskProcuring)
+    .xroad(Base, Client, RskProcuring, NationalRegistryB2C)
     .readiness('/health/check')
     .liveness('/liveness')
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })

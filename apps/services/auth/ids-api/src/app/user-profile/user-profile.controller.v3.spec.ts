@@ -1,11 +1,11 @@
 import * as faker from 'faker'
-// TODO: Delete this file when shouldAuthIdsApiUseNationalRegistryV3 feature flag is removed
+// TODO: Rename this file when v2 tests are deleted
 import request from 'supertest'
 
 import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+  EinstaklingurDTOAllt,
+  NationalRegistryV3ClientService,
+} from '@island.is/clients/national-registry-v3'
 import {
   CompanyAddressType,
   CompanyExtendedInfo,
@@ -17,14 +17,13 @@ import {
   UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Features } from '@island.is/nest/feature-flags'
 import {
   createCurrentUser,
   createNationalId,
-  createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
+import { createNationalRegistryV3User } from '../../../test/nationalRegistryV3User'
 import { setupWithAuth } from '../../../test/setup'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,10 +32,10 @@ function mocked<T extends (...args: any) => any>(value: T) {
 }
 
 const mockNationalRegistry = (
-  nationalRegistryApi: NationalRegistryClientService,
-  data: IndividualDto,
+  nationalRegistryApi: NationalRegistryV3ClientService,
+  data: EinstaklingurDTOAllt,
 ) => {
-  mocked(nationalRegistryApi.getIndividual).mockResolvedValue(data)
+  mocked(nationalRegistryApi.getAllDataIndividual).mockResolvedValue(data)
 }
 
 function createCompany(): CompanyExtendedInfo {
@@ -108,7 +107,6 @@ describe('UserProfileController', () => {
           nationalIdType: 'person',
           scope: ['@identityserver.api/authentication'],
         }),
-        features: [Features.userProfileClaims],
       })
       server = request(app.getHttpServer())
     })
@@ -127,7 +125,7 @@ describe('UserProfileController', () => {
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
         ).mockRejectedValue({ status: 404 })
         mocked(
-          app.get(NationalRegistryClientService).getIndividual,
+          app.get(NationalRegistryV3ClientService).getAllDataIndividual,
         ).mockResolvedValue(null)
 
         // Act
@@ -147,7 +145,7 @@ describe('UserProfileController', () => {
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
         ).mockRejectedValue(new Error('500'))
         mocked(
-          app.get(NationalRegistryClientService).getIndividual,
+          app.get(NationalRegistryV3ClientService).getAllDataIndividual,
         ).mockRejectedValue(new Error('500'))
 
         // Act
@@ -161,42 +159,47 @@ describe('UserProfileController', () => {
       it('with full registries should return all claims', async () => {
         // Arrange
         const userProfile = createUserProfile()
-        const individual = createNationalRegistryUser({
-          genderCode: faker.random.arrayElement(['1', '3']),
+        const individual = createNationalRegistryV3User({
+          kyn: { kynKodi: faker.random.arrayElement(['1', '3']) },
         })
         mocked(
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
         ).mockResolvedValue(userProfile)
-        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
+        mockNationalRegistry(
+          app.get(NationalRegistryV3ClientService),
+          individual,
+        )
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const domicile = individual.legalDomicile!
+        const domicile = individual.heimilisfang!
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const address = individual.residence!
+        const address = individual.itarupplysingar?.adsetur!
         const expected = {
           address: {
-            formatted: `${address.streetAddress}\n${address.postalCode} ${address.locality}\nÍsland`,
-            locality: address.locality,
-            postalCode: address.postalCode,
-            streetAddress: address.streetAddress,
+            formatted: `${address.husHeiti}\n${address.postnumer} ${address.poststod}\nÍsland`,
+            locality: address.poststod,
+            postalCode: address.postnumer,
+            streetAddress: address.husHeiti,
             country: 'Ísland',
           },
-          birthdate: individual.birthdate.toISOString().split('T')[0],
+          birthdate: individual.faedingarstadur?.faedingarDagur
+            ?.toISOString()
+            .split('T')[0],
           legalDomicile: {
-            formatted: `${domicile.streetAddress}\n${domicile.postalCode} ${domicile.locality}\nÍsland`,
-            streetAddress: domicile.streetAddress,
-            postalCode: domicile.postalCode,
-            locality: domicile.locality,
+            formatted: `${domicile.husHeiti}\n${domicile.postnumer} ${domicile.poststod}\nÍsland`,
+            streetAddress: domicile.husHeiti,
+            postalCode: domicile.postnumer,
+            locality: domicile.poststod,
             country: 'Ísland',
           },
           email: userProfile.email,
           emailVerified: userProfile.emailVerified,
-          familyName: individual.familyName,
+          familyName: individual.fulltNafn?.kenniNafn,
           gender: 'male',
-          givenName: individual.givenName,
+          givenName: individual.fulltNafn?.eiginNafn,
           locale: userProfile.locale,
-          middleName: individual.middleName,
-          name: individual.name,
+          middleName: individual.fulltNafn?.milliNafn,
+          name: individual.nafn,
           phoneNumber: userProfile.mobilePhoneNumber,
           phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
           picture: userProfile.profileImageUrl,
@@ -211,18 +214,22 @@ describe('UserProfileController', () => {
 
       it('should return domicile as address if residence is missing', async () => {
         // Arrange
-        const individual = createNationalRegistryUser()
-        individual.residence = null
-        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
+        const individual = createNationalRegistryV3User({
+          itarupplysingar: {},
+        })
+        mockNationalRegistry(
+          app.get(NationalRegistryV3ClientService),
+          individual,
+        )
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const domicile = individual.legalDomicile!
+        const domicile = individual.heimilisfang!
         const expected = {
           address: {
-            formatted: `${domicile.streetAddress}\n${domicile.postalCode} ${domicile.locality}\nÍsland`,
-            locality: domicile.locality,
-            postalCode: domicile.postalCode,
-            streetAddress: domicile.streetAddress,
+            formatted: `${domicile.husHeiti}\n${domicile.postnumer} ${domicile.poststod}\nÍsland`,
+            streetAddress: domicile.husHeiti,
+            postalCode: domicile.postnumer,
+            locality: domicile.poststod,
           },
         }
 
@@ -235,9 +242,13 @@ describe('UserProfileController', () => {
 
       it('should support female gender', async () => {
         // Arrange
-        const individual = createNationalRegistryUser()
-        individual.genderCode = faker.random.arrayElement(['2', '4'])
-        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
+        const individual = createNationalRegistryV3User({
+          kyn: { kynKodi: faker.random.arrayElement(['2', '4']) },
+        })
+        mockNationalRegistry(
+          app.get(NationalRegistryV3ClientService),
+          individual,
+        )
         const expected = {
           gender: 'female',
         }
@@ -251,9 +262,13 @@ describe('UserProfileController', () => {
 
       it('should support non-binary gender', async () => {
         // Arrange
-        const individual = createNationalRegistryUser()
-        individual.genderCode = faker.random.arrayElement(['7', '8'])
-        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
+        const individual = createNationalRegistryV3User({
+          kyn: { kynKodi: faker.random.arrayElement(['7', '8']) },
+        })
+        mockNationalRegistry(
+          app.get(NationalRegistryV3ClientService),
+          individual,
+        )
         const expected = {
           gender: 'non-binary',
         }

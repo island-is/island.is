@@ -2,6 +2,7 @@ export enum Features {
   testing = 'do-not-remove-for-testing-only',
   // Integrate auth-api with user-profile-api.
   userProfileClaims = 'shouldAuthApiReturnUserProfileClaims',
+  shouldAuthIdsApiUseNationalRegistryV3 = 'shouldAuthIdsApiUseNationalRegistryV3',
 
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',

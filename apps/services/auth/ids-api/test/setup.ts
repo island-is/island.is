@@ -7,14 +7,15 @@ import {
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { UserProfileApi } from '@island.is/clients/user-profile'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
-  createDomain,
   createApiScope,
+  createDomain,
   CreateDomain,
 } from '@island.is/services/auth/testing'
 import {
@@ -72,6 +73,12 @@ class MockNationalRegistryClientService
   getCustodyChildren = jest.fn().mockResolvedValue([])
 }
 
+class MockNationalRegistryV3ClientService
+  implements Partial<NationalRegistryV3ClientService>
+{
+  getAllDataIndividual = jest.fn().mockResolvedValue({})
+}
+
 class MockUserProfile {
   withMiddleware = () => this
   userProfileControllerFindOneByNationalId = jest.fn().mockResolvedValue({})
@@ -81,12 +88,14 @@ interface SetupOptions {
   user: User
   scopes?: Scopes
   domains?: CreateDomain[]
+  features?: Features[]
 }
 
 export const setupWithAuth = async ({
   user,
   scopes = defaultScopes,
   domains = defaultDomains,
+  features,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   const app = await testServer({
@@ -103,6 +112,8 @@ export const setupWithAuth = async ({
         )
         .overrideProvider(NationalRegistryClientService)
         .useClass(MockNationalRegistryClientService)
+        .overrideProvider(NationalRegistryV3ClientService)
+        .useClass(MockNationalRegistryV3ClientService)
         .overrideProvider(UserProfileApi)
         .useClass(MockUserProfile)
         .overrideProvider(CompanyRegistryClientService)
@@ -114,7 +125,10 @@ export const setupWithAuth = async ({
           getIndividualRelationships: jest.fn().mockResolvedValue(null),
         })
         .overrideProvider(FeatureFlagService)
-        .useValue({ getValue: () => true }),
+        .useValue({
+          getValue: (feature: Features) =>
+            !features || features.includes(feature),
+        }),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
