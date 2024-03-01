@@ -188,6 +188,12 @@ export const application = {
       defaultMessage: '5% af kaupverði sem er haldið eftir fram að afsali',
       description: 'Closing payment text',
     },
+    confirmLoanTakeover: {
+      id: 'ghb.application:results.confirmLoanTakeover',
+      defaultMessage:
+        'Ég óska eftir að áhvílandi veðskuldir verði teknar yfir.',
+      description: 'Confirm loan takeover',
+    },
   }),
   overview: defineMessages({
     sectionTitle: {

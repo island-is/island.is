@@ -218,6 +218,16 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               title: '',
               description: m.application.results.infoText,
             }),
+            buildCheckboxField({
+              id: 'confirmLoanTakeover',
+              title: '',
+              options: [
+                {
+                  label: m.application.results.confirmLoanTakeover,
+                  value: YES,
+                },
+              ],
+            }),
           ],
         }),
       ],
