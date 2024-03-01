@@ -12,7 +12,5 @@ export const getDayCountThisYear = (): number => {
 }
 
 
-export const isLeapYear = (): boolean => {
-  return getDayCountThisYear() === 366;
-}
+export const isLeapYear = (): boolean => getDayCountThisYear() === 366
 
