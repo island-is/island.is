@@ -74,6 +74,7 @@ export type TableRepeaterItem = {
   width?: 'half' | 'full'
   required?: boolean
   condition?: (application: Application) => boolean
+  dataTestId?: string
 } & (
   | {
       component: 'input'

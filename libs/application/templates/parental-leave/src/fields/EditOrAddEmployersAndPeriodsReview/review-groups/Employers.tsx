@@ -1,17 +1,26 @@
-import React, { FC } from 'react'
-import { Application } from '@island.is/application/types'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import {
+  Application,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
+import {
+  Label,
+  ReviewGroup,
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
+import { StaticTableFormField } from '@island.is/application/ui-fields'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { ReviewGroup, Label } from '@island.is/application/ui-components'
-import { EmployersTable } from '../../components/EmployersTable'
-import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import React, { FC } from 'react'
 import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   YES,
 } from '../../../constants'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 
 interface ReviewScreenProps {
   application: Application
@@ -44,6 +53,17 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
       applicationType === PARENTAL_GRANT_STUDENTS) &&
       employerLastSixMonths === YES)
 
+  const rows = employersArray.map((e) => {
+    return [
+      e.email,
+      formatPhoneNumber(removeCountryCode(e.phoneNumber ?? '')),
+      `${e.ratio}%`,
+      e.isApproved
+        ? parentalLeaveFormMessages.shared.yesOptionLabel
+        : parentalLeaveFormMessages.shared.noOptionLabel,
+    ]
+  })
+
   return (
     hasEmployer &&
     employers.length !== 0 && (
@@ -53,9 +73,25 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
             <Label>
               {formatMessage(parentalLeaveFormMessages.employer.title)}
             </Label>
-            {employersArray?.length > 0 && (
+            {employers?.length > 0 && (
               <Box paddingTop={3}>
-                <EmployersTable employers={employersArray} />
+                <StaticTableFormField
+                  application={application}
+                  field={{
+                    type: FieldTypes.STATIC_TABLE,
+                    component: FieldComponents.STATIC_TABLE,
+                    children: undefined,
+                    id: 'employersTable',
+                    title: '',
+                    header: [
+                      parentalLeaveFormMessages.employer.emailHeader,
+                      parentalLeaveFormMessages.employer.phoneNumberHeader,
+                      parentalLeaveFormMessages.employer.ratioHeader,
+                      parentalLeaveFormMessages.employer.approvedHeader,
+                    ],
+                    rows,
+                  }}
+                />
               </Box>
             )}
           </GridColumn>

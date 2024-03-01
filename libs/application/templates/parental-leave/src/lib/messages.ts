@@ -1546,6 +1546,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hefur þú verið með vinnuveitanda á síðustu 6 mánuðum?',
       description: 'Have you had an employer in the last 6 month?',
     },
+    registerEmployer: {
+      id: 'pl.application:employer.registerEmployer',
+      defaultMessage: 'Skrá vinnuveitanda',
+      description: 'Add employer',
+    },
+    deleteEmployer: {
+      id: 'pl.application:employer.deleteEmployer',
+      defaultMessage: 'Eyða vinnuveitanda',
+      description: 'Remove employer',
+    },
   }),
 
   selfEmployed: defineMessages({
@@ -2470,6 +2480,11 @@ export const errorMessages = defineMessages({
     id: 'pl.application:dataSchema.invalidEmployerNationalRegistryId',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
+  },
+  employersRequired: {
+    id: 'pl.application:dataSchema.employersRequired',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum vinnuveitanda',
+    description: 'You must add at least one employer',
   },
   dateOfBirth: {
     id: 'pl.application:answerValidators.dateOfBirth',
