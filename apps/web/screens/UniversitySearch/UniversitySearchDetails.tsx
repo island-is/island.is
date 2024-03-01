@@ -56,7 +56,6 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { TranslationDefaults } from './TranslationDefaults'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -77,7 +76,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
-  useSetZIndexOnHeader()
   const [sortedCourses, setSortedCourses] = useState<
     Array<UniversityGatewayProgramCourse>
   >([])
@@ -230,7 +228,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       case 'Háskólinn á Hólum':
         return 'https://ugla.holar.is/namsumsoknir/'
       case 'Háskólinn í Reykjavík':
-        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+        return 'https://umsoknir.ru.is/'
       case 'Landbúnaðarháskóli Íslands':
         return 'https://ugla.lbhi.is/namsumsoknir/'
       case 'Listaháskóli Íslands':
@@ -482,8 +480,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       <Text variant="medium">{`${n(
                         'modeOfDelivery',
                         'Námsform',
-                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}
-                      })}`}</Text>
+                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}`}</Text>
                     </Box>
                   </GridColumn>
                 </GridRow>
@@ -645,5 +642,4 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
 
 export default withMainLayout(UniversityDetails, {
   showFooter: false,
-  headerColorScheme: 'white',
 })

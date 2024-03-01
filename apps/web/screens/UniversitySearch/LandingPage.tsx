@@ -34,7 +34,6 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { Screen } from '../../types'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 interface LandingPageProps {
@@ -52,7 +51,6 @@ const LandingPage: Screen<LandingPageProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
-  useSetZIndexOnHeader()
   const { linkResolver } = useLinkResolver()
   const [sortedUniversities, setSortedUniversities] = useState<
     UniversityGatewayUniversity[]
@@ -213,7 +211,7 @@ const LandingPage: Screen<LandingPageProps> = ({
             offset={['0', '0', '1/12']}
           >
             <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
               size="md"
@@ -341,5 +339,4 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
 
 export default withMainLayout(LandingPage, {
   showFooter: false,
-  headerColorScheme: 'white',
 })

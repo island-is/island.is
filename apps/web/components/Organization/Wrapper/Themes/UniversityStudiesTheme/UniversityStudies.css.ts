@@ -10,22 +10,15 @@ export const headerBg = style({
       justifyContent: 'center',
       alignItems: 'center',
       height: 340,
-      marginTop: -105,
     },
     md: {
       display: 'block',
       justifyContent: 'unset',
       alignItems: 'unset',
       height: 340,
-      marginTop: -170,
     },
     lg: {
       height: 444,
-      marginTop: -175,
-    },
-    xl: {
-      height: 444,
-      marginTop: -162,
     },
   }),
 })

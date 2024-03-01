@@ -255,6 +255,10 @@ export const routesTemplate = {
     is: '/haskolanam/leit',
     en: '/en/university-studies/search',
   },
+  universitysub: {
+    is: '/haskolanam/upplysingar/[subSlug]',
+    en: '/en/university-studies/info/[subSlug]',
+  },
   universitylandingpage: {
     is: '/haskolanam',
     en: '/en/university-studies',

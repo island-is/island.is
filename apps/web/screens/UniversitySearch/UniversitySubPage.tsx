@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
+import { ParsedUrlQuery } from 'querystring'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -40,6 +41,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 import { Screen } from '../../types'
 import {
@@ -51,14 +53,14 @@ import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGatewa
 import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
-interface AboutPageProps {
+interface UniversitySubPageProps {
   organizationPage?: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
   universities: Array<UniversityGatewayUniversity>
   namespace: Record<string, string>
   locale: string
 }
-const AboutPage: Screen<AboutPageProps> = ({
+const UniversitySubPage: Screen<UniversitySubPageProps> = ({
   organizationPage,
   subpage,
   universities,
@@ -178,7 +180,7 @@ const AboutPage: Screen<AboutPageProps> = ({
                       <Text variant="eyebrow" color="blueberry600">
                         {n('universities', 'Háskólar')}
                       </Text>
-                      {universities.map((university) => {
+                      {sortedUniversities.map((university) => {
                         return (
                           <Box
                             className={cn(styles.courseListItems)}
@@ -381,7 +383,9 @@ const renderSlices = (
   }
 }
 
-AboutPage.getProps = async ({ apolloClient, locale }) => {
+UniversitySubPage.getProps = async ({ apolloClient, locale, query, req }) => {
+  const { subSlug } = query
+
   const [
     {
       data: { getOrganizationPage },
@@ -407,7 +411,7 @@ AboutPage.getProps = async ({ apolloClient, locale }) => {
         input: {
           organizationSlug:
             locale === 'is' ? 'haskolanam' : 'university-studies',
-          slug: locale === 'is' ? 'um-haskolanam-is' : 'about-haskolanam-is',
+          slug: subSlug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -445,7 +449,6 @@ AboutPage.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(AboutPage, {
+export default withMainLayout(UniversitySubPage, {
   showFooter: false,
-  headerColorScheme: 'white',
 })
