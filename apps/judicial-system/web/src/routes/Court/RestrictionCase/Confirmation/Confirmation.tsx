@@ -53,7 +53,7 @@ export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
     setModalVisible('signingModal'),
   )
 
-  async function signRuling() {
+  const signRuling = async () => {
     const shouldSign =
       isCompletedCase(workingCase.state) ||
       (await transitionCase(
