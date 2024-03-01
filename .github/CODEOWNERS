@@ -128,6 +128,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
+/libs/api/domains/documents-v2/                                                                          @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
 /libs/api/domains/hms-loans/                                                                             @island-is/hugsmidjan
