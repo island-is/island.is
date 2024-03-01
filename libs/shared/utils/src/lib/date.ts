@@ -7,12 +7,10 @@ export const isValidDate = (date: Date) => {
 }
 
 export const getDayCountThisYear = (): number => {
-  const year = new Date().getFullYear();
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365;
+  const year = new Date().getFullYear()
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365
 }
-
 
 export const isLeapYear = (): boolean => {
-  return getDayCountThisYear() === 366;
+  return getDayCountThisYear() === 366
 }
-
