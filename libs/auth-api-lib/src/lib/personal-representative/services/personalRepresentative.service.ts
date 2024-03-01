@@ -28,7 +28,7 @@ export class PersonalRepresentativeService {
     private sequelize: Sequelize,
   ) {}
 
-  /** Get's all personal representatives  */
+  /** Gets all personal representatives  */
   async getMany(
     includeInvalid: boolean,
     query: PaginationWithNationalIdsDto,
@@ -136,7 +136,7 @@ export class PersonalRepresentativeService {
     return personalRepresentatives.map((pr) => pr.toDTO())
   }
 
-  /** Get's all personal representative connections for personal representative  */
+  /** Gets all personal representative connections for personal representative  */
   async getPersonalRepresentativeByRepresentedPerson(
     nationalIdRepresentedPerson: string,
     includeInvalid: boolean,
@@ -189,7 +189,7 @@ export class PersonalRepresentativeService {
     return personalRepresentatives[0].toDTO()
   }
 
-  /** Get's a personal representatives by id */
+  /** Gets a personal representatives by id */
   async getPersonalRepresentative(
     id: string,
   ): Promise<PersonalRepresentativeDTO | null> {

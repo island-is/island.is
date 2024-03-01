@@ -18,6 +18,12 @@ export type DelegationIndexInfo = Pick<
   'toNationalId' | 'fromNationalId' | 'provider' | 'type' | 'validTo'
 >
 
+type SortedDelegations = {
+  created: DelegationIndexInfo[]
+  updated: DelegationIndexInfo[]
+  deleted: DelegationIndexInfo[]
+}
+
 const toDelegationIndexInfo = (
   delegation: DelegationDTO,
 ): DelegationIndexInfo => ({
@@ -81,17 +87,16 @@ export class DelegationsIndexService {
       d.reduce(
         (acc, curr) => {
           return {
-            delegations: acc.delegations.concat(curr.delegations),
+            created: acc.created.concat(curr.created),
+            updated: acc.updated.concat(curr.updated),
             deleted: acc.deleted.concat(curr.deleted),
           }
         },
         {
-          delegations: [],
+          created: [],
+          updated: [],
           deleted: [],
-        } as {
-          delegations: DelegationIndexInfo[]
-          deleted: DelegationIndexInfo[]
-        },
+        } as SortedDelegations,
       ),
     )
 
@@ -126,17 +131,19 @@ export class DelegationsIndexService {
   /*
    * Private methods
    * */
-  private async saveToIndex({
-    delegations,
-    deleted,
-  }: {
-    delegations: DelegationIndexInfo[]
-    deleted: DelegationIndexInfo[]
-  }) {
+  private async saveToIndex({ created, updated, deleted }: SortedDelegations) {
     await Promise.all([
-      this.delegationIndexModel.bulkCreate(delegations, {
-        updateOnDuplicate: ['validTo'],
-      }),
+      this.delegationIndexModel.bulkCreate(created),
+      updated.map((d) =>
+        this.delegationIndexModel.update(d, {
+          where: {
+            fromNationalId: d.fromNationalId,
+            toNationalId: d.toNationalId,
+            provider: d.provider,
+            type: d.type,
+          },
+        }),
+      ),
       this.delegationIndexModel.destroy({
         where: {
           fromNationalId: deleted.map((d) => d.fromNationalId),
@@ -148,14 +155,38 @@ export class DelegationsIndexService {
     ])
   }
 
-  private getDeletedDelegationIndexItems(
+  private sortDelegation(
     currItems: DelegationIndex[],
     newItems: DelegationIndexInfo[],
-  ) {
-    return currItems.filter(
+  ): SortedDelegations {
+    const { created, updated } = newItems.reduce(
+      (acc, curr) => {
+        const existing = currItems.find(
+          (d) => d.fromNationalId === curr.fromNationalId,
+        )
+
+        if (existing) {
+          if (existing.validTo !== curr.validTo) {
+            acc.updated.push(curr)
+          }
+        } else {
+          acc.created.push(curr)
+        }
+
+        return acc
+      },
+      { created: [], updated: [] } as {
+        created: DelegationIndexInfo[]
+        updated: DelegationIndexInfo[]
+      },
+    )
+
+    const deleted = currItems.filter(
       (delegation) =>
         !newItems.some((d) => d.fromNationalId === delegation.fromNationalId),
     )
+
+    return { deleted, created, updated }
   }
 
   private async getCustomDelegations(nationalId: string) {
@@ -173,13 +204,7 @@ export class DelegationsIndexService {
       },
     )
 
-    return {
-      delegations: delegations,
-      deleted: this.getDeletedDelegationIndexItems(
-        currentDelegationIndexItems,
-        delegations,
-      ),
-    }
+    return this.sortDelegation(currentDelegationIndexItems, delegations)
   }
 
   private async getRepresentativeDelegations(nationalId: string) {
@@ -197,13 +222,7 @@ export class DelegationsIndexService {
       },
     )
 
-    return {
-      delegations: delegations,
-      deleted: this.getDeletedDelegationIndexItems(
-        currentDelegationIndexItems,
-        delegations,
-      ),
-    }
+    return this.sortDelegation(currentDelegationIndexItems, delegations)
   }
 
   private async getCompanyDelegations(user: User) {
@@ -221,13 +240,7 @@ export class DelegationsIndexService {
       },
     )
 
-    return {
-      delegations: delegations,
-      deleted: this.getDeletedDelegationIndexItems(
-        currentDelegationIndexItems,
-        delegations,
-      ),
-    }
+    return this.sortDelegation(currentDelegationIndexItems, delegations)
   }
 
   private async getWardDelegations(user: User) {
@@ -245,12 +258,6 @@ export class DelegationsIndexService {
       },
     )
 
-    return {
-      delegations: delegations,
-      deleted: this.getDeletedDelegationIndexItems(
-        currentDelegationIndexItems,
-        delegations,
-      ),
-    }
+    return this.sortDelegation(currentDelegationIndexItems, delegations)
   }
 }

@@ -68,21 +68,26 @@ describe('DelegationsIndexService', () => {
   })
 
   beforeEach(async () => {
-    const mockedDate = testDate
-
-    jest.useFakeTimers()
-    jest.setSystemTime(mockedDate)
-
     // remove all delegation meta and delegations
     await delegationIndexMetaModel.destroy({ where: {} })
   })
 
-  afterEach(() => {
-    jest.useRealTimers()
-  })
-
   describe('indexDelegations', () => {
     describe('delegation index meta logic', () => {
+      beforeEach(async () => {
+        const mockedDate = testDate
+
+        jest.useFakeTimers()
+        jest.setSystemTime(mockedDate)
+
+        // remove all delegation meta and delegations
+        await delegationIndexMetaModel.destroy({ where: {} })
+      })
+
+      afterEach(() => {
+        jest.useRealTimers()
+      })
+
       it('should not index delegations if next reindex date is in the future', async () => {
         const nextReindex = new Date(testDate.getTime() + 1000) // future date
         const lastFullReindex = new Date(testDate.getTime() - 1000)
