@@ -53,7 +53,7 @@ const Confirmation = () => {
 
   const { user } = useContext(UserContext)
 
-  async function signRuling() {
+  const signRuling = async () => {
     const shouldSign =
       isCompletedCase(workingCase.state) ||
       (await transitionCase(
