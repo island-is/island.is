@@ -213,6 +213,10 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                   })}
                   <Box display="flex" justifyContent="center">
                     <Button
+                      disabled={
+                        typeof slice.configJson?.maxLoanCount === 'number' &&
+                        loans.length >= slice.configJson.maxLoanCount
+                      }
                       onClick={() => {
                         loansFieldArray.append({
                           value: undefined,
