@@ -19,6 +19,7 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
+  UserContext,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -33,9 +34,13 @@ import * as styles from './Overview.css'
 const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { user } = useContext(UserContext)
   const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
     'noModal',
   )
+  const [appealConfirmationDecision, setAppealConfirmationDecision] = useState<
+    'confirmAppeal' | 'denyAppeal'
+  >()
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
@@ -100,6 +105,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 id="confirmAppeal"
                 backgroundColor="white"
                 label={formatMessage(strings.overview.confirmAppeal)}
+                checked={appealConfirmationDecision === 'confirmAppeal'}
+                onChange={() => setAppealConfirmationDecision('confirmAppeal')}
               />
               <RadioButton
                 large
@@ -107,6 +114,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 id="denyAppeal"
                 backgroundColor="white"
                 label={formatMessage(strings.overview.denyAppeal)}
+                checked={appealConfirmationDecision === 'denyAppeal'}
+                onChange={() => setAppealConfirmationDecision('denyAppeal')}
               />
             </div>
           </BlueBox>
