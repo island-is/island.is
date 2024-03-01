@@ -20,6 +20,7 @@ export async function switchDelegation(
   const delegationName = await firstDelegation
     .locator('.identity-card--name')
     .textContent()
+
   expect(delegationName).toBeTruthy()
 
   await firstDelegation.click()
@@ -93,7 +94,7 @@ test('Service portal can use english sign-in', async ({ browser }) => {
   await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
 
   // Act
-  await page.getByRole('link', { name: 'English' }).click()
+  await page.getByText('English').click()
 
   // Assert
   await expect(

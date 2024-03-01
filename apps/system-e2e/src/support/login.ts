@@ -6,6 +6,7 @@ export type CognitoCreds = {
   username: string
   password: string
 }
+
 function getCognitoCredentials(): CognitoCreds {
   const username = process.env.AWS_COGNITO_USERNAME
   const password = process.env.AWS_COGNITO_PASSWORD
@@ -15,6 +16,7 @@ function getCognitoCredentials(): CognitoCreds {
     password,
   }
 }
+
 export const cognitoLogin = async (
   page: Page,
   home: string,
@@ -51,14 +53,17 @@ export async function idsLogin(
   const btn = page.locator('button[id="submitPhoneNumber"]')
   await expect(btn).toBeEnabled()
   await btn.click()
-  await page.waitForURL(new RegExp(`${home}|${urls.authUrl}/delegation`), {
-    waitUntil: 'domcontentloaded',
-  })
+  await page.waitForURL(
+    new RegExp(`${home}|${urls.authUrl}/(app/)?delegation`),
+    {
+      waitUntil: 'domcontentloaded',
+    },
+  )
 
   // Handle delegation on login
   if (page.url().startsWith(urls.authUrl)) {
     debug('Still on auth site')
-    const delegations = page.locator('button[name="SelectedNationalId"]')
+    const delegations = page.locator('.identity-card--name')
     await expect(delegations).not.toHaveCount(0)
     // Default to the first delegation
     if (!delegation) await delegations.first().click()
