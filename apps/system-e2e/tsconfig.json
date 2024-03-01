@@ -3,6 +3,7 @@
   "baseUrl": ".",
   "compileOnSave": false,
   "compilerOptions": {
+    "jsx": "preserve",
     "outDir": "../../../dist/out-tsc",
     "types": ["node"],
     "sourceMap": true
