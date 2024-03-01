@@ -136,7 +136,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealJudge3 {
       id
       name
-      canConfirmAppeal
     }
     prosecutorsOffice {
       id
