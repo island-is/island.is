@@ -553,8 +553,8 @@ export interface StaticTableField extends BaseField {
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   summary?:
-    | { label: StaticText; value: StaticText }
-    | ((application: Application) => { label: StaticText; value: StaticText })
+    | { label: StaticText; value: StaticText }[]
+    | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
 export type Field =
