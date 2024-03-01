@@ -1,10 +1,10 @@
 import { computeCountryResidence } from './computeCountryResidence'
 import { DAY } from './constants'
-import { getDayCountThisYear } from '@island.is/shared/utils'
+import isLeapYear from "date-fns/isLeapYear";
 
 jest.useFakeTimers()
 
-const dayCountThisYear = getDayCountThisYear()
+const dayCountThisYear = isLeapYear(new Date()) ? 366 : 365
 
 const d = new Date().getTime()
 
