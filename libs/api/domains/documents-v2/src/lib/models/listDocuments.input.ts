@@ -7,6 +7,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql'
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsISO8601,
@@ -54,8 +55,8 @@ export class DocumentsInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  readonly categoryId?: string
+  @IsArray()
+  readonly categoryIds?: Array<string>
 
   @Field({ nullable: true })
   @IsOptional()

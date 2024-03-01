@@ -67,27 +67,25 @@ export class DocumentService {
     input: DocumentsInput,
   ): Promise<PaginatedDocuments> {
     //If a delegated user is viewing the mailbox, do not return any health related data
-    const { categoryId, ...restOfInput } = input
-    let mutableCategoryId = categoryId
+    //Category is now "1,2,3,...,n"
+    const { categoryIds, ...restOfInput } = input
+    let mutableCategoryIds = categoryIds ?? []
 
     if (input.isLegalGuardian) {
-      if (!mutableCategoryId) {
-        const allCategoriesExceptHealth = (
-          await this.getCategories(nationalId)
-        ).filter((c) => c.id !== HEALTH_CATEGORY_ID)
-
-        mutableCategoryId = allCategoriesExceptHealth
-          .map((x) => x.id)
-          .filter(isDefined)
-          .join()
+      if (!mutableCategoryIds.length) {
+        mutableCategoryIds = (await this.getCategories(nationalId, true)).map(
+          (c) => c.id,
+        )
       } else {
-        mutableCategoryId = categoryId?.replace(HEALTH_CATEGORY_ID, '')
+        mutableCategoryIds = mutableCategoryIds.filter(
+          (c) => c === HEALTH_CATEGORY_ID,
+        )
       }
     }
 
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
-      categoryId: mutableCategoryId,
+      categoryId: mutableCategoryIds.join(),
     })
 
     if (!documents?.totalCount) {
@@ -122,7 +120,10 @@ export class DocumentService {
     }
   }
 
-  async getCategories(nationalId: string): Promise<Array<Category>> {
+  async getCategories(
+    nationalId: string,
+    filterHealth = false,
+  ): Promise<Array<Category>> {
     const categories = await this.documentService.getCustomersCategories(
       nationalId,
     )
@@ -130,7 +131,7 @@ export class DocumentService {
     return (
       categories.categories
         ?.map((c) => {
-          if (!c.id) {
+          if (!c.id || (filterHealth && c.id === HEALTH_CATEGORY_ID)) {
             return null
           }
           return {
