@@ -16,6 +16,11 @@ export type VehiclesCurrentVehicle = {
   requireMileage?: boolean | null
 }
 
+export type CurrentVehiclesAndRecords = {
+  totalRecords: number
+  vehicles: VehiclesCurrentVehicle[]
+}
+
 type VehicleValidationErrorMessage = {
   errorNo?: string | null
   defaultMessage?: string | null

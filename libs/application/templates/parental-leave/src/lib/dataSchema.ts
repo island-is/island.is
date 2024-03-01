@@ -18,6 +18,7 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   NO_UNEMPLOYED_BENEFITS,
+  Languages,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
@@ -113,6 +114,7 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.phoneNumber },
     ),
+    language: z.enum([Languages.IS, Languages.EN]),
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,

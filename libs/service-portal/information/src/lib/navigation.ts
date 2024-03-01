@@ -41,6 +41,17 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.Lists,
       children: [
         {
+          name: m.signatureCollectionLists,
+          path: SignatureCollectionPaths.SignatureCollectionLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.ViewList,
+            },
+          ],
+        },
+        {
           name: m.generalPetitions,
           path: PetitionPaths.Petitions,
           children: [
@@ -53,17 +64,6 @@ export const informationNavigation: PortalNavigationItem = {
               name: m.viewPetition,
               navHide: true,
               path: PetitionPaths.PetitionListOwned,
-            },
-          ],
-        },
-        {
-          name: m.signatureCollectionLists,
-          path: SignatureCollectionPaths.SignatureCollectionLists,
-          children: [
-            {
-              name: m.viewSignatureList,
-              navHide: true,
-              path: SignatureCollectionPaths.ViewList,
             },
           ],
         },

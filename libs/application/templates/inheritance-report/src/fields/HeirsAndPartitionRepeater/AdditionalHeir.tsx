@@ -194,6 +194,7 @@ export const AdditionalHeir = ({
                 requiredNationalId: true,
               },
             }}
+            backgroundColor="blue"
             error={error}
           />
         </Box>
@@ -243,7 +244,7 @@ export const AdditionalHeir = ({
               ) : null}
 
               {customField.id === 'relation' ? (
-                <GridColumn span="1/1" paddingBottom={2}>
+                <GridColumn span="1/2" paddingBottom={2}>
                   <SelectController
                     id={relationField}
                     name={relationField}
@@ -259,7 +260,7 @@ export const AdditionalHeir = ({
                   />
                 </GridColumn>
               ) : customField.id === 'heirsPercentage' ? (
-                <GridColumn span={['1/2']} paddingBottom={2}>
+                <GridColumn span="1/2" paddingBottom={2}>
                   <InputController
                     id={`${fieldIndex}.${customField.id}`}
                     name={`${fieldIndex}.${customField.id}`}
@@ -268,6 +269,7 @@ export const AdditionalHeir = ({
                     defaultValue={defaultValue ? defaultValue : '0'}
                     type="number"
                     suffix="%"
+                    backgroundColor="blue"
                     onChange={(
                       event: React.ChangeEvent<
                         HTMLInputElement | HTMLTextAreaElement
@@ -330,6 +332,7 @@ export const AdditionalHeir = ({
                 field={{
                   id: `${fieldIndex}.advocate`,
                 }}
+                backgroundColor="blue"
                 error={error}
               />
             </GridColumn>
@@ -359,25 +362,27 @@ export const AdditionalHeir = ({
           </GridRow>
         </Box>
       )}
-      <GridColumn span="1/1" paddingBottom={2}>
-        <Box width="half">
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: YES,
-              },
-            ]}
-            onSelect={(val) => {
-              setValue(foreignCitizenshipField, val)
-            }}
-          />
-        </Box>
-      </GridColumn>
+      <GridRow>
+        <GridColumn span="1/1" paddingBottom={2}>
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
+            />
+          </Box>
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }

@@ -51,7 +51,7 @@ export const setupWithAuth = async ({
       ),
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 
@@ -64,7 +64,7 @@ export const setupWithoutScope = async (): Promise<TestApp> => {
     appModule: AppModule,
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 
@@ -74,7 +74,9 @@ export const setupWithoutScope = async (): Promise<TestApp> => {
 export const setupWithoutAuth = async (): Promise<TestApp> => {
   const app = await testServer({
     appModule: AppModule,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+    ],
   })
 
   return app

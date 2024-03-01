@@ -45,7 +45,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.active.summary',
-      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
       description: '',
     },
   }),
@@ -73,18 +73,6 @@ export const errorMessages = {
       description: '',
     },
   }),
-  owner: defineMessages({
-    title: {
-      id: 'sls.application:error.owner.title',
-      defaultMessage: 'Þú átt nú þegar lista í öllum söfnunarsvæðum',
-      description: '',
-    },
-    summary: {
-      id: 'sls.application:error.owner.summary',
-      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
-      description: '',
-    },
-  }),
   deniedByService: defineMessages({
     title: {
       id: 'sls.application:error.deniedByService.title',
@@ -93,7 +81,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.deniedByService.summary',
-      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
       description: '',
     },
   }),
