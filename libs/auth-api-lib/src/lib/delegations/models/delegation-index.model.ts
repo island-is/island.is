@@ -14,7 +14,7 @@ import {
 
 @Table({
   tableName: 'delegation_index',
-  timestamps: false,
+  timestamps: true,
 })
 export class DelegationIndex extends Model<
   InferAttributes<DelegationIndex>,
