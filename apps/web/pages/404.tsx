@@ -58,14 +58,6 @@ const NotFoundPage: React.FC = () => {
     },
   })
 
-  // Temporary "fix", see https://github.com/vercel/next.js/issues/16931 for details
-  useEffect(() => {
-    const els = document.querySelectorAll('link[href*=".css"]')
-    Array.prototype.forEach.call(els, (el) => {
-      el.setAttribute('rel', 'stylesheet')
-    })
-  }, [])
-
   useEffect(() => {
     if (!activeLocale || !apolloClient) {
       return
@@ -75,10 +67,6 @@ const NotFoundPage: React.FC = () => {
       apolloClient: apolloClient as ApolloClient<NormalizedCacheObject>,
       locale: activeLocale,
       query,
-      req: {
-        url: window.location.href,
-      },
-      res: undefined,
     }).then((props) => setLayoutProps(props))
   }, [activeLocale, apolloClient, query])
 
@@ -99,7 +87,6 @@ const NotFoundPage: React.FC = () => {
       } else if (page) {
         if (!isRedirecting.current) {
           isRedirecting.current = true
-
           replace(linkResolver(page.type as LinkType, [page.slug]).href)
         }
       }
@@ -115,7 +102,6 @@ const NotFoundPage: React.FC = () => {
   return (
     <I18n locale={activeLocale} translations={layoutProps?.namespace ?? {}}>
       <Wrapper {...layoutProps}>
-        asdf
         {!errorPageDataLoading && (
           <ErrorScreen
             statusCode={STATUS_CODE}

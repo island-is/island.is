@@ -8,7 +8,7 @@ export type ScreenContext = {
   apolloClient: ApolloClient<NormalizedCacheObject>
   locale: string
   res?: GetServerSidePropsContext['res']
-  req: GetServerSidePropsContext['req'] | { url: string }
+  req?: GetServerSidePropsContext['req']
 }
 
 export type Screen<Props = {}> = ComponentType<Props> & {
