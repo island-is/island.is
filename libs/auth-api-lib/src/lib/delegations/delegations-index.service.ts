@@ -144,14 +144,16 @@ export class DelegationsIndexService {
           },
         }),
       ),
-      this.delegationIndexModel.destroy({
-        where: {
-          fromNationalId: deleted.map((d) => d.fromNationalId),
-          toNationalId: deleted.map((d) => d.toNationalId),
-          provider: deleted.map((d) => d.provider),
-          type: deleted.map((d) => d.type),
-        },
-      }),
+      deleted.map((d) =>
+        this.delegationIndexModel.destroy({
+          where: {
+            fromNationalId: d.fromNationalId,
+            toNationalId: d.toNationalId,
+            provider: d.provider,
+            type: d.type,
+          },
+        }),
+      ),
     ])
   }
 
