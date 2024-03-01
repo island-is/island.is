@@ -68,7 +68,6 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
@@ -176,7 +175,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const n = useNamespace(namespace)
-  useSetZIndexOnHeader()
 
   const isMobileScreenWidth = width < theme.breakpoints.lg
   const isTabletScreenWidth = width < theme.breakpoints.xl
@@ -1478,5 +1476,4 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
 
 export default withMainLayout(UniversitySearch, {
   showFooter: false,
-  headerColorScheme: 'white',
 })
