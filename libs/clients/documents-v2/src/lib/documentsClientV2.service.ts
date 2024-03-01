@@ -1,23 +1,12 @@
 import {
   CustomersApi,
-  CustomersArchiveRequest,
-  CustomersBatchArchiveRequest,
-  CustomersBatchBookmarkRequest,
-  CustomersBatchReadDocumentsRequest,
-  CustomersBookmarkRequest,
-  CustomersCategoriesRequest,
   CustomersListDocumentsOrderEnum,
   CustomersListDocumentsSortByEnum,
-  CustomersMessageTypesRequest,
-  CustomersSendersRequest,
-  CustomersUnarchiveRequest,
-  CustomersUnbookmarkRequest,
-  CustomersUpdatePaperMailPreferenceRequest,
   CustomersWantsPaperMailRequest,
 } from '../../gen/fetch'
 import { Injectable } from '@nestjs/common'
 import { DocumentDto, mapToDocument } from './dto/document.dto'
-import { ListDocumentsInputDto } from './dto/listDocuments.input.dto'
+import { ListDocumentsInputDto } from './dto/listDocuments.input'
 import { ListDocumentsDto } from './dto/documentList.dto'
 import { isDefined } from '@island.is/shared/utils'
 import { mapToDocumentInfoDto } from './dto/documentInfo.dto'
@@ -71,37 +60,75 @@ export class DocumentsClientV2Service {
   getCustomersCategories(nationalId: string) {
     return this.api.customersCategories({ kennitala: nationalId })
   }
-  getCustomersTypes(input: CustomersMessageTypesRequest) {
-    return this.api.customersMessageTypes(input)
+  getCustomersTypes(nationalId: string) {
+    return this.api.customersMessageTypes({ kennitala: nationalId })
   }
-  getCustomersSenders(input: CustomersSendersRequest) {
-    return this.api.customersSenders(input)
+  getCustomersSenders(nationalId: string) {
+    return this.api.customersSenders({ kennitala: nationalId })
   }
   requestPaperMail(input: CustomersWantsPaperMailRequest) {
     return this.api.customersWantsPaperMail(input)
   }
-  updatePaperMailPreferance(body: CustomersUpdatePaperMailPreferenceRequest) {
-    return this.api.customersUpdatePaperMailPreference(body)
+  updatePaperMailPreference(nationalId: string, wantsPaper: boolean) {
+    return this.api.customersUpdatePaperMailPreference({
+      kennitala: nationalId,
+      paperMail: {
+        kennitala: nationalId,
+        wantsPaper: wantsPaper,
+      },
+    })
   }
-  archiveMail(body: CustomersArchiveRequest) {
-    return this.api.customersArchive(body)
+  archiveMail(nationalId: string, documentId: string) {
+    return this.api.customersArchive({
+      kennitala: nationalId,
+      messageId: documentId,
+    })
   }
-  unArchiveMail(body: CustomersUnarchiveRequest) {
-    return this.api.customersUnarchive(body)
+  unarchiveMail(nationalId: string, documentId: string) {
+    return this.api.customersUnarchive({
+      kennitala: nationalId,
+      messageId: documentId,
+    })
   }
-  bookmarkMail(body: CustomersBookmarkRequest) {
-    return this.api.customersBookmark(body)
+  bookmarkMail(nationalId: string, documentId: string) {
+    return this.api.customersBookmark({
+      kennitala: nationalId,
+      messageId: documentId,
+    })
   }
-  unbookmarkMail(body: CustomersUnbookmarkRequest) {
-    return this.api.customersUnbookmark(body)
+  unbookmarkMail(nationalId: string, documentId: string) {
+    return this.api.customersUnbookmark({
+      kennitala: nationalId,
+      messageId: documentId,
+    })
   }
-  batchArchiveMail(body: CustomersBatchArchiveRequest) {
-    return this.api.customersBatchArchive(body)
+
+  batchArchiveMail(
+    nationalId: string,
+    documentIds: Array<string>,
+    status: boolean,
+  ) {
+    return this.api.customersBatchArchive({
+      kennitala: nationalId,
+      batchRequest: { ids: documentIds, status },
+    })
   }
-  batchBookmarkMail(body: CustomersBatchBookmarkRequest) {
-    return this.api.customersBatchBookmark(body)
+
+  batchBookmarkMail(
+    nationalId: string,
+    documentIds: Array<string>,
+    status: boolean,
+  ) {
+    return this.api.customersBatchBookmark({
+      kennitala: nationalId,
+      batchRequest: { ids: documentIds, status },
+    })
   }
-  batchReadMail(body: CustomersBatchReadDocumentsRequest) {
-    return this.api.customersBatchReadDocuments(body)
+
+  batchReadMail(nationalId: string, documentIds: Array<string>) {
+    return this.api.customersBatchReadDocuments({
+      kennitala: nationalId,
+      request: { ids: documentIds },
+    })
   }
 }

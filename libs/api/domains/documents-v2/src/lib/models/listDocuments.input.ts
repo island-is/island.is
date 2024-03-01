@@ -53,7 +53,7 @@ export class DocumentsInput {
   @IsISO8601()
   readonly dateTo?: Date
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
   readonly categoryIds?: Array<string>

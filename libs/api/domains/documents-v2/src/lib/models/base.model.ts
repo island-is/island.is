@@ -5,6 +5,6 @@ export abstract class Base {
   @Field()
   id!: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   name?: string
 }

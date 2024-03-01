@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   CategoryDTO,
   DocumentInfoDTO,
@@ -11,12 +11,20 @@ import { FileType } from './models/documentContent.model'
 import { DocumentsInput } from './models/listDocuments.input'
 import { Category } from './models/category.model'
 import { isDefined } from '@island.is/shared/utils'
-import { HEALTH_CATEGORY_ID } from './document.types'
+import { HEALTH_CATEGORY_ID, customDocuments } from './document.types'
+import { Type } from './models/type.model'
+import { Sender } from './models/sender.model'
+import { PaperMailPreferences } from './models/paperMailPreferences.model'
+import { MailAction } from './models/bulkMailAction.input'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const LOG_CATEGORY = 'documents-api'
 @Injectable()
 export class DocumentService {
-  constructor(private documentService: DocumentsClientV2Service) {}
+  constructor(
+    private documentService: DocumentsClientV2Service,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async findDocumentById(
     nationalId: string,
@@ -141,5 +149,136 @@ export class DocumentService {
         })
         .filter(isDefined) ?? []
     )
+  }
+
+  async getTypes(nationalId: string): Promise<Array<Type>> {
+    const res = await this.documentService.getCustomersTypes(nationalId)
+
+    return (
+      res.types
+        ?.map((t) => {
+          if (!t.id) {
+            return null
+          }
+          return {
+            id: t.id,
+            name: t.name,
+          }
+        })
+        .filter(isDefined) ?? []
+    )
+  }
+
+  async getSenders(nationalId: string): Promise<Array<Sender>> {
+    const res = await this.documentService.getCustomersSenders(nationalId)
+
+    return (
+      res.senders
+        ?.map((s) => {
+          if (!s.kennitala) {
+            return null
+          }
+          return {
+            id: s.kennitala,
+            name: s.name,
+          }
+        })
+        .filter(isDefined) ?? []
+    )
+  }
+
+  async getPaperMailInfo(
+    nationalId: string,
+  ): Promise<PaperMailPreferences | null> {
+    const res = await this.documentService.requestPaperMail({
+      kennitala: nationalId,
+    })
+
+    if (!res.kennitala || !res.wantsPaper) {
+      return null
+    }
+
+    return {
+      wantsPaper: res.wantsPaper,
+      nationalId: res.kennitala,
+    }
+  }
+
+  async postPaperMailInfo(
+    nationalId: string,
+    wantsPaper: boolean,
+  ): Promise<PaperMailPreferences | null> {
+    const res = await this.documentService.updatePaperMailPreference(
+      nationalId,
+      wantsPaper,
+    )
+
+    if (!res.kennitala || !res.wantsPaper) {
+      return null
+    }
+
+    return {
+      wantsPaper: res.wantsPaper,
+      nationalId: res.kennitala,
+    }
+  }
+
+  async postMailAction(
+    nationalId: string,
+    documentId: string | Array<string>,
+    action: MailAction,
+  ) {
+    if (Array.isArray(documentId)) {
+      switch (action) {
+        case MailAction.ARCHIVE:
+          return this.documentService.batchArchiveMail(
+            nationalId,
+            documentId,
+            true,
+          )
+        case MailAction.UNARCHIVE:
+          return this.documentService.batchArchiveMail(
+            nationalId,
+            documentId,
+            false,
+          )
+        case MailAction.BOOKMARK:
+          return this.documentService.batchBookmarkMail(
+            nationalId,
+            documentId,
+            true,
+          )
+        case MailAction.UNBOOKMARK:
+          return this.documentService.batchBookmarkMail(
+            nationalId,
+            documentId,
+            false,
+          )
+        case MailAction.READ:
+          return this.documentService.batchReadMail(nationalId, documentId)
+        default:
+          this.logger.error('Invalid bulk document action', {
+            action,
+            category: LOG_CATEGORY,
+          })
+          throw new Error('Invalid bulk document action')
+      }
+    }
+    switch (action) {
+      case MailAction.ARCHIVE:
+        return this.documentService.archiveMail(nationalId, documentId)
+      case MailAction.UNARCHIVE:
+        return this.documentService.unarchiveMail(nationalId, documentId)
+      case MailAction.BOOKMARK:
+        return this.documentService.bookmarkMail(nationalId, documentId)
+      case MailAction.UNBOOKMARK:
+        return this.documentService.unbookmarkMail(nationalId, documentId)
+      default:
+        this.logger.error('Invalid single document action', {
+          action,
+          category: LOG_CATEGORY,
+        })
+        throw new Error('Invalid single document action')
+    }
   }
 }

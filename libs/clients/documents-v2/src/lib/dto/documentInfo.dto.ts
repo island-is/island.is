@@ -1,7 +1,5 @@
-import { DocumentDTO, DocumentInfoDTO } from '../..'
+import { DocumentInfoDTO } from '../..'
 import { DocumentDto } from './document.dto'
-
-export type FileType = 'pdf' | 'html' | 'url'
 
 export interface DocumentInfoDto
   extends Omit<DocumentDto, 'fileName' | 'fileType' | 'content' | 'date'> {
