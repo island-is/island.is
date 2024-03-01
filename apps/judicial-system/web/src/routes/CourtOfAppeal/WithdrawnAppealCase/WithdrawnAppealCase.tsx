@@ -20,7 +20,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { strings } from './WithdrawnAppealCase.strings'
 
 const WithdrawnAppealCase = () => {
@@ -37,8 +36,6 @@ const WithdrawnAppealCase = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-
-  const previousUrl = `${constants.COURT_OF_APPEAL_CASES_ROUTE}`
 
   const isStepValid = allFilesUploaded && workingCase.appealCaseNumber
 

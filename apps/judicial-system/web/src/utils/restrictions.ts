@@ -70,11 +70,11 @@ export const travelBanRestrictionsCheckboxes = [
   ),
 ]
 
-export function formatCustodyRestrictions(
+export const formatCustodyRestrictions = (
   formatMessage: IntlShape['formatMessage'],
   caseType: CaseType,
   requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
-) {
+) => {
   const restrictions = getSupportedCaseCustodyRestrictions(
     requestedCustodyRestrictions,
   )
