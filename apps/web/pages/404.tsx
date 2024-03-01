@@ -75,7 +75,9 @@ const NotFoundPage: React.FC = () => {
       apolloClient: apolloClient as ApolloClient<NormalizedCacheObject>,
       locale: activeLocale,
       query,
-      req: undefined,
+      req: {
+        url: window.location.href,
+      },
       res: undefined,
     }).then((props) => setLayoutProps(props))
   }, [activeLocale, apolloClient, query])
