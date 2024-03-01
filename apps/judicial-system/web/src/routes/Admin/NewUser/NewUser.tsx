@@ -58,8 +58,6 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
       user.email &&
       user.active !== undefined &&
       user.active !== null &&
-      user.canConfirmAppeal !== undefined &&
-      user.canConfirmAppeal !== null &&
       user.institution
     ) {
       await createUserMutation({
