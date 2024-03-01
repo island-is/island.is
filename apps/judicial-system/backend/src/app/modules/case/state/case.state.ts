@@ -21,7 +21,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.OPEN,
     {
-      fromStates: [CaseState.NEW],
+      fromStates: [CaseState.NEW, CaseState.WAITING_FOR_CONFIRMATION],
       fromAppealStates: [undefined],
       to: { state: CaseState.DRAFT },
     },

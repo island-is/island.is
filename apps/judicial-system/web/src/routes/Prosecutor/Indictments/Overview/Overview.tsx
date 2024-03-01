@@ -45,11 +45,15 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
-      await transitionCase(
+      const caseTransitioned = await transitionCase(
         workingCase.id,
-        CaseTransition.SUBMIT,
+        CaseTransition.ASK_FOR_CONFIRMATION,
         setWorkingCase,
       )
+
+      if (!caseTransitioned) {
+        return
+      }
     }
 
     setModal('caseSubmittedModal')
