@@ -1,7 +1,7 @@
 import ip3country from 'ip3country'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-function getCountryCode(ip?: string): { countryCode: string } {
+const getCountryCode = (ip?: string): { countryCode: string } => {
   if (!ip) {
     return { countryCode: '' }
   } else if (ip.includes('127.0.0.1')) {
