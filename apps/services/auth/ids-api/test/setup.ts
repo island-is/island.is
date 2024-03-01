@@ -117,7 +117,7 @@ export const setupWithAuth = async ({
         .useValue({ getValue: () => true }),
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 
@@ -135,7 +135,9 @@ export const setupWithoutAuth = async (): Promise<TestApp> => {
   const app = await testServer({
     appModule: AppModule,
     enableVersioning: true,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+    ],
   })
 
   return app
@@ -148,7 +150,7 @@ export const setupWithoutPermission = async (): Promise<TestApp> => {
     enableVersioning: true,
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 
