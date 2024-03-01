@@ -67,21 +67,17 @@ describe('DelegationsIndexService', () => {
     await app.cleanUp()
   })
 
-  beforeEach(async () => {
-    // remove all delegation meta and delegations
-    await delegationIndexMetaModel.destroy({ where: {} })
-  })
-
   describe('indexDelegations', () => {
     describe('delegation index meta logic', () => {
       beforeEach(async () => {
+        // remove all delegation meta and delegations
+        await delegationIndexMetaModel.destroy({ where: {} })
+        await delegationIndexModel.destroy({ where: {} })
+
         const mockedDate = testDate
 
         jest.useFakeTimers()
         jest.setSystemTime(mockedDate)
-
-        // remove all delegation meta and delegations
-        await delegationIndexMetaModel.destroy({ where: {} })
       })
 
       afterEach(() => {
@@ -210,6 +206,12 @@ describe('DelegationsIndexService', () => {
       })
 
       beforeEach(async () => {
+        // remove all data
+        await delegationIndexMetaModel.destroy({ where: {} })
+        await delegationIndexModel.destroy({ where: {} })
+        await delegationModel.destroy({ where: {} })
+        await delegationScopeModel.destroy({ where: {} })
+
         // create custom delegations
         await Promise.all(
           testcase.customDelegations.map((delegation) =>
