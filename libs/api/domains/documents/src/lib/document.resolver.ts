@@ -26,6 +26,8 @@ import { PostMailActionResolverInput } from './dto/postMailActionInput'
 import { ActionMailBody } from './models/actionMail.model'
 import { PostBulkMailActionResolverInput } from './dto/postBulkMailActionInput'
 import { BulkMailAction } from './models/bulkMailAction.model'
+import { GetDocumentPageInput } from './dto/documentPageInput'
+import { DocumentPageResponse } from './models/documentPage.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -85,6 +87,15 @@ export class DocumentResolver {
   @Query(() => [DocumentSender], { nullable: true })
   getDocumentSenders(@CurrentUser() user: User): Promise<DocumentSender[]> {
     return this.documentService.getSenders(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentPageResponse)
+  getDocumentPageNumber(
+    @Args('input') input: GetDocumentPageInput,
+    @CurrentUser() user: User,
+  ): Promise<DocumentPageResponse> {
+    return this.documentService.getDocumentPageNumber(input, user.nationalId)
   }
 
   @Scopes(DocumentsScope.main)
