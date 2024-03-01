@@ -35,10 +35,9 @@
     "smoke": {
       "executor": "@nx/playwright:playwright",
       "options": {
-        "debug": true,
-        "grep": "/smoke/"
-      },
-      "dependsOn": ["build"]
+        "config": "{projectRoot}/playwright.config.ts",
+        "skipInstall": true
+      }
     },
     "acceptance": {
       "executor": "@nx/playwright:playwright",

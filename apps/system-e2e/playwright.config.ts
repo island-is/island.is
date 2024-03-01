@@ -16,6 +16,9 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:3000'
  */
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './e2e' }),
+  // build: {
+  //   external: ["@island.is/**"]
+  // },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
@@ -27,40 +30,40 @@ export default defineConfig({
   //   url: 'http://127.0.0.1:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    // Uncomment for mobile browsers support
-    /* {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    }, */
-
-    // Uncomment for branded browsers
-    /* {
-      name: 'Microsoft Edge',
-      use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    },
-    {
-      name: 'Google Chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    } */
-  ],
+  // projects: [
+  //   {
+  //     name: 'chromium',
+  //     use: { ...devices['Desktop Chrome'] },
+  //   },
+  //
+  //   {
+  //     name: 'firefox',
+  //     use: { ...devices['Desktop Firefox'] },
+  //   },
+  //
+  //   {
+  //     name: 'webkit',
+  //     use: { ...devices['Desktop Safari'] },
+  //   },
+  //
+  //   // Uncomment for mobile browsers support
+  //   /* {
+  //     name: 'Mobile Chrome',
+  //     use: { ...devices['Pixel 5'] },
+  //   },
+  //   {
+  //     name: 'Mobile Safari',
+  //     use: { ...devices['iPhone 12'] },
+  //   }, */
+  //
+  //   // Uncomment for branded browsers
+  //   /* {
+  //     name: 'Microsoft Edge',
+  //     use: { ...devices['Desktop Edge'], channel: 'msedge' },
+  //   },
+  //   {
+  //     name: 'Google Chrome',
+  //     use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+  //   } */
+  // ],
 })
