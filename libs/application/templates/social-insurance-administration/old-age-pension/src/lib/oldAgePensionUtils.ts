@@ -259,10 +259,10 @@ export function getApplicationExternalData(
   }
 }
 
-export function getStartDateAndEndDate(
+export const getStartDateAndEndDate = (
   nationalId: string,
   applicationType: ApplicationType,
-) {
+) => {
   // Applicant could apply from the 1st of the month after his/her 65 birthday
   // Until 6 month ahead
   const today = new Date()

@@ -37,7 +37,7 @@ const ActionExtendDeadline = ({
       const res = await extendDeadlineMutation({
         variables: {
           input: {
-            id: listId,
+            listId,
             newEndDate: newEndDate,
           },
         },

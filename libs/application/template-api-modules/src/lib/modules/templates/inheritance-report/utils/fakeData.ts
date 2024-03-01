@@ -45,11 +45,11 @@ export const getFakeData = (): EstateInfo => {
       },
     ],
     estateMembers: [
-      {
-        name: 'Stúfur Mack',
-        relation: 'Sonur',
-        nationalId: '2222222229',
-      },
+      // {
+      //   name: 'Stúfur Mack',
+      //   relation: 'Sonur',
+      //   nationalId: '2222222229',
+      // },
       {
         name: 'Gervimaður Færeyja',
         relation: 'Maki',
