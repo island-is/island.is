@@ -1,7 +1,10 @@
 import { computeCountryResidence } from './computeCountryResidence'
 import { DAY } from './constants'
+import { getDayCountThisYear } from '@island.is/shared/utils'
 
 jest.useFakeTimers()
+
+const dayCountThisYear = getDayCountThisYear()
 
 const d = new Date().getTime()
 
@@ -19,7 +22,7 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      IS: 365,
+      IS: dayCountThisYear,
     })
   })
 
@@ -47,7 +50,7 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      US: 365,
+      US: dayCountThisYear,
     })
   })
 
@@ -91,7 +94,7 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      IS: 265,
+      IS: dayCountThisYear - 100,
       US: 100,
     })
   })
@@ -121,7 +124,7 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      IS: 265,
+      IS: dayCountThisYear - 100,
       US: 100,
     })
   })

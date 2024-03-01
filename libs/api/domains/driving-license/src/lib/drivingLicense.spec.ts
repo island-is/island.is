@@ -24,6 +24,12 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule } from '@island.is/nest/config'
 
+import { getDayCountThisYear } from '@island.is/shared/utils'
+
+
+const daysOfResidency = getDayCountThisYear();
+
+
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
@@ -292,7 +298,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
-            daysOfResidency: 365,
+            daysOfResidency,
             requirementMet: true,
           },
           {
@@ -315,7 +321,7 @@ describe('DrivingLicenseService', () => {
         requirements: [
           {
             key: 'LocalResidency',
-            daysOfResidency: 365,
+            daysOfResidency,
             requirementMet: true,
           },
           {
@@ -348,7 +354,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
-            daysOfResidency: 365,
+            daysOfResidency,
             requirementMet: true,
           },
           {
