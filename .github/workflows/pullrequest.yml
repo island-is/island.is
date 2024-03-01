@@ -167,6 +167,21 @@ jobs:
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
 
+      - name: Check user permissions
+        uses: actions-cool/check-user-permission@v2
+        id: check-permission
+
+      - name: Set magic env if test-everything label is set
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
+        run: |
+          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> $GITHUB_ENV
+
+      - name: Warn if user does not have the required permissions
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] != 'admin' }}
+        run: |
+          echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
+          echo "User $GITHUB_ACTOR does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Prepare lint targets
         id: lint_projects
         run: |
