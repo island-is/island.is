@@ -24,6 +24,24 @@ export const overview = {
     description:
       'Notaður sem titill á "brot" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
   }),
+  appealConfirmationTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.appeal_confirmation_title',
+    defaultMessage: 'Afstaða staðfestingaraðila til ákæru',
+    description:
+      'Notaður sem titill á "Afstaða staðfestingaraðila til ákæru" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
+  }),
+  confirmAppeal: defineMessage({
+    id: 'judicial.system.indictments:overview.confirm_appeal',
+    defaultMessage: 'Staðfesta ákæru og senda á dómstól',
+    description:
+      'Notaður sem texti í valmöguleika um að staðfesta ákæru á yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
+  }),
+  denyAppeal: defineMessage({
+    id: 'judicial.system.indictments:overview.deny_appeal',
+    defaultMessage: 'Hafna ákæru og endursenda til ákæranda',
+    description:
+      'Notaður sem texti í valmöguleika um að hafna ákæru á yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
+  }),
   nextButtonText: defineMessage({
     id: 'judicial.system.indictments:overview.next_button_text',
     defaultMessage:

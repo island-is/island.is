@@ -18,6 +18,7 @@ import {
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
+  SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -87,10 +88,26 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         )}
         <IndictmentCaseFilesList workingCase={workingCase} />
         <Box marginBottom={5}>
+          <SectionHeading
+            title={formatMessage(strings.overview.appealConfirmationTitle)}
+            required
+          />
           <BlueBox>
             <div className={styles.gridRowEqual}>
-              <RadioButton large backgroundColor="white" />
-              <RadioButton large backgroundColor="white" />
+              <RadioButton
+                large
+                name="appealConfirmationDecision"
+                id="confirmAppeal"
+                backgroundColor="white"
+                label={formatMessage(strings.overview.confirmAppeal)}
+              />
+              <RadioButton
+                large
+                name="appealConfirmationDecision"
+                id="denyAppeal"
+                backgroundColor="white"
+                label={formatMessage(strings.overview.denyAppeal)}
+              />
             </div>
           </BlueBox>
         </Box>
