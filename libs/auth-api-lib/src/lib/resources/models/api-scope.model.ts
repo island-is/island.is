@@ -111,7 +111,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   domainName!: string
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
     validate: {

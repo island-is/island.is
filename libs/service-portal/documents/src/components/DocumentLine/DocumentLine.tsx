@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 
 import {
   Document,
@@ -15,7 +15,7 @@ import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import AvatarImage from './AvatarImage'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
@@ -67,6 +67,7 @@ export const DocumentLine: FC<Props> = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const date = format(new Date(documentLine.date), dateFormat.is)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const {
     submitMailAction,
@@ -89,6 +90,13 @@ export const DocumentLine: FC<Props> = ({
   useEffect(() => {
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
+
+  useEffect(() => {
+    const paramId = searchParams.get('id')
+    if (paramId === documentLine.id) {
+      onLineClick()
+    }
+  }, [searchParams.get('id'), documentLine])
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -161,6 +169,14 @@ export const DocumentLine: FC<Props> = ({
   }, [fileLoading])
 
   const onLineClick = async () => {
+    const paramId = searchParams.get('id')
+    if (paramId !== documentLine?.id) {
+      setSearchParams((params) => {
+        params.delete('id')
+        return params
+      })
+    }
+
     getFileByIdData
       ? displayPdf()
       : await getDocument({

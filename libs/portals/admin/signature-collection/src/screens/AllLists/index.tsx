@@ -33,18 +33,20 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 import ListInfo from '../List/components/listInfoAlert'
+import { ListsLoaderReturn } from './AllLists.loader'
+import EmptyState from './components/emptyState'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collectionStatus } = useLoaderData() as {
-    allLists: SignatureCollectionList[]
-    collectionStatus: string
-  }
+  const { allLists, collectionStatus, collectionId } =
+    useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
+  // hasInReview is used to check if any list is in review
+  const [hasInReview, setHasInReview] = useState(false)
   const [filters, setFilters] = useState<Filters>({
     area: [],
     candidate: [],
@@ -85,7 +87,13 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
     // set candidates on initial load of lists
     if (lists.length > 0) {
       const candidates = lists
-        .map((list) => list.candidate.name)
+        .map((list) => {
+          // mapping all lists to check if any are in review
+          if (!list.reviewed) {
+            setHasInReview(true)
+          }
+          return list.candidate.name
+        })
         .filter((value, index, self) => self.indexOf(value) === index)
         .map((candidate) => {
           return {
@@ -126,16 +134,24 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           />
           {collectionStatus !== CollectionStatus.InitialActive && (
             <ListInfo
+              type={
+                collectionStatus === CollectionStatus.InReview && !hasInReview
+                  ? 'success'
+                  : undefined
+              }
               message={formatMessage(
                 collectionStatus === CollectionStatus.InInitialReview
-                  ? m.signatureCollectionInInitialReview
-                  : collectionStatus === CollectionStatus.Processed
-                  ? m.signatureCollectionProcessing
+                  ? hasInReview
+                    ? m.signatureCollectionInInitialReview
+                    : m.signatureCollectionProcessing
                   : collectionStatus === CollectionStatus.Processed
                   ? m.signatureCollectionProcessed
                   : collectionStatus === CollectionStatus.Active
                   ? m.signatureCollectionActive
-                  : m.signatureCollectionInReview,
+                  : collectionStatus === CollectionStatus.InReview &&
+                    hasInReview
+                  ? m.signatureCollectionInReview
+                  : m.signatureCollectionReviewDone,
               )}
             />
           )}
@@ -203,9 +219,8 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 </Filter>
                 {lists?.length > 0 &&
                   allowedToProcess &&
-                  (collectionStatus === CollectionStatus.InInitialReview ||
-                    collectionStatus === CollectionStatus.Processing) && (
-                    <CreateCollection />
+                  collectionStatus === CollectionStatus.InInitialReview && (
+                    <CreateCollection collectionId={collectionId} />
                   )}
               </Box>
             </GridColumn>
@@ -256,7 +271,10 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                             : undefined
                         }
                         cta={
-                          collectionStatus !== CollectionStatus.InitialActive
+                          (allowedToProcess &&
+                            collectionStatus !==
+                              CollectionStatus.InitialActive) ||
+                          !allowedToProcess
                             ? {
                                 label: formatMessage(m.viewList),
                                 variant: 'text',
@@ -285,7 +303,12 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               </Box>
             </Box>
           ) : (
-            <Text>{formatMessage(m.noLists)}</Text>
+            <Box marginTop={10}>
+              <EmptyState
+                title={formatMessage(m.noLists)}
+                description={formatMessage(m.noListsDescription)}
+              />
+            </Box>
           )}
           {lists?.length > 0 && (
             <Box marginTop={5}>
@@ -308,15 +331,17 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           )}
           {lists?.length > 0 && allowedToProcess && (
             <Box>
-              {(collectionStatus === CollectionStatus.Processing ||
-                collectionStatus === CollectionStatus.InInitialReview ||
+              {(collectionStatus === CollectionStatus.InInitialReview ||
                 collectionStatus === CollectionStatus.InReview) && (
-                <CompareLists />
+                <CompareLists collectionId={collectionId} />
               )}
 
-              {collectionStatus === CollectionStatus.Processing && (
-                <ActionCompleteCollectionProcessing />
-              )}
+              {!hasInReview &&
+                collectionStatus === CollectionStatus.InInitialReview && (
+                  <ActionCompleteCollectionProcessing
+                    collectionId={collectionId}
+                  />
+                )}
             </Box>
           )}
         </GridColumn>
