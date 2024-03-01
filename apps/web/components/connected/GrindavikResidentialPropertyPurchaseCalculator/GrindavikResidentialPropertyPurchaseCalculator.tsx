@@ -302,6 +302,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                 '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
               )}
             </Text>
+            <Text variant="small">{n('loanDisclaimer', '')}</Text>
           </Stack>
         </Stack>
       </Box>
