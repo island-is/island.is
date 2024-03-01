@@ -8,7 +8,7 @@ import { m } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/service-portal/core/messages'
 import { mCompany } from '@island.is/service-portal/information/messages'
 import { disableI18n } from '../../../../support/disablers'
-import { switchDelegation } from './auth.spec'
+import { switchDelegation } from './auth-utils'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
