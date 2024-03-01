@@ -12,8 +12,6 @@ import {
   InferCreationAttributes,
 } from 'sequelize'
 
-class CreateOptional<T> {}
-
 @Table({
   tableName: 'delegation_index',
   timestamps: false,
@@ -54,7 +52,7 @@ export class DelegationIndex extends Model<
     type: DataType.DATE,
     allowNull: true,
   })
-  validTo?: CreateOptional<Date> | null
+  validTo?: CreationOptional<Date> | null
 
   @CreatedAt
   readonly created!: CreationOptional<Date>
