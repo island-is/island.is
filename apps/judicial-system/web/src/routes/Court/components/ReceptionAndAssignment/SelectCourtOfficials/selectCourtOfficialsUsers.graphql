@@ -26,6 +26,7 @@ query SelectCourtOfficialsUsers {
       active
     }
     active
+    canConfirmAppeal
     latestLogin
     loginCount
   }
