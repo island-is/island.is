@@ -160,13 +160,13 @@ export class RecyclingRequestService {
   }
 
   endTimers = () => {
-    console.timeEnd('Timer-Samgongustofa-deregistered-total')
-    console.timeEnd('Timer-Samgongustofa-deregistered')
+    console.timeEnd('car-recycling:Timer-Samgongustofa-deregistered-total')
+    console.timeEnd('car-recycling:Timer-Samgongustofa-deregistered')
 
-    console.timeEnd('Timer-Payment-total')
-    console.timeEnd('Timer-Payment')
+    console.timeEnd('car-recycling:Timer-Payment-total')
+    console.timeEnd('car-recycling:Timer-Payment')
 
-    console.timeEnd('Timer-CreateRecyclingRequest')
+    console.timeEnd('car-recycling:Timer-CreateRecyclingRequest')
   }
 
   // Create new RecyclingRequest for citizen and recyclingPartner.
@@ -180,16 +180,23 @@ export class RecyclingRequestService {
     const partnerId = user.partnerId
     const errors = new RequestErrors()
 
-    console.time('Timer-CreateRecyclingRequest')
+    // We are only logging the last 3 chars in the vehicle number
+    const loggedPermno = permno.slice(-3)
+
+    console.time('car-recycling:Timer-CreateRecyclingRequest')
+
+    this.logger.info(`car-recycling: Recycling request ${loggedPermno}`, {
+      requestType: requestType,
+    })
 
     try {
       // nameOfRequestor and partnerId are not required arguments
       // But nameOfRequestor and partnerId could not both be null at the same time
       if (!nameOfRequestor && !partnerId) {
         if (!nameOfRequestor) {
-          this.logger.error(`nameOfRequestor is missing`)
+          this.logger.error(`car-recycling: nameOfRequestor is missing`)
         } else {
-          this.logger.error(`partnerId is missing`)
+          this.logger.error(`car-recycling: partnerId is missing`)
         }
 
         errors.operation = 'Checking arguments'
@@ -201,7 +208,7 @@ export class RecyclingRequestService {
       // partnerId could not be null when create requestType for recyclingPartner.
       if (requestType === 'deregistered' && !partnerId) {
         this.logger.error(
-          `If requestType is deregistered partnerId could not be null when create requestType for recyclingPartner`,
+          `car-recycling: If requestType is deregistered partnerId could not be null when create requestType for recyclingPartner`,
         )
 
         errors.operation = 'Checking partnerId'
@@ -218,7 +225,7 @@ export class RecyclingRequestService {
         )
       ) {
         this.logger.error(
-          `RequestType is not 'pendingRecycle', 'cancelled' or 'deregistered'`,
+          `car-recycling: RequestType is not 'pendingRecycle', 'cancelled' or 'deregistered'`,
         )
 
         errors.operation = 'Checking requestType'
@@ -239,7 +246,10 @@ export class RecyclingRequestService {
         const partner = await this.recycllingPartnerService.findOne(partnerId)
         if (!partner) {
           this.logger.error(
-            `The recycling station is not in the recycling station list`,
+            `car-recycling: The recycling station is not in the recycling station list`,
+            {
+              partnerId,
+            },
           )
 
           errors.operation = 'Checking partner'
@@ -252,7 +262,9 @@ export class RecyclingRequestService {
       // Checking if 'permno' is already in the database
       const vehicle = await this.vehicleService.findByVehicleId(permno)
       if (!vehicle) {
-        this.logger.error(`Citizen has not accepted to recycle the vehicle`)
+        this.logger.error(
+          `car-recycling: Citizen has not accepted to recycle the vehicle`,
+        )
         errors.operation = 'Checking vehicle'
         errors.message = `Citizen has not accepted to recycle the vehicle.`
         return errors
@@ -273,7 +285,7 @@ export class RecyclingRequestService {
         const resRequestType = await this.findAllWithPermno(permno)
         if (!requestType || resRequestType.length == 0) {
           this.logger.error(
-            `Citizen has not accepted to deregistered the vehicle.`,
+            `car-recycling: Citizen has not accepted to deregistered the vehicle.`,
           )
 
           errors.operation = 'Checking vehicle status'
@@ -286,7 +298,7 @@ export class RecyclingRequestService {
             )
           ) {
             this.logger.error(
-              `Citizen has not accepted to recycle the vehicle.`,
+              `car-recycling: Citizen has not accepted to recycle the vehicle.`,
             )
 
             errors.operation = 'Checking vehicle status'
@@ -304,10 +316,13 @@ export class RecyclingRequestService {
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
         } catch (err) {
-          this.logger.error(`Could not start deregistered process.`, {
-            permno: newRecyclingRequest.vehicleId,
-            newRecyclingRequest,
-          })
+          this.logger.error(
+            `car-recycling: Could not start deregistered process.`,
+            {
+              permno: loggedPermno,
+              newRecyclingRequest,
+            },
+          )
 
           errors.operation = 'handOver'
           errors.message = `Could not start deregistered process. Please try again later.`
@@ -316,14 +331,13 @@ export class RecyclingRequestService {
 
         // 3. deregistered vehicle from Samgongustofa
         try {
-          console.time('Timer-Samgongustofa-deregistered-total')
-          console.time('Timer-Samgongustofa-deregistered')
+          console.time('car-recycling:Timer-Samgongustofa-deregistered-total')
+          console.time('car-recycling:Timer-Samgongustofa-deregistered')
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
           this.logger.info(
-            `Degregistering vehicle ${permno} from Samgongustofa`,
+            `car-recycling: Degregistering vehicle ${loggedPermno} from Samgongustofa`,
             {
-              permno,
               mileage: vehicle.mileage ?? 0,
               partnerId,
             },
@@ -339,10 +353,13 @@ export class RecyclingRequestService {
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
           this.logger.error(err.message)
-          this.logger.error(`Deregistered process failed.`, {
-            permno: newRecyclingRequest.vehicleId,
-            newRecyclingRequest,
-          })
+          this.logger.error(
+            `car-recycling: Deregistered process failed. ${loggedPermno}`,
+            {
+              requestType,
+              recyclingPartnerId: newRecyclingRequest.recyclingPartnerId,
+            },
+          )
           errors.operation = 'deregistered'
           errors.message = `deregistered process failed. Please try again later.`
 
@@ -350,7 +367,7 @@ export class RecyclingRequestService {
           return errors
         }
 
-        console.timeEnd('Timer-Samgongustofa-deregistered')
+        console.timeEnd('car-recycling:Timer-Samgongustofa-deregistered')
 
         // 4. Update requestType to 'deregistered'
         let getGuId = new RecyclingRequestModel()
@@ -363,16 +380,17 @@ export class RecyclingRequestService {
           getGuId = await req.save()
         } catch (err) {
           // Log error and continue to payment
-          this.logger.warn(
-            `Failed on inserting requestType 'deregistered' for vehicle's number: ${permno} in database with error: ${err} but we continue to payment.`,
+          this.logger.error(
+            `car-recycling: Failed on inserting requestType 'deregistered' for vehicle's number: ${loggedPermno},
+            )} in database with error: ${err} but we continue to payment.`,
           )
         }
-        console.timeEnd('Timer-Samgongustofa-deregistered-total')
+        console.timeEnd('car-recycling:Timer-Samgongustofa-deregistered-total')
 
         // 5. Call Fjarsysla for payment
         try {
-          console.time('Timer-Payment-total')
-          console.time('Timer-Payment')
+          console.time('car-recycling:Timer-Payment-total')
+          console.time('car-recycling:Timer-Payment')
 
           // Need to send vehicleOwner's nationalId on fjarsysla API
           const vehicle = await this.vehicleService.findByVehicleId(permno)
@@ -385,10 +403,10 @@ export class RecyclingRequestService {
             await req.save()
 
             this.logger.error(
-              `Vehicle has been successful deregistered but payment process failed.`,
+              `car-recycling: Vehicle ${loggedPermno} has been successful deregistered but payment process failed.`,
               {
-                permno: newRecyclingRequest.vehicleId,
-                newRecyclingRequest,
+                requestType,
+                recyclingPartnerId: newRecyclingRequest.recyclingPartnerId,
               },
             )
 
@@ -401,10 +419,9 @@ export class RecyclingRequestService {
             guid = getGuId.id
           }
 
-          this.logger.info(`Payment for vehicle ${permno} from Fjarsyslan`, {
-            permno,
-            guid,
-          })
+          this.logger.info(
+            `car-recycling: Payment for vehicle ${loggedPermno}  from Fjarsyslan`,
+          )
 
           await this.fjarsyslaService.getFjarsysluRest(
             vehicle.ownerNationalId,
@@ -420,10 +437,10 @@ export class RecyclingRequestService {
           await req.save()
 
           this.logger.error(
-            `Vehicle has been successful deregistered but payment process failed.`,
+            `car-recycling: Vehicle ${loggedPermno} has been successful deregistered but payment process failed.`,
             {
-              permno: newRecyclingRequest.vehicleId,
-              newRecyclingRequest,
+              requestType,
+              recyclingPartnerId: newRecyclingRequest.recyclingPartnerId,
             },
           )
 
@@ -434,7 +451,7 @@ export class RecyclingRequestService {
           return errors
         }
 
-        console.timeEnd('Timer-Payment')
+        console.timeEnd('car-recycling:Timer-Payment')
 
         // 6. Update requestType to 'paymentInitiated'
         try {
@@ -446,11 +463,12 @@ export class RecyclingRequestService {
           await req.save()
         } catch (err) {
           // Payment succeed but we could not log it in database
-          this.logger.warn(
-            `Failed on inserting requestType 'paymentInitiated' for vehicle's number: ${permno} in database with error: ${err} but payment has succeed.`,
+          this.logger.error(
+            `car-recycling: Failed on inserting requestType 'paymentInitiated' for vehicle's number: ${loggedPermno}
+            )} in database with error: ${err} but payment has succeed.`,
           )
         }
-        console.timeEnd('Timer-Payment-total')
+        console.timeEnd('car-recycling:Timer-Payment-total')
       }
       // requestType: 'pendingRecycle' or 'cancelled'
       else {
@@ -460,13 +478,16 @@ export class RecyclingRequestService {
       const status = new RequestStatus()
       status.status = true
 
-      console.timeEnd('Timer-CreateRecyclingRequest')
+      console.timeEnd('car-recycling:Timer-CreateRecyclingRequest')
 
       return status
     } catch (err) {
-      this.logger.error(`Something went wrong.`, {
-        err,
-      })
+      this.logger.error(
+        `car-recycling: Something went wrong while saving request for ${loggedPermno}`,
+        {
+          err,
+        },
+      )
 
       errors.operation = 'general'
       errors.message = `Something went wrong. Please try again later.`
