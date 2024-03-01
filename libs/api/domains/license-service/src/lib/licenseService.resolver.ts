@@ -18,24 +18,22 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { GeneratePkPassInput } from '../dto/GeneratePkPass.input'
-import { GetGenericLicenseInput } from '../dto/GetGenericLicense.input'
-import { GetGenericLicensesInput } from '../dto/GetGenericLicenses.input'
-import { VerifyPkPassInput } from '../dto/VerifyPkPass.input'
-import { LicenseServiceService } from '../licenseService.service'
-import {
-  GenericPkPass,
-  GenericPkPassQrCode,
-  GenericPkPassVerification,
-  GenericUserLicense,
-  UserLicensesResponse,
-} from './genericLicense.model'
+import { GeneratePkPassInput } from './dto/GeneratePkPass.input'
+import { GenericPkPass } from './dto/GenericPkPass.dto'
+import { GenericPkPassQrCode } from './dto/GenericPkPassQrCode.dto'
+import { GenericPkPassVerification } from './dto/GenericPkPassVerification.dto'
+import { GenericUserLicense } from './dto/GenericUserLicense.dto'
+import { GetGenericLicenseInput } from './dto/GetGenericLicense.input'
+import { GetGenericLicensesInput } from './dto/GetGenericLicenses.input'
+import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
+import { VerifyPkPassInput } from './dto/VerifyPkPass.input'
+import { LicenseServiceService } from './licenseService.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => GenericUserLicense)
 @Audit({ namespace: '@island.is/api/license-service' })
-export class MainResolver {
+export class LicenseServiceResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
   @Query(() => [GenericUserLicense], {

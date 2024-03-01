@@ -20,10 +20,9 @@ import { Cache as CacheManager } from 'cache-manager/dist/caching'
 
 import pick from 'lodash/pick'
 import ShortUniqueId from 'short-unique-id'
-import {
-  GenericUserLicense,
-  UserLicensesResponse,
-} from './graphql/genericLicense.model'
+import { GenericUserLicense } from './dto/GenericUserLicense.dto'
+import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
+
 import {
   GenericLicenseFetchResult,
   GenericLicenseMapper,

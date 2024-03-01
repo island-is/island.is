@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { verify, sign, SignOptions } from 'jsonwebtoken'
+import { sign, SignOptions, verify } from 'jsonwebtoken'
 
 @Injectable()
 export class TokenService<Data extends Record<string, unknown>> {

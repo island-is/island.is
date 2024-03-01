@@ -76,13 +76,6 @@ export enum GenericUserLicenseMetaLinksType {
 
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
-
-  // TODO(osk) should these be here? or be resolved by client via contentful?
-  // Commented out until talked about, to limit scope of v1
-  /*
-  name: string
-  logo?: string
-  */
 }
 
 export type GenericLicenseMetadata = {
@@ -92,16 +85,6 @@ export type GenericLicenseMetadata = {
   pkpassVerify: boolean
   timeout: number
   orgSlug?: GenericLicenseOrganizationSlug
-
-  // TODO(osk) should these be here? or be resolved by client via contentful?
-  // Commented out until talked about, to limit scope of v1
-  /*
-  title: string
-  ordering: number
-  backgroundImage?: string
-  applicationUrl?: string
-  detailUrl?: string
-  */
 }
 
 export type GenericLicenseOrgdata = {
@@ -115,7 +98,7 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
-  //if any functionality comes attached to said data field, f.x. renewLicense
+  // if any functionality comes attached to said data field, f.x. renewLicense
   link?: GenericUserLicenseMetaLinks
   hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
@@ -152,7 +135,7 @@ export type GenericLicenseFetchResult = {
   fetch: GenericLicenseFetch
 }
 
-// Bit of an awkward type, it contains data from any external API, but we don't know if it's
+// A bit of an awkward type, it contains data from any external API, but we don't know if it's
 // too narrow or not until we bring in more licenses
 export type GenericLicenseUserdataExternal = {
   status: GenericUserLicenseStatus
@@ -189,11 +172,6 @@ export type GenericUserLicense = {
   payload?: GenericUserLicensePayload
 }
 
-export type GenericLicensePkPassResult = {
-  valid?: boolean
-  url?: string
-}
-
 export type PkPassVerificationError = {
   /**
    * Generic placeholder for a status code, could be the HTTP status code, code
@@ -219,17 +197,6 @@ export type PassTemplateIds = {
   machineLicense: string
   disabilityLicense: string
   drivingLicense: string
-}
-
-export type PkPassVerificationData = {
-  id?: string
-  validFrom?: string
-  expirationDate?: string
-  expirationTime?: string
-  status?: string
-  whenCreated?: string
-  whenModified?: string
-  alreadyPaid?: boolean
 }
 
 export type PkPassVerification = {

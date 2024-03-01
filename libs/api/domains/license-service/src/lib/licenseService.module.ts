@@ -7,8 +7,6 @@ import { CacheModule } from '@nestjs/cache-manager'
 import { DynamicModule, Module } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { redisInsStore } from 'cache-manager-ioredis-yet'
-
-import { MainResolver } from '../../../license-service/src/lib/graphql/main.resolver'
 import { LicenseServiceService } from '../../../license-service/src/lib/licenseService.service'
 import { AdrLicensePayloadMapper } from '../../../license-service/src/lib/mappers/adrLicenseMapper'
 import { DisabilityLicensePayloadMapper } from '../../../license-service/src/lib/mappers/disabilityLicenseMapper'
@@ -28,6 +26,8 @@ import {
   LICENSE_MAPPER_FACTORY,
   TOKEN_SERVICE_PROVIDER,
 } from './licenseService.constants'
+
+import { LicenseServiceResolver } from './licenseService.resolver'
 import { TokenService } from './services/token.service'
 
 @Module({})
@@ -63,7 +63,7 @@ export class LicenseServiceModule {
         }),
       ],
       providers: [
-        MainResolver,
+        LicenseServiceResolver,
         LicenseServiceService,
         {
           provide: LOGGER_PROVIDER,
