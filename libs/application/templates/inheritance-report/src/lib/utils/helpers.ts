@@ -24,10 +24,13 @@ export const getEstateDataFromApplication = (
     application.externalData.syslumennOnEntry?.data as {
       inheritanceReportInfos?: Array<InheritanceReportInfo>
     }
-  ).estates?.find((estate) => estate.caseNumber === selectedEstate)
+  ).inheritanceReportInfos?.find(
+    (estate) => estate.caseNumber === selectedEstate,
+  )
+  console.log('estateData', estateData)
 
   return {
-    estate: estateData,
+    inheritanceReportInfo: estateData,
   }
 }
 

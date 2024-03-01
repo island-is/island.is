@@ -25,7 +25,11 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
-import { isValidRealEstate, valueToNumber } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  isValidRealEstate,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 
 type RepeaterProps = {
   field: {
@@ -115,10 +119,9 @@ export const AssetsRepeater: FC<
   }
 
   useEffect(() => {
-    const extData = getValueViaPath(
-      (externalData.syslumennOnEntry?.data as any).estate,
-      fromExternalData ?? '',
-    ) as Record<string, unknown>[]
+    const extData =
+      getEstateDataFromApplication(application).inheritanceReportInfo?.assets ??
+      []
 
     if (
       !(application?.answers as any)?.assets?.[assetKey]?.hasModified &&
