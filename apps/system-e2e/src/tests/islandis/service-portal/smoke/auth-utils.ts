@@ -4,8 +4,6 @@ import { urls } from '../../../../support/urls'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-
-
 export async function switchDelegation(
   page: Page,
   delegationType: 'Prókúra' | 'Forsjá',
