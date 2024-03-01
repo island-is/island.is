@@ -40,4 +40,5 @@ patterns=(
 	'libs/**/clientConfig.json'
 )
 HASH="$(for pattern in "${patterns[@]}"; do git ls-files "$pattern"; done | xargs cat | git hash-object --stdin)" 
-echo $HASH | tr -d '\n'
+echo -n "$HASH"
+
