@@ -6,10 +6,9 @@ import {
 } from '@island.is/island-ui/core'
 import { Modal, ModalProps } from '@island.is/react/components'
 
-import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { useContext, useMemo, useState } from 'react'
+import { FormEvent, useContext, useMemo, useState } from 'react'
 import { TypeCategoryContext } from '../../screens/CategoriesAndTypes/TypeCategoryContext'
 import { useTypeAndCategoryMutation } from './useTypeAndCategoryMutation'
 
@@ -29,7 +28,8 @@ export const AddTypeCategory = ({
     setChecked(!!currentTypeCategory?.active)
   }, [currentTypeCategory?.name, currentTypeCategory?.active])
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     mutationFunction(
       {
         id: currentTypeCategory?.id,
@@ -38,9 +38,7 @@ export const AddTypeCategory = ({
       },
       formatMessage(m.saved),
       formatMessage(m.error),
-    )
-
-    onClose?.()
+    ).finally(() => onClose?.())
   }
 
   const labelCreate =
@@ -66,7 +64,7 @@ export const AddTypeCategory = ({
       }}
       closeButtonLabel={formatMessage(m.close)}
     >
-      <Form method="post">
+      <form onSubmit={handleSubmit}>
         <Box paddingTop={3}>
           <Input
             name="type-or-category"
@@ -102,13 +100,13 @@ export const AddTypeCategory = ({
               loading={isLoading}
               size="small"
               icon="checkmark"
-              onClick={handleSubmit}
+              type="submit"
             >
               {formatMessage(m.save)}
             </Button>
           </Box>
         </Box>
-      </Form>
+      </form>
     </Modal>
   )
 }
