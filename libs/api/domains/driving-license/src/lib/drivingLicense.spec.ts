@@ -24,7 +24,7 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule } from '@island.is/nest/config'
 
-import isLeapYear from "date-fns/isLeapYear";
+import isLeapYear from 'date-fns/isLeapYear'
 
 const daysOfResidency = isLeapYear(new Date()) ? 366 : 365
 

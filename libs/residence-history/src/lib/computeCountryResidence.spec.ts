@@ -1,6 +1,6 @@
 import { computeCountryResidence } from './computeCountryResidence'
 import { DAY } from './constants'
-import isLeapYear from "date-fns/isLeapYear";
+import isLeapYear from 'date-fns/isLeapYear'
 
 jest.useFakeTimers()
 
