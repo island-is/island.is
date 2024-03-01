@@ -3,10 +3,11 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -26,6 +27,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as strings from './Overview.strings'
+import * as styles from './Overview.css'
 
 const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -84,6 +86,14 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Box>
         )}
         <IndictmentCaseFilesList workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <BlueBox>
+            <div className={styles.gridRowEqual}>
+              <RadioButton large backgroundColor="white" />
+              <RadioButton large backgroundColor="white" />
+            </div>
+          </BlueBox>
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

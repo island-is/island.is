@@ -58,9 +58,7 @@ const CreateCaseButton: React.FC<
           title: capitalize(formatMessage(core.indictment)),
         },
       ]
-    }
-
-    if (user.role === UserRole.PROSECUTOR) {
+    } else if (user.role === UserRole.PROSECUTOR) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -79,9 +77,9 @@ const CreateCaseButton: React.FC<
           title: capitalize(formatMessage(core.investigationCase)),
         },
       ]
+    } else {
+      return []
     }
-
-    return []
   }, [formatMessage, user?.role])
 
   return (
@@ -97,7 +95,6 @@ const CreateCaseButton: React.FC<
   )
 }
 
-// Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
