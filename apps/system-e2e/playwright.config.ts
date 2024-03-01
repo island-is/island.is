@@ -16,9 +16,6 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:3000'
  */
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: '.' }),
-  // build: {
-  //   external: ["@island.is/**"]
-  // },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
