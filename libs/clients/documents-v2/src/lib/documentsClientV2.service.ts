@@ -6,8 +6,8 @@ import {
   CustomersBatchReadDocumentsRequest,
   CustomersBookmarkRequest,
   CustomersCategoriesRequest,
-  CustomersDocumentRequest,
-  CustomersListDocumentsRequest,
+  CustomersListDocumentsOrderEnum,
+  CustomersListDocumentsSortByEnum,
   CustomersMessageTypesRequest,
   CustomersSendersRequest,
   CustomersUnarchiveRequest,
@@ -16,20 +16,60 @@ import {
   CustomersWantsPaperMailRequest,
 } from '../../gen/fetch'
 import { Injectable } from '@nestjs/common'
+import { DocumentDto, mapToDocument } from './dto/document.dto'
+import { ListDocumentsInputDto } from './dto/listDocuments.input.dto'
+import { ListDocumentsDto } from './dto/documentList.dto'
+import { isDefined } from '@island.is/shared/utils'
+import { mapToDocumentInfoDto } from './dto/documentInfo.dto'
 
 @Injectable()
 export class DocumentsClientV2Service {
   constructor(private api: CustomersApi) {}
 
-  getDocumentList(input: CustomersListDocumentsRequest) {
-    return this.api.customersListDocuments(input)
+  async getDocumentList(
+    input: ListDocumentsInputDto,
+  ): Promise<ListDocumentsDto | null> {
+    const documents = await this.api.customersListDocuments({
+      ...input,
+      kennitala: input.nationalId,
+      senderKennitala: input.senderNationalId,
+      order: input.order
+        ? CustomersListDocumentsOrderEnum[input.order]
+        : undefined,
+      sortBy: input.sortBy
+        ? CustomersListDocumentsSortByEnum[input.sortBy]
+        : undefined,
+    })
+
+    if (!documents.totalCount) {
+      //throw maybe?
+      return null
+    }
+
+    return {
+      totalCount: documents.totalCount,
+      unreadCount: documents.unreadCount,
+      documents:
+        documents.messages
+          ?.map((m) => mapToDocumentInfoDto(m))
+          .filter(isDefined) ?? [],
+    }
   }
 
-  getCustomersDocument(input: CustomersDocumentRequest) {
-    return this.api.customersDocument(input)
+  async getCustomersDocument(
+    customerId: string,
+    documentId: string,
+  ): Promise<DocumentDto | null> {
+    const document = await this.api.customersDocument({
+      kennitala: customerId,
+      messageId: documentId,
+      authenticationType: 'HIGH',
+    })
+
+    return mapToDocument(document)
   }
-  getCustomersCategories(input: CustomersCategoriesRequest) {
-    return this.api.customersCategories(input)
+  getCustomersCategories(nationalId: string) {
+    return this.api.customersCategories({ kennitala: nationalId })
   }
   getCustomersTypes(input: CustomersMessageTypesRequest) {
     return this.api.customersMessageTypes(input)
