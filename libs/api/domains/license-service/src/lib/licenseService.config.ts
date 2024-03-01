@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { DEFAULT_CACHE_TTL } from './licenseService.constants'
 
 const LicenseServiceConfigSchema = z.object({
+  barcodeSecretKey: z.string(),
   redis: z.object({
     nodes: z.array(z.string()),
     ssl: z.boolean(),
@@ -13,23 +14,21 @@ const LicenseServiceConfigSchema = z.object({
 export const LicenseServiceConfig = defineConfig({
   name: 'LicenseServiceConfig',
   schema: LicenseServiceConfigSchema,
-  load: (env) => {
-    const cacheTtlEnv = env.optional('LICENSE_SERVICE_BARCODES_CACHE_TTL')
-    const cacheTtl = cacheTtlEnv ? Number(cacheTtlEnv) : DEFAULT_CACHE_TTL
-
-    return {
-      redis: {
-        nodes: env.requiredJSON('REDIS_URL_NODE_01', [
-          'localhost:7000',
-          'localhost:7001',
-          'localhost:7002',
-          'localhost:7003',
-          'localhost:7004',
-          'localhost:7005',
-        ]),
-        ssl: env.requiredJSON('REDIS_USE_SSL', false),
-        cacheTtl,
-      },
-    }
-  },
+  load: (env) => ({
+    barcodeSecretKey: env.required('LICENSE_SERVICE_BARCODE_SECRET_KEY'),
+    redis: {
+      nodes: env.requiredJSON('LICENSE_SERVICE_REDIS_NODES', [
+        'localhost:7000',
+        'localhost:7001',
+        'localhost:7002',
+        'localhost:7003',
+        'localhost:7004',
+        'localhost:7005',
+      ]),
+      ssl: env.optionalJSON('LICENSE_SERVICE_REDIS_USE_SSL', false) ?? true,
+      cacheTtl:
+        env.optionalJSON('LICENSE_SERVICE_BARCODES_CACHE_TTL') ??
+        DEFAULT_CACHE_TTL,
+    },
+  }),
 })

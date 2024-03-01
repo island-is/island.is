@@ -141,6 +141,7 @@ import {
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
+import { LicenseServiceConfig } from '@island.is/api/domains/license-service'
 
 import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
@@ -194,9 +195,7 @@ const environment = getConfig
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
-    LicenseServiceModule.register({
-      barcodeSecretKey: environment.licenseService.barcodeSecretKey!,
-    }),
+    LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule.register({
@@ -377,6 +376,7 @@ const environment = getConfig
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
+        LicenseServiceConfig,
       ],
     }),
   ],

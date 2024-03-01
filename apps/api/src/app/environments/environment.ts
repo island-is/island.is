@@ -116,13 +116,6 @@ const prodConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-  licenseService: {
-    barcodeSecretKey: process.env.LICENSE_SERVICE_BARCODE_SECRET_KEY,
-    barcodeCacheTTL: process.env.LICENSE_SERVICE_BARCODES_CACHE_TTL,
-  },
-  redis: {
-    urls: [process.env.REDIS_URL_NODE_01!],
-  },
 })
 const devConfig = () => ({
   production: false,
@@ -256,20 +249,6 @@ const devConfig = () => ({
     cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
-  licenseService: {
-    barcodeSecretKey: process.env.LICENSE_SERVICE_BARCODE_SECRET_KEY,
-    barcodeCacheTTL: process.env.LICENSE_SERVICE_BARCODES_CACHE_TTL,
-  },
-  redis: {
-    urls: [
-      'localhost:7000',
-      'localhost:7001',
-      'localhost:7002',
-      'localhost:7003',
-      'localhost:7004',
-      'localhost:7005',
-    ],
   },
 })
 export const getConfig =

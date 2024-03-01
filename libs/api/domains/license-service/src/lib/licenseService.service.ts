@@ -9,7 +9,6 @@ import { CmsContentfulService } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Locale } from '@island.is/shared/types'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import {
   BadRequestException,
   Inject,
@@ -40,6 +39,7 @@ import {
   AVAILABLE_LICENSES,
   DEFAULT_LICENSE_ID,
   LICENSE_MAPPER_FACTORY,
+  LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
   TOKEN_SERVICE_PROVIDER,
 } from './licenseService.constants'
 import { TokenService } from './services/token.service'
@@ -59,7 +59,8 @@ const { randomUUID } = new ShortUniqueId({ length: 10 })
 export class LicenseServiceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+    @Inject(LICENSE_SERVICE_CACHE_MANAGER_PROVIDER)
+    private readonly cacheManager: CacheManager,
     @Inject(TOKEN_SERVICE_PROVIDER)
     private readonly tokenService: TokenService<LicenseTokenData>,
     private readonly licenseClient: LicenseClientService,
@@ -523,8 +524,6 @@ export class LicenseServiceService {
         nationalId,
         extraData,
         ...pick(genericUserLicense, ['license', 'payload']),
-        license: genericUserLicense.license,
-        payload: genericUserLicense.payload,
       },
       60 * 1000,
     )

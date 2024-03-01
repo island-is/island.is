@@ -70,7 +70,6 @@ export class LicenseServiceResolver {
     )
   }
 
-  @Scopes()
   @ResolveField('barcode', () => String)
   async createBarcode(
     @CurrentUser() user: User,

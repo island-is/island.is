@@ -13,6 +13,9 @@ export const TOKEN_SERVICE_PROVIDER = 'token_service_provider'
 
 export const DEFAULT_LICENSE_ID = 'default'
 
+export const LICENSE_SERVICE_CACHE_MANAGER_PROVIDER =
+  'license_service_cache_manager_provider'
+
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,
