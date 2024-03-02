@@ -28,6 +28,7 @@
 /apps/icelandic-names-registry*/                                                                         @island-is/juni
 /apps/web/screens/PetitionView/                                                                          @island-is/juni
 /libs/cms/                                                                                               @island-is/juni @island-is/stefna
+/libs/residence-history                                                                                  @island-is/juni
 /libs/api/domains/endorsement-system                                                                     @island-is/juni
 /libs/api/domains/icelandic-names-registry/                                                              @island-is/juni
 /libs/clients/rsk/                                                                                       @island-is/juni
@@ -335,6 +336,7 @@ libs/clients/rsk/relationships/                                                 
 
 # DevOps
 /.github/                                                                                                @island-is/devops
+/.githooks/                                                                                              @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops

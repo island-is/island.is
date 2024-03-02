@@ -26,7 +26,6 @@ import {
   Gender,
   InstitutionType,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -1347,64 +1346,6 @@ const useSections = (
   }
 
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
-    console.log([
-      isRestrictionCase(workingCase.type)
-        ? getRestrictionCaseProsecutorSection(workingCase, user)
-        : isInvestigationCase(workingCase.type)
-        ? getInvestigationCaseProsecutorSection(workingCase, user)
-        : getIndictmentCaseProsecutorSection(workingCase, user),
-      isRestrictionCase(workingCase.type)
-        ? getRestrictionCaseCourtSections(workingCase, user)
-        : isInvestigationCase(workingCase.type)
-        ? getInvestigationCaseCourtSections(workingCase, user)
-        : getIndictmentsCourtSections(workingCase, user),
-      {
-        name: formatCaseResult(
-          formatMessage,
-          workingCase,
-          workingCase.parentCase
-            ? workingCase.parentCase.state
-            : workingCase.state,
-        ),
-        isActive:
-          (workingCase.appealState === CaseAppealState.WITHDRAWN &&
-            !workingCase.appealReceivedByCourtDate) ||
-          (!workingCase.parentCase &&
-            isCompletedCase(workingCase.state) &&
-            !workingCase.prosecutorPostponedAppealDate &&
-            !workingCase.accusedPostponedAppealDate &&
-            workingCase.appealState !== CaseAppealState.COMPLETED),
-        children: [],
-      },
-      ...(workingCase.parentCase
-        ? [
-            isRestrictionCase(workingCase.type)
-              ? getRestrictionCaseExtensionSections(workingCase, user)
-              : getInvestigationCaseExtensionSections(workingCase, user),
-            isRestrictionCase(workingCase.type)
-              ? getRestrictionCaseExtensionCourtSections(workingCase, user)
-              : getInvestigationCaseExtensionCourtSections(workingCase, user),
-            {
-              name: formatCaseResult(
-                formatMessage,
-                workingCase,
-                workingCase.state,
-              ),
-              isActive:
-                isCompletedCase(workingCase.state) &&
-                !workingCase.prosecutorPostponedAppealDate &&
-                !workingCase.accusedPostponedAppealDate &&
-                workingCase.appealState !== CaseAppealState.COMPLETED,
-              children: [],
-            },
-          ]
-        : []),
-      ...(!workingCase.appealState ||
-      (workingCase.appealState === CaseAppealState.WITHDRAWN &&
-        !workingCase.appealReceivedByCourtDate)
-        ? []
-        : getCourtOfAppealSections(workingCase, user)),
-    ])
     return [
       isRestrictionCase(workingCase.type)
         ? getRestrictionCaseProsecutorSection(workingCase, user)

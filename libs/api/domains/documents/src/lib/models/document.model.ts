@@ -6,6 +6,9 @@ export class DocumentListResponse {
   @Field(() => Number, { nullable: true })
   totalCount?: number
 
+  @Field(() => Number, { nullable: true })
+  unreadCount?: number
+
   @Field(() => [Document])
   data!: Document[]
 }

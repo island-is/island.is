@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from './constants'
+import { NO, YES } from './constants'
 import {
   customZodError,
   isValidEmail,
@@ -95,7 +95,7 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             foreignBankAccount: z.array(z.enum([YES])).optional(),
-            accountNumber: z.string(),
+            accountNumber: z.string().refine((v) => v),
             balance: z.string().refine((v) => v),
           })
           .array()
@@ -219,7 +219,46 @@ export const inheritanceReportSchema = z.object({
     debtsTotal: z.number().optional(),
   }),
 
-  funeralCostAmount: z.string().refine((v) => v),
+  funeralCost: z
+    .object({
+      build: z.string().optional(),
+      cremation: z.string().optional(),
+      print: z.string().optional(),
+      flowers: z.string().optional(),
+      music: z.string().optional(),
+      rent: z.string().optional(),
+      food: z.string().optional(),
+      tombstone: z.string().optional(),
+      hasOther: z.array(z.enum([YES])).optional(),
+      other: z.string().optional(),
+      otherDetails: z.string().optional(),
+      total: z.string().optional(),
+    })
+    .refine(
+      ({ hasOther, other }) => {
+        if (hasOther && hasOther.length > 0) {
+          return !!other
+        }
+
+        return true
+      },
+      {
+        path: ['other'],
+      },
+    )
+    .refine(
+      ({ hasOther, otherDetails }) => {
+        if (hasOther && hasOther.length > 0) {
+          return !!otherDetails
+        }
+
+        return true
+      },
+      {
+        path: ['otherDetails'],
+      },
+    )
+    .optional(),
 
   /* business */
   business: z.object({
@@ -325,10 +364,10 @@ export const inheritanceReportSchema = z.object({
         // Málsvari
         advocate: z
           .object({
-            name: z.string(),
-            nationalId: z.string(),
-            phone: z.string(),
-            email: z.string(),
+            name: z.string().optional(),
+            nationalId: z.string().optional(),
+            phone: z.string().optional(),
+            email: z.string().optional(),
           })
           .optional(),
       })
@@ -359,7 +398,9 @@ export const inheritanceReportSchema = z.object({
           enabled and whether member has advocate */
       .refine(
         ({ enabled, advocate, phone }) => {
-          return enabled && !advocate ? isValidPhoneNumber(phone) : true
+          return enabled && !advocate?.nationalId
+            ? isValidPhoneNumber(phone)
+            : true
         },
         {
           path: ['phone'],
@@ -367,7 +408,7 @@ export const inheritanceReportSchema = z.object({
       )
       .refine(
         ({ enabled, advocate, email }) => {
-          return enabled && !advocate ? isValidEmail(email) : true
+          return enabled && !advocate?.nationalId ? isValidEmail(email) : true
         },
         {
           path: ['email'],
@@ -377,7 +418,9 @@ export const inheritanceReportSchema = z.object({
       /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
+          return enabled && advocate?.phone
+            ? isValidPhoneNumber(advocate.phone)
+            : true
         },
         {
           path: ['advocate', 'phone'],
@@ -385,7 +428,9 @@ export const inheritanceReportSchema = z.object({
       )
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate ? isValidEmail(advocate.email) : true
+          return enabled && advocate?.email
+            ? isValidEmail(advocate.email)
+            : true
         },
         {
           path: ['advocate', 'email'],
@@ -402,7 +447,47 @@ export const inheritanceReportSchema = z.object({
 
   heirsAdditionalInfo: z.string().optional(),
 
-  totalDeduction: z.string(),
+  spouse: z
+    .object({
+      wasInCohabitation: z.string().optional(),
+      hadSeparateProperty: z.string().optional(),
+      spouseTotalDeduction: z.number().optional(),
+      spouseTotalSeparateProperty: z.number().optional(),
+    })
+    .refine(
+      ({ wasInCohabitation }) => {
+        return wasInCohabitation && [YES, NO].includes(wasInCohabitation)
+      },
+      {
+        path: ['wasInCohabitation'],
+      },
+    )
+    .refine(
+      ({ hadSeparateProperty, wasInCohabitation }) => {
+        if (wasInCohabitation && [NO].includes(wasInCohabitation)) {
+          return true
+        }
+
+        return hadSeparateProperty && [YES, NO].includes(hadSeparateProperty)
+      },
+      {
+        path: ['hadSeparateProperty'],
+      },
+    )
+    .refine(
+      ({ hadSeparateProperty, spouseTotalSeparateProperty }) => {
+        if (hadSeparateProperty && [YES].includes(hadSeparateProperty)) {
+          return spouseTotalSeparateProperty && spouseTotalSeparateProperty > 0
+        }
+
+        return true
+      },
+      {
+        path: ['spouseTotalSeparateProperty'],
+      },
+    ),
+
+  totalDeduction: z.number(),
 
   /* einkaskipti */
   confirmAction: z.array(z.enum([YES])).length(1),

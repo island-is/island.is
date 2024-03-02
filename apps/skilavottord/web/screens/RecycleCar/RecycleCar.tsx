@@ -19,7 +19,10 @@ interface PropTypes {
 }
 
 const RecycleCar = ({ apolloState }: PropTypes) => {
-  const [checkbox, setCheckbox] = useState(false)
+  const router = useRouter()
+  const { id } = router.query
+
+  /* const [checkbox, setCheckbox] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
   const { width } = useWindowSize()
 
@@ -27,8 +30,8 @@ const RecycleCar = ({ apolloState }: PropTypes) => {
     t: { recycle: t, routes },
   } = useI18n()
 
-  const router = useRouter()
-  const { id } = router.query
+
+  
 
   const car = apolloState[`VehicleInformation:${id}`]
 
@@ -67,16 +70,43 @@ const RecycleCar = ({ apolloState }: PropTypes) => {
         </a>
       </Text>
     </>
-  )
+  )*/
 
   return (
+    <ProcessPageLayout
+      processType={'citizen'}
+      activeSection={0}
+      activeCar={id?.toString()}
+    >
+      <h1 style={{ color: 'red' }}>
+        Þessu vefsvæði hefur verið lokað!
+        <br /> Vinsamlegast notaðu{' '}
+        <a href="https://island.is/skilavottord">island.is/skilavottord</a> í
+        staðinn.
+      </h1>
+      <br />
+      <h3 style={{ color: 'red' }}>
+        This website has been closed!
+        <br />
+        Please use{' '}
+        <a href="https://island.is/skilavottord">island.is/skilavottord</a>{' '}
+        instead.
+      </h3>
+    </ProcessPageLayout>
+  )
+
+  /*
+  return (
     <>
-      {car && (
+      {car && ( 
         <ProcessPageLayout
           processType={'citizen'}
           activeSection={0}
           activeCar={id?.toString()}
         >
+          
+
+          
           <Stack space={4}>
             <Text variant="h1">{t.title}</Text>
             <Stack space={2}>
@@ -133,10 +163,13 @@ const RecycleCar = ({ apolloState }: PropTypes) => {
               {t.buttons.continue}
             </Button>
           </Box>
+
+            
         </ProcessPageLayout>
       )}
     </>
   )
+  */
 }
 
 export default RecycleCar

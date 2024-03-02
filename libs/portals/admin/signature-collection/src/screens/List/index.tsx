@@ -71,6 +71,8 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     ? formatMessage(m.listStatusInReviewAlert)
                     : listStatus === ListStatus.Reviewed
                     ? formatMessage(m.listStatusReviewedStatusAlert)
+                    : listStatus === ListStatus.Inactive
+                    ? formatMessage(m.listStatusReviewedStatusAlert)
                     : formatMessage(m.listStatusActiveAlert)
                 }
                 type={
