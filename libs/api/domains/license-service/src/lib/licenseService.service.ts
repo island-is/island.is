@@ -517,7 +517,7 @@ export class LicenseServiceService {
       { expiresIn: '1m' },
     )
 
-    // Store license data in cache so that we can fetch data quickly in the verify endpoint
+    // Store license data in cache so that we can fetch data quickly in the verify resolver method
     const redisPromise = this.cacheManager.set(
       code,
       {

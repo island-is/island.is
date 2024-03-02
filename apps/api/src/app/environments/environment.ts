@@ -1,4 +1,3 @@
-import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import {
   ServerSideFeature,
   ServerSideFeatureClient,
