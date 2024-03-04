@@ -27,7 +27,7 @@ export const SignatureLists: FC<
   return (
     !loading &&
     !openListsLoading && (
-      <Box marginTop={7}>
+      <Box marginTop={10}>
         {(collection?.candidates.length > 0 || openLists?.length > 0) && (
           <Box marginBottom={4}>
             <Text variant="h3">
