@@ -34,6 +34,7 @@ describe('MeLoginRestrictionsController', () => {
       AppModule,
       SequelizeConfigService,
       user: currentUser,
+      dbType: 'postgres',
       override: (builder) =>
         builder
           .overrideProvider(FeatureFlagService)
@@ -166,6 +167,7 @@ describe('MeLoginRestrictionsController', () => {
       const app = await setupApp({
         AppModule,
         SequelizeConfigService,
+        dbType: 'postgres',
         user: createCurrentUser({
           scope: [ApiScope.internal],
         }),
