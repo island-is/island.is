@@ -27,7 +27,9 @@ const generateRandomAsset = (n: number, i = 1): InheritanceReportAsset => {
     share: Math.round(Math.random() * 100),
     assetNumber: String(100000 + Math.round(Math.random() * 899999)),
     description: `${lookup[n]}-${i}`,
-    evaluation: String(1_000_000 + Math.round(Math.random() * 9_000_000)),
+    propertyValuation: String(
+      1_000_000 + Math.round(Math.random() * 9_000_000),
+    ),
   }
 }
 

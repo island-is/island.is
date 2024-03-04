@@ -293,7 +293,7 @@ export interface InheritanceReportAsset {
   description?: string
   assetNumber?: string
   share: number
-  evaluation?: string
+  propertyValuation?: string
 }
 
 export interface InheritanceReportInfo {

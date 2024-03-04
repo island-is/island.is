@@ -512,7 +512,7 @@ const mapInheritanceReportAsset = (
     description: iAsset.lysing,
     assetNumber: iAsset.fastanumer,
     share: iAsset.eignarhlutfall,
-    evaluation: iAsset.fasteignamat,
+    propertyValuation: iAsset.fasteignamat,
   }
 }
 
