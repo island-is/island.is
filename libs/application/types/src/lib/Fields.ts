@@ -528,6 +528,8 @@ export interface FindVehicleField extends BaseField {
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
+  isEnergyFunds?: boolean
+  energyFundsMessages?: Record<string, FormText>
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
