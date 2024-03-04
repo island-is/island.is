@@ -3,6 +3,7 @@ import Fuse from 'fuse.js'
 import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client/react/hooks/useQuery'
 
 import {
   Accordion,
@@ -78,7 +79,6 @@ const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
-  data: Array<UniversityGatewayProgram>
   namespace: Record<string, string>
   filterOptions: Array<UniversityGatewayProgramFilter>
   locale: string
@@ -117,6 +117,11 @@ export interface ComparisonProps {
   iconSrc: string
 }
 
+interface UniversityProgramsQuery {
+  universityGatewayPrograms: {
+    data: Array<UniversityGatewayProgram> // You might want to replace `any` with the actual type of your data items
+  }
+}
 interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
   applicationStatus: string
 }
@@ -138,7 +143,6 @@ const getActiveNavigationItemTitle = (
 }
 
 const UniversitySearch: Screen<UniversitySearchProps> = ({
-  data,
   filterOptions,
   namespace,
   searchQuery,
@@ -146,6 +150,53 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   organizationPage,
   universities,
 }) => {
+  const { data, loading } = useQuery<UniversityProgramsQuery>(
+    GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
+    { ssr: false },
+  )
+
+  const router = useRouter()
+  const { width } = useWindowSize()
+  const n = useNamespace(namespace)
+  const isMobileScreenWidth = width < theme.breakpoints.lg
+  const isTabletScreenWidth = width < theme.breakpoints.xl
+
+  const [selectedPage, setSelectedPage] = useState(1)
+  const [selectedComparison, setSelectedComparison] = useState<
+    Array<ComparisonProps>
+  >([])
+  const [query, setQuery] = useState('')
+  const searchTermHasBeenInitialized = useRef(false)
+  const [originalSortedResults, setOriginalSortedList] = useState<any>([])
+  const [filteredResults, setFilteredResults] = useState<Array<any>>([])
+  const [gridView, setGridView] = useState<boolean>(true)
+  const { linkResolver } = useLinkResolver()
+  const [totalPages, setTotalPages] = useState<number>(
+    0,
+    //Math.ceil(data.length / ITEMS_PER_PAGE),
+  )
+  const [filters, setFilters] = useState<FilterProps>(
+    JSON.parse(JSON.stringify(initialFilters)),
+  )
+
+  useEffect(() => {
+    if (!loading) {
+      const temp = [
+        ...(data?.universityGatewayPrograms.data as UniversityGatewayProgram[]),
+      ]
+        // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
+        .sort(() => Math.random() - 0.5)
+        .map((item: UniversityGatewayProgram, index: number) => {
+          const itemWithStatus = {
+            ...item,
+            applicationStatus: getApplicationStatus(item),
+          }
+          return { item: itemWithStatus, refIndex: index, score: 1 }
+        })
+      setOriginalSortedList(temp)
+    }
+  }, [data, loading])
+
   useEffect(() => {
     if (!filterOptions) return
 
@@ -172,20 +223,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }, [filterOptions, universities])
 
-  const router = useRouter()
-  const { width } = useWindowSize()
-  const n = useNamespace(namespace)
-
-  const isMobileScreenWidth = width < theme.breakpoints.lg
-  const isTabletScreenWidth = width < theme.breakpoints.xl
-
-  const [selectedPage, setSelectedPage] = useState(1)
-  const [selectedComparison, setSelectedComparison] = useState<
-    Array<ComparisonProps>
-  >([])
-  const [query, setQuery] = useState('')
-  const searchTermHasBeenInitialized = useRef(false)
-
   const getApplicationStatus = (item: UniversityGatewayProgram) => {
     const now = new Date()
     return new Date(item.applicationStartDate) <= now &&
@@ -195,35 +232,19 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   // TODO Create proper types here
-  const [originalSortedResults, setOriginalSortedList] = useState<any>(
-    [...data]
-      // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
-      .sort(() => Math.random() - 0.5)
-      .map((item: UniversityGatewayProgram, index: number) => {
-        const itemWithStatus = {
-          ...item,
-          applicationStatus: getApplicationStatus(item),
-        }
-        return { item: itemWithStatus, refIndex: index, score: 1 }
-      }),
-  )
 
-  const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    originalSortedResults,
-  )
-
-  const { linkResolver } = useLinkResolver()
+  // [...data]
+  // // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
+  // .sort(() => Math.random() - 0.5)
+  // .map((item: UniversityGatewayProgram, index: number) => {
+  //   const itemWithStatus = {
+  //     ...item,
+  //     applicationStatus: getApplicationStatus(item),
+  //   }
+  //   return { item: itemWithStatus, refIndex: index, score: 1 }
+  // }),
 
   //creating a deep copy to avoid original being affected by changes to filters
-  const [filters, setFilters] = useState<FilterProps>(
-    JSON.parse(JSON.stringify(initialFilters)),
-  )
-
-  const [gridView, setGridView] = useState<boolean>(true)
-
-  const [totalPages, setTotalPages] = useState<number>(
-    Math.ceil(data.length / ITEMS_PER_PAGE),
-  )
 
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
@@ -274,14 +295,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     ],
   }
 
-  const fuseInstance = new Fuse(
-    data.map((item) => {
-      return { ...item, applicationStatus: getApplicationStatus(item) }
-    }),
-    fuseOptions,
-  )
+  const resetFilteredList = () => {
+    setFilteredResults(originalSortedResults)
+  }
 
   useEffect(() => {
+    if (loading) return
+
+    let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
+    if (originalSortedResults.length > 0) {
+      fuseInstance = new Fuse(
+        data?.universityGatewayPrograms.data || [],
+        fuseOptions,
+      )
+    }
+
     const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
     Object.keys(filters).forEach((key) => {
       const str = key as keyof typeof filters
@@ -303,11 +331,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       setFilteredResults(results)
     }
     localStorage.setItem('savedFilters', JSON.stringify(filters))
-  }, [filters, query])
-
-  const resetFilteredList = () => {
-    setFilteredResults(originalSortedResults)
-  }
+  }, [filters, query, data, loading, originalSortedResults, locale])
 
   const applicationUrlParser = (universityId: string) => {
     const university =
@@ -914,6 +938,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
                     )
                     .map((item, index) => {
+                      console.log(item)
                       const dataItem =
                         item.item as UniversityGatewayProgramWithStatus
                       const specializedName =
@@ -1435,9 +1460,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { universityGatewayPrograms },
-    },
     filters,
     {
       data: { universityGatewayUniversities },
@@ -1452,9 +1474,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
         },
       },
     }),
-    apolloClient.query<GetUniversityGatewayProgramsQuery>({
-      query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    }),
     apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
       query: GET_UNIVERSITY_GATEWAY_FILTERS,
     }),
@@ -1464,7 +1483,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   ])
 
   return {
-    data: universityGatewayPrograms.data,
     searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
