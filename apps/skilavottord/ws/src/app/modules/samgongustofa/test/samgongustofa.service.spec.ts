@@ -3,8 +3,6 @@ import { of } from 'rxjs'
 import { Test } from '@nestjs/testing'
 import { HttpModule, HttpService } from '@nestjs/axios'
 
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-
 import {
   RecyclingRequestService,
   RecyclingRequestModel,
@@ -46,10 +44,6 @@ describe('skilavottordApiTest', () => {
         imports: [HttpModule],
         providers: [
           SamgongustofaService,
-          {
-            provide: LOGGER_PROVIDER,
-            useValue: logger,
-          },
           {
             provide: RecyclingRequestService,
             useClass: jest.fn(() => ({

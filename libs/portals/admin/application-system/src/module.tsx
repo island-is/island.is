@@ -10,7 +10,7 @@ const InstitutionOverview = lazy(() =>
 )
 
 const allowedScopes: string[] = [
-  AdminPortalScope.applicationSystem,
+  AdminPortalScope.applicationSystemAdmin,
   AdminPortalScope.applicationSystemInstitution,
 ]
 const getScreen = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {

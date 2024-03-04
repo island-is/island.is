@@ -226,6 +226,30 @@ You can serve this service locally by running:
 yarn start judicial-system-xrd-api
 ```
 
+## Robot API
+
+This service is for access through xRoad.
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-robot-api
+```
+
+## Digital Mailbox API
+
+This service is for access through xRoad.
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-digital-mailbox-api
+```
+
 ## Scheduler
 
 This service is for running scheduled tasks. Currently, archiving old cases is the only task.

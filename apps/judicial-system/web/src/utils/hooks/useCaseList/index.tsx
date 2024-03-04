@@ -30,10 +30,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import {
-  isTrafficViolationCase,
-  shouldUseAppealWithdrawnRoutes,
-} from '../../stepHelper'
+import { isTrafficViolationCase } from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {

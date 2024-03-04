@@ -65,7 +65,6 @@ import {
 } from '../lib/directorateOfLabour.utils'
 import {
   ChildInformation,
-  ChildrenAndExistingApplications,
   EmployerRow,
   Files,
   OtherParentObj,
@@ -77,9 +76,9 @@ import {
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
-export function getExpectedDateOfBirthOrAdoptionDate(
+export const getExpectedDateOfBirthOrAdoptionDate = (
   application: Application,
-): string | undefined {
+): string | undefined => {
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -95,25 +94,25 @@ export function getExpectedDateOfBirthOrAdoptionDate(
   return selectedChild.expectedDateOfBirth
 }
 
-export function getBeginningOfThisMonth(): Date {
+export const getBeginningOfThisMonth = (): Date => {
   const today = new Date()
   return addDays(today, today.getDate() * -1 + 1)
 }
 
-export function getBeginningOfMonth3MonthsAgo(): Date {
+export const getBeginningOfMonth3MonthsAgo = (): Date => {
   return addMonths(getBeginningOfThisMonth(), -3)
 }
 
-export function getLastDayOfLastMonth(): Date {
+export const getLastDayOfLastMonth = (): Date => {
   const today = new Date()
   return addDays(today, today.getDate() * -1)
 }
 
 // TODO: Once we have the data, add the otherParentPeriods here.
-export function formatPeriods(
+export const formatPeriods = (
   application: Application,
   formatMessage: FormatMessage,
-): TimelinePeriod[] {
+): TimelinePeriod[] => {
   const { periods, firstPeriodStart, addPeriods, tempPeriods } =
     getApplicationAnswers(application.answers)
   const { applicationFundId } = getApplicationExternalData(
@@ -424,6 +423,9 @@ export const getOtherParentOptions = (application: Application) => {
   const spouse = getSpouse(application)
 
   if (spouse) {
+    options.forEach((o) => {
+      o.disabled = true
+    })
     options.unshift({
       value: SPOUSE,
       label: {
@@ -501,12 +503,11 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const { dataProvider, children, existingApplications } =
-    getApplicationExternalData(externalData)
+  const { dataProvider, children } = getApplicationExternalData(externalData)
 
   return (
     dataProvider?.hasActivePregnancy &&
-    (children.length > 0 || existingApplications.length > 0) &&
+    children.length > 0 &&
     dataProvider?.remainingDays > 0
   )
 }
@@ -533,9 +534,9 @@ const getOrFallback = (condition: YesOrNo, value: number | undefined = 0) => {
   return 0
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const dataProvider = getValueViaPath(
     externalData,
     'children.data',
@@ -545,13 +546,7 @@ export function getApplicationExternalData(
     externalData,
     'children.data.children',
     [],
-  ) as ChildrenAndExistingApplications['children']
-
-  const existingApplications = getValueViaPath(
-    externalData,
-    'children.data.existingApplications',
-    [],
-  ) as ChildrenAndExistingApplications['existingApplications']
+  ) as ChildInformation[]
 
   const userEmail = getValueViaPath(
     externalData,
@@ -594,7 +589,6 @@ export function getApplicationExternalData(
     applicationFundId,
     dataProvider,
     children,
-    existingApplications,
     navId,
     userEmail,
     userPhoneNumber,
@@ -602,7 +596,7 @@ export function getApplicationExternalData(
   }
 }
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   let applicationType = getValueViaPath(answers, 'applicationType.option')
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
