@@ -173,7 +173,7 @@ describe('UserProfileController', () => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const domicile = individual.heimilisfang!
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const address = individual.itarupplysingar?.adsetur!
+        const address = individual.itarupplysingar!.adsetur!
         const expected = {
           address: {
             formatted: `${address.husHeiti}\n${address.postnumer} ${address.poststod}\nÍsland`,
