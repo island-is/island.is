@@ -24,7 +24,8 @@ import { formatText, getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
 import format from 'date-fns/format'
-import { MessageDescriptor } from 'react-intl'
+import { formatCurrency } from '@island.is/application/ui-components'
+import { energyFundsLabel } from './FindVehicleFormField.util'
 
 interface VehicleDetails {
   permno: string
@@ -363,40 +364,29 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                   energyDetails.permno
                 }`}
                 text={`${energyDetails.color} - ${
-                  energyFundsMessages &&
-                  formatText(
-                    energyFundsMessages.registrationDate,
-                    application,
-                    formatMessage,
-                  )
-                }: ${
-                  energyDetails.newRegistrationDate &&
-                  format(
-                    new Date(energyDetails.newRegistrationDate),
-                    'dd.MM.yyyy',
-                  )
+                  energyFundsMessages && energyFundsMessages.registrationDate
+                    ? formatText(
+                        energyFundsMessages.registrationDate,
+                        application,
+                        formatMessage,
+                      ) + ': '
+                    : ''
+                }${
+                  energyDetails.newRegistrationDate
+                    ? format(
+                        new Date(energyDetails.newRegistrationDate),
+                        'dd.MM.yyyy',
+                      )
+                    : ''
                 }`}
                 tag={{
-                  label:
-                    (!energyDetails.hasReceivedSubsidy
-                      ? energyFundsMessages &&
-                        formatMessage(
-                          energyFundsMessages.checkboxCheckableTag as MessageDescriptor,
-                          {
-                            amount: energyDetails.vehicleGrant
-                              ? `${formatIsk(energyDetails.vehicleGrant)}`
-                              : energyFundsMessages &&
-                                formatMessage(
-                                  energyFundsMessages.carNotEligable as MessageDescriptor,
-                                ),
-                          },
-                        )
-                      : energyFundsMessages &&
-                        formatText(
-                          energyFundsMessages.checkboxNotCheckable,
-                          application,
-                          formatMessage,
-                        )) ?? '',
+                  label: energyFundsLabel(
+                    energyDetails,
+                    energyFundsMessages,
+                    formatMessage,
+                    formatCurrency,
+                    application,
+                  ),
                   outlined: true,
                   variant:
                     !energyDetails.hasReceivedSubsidy &&
