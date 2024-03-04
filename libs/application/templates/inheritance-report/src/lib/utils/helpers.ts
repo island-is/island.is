@@ -27,7 +27,6 @@ export const getEstateDataFromApplication = (
   ).inheritanceReportInfos?.find(
     (estate) => estate.caseNumber === selectedEstate,
   )
-  console.log('estateData', estateData)
 
   return {
     inheritanceReportInfo: estateData,
