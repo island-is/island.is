@@ -26,7 +26,7 @@ export class DelegationsIncomingRepresentativeService {
   ) {}
 
   async findAllIncoming(
-    user: User,
+    nationalId: string,
     clientAllowedApiScopes?: ApiScopeInfo[],
     requireApiScopes?: boolean,
   ): Promise<DelegationDTO[]> {
@@ -54,7 +54,7 @@ export class DelegationsIncomingRepresentativeService {
 
       const personalRepresentatives =
         await this.prService.getByPersonalRepresentative({
-          nationalIdPersonalRepresentative: user.nationalId,
+          nationalIdPersonalRepresentative: nationalId,
         })
 
       const personPromises = personalRepresentatives.map(
