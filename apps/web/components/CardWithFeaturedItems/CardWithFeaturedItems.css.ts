@@ -8,7 +8,6 @@ export const container = style({
 })
 
 export const icon = style({
-  objectFit: 'cover',
   width: '100%',
   height: 'auto',
   maxWidth: 170,
@@ -16,7 +15,7 @@ export const icon = style({
   ...themeUtils.responsiveStyle({
     xs: {
       maxWidth: 105,
-      maxHeight: 125,
+      maxHeight: 120,
     },
   }),
 })

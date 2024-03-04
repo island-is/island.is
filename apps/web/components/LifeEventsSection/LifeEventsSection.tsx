@@ -57,7 +57,7 @@ export const LifeEventsSection = ({
         third
       >
         {items
-          .slice(0, 3)
+          .slice(0, 6)
           .filter((x: { slug: string; title: string }) => x.slug && x.title)
           .map((lifeEvent, index: number) => {
             return (
@@ -73,39 +73,6 @@ export const LifeEventsSection = ({
                   ]).href
                 }
                 featuredItems={lifeEvent.featured}
-                buttonTitle={
-                  lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
-                    ? lifeEvent.seeMoreText
-                    : 'Skoða lífsviðburð'
-                }
-              />
-            )
-          })}
-      </GridItems>
-      <GridItems
-        mobileItemWidth={270}
-        mobileItemsRows={1}
-        paddingBottom={3}
-        insideGridContainer
-      >
-        {items
-          .slice(3, 7)
-          .filter((x: { slug: string; title: string }) => x.slug && x.title)
-          .map((lifeEvent, index: number) => {
-            return (
-              <IconTitleCard
-                key={index}
-                heading={lifeEvent.shortTitle || lifeEvent.title}
-                imgSrc={lifeEvent.tinyThumbnail?.url ?? ''}
-                alt={lifeEvent.tinyThumbnail?.title ?? ''}
-                dataTestId="lifeevent-card"
-                href={
-                  linkResolver(lifeEvent.__typename as LinkType, [
-                    lifeEvent.slug,
-                  ]).href
-                }
-                reverseOrder={true}
-                withButton={true}
                 buttonTitle={
                   lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
                     ? lifeEvent.seeMoreText
