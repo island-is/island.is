@@ -29,16 +29,24 @@ type SortedDelegations = {
   deleted: DelegationIndexInfo[]
 }
 
-const hasAllSameScopes = (a: string[] | undefined, b: string[] | undefined) => {
+const hasAllSameScopes = (
+  a: string[] | undefined,
+  b: string[] | undefined,
+): boolean => {
   // Only custom delegations have scopes and they are never undefined
   if (!a && !b) {
     return true
   }
 
-  if (a?.length !== b?.length) {
+  if (!a || !b) {
     return false
   }
-  return a?.every((s) => b?.includes(s))
+
+  if (a.length !== b.length) {
+    return false
+  }
+
+  return a.every((s) => b.includes(s))
 }
 
 const toDelegationIndexInfo = (
