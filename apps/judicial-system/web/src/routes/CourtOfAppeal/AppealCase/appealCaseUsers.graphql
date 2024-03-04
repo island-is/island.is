@@ -18,6 +18,7 @@ query AppealCaseUsers {
       active
     }
     active
+    canConfirmAppeal
     latestLogin
     loginCount
   }
