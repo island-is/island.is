@@ -51,11 +51,11 @@ export const SignatureLists: FC<
               .map((list: SignatureCollectionListBase) => {
                 return (
                   <ActionCard
-                    /*eyebrow={
+                    eyebrow={
                       t('openTil', 'Lokadagur:') +
                       ' ' +
                       format(new Date(list.endTime), 'dd.MM.yyyy')
-                    }*/
+                    }
                     key={list.id}
                     backgroundColor="white"
                     heading={list.title}
