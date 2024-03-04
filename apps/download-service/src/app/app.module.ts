@@ -21,7 +21,7 @@ import { VehicleController } from './modules/vehicles-documents/vehicle-document
 import { EducationController } from './modules/education-documents/education-document.controller'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
-import { OccupationalLicensesEducationController } from './modules/occupational-licenses/education-license.controller'
+import { OccupationalLicensesController } from './modules/occupational-licenses/occupational-license.controller'
 import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
 import {
   VehiclesClientConfig,
@@ -48,6 +48,7 @@ import {
   RightsPortalClientConfig,
   RightsPortalClientModule,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { DistrictCommissionersLicensesClientModule } from '@island.is/clients/district-commissioners-licenses'
 @Module({
   controllers: [
     DocumentController,
@@ -57,7 +58,7 @@ import {
     EducationController,
     RegulationDocumentsController,
     WorkMachinesController,
-    OccupationalLicensesEducationController,
+    OccupationalLicensesController,
     HealthPaymentsOverviewController,
   ],
   imports: [
@@ -75,6 +76,7 @@ import {
     RegulationsAdminClientModule,
     RegulationsClientModule,
     WorkMachinesClientModule,
+    DistrictCommissionersLicensesClientModule,
     MMSClientModule,
     RightsPortalClientModule,
     ConfigModule.forRoot({
