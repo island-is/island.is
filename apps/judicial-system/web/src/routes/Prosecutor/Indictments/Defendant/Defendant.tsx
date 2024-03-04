@@ -290,7 +290,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
           )
 
           updateIndictmentCount(workingCase.id, ic.id, {
-            incidentDescription: incidentDescription,
+            incidentDescription,
           } as UpdateIndictmentCount)
         })
     }
