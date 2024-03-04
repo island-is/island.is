@@ -587,10 +587,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-as-much-as-possible',
                       value: YES,
                     },
                     {
                       label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-as-much-as-possible',
                       value: NO,
                     },
                   ],
