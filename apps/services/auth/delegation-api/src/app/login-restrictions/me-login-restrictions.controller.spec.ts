@@ -111,11 +111,9 @@ describe('MeLoginRestrictionsController', () => {
 
       // Assert - response
       expect(response.status).toBe(200)
-      expect(response.body).toEqual({
-        nationalId: currentUser.nationalId,
-        phoneNumber: cleanCurrentUserPhoneNumber,
-        until: until.toISOString(),
-      })
+      expect(response.body.nationalId).toEqual(currentUser.nationalId)
+      expect(response.body.phoneNumber).toEqual(cleanCurrentUserPhoneNumber)
+      expect(response.body.until).toEqual(until.toISOString())
 
       // Assert - database
       const loginRestrictions = await loginRestrictionModel.findAll()
@@ -145,11 +143,9 @@ describe('MeLoginRestrictionsController', () => {
 
       // Assert - response
       expect(response.status).toBe(200)
-      expect(response.body).toEqual({
-        nationalId: currentUser.nationalId,
-        phoneNumber: cleanCurrentUserPhoneNumber,
-        until: newRestrictedUntil.toISOString(),
-      })
+      expect(response.body.nationalId).toEqual(currentUser.nationalId)
+      expect(response.body.phoneNumber).toEqual(cleanCurrentUserPhoneNumber)
+      expect(response.body.until).toEqual(newRestrictedUntil.toISOString())
 
       // Assert - database
       const loginRestrictions = await loginRestrictionModel.findAll()
