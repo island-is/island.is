@@ -141,12 +141,12 @@ export const groupPensionCalculationItems = (
   const groupCutoffValues = (pageData?.configJson?.[
     'groupCutOffValues'
   ] as string[]) ?? [
-    'Samtals frá TR fyrir skatt:',
-    'Samtals frá TR eftir skatt:',
-    'Samtals frá öðrum eftir skatt:',
-    'Samtals fjármagnstekjur eftir skatt:',
-    'Tekjur samtals:',
-    'Samtals ráðstöfunartekjur eftir skatt:',
+    'REIKNH.SAMTALSTRFYRIRSK',
+    'REIKNH.SAMTALSTREFTIRSK',
+    'REIKNH.SAMTALSEFTIRSK',
+    'REIKNH.SAMTFJARMTEKESK',
+    'REIKNH.TEKJURSAMTALS',
+    'REIKNH.SAMTRADSTTEKESK',
   ]
 
   // These values are used as keys in the frontend to display translations
@@ -185,14 +185,22 @@ export const groupPensionCalculationItems = (
   return groups
 }
 
-export const getPensionCalculationHighlightedItem = (
+export const getPensionCalculationHighlightedItems = (
   calculation: TrWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorOutput[],
   pageData: CustomPage | null,
-) => {
-  return calculation?.find(
-    (item) =>
-      item?.name ===
-      (pageData?.configJson?.['highlightedItemName'] ??
-        'Samtals frá TR eftir skatt:'),
-  )
+): PensionCalculationResponse['highlightedItems'] => {
+  const higlightedItemNames = (pageData?.configJson?.[
+    'higlightedItemNames'
+  ] as string[]) ?? ['REIKNH.SAMTRADSTTEKESK', 'REIKNH.SAMTALSTREFTIRSK']
+
+  const highlightedItems = []
+
+  for (const itemName of higlightedItemNames) {
+    const item = calculation.find((item) => item?.name === itemName)
+    if (item) {
+      highlightedItems.push(item)
+    }
+  }
+
+  return highlightedItems
 }
