@@ -61,6 +61,7 @@ export enum ApplicationTypes {
   UNIVERSITY = 'University',
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  DEREGISTER_MACHINE = 'DeregisterMachine',
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   REQUEST_MACHINE_FOR_INSPECTION = 'RequestMachineForInspection',
 }
@@ -317,6 +318,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNIVERSITY]: {
     slug: 'haskolanam',
     translation: 'uni.application',
+  },
+  [ApplicationTypes.DEREGISTER_MACHINE]: {
+    slug: 'afskraning-taekis',
+    translation: 'aosh.drm.application',
   },
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',

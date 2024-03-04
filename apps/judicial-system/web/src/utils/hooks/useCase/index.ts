@@ -53,7 +53,7 @@ export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
   force?: boolean
 }
 
-function isChildKey(key: keyof UpdateCaseInput): key is keyof ChildKeys {
+const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
   return [
     'courtId',
     'prosecutorId',
