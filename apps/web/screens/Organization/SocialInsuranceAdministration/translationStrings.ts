@@ -371,9 +371,9 @@ export const translationStrings = defineMessages({
     description: ' ár',
   },
   ageOfFirst75DisabilityAssessment: {
-    id: 'web.pensionCalculator:yearsSuffix',
-    defaultMessage: ' ár',
-    description: ' ár',
+    id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessment',
+    defaultMessage: 'Fyrsta örorkumat',
+    description: 'Fyrsta örorkumat',
   },
   livingConditionAbroadInYearsPlaceholder: {
     id: 'web.pensionCalculator:livingConditionAbroadInYearsPlaceholder',
