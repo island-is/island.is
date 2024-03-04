@@ -146,6 +146,7 @@ describe('PersonalRepresentativeController', () => {
   })
 
   beforeEach(async () => {
+    jest.clearAllMocks()
     await prRightsModel.destroy({
       where: {},
       cascade: true,
@@ -184,6 +185,9 @@ describe('PersonalRepresentativeController', () => {
         ...errorExpectedStructure,
         statusCode: 400,
       })
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).not.toHaveBeenCalled()
     })
 
     it('POST /v1/personal-representatives should create a new entry', async () => {
@@ -240,6 +244,9 @@ describe('PersonalRepresentativeController', () => {
     it('DELETE /v1/personal-representatives should return BadRequest for invalid uuid', async () => {
       // Test delete personal rep
       await server.delete(`${path}/notexisting`).expect(400)
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).not.toHaveBeenCalled()
     })
   })
 
