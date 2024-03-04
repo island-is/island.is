@@ -62,28 +62,30 @@ export const StaticTableFormField: FC<Props> = ({
             ))}
           </T.Body>
         </T.Table>
-        {summary && (
-          <Box
-            marginTop={3}
-            display={['block', 'block', 'flex']}
-            justifyContent="spaceBetween"
-            alignItems="center"
-            padding={3}
-            borderRadius="large"
-            background="blue100"
-          >
-            <Text
-              variant="medium"
-              fontWeight="semiBold"
-              marginBottom={[1, 1, 0]}
+        {summary &&
+          summary.map((s, index) => (
+            <Box
+              key={`summary-${index}`}
+              marginTop={3}
+              display={['block', 'block', 'flex']}
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={3}
+              borderRadius="large"
+              background="blue100"
             >
-              {formatText(summary.label, application, formatMessage)}
-            </Text>
-            <Text variant="h3" as="span" color="blue400">
-              {formatText(summary.value, application, formatMessage)}
-            </Text>
-          </Box>
-        )}
+              <Text
+                variant="medium"
+                fontWeight="semiBold"
+                marginBottom={[1, 1, 0]}
+              >
+                {formatText(s.label, application, formatMessage)}
+              </Text>
+              <Text variant="h3" as="span" color="blue400">
+                {formatText(s.value, application, formatMessage)}
+              </Text>
+            </Box>
+          ))}
       </Box>
     </Box>
   )

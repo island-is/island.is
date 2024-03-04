@@ -115,6 +115,8 @@ import { SignatureListSigningModule } from './signature-collection/signature-lis
 import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 import { HomeSupportModule } from './home-support/home-support.module'
 import { HomeSupportService } from './home-support/home-support.service'
+import { DeregisterMachineTemplateModule } from './aosh/deregister-machine/deregister-machine.module'
+import { DeregisterMachineTemplateService } from './aosh/deregister-machine/deregister-machine.service'
 import { GrindavikHousingBuyoutModule } from './grindavik-housing-buyout/grindavik-housing-buyout.module'
 import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grindavik-housing-buyout.service'
 
@@ -178,6 +180,7 @@ export const modules = [
   HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
   UniversityModule,
+  DeregisterMachineTemplateModule,
   GrindavikHousingBuyoutModule,
 ]
 
@@ -241,5 +244,6 @@ export const services = [
   HomeSupportService,
   ChangeMachineSupervisorTemplateService,
   UniversityService,
+  DeregisterMachineTemplateService,
   GrindavikHousingBuyoutService,
 ]

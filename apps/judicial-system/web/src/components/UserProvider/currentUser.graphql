@@ -10,6 +10,7 @@ query CurrentUser {
     email
     mobileNumber
     nationalId
+    canConfirmAppeal
     institution {
       id
       created

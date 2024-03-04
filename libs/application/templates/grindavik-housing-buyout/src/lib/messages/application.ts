@@ -7,6 +7,11 @@ export const application = {
       defaultMessage: 'Kaup ríkis á íbúðarhúsnæði í Grindavík',
       description: 'Grindavik Housing Buyout application name',
     },
+    institutionName: {
+      id: 'ghb.application:general.institutionName',
+      defaultMessage: 'Sýslumenn',
+      description: 'Institution name',
+    },
     submit: {
       id: 'ghb.application:general.submit',
       defaultMessage: 'Senda inn umsókn',
@@ -58,6 +63,24 @@ export const application = {
       description: 'Fire insurance value',
     },
   }),
+  additionalOwners: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:additionalOwners.section.title',
+      defaultMessage: 'Aðrir eigendur',
+      description: 'Additional owners section title',
+    },
+    sectionDescription: {
+      id: 'ghb.application:additionalOwners.section.description',
+      defaultMessage:
+        'Hér þarf að slá inn tengiupplýsingar fyrir aðra eigendur fasteignarinnar.',
+      description: 'Additional owners section description',
+    },
+    owner: {
+      id: 'ghb.application:additionalOwners.owner',
+      defaultMessage: 'Eigandi',
+      description: 'Owner',
+    },
+  }),
   loanStatus: defineMessages({
     sectionTitle: {
       id: 'ghb.application:loanStatus.section.title',
@@ -99,6 +122,12 @@ export const application = {
       id: 'ghb.application:loanStatus.saveNewLoan',
       defaultMessage: 'Vista lán',
       description: 'Save new loan',
+    },
+    additionalInfo: {
+      id: 'ghb.application:loanStatus.additionalInfo#markdown',
+      defaultMessage:
+        'Ef þú ert ekki með lán hjá neinum lánveitanda hér fyrir ofan þá getur þú xxx ...',
+      description: 'Loan status info',
     },
   }),
   results: defineMessages({
@@ -149,10 +178,39 @@ export const application = {
       defaultMessage: 'Áhvílandi lán',
       description: 'Total loan text',
     },
+    total: {
+      id: 'ghb.application:results.total',
+      defaultMessage: 'Útgreitt samtals',
+      description: 'Total text',
+    },
     closingPayment: {
       id: 'ghb.application:results.closingPayment',
       defaultMessage: '5% af kaupverði sem er haldið eftir fram að afsali',
       description: 'Closing payment text',
+    },
+    confirmLoanTakeover: {
+      id: 'ghb.application:results.confirmLoanTakeover',
+      defaultMessage: 'Ég óska eftir að áhvílandi veðskuldir verði teknar yfir',
+      description: 'Confirm loan takeover',
+    },
+  }),
+  sellerStatement: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:sellerStatement.section.title',
+      defaultMessage: 'Yfirlýsing seljanda',
+      description: 'Additional info section title',
+    },
+    text: {
+      id: 'ghb.application:sellerStatement.text#markdown',
+      defaultMessage:
+        'Ég átti lögheimili í eigninni þann 10. nóvember 2023 sem var eignin þá og er í þinglýstri eigu minni. Í dag er eignin ekki bústaður fjölskyldu minnar eða notaður við atvinnurekstur maka míns.\n\nÉg veiti ríkinu heimild til þess að afla allra nauðsynlegra upplýsinga og ganga um eignina. Nauðsynleg gögn eru öll þinglýst skjöl, áhvílandi veðskuldir, lánastöðu, stöðu krafna, uppgjörsfjárhæðir og skuldir sem og eiga í samskiptum um uppgjör þeirra.\n\nKaupanda er heimilt að leita eftir stöðu opinberra gjalda sem og stöðu vegna kaupa á hita og rafmagns. Einnig er kaupanda heimilt að kanna kvaðir þær sem á eigninni kunna að hvíla og heimild til að hafa samband við aðila þeim tengdum. Ég lýsi því yfir að ég mun ekki fjarlægja fylgifé fasteignarinnar en með fylgifé er átti við fastar innréttingar, útipallar eða heitur pottur. Ég lýsi því yfir að ég skulda ekki fasteignagjöld, rafmagn, hita eða húsfélag. Yfirlýsing þessi tekur einnig til annara skulda við þriðja aðila vegna eignarinnar.',
+      description: 'Additional info text',
+    },
+    confirmationLabel: {
+      id: 'ghb.application:sellerStatement.confirmationLabel',
+      defaultMessage:
+        'Ég óska eftir því að í kaupsamningi sem gerður verður um eignina verðið kveðið á um forgagnsrétt minn til eignarinnar',
+      description: 'Confirmation label',
     },
   }),
   overview: defineMessages({
@@ -196,6 +254,16 @@ export const application = {
       id: 'ghb.application:overview.loanStatusTitle',
       defaultMessage: 'Staða á láni',
       description: 'Loan status title',
+    },
+    resultTitle: {
+      id: 'ghb.application:overview.resultTitle',
+      defaultMessage: 'Útreikningur',
+      description: 'Result title',
+    },
+    checkboxText: {
+      id: 'ghb.application:overview.checkboxText',
+      defaultMessage: 'Ég skil að...',
+      description: 'Checkbox text',
     },
   }),
 }
