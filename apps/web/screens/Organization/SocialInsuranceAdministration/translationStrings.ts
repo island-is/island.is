@@ -787,6 +787,51 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Samtals ráðstöfunartekjur eftir skatt',
     description: 'Niðurstöðuskjár, Samtals ráðstöfunartekjur eftir skatt',
   },
+  'REIKNH.GRUNNLIFENDURH': {
+    id: 'web.pensionCalculator:REIKNH.GRUNNLIFENDURH',
+    defaultMessage: 'Endurhæfingarlífeyrir',
+    description: 'Niðurstöðuskjár, Endurhæfingarlífeyrir',
+  },
+  'REIKNH.ALDURSVIDBOT': {
+    id: 'web.pensionCalculator:REIKNH.ALDURSVIDBOT',
+    defaultMessage: 'Aldursviðbót',
+    description: 'Niðurstöðuskjár, Aldursviðbót',
+  },
+  'REIKNH.TEKJUTRYGGING': {
+    id: 'web.pensionCalculator:REIKNH.TEKJUTRYGGING',
+    defaultMessage: 'Tekjutrygging',
+    description: 'Niðurstöðuskjár, Tekjutrygging',
+  },
+  'REIKNH.FRAMFAERSLUUPPB': {
+    id: 'web.pensionCalculator:REIKNH.FRAMFAERSLUUPPB',
+    defaultMessage: 'Framfærsluuppbót',
+    description: 'Niðurstöðuskjár, Framfærsluuppbót',
+  },
+  'REIKNH.FRADRSKATTURTR2': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTURTR2',
+    defaultMessage: 'Frádreginn skattur (1. og 2. skattþrep)',
+    description: 'Niðurstöðuskjár, Frádreginn skattur (1. og 2. skattþrep)',
+  },
+  'REIKNH.GRUNNLIFORORKA': {
+    id: 'web.pensionCalculator:REIKNH.GRUNNLIFORORKA',
+    defaultMessage: 'Örorkulífeyrir',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir',
+  },
+  'REIKNH.GRUNNLIFHALFURELLI': {
+    id: 'web.pensionCalculator:REIKNH.GRUNNLIFHALFURELLI',
+    defaultMessage: 'Hálfur ellilífeyrir',
+    description: 'Niðurstöðuskjár, Hálfur ellilífeyrir',
+  },
+  'REIKNHH.ALFHEIMILISUPPBOT': {
+    id: 'web.pensionCalculator:REIKNHH.ALFHEIMILISUPPBOT',
+    defaultMessage: 'Hálf heimilisuppbót',
+    description: 'Niðurstöðuskjár, Hálf heimilisuppbót',
+  },
+  'REIKNH.GRUNNLIFELLISJOM': {
+    id: 'web.pensionCalculator:REIKNH.GRUNNLIFELLISJOM',
+    defaultMessage: 'Ellilífeyrir sjómanna',
+    description: 'Niðurstöðuskjár, Ellilífeyrir sjómanna',
+  },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
     defaultMessage: 'Þar af greiðslur frá TR',
