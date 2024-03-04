@@ -2,8 +2,8 @@ import {
   GenericLicenseMetadata,
   GenericLicenseOrganizationSlug,
   GenericLicenseProviderId,
-  GenericLicenseType,
 } from './licenceService.type'
+import { LicenseType } from '@island.is/shared/constants'
 
 export const DEFAULT_CACHE_TTL = 1 * 1000 // 1 minute
 
@@ -18,7 +18,7 @@ export const LICENSE_SERVICE_CACHE_MANAGER_PROVIDER =
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
-    type: GenericLicenseType.FirearmLicense,
+    type: LicenseType.FirearmLicense,
     provider: {
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
     },
@@ -28,7 +28,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
   },
   {
-    type: GenericLicenseType.DriversLicense,
+    type: LicenseType.DriversLicense,
     provider: {
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
     },
@@ -38,7 +38,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.DriversLicense,
   },
   {
-    type: GenericLicenseType.AdrLicense,
+    type: LicenseType.AdrLicense,
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
@@ -48,7 +48,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.AdrLicense,
   },
   {
-    type: GenericLicenseType.MachineLicense,
+    type: LicenseType.MachineLicense,
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
@@ -58,7 +58,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
   {
-    type: GenericLicenseType.DisabilityLicense,
+    type: LicenseType.DisabilityLicense,
     provider: {
       id: GenericLicenseProviderId.SocialInsuranceAdministration,
     },
@@ -68,7 +68,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
   },
   {
-    type: GenericLicenseType.PCard,
+    type: LicenseType.PCard,
     provider: {
       id: GenericLicenseProviderId.DistrictCommissioners,
     },
@@ -78,7 +78,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.PCard,
   },
   {
-    type: GenericLicenseType.Ehic,
+    type: LicenseType.Ehic,
     provider: {
       id: GenericLicenseProviderId.IcelandicHealthInsurance,
     },
@@ -88,7 +88,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.EHIC,
   },
   {
-    type: GenericLicenseType.Passport,
+    type: LicenseType.Passport,
     provider: {
       id: GenericLicenseProviderId.RegistersIceland,
     },

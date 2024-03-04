@@ -1,17 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
+import { LicenseType } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-
-export enum GenericLicenseType {
-  DriversLicense = 'DriversLicense',
-  HuntingLicense = 'HuntingLicense',
-  AdrLicense = 'AdrLicense',
-  MachineLicense = 'MachineLicense',
-  FirearmLicense = 'FirearmLicense',
-  DisabilityLicense = 'DisabilityLicense',
-  PCard = 'PCard',
-  Ehic = 'Ehic',
-  Passport = 'Passport',
-}
 
 /**
  * Get organization slug from the CMS.
@@ -28,7 +17,7 @@ export enum GenericLicenseOrganizationSlug {
   EHIC = 'sjukratryggingar-islands',
   Passport = 'thjodskra-islands',
 }
-export type GenericLicenseTypeType = keyof typeof GenericLicenseType
+export type LicenseTypeKey = keyof typeof LicenseType
 
 export enum GenericLicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
@@ -79,7 +68,7 @@ export type GenericLicenseProvider = {
 }
 
 export type GenericLicenseMetadata = {
-  type: GenericLicenseType
+  type: LicenseType
   provider: GenericLicenseProvider
   pkpass: boolean
   pkpassVerify: boolean

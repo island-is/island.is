@@ -2,7 +2,6 @@ import { User } from '@island.is/auth-nest-tools'
 import {
   LicenseClient,
   LicenseClientService,
-  LicenseType,
   LicenseVerifyExtraDataResult,
 } from '@island.is/clients/license-client'
 import { CmsContentfulService } from '@island.is/cms'
@@ -15,7 +14,8 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { Cache as CacheManager } from 'cache-manager/dist/caching'
+import { Cache as CacheManager } from 'cache-manager'
+import { LicenseType } from '@island.is/shared/constants'
 
 import pick from 'lodash/pick'
 import ShortUniqueId from 'short-unique-id'
@@ -26,8 +26,7 @@ import {
   GenericLicenseFetchResult,
   GenericLicenseMapper,
   GenericLicenseOrganizationSlug,
-  GenericLicenseType,
-  GenericLicenseTypeType,
+  LicenseTypeKey,
   GenericLicenseUserdata,
   GenericUserLicenseFetchStatus,
   GenericUserLicensePkPassStatus,
@@ -47,8 +46,8 @@ import { TokenService } from './services/token.service'
 const LOG_CATEGORY = 'license-service'
 
 export type GetGenericLicenseOptions = {
-  includedTypes?: Array<GenericLicenseTypeType>
-  excludedTypes?: Array<GenericLicenseTypeType>
+  includedTypes?: Array<LicenseTypeKey>
+  excludedTypes?: Array<LicenseTypeKey>
   force?: boolean
   onlyList?: boolean
 }
@@ -68,7 +67,7 @@ export class LicenseServiceService {
 
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
-      type: GenericLicenseType,
+      type: LicenseType,
     ) => Promise<GenericLicenseMapper | null>,
   ) {}
 
@@ -78,14 +77,8 @@ export class LicenseServiceService {
   ) {
     return this.cmsContentfulService.getOrganization(slug, locale)
   }
-
-  //backwards compatibility hax
-  private mapLicenseType = (type: GenericLicenseType) =>
-    this.licenseClient.getClientByLicenseType(
-      type === GenericLicenseType.DriversLicense
-        ? LicenseType.DrivingLicense
-        : (type as unknown as LicenseType),
-    )
+  private mapLicenseType = (type: LicenseType) =>
+    this.licenseClient.getClientByLicenseType(type)
 
   private async getLicenseLabels(locale: Locale) {
     const licenseLabels = await this.cmsContentfulService.getNamespace(
@@ -200,7 +193,7 @@ export class LicenseServiceService {
   async getLicensesOfType(
     user: User,
     locale: Locale,
-    licenseType: GenericLicenseType,
+    licenseType: LicenseType,
   ): Promise<Array<GenericUserLicense> | null> {
     const licenseTypeDefinition = AVAILABLE_LICENSES.find(
       (i) => i.type === licenseType,
@@ -298,7 +291,7 @@ export class LicenseServiceService {
   async getLicense(
     user: User,
     locale: Locale,
-    licenseType: GenericLicenseType,
+    licenseType: LicenseType,
     licenseId?: string,
   ): Promise<GenericUserLicense | null> {
     const licensesOfType =
@@ -315,7 +308,7 @@ export class LicenseServiceService {
     )
   }
 
-  async getClient(type: GenericLicenseType) {
+  async getClient(type: LicenseType) {
     const client = await this.mapLicenseType(type)
 
     if (!client) {
@@ -331,7 +324,7 @@ export class LicenseServiceService {
   async generatePkPassUrl(
     user: User,
     locale: Locale,
-    licenseType: GenericLicenseType,
+    licenseType: LicenseType,
   ): Promise<string> {
     const client = await this.getClient(licenseType)
 
@@ -389,7 +382,7 @@ export class LicenseServiceService {
   async generatePkPassQRCode(
     user: User,
     locale: Locale,
-    licenseType: GenericLicenseType,
+    licenseType: LicenseType,
   ): Promise<string> {
     const client = await this.getClient(licenseType)
 

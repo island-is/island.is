@@ -1,12 +1,12 @@
+import { LicenseType } from '@island.is/shared/constants'
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
-  GenericLicenseType,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
 } from '../licenceService.type'
 import { GenericLicenseProvider } from './GenericLicenseProvider.dto'
 
-registerEnumType(GenericLicenseType, {
+registerEnumType(LicenseType, {
   name: 'GenericLicenseType',
   description: 'Exhaustive list of license types',
 })
@@ -23,10 +23,10 @@ registerEnumType(GenericUserLicensePkPassStatus, {
 
 @ObjectType()
 export class GenericLicense {
-  @Field(() => GenericLicenseType, {
+  @Field(() => LicenseType, {
     description: 'Type of license from an exhaustive list',
   })
-  type!: GenericLicenseType
+  type!: LicenseType
 
   @Field(() => GenericLicenseProvider, {
     description: 'Provider of the license',

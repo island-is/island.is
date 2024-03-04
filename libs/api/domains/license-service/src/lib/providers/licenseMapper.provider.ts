@@ -1,8 +1,5 @@
 import { FactoryProvider } from '@nestjs/common'
-import {
-  GenericLicenseMapper,
-  GenericLicenseType,
-} from '../licenceService.type'
+import { GenericLicenseMapper } from '../licenceService.type'
 import { LICENSE_MAPPER_FACTORY } from '../licenseService.constants'
 import { AdrLicensePayloadMapper } from '../mappers/adrLicenseMapper'
 import { DisabilityLicensePayloadMapper } from '../mappers/disabilityLicenseMapper'
@@ -11,6 +8,7 @@ import { EHICCardPayloadMapper } from '../mappers/ehicCardMapper'
 import { FirearmLicensePayloadMapper } from '../mappers/firearmLicenseMapper'
 import { MachineLicensePayloadMapper } from '../mappers/machineLicenseMapper'
 import { PCardPayloadMapper } from '../mappers/pCardMapper'
+import { LicenseType } from '@island.is/shared/constants'
 
 export const LicenseMapperProvider: FactoryProvider = {
   provide: LICENSE_MAPPER_FACTORY,
@@ -24,21 +22,21 @@ export const LicenseMapperProvider: FactoryProvider = {
       pCard: PCardPayloadMapper,
       ehic: EHICCardPayloadMapper,
     ) =>
-    async (type: GenericLicenseType): Promise<GenericLicenseMapper | null> => {
+    async (type: LicenseType): Promise<GenericLicenseMapper | null> => {
       switch (type) {
-        case GenericLicenseType.AdrLicense:
+        case LicenseType.AdrLicense:
           return adr
-        case GenericLicenseType.DisabilityLicense:
+        case LicenseType.DisabilityLicense:
           return disability
-        case GenericLicenseType.MachineLicense:
+        case LicenseType.MachineLicense:
           return machine
-        case GenericLicenseType.FirearmLicense:
+        case LicenseType.FirearmLicense:
           return firearm
-        case GenericLicenseType.DriversLicense:
+        case LicenseType.DriversLicense:
           return driving
-        case GenericLicenseType.PCard:
+        case LicenseType.PCard:
           return pCard
-        case GenericLicenseType.Ehic:
+        case LicenseType.Ehic:
           return ehic
         default:
           return null

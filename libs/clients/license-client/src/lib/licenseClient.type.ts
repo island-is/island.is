@@ -10,42 +10,36 @@ import { Locale } from '@island.is/shared/types'
 import { FlattenedAdrDto } from './clients/adr-license-client'
 import { FirearmLicenseDto } from './clients/firearm-license-client'
 import { DrivingLicenseVerifyExtraDataResult } from './clients/driving-license-client/types'
+import { LicenseType } from '@island.is/shared/constants'
 
 export type LicenseLabelsObject = {
   [x: string]: string
 }
 
-export enum LicenseType {
-  FirearmLicense = 'FirearmLicense',
-  AdrLicense = 'AdrLicense',
-  MachineLicense = 'MachineLicense',
-  DisabilityLicense = 'DisabilityLicense',
-  DrivingLicense = 'DrivingLicense',
-  PCard = 'PCard',
-  Ehic = 'Ehic',
-  Passport = 'Passport',
-}
+export { LicenseType }
 
 export interface LicenseResults {
-  [LicenseType.FirearmLicense]: FirearmLicenseDto
   [LicenseType.AdrLicense]: FlattenedAdrDto
-  [LicenseType.MachineLicense]: VinnuvelaDto
   [LicenseType.DisabilityLicense]: OrorkuSkirteini
-  [LicenseType.DrivingLicense]: DriverLicenseDto
-  [LicenseType.PCard]: Staediskortamal
+  [LicenseType.DriversLicense]: DriverLicenseDto
   [LicenseType.Ehic]: BasicCardInfoDTO
+  [LicenseType.FirearmLicense]: FirearmLicenseDto
+  [LicenseType.HuntingLicense]: void
+  [LicenseType.MachineLicense]: VinnuvelaDto
+  [LicenseType.PCard]: Staediskortamal
   [LicenseType.Passport]: Passport
 }
 
 export interface VerifyExtraDataResult {
-  FirearmLicense: void
-  AdrLicense: void
-  MachineLicense: void
-  DisabilityLicense: void
-  DrivingLicense: DrivingLicenseVerifyExtraDataResult
-  PCard: void
-  Ehic: string
-  Passport: void
+  [LicenseType.AdrLicense]: void
+  [LicenseType.DisabilityLicense]: void
+  [LicenseType.DriversLicense]: DrivingLicenseVerifyExtraDataResult
+  [LicenseType.Ehic]: void
+  [LicenseType.FirearmLicense]: void
+  [LicenseType.HuntingLicense]: void
+  [LicenseType.MachineLicense]: void
+  [LicenseType.PCard]: void
+  [LicenseType.Passport]: void
 }
 
 export type LicenseResult<T extends LicenseType> = T extends LicenseType
