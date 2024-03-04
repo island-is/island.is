@@ -1,5 +1,6 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -10,7 +11,7 @@ import {
   buildSubmitField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, YES } from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
@@ -31,10 +32,14 @@ import {
   conclusionSection,
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
+import Logo from '../assets/Logo'
+
+const banks = ['Arion banki', 'Landsbankinn', 'Íslandsbanki']
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
   title: m.application.general.name,
+  logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -70,11 +75,35 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               },
               summary: ({ externalData }) => {
                 const fireInsuranceValue = getFireInsuranceValue(externalData)
-                return {
-                  label: m.application.propertyInformation.fireInsuranceValue,
-                  value: formatCurrency(fireInsuranceValue.toString()),
-                }
+                return [
+                  {
+                    label: m.application.propertyInformation.fireInsuranceValue,
+                    value: formatCurrency(fireInsuranceValue.toString()),
+                  },
+                ]
               },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'additionalOwnersSection',
+      title: m.application.additionalOwners.sectionTitle,
+      condition: (_, externalData) => {
+        const owners = getPropertyOwners(externalData)
+        return owners.length > 1
+      },
+      children: [
+        buildMultiField({
+          id: 'additionalOwnersMultiField',
+          title: m.application.additionalOwners.sectionTitle,
+          description: m.application.additionalOwners.sectionDescription,
+          children: [
+            buildCustomField({
+              id: 'additionalOwners',
+              title: '',
+              component: 'AdditionalOwnersRepeater',
             }),
           ],
         }),
@@ -84,29 +113,42 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
       id: 'loanStatusSection',
       title: m.application.loanStatus.sectionTitle,
       children: [
-        buildTableRepeaterField({
-          id: 'loans',
-          marginTop: 2,
+        buildMultiField({
+          id: 'loanStatusMultiField',
           title: m.application.loanStatus.sectionTitle,
           description: m.application.loanStatus.addLoanDescription,
-          addItemButtonText: m.application.loanStatus.addNewLoan,
-          saveItemButtonText: m.application.loanStatus.saveNewLoan,
-          fields: {
-            status: {
-              component: 'input',
-              label: m.application.loanStatus.statusOfLoan,
-              currency: true,
-            },
-            provider: {
-              component: 'input',
-              label: m.application.loanStatus.loanProvider,
-            },
-          },
-          table: {
-            format: {
-              status: (v) => formatCurrency(v),
-            },
-          },
+          children: [
+            buildTableRepeaterField({
+              id: 'loans',
+              marginTop: 2,
+              title: '',
+              addItemButtonText: m.application.loanStatus.addNewLoan,
+              saveItemButtonText: m.application.loanStatus.saveNewLoan,
+              fields: {
+                provider: {
+                  component: 'select',
+                  label: m.application.loanStatus.loanProvider,
+                  options: banks.map((bank) => ({ value: bank, label: bank })),
+                },
+                status: {
+                  component: 'input',
+                  label: m.application.loanStatus.statusOfLoan,
+                  currency: true,
+                },
+              },
+              table: {
+                format: {
+                  status: (v) => formatCurrency(v),
+                },
+              },
+            }),
+            buildDescriptionField({
+              id: 'loanStatusAdditionalInfo',
+              title: '',
+              marginTop: [4, 6],
+              description: m.application.loanStatus.additionalInfo,
+            }),
+          ],
         }),
       ],
     }),
@@ -157,11 +199,18 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 ]
               },
               summary: (application) => {
-                const { result } = calculateBuyoutPrice(application)
-                return {
-                  label: m.application.results.payment,
-                  value: formatCurrency(result.toString()),
-                }
+                const { result, buyoutPriceWithLoans } =
+                  calculateBuyoutPrice(application)
+                return [
+                  {
+                    label: m.application.results.payment,
+                    value: formatCurrency(result.toString()),
+                  },
+                  {
+                    label: m.application.results.total,
+                    value: formatCurrency(buyoutPriceWithLoans.toString()),
+                  },
+                ]
               },
             }),
             buildDescriptionField({
@@ -189,7 +238,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             buildDescriptionField({
               id: 'applicantOverview',
               title: m.application.overview.applicantTitle,
-              titleVariant: 'h4',
+              titleVariant: 'h3',
             }),
             buildKeyValueField({
               label: applicantInformationMessages.labels.name,
@@ -225,62 +274,82 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildDividerField({}),
 
+            // Additional owners
+            buildCustomField({
+              id: 'additionalOwnersOverview',
+              title: m.application.additionalOwners.sectionTitle,
+              component: 'AdditionalOwnersOverview',
+            }),
+
             // Property
             buildDescriptionField({
               id: 'propertyOverview',
               title: m.application.overview.propertyTitle,
-              titleVariant: 'h4',
+              titleVariant: 'h3',
             }),
             buildKeyValueField({
               label: '',
               value: ({ externalData }) => getPropertyAddress(externalData),
             }),
-            buildDividerField({}),
-
-            // Compensation assessment
-            buildDescriptionField({
-              id: 'compensationAssessmentOverview',
-              title: m.application.overview.compensationAssessmentTitle,
-              titleVariant: 'h4',
-            }),
             buildKeyValueField({
-              label: '',
+              label: m.application.overview.compensationAssessmentTitle,
+              colSpan: ['1/1', '6/12'],
               value: ({ externalData }) => {
                 const fireInsuranceValue = getFireInsuranceValue(externalData)
                 return formatCurrency(fireInsuranceValue.toString())
               },
             }),
-            buildDividerField({}),
-
-            // Payout
-            buildDescriptionField({
-              id: 'buyoutPriceOverview',
-              title: m.application.overview.buyoutPriceTitle,
-              titleVariant: 'h4',
-            }),
             buildKeyValueField({
-              label: '',
+              label: m.application.overview.buyoutPriceTitle,
+              colSpan: ['1/1', '6/12'],
               value: (application) => {
                 const { buyoutPrice } = calculateBuyoutPrice(application)
                 return formatCurrency(buyoutPrice.toString())
               },
             }),
-            buildDividerField({}),
-
-            // Total loan
-            buildDescriptionField({
-              id: 'totalLoanOverview',
-              title: m.application.overview.totalLoanTitle,
-              titleVariant: 'h4',
-            }),
             buildKeyValueField({
-              label: '',
+              label: m.application.overview.totalLoanTitle,
+              colSpan: ['1/1', '6/12'],
               value: ({ answers }) => {
                 const total = calculateTotalLoanFromAnswers(answers)
                 return formatCurrency(total.toString())
               },
             }),
             buildDividerField({}),
+
+            // Calculation
+            buildDescriptionField({
+              id: 'resultOverview',
+              title: m.application.overview.resultTitle,
+              titleVariant: 'h3',
+            }),
+            buildKeyValueField({
+              label: m.application.results.payment,
+              colSpan: ['1/1', '6/12'],
+              value: (application) => {
+                const { result } = calculateBuyoutPrice(application)
+                return formatCurrency(result.toString())
+              },
+            }),
+            buildKeyValueField({
+              label: m.application.results.total,
+              colSpan: ['1/1', '6/12'],
+              value: (application) => {
+                const { buyoutPriceWithLoans } =
+                  calculateBuyoutPrice(application)
+                return formatCurrency(buyoutPriceWithLoans.toString())
+              },
+            }),
+            buildDividerField({}),
+
+            buildCheckboxField({
+              id: 'userConfirmation',
+              title: '',
+              defaultValue: [],
+              options: [
+                { label: m.application.overview.checkboxText, value: YES },
+              ],
+            }),
 
             buildSubmitField({
               id: 'submit',
