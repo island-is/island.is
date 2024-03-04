@@ -235,7 +235,7 @@ describe('DelegationsIndexService', () => {
         })
       })
 
-      it('should remove delegations that are no longer valid', async () => {
+      it('should remove delegations from index that are no longer valid', async () => {
         // Act
         await delegationIndexService.indexDelegations(user)
         // remove custom delegations
@@ -307,7 +307,7 @@ describe('DelegationsIndexService', () => {
         ).toStrictEqual(updatedValidTo)
       })
 
-      it('should remove scopes for custom delegations index item', async () => {
+      it('should remove scopes from custom delegations index item', async () => {
         // Act
         await delegationIndexService.indexDelegations(user)
 
