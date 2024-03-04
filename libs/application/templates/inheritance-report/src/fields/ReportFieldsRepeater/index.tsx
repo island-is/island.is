@@ -23,6 +23,11 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import {
+  InheritanceReportAsset,
+  InheritanceReportInfo,
+} from '@island.is/clients/syslumenn'
 
 type RepeaterProps = {
   field: {
@@ -177,9 +182,14 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
-    const extData = (externalData.syslumennOnEntry?.data as any).estate[
-      props.fromExternalData ? props.fromExternalData : ''
-    ]
+    const estateData =
+      getEstateDataFromApplication(application).inheritanceReportInfo
+    const extData: Array<InheritanceReportAsset> =
+      estateData && props.fromExternalData
+        ? (estateData[
+            props.fromExternalData as keyof InheritanceReportInfo
+          ] as InheritanceReportAsset[])
+        : []
 
     if (
       !(application?.answers as any)?.assets?.realEstate?.hasModified &&

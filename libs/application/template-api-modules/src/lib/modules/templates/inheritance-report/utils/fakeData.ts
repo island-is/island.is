@@ -89,6 +89,14 @@ export const getFakeData = (
 
   assetProperties.forEach((k, i) => {
     assetStructure[k] = [generateRandomAsset(i), generateRandomAsset(i, 2)]
+    if (k === 'assets') {
+      assetStructure[k].forEach(
+        (asset) => (asset.assetNumber = 'L' + asset.assetNumber),
+      )
+    } else if (k === 'vehicles') {
+      assetStructure[k][0].assetNumber = 'JOL25'
+      assetStructure[k][1].assetNumber = 'YZ927'
+    }
   })
 
   // This code is only used in local or dev environments since

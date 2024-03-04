@@ -74,7 +74,7 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
-                assetKey: 'realEstate',
+                assetKey: 'assets',
                 calcWithShareValue: true,
                 repeaterButtonText: m.addRealEstate.defaultMessage,
                 fromExternalData: 'assets',

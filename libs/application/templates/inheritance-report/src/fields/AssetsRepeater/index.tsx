@@ -30,6 +30,7 @@ import {
   isValidRealEstate,
   valueToNumber,
 } from '../../lib/utils/helpers'
+import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 
 type RepeaterProps = {
   field: {
@@ -119,9 +120,11 @@ export const AssetsRepeater: FC<
   }
 
   useEffect(() => {
+    const estData =
+      getEstateDataFromApplication(application).inheritanceReportInfo ?? {}
+
     const extData =
-      getEstateDataFromApplication(application).inheritanceReportInfo?.assets ??
-      []
+      getValueViaPath<InheritanceReportAsset[]>(estData, assetKey) ?? []
 
     if (
       !(application?.answers as any)?.assets?.[assetKey]?.hasModified &&
@@ -286,7 +289,7 @@ const FieldComponent = ({
         </GridColumn>
       )
     case 'assetNumber':
-      if (assetKey === 'realEstate') {
+      if (assetKey === 'assets') {
         content = (
           <RealEstateNumberField
             field={field}
