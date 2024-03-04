@@ -78,7 +78,7 @@
         "cwd": "apps/api"
       }
     },
-  "dev": {
+    "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
