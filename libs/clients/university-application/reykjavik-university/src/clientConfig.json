@@ -48,10 +48,10 @@
         }
       }
     },
-    "/v{version}/hvin/semesters/{semesterYear}/{semesterSeason}/applications": {
+    "semesters/{semesterYear}/{semesterSeason}/applications": {
       "get": {
         "tags": ["Hvin"],
-        "summary": "Finds and returns all the applications on a specific semester",
+        "summary": "Finds and returns all the applications on a specific semester.",
         "operationId": "Hvin_GetApplicationsBySemesterCode",
         "consumes": [],
         "produces": [
