@@ -280,6 +280,65 @@ describe('UserProfileController', () => {
         expect(res.body).toMatchObject(expected)
       })
     })
+
+    it('should return Ísland if address is valid', async () => {
+      // Arrange
+      const individual = createNationalRegistryV3User({
+        itarupplysingar: {
+          adsetur: {
+            husHeiti: faker.address.streetName(),
+            postnumer: faker.address.zipCode(),
+            poststod: faker.address.city(),
+          },
+        },
+      })
+      mockNationalRegistry(app.get(NationalRegistryV3ClientService), individual)
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const address = individual.itarupplysingar!.adsetur!
+      const expected = {
+        address: {
+          formatted: `${address.husHeiti}\n${address.postnumer} ${address.poststod}\nÍsland`,
+          streetAddress: address.husHeiti,
+          postalCode: address.postnumer,
+          locality: address.poststod,
+          country: 'Ísland',
+        },
+      }
+
+      // Act
+      const res = await server.get(path).expect(200)
+
+      // Assert
+      expect(res.body).toMatchObject(expected)
+    })
+
+    it('should return country if registered', async () => {
+      // Arrange
+      const country = faker.address.country()
+      const individual = createNationalRegistryV3User({
+        itarupplysingar: {
+          adsetur: {
+            husHeiti: country,
+            postnumer: undefined,
+            poststod: undefined,
+          },
+        },
+      })
+      mockNationalRegistry(app.get(NationalRegistryV3ClientService), individual)
+
+      const expected = {
+        address: {
+          country: country,
+        },
+      }
+
+      // Act
+      const res = await server.get(path).expect(200)
+
+      // Assert
+      expect(res.body).toMatchObject(expected)
+    })
   })
 
   describe('with auth as company delegation', () => {
