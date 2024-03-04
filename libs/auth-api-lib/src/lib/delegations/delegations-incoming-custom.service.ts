@@ -44,11 +44,11 @@ export class DelegationsIncomingCustomService {
   ) {}
 
   async findAllValidIncoming(
-    user: User,
+    nationalId: string,
     domainName?: string,
   ): Promise<DelegationDTO[]> {
     const { delegations, fromNameInfo } = await this.findAllIncoming(
-      user,
+      nationalId,
       DelegationValidity.NOW,
       domainName,
     )
@@ -78,7 +78,7 @@ export class DelegationsIncomingCustomService {
     }
 
     const { delegations, fromNameInfo } = await this.findAllIncoming(
-      user,
+      user.nationalId,
       DelegationValidity.NOW,
     )
 
@@ -131,7 +131,7 @@ export class DelegationsIncomingCustomService {
   }
 
   private async findAllIncoming(
-    user: User,
+    nationalId: string,
     validity: DelegationValidity,
     domainName?: string,
   ): Promise<{ delegations: Delegation[]; fromNameInfo: IndividualDto[] }> {
@@ -140,7 +140,7 @@ export class DelegationsIncomingCustomService {
 
     const delegations = await this.delegationModel.findAll({
       where: {
-        toNationalId: user.nationalId,
+        toNationalId: nationalId,
       },
       include: [
         {

@@ -31,6 +31,7 @@ const user: User = {
   role: UserRole.PROSECUTOR,
   institution: undefined,
   active: true,
+  canConfirmAppeal: false,
 }
 
 export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -70,6 +71,7 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
             mobileNumber: user.mobileNumber,
             email: user.email,
             active: user.active,
+            canConfirmAppeal: user.canConfirmAppeal,
           },
         },
       })
