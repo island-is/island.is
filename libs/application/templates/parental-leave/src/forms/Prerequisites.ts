@@ -347,38 +347,36 @@ export const PrerequisitesForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   provider: UserProfileApi,
-                  title: 'Mínar upplýsingar á Mínum síðum Ísland.is',
-                  // parentalLeaveFormMessages.shared
-                  //   .userProfileInformationTitle,
+                  title:
+                    parentalLeaveFormMessages.shared
+                      .userProfileInformationTitle,
                   subTitle:
-                    'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið',
-                  // parentalLeaveFormMessages.shared
-                  //   .userProfileInformationSubTitle,
+                    parentalLeaveFormMessages.shared
+                      .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: GetPersonInformation,
-                  title: 'Upplýsingar frá Þjóðskrá',
-                  // parentalLeaveFormMessages.shared.familyInformationTitle,
-                  subTitle: 'Upplýsingar um þig, maka og börn.',
-                  //parentalLeaveFormMessages.shared.familyInformationSubTitle,
+                  title:
+                    parentalLeaveFormMessages.shared.familyInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.familyInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: ChildrenApi,
-                  title: 'Upplýsingar frá Heilsuveru',
-                  //parentalLeaveFormMessages.shared.childrenInformationTitle,
+                  title:
+                    parentalLeaveFormMessages.shared.childrenInformationTitle,
                   subTitle:
-                    'Staðfesting á áætluðum fæðingardegi barn. Athugið að barnshafandi foreldri þarf að klára sína umsókn á undan maka.',
-                  // parentalLeaveFormMessages.shared
-                  //   .childrenInformationSubTitle,
+                    parentalLeaveFormMessages.shared
+                      .childrenInformationSubTitle,
                 }),
               ],
               otherPermissions: [
                 buildDataProviderPermissionItem({
                   id: 'salary',
-                  title: 'Upplýsingar frá Skattinum',
-                  //parentalLeaveFormMessages.shared.salaryInformationTitle,
-                  subTitle: 'Upplýsingar um laun.',
-                  //parentalLeaveFormMessages.shared.salaryInformationSubTitle,
+                  title:
+                    parentalLeaveFormMessages.shared.salaryInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.salaryInformationSubTitle,
                 }),
               ],
             }),
