@@ -77,8 +77,8 @@ export class LicenseServiceService {
   ) {
     return this.cmsContentfulService.getOrganization(slug, locale)
   }
-  private mapLicenseType = (type: LicenseType) =>
-    this.licenseClient.getClientByLicenseType(type)
+  private mapLicenseType = <Type extends LicenseType>(type: LicenseType) =>
+    this.licenseClient.getClientByLicenseType<Type>(type)
 
   private async getLicenseLabels(locale: Locale) {
     const licenseLabels = await this.cmsContentfulService.getNamespace(
@@ -308,8 +308,8 @@ export class LicenseServiceService {
     )
   }
 
-  async getClient(type: LicenseType) {
-    const client = await this.mapLicenseType(type)
+  async getClient<Type extends LicenseType>(type: LicenseType) {
+    const client = await this.mapLicenseType<Type>(type)
 
     if (!client) {
       const msg = `Invalid license type. "${type}"`
@@ -483,7 +483,7 @@ export class LicenseServiceService {
   ) {
     const code = randomUUID()
     const licenseType = genericUserLicense.license.type
-    const client = await this.getClient(licenseType)
+    const client = await this.getClient<typeof licenseType>(licenseType)
     let extraData: LicenseVerifyExtraDataResult<LicenseType> | undefined
 
     if (client?.verifyExtraData) {
@@ -515,8 +515,8 @@ export class LicenseServiceService {
       code,
       {
         nationalId,
+        licenseType,
         extraData,
-        ...pick(genericUserLicense, ['license', 'payload']),
       },
       60 * 1000,
     )
