@@ -70,7 +70,7 @@ export class LicenseServiceResolver {
     )
   }
 
-  @ResolveField('barcode', () => String)
+  @ResolveField('barcode', () => String, { nullable: true })
   async createBarcode(
     @CurrentUser() user: User,
     @Parent() genericUserLicense: GenericUserLicense,

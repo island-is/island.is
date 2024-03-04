@@ -1,9 +1,9 @@
+import { LicenseType } from '@island.is/shared/constants'
 import { factory, faker, title } from '@island.is/shared/mocking'
 import {
   GenericLicense,
   GenericLicenseFetch,
   GenericLicenseProviderId,
-  GenericLicenseType,
   GenericUserLicense,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseMetadata,
@@ -111,7 +111,7 @@ export const genericUserLicenses = (types?: Array<string>) => {
 export const genericUserLicense = (type: string) => {
   return factory<GenericUserLicense>({
     fetch: () => genericLicenseFetch(),
-    license: () => genericLicense({ type: type as GenericLicenseType }),
+    license: () => genericLicense({ type: type as LicenseType }),
     nationalId: '0000000001',
     payload: () => payload()(type),
   })
