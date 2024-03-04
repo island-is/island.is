@@ -71,6 +71,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   calculationInput,
   queryParamString,
   dateOfCalculationsOptions,
+  customPageData,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
@@ -120,7 +121,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                 {higlightedItemIsPresent && (
                   <Stack space={5}>
                     {highlightedItems.map((highlightedItem, index) => {
-                      const highlightedItemName =
+                      let highlightedItemName =
                         highlightedItem?.name &&
                         highlightedItem?.name in translationStrings
                           ? formatMessage(
@@ -129,6 +130,17 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                               ],
                             )
                           : highlightedItem?.name
+
+                      if (
+                        index > 0 &&
+                        highlightedItem?.name ===
+                          (customPageData?.configJson?.totalFromTrAfterTaxKey ??
+                            'REIKNH.SAMTALSTREFTIRSK')
+                      ) {
+                        highlightedItemName = formatMessage(
+                          translationStrings.highlighedResultItemHeadingForTotalAfterTaxFromTR,
+                        )
+                      }
 
                       const titleVariant: TextProps['variant'] =
                         index === 0 ? 'h3' : 'h4'

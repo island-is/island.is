@@ -787,4 +787,9 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Samtals ráðstöfunartekjur eftir skatt',
     description: 'Niðurstöðuskjár, Samtals ráðstöfunartekjur eftir skatt',
   },
+  highlighedResultItemHeadingForTotalAfterTaxFromTR: {
+    id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
+    defaultMessage: 'Þar af greiðslur frá TR',
+    description: 'Texti efst, Þar af greiðslur frá TR',
+  },
 })
