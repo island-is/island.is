@@ -6,6 +6,13 @@ export const getSelectedVehicle = (
   externalData: ExternalData,
   answers: FormValue,
 ) => {
+  if (answers.findVehicle) {
+    const vehicle = getValueViaPath(
+      answers,
+      'selectVehicle',
+    ) as VehiclesCurrentVehicle
+    return vehicle
+  }
   const currentVehicleList =
     (externalData?.currentVehicles?.data as VehiclesCurrentVehicle[]) || []
   const vehicleValue = getValueViaPath(
