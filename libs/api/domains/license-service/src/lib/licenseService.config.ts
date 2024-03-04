@@ -15,7 +15,9 @@ export const LicenseServiceConfig = defineConfig({
   name: 'LicenseServiceConfig',
   schema: LicenseServiceConfigSchema,
   load: (env) => ({
-    barcodeSecretKey: env.required('LICENSE_SERVICE_BARCODE_SECRET_KEY'),
+    barcodeSecretKey: env.required(
+      'LICENSE_SERVICE_BARCODE_SECRET_KEY',''
+    ),
     redis: {
       nodes: env.requiredJSON('LICENSE_SERVICE_REDIS_NODES', [
         'localhost:7000',
