@@ -7,6 +7,11 @@ export const application = {
       defaultMessage: 'Kaup ríkis á íbúðarhúsnæði í Grindavík',
       description: 'Grindavik Housing Buyout application name',
     },
+    institutionName: {
+      id: 'ghb.application:general.institutionName',
+      defaultMessage: 'Sýslumenn',
+      description: 'Institution name',
+    },
     submit: {
       id: 'ghb.application:general.submit',
       defaultMessage: 'Senda inn umsókn',
@@ -58,6 +63,24 @@ export const application = {
       description: 'Fire insurance value',
     },
   }),
+  additionalOwners: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:additionalOwners.section.title',
+      defaultMessage: 'Aðrir eigendur',
+      description: 'Additional owners section title',
+    },
+    sectionDescription: {
+      id: 'ghb.application:additionalOwners.section.description',
+      defaultMessage:
+        'Hér þarf að slá inn tengiupplýsingar fyrir aðra eigendur fasteignarinnar.',
+      description: 'Additional owners section description',
+    },
+    owner: {
+      id: 'ghb.application:additionalOwners.owner',
+      defaultMessage: 'Eigandi',
+      description: 'Owner',
+    },
+  }),
   loanStatus: defineMessages({
     sectionTitle: {
       id: 'ghb.application:loanStatus.section.title',
@@ -99,6 +122,12 @@ export const application = {
       id: 'ghb.application:loanStatus.saveNewLoan',
       defaultMessage: 'Vista lán',
       description: 'Save new loan',
+    },
+    additionalInfo: {
+      id: 'ghb.application:loanStatus.additionalInfo#markdown',
+      defaultMessage:
+        'Ef þú ert ekki með lán hjá neinum lánveitanda hér fyrir ofan þá getur þú xxx ...',
+      description: 'Loan status info',
     },
   }),
   results: defineMessages({
@@ -149,6 +178,11 @@ export const application = {
       defaultMessage: 'Áhvílandi lán',
       description: 'Total loan text',
     },
+    total: {
+      id: 'ghb.application:results.total',
+      defaultMessage: 'Útgreitt samtals',
+      description: 'Total text',
+    },
     closingPayment: {
       id: 'ghb.application:results.closingPayment',
       defaultMessage: '5% af kaupverði sem er haldið eftir fram að afsali',
@@ -196,6 +230,16 @@ export const application = {
       id: 'ghb.application:overview.loanStatusTitle',
       defaultMessage: 'Staða á láni',
       description: 'Loan status title',
+    },
+    resultTitle: {
+      id: 'ghb.application:overview.resultTitle',
+      defaultMessage: 'Útreikningur',
+      description: 'Result title',
+    },
+    checkboxText: {
+      id: 'ghb.application:overview.checkboxText',
+      defaultMessage: 'Ég skil að...',
+      description: 'Checkbox text',
     },
   }),
 }

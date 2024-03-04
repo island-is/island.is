@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'framer-motion'
 import router from 'next/router'
@@ -20,7 +20,10 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Defendant,
   IndictmentCountOffense,
+  Institution,
+  Maybe,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
@@ -40,6 +43,37 @@ import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-syst
 import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
+
+export const getIndictmentIntroductionAutofill = (
+  formatMessage: IntlShape['formatMessage'],
+  prosecutorsOffice?: Maybe<Institution> | undefined,
+  court?: Maybe<Institution> | undefined,
+  defendants?: Maybe<Defendant[]> | undefined,
+) => {
+  return defendants && defendants.length > 0
+    ? [
+        prosecutorsOffice?.name?.toUpperCase(),
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
+        `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
+          court: court?.name?.replace('dómur', 'dómi'),
+        })}`,
+        `\n\n${defendants.map((defendant) => {
+          return `\n          ${formatMessage(
+            strings.indictmentIntroductionAutofillDefendant,
+            {
+              defendantName: defendant.name
+                ? applyCase('þgf', defendant.name)
+                : 'Ekki skráð',
+              defendantNationalId: defendant.nationalId
+                ? formatNationalId(defendant.nationalId)
+                : 'Ekki skráð',
+            },
+          )}\n          ${defendant.address}`
+        })}
+    `,
+      ]
+    : []
+}
 
 const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
@@ -232,40 +266,19 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const initialize = useCallback(() => {
-    let indictmentIntroductionAutofill = undefined
-
     if (workingCase.indictmentCounts?.length === 0) {
       handleCreateIndictmentCount()
-    }
-
-    if (workingCase.defendants && workingCase.defendants.length > 0) {
-      indictmentIntroductionAutofill = [
-        workingCase.prosecutorsOffice?.name?.toUpperCase(),
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
-          court: workingCase.court?.name?.replace('dómur', 'dómi'),
-        })}`,
-        `\n\n${workingCase.defendants.map((defendant) => {
-          return `\n          ${formatMessage(
-            strings.indictmentIntroductionAutofillDefendant,
-            {
-              defendantName: defendant.name
-                ? applyCase('þgf', defendant.name)
-                : 'Ekki skráð',
-              defendantNationalId: defendant.nationalId
-                ? formatNationalId(defendant.nationalId)
-                : 'Ekki skráð',
-            },
-          )}\n          ${defendant.address}`
-        })}
-        `,
-      ]
     }
 
     setAndSendCaseToServer(
       [
         {
-          indictmentIntroduction: indictmentIntroductionAutofill?.join(''),
+          indictmentIntroduction: getIndictmentIntroductionAutofill(
+            formatMessage,
+            workingCase.prosecutorsOffice,
+            workingCase.court,
+            workingCase.defendants,
+          )?.join(''),
           demands: workingCase.requestDriversLicenseSuspension
             ? formatMessage(strings.demandsAutofillWithSuspension)
             : formatMessage(strings.demandsAutofill),
