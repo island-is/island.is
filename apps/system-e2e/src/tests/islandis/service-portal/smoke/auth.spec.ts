@@ -94,6 +94,10 @@ test('Service portal can use english sign-in', async ({ browser }) => {
   await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
 
   // Act
+  /**
+   * Not using accessible selector here because this test needs to work on both the new and current login page at the same time to handle the transition gracefully
+   * TODO: use accessible selector when the new login pages is out
+   */
   await page.getByText('English').click()
 
   // Assert

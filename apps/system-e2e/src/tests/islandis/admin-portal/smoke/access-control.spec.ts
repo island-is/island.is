@@ -12,7 +12,6 @@ test.describe('Admin portal access control', () => {
     contextGranter = await session({
       browser,
       storageState: 'service-portal-faereyjar.json',
-      delegation: '65° ARTIC ehf.',
       homeUrl,
       phoneNumber: '0102399',
       idsLoginOn: true,

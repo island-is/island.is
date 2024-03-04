@@ -63,6 +63,10 @@ export async function idsLogin(
   // Handle delegation on login
   if (page.url().startsWith(urls.authUrl)) {
     debug('Still on auth site')
+    /**
+     * Not using accessible selector here because this test needs to work on both the new and current login page at the same time to handle the transition gracefully
+     * TODO: use accessible selector when the new login pages is out
+     */
     const delegations = page.locator('.identity-card--name')
     await expect(delegations).not.toHaveCount(0)
     // Default to the first delegation
