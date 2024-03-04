@@ -62,6 +62,7 @@ export enum ApplicationTypes {
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
+  REQUEST_MACHINE_FOR_INSPECTION = 'RequestMachineForInspection',
 }
 
 export const ApplicationConfigurations = {
@@ -320,5 +321,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
     translation: 'ghb.application',
+  },
+  [ApplicationTypes.REQUEST_MACHINE_FOR_INSPECTION]: {
+    slug: 'beidni-um-skodun-taekis',
+    translation: 'aosh.rmfi.application',
   },
 }
