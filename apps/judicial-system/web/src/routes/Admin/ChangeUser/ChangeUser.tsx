@@ -46,6 +46,8 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
       user.email &&
       user.active !== undefined &&
       user.active !== null &&
+      user.canConfirmAppeal !== undefined &&
+      user.canConfirmAppeal !== null &&
       user.institution
     ) {
       await updateUserMutation({
@@ -59,6 +61,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
             mobileNumber: user.mobileNumber,
             email: user.email,
             active: user.active,
+            canConfirmAppeal: user.canConfirmAppeal,
           },
         },
       })
