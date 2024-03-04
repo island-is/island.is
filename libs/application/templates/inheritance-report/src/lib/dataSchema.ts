@@ -349,7 +349,7 @@ export const inheritanceReportSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z.string(),
+        phone: z.string().optional(),
         email: z.string(),
         heirsPercentage: z.string().refine((v) => {
           if (!v) return true
@@ -399,7 +399,7 @@ export const inheritanceReportSchema = z.object({
       .refine(
         ({ enabled, advocate, phone }) => {
           return enabled && !advocate?.nationalId
-            ? isValidPhoneNumber(phone)
+            ? isValidPhoneNumber(phone ?? '')
             : true
         },
         {
@@ -418,8 +418,8 @@ export const inheritanceReportSchema = z.object({
       /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate?.phone
-            ? isValidPhoneNumber(advocate.phone)
+          return enabled && (advocate?.phone || advocate?.nationalId)
+            ? isValidPhoneNumber(advocate?.phone ?? '')
             : true
         },
         {
