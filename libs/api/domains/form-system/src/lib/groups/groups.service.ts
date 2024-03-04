@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common"
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { ApolloError } from "@apollo/client"
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { GroupsApi, ApiGroupsGroupIdGetRequest, ApiGroupsPostRequest, ApiGroupsGroupIdDeleteRequest, ApiGroupsGroupIdPutRequest } from "@island.is/clients/form-system"
+import { GroupsApi, ApiGroupsGroupIdGetRequest, ApiGroupsPostRequest, ApiGroupsGroupIdDeleteRequest, ApiGroupsGroupIdPutRequest, GroupCreationDto, GroupUpdateDto } from "@island.is/clients/form-system"
 import { GetGroupInput, CreateGroupInput, DeleteGroupInput, UpdateGroupInput } from "../../dto/groups.input"
 import { Group } from "../../models/group.model"
 
@@ -50,7 +50,7 @@ export class GroupsService {
 
   async postGroup(auth: User, input: CreateGroupInput): Promise<Group> {
     const request: ApiGroupsPostRequest = {
-      groupCreationDto: input.groupCreationDto,
+      groupCreationDto: input.groupCreationDto as GroupCreationDto,
     }
     const response = await this.groupsApiWithAuth(auth)
       .apiGroupsPost(request)
@@ -80,7 +80,7 @@ export class GroupsService {
   async updateGroup(auth: User, input: UpdateGroupInput): Promise<Group> {
     const request: ApiGroupsGroupIdPutRequest = {
       groupId: input.groupId,
-      groupUpdateDto: input.groupUpdateDto
+      groupUpdateDto: input.groupUpdateDto as GroupUpdateDto
     }
 
     const response = await this.groupsApiWithAuth(auth)
@@ -90,6 +90,6 @@ export class GroupsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    return response as Group
+    return response
   }
 }

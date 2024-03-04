@@ -1,5 +1,4 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { GroupCreationDto, GroupUpdateDto } from '@island.is/clients/form-system'
 import { CreateGroup, UpdateGroup } from "../models/group.model";
 
 
@@ -12,7 +11,7 @@ export class GetGroupInput {
 @InputType('FormSystemCreateGroupInput')
 export class CreateGroupInput {
   @Field(() => CreateGroup, { nullable: true })
-  groupCreationDto?: GroupCreationDto
+  groupCreationDto?: CreateGroup
 }
 
 @InputType('FormSystemDeleteGroupInput')
@@ -27,5 +26,5 @@ export class UpdateGroupInput {
   groupId!: number
 
   @Field(() => UpdateGroup, { nullable: true })
-  groupUpdateDto?: GroupUpdateDto
+  groupUpdateDto?: UpdateGroup
 }

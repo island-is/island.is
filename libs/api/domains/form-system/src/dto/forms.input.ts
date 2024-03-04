@@ -33,6 +33,6 @@ export class UpdateFormInput {
   formId!: number
 
   @Field(() => Form, { nullable: true })
-  form?: FormUpdateDto
+  form?: Form
 
 }

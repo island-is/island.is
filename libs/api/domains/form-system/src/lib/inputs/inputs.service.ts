@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common"
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { ApolloError } from "@apollo/client"
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { InputsApi, ApiInputsInputIdGetRequest, ApiInputsPostRequest, ApiInputsInputIdDeleteRequest, ApiInputsInputIdPutRequest } from "@island.is/clients/form-system"
+import { InputsApi, ApiInputsInputIdGetRequest, ApiInputsPostRequest, ApiInputsInputIdDeleteRequest, ApiInputsInputIdPutRequest, InputCreationDto, InputUpdateDto } from "@island.is/clients/form-system"
 import { GetInputInput, CreateInputInput, DeleteInputInput, UpdateInputInput } from "../../dto/inputs.input"
 import { Input } from "../../models/input.model"
 
@@ -50,7 +50,7 @@ export class InputsService {
 
   async postInput(auth: User, input: CreateInputInput): Promise<Input> {
     const request: ApiInputsPostRequest = {
-      inputCreationDto: input.inputCreationDto,
+      inputCreationDto: input.inputCreationDto as InputCreationDto,
     }
     const response = await this.inputsApiWithAuth(auth)
       .apiInputsPost(request)
@@ -80,7 +80,7 @@ export class InputsService {
   async updateInput(auth: User, input: UpdateInputInput): Promise<Input> {
     const request: ApiInputsInputIdPutRequest = {
       inputId: input.inputId,
-      inputUpdateDto: input.inputUpdateDto
+      inputUpdateDto: input.inputUpdateDto as InputUpdateDto,
     }
 
     const response = await this.inputsApiWithAuth(auth)
