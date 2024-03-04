@@ -190,9 +190,27 @@ export const application = {
     },
     confirmLoanTakeover: {
       id: 'ghb.application:results.confirmLoanTakeover',
-      defaultMessage:
-        'Ég óska eftir að áhvílandi veðskuldir verði teknar yfir.',
+      defaultMessage: 'Ég óska eftir að áhvílandi veðskuldir verði teknar yfir',
       description: 'Confirm loan takeover',
+    },
+  }),
+  sellerStatement: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:sellerStatement.section.title',
+      defaultMessage: 'Yfirlýsing seljanda',
+      description: 'Additional info section title',
+    },
+    text: {
+      id: 'ghb.application:sellerStatement.text#markdown',
+      defaultMessage:
+        'Ég átti lögheimili í eigninni þann 10. nóvember 2023 sem var eignin þá og er í þinglýstri eigu minni. Í dag er eignin ekki bústaður fjölskyldu minnar eða notaður við atvinnurekstur maka míns.\n\nÉg veiti ríkinu heimild til þess að afla allra nauðsynlegra upplýsinga og ganga um eignina. Nauðsynleg gögn eru öll þinglýst skjöl, áhvílandi veðskuldir, lánastöðu, stöðu krafna, uppgjörsfjárhæðir og skuldir sem og eiga í samskiptum um uppgjör þeirra.\n\nKaupanda er heimilt að leita eftir stöðu opinberra gjalda sem og stöðu vegna kaupa á hita og rafmagns. Einnig er kaupanda heimilt að kanna kvaðir þær sem á eigninni kunna að hvíla og heimild til að hafa samband við aðila þeim tengdum. Ég lýsi því yfir að ég mun ekki fjarlægja fylgifé fasteignarinnar en með fylgifé er átti við fastar innréttingar, útipallar eða heitur pottur. Ég lýsi því yfir að ég skulda ekki fasteignagjöld, rafmagn, hita eða húsfélag. Yfirlýsing þessi tekur einnig til annara skulda við þriðja aðila vegna eignarinnar.',
+      description: 'Additional info text',
+    },
+    confirmationLabel: {
+      id: 'ghb.application:sellerStatement.confirmationLabel',
+      defaultMessage:
+        'Ég óska eftir því að í kaupsamningi sem gerður verður um eignina verðið kveðið á um forgagnsrétt minn til eignarinnar',
+      description: 'Confirmation label',
     },
   }),
   overview: defineMessages({

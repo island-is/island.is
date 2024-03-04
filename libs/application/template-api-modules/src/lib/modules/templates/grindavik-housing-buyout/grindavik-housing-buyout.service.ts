@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes, YES } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import {
@@ -66,6 +66,11 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         type: PersonType.CounterParty,
       })) ?? []
 
+    const confirmsLoanTakeover =
+      answers.confirmLoanTakeover?.includes(YES) ?? false
+    const wishesForPreemptiveRights =
+      answers.preemptiveRightWish?.includes(YES) ?? false
+
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
       residenceData: JSON.stringify(
@@ -75,6 +80,8 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         application.externalData.getGrindavikHousing.data,
       ),
       loans: JSON.stringify(answers.loans),
+      confirmsLoanTakeover: JSON.stringify(confirmsLoanTakeover),
+      wishesForPreemptiveRights: JSON.stringify(wishesForPreemptiveRights),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
