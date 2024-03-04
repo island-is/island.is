@@ -36,6 +36,7 @@ import {
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
+import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -275,9 +276,34 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
 
       if (workingCase.id) {
         updateDefendant(updatedDefendant)
+
+        if (workingCase.indictmentIntroduction) {
+          setAndSendCaseToServer(
+            [
+              {
+                indictmentIntroduction: getIndictmentIntroductionAutofill(
+                  formatMessage,
+                  workingCase.prosecutorsOffice,
+                  workingCase.court,
+                  workingCase.defendants,
+                )?.join(''),
+                force: true,
+              },
+            ],
+            workingCase,
+            setWorkingCase,
+          )
+        }
       }
     },
-    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
+    [
+      updateDefendantState,
+      setWorkingCase,
+      workingCase,
+      updateDefendant,
+      setAndSendCaseToServer,
+      formatMessage,
+    ],
   )
 
   const handleNavigationTo = useCallback(

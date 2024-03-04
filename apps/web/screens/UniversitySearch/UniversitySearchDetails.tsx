@@ -230,7 +230,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       case 'Háskólinn á Hólum':
         return 'https://ugla.holar.is/namsumsoknir/'
       case 'Háskólinn í Reykjavík':
-        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+        return 'https://umsoknir.ru.is/'
       case 'Landbúnaðarháskóli Íslands':
         return 'https://ugla.lbhi.is/namsumsoknir/'
       case 'Listaháskóli Íslands':
@@ -482,8 +482,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       <Text variant="medium">{`${n(
                         'modeOfDelivery',
                         'Námsform',
-                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}
-                      })}`}</Text>
+                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}`}</Text>
                     </Box>
                   </GridColumn>
                 </GridRow>
