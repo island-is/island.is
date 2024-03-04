@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import isEqual from 'lodash/isEqual'
 
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { formatCurrency } from '@island.is/web/utils/currency'
+
+import * as styles from './GrindavikResidentialPropertyPurchaseCalculator.css'
 
 interface ResultState {
   thorkatlaPayment: number
@@ -17,9 +19,7 @@ interface ResultState {
 
 interface InputState {
   fireInsuranceValue: number
-  loan1: number
-  loan2: number
-  loan3: number
+  loans: { value: number | undefined }[]
 }
 
 interface GrindavikResidentialPropertyPurchaseCalculatorProps {
@@ -47,15 +47,13 @@ const calculateResultState = (
   thorkatlaPurchasePrice: number,
 ) => {
   let thorkatlaPayment = thorkatlaPurchasePrice
-  if (inputState.loan1) {
-    thorkatlaPayment -= Number(inputState.loan1)
+
+  for (const loan of inputState.loans) {
+    if (loan.value) {
+      thorkatlaPayment -= Number(loan.value)
+    }
   }
-  if (inputState.loan2) {
-    thorkatlaPayment -= Number(inputState.loan2)
-  }
-  if (inputState.loan3) {
-    thorkatlaPayment -= Number(inputState.loan3)
-  }
+
   const closingPayment = 0.05 * thorkatlaPurchasePrice
 
   const purchaseAgreementPayment = thorkatlaPayment - closingPayment
@@ -72,19 +70,25 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
   slice,
 }: GrindavikResidentialPropertyPurchaseCalculatorProps) => {
   const n = useNamespace(slice.json ?? {})
-  const methods = useForm<InputState>()
+  const methods = useForm<InputState>({
+    defaultValues: { loans: [{ value: undefined }] },
+  })
+  const loansFieldArray = useFieldArray({
+    name: 'loans',
+    control: methods.control,
+  })
   const resultContainerRef = useRef<HTMLDivElement>(null)
 
   const fireInsuranceValue = methods.watch('fireInsuranceValue')
-  const loan1 = methods.watch('loan1')
-  const loan2 = methods.watch('loan2')
-  const loan3 = methods.watch('loan3')
+
+  const loans = useWatch({
+    control: methods.control,
+    name: 'loans',
+  })
 
   const inputState: InputState = {
     fireInsuranceValue,
-    loan1,
-    loan2,
-    loan3,
+    loans,
   }
 
   const [resultState, setResultState] = useState<ResultState | null>(null)
@@ -93,7 +97,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
 
   const onSubmit = (inputState: InputState) => {
     setTimeout(() => {
-      // Only scroll results container into view it isn't already in view
+      // Only scroll results container into view if it isn't already in view
       if (!isElementInView(resultContainerRef.current)) {
         resultContainerRef.current?.scrollIntoView({
           behavior: 'smooth',
@@ -158,42 +162,73 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
               <Stack space={3}>
                 <Text variant="h4">{n('loanHeading', 'Áhvílandi lán')}</Text>
                 <Stack space={2}>
-                  <InputController
-                    id="loan1"
-                    name="loan1"
-                    label={n('loan1Label', 'Lán 1')}
-                    currency={true}
-                    maxLength={maxLength}
-                    placeholder={n('currencyInputPlaceholder', 'kr.')}
-                    type="number"
-                    size="sm"
-                    inputMode="numeric"
-                    suffix={currencySuffix}
-                  />
-                  <InputController
-                    id="loan2"
-                    name="loan2"
-                    label={n('loan2Label', 'Lán 2')}
-                    currency={true}
-                    maxLength={maxLength}
-                    placeholder={n('currencyInputPlaceholder', 'kr.')}
-                    type="number"
-                    size="sm"
-                    inputMode="numeric"
-                    suffix={currencySuffix}
-                  />
-                  <InputController
-                    id="loan3"
-                    name="loan3"
-                    label={n('loan3Label', 'Lán 3')}
-                    currency={true}
-                    maxLength={maxLength}
-                    placeholder={n('currencyInputPlaceholder', 'kr.')}
-                    type="number"
-                    size="sm"
-                    inputMode="numeric"
-                    suffix={currencySuffix}
-                  />
+                  {loansFieldArray.fields.map((field, index) => {
+                    const name = `loans[${index}].value`
+                    return (
+                      <Box
+                        width="full"
+                        display="flex"
+                        flexDirection="row"
+                        flexWrap="nowrap"
+                        alignItems="center"
+                        columnGap={2}
+                      >
+                        <Box className={styles.fullWidth}>
+                          <InputController
+                            key={field.id}
+                            id={name}
+                            name={name}
+                            label={`${n('loanLabel', 'Lán')} ${index + 1}`}
+                            currency={true}
+                            maxLength={maxLength}
+                            placeholder={n('currencyInputPlaceholder', 'kr.')}
+                            type="number"
+                            size="sm"
+                            inputMode="numeric"
+                            suffix={currencySuffix}
+                          />
+                        </Box>
+                        <Box
+                          userSelect="none"
+                          onKeyDown={(ev) => {
+                            if (ev.key === ' ' || ev.key === 'Enter') {
+                              loansFieldArray.remove(index)
+                              ev.preventDefault()
+                            }
+                          }}
+                          tabIndex={0}
+                          cursor="pointer"
+                          onClick={() => {
+                            loansFieldArray.remove(index)
+                          }}
+                        >
+                          <Icon
+                            icon="removeCircle"
+                            type="outline"
+                            color="dark200"
+                          />
+                        </Box>
+                      </Box>
+                    )
+                  })}
+                  <Box display="flex" justifyContent="center">
+                    <Button
+                      disabled={
+                        typeof slice.configJson?.maxLoanCount === 'number' &&
+                        loans.length >= slice.configJson.maxLoanCount
+                      }
+                      onClick={() => {
+                        loansFieldArray.append({
+                          value: undefined,
+                        })
+                      }}
+                      icon="add"
+                      size="small"
+                      variant="utility"
+                    >
+                      {n('appendLoan', 'Bæta við láni')}
+                    </Button>
+                  </Box>
                 </Stack>
               </Stack>
 
@@ -300,6 +335,12 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
               {n(
                 'closingResultDisclaimer',
                 '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
+              )}
+            </Text>
+            <Text variant="small">
+              {n(
+                'loanDisclaimer',
+                'Samtal er enn í gangi við lífeyrissjóði um þátttöku þeirra í úrræðinu. Vonast er til þess að niðurstaða liggi fyrir fljótlega',
               )}
             </Text>
           </Stack>
