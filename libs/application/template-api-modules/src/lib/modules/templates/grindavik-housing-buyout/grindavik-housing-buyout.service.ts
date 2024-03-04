@@ -80,8 +80,8 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         application.externalData.getGrindavikHousing.data,
       ),
       loans: JSON.stringify(answers.loans),
-      confirmsLoanTakeover: JSON.stringify(confirmsLoanTakeover),
-      wishesForPreemptiveRights: JSON.stringify(wishesForPreemptiveRights),
+      confirmsLoanTakeover: confirmsLoanTakeover.toString(),
+      wishesForPreemptiveRights: wishesForPreemptiveRights.toString(),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
