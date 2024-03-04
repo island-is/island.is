@@ -58,8 +58,11 @@ export enum ApplicationTypes {
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  UNIVERSITY = 'University',
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  DEREGISTER_MACHINE = 'DeregisterMachine',
+  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
 }
 
 export const ApplicationConfigurations = {
@@ -310,5 +313,17 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekis',
     translation: 'aosh.cms.application',
+  },
+  [ApplicationTypes.UNIVERSITY]: {
+    slug: 'haskolanam',
+    translation: 'uni.application',
+  },
+  [ApplicationTypes.DEREGISTER_MACHINE]: {
+    slug: 'afskraning-taekis',
+    translation: 'aosh.drm.application',
+  },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
+    translation: 'ghb.application',
   },
 }

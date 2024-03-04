@@ -8,6 +8,14 @@ import {
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
 
+export enum ListStatus {
+  Active = 'active',
+  InReview = 'inReview',
+  Reviewed = 'reviewed',
+  Extendable = 'extendable',
+  Inactive = 'inactive',
+}
+
 export interface ListBase {
   id: string
   title: string
@@ -27,19 +35,23 @@ export interface List {
   numberOfSignatures: number
   slug: string
   maxReached: boolean
+  reviewed: boolean
+  isExtended: boolean
 }
 
 export interface SignedList extends List {
   signedDate: Date
   isDigital: boolean
   pageNumber?: number
+  isValid: boolean
+  canUnsign: boolean
 }
 
-export function getSlug(id: number | string): string {
+export const getSlug = (id: number | string): string => {
   return `/umsoknir/maela-med-frambodi/?candidate=${id}`
 }
 
-export function mapListBase(list: MedmaelalistiBaseDTO): ListBase {
+export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
   const { id: id, svaedi: areas } = list
   if (!id || !areas) {
     logger.warn(
@@ -56,10 +68,10 @@ export function mapListBase(list: MedmaelalistiBaseDTO): ListBase {
   }
 }
 
-export function mapList(
+export const mapList = (
   list: MedmaelalistiDTO,
   collectors?: UmbodBaseDTO[],
-): List {
+): List => {
   const {
     id: id,
     medmaelasofnun: collection,
@@ -67,7 +79,14 @@ export function mapList(
     svaedi: areas,
     dagsetningLokar: endTime,
   } = list
-  if (!id || !collection || !candidate || !candidate.id || !areas || !endTime) {
+  if (
+    !id ||
+    !collection?.sofnunEnd ||
+    !candidate ||
+    !candidate.id ||
+    !areas ||
+    !endTime
+  ) {
     logger.warn(
       'Received partial collection information from the national registry.',
       list,
@@ -78,12 +97,17 @@ export function mapList(
   }
   const area = mapArea(areas)
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
+
+  const isActive = endTime > new Date()
+  const isExtended = endTime > collection.sofnunEnd
+  const reviewed = list.lokadHandvirkt ?? false
+
   return {
     id: list.id?.toString() ?? '',
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
     title: list.listiNafn ?? '',
     startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
-    endTime: list.dagsetningLokar ?? new Date(),
+    endTime,
     collectors: collectors
       ? collectors?.map((collector) => ({
           name: collector.nafn ?? '',
@@ -93,8 +117,10 @@ export function mapList(
     candidate: mapCandidate(candidate),
     slug: getSlug(candidate.id),
     area,
-    active: endTime > new Date(),
+    active: isActive,
     numberOfSignatures,
     maxReached: area.max <= numberOfSignatures,
+    reviewed,
+    isExtended,
   }
 }

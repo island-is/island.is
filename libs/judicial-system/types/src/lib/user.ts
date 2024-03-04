@@ -26,6 +26,7 @@ export interface User {
   role: UserRole
   institution?: Institution
   active: boolean
+  canConfirmAppeal: boolean
   latestLogin?: string
   loginCount?: number
 }

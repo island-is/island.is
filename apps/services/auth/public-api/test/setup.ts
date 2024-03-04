@@ -146,7 +146,7 @@ export const setupWithAuth = async ({
         .useValue(FeatureFlagServiceMock),
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 
@@ -216,7 +216,9 @@ export const setupWithAuth = async ({
 export const setupWithoutAuth = async (): Promise<TestApp> =>
   testServer({
     appModule: AppModule,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+    ],
   })
 
 export const setupWithoutPermission = async (): Promise<TestApp> => {
@@ -225,7 +227,7 @@ export const setupWithoutPermission = async (): Promise<TestApp> => {
     appModule: AppModule,
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 }

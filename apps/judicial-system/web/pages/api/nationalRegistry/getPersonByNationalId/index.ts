@@ -2,9 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 
-async function getPersonByNationalId(
+const getPersonByNationalId = async (
   nationalId: string,
-): Promise<NationalRegistryResponsePerson> {
+): Promise<NationalRegistryResponsePerson> => {
   const response = await fetch(
     `https://api.ja.is/skra/v1/people?kennitala=${nationalId}`,
     {

@@ -27,7 +27,7 @@ export const useGetSignatureList = (listId: string) => {
     {
       variables: {
         input: {
-          id: listId,
+          listId,
         },
       },
     },
@@ -47,7 +47,7 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
   }>(GetListSignatures, {
     variables: {
       input: {
-        id: listId,
+        listId,
       },
     },
   })
@@ -60,25 +60,32 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
 export const useGetSignedList = () => {
   const {
     data: getSignedList,
-    loading: loadingSignedList,
-    refetch: refetchSignedList,
+    loading: loadingSignedLists,
+    refetch: refetchSignedLists,
   } = useQuery<{
-    signatureCollectionSignedList?: SignatureCollectionSignedList
+    signatureCollectionSignedList?: SignatureCollectionSignedList[]
   }>(GetSignedList)
-  const signedList =
-    (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList) ??
+  const signedLists =
+    (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList[]) ??
     null
-  return { signedList, loadingSignedList, refetchSignedList }
+  return { signedLists, loadingSignedLists, refetchSignedLists }
 }
 
-export const useGetListsForUser = () => {
+export const useGetListsForUser = (collectionId?: string) => {
   const {
     data: getListsForUser,
     loading: loadingUserLists,
     refetch: refetchListsForUser,
   } = useQuery<{
     signatureCollectionListsForUser?: SignatureCollectionListBase[]
-  }>(GetListsForUser)
+  }>(GetListsForUser, {
+    variables: {
+      input: {
+        collectionId,
+      },
+    },
+    skip: !collectionId,
+  })
 
   const listsForUser =
     (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionListBase[]) ??
@@ -86,14 +93,21 @@ export const useGetListsForUser = () => {
   return { listsForUser, loadingUserLists, refetchListsForUser }
 }
 
-export const useGetListsForOwner = () => {
+export const useGetListsForOwner = (collectionId: string) => {
   const {
     data: getListsForOwner,
     loading: loadingOwnerLists,
     refetch: refetchListsForOwner,
   } = useQuery<{
     signatureCollectionListsForOwner?: SignatureCollectionList[]
-  }>(GetListsForOwner)
+  }>(GetListsForOwner, {
+    variables: {
+      input: {
+        collectionId,
+      },
+      skip: !collectionId,
+    },
+  })
 
   const listsForOwner =
     (getListsForOwner?.signatureCollectionListsForOwner as SignatureCollectionList[]) ??

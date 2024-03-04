@@ -48,7 +48,7 @@ import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/valida
 
 import { rcRuling as m } from './Ruling.strings'
 
-export function getConclusionAutofill(
+export const getConclusionAutofill = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
@@ -56,7 +56,7 @@ export function getConclusionAutofill(
   validToDate?: string | null,
   isCustodyIsolation?: boolean | null,
   isolationToDate?: string | null,
-) {
+) => {
   const isolationEndsBeforeValidToDate =
     validToDate &&
     isolationToDate &&
@@ -371,7 +371,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'introduction',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 introductionErrorMessage,
                 setIntroductionErrorMessage,
@@ -414,7 +413,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'prosecutorDemands',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 prosecutorDemandsErrorMessage,
                 setProsecutorDemandsMessage,
@@ -459,7 +457,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'courtCaseFacts',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtCaseFactsErrorMessage,
                   setCourtCaseFactsErrorMessage,
@@ -507,7 +504,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'courtLegalArguments',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLegalArgumentsErrorMessage,
                   setCourtLegalArgumentsErrorMessage,
@@ -663,7 +659,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'conclusion',
                 event.target.value,
                 [],
-                workingCase,
                 setWorkingCase,
               )
             }

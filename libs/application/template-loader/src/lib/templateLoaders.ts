@@ -161,6 +161,12 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/home-support'),
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: () =>
     import('@island.is/application/templates/aosh/change-machine-supervisor'),
+  [ApplicationTypes.UNIVERSITY]: () =>
+    import('@island.is/application/templates/university'),
+  [ApplicationTypes.DEREGISTER_MACHINE]: () =>
+    import('@island.is/application/templates/aosh/deregister-machine'),
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
+    import('@island.is/application/templates/grindavik-housing-buyout'),
 }
 
 export default templates

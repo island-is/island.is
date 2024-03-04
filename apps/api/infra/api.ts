@@ -42,6 +42,7 @@ import {
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
+  Inna,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -61,7 +62,6 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
-
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -368,6 +368,7 @@ export const serviceSetup = (services: {
       OccupationalLicenses,
       HealthInsurance,
       IntellectualProperties,
+      Inna,
       Labor,
       DrivingLicense,
       Payment,

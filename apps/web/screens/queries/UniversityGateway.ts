@@ -21,6 +21,9 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
         durationInYears
         externalId
         schoolAnswerDate
+        specializationExternalId
+        specializationNameEn
+        specializationNameIs
         id
         iscedCode
         studentAnswerDate

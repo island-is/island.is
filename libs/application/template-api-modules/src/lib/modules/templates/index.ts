@@ -96,6 +96,8 @@ import { HealthcareLicenseCertificateService } from './healthcare-license-certif
 
 import { EnergyFundsModule } from './energy-funds/energy-funds.module'
 import { EnergyFundsService } from './energy-funds/energy-funds.service'
+import { UniversityModule } from './university/university.module'
+import { UniversityService } from './university/university.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
@@ -113,6 +115,10 @@ import { SignatureListSigningModule } from './signature-collection/signature-lis
 import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 import { HomeSupportModule } from './home-support/home-support.module'
 import { HomeSupportService } from './home-support/home-support.service'
+import { DeregisterMachineTemplateModule } from './aosh/deregister-machine/deregister-machine.module'
+import { DeregisterMachineTemplateService } from './aosh/deregister-machine/deregister-machine.service'
+import { GrindavikHousingBuyoutModule } from './grindavik-housing-buyout/grindavik-housing-buyout.module'
+import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grindavik-housing-buyout.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -173,6 +179,9 @@ export const modules = [
   TransferOfMachineOwnershipTemplateModule,
   HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
+  UniversityModule,
+  DeregisterMachineTemplateModule,
+  GrindavikHousingBuyoutModule,
 ]
 
 export const services = [
@@ -234,4 +243,7 @@ export const services = [
   TransferOfMachineOwnershipTemplateService,
   HomeSupportService,
   ChangeMachineSupervisorTemplateService,
+  UniversityService,
+  DeregisterMachineTemplateService,
+  GrindavikHousingBuyoutService,
 ]

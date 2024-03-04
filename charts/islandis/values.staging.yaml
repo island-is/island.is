@@ -12,6 +12,7 @@ air-discount-scheme-api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -51,7 +52,7 @@ air-discount-scheme-api:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -90,6 +91,7 @@ air-discount-scheme-backend:
     ENVIRONMENT: 'staging'
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
@@ -146,6 +148,7 @@ air-discount-scheme-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -160,10 +163,10 @@ air-discount-scheme-backend:
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+      DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -178,7 +181,7 @@ air-discount-scheme-backend:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
@@ -195,6 +198,7 @@ air-discount-scheme-web:
     API_URL: 'http://web-air-discount-scheme-api'
     ENVIRONMENT: 'staging'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://loftbru.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
@@ -240,7 +244,7 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -301,6 +305,7 @@ api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -349,6 +354,7 @@ api:
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1'
+    XROAD_INNA_PATH: 'IS-TEST/EDU/5708150320/MMS-Protected/inna-v1'
     XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/license-api-v1'
@@ -426,7 +432,7 @@ api:
             - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -580,6 +586,7 @@ application-system-api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NOVA_USERNAME: 'IslandIs_User_Development'
@@ -587,6 +594,7 @@ application-system-api:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
+    UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -685,6 +693,7 @@ application-system-api:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -699,10 +708,10 @@ application-system-api:
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+      DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -726,7 +735,7 @@ application-system-api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
     DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
@@ -787,6 +796,7 @@ application-system-api-worker:
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
@@ -824,7 +834,7 @@ application-system-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -843,7 +853,7 @@ application-system-api-worker:
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
     DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD'
@@ -869,6 +879,7 @@ application-system-form:
   enabled: true
   env:
     BASEPATH: '/umsoknir'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
@@ -912,7 +923,7 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -941,6 +952,7 @@ consultation-portal:
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'staging'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://beta.staging01.devland.is/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
@@ -979,7 +991,7 @@ consultation-portal:
             - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1003,6 +1015,7 @@ consultation-portal:
 contentful-translation-extension:
   enabled: true
   env:
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1039,7 +1052,7 @@ contentful-translation-extension:
             - '/'
   namespace: 'contentful-translation-extension'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1062,6 +1075,7 @@ download-service:
   env:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
@@ -1116,7 +1130,7 @@ download-service:
             - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1165,6 +1179,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -1224,7 +1239,7 @@ endorsement-system-api:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1274,6 +1289,7 @@ icelandic-names-registry-backend:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1318,7 +1334,7 @@ icelandic-names-registry-backend:
           - 'db:seed:all'
         command:
           - 'npx'
-        name: 'seeds'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
@@ -1336,7 +1352,7 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1358,6 +1374,7 @@ icelandic-names-registry-backend:
 island-ui-storybook:
   enabled: true
   env:
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1394,7 +1411,7 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1416,6 +1433,7 @@ license-api:
   enabled: true
   env:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -1463,7 +1481,7 @@ license-api:
             - '/'
   namespace: 'license-api'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1528,6 +1546,7 @@ portals-admin:
   enabled: true
   env:
     BASEPATH: '/stjornbord'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
@@ -1567,7 +1586,7 @@ portals-admin:
             - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1597,6 +1616,7 @@ regulations-admin-backend:
     DB_USER: 'regulations_admin_backend'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -1638,6 +1658,7 @@ regulations-admin-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -1655,7 +1676,7 @@ regulations-admin-backend:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1691,6 +1712,7 @@ search-indexer-service:
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     ENVIRONMENT: 'staging'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -1781,7 +1803,7 @@ search-indexer-service:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -1815,6 +1837,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
@@ -1860,7 +1883,7 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1891,6 +1914,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: ''
@@ -1939,6 +1963,7 @@ service-portal-api:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -1953,10 +1978,10 @@ service-portal-api:
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+      DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1973,7 +1998,7 @@ service-portal-api:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2006,6 +2031,7 @@ service-portal-api-worker:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: ''
@@ -2041,7 +2067,7 @@ service-portal-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   namespace: 'service-portal'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2057,7 +2083,7 @@ service-portal-api-worker:
   schedule: '0 0 31 12 *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2078,6 +2104,7 @@ services-documents:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2110,6 +2137,7 @@ services-documents:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2127,7 +2155,7 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2153,8 +2181,8 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions_read'
-    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
@@ -2194,14 +2222,8 @@ services-sessions:
             - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 0
-  pvcs:
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/geoip-lite/data'
-      name: 'sessions-geoip-db'
-      size: '1Gi'
-      storageClass: 'efs-csi'
-      useExisting: true
+    maxUnavailable: 1
+  pvcs: []
   replicaCount:
     default: 1
     max: 10
@@ -2216,7 +2238,6 @@ services-sessions:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
-    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2233,6 +2254,7 @@ services-sessions-geoip-job:
   env:
     GEODATADIR: '/geoip-lite/data'
     GEOTMPDIR: '/geoip-lite/data/tmp'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2261,7 +2283,7 @@ services-sessions-geoip-job:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -2307,7 +2329,9 @@ services-sessions-worker:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
+    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
@@ -2343,6 +2367,7 @@ services-sessions-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2361,10 +2386,16 @@ services-sessions-worker:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/geoip-lite/data'
+      name: 'sessions-geoip-db'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: true
   replicaCount:
     default: 1
     max: 3
@@ -2400,6 +2431,7 @@ services-university-gateway:
     DB_USER: 'services_university_gateway'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=345'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
@@ -2412,6 +2444,7 @@ services-university-gateway:
     XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: 'IS-TEST/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
   grantNamespaces:
@@ -2484,7 +2517,7 @@ services-university-gateway:
       DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2526,6 +2559,7 @@ services-university-gateway-worker:
     DB_USER: 'services_university_gateway'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=345'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
@@ -2538,6 +2572,7 @@ services-university-gateway-worker:
     XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: 'IS-TEST/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1'
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
   grantNamespaces:
@@ -2565,7 +2600,7 @@ services-university-gateway-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2598,6 +2633,7 @@ skilavottord-web:
   env:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'staging'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2635,7 +2671,7 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2667,6 +2703,7 @@ skilavottord-ws:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2707,6 +2744,7 @@ skilavottord-ws:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2724,7 +2762,7 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2767,6 +2805,7 @@ user-notification:
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -2815,7 +2854,7 @@ user-notification:
             - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2859,6 +2898,7 @@ user-notification-cleanup-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2890,6 +2930,7 @@ user-notification-cleanup-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2907,7 +2948,7 @@ user-notification-cleanup-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2951,6 +2992,7 @@ user-notification-worker:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -2994,6 +3036,7 @@ user-notification-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -3011,7 +3054,7 @@ user-notification-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3051,6 +3094,7 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
@@ -3093,7 +3137,7 @@ web:
             - '/'
   namespace: 'islandis'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -3122,6 +3166,7 @@ xroad-collector:
   enabled: true
   env:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
     SERVERSIDE_FEATURES_ON: ''
@@ -3153,7 +3198,7 @@ xroad-collector:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
   podDisruptionBudget:
-    maxUnavailable: 0
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
