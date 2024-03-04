@@ -211,7 +211,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
         </div>
       ) : (
         <>
-          {isProsecutionUser(user) && (
+          {isProsecutionUser(user) && user?.canConfirmAppeal && (
             <>
               <SectionHeading
                 title={formatMessage(

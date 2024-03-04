@@ -19,8 +19,8 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
-  UserContext,
   useIndictmentsLawsBroken,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
@@ -91,35 +91,41 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
-        <IndictmentCaseFilesList workingCase={workingCase} />
-        <Box marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.overview.appealConfirmationTitle)}
-            required
-          />
-          <BlueBox>
-            <div className={styles.gridRowEqual}>
-              <RadioButton
-                large
-                name="appealConfirmationDecision"
-                id="confirmAppeal"
-                backgroundColor="white"
-                label={formatMessage(strings.overview.confirmAppeal)}
-                checked={appealConfirmationDecision === 'confirmAppeal'}
-                onChange={() => setAppealConfirmationDecision('confirmAppeal')}
-              />
-              <RadioButton
-                large
-                name="appealConfirmationDecision"
-                id="denyAppeal"
-                backgroundColor="white"
-                label={formatMessage(strings.overview.denyAppeal)}
-                checked={appealConfirmationDecision === 'denyAppeal'}
-                onChange={() => setAppealConfirmationDecision('denyAppeal')}
-              />
-            </div>
-          </BlueBox>
+        <Box marginBottom={user?.canConfirmAppeal ? 5 : 10}>
+          <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
+        {user?.canConfirmAppeal && (
+          <Box marginBottom={10}>
+            <SectionHeading
+              title={formatMessage(strings.overview.appealConfirmationTitle)}
+              required
+            />
+            <BlueBox>
+              <div className={styles.gridRowEqual}>
+                <RadioButton
+                  large
+                  name="appealConfirmationDecision"
+                  id="confirmAppeal"
+                  backgroundColor="white"
+                  label={formatMessage(strings.overview.confirmAppeal)}
+                  checked={appealConfirmationDecision === 'confirmAppeal'}
+                  onChange={() =>
+                    setAppealConfirmationDecision('confirmAppeal')
+                  }
+                />
+                <RadioButton
+                  large
+                  name="appealConfirmationDecision"
+                  id="denyAppeal"
+                  backgroundColor="white"
+                  label={formatMessage(strings.overview.denyAppeal)}
+                  checked={appealConfirmationDecision === 'denyAppeal'}
+                  onChange={() => setAppealConfirmationDecision('denyAppeal')}
+                />
+              </div>
+            </BlueBox>
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
