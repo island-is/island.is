@@ -8,7 +8,7 @@ import {
 import { ApiScope, LicenseApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import { ForbiddenException, UseGuards } from '@nestjs/common'
 import {
   Args,
