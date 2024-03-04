@@ -15,13 +15,30 @@ const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
-  'toNationalId' | 'fromNationalId' | 'provider' | 'type' | 'validTo'
+  | 'toNationalId'
+  | 'fromNationalId'
+  | 'provider'
+  | 'type'
+  | 'validTo'
+  | 'customDelegationScopes'
 >
 
 type SortedDelegations = {
   created: DelegationIndexInfo[]
   updated: DelegationIndexInfo[]
   deleted: DelegationIndexInfo[]
+}
+
+const hasAllSameScopes = (a: string[] | undefined, b: string[] | undefined) => {
+  // Only custom delegations have scopes and they are never undefined
+  if (!a && !b) {
+    return true
+  }
+
+  if (a?.length !== b?.length) {
+    return false
+  }
+  return a?.every((s) => b?.includes(s))
 }
 
 const toDelegationIndexInfo = (
@@ -32,6 +49,7 @@ const toDelegationIndexInfo = (
   type: delegation.type,
   provider: delegation.provider,
   validTo: delegation.validTo,
+  customDelegationScopes: delegation.scopes?.map((s) => s.scopeName),
 })
 
 /**
@@ -168,7 +186,13 @@ export class DelegationsIndexService {
         )
 
         if (existing) {
-          if (existing.validTo !== curr.validTo) {
+          if (
+            existing.validTo !== curr.validTo ||
+            !hasAllSameScopes(
+              existing.customDelegationScopes,
+              curr.customDelegationScopes,
+            )
+          ) {
             acc.updated.push(curr)
           }
         } else {

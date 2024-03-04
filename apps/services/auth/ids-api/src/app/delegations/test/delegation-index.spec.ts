@@ -15,7 +15,7 @@ import { indexingTestcases } from './delegation-index-test-cases'
 import { setupWithAuth } from '../../../../test/setup'
 import { Sequelize } from 'sequelize-typescript'
 import { Type } from '@nestjs/common'
-import { user } from './delegations-filters-types'
+import { domainName, user } from './delegations-filters-types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import faker from 'faker'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
@@ -305,6 +305,98 @@ describe('DelegationsIndexService', () => {
         expect(
           delegations.find((d) => d.fromNationalId === fromNationalId)?.validTo,
         ).toStrictEqual(updatedValidTo)
+      })
+
+      it('should remove scopes for custom delegations index item', async () => {
+        // Act
+        await delegationIndexService.indexDelegations(user)
+
+        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const testDelegation = await delegationModel.findOne({
+          where: {
+            fromNationalId,
+            toNationalId: user.nationalId,
+          },
+        })
+
+        // Add remove scope from delegation
+        if (testDelegation) {
+          await delegationScopeModel.destroy({
+            where: {
+              delegationId: testDelegation.id,
+              scopeName: 'cu1',
+            },
+          })
+        }
+
+        // delete delegation index meta to force reindex
+        await delegationIndexMetaModel.destroy({
+          where: {
+            nationalId: user.nationalId,
+          },
+        })
+
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll()
+        const delegation = delegations.find(
+          (d) => d.fromNationalId === fromNationalId,
+        )
+
+        expect(delegations.length).toBe(testcase.expectedFrom.length)
+        expect(delegation?.customDelegationScopes).toHaveLength(1)
+        expect(delegation?.customDelegationScopes).not.toContain('cu1')
+      })
+
+      it('should add new scopes to custom delegation index item', async () => {
+        // Act
+        await delegationIndexService.indexDelegations(user)
+
+        const testDelegationScope = 'test-scope'
+        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const testDelegation = await delegationModel.findOne({
+          where: {
+            fromNationalId,
+            toNationalId: user.nationalId,
+          },
+        })
+
+        // Add new scope to delegation
+        if (testDelegation) {
+          await factory.createApiScope({
+            name: testDelegationScope,
+            domainName: domainName,
+            allowExplicitDelegationGrant: true,
+            isAccessControlled: false,
+          })
+
+          await factory.createCustomScope({
+            scopeName: testDelegationScope,
+            delegationId: testDelegation.id,
+          })
+        }
+
+        // delete delegation index meta to force reindex
+        await delegationIndexMetaModel.destroy({
+          where: {
+            nationalId: user.nationalId,
+          },
+        })
+
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll()
+        const delegation = delegations.find(
+          (d) => d.fromNationalId === fromNationalId,
+        )
+
+        expect(delegations.length).toBe(testcase.expectedFrom.length)
+        expect(delegation?.customDelegationScopes).toHaveLength(3)
+        expect(delegation?.customDelegationScopes).toContain(
+          testDelegationScope,
+        )
       })
     })
   })
