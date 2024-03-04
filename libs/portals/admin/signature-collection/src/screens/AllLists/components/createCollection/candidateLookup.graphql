@@ -1,4 +1,4 @@
-query CandidateLookup($input: SignatureCollectionIdInput!) {
+query CandidateLookup($input: SignatureCollectionNationalIdInput!) {
   signatureCollectionAdminCandidateLookup(input: $input) {
     nationalId
     name

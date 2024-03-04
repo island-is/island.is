@@ -20,20 +20,20 @@ export const SignatureLists: FC<
   React.PropsWithChildren<SignatureListsProps>
 > = ({ slice }) => {
   const { collection, loading } = useGetCurrentCollection()
-  const { openLists } = useGetOpenLists()
+  const { openLists, openListsLoading } = useGetOpenLists(collection?.id || '')
   const t = useLocalization(slice.json)
 
   return (
-    !loading && (
+    !loading &&
+    !openListsLoading && (
       <Box marginTop={7}>
-        {openLists?.length > 0 ||
-          (collection?.candidates.length > 0 && (
-            <Box marginBottom={3}>
-              <Text variant="h4">
-                {t('title', 'Frambjóðendur sem hægt er að mæla með')}
-              </Text>
-            </Box>
-          ))}
+        {(collection?.candidates.length > 0 || openLists?.length > 0) && (
+          <Box marginBottom={3}>
+            <Text variant="h4">
+              {t('title', 'Frambjóðendur sem hægt er að mæla með')}
+            </Text>
+          </Box>
+        )}
         <Stack space={4}>
           {/* if collection time is over yet there are still open lists, show them */}
           {new Date() > new Date(collection.endTime) &&
@@ -78,7 +78,7 @@ export const SignatureLists: FC<
                     key={candidate.id}
                     backgroundColor="white"
                     heading={candidate.name}
-                    text={collection.name}
+                    text={t('collectionName', 'Forsetakosningar 2024')}
                     cta={
                       new Date() < new Date(collection.endTime)
                         ? {

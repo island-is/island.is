@@ -29,8 +29,8 @@ export const GetCurrentCollection = gql`
   }
 `
 export const GetOpenLists = gql`
-  query allOpenLists {
-    signatureCollectionAllOpenLists {
+  query allOpenLists($input: SignatureCollectionIdInput!) {
+    signatureCollectionAllOpenLists(input: $input) {
       id
       title
       area {
@@ -55,10 +55,14 @@ export const useGetCurrentCollection = () => {
   return { collection, loading }
 }
 
-export const useGetOpenLists = () => {
-  const { data, loading } = useQuery<Query>(GetOpenLists)
+export const useGetOpenLists = (collectionId: string) => {
+  const { data, loading: openListsLoading } = useQuery<Query>(GetOpenLists, {
+    variables: {
+      input: { collectionId: collectionId },
+    },
+  })
   const openLists =
     data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
 
-  return { openLists, loading }
+  return { openLists, openListsLoading }
 }

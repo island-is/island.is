@@ -12,11 +12,9 @@ import {
   InferCreationAttributes,
 } from 'sequelize'
 
-class CreateOptional<T> {}
-
 @Table({
   tableName: 'delegation_index',
-  timestamps: false,
+  timestamps: true,
 })
 export class DelegationIndex extends Model<
   InferAttributes<DelegationIndex>,
@@ -25,38 +23,36 @@ export class DelegationIndex extends Model<
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   fromNationalId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   toNationalId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   provider!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    primaryKey: true,
   })
   type!: string
-
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: true,
-  })
-  customDelegationScopes?: CreateOptional<string[]>
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  validTo?: CreateOptional<Date>
+  validTo?: CreationOptional<Date> | null
 
   @CreatedAt
   readonly created!: CreationOptional<Date>

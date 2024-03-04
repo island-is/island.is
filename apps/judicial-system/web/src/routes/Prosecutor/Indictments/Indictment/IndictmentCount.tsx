@@ -35,6 +35,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
+import { policeCaseInfo } from '../Defendant/PoliceCaseInfo/PoliceCaseInfo.strings'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
@@ -55,10 +56,10 @@ interface Props {
   ) => void
 }
 
-function offensesCompare(
+const offensesCompare = (
   offense1: IndictmentCountOffense,
   offense2: IndictmentCountOffense,
-) {
+) => {
   const offense1Index = Object.values(IndictmentCountOffense).indexOf(offense1)
   const offense2Index = Object.values(IndictmentCountOffense).indexOf(offense2)
 
@@ -91,7 +92,7 @@ const offenseLawsMap: Record<
 
 const generalLaws: [number, number][] = [[95, 1]]
 
-function lawsCompare(law1: number[], law2: number[]) {
+const lawsCompare = (law1: number[], law2: number[]) => {
   if (law1[0] < law2[0]) {
     return -1
   }
@@ -112,10 +113,10 @@ const laws = Object.values(offenseLawsMap)
   .concat(generalLaws)
   .sort(lawsCompare)
 
-function getLawsBroken(
+const getLawsBroken = (
   offenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
-) {
+) => {
   if (!offenses || offenses.length === 0) {
     return []
   }
@@ -144,10 +145,10 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
-export function getRelevantSubstances(
+export const getRelevantSubstances = (
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
-) {
+) => {
   const allowedSubstances = offenses.map(
     (offense) => offenseSubstances[offense],
   )
@@ -162,11 +163,11 @@ export function getRelevantSubstances(
   return relevantSubstances
 }
 
-export function getIncidentDescriptionReason(
+export const getIncidentDescriptionReason = (
   offenses: IndictmentCountOffense[],
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
-) {
+) => {
   let reason = offenses.reduce((acc, offense, index) => {
     if (
       (offenses.length > 1 && index === offenses.length - 1) ||
@@ -233,10 +234,10 @@ export function getIncidentDescriptionReason(
   return reason
 }
 
-export function getLegalArguments(
+export const getLegalArguments = (
   lawsBroken: number[][],
   formatMessage: IntlShape['formatMessage'],
-) {
+) => {
   if (lawsBroken.length === 0) {
     return ''
   }
