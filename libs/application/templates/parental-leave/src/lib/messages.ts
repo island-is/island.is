@@ -728,7 +728,8 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:expectedDateOfBirth.subtitle',
       defaultMessage:
         'Staðfesting á áætluðum fæðingardegi barn. Athugið að barnshafandi foreldri þarf að klára sína umsókn á undan maka.',
-      description: 'Confirmation on estimated due date from Heilsuvera. Note that the pregnant parent must complete their application before their spouse.',
+      description:
+        'Confirmation on estimated due date from Heilsuvera. Note that the pregnant parent must complete their application before their spouse.',
     },
     salaryInformationTitle: {
       id: 'pl.application:permission.salaryInformation.title',
