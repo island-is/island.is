@@ -7,7 +7,6 @@ import {
   FeatureDeploymentServices,
   Services as IslandisServices,
 } from './uber-charts/islandis'
-import { Services as JudicialServices } from './uber-charts/judicial-system'
 import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
 import { HelmService, Services } from './dsl/types/output-types'
@@ -22,12 +21,11 @@ import {
 import { ServiceBuilder } from './dsl/dsl'
 import { logger } from './common'
 
-type ChartName = 'islandis' | 'identity-server' | 'judicial-system'
+type ChartName = 'islandis' | 'identity-server'
 
 const charts: { [name in ChartName]: EnvironmentServices } = {
   islandis: IslandisServices,
   'identity-server': IDSServices,
-  'judicial-system': JudicialServices,
 }
 
 interface Arguments {
