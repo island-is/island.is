@@ -249,7 +249,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           description: m.application.sellerStatement.text,
           children: [
             buildCheckboxField({
-              id: 'preemptiveRightWish',
+              id: 'userConfirmation',
               title: '',
               defaultValue: [],
               options: [
@@ -413,7 +413,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
 
             buildCheckboxField({
-              id: 'userConfirmation',
+              id: 'preemptiveRightWish',
               title: '',
               defaultValue: [],
               options: [
