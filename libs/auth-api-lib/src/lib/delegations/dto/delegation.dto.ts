@@ -13,7 +13,12 @@ import {
   UpdateDelegationScopeDTO,
 } from './delegation-scope.dto'
 import { PersonalRepresentativeRightTypeDTO } from '../../personal-representative/dto/personal-representative-right-type.dto'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
+/** @deprecated - use AuthDelegationProvider from @island.is/shared/types instead */
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',
   CompanyRegistry = 'fyrirtaekjaskra',
@@ -47,11 +52,14 @@ export class DelegationDTO {
   @ApiPropertyOptional({ nullable: true, type: Date })
   validTo?: Date | null
 
-  @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
-  type!: DelegationType
+  @ApiProperty({ enum: AuthDelegationType, enumName: 'AuthDelegationType' })
+  type!: AuthDelegationType
 
-  @ApiProperty({ enum: DelegationProvider, enumName: 'DelegationProvider' })
-  provider!: DelegationProvider
+  @ApiProperty({
+    enum: AuthDelegationProvider,
+    enumName: 'AuthDelegationProvider',
+  })
+  provider!: AuthDelegationProvider
 
   @IsOptional()
   @ApiPropertyOptional({ type: [DelegationScopeDTO] })
