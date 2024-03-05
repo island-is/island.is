@@ -134,7 +134,7 @@ const LinkGroupLinkField = () => {
     }
   }
 
-  const handleLinkExisting = (props) => {
+  const handleLinkExisting = (props: LinkActionsProps) => {
     const contentTypeToSelect = getSubpageContentTypeId(
       pageAbove?.sys?.contentType?.sys?.id,
     )
@@ -146,8 +146,10 @@ const LinkGroupLinkField = () => {
 
     selectEntriesFunction({
       contentTypes: contentTypeToSelect ? [contentTypeToSelect] : [],
-    }).then((entries) => {
-      props.onLinkedExisting(Array.isArray(entries) ? entries : [entries])
+    }).then((entries: EntryProps[]) => {
+      entries = Array.isArray(entries) ? entries : [entries]
+      entries = entries.filter((entry) => entry?.sys?.id) // Make sure the entries are non-empty
+      props.onLinkedExisting(entries)
     })
   }
 
