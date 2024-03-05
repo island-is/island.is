@@ -227,7 +227,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
         <Box alignItems="center">
           <Inline space={1} alignY="center">
             <Button
-              size="small"
+              variant="ghost"
               icon="add"
               disabled={!canAddAnotherPeriod}
               onClick={expandRepeater}
