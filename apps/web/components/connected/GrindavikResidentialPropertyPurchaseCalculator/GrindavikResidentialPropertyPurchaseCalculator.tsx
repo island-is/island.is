@@ -2,10 +2,18 @@ import { useRef, useState } from 'react'
 import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import isEqual from 'lodash/isEqual'
 
-import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Stack,
+  Text,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
 import * as styles from './GrindavikResidentialPropertyPurchaseCalculator.css'
@@ -66,6 +74,17 @@ const calculateResultState = (
   }
 }
 
+const focusLoanInput = (index: number, delay = 100) => {
+  setTimeout(() => {
+    const appendedElement = document
+      .getElementsByName(`loans[${index}].value`)
+      .item(0)
+    if (appendedElement) {
+      appendedElement.focus()
+    }
+  }, delay)
+}
+
 const GrindavikResidentialPropertyPurchaseCalculator = ({
   slice,
 }: GrindavikResidentialPropertyPurchaseCalculatorProps) => {
@@ -77,6 +96,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
     name: 'loans',
     control: methods.control,
   })
+  const { activeLocale } = useI18n()
   const resultContainerRef = useRef<HTMLDivElement>(null)
 
   const fireInsuranceValue = methods.watch('fireInsuranceValue')
@@ -189,6 +209,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                           />
                         </Box>
                         <Box
+                          role="button"
                           userSelect="none"
                           onKeyDown={(ev) => {
                             if (ev.key === ' ' || ev.key === 'Enter') {
@@ -202,6 +223,14 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                             loansFieldArray.remove(index)
                           }}
                         >
+                          <VisuallyHidden>
+                            {n(
+                              'removeLoan',
+                              activeLocale === 'is'
+                                ? 'Eyða láni'
+                                : 'Remove loan',
+                            )}
+                          </VisuallyHidden>
                           <Icon
                             icon="removeCircle"
                             type="outline"
@@ -221,6 +250,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                         loansFieldArray.append({
                           value: undefined,
                         })
+                        focusLoanInput(loansFieldArray.fields.length)
                       }}
                       icon="add"
                       size="small"
