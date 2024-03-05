@@ -125,7 +125,7 @@ export const getDateOfCalculationsOptions = (pageData?: CustomPage | null) => {
     while (year > new Date(options[0].value).getFullYear()) {
       missingYearOptions.push({
         label: year.toString(),
-        value: new Date(year, 0, 1).toISOString(),
+        value: new Date(year, 11, 31).toISOString(),
       })
       year -= 1
     }
