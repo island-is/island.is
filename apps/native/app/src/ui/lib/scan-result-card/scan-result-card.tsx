@@ -10,9 +10,11 @@ import danger from '../../assets/card/danger.png'
 import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
 import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
 import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
+import PassportBg from '../../assets/card/passport-bg.png'
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
+import LogoEhic from '../../assets/card/sjukratryggingar.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import { font } from '../../utils'
 
@@ -210,6 +212,12 @@ const ScanResultCardPresets = {
     logo: DisabilityLicenseLogo,
     backgroundImage: DisabilityLicenseBg,
     backgroundColor: '#C5D5C8',
+  },
+  Ehic: {
+    title: 'Evrópska sjúkratryggingakortið',
+    logo: LogoEhic,
+    backgroundImage: PassportBg,
+    backgroundColor: '#F5E4EC',
   },
   Unknown: {
     title: 'Ekki þekkt',

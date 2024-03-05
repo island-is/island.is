@@ -17,6 +17,7 @@ enum ScanResult {
   ADR_LICENSE = 'AdrLicense',
   MACHINE_LICENSE = 'MachineLicense',
   DISABILITY_LICENSE = 'DisabilityLicense',
+  EHIC = 'Ehic',
   UNKNOWN = 'Unknown',
 }
 
@@ -39,6 +40,11 @@ const ADRTemplaeIds = [
 ]
 const DisabilityTemplateIds = [
   'd0b1a6b6-3af3-4131-9b97-c6d7d2ed7e63',
+  'c78364b6-33a8-4242-84ca-24de0854fe00',
+]
+
+const EhicTemplateIds = [
+  'c78364b6-33a8-4242-84ca-24de0854fe00',
   'c78364b6-33a8-4242-84ca-24de0854fe00',
 ]
 
@@ -82,6 +88,10 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
 
         if (DisabilityTemplateIds.includes(parsed?.passTemplateId)) {
           setScanResult(ScanResult.DISABILITY_LICENSE)
+        }
+
+        if (EhicTemplateIds.includes(parsed?.passTemplateId)) {
+          setScanResult(ScanResult.EHIC)
         }
       }
       // else if (type === Constants.BarCodeType.qr) {
