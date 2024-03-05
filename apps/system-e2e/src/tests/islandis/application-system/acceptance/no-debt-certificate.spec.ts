@@ -60,7 +60,9 @@ applicationTest.describe('Data protection complaint application', () => {
             page.getByRole('region').getByText('Staðfesting'),
           ).toBeVisible()
           await expect(
-            page.getByRole('heading', { name: 'Umsókn þín um skuldleysisvottorð hefur verið staðfest' }),
+            page.getByRole('heading', {
+              name: 'Umsókn þín um skuldleysisvottorð hefur verið staðfest',
+            }),
           ).toBeVisible()
         },
       )

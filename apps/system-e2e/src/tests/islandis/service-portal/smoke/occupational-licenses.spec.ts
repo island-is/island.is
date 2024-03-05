@@ -64,9 +64,7 @@ test.describe('Occupational licenses overview', () => {
         // Arrange
         await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
 
-        const license = page
-          .locator(`role=button[name="${'Skoða'}"]`)
-          .last()
+        const license = page.locator(`role=button[name="${'Skoða'}"]`).last()
 
         // Act
         await license.click()

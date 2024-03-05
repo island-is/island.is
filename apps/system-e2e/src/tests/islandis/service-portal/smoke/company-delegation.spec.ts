@@ -55,15 +55,9 @@ test.describe('Service portal', () => {
 
     // Act
     await page.locator('data-testid=user-menu >> visible=true').click()
-    await page
-      .locator(
-        `role=button[name="${'Skipta um notanda'}"]`,
-      )
-      .click()
+    await page.locator(`role=button[name="${'Skipta um notanda'}"]`).click()
     const firstCompany = page
-      .locator(
-        `role=button[name*="${'Prókúra'}"]`,
-      )
+      .locator(`role=button[name*="${'Prókúra'}"]`)
       .first()
     await expect(firstCompany).toBeVisible()
     await firstCompany.click()
@@ -71,12 +65,12 @@ test.describe('Service portal', () => {
       waitUntil: 'domcontentloaded',
     })
 
-    const link = page
-      .getByRole('link', { name: 'Um fyrirtæki' })
-      .first()
+    const link = page.getByRole('link', { name: 'Um fyrirtæki' }).first()
     await link.click()
 
-    const headlineText = page.getByText('Hér má nálgast upplýsingar úr fyrirtækjaskrá hjá Skattinum.').first()
+    const headlineText = page
+      .getByText('Hér má nálgast upplýsingar úr fyrirtækjaskrá hjá Skattinum.')
+      .first()
     const dataText = page.getByText('Einkahlutafélag').first()
 
     // Assert

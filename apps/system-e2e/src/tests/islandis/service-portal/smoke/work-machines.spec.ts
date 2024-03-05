@@ -45,9 +45,7 @@ test.describe('MS - Work Machines', () => {
       await inputField.type('hys', { delay: 200 })
       const actionCardButton = page.getByTestId('action-card-cta').first()
 
-      const closeFilter = page
-        .getByRole('button', { name: 'Loka síu' })
-        .first()
+      const closeFilter = page.getByRole('button', { name: 'Loka síu' }).first()
 
       await filterButton.click()
 
@@ -65,9 +63,7 @@ test.describe('MS - Work Machines', () => {
       const actionCardButton = page.getByTestId('action-card-cta').first()
       await actionCardButton.click()
 
-      const basicInfoText = page
-        .getByText('Grunnupplýsingar tækis')
-        .first()
+      const basicInfoText = page.getByText('Grunnupplýsingar tækis').first()
 
       // Assert
       await expect(page).toHaveURL(/minarsidur\/eignir\/vinnuvelar(\/[^/]+){2}/)

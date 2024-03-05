@@ -57,14 +57,8 @@ test.describe('MS - Pósthólf overview', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       // Act
-      await page
-        .getByRole('button', { name: 'Opna síu' })
-        .first()
-        .click()
-      await page
-        .getByRole('button', { name: 'Stofnun' })
-        .first()
-        .click()
+      await page.getByRole('button', { name: 'Opna síu' }).first().click()
+      await page.getByRole('button', { name: 'Stofnun' }).first().click()
       await page.mouse.wheel(0, 50)
 
       // "institution" comes from the api - not translateable

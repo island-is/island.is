@@ -39,7 +39,7 @@ applicationTest.describe('Car recycling', () => {
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
           page.getByRole('heading', {
-            name: 'Gagnaöflun'
+            name: 'Gagnaöflun',
           }),
         ).toBeVisible()
         await page.getByTestId('agree-to-data-providers').click()
@@ -85,12 +85,9 @@ applicationTest.describe('Car recycling', () => {
 
       await applicationTest.step('Submit application', async () => {
         await expect(
-          page
-            .locator('form')
-            .getByRole('paragraph')
-            .filter({
-              hasText: 'Afskrá til endurvinnslu',
-            }),
+          page.locator('form').getByRole('paragraph').filter({
+            hasText: 'Afskrá til endurvinnslu',
+          }),
         ).toBeVisible()
         await page
           .getByRole('button', {

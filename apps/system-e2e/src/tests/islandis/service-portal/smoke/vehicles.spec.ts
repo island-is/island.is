@@ -42,9 +42,7 @@ test.describe('MS - Vehicles', () => {
         .locator(`role=button[name="${'Skilavottorð'}"]`)
         .first()
       const hideName = page
-        .locator(
-          `role=button[name="${'Nafnleynd í ökutækjaskrá'}"]`,
-        )
+        .locator(`role=button[name="${'Nafnleynd í ökutækjaskrá'}"]`)
         .first()
       const ownershipLink = page
         .getByRole('button', { name: 'Tilkynna eigendaskipti' })
@@ -71,13 +69,9 @@ test.describe('MS - Vehicles', () => {
       const viewLink = page.getByText('Skoða nánar').first()
       await viewLink.click()
 
-      const basicInfoText = page
-        .getByText('Grunnupplýsingar ökutækis')
-        .first()
+      const basicInfoText = page.getByText('Grunnupplýsingar ökutækis').first()
       const reportLink = page
-        .locator(
-          `role=button[name="${'Ferilskýrsla'}"]`,
-        )
+        .locator(`role=button[name="${'Ferilskýrsla'}"]`)
         .first()
 
       // Assert
@@ -110,13 +104,9 @@ test.describe('MS - Vehicles', () => {
       })
       await inputField.click()
       await inputField.type('ísland.is', { delay: 200 })
-      const lookBtn = page
-        .getByRole('button', { name: 'Leita' })
-        .first()
+      const lookBtn = page.getByRole('button', { name: 'Leita' }).first()
       await lookBtn.click()
-      const basicInfoText = page
-        .getByText('Ekkert ökutæki fannst')
-        .first()
+      const basicInfoText = page.getByText('Ekkert ökutæki fannst').first()
 
       // Assert
       await expect(basicInfoText).toBeVisible()

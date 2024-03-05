@@ -17,9 +17,7 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/system-e2e/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "smoke:old": {
@@ -49,7 +47,5 @@
     },
     "docker-playwright": {}
   },
-  "tags": [
-    "scope:e2e"
-  ]
+  "tags": ["scope:e2e"]
 }

@@ -61,9 +61,7 @@ async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
     })
     .click()
 
-  await expect(
-    page.getByRole('heading', { name: 'Takk fyrir' }),
-  ).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Takk fyrir' })).toBeVisible()
 }
 
 const applicationSystemApi: { [env in TestEnvironment]: string } = {

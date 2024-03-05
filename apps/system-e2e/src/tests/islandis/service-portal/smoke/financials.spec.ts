@@ -33,9 +33,7 @@ test.describe('MS - Fjármál overview', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/stada'))
       // Assert
       await expect(
-        page
-          .locator(`role=button[name="${'Sundurliðun'}"]`)
-          .first(),
+        page.locator(`role=button[name="${'Sundurliðun'}"]`).first(),
         {},
       ).toBeVisible({ timeout })
     })
@@ -59,9 +57,7 @@ test.describe('MS - Fjármál overview', () => {
 
       // Assert
       await expect(
-        page
-          .locator(`role=button[name="${'Sundurliðun'}"]`)
-          .first(),
+        page.locator(`role=button[name="${'Sundurliðun'}"]`).first(),
       ).toBeVisible({ timeout })
 
       await expect(page.locator('role=table')).toContainText('Sakavottorð')

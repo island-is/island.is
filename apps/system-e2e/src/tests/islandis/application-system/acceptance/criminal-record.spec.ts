@@ -38,7 +38,8 @@ applicationTest.describe('Criminal record application payment test', () => {
       const buttonTextSubmit3DData = 'Submit 3D data'
       const textGervimaðurAfríka = 'Gervimaður Afríka'
       const textGreiðslaTókst = 'Greiðsla tókst'
-      const textUmsóknStaðfest = 'Umsókn þín um sakavottorð hefur verið staðfest'
+      const textUmsóknStaðfest =
+        'Umsókn þín um sakavottorð hefur verið staðfest'
       const textAfgreidd = 'Afgreidd'
 
       await applicationTest.step(

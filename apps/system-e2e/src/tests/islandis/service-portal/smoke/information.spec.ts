@@ -33,9 +33,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     const element = page.getByText('Kennitala').first()
 
     // Assert
-    await expect(
-      page.getByRole('heading', { name: 'Mín gögn' }),
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Mín gögn' })).toBeVisible()
     await expect(element).toBeVisible()
   })
 
@@ -49,9 +47,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     // Act
     const title1 = page.getByText('Mín skráning')
     const title2 = page.getByText('Grunnupplýsingar')
-    const link = page
-      .getByRole('link', { name: 'Breyta í Þjóðskrá' })
-      .first()
+    const link = page.getByRole('link', { name: 'Breyta í Þjóðskrá' }).first()
 
     // Assert
     await expect(title1).toBeVisible()
