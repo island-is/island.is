@@ -8,6 +8,7 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
+GRAY='\033[0;90m'
 NC='\033[0m' # No Color
 
 # Log function to print messages with color
@@ -56,7 +57,7 @@ resolve_path() {
   aliasMapping="$(
     grep -Pzm1 -o "\"${importPath}\": ${aliasGroupPattern}" "$tsConfigPath"
   )" || true
-  log "$YELLOW" "aliasMapping='$aliasMapping'"
+  log "$GRAY" "aliasMapping='$aliasMapping'"
 
   aliasPath="$(
     echo "$aliasMapping" | grep -oP "${stringPattern}"
@@ -64,7 +65,7 @@ resolve_path() {
   log "$YELLOW" "aliasPath='$aliasPath'"
   importPath="$aliasPath"
 
-  log "$BLUE" "Searching for alias in $tsConfigPath for '$importPath'..."
+  log "$GRAY" "Searching for alias in $tsConfigPath for '$importPath'..."
 
   if [ -z "$aliasPath" ]; then
     log "$YELLOW" "No alias found in $tsConfigPath for '$importPath'."
@@ -90,16 +91,16 @@ process_labels() {
     log "$YELLOW" "No label references found."
     exit 1
   fi
-  log "$BLUE" "Found label references: '$references'"
+  log "$GRAY" "Found label references: '${references//$'\n'/, }'"
 
   echo "$references" | while read -r labelRef; do
     log "$BLUE" "Processing label reference: '$labelRef'"
 
     local attribute
     attribute=$(echo "$labelRef" | grep -oP '\.\K\w+')
-    log "$BLUE" "Extracted attribute: '$attribute'"
+    log "$GRAY" "Extracted attribute: '$attribute'"
 
-    log "$BLUE" "Searching for defaultMessage for '$attribute' in '$resolvedPath'..."
+    log "$GRAY" "Searching for defaultMessage for '$attribute' in '$resolvedPath'..."
 
     local defaultMessage
     defaultMessage=$(awk -v attr="$attribute" '
@@ -140,7 +141,6 @@ main() {
   log "$BLUE" "Resolved path: '$resolvedPath'"
 
   process_labels "$filename" "$resolvedPath"
-  clean_imports "$filename" "$namespace"
 
   log "$GREEN" "Processing complete."
 }
