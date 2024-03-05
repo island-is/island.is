@@ -1,6 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import {
+  getOrganizationPageUrlPrefix,
+  getProjectPageUrlPrefix,
+} from '@island.is/shared/utils'
+import {
   ILink,
   ILinkGroup,
   ILinkGroupFields,
@@ -9,6 +13,7 @@ import {
   IProjectSubpage,
 } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
+
 @ObjectType()
 export class LinkGroup {
   @Field(() => ID)
@@ -50,13 +55,13 @@ export const mapLinkGroup = ({
 }: ILinkGroupModel): LinkGroup => ({
   id: sys.id,
   name: fields.name ?? '',
-  primaryLink: doMapLink(fields.primaryLink, pageAbove),
+  primaryLink: mapLinkWrapper(fields.primaryLink, pageAbove),
   childrenLinks: (fields.childrenLinks ?? []).map((link) =>
-    doMapLink(link, pageAbove),
+    mapLinkWrapper(link, pageAbove),
   ),
 })
 
-const doMapLink = (link: LinkType, pageAbove: PageAbove | undefined) => {
+const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
   if (link.sys?.contentType?.sys?.id === 'organizationSubpage') {
     return generateOrganizationSubpageLink(link as IOrganizationSubpage)
   } else if (link.sys.contentType.sys.id === 'projectSubpage') {
@@ -66,22 +71,8 @@ const doMapLink = (link: LinkType, pageAbove: PageAbove | undefined) => {
   }
 }
 
-const getOrganizationPrefix = (locale: string) => {
-  if (locale && !locale.includes('is')) {
-    return `${locale}/o`
-  }
-  return 's'
-}
-
-const getProjectPrefix = (locale: string) => {
-  if (locale && !locale.includes('is')) {
-    return `${locale}/p`
-  }
-  return 'v'
-}
-
 const generateOrganizationSubpageLink = (subpage: IOrganizationSubpage) => {
-  const prefix = getOrganizationPrefix(subpage.sys.locale)
+  const prefix = getOrganizationPageUrlPrefix(subpage.sys.locale)
 
   return mapLink({
     ...subpage,
@@ -105,7 +96,7 @@ const generateProjectSubpageLink = (
   subpage: IProjectSubpage,
   pageAbove?: PageAbove,
 ) => {
-  const prefix = getProjectPrefix(subpage.sys.locale)
+  const prefix = getProjectPageUrlPrefix(subpage.sys.locale)
 
   return mapLink({
     ...subpage,

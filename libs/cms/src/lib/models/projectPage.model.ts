@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import GraphQLJSON from 'graphql-type-json'
 import { CacheField } from '@island.is/nest/graphql'
+import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
 
 import { ILinkFields, IProjectPage } from '../generated/contentfulTypes'
 import {
@@ -111,37 +112,51 @@ export class ProjectPage {
   alertBanner?: AlertBanner
 }
 
-export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
-  const { sys, fields } = projectPage
+const processSidebarLinks = (projectPage: IProjectPage) => {
   let hasFrontpageLink = false
-  const filteredItems: ILinkGroupModel[] = (fields.sidebarLinks ?? []).filter(
-    (linkGroup) => {
-      const linkGroupContentType =
-        linkGroup.fields.primaryLink.sys.contentType.sys.id
 
-      if (fields.sidebarFrontpageLink && linkGroupContentType === 'link') {
-        const linkFields = linkGroup.fields.primaryLink.fields as ILinkFields
-        const linkUrl = linkFields.url.split('/')
-        if (linkUrl.at(-1) === projectPage.fields.slug) {
-          hasFrontpageLink = true
-        }
-      }
-      if (linkGroupContentType !== 'projectSubpage') {
-        return true
-      }
+  const filteredItems: ILinkGroupModel[] = (
+    projectPage.fields.sidebarLinks ?? []
+  ).filter((linkGroup) => {
+    const linkGroupContentTypeId =
+      linkGroup.fields.primaryLink.sys.contentType.sys.id
 
-      return fields.projectSubpages?.some((subpage) => {
+    if (
+      projectPage.fields.sidebarFrontpageLink &&
+      linkGroupContentTypeId === 'link'
+    ) {
+      const linkFields = linkGroup.fields.primaryLink.fields as ILinkFields
+
+      const frontpageLinkIsPresent =
+        linkFields.url.split('/').at(-1) === projectPage.fields.slug
+
+      if (frontpageLinkIsPresent) {
+        hasFrontpageLink = true
+      }
+    }
+
+    if (linkGroupContentTypeId === 'link') {
+      return true
+    }
+
+    // Filter out links that are not present in the projectSubpages array (since those links will result in a 404)
+    return (
+      linkGroupContentTypeId === 'projectSubpage' &&
+      projectPage.fields.projectSubpages?.some((subpage) => {
         return subpage.sys.id === linkGroup.fields.primaryLink?.sys.id
       })
-    },
-  )
+    )
+  })
 
-  if (!hasFrontpageLink && fields.sidebarFrontpageLink) {
-    const localeIs = projectPage.sys.locale === 'is-IS'
-    const frontpageText = localeIs ? 'Forsíða' : 'Frontpage'
-    const frontpageUrlWithPrefix = localeIs
-      ? '/v/' + projectPage.fields.slug
-      : '/en/p/' + projectPage.fields.slug
+  // Create a frontpage link at the top of the sidebar if it's been requested and isn't already there
+  if (projectPage.fields.sidebarFrontpageLink && !hasFrontpageLink) {
+    const frontpageText =
+      projectPage.sys.locale === 'is-IS' ? 'Forsíða' : 'Frontpage'
+
+    const frontpageUrlWithPrefix = `/${getProjectPageUrlPrefix(
+      projectPage.sys.locale,
+    )}/${projectPage.fields.slug}`
+
     filteredItems.unshift({
       sys: {
         ...projectPage.sys,
@@ -154,7 +169,7 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
         },
       },
       fields: {
-        name: '',
+        name: frontpageText,
         childrenLinks: [],
         primaryLink: {
           ...projectPage,
@@ -177,14 +192,23 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
   for (const item of filteredItems) {
     item.fields.childrenLinks =
       item.fields.childrenLinks?.filter((childLink) => {
-        if (childLink.sys.contentType.sys.id !== 'projectSubpage') {
+        if (childLink.sys.contentType.sys.id === 'link') {
           return true
         }
-        return fields.projectSubpages?.some(
-          (subpage) => subpage.sys.id === childLink.sys.id,
+        return (
+          childLink.sys.contentType.sys.id === 'projectSubpage' &&
+          projectPage.fields.projectSubpages?.some(
+            (subpage) => subpage.sys.id === childLink.sys.id,
+          )
         )
       }) ?? []
   }
+
+  return filteredItems
+}
+
+export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
+  const { sys, fields } = projectPage
 
   return {
     id: sys.id,
@@ -192,9 +216,9 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
     slug: (fields.slug ?? '').trim(),
     theme: fields.theme ?? 'default',
     sidebar: fields.sidebar ?? false,
-    sidebarLinks: filteredItems
+    sidebarLinks: processSidebarLinks(projectPage)
       .map((linkGroup) =>
-        mapLinkGroup({ ...linkGroup, entryAbove: projectPage }),
+        mapLinkGroup({ ...linkGroup, pageAbove: projectPage }),
       )
       .filter((link) => Boolean(link.primaryLink)),
     secondarySidebar: fields.secondarySidebar
