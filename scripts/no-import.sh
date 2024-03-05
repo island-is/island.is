@@ -85,7 +85,7 @@ process_labels() {
 
   log "$BLUE" "Looking for label(...) references in '$filename'..."
   local references
-  references="$(grep -oP 'label\(\K(\w*[mM]essages?\w*|m)\.[^)]+' "$filename")" || true
+  references="$(grep -oP 'label\(\K(\w+)\.[^)]+' "$filename")" || true
 
   if [ -z "$references" ]; then
     log "$YELLOW" "No label references found."
