@@ -2,10 +2,18 @@ import { useRef, useState } from 'react'
 import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import isEqual from 'lodash/isEqual'
 
-import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Stack,
+  Text,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
 import * as styles from './GrindavikResidentialPropertyPurchaseCalculator.css'
@@ -66,6 +74,17 @@ const calculateResultState = (
   }
 }
 
+const focusLoanInput = (index: number, delay = 100) => {
+  setTimeout(() => {
+    const appendedElement = document
+      .getElementsByName(`loans[${index}].value`)
+      .item(0)
+    if (appendedElement) {
+      appendedElement.focus()
+    }
+  }, delay)
+}
+
 const GrindavikResidentialPropertyPurchaseCalculator = ({
   slice,
 }: GrindavikResidentialPropertyPurchaseCalculatorProps) => {
@@ -77,6 +96,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
     name: 'loans',
     control: methods.control,
   })
+  const { activeLocale } = useI18n()
   const resultContainerRef = useRef<HTMLDivElement>(null)
 
   const fireInsuranceValue = methods.watch('fireInsuranceValue')
@@ -117,6 +137,23 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
   const canCalculate = !isEqual(resultState?.inputState, inputState)
 
   const maxLength = (slice.configJson?.maxLength ?? 11) + currencySuffix.length
+
+  const thorkatlaPaymentDisclaimer = n(
+    'thorkatlaPaymentDisclaimer',
+    'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
+  )
+  const purchaseAgreementPaymentDisclaimer = n(
+    'purchaseAgreementPaymentDisclaimer',
+    '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
+  )
+  const closingResultDisclaimer = n(
+    'closingResultDisclaimer',
+    '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
+  )
+  const loanDisclaimer = n(
+    'loanDisclaimer',
+    'Samtal er enn í gangi við lífeyrissjóði um þátttöku þeirra í úrræðinu. Vonast er til þess að niðurstaða liggi fyrir fljótlega',
+  )
 
   return (
     <Stack space={5}>
@@ -189,6 +226,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                           />
                         </Box>
                         <Box
+                          role="button"
                           userSelect="none"
                           onKeyDown={(ev) => {
                             if (ev.key === ' ' || ev.key === 'Enter') {
@@ -202,6 +240,14 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                             loansFieldArray.remove(index)
                           }}
                         >
+                          <VisuallyHidden>
+                            {n(
+                              'removeLoan',
+                              activeLocale === 'is'
+                                ? 'Eyða láni'
+                                : 'Remove loan',
+                            )}
+                          </VisuallyHidden>
                           <Icon
                             icon="removeCircle"
                             type="outline"
@@ -221,6 +267,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                         loansFieldArray.append({
                           value: undefined,
                         })
+                        focusLoanInput(loansFieldArray.fields.length)
                       }}
                       icon="add"
                       size="small"
@@ -319,30 +366,16 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
           </Stack>
 
           <Stack space={2}>
-            <Text variant="small">
-              {n(
-                'thorkatlaPaymentDisclaimer',
-                'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'purchaseAgreementPaymentDisclaimer',
-                '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'closingResultDisclaimer',
-                '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'loanDisclaimer',
-                'Samtal er enn í gangi við lífeyrissjóði um þátttöku þeirra í úrræðinu. Vonast er til þess að niðurstaða liggi fyrir fljótlega',
-              )}
-            </Text>
+            {thorkatlaPaymentDisclaimer && (
+              <Text variant="small">{thorkatlaPaymentDisclaimer}</Text>
+            )}
+            {purchaseAgreementPaymentDisclaimer && (
+              <Text variant="small">{purchaseAgreementPaymentDisclaimer}</Text>
+            )}
+            {closingResultDisclaimer && (
+              <Text variant="small">{closingResultDisclaimer}</Text>
+            )}
+            {loanDisclaimer && <Text variant="small">{loanDisclaimer}</Text>}
           </Stack>
         </Stack>
       </Box>
