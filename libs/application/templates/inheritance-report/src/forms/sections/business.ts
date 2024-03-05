@@ -41,10 +41,14 @@ export const business = buildSection({
                 title: '',
                 id: 'business.businessAssets.data',
                 doesNotRequireAnswer: true,
-                component: 'ReportFieldsRepeater',
+                component: 'BusinessAssetsRepeater',
               },
               {
-                fields: [
+                assetFields: [
+                  {
+                    title: '',
+                    id: 'assetType',
+                  },
                   {
                     title: m.businessAsset.defaultMessage,
                     id: 'businessAsset',
@@ -55,6 +59,29 @@ export const business = buildSection({
                     required: true,
                     currency: true,
                     width: 'half',
+                  },
+                ],
+                estateFields: [
+                  {
+                    title: '',
+                    id: 'assetType',
+                  },
+                  {
+                    title: m.assetNumber.defaultMessage,
+                    id: 'assetNumber',
+                    placeholder: 'F1234567',
+                  },
+                  {
+                    title: m.assetAddress.defaultMessage,
+                    id: 'description',
+                    backgroundColor: 'white',
+                    readOnly: true,
+                  },
+                  {
+                    title: m.propertyValuation.defaultMessage,
+                    id: 'businessAssetValue',
+                    required: true,
+                    currency: true,
                   },
                 ],
                 repeaterButtonText:
@@ -153,8 +180,12 @@ export const business = buildSection({
                   ).businessAssets.data
                   return (
                     buisnessProperty.map((asset: BuisnessAssetsData) => ({
-                      title: asset.businessAsset,
+                      title: asset.businessAsset || asset.description,
                       description: [
+                        asset.assetNumber &&
+                          m.assetNumber.defaultMessage +
+                            ': ' +
+                            asset.assetNumber,
                         m.businessAssetAmount.defaultMessage +
                           ': ' +
                           (asset.businessAssetValue
