@@ -45,6 +45,13 @@
         "grep": "/acceptance/"
       }
     },
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "config": "{projectRoot}/playwright.config.ts",
+        "skipInstall": true
+      }
+    },
     "docker-playwright": {}
   },
   "tags": ["scope:e2e"]
