@@ -117,20 +117,25 @@ applicationTest.describe('Data protection complaint application', () => {
       const emailLabel = 'Netfang'
       const phoneNumberLabel = 'Símanúmer'
 
-
       const fullNameLabel = 'Fullt nafn'
       const nationalIdLabel = 'Kennitala'
       const uploadButtonName = 'Velja umboðsskjöl til að hlaða upp'
       const stepBackTestId = 'step-back'
-      const firstCheckboxText = 'Er málið sem um ræðir til meðferðar hjá dómstólum eða öðrum stjórnvöldum?'
-      const secondCheckBoxText = 'Ertu að kvarta yfir umfjöllun um þig eða aðra í fjölmiðlum?'
-      const thirdCheckBoxText = 'Ertu að kvarta yfir því að x-merking í símaskrá eða bannmerking í þjóðskrá hafi ekki verið virt?'
-      const fourthCheckBoxText = 'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?'
-      const infoAboutCaseText = 'Ítarlegri upplýsingar um málsmeðferð hjá Persónuvernd má nálgast í {link}.'
+      const firstCheckboxText =
+        'Er málið sem um ræðir til meðferðar hjá dómstólum eða öðrum stjórnvöldum?'
+      const secondCheckBoxText =
+        'Ertu að kvarta yfir umfjöllun um þig eða aðra í fjölmiðlum?'
+      const thirdCheckBoxText =
+        'Ertu að kvarta yfir því að x-merking í símaskrá eða bannmerking í þjóðskrá hafi ekki verið virt?'
+      const fourthCheckBoxText =
+        'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?'
+      const infoAboutCaseText =
+        'Ítarlegri upplýsingar um málsmeðferð hjá Persónuvernd má nálgast í {link}.'
       const forWhomText = 'Fyrir hvern ertu að senda inn kvörtun?'
       const inPowerOfText = 'Upplýsingar um umboð'
       const inPowerOfSomeoneElse = 'Í umboði fyrir aðra'
-      const informationAboutCompanyText = 'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir'
+      const informationAboutCompanyText =
+        'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir'
 
       await applicationTest.step('Start the application', async () => {
         await createApplication(page)

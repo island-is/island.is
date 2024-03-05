@@ -257,19 +257,13 @@ test.describe('Parental leave', () => {
     await proceed()
 
     // Are you self employed?
-    await expect(
-      page.getByText('Ertu sjálfstætt starfandi?'),
-    ).toBeVisible()
+    await expect(page.getByText('Ertu sjálfstætt starfandi?')).toBeVisible()
     await page
       .getByRole('radio', {
         name: 'Nei',
       })
       .click()
-    await expect(
-      page.getByText(
-        'Skrifaðu hér til að leita',
-      ),
-    ).toBeVisible()
+    await expect(page.getByText('Skrifaðu hér til að leita')).toBeVisible()
     await page
       .getByRole('radio', {
         name: 'Nei',
@@ -540,19 +534,13 @@ test.describe('Parental leave', () => {
     await proceed()
 
     // Are you self employed?
-    await expect(
-      page.getByText('Ertu sjálfstætt starfandi?'),
-    ).toBeVisible()
+    await expect(page.getByText('Ertu sjálfstætt starfandi?')).toBeVisible()
     await page
       .getByRole('radio', {
         name: 'Nei',
       })
       .click()
-    await expect(
-      page.getByText(
-        'Skrifaðu hér til að leita',
-      ),
-    ).toBeVisible()
+    await expect(page.getByText('Skrifaðu hér til að leita')).toBeVisible()
     await page
       .getByRole('radio', {
         name: 'Nei',
@@ -657,4 +645,3 @@ test.describe('Parental leave', () => {
     await getEmployerEmailAndApprove(employer, page)
   })
 })
-
