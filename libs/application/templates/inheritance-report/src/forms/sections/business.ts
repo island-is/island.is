@@ -54,7 +54,7 @@ export const business = buildSection({
                     id: 'businessAsset',
                   },
                   {
-                    title: m.businessAssetAmount.defaultMessage,
+                    title: m.moneyValue.defaultMessage,
                     id: 'businessAssetValue',
                     required: true,
                     currency: true,
@@ -78,7 +78,7 @@ export const business = buildSection({
                     readOnly: true,
                   },
                   {
-                    title: m.propertyValuation.defaultMessage,
+                    title: m.propertyValuationOnDeath.defaultMessage,
                     id: 'businessAssetValue',
                     required: true,
                     currency: true,

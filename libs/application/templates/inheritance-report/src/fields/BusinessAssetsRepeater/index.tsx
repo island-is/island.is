@@ -48,11 +48,9 @@ type PropertyType = 'asset' | 'estate'
 
 export const BusinessAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
-> = ({ application, field, errors }) => {
+> = ({ field, errors }) => {
   const { id, props } = field
   const { assetFields, estateFields } = props
-
-  console.log('application', application)
 
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
