@@ -44,7 +44,8 @@ export const overview = {
   }),
   nextButtonText: defineMessage({
     id: 'judicial.system.indictments:overview.next_button_text_v1',
-    defaultMessage: 'Senda til staðfestingar',
+    defaultMessage:
+      '{isNewIndictment, select, true {Senda} other {Endursenda}} til staðfestingar',
     description: 'Texti í áfram takka á Yfirlit ákæru skefi í ákærum.',
   }),
   modalHeading: defineMessage({
@@ -57,5 +58,17 @@ export const overview = {
     defaultMessage: 'Ákæra hefur verið send dómstól',
     description:
       'Texti í info boxi þegar ákæra hefur verið send á Yfirlit ákæru skefi í ákærum.',
+  }),
+  caseSentForConfirmation: defineMessage({
+    id: 'judicial.system.indictments:overview.case_sent_for_confirmation',
+    defaultMessage: 'Ákæra hefur verið send til staðfestingar',
+    description:
+      'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
+  }),
+  caseSentForConfirmationText: defineMessage({
+    id: 'judicial.system.indictments:overview.case_sent_for_confirmation',
+    defaultMessage: 'Að staðfestingu lokinni sendist ákæran á héraðsdómstól',
+    description:
+      'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
   }),
 }

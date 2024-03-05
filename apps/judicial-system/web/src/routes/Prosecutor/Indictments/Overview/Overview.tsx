@@ -35,9 +35,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
-  const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
-    'noModal',
-  )
+  const [modal, setModal] = useState<
+    'noModal' | 'caseSubmittedModal' | 'caseSentForConfirmationModal'
+  >('noModal')
   const [appealConfirmationDecision, setAppealConfirmationDecision] = useState<
     'confirmAppeal' | 'denyAppeal'
   >()
@@ -52,10 +52,23 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNextButtonClick = async () => {
+    let transitionType
+    let modalType: typeof modal = 'noModal'
+
     if (isNewIndictment) {
+      transitionType = CaseTransition.ASK_FOR_CONFIRMATION
+      modalType = 'caseSentForConfirmationModal'
+    } else if (user?.canConfirmAppeal) {
+      transitionType = CaseTransition.SUBMIT
+      modalType = 'caseSubmittedModal'
+    } else if (workingCase.state === CaseState.WAITING_FOR_CONFIRMATION) {
+      modalType = 'caseSentForConfirmationModal'
+    }
+
+    if (transitionType) {
       const caseTransitioned = await transitionCase(
         workingCase.id,
-        CaseTransition.ASK_FOR_CONFIRMATION,
+        transitionType,
         setWorkingCase,
       )
 
@@ -64,7 +77,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
       }
     }
 
-    setModal('caseSubmittedModal')
+    if (modalType !== 'noModal') {
+      setModal(modalType)
+    }
   }
 
   return (
@@ -138,7 +153,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           nextButtonText={
             user?.canConfirmAppeal
               ? undefined
-              : formatMessage(strings.overview.nextButtonText)
+              : formatMessage(strings.overview.nextButtonText, {
+                  isNewIndictment,
+                })
           }
           hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
@@ -151,7 +168,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         />
       </FormContentContainer>
       <AnimatePresence>
-        {modal === 'caseSubmittedModal' && (
+        {modal === 'caseSubmittedModal' ? (
           <Modal
             title={formatMessage(strings.overview.modalHeading)}
             onClose={() => router.push(constants.CASES_ROUTE)}
@@ -160,7 +177,17 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             }}
             primaryButtonText={formatMessage(core.closeModal)}
           />
-        )}
+        ) : modal === 'caseSentForConfirmationModal' ? (
+          <Modal
+            title={formatMessage(strings.overview.caseSentForConfirmation)}
+            text={formatMessage(strings.overview.caseSentForConfirmationText)}
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onPrimaryButtonClick={() => {
+              router.push(constants.CASES_ROUTE)
+            }}
+            primaryButtonText={formatMessage(core.closeModal)}
+          />
+        ) : null}
       </AnimatePresence>
     </PageLayout>
   )
