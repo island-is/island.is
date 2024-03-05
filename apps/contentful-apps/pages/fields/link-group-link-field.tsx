@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ContentTypeProps, EntryProps } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { Flex, Spinner } from '@contentful/f36-components'
 import {
   CombinedLinkActions,
   MultipleEntryReferenceEditor,
@@ -151,6 +152,14 @@ const LinkGroupLinkField = () => {
   }
 
   const selectableContentTypes = subpageContentType ? [subpageContentType] : []
+
+  if (!subpageContentType) {
+    return (
+      <Flex paddingTop="spacingM" justifyContent="center">
+        <Spinner />
+      </Flex>
+    )
+  }
 
   if (sdk.ids.field === 'primaryLink') {
     return (
