@@ -99,4 +99,11 @@ export class User extends Model {
   })
   @ApiProperty()
   active!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  canConfirmAppeal!: boolean
 }

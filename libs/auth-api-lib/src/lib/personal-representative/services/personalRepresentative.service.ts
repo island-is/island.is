@@ -28,7 +28,7 @@ export class PersonalRepresentativeService {
     private sequelize: Sequelize,
   ) {}
 
-  /** Get's all personal repreasentatives  */
+  /** Gets all personal representatives  */
   async getMany(
     includeInvalid: boolean,
     query: PaginationWithNationalIdsDto,
@@ -85,7 +85,7 @@ export class PersonalRepresentativeService {
     return result
   }
 
-  /** Get's all personal repreasentative connections for personal representative  */
+  /** Gets all personal representative connections for personal representative  */
   async getByPersonalRepresentative({
     nationalIdPersonalRepresentative,
     includeInactive = false,
@@ -136,7 +136,7 @@ export class PersonalRepresentativeService {
     return personalRepresentatives.map((pr) => pr.toDTO())
   }
 
-  /** Get's all personal repreasentative connections for personal representative  */
+  /** Gets all personal representative connections for personal representative  */
   async getPersonalRepresentativeByRepresentedPerson(
     nationalIdRepresentedPerson: string,
     includeInvalid: boolean,
@@ -189,7 +189,7 @@ export class PersonalRepresentativeService {
     return personalRepresentatives[0].toDTO()
   }
 
-  /** Get's a personal repreasentatives by id */
+  /** Gets a personal representatives by id */
   async getPersonalRepresentative(
     id: string,
   ): Promise<PersonalRepresentativeDTO | null> {
@@ -209,7 +209,7 @@ export class PersonalRepresentativeService {
     return personalRepresentative ? personalRepresentative.toDTO() : null
   }
 
-  /** Create a new personal repreasentative */
+  /** Create a new personal representative */
   async create(
     personalRepresentative: PersonalRepresentativeCreateDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
@@ -251,16 +251,21 @@ export class PersonalRepresentativeService {
     }
   }
 
-  /** Delete a personal repreasentative */
-  async delete(id: string): Promise<number> {
+  /** Delete a personal representative */
+  async delete(id: string): Promise<PersonalRepresentative | null> {
     this.logger.debug('Deleting a personal representative with id: ', id)
     await this.personalRepresentativeRightModel.destroy({
       where: { personalRepresentativeId: id },
     })
 
-    return await this.personalRepresentativeModel.destroy({
+    const personalRepresentative =
+      await this.personalRepresentativeModel.findByPk(id)
+
+    await this.personalRepresentativeModel.destroy({
       where: { id: id },
     })
+
+    return personalRepresentative
   }
 
   async makeInactive(id: string) {

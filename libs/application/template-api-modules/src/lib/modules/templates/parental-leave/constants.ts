@@ -31,3 +31,7 @@ export const apiConstants = {
 }
 
 export const isRunningInProduction = process.env.NODE_ENV === 'production'
+
+export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
+export const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
+export const df = 'yyyy-MM-dd'

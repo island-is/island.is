@@ -189,7 +189,7 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
   return {
     id: sys.id,
     title: fields.title ?? '',
-    slug: fields.slug ?? '',
+    slug: (fields.slug ?? '').trim(),
     theme: fields.theme ?? 'default',
     sidebar: fields.sidebar ?? false,
     sidebarLinks: filteredItems

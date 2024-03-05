@@ -100,7 +100,7 @@ const Processing: React.FC = () => {
               })}
             />
             {workingCase.defendants.map((defendant) => (
-              <Box marginBottom={2}>
+              <Box marginBottom={2} key={defendant.id}>
                 <BlueBox>
                   <Text variant="h4" marginBottom={3}>
                     {`${formatMessage(strings.defendantName, {

@@ -1,12 +1,14 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiMachineStatusChangePostRequest,
   ApiMachinesGetRequest,
   ExcelRequest,
   GetMachineRequest,
   MachineCategoryApi,
   MachineHateoasDto,
   MachineOwnerChangeApi,
+  MachineStatusChangeApi,
   MachineSupervisorChangeApi,
   MachinesApi,
   MachinesDocumentApi,
@@ -17,6 +19,7 @@ import {
   ChangeMachineOwner,
   ConfirmOwnerChange,
   SupervisorChange,
+  MachinesWithTotalCount,
 } from './workMachines.types'
 import {
   apiChangeMachineOwnerToApiRequest,
@@ -35,6 +38,7 @@ export class WorkMachinesClientService {
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
     private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
+    private readonly machineStatusApi: MachineStatusChangeApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -57,6 +61,10 @@ export class WorkMachinesClientService {
     )
   }
 
+  private machineStatusApiWithAuth(auth: Auth) {
+    return this.machineStatusApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   getWorkMachines = async (
     user: User,
     input: ApiMachinesGetRequest,
@@ -76,25 +84,40 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
-  async getMachines(auth: User): Promise<MachineDto[]> {
+  async getMachines(auth: User): Promise<MachinesWithTotalCount> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
+      pageSize: 20,
+      pageNumber: 1,
     })
-    return (
-      result?.value?.map((machine) => {
-        return {
-          id: machine.id,
-          type: machine.type || '',
-          category: machine?.category || '',
-          regNumber: machine?.registrationNumber || '',
-          status: machine?.status || '',
-        }
-      }) || []
-    )
+
+    return {
+      machines:
+        result?.value?.map((machine) => {
+          return {
+            id: machine.id,
+            type: machine.type || '',
+            category: machine?.category || '',
+            regNumber: machine?.registrationNumber || '',
+            status: machine?.status || '',
+          }
+        }) || [],
+      totalCount: result?.pagination?.totalCount || 0,
+    }
+  }
+
+  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
+    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+      onlyShowOwnedMachines: true,
+      searchQuery: regNumber,
+    })
+
+    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '')
   }
 
   async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
+
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,
@@ -148,5 +171,14 @@ export class WorkMachinesClientService {
     await this.machineSupervisorChangeApiWithAuth(
       auth,
     ).apiMachineSupervisorChangePost(input)
+  }
+
+  async deregisterMachine(
+    auth: Auth,
+    deregisterMachine: ApiMachineStatusChangePostRequest,
+  ) {
+    await this.machineStatusApiWithAuth(auth).apiMachineStatusChangePost(
+      deregisterMachine,
+    )
   }
 }

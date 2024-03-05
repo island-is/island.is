@@ -17,7 +17,7 @@ import {
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 
-export function allEmployersHaveApproved(context: ApplicationContext) {
+export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
     context.application.answers,
     'employers',
@@ -28,7 +28,7 @@ export function allEmployersHaveApproved(context: ApplicationContext) {
   return employers.every((e) => !!e.isApproved)
 }
 
-export function hasEmployer(context: ApplicationContext) {
+export const hasEmployer = (context: ApplicationContext) => {
   const { application } = context
   const { isReceivingUnemploymentBenefits, isSelfEmployed, employers } =
     getApplicationAnswers(application.answers)
@@ -60,19 +60,19 @@ export function hasEmployer(context: ApplicationContext) {
   }
 }
 
-export function needsOtherParentApproval(context: ApplicationContext) {
+export const needsOtherParentApproval = (context: ApplicationContext) => {
   return requiresOtherParentApproval(
     context.application.answers,
     context.application.externalData,
   )
 }
 
-export function currentDateStartTime() {
+export const currentDateStartTime = () => {
   const date = new Date().toDateString()
   return new Date(date).getTime()
 }
 
-export function findActionName(context: ApplicationContext) {
+export const findActionName = (context: ApplicationContext) => {
   const { application } = context
   const { state } = application
   const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
@@ -96,16 +96,16 @@ export const disableResidenceGrantApplication = (dateOfBirth: string) => {
   return true
 }
 
-export function hasDateOfBirth(context: ApplicationContext) {
+export const hasDateOfBirth = (context: ApplicationContext) => {
   const { application } = context
   const { dateOfBirth } = getApplicationExternalData(application.externalData)
   return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
 }
 
-export function goToState(
+export const goToState = (
   applicationContext: ApplicationContext,
   state: States,
-) {
+) => {
   const { previousState } = getApplicationAnswers(
     applicationContext.application.answers,
   )
