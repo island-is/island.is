@@ -3,10 +3,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { UniversityApplication } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
-import {
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { SelectController } from '@island.is/shared/form-fields'
 import { UniversityExternalData } from '../../types'
 import { Program } from '@island.is/clients/university-gateway-api'
 import { information } from '../../lib/messages'
@@ -15,7 +12,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useLazyUniversityQuery } from '../../hooks/useGetUniversityInformation'
 import { UniversityGatewayUniversity } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
-import { useLazyInnaQuery } from '../../hooks/useGetInna'
+import { useGetProgramQuery } from '../../hooks/useGetProgramQuery'
 
 export const ProgramSelection: FC<FieldBaseProps> = ({
   application,
@@ -94,27 +91,49 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
   }
 
   const ChooseProgram = (value: string) => {
-    const programInfo = programs.filter(
+    const chosenProgram = programs.find(
       (program) => program.universityId === chosenUniversity,
-    )[0]
+    )
+
+    if (chosenProgram && chosenProgram.id) {
+      getProgramDetailsCallback({ id: chosenProgram.id }).then((response) => {
+        console.log('response', response)
+      })
+    }
+
     const extra =
-      lang === 'is'
-        ? programInfo.specializationNameIs
+      lang === 'is' && chosenProgram
+        ? chosenProgram.specializationNameIs
           ? ` - ${formatMessage(
               information.labels.programSelection.specilizationLabel,
-            )}: ${programInfo.specializationNameIs}`
+            )}: ${chosenProgram.specializationNameIs}`
           : ''
-        : programInfo.specializationNameEn
+        : chosenProgram && chosenProgram.specializationNameEn
         ? ` - ${formatMessage(
             information.labels.programSelection.specilizationLabel,
-          )}: ${programInfo.specializationNameEn}`
+          )}: ${chosenProgram.specializationNameEn}`
         : ''
     const programName = `${
-      lang === 'is' ? programInfo.nameIs : programInfo.nameEn
+      lang === 'is' && chosenProgram
+        ? chosenProgram.nameIs
+        : chosenProgram && chosenProgram.nameEn
     }${extra}`
     setChosenProgram(value)
     setValue(`${Routes.PROGRAMINFORMATION}.programName`, programName)
   }
+
+  const getProgramDetails = useGetProgramQuery()
+  const getProgramDetailsCallback = useCallback(
+    async ({ id }: { id: string }) => {
+      const { data } = await getProgramDetails({
+        input: {
+          id,
+        },
+      })
+      return data
+    },
+    [getProgramDetails],
+  )
 
   return !loadingUniversities && !loadingPreAnswer ? (
     <Box>

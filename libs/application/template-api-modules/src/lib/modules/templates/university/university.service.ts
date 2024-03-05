@@ -8,12 +8,19 @@ import {
 } from '@island.is/application/types'
 
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { mapStringToEnum } from '@island.is/university-gateway'
+import {
+  mapStringToEnum,
+  ApplicationTypes as UniversityApplicationTypes,
+} from '@island.is/university-gateway'
 import {
   ProgramApi,
   UniversityApi,
   ApplicationApi,
   CreateApplicationDtoModeOfDeliveryEnum,
+  CreateApplicationEducationDto,
+  CreateApplicationDto,
+  UniversityApplicationControllerCreateApplicationRequest,
+  CreateApplicationDtoEducationOptionEnum,
 } from '@island.is/clients/university-gateway-api'
 
 import { UniversityAnswers } from '@island.is/application/templates/university'
@@ -83,6 +90,7 @@ export class UniversityService extends BaseTemplateApiService {
       costPerYear: item.costPerYear,
       iscedCode: item.iscedCode,
       modeOfDelivery: item.modeOfDelivery,
+      allowException: item.allowException,
     }))
   }
 
@@ -125,54 +133,92 @@ export class UniversityService extends BaseTemplateApiService {
     }
 
     //all possible types of education data from the application answers
-    const notFinishedData = answers.educationDetails.notFinishedDetails
-    const exemptionData = answers.educationDetails.exemptionDetails
-    const thirdLevelData = answers.educationDetails.thirdLevelDetails
+    const educationOptionChosen =
+      answers.educationOptions || UniversityApplicationTypes.DIPLOMA
+    const notFinishedData =
+      educationOptionChosen === UniversityApplicationTypes.NOTFINISHED
+        ? {
+            schoolName: answers.educationDetails.notFinishedDetails?.school,
+            degree: answers.educationDetails.notFinishedDetails?.degreeLevel,
+            moreDetails:
+              answers.educationDetails.notFinishedDetails?.moreDetails,
+          }
+        : undefined
+    const exemptionData =
+      educationOptionChosen === UniversityApplicationTypes.EXEMPTION
+        ? {
+            // degreeAttachments:
+            //   answers.educationDetails.exemptionDetails?.degreeAttachments,
+            moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
+          }
+        : undefined
+    const thirdLevelData =
+      educationOptionChosen === UniversityApplicationTypes.THIRDLEVEL
+        ? {
+            schoolName: answers.educationDetails.thirdLevelDetails?.school,
+            degree: answers.educationDetails.thirdLevelDetails?.degreeLevel,
+            degreeName: answers.educationDetails.thirdLevelDetails?.degreeMajor,
+            degreeCountry:
+              answers.educationDetails.thirdLevelDetails?.degreeCountry,
+            finishedUnits:
+              answers.educationDetails.thirdLevelDetails?.finishedUnits,
+            degreeStartDate:
+              answers.educationDetails.thirdLevelDetails?.beginningDate,
+            degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
+            moreDetails:
+              answers.educationDetails.thirdLevelDetails?.moreDetails,
+          }
+        : undefined
     const finishedData = answers.educationDetails.finishedDetails || []
 
-    const combinedEducationLists = [
-      ...finishedData.filter((x) => x && x.wasRemoved !== 'true'),
-      notFinishedData && {
-        school: notFinishedData.school,
-        degreeLevel: notFinishedData.degreeLevel,
-        moreDetails: notFinishedData.moreDetails,
-      },
-      exemptionData && {
-        degreeAttachments: exemptionData.degreeAttachments,
-        moreDetails: exemptionData.moreDetails,
-      },
-      thirdLevelData && thirdLevelData,
+    const combinedEducationList: Array<CreateApplicationEducationDto> = [
+      ...finishedData
+        .filter((x) => x && x.wasRemoved !== 'true')
+        .map((education) => {
+          return {
+            schoolName: education.school,
+            degree: education.degreeLevel,
+            degreeName: education.degreeMajor,
+            degreeCountry: education.degreeCountry,
+            finishedUnits: education.finishedUnits,
+            degreeStartDate: education.beginningDate,
+            degreeEndDate: education.endDate,
+            moreDetails: education.moreDetails,
+          }
+        }),
     ]
-
-    console.log('combinedEducationLists', combinedEducationLists)
-
-    const createApplicationDto = {
-      createApplicationDto: {
-        applicationId: application.id,
-        universityId: answers.programInformation.university,
-        programId: answers.programInformation.program,
-        modeOfDelivery: mapStringToEnum(
-          answers.modeOfDeliveryInformation,
-          CreateApplicationDtoModeOfDeliveryEnum,
-        ),
-        applicant: user,
-        // educationList: combinedEducationLists.map((education) => {
-        //   return {
-        //     schoolName: education.school,
-        //     degree: education.degreeLevel,
-        //     degreeName: education.degreeMajor,
-        //     degreeCountry: education.degreeCountry,
-        //     finishedUnits: education.finishedUnits?.toString(),
-        //     degreeEndDate: education.endDate,
-        //   }
-        // }),
-        workExperienceList: [],
-        extraFieldList: [],
-      },
+    if (notFinishedData) {
+      combinedEducationList.push(notFinishedData)
     }
-    console.log('createApplicationDto', createApplicationDto)
-    // await this.universityApplicationApiWithAuth(
-    //   auth,
-    // ).universityApplicationControllerCreateApplication(createApplicationDto)
+    if (exemptionData) {
+      combinedEducationList.push(exemptionData)
+    }
+    if (thirdLevelData) {
+      combinedEducationList.push(thirdLevelData)
+    }
+
+    const createApplicationDto: UniversityApplicationControllerCreateApplicationRequest =
+      {
+        createApplicationDto: {
+          applicationId: application.id,
+          universityId: answers.programInformation.university,
+          programId: answers.programInformation.program,
+          modeOfDelivery: mapStringToEnum(
+            answers.modeOfDeliveryInformation,
+            CreateApplicationDtoModeOfDeliveryEnum,
+          ),
+          applicant: user,
+          educationOption: mapStringToEnum(
+            educationOptionChosen,
+            CreateApplicationDtoEducationOptionEnum,
+          ),
+          educationList: combinedEducationList,
+          workExperienceList: [],
+          extraFieldList: [],
+        },
+      }
+    await this.universityApplicationApiWithAuth(
+      auth,
+    ).universityApplicationControllerCreateApplication(createApplicationDto)
   }
 }

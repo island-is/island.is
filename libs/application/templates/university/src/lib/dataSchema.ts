@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -130,7 +131,12 @@ export const UniversitySchema = z.object({
   programInformation: ProgramSchema,
   modeOfDeliveryInformation: z.string().optional(),
   educationOptions: z
-    .enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
+    .enum([
+      ApplicationTypes.DIPLOMA,
+      ApplicationTypes.EXEMPTION,
+      ApplicationTypes.NOTFINISHED,
+      ApplicationTypes.THIRDLEVEL,
+    ])
     .optional(),
   educationDetails: EducationDetailsSchema,
   otherDocuments: otherDocumentsSchema.optional(),

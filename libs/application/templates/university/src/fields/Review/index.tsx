@@ -11,6 +11,7 @@ import {
   EducationDetailsItemExemption,
   EducationDetailsItemNotFinished,
 } from '../../shared/types'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const Review: FC<FieldBaseProps> = ({
   application,
@@ -47,33 +48,36 @@ export const Review: FC<FieldBaseProps> = ({
         goToScreen={goToScreen}
       />
       <Divider />
-      {educationOptionChosen && educationOptionChosen === 'exemption' && (
-        <SchoolCareerReview
-          educationItemExemption={educationExemption}
-          field={field}
-          application={application}
-          route={Routes.EDUCATIONDETAILSFINISHED}
-          goToScreen={goToScreen}
-        />
-      )}
-      {educationOptionChosen && educationOptionChosen === 'thirdLevel' && (
-        <SchoolCareerReview
-          educationItemThirdLevel={educationThirdLevel}
-          field={field}
-          application={application}
-          route={Routes.EDUCATIONDETAILSTHIRDLEVEL}
-          goToScreen={goToScreen}
-        />
-      )}
-      {educationOptionChosen && educationOptionChosen === 'notFinished' && (
-        <SchoolCareerReview
-          educationItemNotFinished={educationNotFinished}
-          field={field}
-          application={application}
-          route={Routes.EDUCATIONDETAILSNOTFINISHED}
-          goToScreen={goToScreen}
-        />
-      )}
+      {educationOptionChosen &&
+        educationOptionChosen === ApplicationTypes.EXEMPTION && (
+          <SchoolCareerReview
+            educationItemExemption={educationExemption}
+            field={field}
+            application={application}
+            route={Routes.EDUCATIONDETAILSFINISHED}
+            goToScreen={goToScreen}
+          />
+        )}
+      {educationOptionChosen &&
+        educationOptionChosen === ApplicationTypes.THIRDLEVEL && (
+          <SchoolCareerReview
+            educationItemThirdLevel={educationThirdLevel}
+            field={field}
+            application={application}
+            route={Routes.EDUCATIONDETAILSTHIRDLEVEL}
+            goToScreen={goToScreen}
+          />
+        )}
+      {educationOptionChosen &&
+        educationOptionChosen === ApplicationTypes.NOTFINISHED && (
+          <SchoolCareerReview
+            educationItemNotFinished={educationNotFinished}
+            field={field}
+            application={application}
+            route={Routes.EDUCATIONDETAILSNOTFINISHED}
+            goToScreen={goToScreen}
+          />
+        )}
       {educationListFinished && educationListFinished.length > 0 && (
         <SchoolCareerReview
           educationItemsFinished={educationListFinished}

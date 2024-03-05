@@ -113,6 +113,7 @@ export class UniversityApplicationService {
       },
       preferredLanguage: applicationDto.preferredLanguage,
       educationList: applicationDto.educationList,
+      educationOption: applicationDto.educationOption,
       workExperienceList: applicationDto.workExperienceList,
       extraFieldList: applicationDto.extraFieldList,
     }

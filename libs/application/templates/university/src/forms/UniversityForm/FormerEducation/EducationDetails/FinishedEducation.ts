@@ -8,6 +8,7 @@ import { formerEducation } from '../../../../lib/messages/formerEducation'
 import { Routes } from '../../../../lib/constants'
 import { FormValue } from '@island.is/application/types'
 import { InlineResponse200Items } from '@island.is/clients/inna'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const FinishedEducationSubSection = buildSubSection({
   id: `${Routes.EDUCATIONDETAILS}.finishedDetails`,
@@ -21,7 +22,10 @@ export const FinishedEducationSubSection = buildSubSection({
       [],
     ) as Array<InlineResponse200Items>
 
-    return optionAnswers === 'diploma' || predefinedInnaData.length > 0
+    return (
+      optionAnswers === ApplicationTypes.DIPLOMA ||
+      predefinedInnaData.length > 0
+    )
   },
   children: [
     buildMultiField({

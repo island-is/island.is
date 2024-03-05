@@ -24,7 +24,6 @@ interface Props extends FieldBaseProps {
 }
 
 export const SchoolCareerReview: FC<Props> = ({
-  application,
   goToScreen,
   educationItemsFinished,
   educationItemExemption,

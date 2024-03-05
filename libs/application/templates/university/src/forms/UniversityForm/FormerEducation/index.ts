@@ -5,6 +5,7 @@ import { FinishedEducationSubSection } from './EducationDetails/FinishedEducatio
 import { NotFinishedEducationSubSection } from './EducationDetails/NotFinishedEducation'
 import { ThirdLevelEducationSubSection } from './EducationDetails/ThirdLevelEducation'
 import { ExemptionSubSection } from './EducationDetails/Exemtion'
+import { OtherDocumentsSection } from './OtherDocuments'
 
 export const FormerEducationSection = buildSection({
   id: 'formerEducation',
@@ -15,5 +16,6 @@ export const FormerEducationSection = buildSection({
     NotFinishedEducationSubSection,
     ThirdLevelEducationSubSection,
     ExemptionSubSection,
+    OtherDocumentsSection,
   ],
 })

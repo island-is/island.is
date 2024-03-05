@@ -1,4 +1,4 @@
-import { IApplication } from '@island.is/university-gateway'
+import { ApplicationTypes, IApplication } from '@island.is/university-gateway'
 import { ApplicationsPostRequest } from '../../../gen/fetch'
 
 export const mapUglaApplication = (
@@ -21,7 +21,10 @@ export const mapUglaApplication = (
 
       nominationId: 0, // TODO what is this?
 
-      undanthaga: 'false', // TODO connect to choice in application
+      undanthaga:
+        application.educationOption === ApplicationTypes.EXEMPTION
+          ? 'true'
+          : 'false', // TODO connect to choice in application
 
       leidbeiningarFylgigognLesid: 'false', // TODO done when extraApplicationFields are connected
 
@@ -43,12 +46,10 @@ export const mapUglaApplication = (
         return {
           skoli: education.schoolName,
           namsgrada: education.degree,
-          // land?: string;
-          // namiLokid?: string;
-          // arLokid?: number;
-          // manudurLokid?: number;
+          land: education.degreeCountry,
+          namiLokid: education.degreeEndDate,
         }
-      }), // TODO við gerum ekki greinamun í educationList á framhaldsskóla námi og öðru námi.. hvernig höndlum við þetta?
+      }),
       medmaelendur: [], // TODO are we doing this?
       leidbeinandi: undefined, // TODO are we doing this?
       tenglar: [], // TODO are we doing this?

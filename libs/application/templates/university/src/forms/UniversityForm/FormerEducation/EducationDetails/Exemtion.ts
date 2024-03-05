@@ -10,13 +10,14 @@ import { formerEducation } from '../../../../lib/messages/formerEducation'
 import { Routes } from '../../../../lib/constants'
 import { FILE_SIZE_LIMIT } from '../../../../shared'
 import { FormValue } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const ExemptionSubSection = buildSubSection({
   id: `${Routes.EDUCATIONDETAILS}.exemptionDetails`,
   title: formerEducation.labels.educationDetails.pageTitle,
   condition: (answers: FormValue, externalData) => {
     const optionAnswers = getValueViaPath(answers, 'educationOptions')
-    return optionAnswers === 'exemption'
+    return optionAnswers === ApplicationTypes.EXEMPTION
   },
   children: [
     buildMultiField({
@@ -24,11 +25,6 @@ export const ExemptionSubSection = buildSubSection({
       title: formerEducation.labels.educationDetails.pageTitle,
       description: formerEducation.labels.educationDetails.pageDescription,
       children: [
-        buildCustomField({
-          id: `${Routes.EDUCATIONDETAILS}.exemptionDetails.wasRemoved`,
-          title: '',
-          component: 'HiddenTextInput',
-        }),
         buildFileUploadField({
           id: `${Routes.EDUCATIONDETAILS}.exemptionDetails.degreeAttachments`,
           title: formerEducation.labels.educationDetails.degreeFileUploadTitle,

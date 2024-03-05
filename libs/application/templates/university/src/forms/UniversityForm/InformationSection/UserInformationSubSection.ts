@@ -94,6 +94,13 @@ export const UserInformationSubSection = buildSubSection({
           title: '',
           alertType: 'info',
           message: personal.labels.userInformation.alertMessage,
+          links: [
+            {
+              title: personal.labels.userInformation.alertMessageLinkTitle,
+              url: personal.labels.userInformation.alertMessageLink,
+              isExternal: false,
+            },
+          ],
         }),
         buildTextField({
           id: 'userInformation.email',

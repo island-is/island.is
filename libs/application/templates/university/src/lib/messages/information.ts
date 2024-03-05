@@ -169,5 +169,23 @@ export const information = {
         description: 'Extra DataProvider button submit text',
       },
     }),
+    otherDocumentsSection: defineMessages({
+      sectionTitle: {
+        id: 'uni.application:information.labels.otherDocumentsSection.sectionTitle',
+        defaultMessage: 'Önnur fylgigögn',
+        description: 'Other documents section title',
+      },
+      title: {
+        id: 'uni.application:information.labels.otherDocumentsSection.title',
+        defaultMessage: 'Önnur fylgigögn',
+        description: 'Other documents selection title',
+      },
+      subTitle: {
+        id: 'uni.application:information.labels.otherDocumentsSection.subTitle',
+        defaultMessage:
+          'Vinsamlegast settu inn eftirfarandi fylgigögn sem nauðsynleg eru fyrir umsóknina þína.',
+        description: 'Other documents subtitle',
+      },
+    }),
   },
 }

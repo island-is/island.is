@@ -20,32 +20,74 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = `
   }
 `
 
-export const GET_INNA_PERIONDS = `
-query GetInnaPeriods {
-  innaPeriods {
-    items {
+export const GET_UNIVERSITY_GATEWAY_PROGRAM = `
+  query GetUniversityGateway($input: UniversityGatewayGetPogramInput!) {
+    universityGatewayProgram(input: $input) {
+      active
+      admissionRequirementsEn
+      admissionRequirementsIs
+      allowException
+      allowThirdLevelQualification
+      applicationEndDate
+      applicationStartDate
+      costInformationEn
+      costInformationIs
+      costPerYear
       courses {
-        courseId
-        courseName
-        finalgrade
-        units
-        stage
-        status
-        date
+        credits
+        descriptionEn
+        descriptionIs
+        externalId
+        externalUrlEn
+        externalUrlIs
+        id
+        nameEn
+        nameIs
+        requirement
+        semesterSeason
+        semesterYear
+        semesterYearNumber
       }
-      division
-      divisionShort
-      organisation
-      organisationShort
-      periodFrom
-      periodName
-      periodShort
-      periodTo
-      studentId
-      periodId
-      diplomaId
+      credits
+      degreeAbbreviation
+      degreeType
+      departmentNameEn
+      departmentNameIs
+      descriptionEn
+      descriptionIs
+      durationInYears
+      externalId
+      externalUrlEn
+      externalUrlIs
+      extraApplicationFields {
+        descriptionEn
+        descriptionIs
+        externalId
+        fieldType
+        nameEn
+        nameIs
+        options
+        required
+        uploadAcceptedFileType
+      }
+      id
+      iscedCode
+      modeOfDelivery
+      nameEn
+      nameIs
+      schoolAnswerDate
+      specializationExternalId
+      specializationNameEn
+      specializationNameIs
+      startingSemesterSeason
+      startingSemesterYear
+      studentAnswerDate
+      studyRequirementsEn
+      studyRequirementsIs
+      arrangementIs
+      arrangementEn
+      universityContentfulKey
+      universityId
     }
   }
-}
-
 `

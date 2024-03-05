@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/inna'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import { InnaParameters } from '@island.is/application/types'
 
 @Injectable()
 export class InnaService extends BaseTemplateApiService {
@@ -17,13 +18,27 @@ export class InnaService extends BaseTemplateApiService {
 
   async getInnaDiplomas({
     auth,
-  }: TemplateApiModuleActionProps): Promise<
+    params,
+  }: TemplateApiModuleActionProps<InnaParameters>): Promise<
     Array<InlineResponse200Items> | null | undefined
   > {
     let res
+
     try {
       res = await this.innaService.getDiplomas(auth)
     } catch (e) {
+      if (!params?.allowEmpty) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.errorDataProvider,
+            summary: coreErrorMessages.errorDataProvider,
+          },
+          400,
+        )
+      }
+    }
+
+    if (!res && !params?.allowEmpty) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.errorDataProvider,
@@ -33,17 +48,7 @@ export class InnaService extends BaseTemplateApiService {
       )
     }
 
-    if (!res) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.errorDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
-        },
-        400,
-      )
-    }
-
-    return res?.items
+    return res?.items || []
   }
 
   async getInnaPeriods({

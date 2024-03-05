@@ -11,13 +11,14 @@ import { formerEducation } from '../../../../lib/messages/formerEducation'
 import { Routes } from '../../../../lib/constants'
 import { degreeLevelOptions } from './degreeLevelOptions'
 import { FormValue } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const NotFinishedEducationSubSection = buildSubSection({
   id: `${Routes.EDUCATIONDETAILS}.notFinishedDetails`,
   title: formerEducation.labels.educationDetails.pageTitle,
   condition: (answers: FormValue, externalData) => {
     const optionAnswers = getValueViaPath(answers, 'educationOptions')
-    return optionAnswers === 'notFinished'
+    return optionAnswers === ApplicationTypes.NOTFINISHED
   },
   children: [
     buildMultiField({

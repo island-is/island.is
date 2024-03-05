@@ -11,6 +11,12 @@ import { useLazyApplicationQuery } from '../../hooks/useLazyApplicationQuery'
 import { useLocale } from '@island.is/localization'
 import { review } from '../../lib/messages'
 import { AcceptConfirmationModal } from './AcceptConfirmationModal'
+import {
+  EducationDetailsItem,
+  EducationDetailsItemExemption,
+  EducationDetailsItemNotFinished,
+} from '../../shared/types'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const Overview: FC<FieldBaseProps> = ({
   application,
@@ -19,7 +25,19 @@ export const Overview: FC<FieldBaseProps> = ({
   refetch,
 }) => {
   const answers = application.answers as UniversityApplication
-  const educationList = answers.educationDetails
+
+  const educationListFinished =
+    answers.educationDetails.finishedDetails?.filter(
+      (x) => x.wasRemoved === 'false',
+    ) as Array<EducationDetailsItem>
+  const educationOptionChosen = answers.educationOptions
+  const educationExemption = answers.educationDetails
+    .exemptionDetails as EducationDetailsItemExemption
+  const educationThirdLevel = answers.educationDetails
+    .thirdLevelDetails as EducationDetailsItem
+  const educationNotFinished = answers.educationDetails
+    .notFinishedDetails as EducationDetailsItemNotFinished
+
   const [loading, setLoading] = useState(false)
   const { formatMessage } = useLocale()
 
@@ -62,19 +80,41 @@ export const Overview: FC<FieldBaseProps> = ({
       <Divider />
       <ApplicantReview field={field} application={application} />
       <Divider />
-      {/* {educationList &&
-        educationList.length > 0 &&
-        educationList.map((educationItem) => {
-          return (
-            <SchoolCareerReview
-              educationItem={educationItem}
-              field={field}
-              application={application}
-              route={Routes.EDUCATIONDETAILS}
-              goToScreen={goToScreen}
-            />
-          )
-        })} */}
+      {educationOptionChosen &&
+        educationOptionChosen === ApplicationTypes.EXEMPTION && (
+          <SchoolCareerReview
+            educationItemExemption={educationExemption}
+            field={field}
+            application={application}
+            route={Routes.EDUCATIONDETAILSFINISHED}
+          />
+        )}
+      {educationOptionChosen &&
+        educationOptionChosen === ApplicationTypes.THIRDLEVEL && (
+          <SchoolCareerReview
+            educationItemThirdLevel={educationThirdLevel}
+            field={field}
+            application={application}
+            route={Routes.EDUCATIONDETAILSTHIRDLEVEL}
+          />
+        )}
+      {educationOptionChosen &&
+        educationOptionChosen === ApplicationTypes.NOTFINISHED && (
+          <SchoolCareerReview
+            educationItemNotFinished={educationNotFinished}
+            field={field}
+            application={application}
+            route={Routes.EDUCATIONDETAILSNOTFINISHED}
+          />
+        )}
+      {educationListFinished && educationListFinished.length > 0 && (
+        <SchoolCareerReview
+          educationItemsFinished={educationListFinished}
+          field={field}
+          application={application}
+          route={Routes.EDUCATIONDETAILSFINISHED}
+        />
+      )}
       <Divider />
       <OtherDocumentsReview
         field={field}

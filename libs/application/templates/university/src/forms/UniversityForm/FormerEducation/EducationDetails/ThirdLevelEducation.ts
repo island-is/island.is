@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDateField,
   buildFileUploadField,
+  buildHiddenInput,
   buildMultiField,
   buildSelectField,
   buildSubSection,
@@ -14,13 +15,14 @@ import { FILE_SIZE_LIMIT } from '../../../../shared'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { degreeLevelOptions } from './degreeLevelOptions'
 import { FormValue } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const ThirdLevelEducationSubSection = buildSubSection({
   id: `${Routes.EDUCATIONDETAILS}.thirdLevelDetails`,
   title: formerEducation.labels.educationDetails.pageTitle,
   condition: (answers: FormValue, externalData) => {
     const optionAnswers = getValueViaPath(answers, 'educationOptions')
-    return optionAnswers === 'thirdLevel'
+    return optionAnswers === ApplicationTypes.THIRDLEVEL
   },
   children: [
     buildMultiField({
@@ -28,9 +30,14 @@ export const ThirdLevelEducationSubSection = buildSubSection({
       title: formerEducation.labels.educationDetails.pageTitle,
       description: formerEducation.labels.educationDetails.pageDescription,
       children: [
-        // buildHiddenInput({
-
-        // }),
+        buildHiddenInput({
+          id: `${Routes.EDUCATIONDETAILS}.thirdLevelDetails.wasRemoved`,
+          defaultValue: 'false',
+        }),
+        buildHiddenInput({
+          id: `${Routes.EDUCATIONDETAILS}.thirdLevelDetails.readOnly`,
+          defaultValue: 'false',
+        }),
         buildTextField({
           id: `${Routes.EDUCATIONDETAILS}.thirdLevelDetails.school`,
           title: formerEducation.labels.educationDetails.schoolLabel,

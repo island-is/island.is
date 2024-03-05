@@ -7,6 +7,7 @@ import { formerEducation } from '../../lib/messages/formerEducation'
 import { getValueViaPath } from '@island.is/application/core'
 import { EducationDetailsItem } from '../../shared/types'
 import { InlineResponse200Items } from '@island.is/clients/inna'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const EducationDetails: FC<FieldBaseProps> = ({
   application,
@@ -62,7 +63,7 @@ export const EducationDetails: FC<FieldBaseProps> = ({
         ...educationList.filter((x) => x.readOnly === 'false'),
       ]
       setEducationList(combinedLists)
-    } else if (educationOptionAnswer === 'diploma') {
+    } else if (educationOptionAnswer === ApplicationTypes.DIPLOMA) {
       handleAdd()
     }
   }, [])
@@ -128,7 +129,7 @@ export const EducationDetails: FC<FieldBaseProps> = ({
           const removeable =
             (position > 0 && educationItem.readOnly !== 'true') ||
             (educationOptionAnswer !== '' &&
-              educationOptionAnswer !== 'diploma')
+              educationOptionAnswer !== ApplicationTypes.DIPLOMA)
           return (
             <Box paddingTop={3}>
               <DetailsRepeaterItem

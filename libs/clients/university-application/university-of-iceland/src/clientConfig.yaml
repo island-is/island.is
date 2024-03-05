@@ -89,6 +89,10 @@ paths:
                           type: 'string'
                         externalUrlEn:
                           type: 'string'
+                        applicationUrlIs:
+                          type: 'string'
+                        applicationUrlEn:
+                          type: 'string'
                         modeOfDelivery:
                           type: 'array'
                           items:
@@ -143,6 +147,8 @@ paths:
                               type: 'string'
                               format: 'date-time'
                             nafnleynd:
+                              type: 'string'
+                            thridja_stigsnam_leyft:
                               type: 'string'
                         extraApplicationFields:
                           type: 'array'

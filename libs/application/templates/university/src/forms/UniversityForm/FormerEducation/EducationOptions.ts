@@ -7,6 +7,7 @@ import { formerEducation } from '../../../lib/messages/formerEducation'
 import { Routes } from '../../../lib/constants'
 import { Program } from '@island.is/clients/university-gateway-api'
 import { FormValue } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/university-gateway'
 
 import { InlineResponse200Items } from '@island.is/clients/inna'
 
@@ -46,7 +47,7 @@ export const EducationOptionsSubSection = buildSubSection({
               formerEducation.labels.educationOptions
                 .diplomaFinishedDescription,
 
-            value: 'diploma',
+            value: ApplicationTypes.DIPLOMA,
           },
           {
             label:
@@ -56,7 +57,7 @@ export const EducationOptionsSubSection = buildSubSection({
               formerEducation.labels.educationOptions
                 .diplomaNotFinishedDescription,
 
-            value: 'notFinished',
+            value: ApplicationTypes.NOTFINISHED,
           },
           {
             label: formerEducation.labels.educationOptions.thirdLevelLabel,
@@ -64,7 +65,7 @@ export const EducationOptionsSubSection = buildSubSection({
             subLabel:
               formerEducation.labels.educationOptions.thirdLevelDescription,
 
-            value: 'thirdLevel',
+            value: ApplicationTypes.THIRDLEVEL,
           },
         ]
 
@@ -75,7 +76,7 @@ export const EducationOptionsSubSection = buildSubSection({
             subLabel:
               formerEducation.labels.educationOptions.exemptionDescription,
 
-            value: 'exemption',
+            value: ApplicationTypes.EXEMPTION,
           })
         }
 

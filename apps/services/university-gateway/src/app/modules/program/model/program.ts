@@ -311,6 +311,17 @@ export class ProgramBase extends Model<
   })
   tmpActive!: boolean
 
+  @ApiProperty({
+    description:
+      'Whether the program allows applicants to apply using exception',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  allowException!: boolean
+
   @ApiHideProperty()
   @CreatedAt
   readonly created!: CreationOptional<Date>
@@ -427,17 +438,6 @@ export class Program extends ProgramBase {
     allowNull: true,
   })
   arrangementEn?: string
-
-  @ApiProperty({
-    description:
-      'Whether the program allows applicants to apply using exception',
-    example: true,
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  allowException!: boolean
 
   @ApiProperty({
     description:
