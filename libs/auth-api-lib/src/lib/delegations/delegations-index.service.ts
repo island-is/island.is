@@ -225,7 +225,7 @@ export class DelegationsIndexService {
 
   private async getCustomDelegations(nationalId: string) {
     const delegations = await this.delegationsIncomingCustomService
-      .findAllValidIncoming(nationalId)
+      .findAllValidIncoming({ nationalId }, true)
       .then((d) => d.map(toDelegationIndexInfo))
 
     const currentDelegationIndexItems = await this.delegationIndexModel.findAll(
@@ -243,7 +243,7 @@ export class DelegationsIndexService {
 
   private async getRepresentativeDelegations(nationalId: string) {
     const delegations = await this.delegationsIncomingRepresentativeService
-      .findAllIncoming(nationalId)
+      .findAllIncoming({ nationalId }, true)
       .then((d) => d.map(toDelegationIndexInfo))
 
     const currentDelegationIndexItems = await this.delegationIndexModel.findAll(
