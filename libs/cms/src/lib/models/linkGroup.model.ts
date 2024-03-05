@@ -24,7 +24,7 @@ export class LinkGroup {
   childrenLinks?: Array<Link>
 }
 
-type EntryAbove = IProjectPage
+type PageAbove = IProjectPage
 
 type LinkType = Omit<
   ILink | IOrganizationSubpage | IProjectSubpage,
@@ -40,86 +40,27 @@ export type ILinkGroupModel = {
     childrenLinks?: LinkType[] | undefined
   }
   sys: ILinkGroup['sys']
-  entryAbove?: EntryAbove
+  pageAbove?: PageAbove
 }
 
 export const mapLinkGroup = ({
   fields,
   sys,
-  entryAbove,
-}: ILinkGroupModel): LinkGroup => {
-  let primaryLink: Link | null = null
-  const contentTypeId = fields.primaryLink.sys.contentType.sys.id
+  pageAbove,
+}: ILinkGroupModel): LinkGroup => ({
+  id: sys.id,
+  name: fields.name ?? '',
+  primaryLink: doMapLink(fields.primaryLink, pageAbove),
+  childrenLinks: (fields.childrenLinks ?? []).map((link) =>
+    doMapLink(link, pageAbove),
+  ),
+})
 
-  if (contentTypeId === 'organizationSubpage') {
-    const subpage = fields.primaryLink as IOrganizationSubpage
-    const prefix = getOrganizationPrefix(sys.locale)
-
-    primaryLink = mapLink({
-      ...subpage,
-      sys: {
-        ...subpage.sys,
-        contentType: {
-          sys: {
-            ...subpage.sys.contentType.sys,
-            id: 'link',
-          },
-        },
-      },
-      fields: {
-        text: subpage.fields.title,
-        url: `/${prefix}/${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`,
-      },
-    })
-  } else if (contentTypeId === 'projectSubpage') {
-    const subpage = fields.primaryLink as IProjectSubpage
-    const prefix = getProjectPrefix(sys.locale)
-
-    primaryLink = mapLink({
-      ...subpage,
-      sys: {
-        ...subpage.sys,
-        contentType: {
-          sys: {
-            ...subpage.sys.contentType.sys,
-            id: 'link',
-          },
-        },
-      },
-      fields: {
-        text: subpage.fields.title,
-        url: `/${prefix}/${entryAbove?.fields.slug}/${subpage.fields.slug}`,
-      },
-    })
-  } else if (contentTypeId === 'link') {
-    primaryLink = mapLink(fields.primaryLink as ILink)
-  }
-
-  return {
-    id: sys.id,
-    name: fields.name ?? '',
-    primaryLink,
-    childrenLinks: (fields.childrenLinks ?? []).map((link) => {
-      return doMapLink(link, sys.locale, entryAbove)
-    }),
-  }
-}
-
-const doMapLink = (
-  link: LinkType,
-  locale: string,
-  entryAbove: EntryAbove | undefined,
-) => {
+const doMapLink = (link: LinkType, pageAbove: PageAbove | undefined) => {
   if (link.sys?.contentType?.sys?.id === 'organizationSubpage') {
-    const organizationSubpage = link as IOrganizationSubpage
-    return mapLink(
-      convertOrganizationSubpageToLink(organizationSubpage, locale),
-    )
+    return generateOrganizationSubpageLink(link as IOrganizationSubpage)
   } else if (link.sys.contentType.sys.id === 'projectSubpage') {
-    const projectSubpage = link as IProjectSubpage
-    return mapLink(
-      convertProjectSubpageToLink(projectSubpage, locale, entryAbove),
-    )
+    return generateProjectSubpageLink(link as IProjectSubpage, pageAbove)
   } else {
     return mapLink(link as ILink)
   }
@@ -139,47 +80,47 @@ const getProjectPrefix = (locale: string) => {
   return 'v'
 }
 
-const convertProjectSubpageToLink = (
-  projectSubpage: IProjectSubpage,
-  locale: string,
-  entryAbove: EntryAbove | undefined,
-) => {
-  const prefix = getProjectPrefix(locale)
-  return {
+const generateOrganizationSubpageLink = (subpage: IOrganizationSubpage) => {
+  const prefix = getOrganizationPrefix(subpage.sys.locale)
+
+  return mapLink({
+    ...subpage,
     sys: {
-      ...projectSubpage.sys,
+      ...subpage.sys,
       contentType: {
         sys: {
-          ...projectSubpage.sys.contentType.sys,
+          ...subpage.sys.contentType.sys,
           id: 'link',
         },
       },
     },
     fields: {
-      text: projectSubpage.fields.title,
-      url: `/${prefix}/${entryAbove?.fields.slug}/${projectSubpage.fields.slug}`,
+      text: subpage.fields.title,
+      url: `/${prefix}/${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`,
     },
-  } as ILink
+  })
 }
 
-const convertOrganizationSubpageToLink = (
-  organizationSubpage: IOrganizationSubpage,
-  locale: string,
+const generateProjectSubpageLink = (
+  subpage: IProjectSubpage,
+  pageAbove?: PageAbove,
 ) => {
-  const prefix = getOrganizationPrefix(locale)
-  return {
+  const prefix = getProjectPrefix(subpage.sys.locale)
+
+  return mapLink({
+    ...subpage,
     sys: {
-      ...organizationSubpage.sys,
+      ...subpage.sys,
       contentType: {
         sys: {
-          ...organizationSubpage.sys.contentType.sys,
+          ...subpage.sys.contentType.sys,
           id: 'link',
         },
       },
     },
     fields: {
-      text: organizationSubpage.fields.title,
-      url: `/${prefix}/${organizationSubpage.fields.organizationPage.fields.slug}/${organizationSubpage.fields.slug}`,
+      text: subpage.fields.title,
+      url: `/${prefix}/${pageAbove?.fields.slug}/${subpage.fields.slug}`,
     },
-  } as ILink
+  })
 }
