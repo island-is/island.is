@@ -36,14 +36,13 @@ import { DocumentsListItemTypes } from './DocumentScreen.types'
 import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 import * as styles from '../../screens/Finance.css'
-import FinanceIntro from '../FinanceIntro'
 import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
 
 const ITEMS_ON_PAGE = 20
 
 interface Props {
   title: string
-  intro: string
+  intro?: string
   listPath: string
   defaultDateRangeMonths?: number
 }
@@ -120,7 +119,6 @@ const DocumentScreen = ({
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-      <FinanceIntro text={intro} />
       <Stack space={2}>
         <Hidden print={true}>
           <Box
