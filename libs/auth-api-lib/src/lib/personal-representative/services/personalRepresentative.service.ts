@@ -14,6 +14,12 @@ import { PersonalRepresentativeRight } from '../models/personal-representative-r
 import { InactiveReason } from '../models/personal-representative.enum'
 import { PersonalRepresentative } from '../models/personal-representative.model'
 
+type GetByPersonalRepresentativeOptions = {
+  nationalIdPersonalRepresentative: string
+  includeInactive?: boolean
+  skipInactive?: boolean
+}
+
 @Injectable()
 export class PersonalRepresentativeService {
   constructor(
@@ -86,15 +92,14 @@ export class PersonalRepresentativeService {
   }
 
   /** Gets all personal representative connections for personal representative  */
-  async getByPersonalRepresentative({
-    nationalIdPersonalRepresentative,
-    includeInactive = false,
-    skipInactive = true,
-  }: {
-    nationalIdPersonalRepresentative: string
-    includeInactive?: boolean
-    skipInactive?: boolean
-  }): Promise<PersonalRepresentativeDTO[]> {
+  async getByPersonalRepresentative(
+    {
+      nationalIdPersonalRepresentative,
+      includeInactive = false,
+      skipInactive = true,
+    }: GetByPersonalRepresentativeOptions,
+    useMaster = false,
+  ): Promise<PersonalRepresentativeDTO[]> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
@@ -117,6 +122,7 @@ export class PersonalRepresentativeService {
 
     const personalRepresentatives =
       await this.personalRepresentativeModel.findAll({
+        useMaster,
         where: whereClause,
         include: [
           {
