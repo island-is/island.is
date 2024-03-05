@@ -58,6 +58,10 @@ export class NotificationsService {
     private readonly notificationModel: typeof Notification,
   ) {}
 
+
+
+    
+
   private async formatAndMapNotification(
     notification: Notification,
     templateId: string,
@@ -70,6 +74,22 @@ export class NotificationsService {
         template = await this.getTemplate(templateId, locale)
       }
 
+      // dis is de spot
+      // if senderId is set and args contains organization, fetch organizationtitle from senderId
+      if (notification.senderId && notification.args) {
+        const organizationArg = notification.args.find(
+          (arg) => arg.key === 'organization',
+        )
+        if (organizationArg) {
+          const organizationTitle = "YouCanFlyBobby"
+          // const organizationTitle = await this.getOrganizationTitle(
+          //   notification.senderId,
+          //   organizationArg.value,
+          // )
+          organizationArg.value = organizationTitle
+        }
+      }
+
       // Format the template with arguments from the notification
       const formattedTemplate = this.formatArguments(
         notification.args,
@@ -80,7 +100,7 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        senderId: notification.senderId || '',
+        senderId: notification.senderId || '', // ................... or null
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
