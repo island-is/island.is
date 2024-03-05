@@ -43,9 +43,8 @@ export const overview = {
       'Notaður sem texti í valmöguleika um að hafna ákæru á yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
   }),
   nextButtonText: defineMessage({
-    id: 'judicial.system.indictments:overview.next_button_text',
-    defaultMessage:
-      '{isNewIndictment, select, true {Senda} other {Endursenda}} ákæru á héraðsdóm',
+    id: 'judicial.system.indictments:overview.next_button_text_v1',
+    defaultMessage: 'Senda til staðfestingar',
     description: 'Texti í áfram takka á Yfirlit ákæru skefi í ákærum.',
   }),
   modalHeading: defineMessage({

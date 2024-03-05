@@ -135,9 +135,11 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               ? constants.CASES_ROUTE
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
-          nextButtonText={formatMessage(strings.overview.nextButtonText, {
-            isNewIndictment,
-          })}
+          nextButtonText={
+            user?.canConfirmAppeal
+              ? undefined
+              : formatMessage(strings.overview.nextButtonText)
+          }
           hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
             caseHasBeenReceivedByCourt
