@@ -1,7 +1,9 @@
 import gql from 'graphql-tag'
 
 export const cancelCollectionMutation = gql`
-  mutation signatureCollectionCancel($input: SignatureCollectionIdInput!) {
+  mutation signatureCollectionCancel(
+    $input: SignatureCollectionCancelListsInput!
+  ) {
     signatureCollectionCancel(input: $input) {
       success
     }
@@ -9,7 +11,7 @@ export const cancelCollectionMutation = gql`
 `
 
 export const unSignList = gql`
-  mutation removeSignature($input: SignatureCollectionIdInput!) {
+  mutation removeSignature($input: SignatureCollectionListIdInput!) {
     signatureCollectionUnsign(input: $input) {
       success
       reasons

@@ -10,17 +10,20 @@ class StatisticKeyValue {
   value!: number | null
 }
 
-@ObjectType('StatisticsKeyValuesOnDate')
-class StatisticOnDate {
-  @Field(() => Date)
-  date!: Date
+@ObjectType('StatisticsForHeader')
+class StatisticsForHeader {
+  @Field(() => String)
+  header!: string
+
+  @Field(() => String)
+  headerType!: string
 
   @Field(() => [StatisticKeyValue])
-  statisticsForDate!: StatisticKeyValue[]
+  statisticsForHeader!: StatisticKeyValue[]
 }
 
 @ObjectType('StatisticsQueryResponse')
 export class StatisticsQueryResponse {
-  @CacheField(() => [StatisticOnDate])
-  statistics!: StatisticOnDate[]
+  @CacheField(() => [StatisticsForHeader])
+  statistics!: StatisticsForHeader[]
 }

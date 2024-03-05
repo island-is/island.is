@@ -3,5 +3,6 @@ query PoliceCaseInfo($input: PoliceCaseInfoQueryInput!) {
     policeCaseNumber
     place
     date
+    licencePlate
   }
 }

@@ -208,9 +208,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Skráður maki í þjóðskrá er sjálfgefinn. Þú getur valið að skráð hitt foreldri, hvort þú sért einstætt foreldri eða haldið áfram án skráningar.',
+        'Skráður maki í þjóðskrá er valinn sjálfkrafa. Finnist ekki maki í þjóðskrá getur þú haldið áfram án skráningar, skráð þig sem einstætt foreldri eða skráð hitt foreldrið handvirkt.',
       description:
-        'Your spouse according to National Registry records is filled in by default. You can choose to register the other parent, whether you are a single parent or continue without registration.',
+        'Your spouse according to Registers Iceland is preselected. If no spouse is found, you can continue without registration, register as a single parent or register the other parent manually.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -670,6 +670,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Sækja gögn',
       description: 'External Data',
     },
+    subTitle: {
+      id: 'pl.application:sub.title',
+      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+      description: 'The following data will be retrieved electronically',
+    },
     checkboxProvider: {
       id: 'pl.application:checkbox.provider',
       defaultMessage:
@@ -683,25 +688,24 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     userProfileInformationTitle: {
       id: 'pl.application:userprofile.title',
-      defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+      defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
       description: 'Your user profile information',
     },
     userProfileInformationSubTitle: {
       id: 'pl.application:userprofile.subtitle',
       defaultMessage:
-        'Til þess að auðvelda umsóknarferlið er gott að hafa stillt netfang og símanúmer á mínum síðum',
-      description:
-        'In order to apply for this application we need your email and phone number',
+        'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið',
+      description: 'user profile sub title',
     },
     familyInformationTitle: {
       id: 'pl.application:familyinformation.title',
-      defaultMessage: 'Upplýsingar um fjölskyldumeðlimi',
-      description: 'Your family information',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
+      description: 'Information from Registers Iceland',
     },
     familyInformationSubTitle: {
       id: 'pl.application:familyinformation.subtitle',
-      defaultMessage: 'Nafn, kennitala og tengsl',
-      description: 'Name, national registry id and type of relation',
+      defaultMessage: 'Upplýsingar um þig, maka og börn.',
+      description: 'Information about you, spouse and children.',
     },
     pregnancyStatusAndRightsError: {
       id: 'pl.application:pregnancyStatusAndRights.error',
@@ -717,23 +721,25 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     childrenInformationTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
-      defaultMessage: 'Áætlaður fæðingardagur',
-      description: 'Expected birth date',
+      defaultMessage: 'Upplýsingar frá Heilsuveru',
+      description: 'Information from Heilsuvera',
     },
     childrenInformationSubTitle: {
       id: 'pl.application:expectedDateOfBirth.subtitle',
-      defaultMessage: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
-      description: 'Confirmation on date of birth',
+      defaultMessage:
+        'Staðfesting á áætluðum fæðingardegi barns. Athugið að barnshafandi foreldri þarf að klára sína umsókn á undan maka.',
+      description:
+        'Confirmation on estimated due date from Heilsuvera. Note that the pregnant parent must complete their application before their spouse.',
     },
     salaryInformationTitle: {
       id: 'pl.application:permission.salaryInformation.title',
-      defaultMessage: 'Upplýsingar um laun',
-      description: 'Salary information',
+      defaultMessage: 'Upplýsingar frá Skattinum',
+      description: 'Information from Iceland Revenue and Customs',
     },
     salaryInformationSubTitle: {
       id: 'pl.application:permission.salaryInformation.subtitle',
-      defaultMessage: 'Sóttar til Skattsins.',
-      description: 'Salary information will be fetched from the tax office.',
+      defaultMessage: 'Upplýsingar um laun.',
+      description: 'Salary information.',
     },
     salaryTitle: {
       id: 'pl.application:salary.title',
@@ -1545,6 +1551,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employer.employerLastSixMonths',
       defaultMessage: 'Hefur þú verið með vinnuveitanda á síðustu 6 mánuðum?',
       description: 'Have you had an employer in the last 6 month?',
+    },
+    registerEmployer: {
+      id: 'pl.application:employer.registerEmployer',
+      defaultMessage: 'Skrá vinnuveitanda',
+      description: 'Add employer',
+    },
+    deleteEmployer: {
+      id: 'pl.application:employer.deleteEmployer',
+      defaultMessage: 'Eyða vinnuveitanda',
+      description: 'Remove employer',
     },
   }),
 
@@ -2470,6 +2486,11 @@ export const errorMessages = defineMessages({
     id: 'pl.application:dataSchema.invalidEmployerNationalRegistryId',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
+  },
+  employersRequired: {
+    id: 'pl.application:dataSchema.employersRequired',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum vinnuveitanda',
+    description: 'You must add at least one employer',
   },
   dateOfBirth: {
     id: 'pl.application:answerValidators.dateOfBirth',

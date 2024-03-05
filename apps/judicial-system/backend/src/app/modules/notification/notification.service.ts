@@ -2121,7 +2121,6 @@ export class NotificationService {
         theCase.defenderName,
         theCase.defenderEmail,
       ),
-      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
     )
 
     return Promise.all(promises)
@@ -2171,7 +2170,7 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    const sendTo = await this.getNotificationRecipients(
+    const sendTo = await this.getWithdrawnNotificationRecipients(
       theCase,
       user,
       wasWithdrawnByProsecution,
@@ -2191,7 +2190,7 @@ export class NotificationService {
     )
   }
 
-  private async getNotificationRecipients(
+  private async getWithdrawnNotificationRecipients(
     theCase: Case,
     user: User,
     wasWithdrawnByProsecution: boolean,
@@ -2224,16 +2223,17 @@ export class NotificationService {
       })
     }
 
-    recipients.push(
-      {
-        name: theCase.registrar?.name,
-        email: theCase.registrar?.email,
-      },
-      {
-        name: theCase.court?.name,
-        email: this.getCourtEmail(theCase.court?.id),
-      },
-    )
+    recipients.push({
+      name: theCase.court?.name,
+      email: this.getCourtEmail(theCase.court?.id),
+    })
+
+    if (theCase.registrar) {
+      recipients.push({
+        name: theCase.registrar.name,
+        email: theCase.registrar.email,
+      })
+    }
 
     if (theCase.appealReceivedByCourtDate) {
       recipients.push({
