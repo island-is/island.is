@@ -280,8 +280,7 @@ export const getIncidentDescription = (
   formatMessage: IntlShape['formatMessage'],
   crimeScene?: CrimeScene,
 ) => {
-  const { offenses, substances, policeCaseNumber, vehicleRegistrationNumber } =
-    indictmentCount
+  const { offenses, substances, vehicleRegistrationNumber } = indictmentCount
 
   if (offenses?.length === 0) {
     return ''
@@ -291,7 +290,7 @@ export const getIncidentDescription = (
   let incidentDate = ''
   let incidentDescription = ''
 
-  if (crimeScene && policeCaseNumber) {
+  if (crimeScene) {
     incidentLocation = crimeScene.place ?? ''
     incidentDate =
       formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
