@@ -390,6 +390,7 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.HOME_SUPPORT]: {
     slug: 'heimastudningur',
     translation: 'hst.application',
+    formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekis',
@@ -399,13 +400,16 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.UNIVERSITY]: {
     slug: 'haskolanam',
     translation: 'uni.application',
+    formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.DEREGISTER_MACHINE]: {
     slug: 'afskraning-taekis',
     translation: 'aosh.drm.application',
+    formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
     translation: 'ghb.application',
+    formType: ApplicationFormTypes.STATIC,
   },
 }
