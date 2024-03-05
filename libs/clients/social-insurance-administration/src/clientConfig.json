@@ -1175,6 +1175,240 @@
         }
       }
     },
+    "/api/protected/v1/IncomePlan": {
+      "get": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns a list of income plans for the logged-in user",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/IncomePlan/CategorizedIncomeTypes": {
+      "get": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns a list of all available income types with their associated income categories",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.ExternalIncomeTypeDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.ExternalIncomeTypeDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.ExternalIncomeTypeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/PaymentPlan": {
       "get": {
         "tags": ["PaymentPlan"],
@@ -2476,6 +2710,97 @@
           "message": {
             "type": "string",
             "description": "Message to be displayed to the user if the application is not valid.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.ExternalIncomeTypeDto": {
+        "type": "object",
+        "properties": {
+          "categoryNumber": {
+            "type": "integer",
+            "description": "Income type category number",
+            "format": "int64"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Income type category name, e.g. \"Atvinnutekjur\", \"Fjármagnstekjur\" etc.",
+            "nullable": true
+          },
+          "categoryCode": {
+            "type": "string",
+            "description": "Income type category code",
+            "nullable": true
+          },
+          "incomeTypeNumber": {
+            "type": "integer",
+            "description": "Income type number",
+            "format": "int64"
+          },
+          "incomeTypeName": {
+            "type": "string",
+            "description": "Income type name, e.g. \"Laun\", \"Atvinnuleysisbætur\", etc.",
+            "nullable": true
+          },
+          "incomeTypeCode": {
+            "type": "string",
+            "description": "Income type code",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanDto": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "description": "The year of the income plan",
+            "format": "int32"
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "The date when the income plan was registered",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the income plan (in progress, accepted, cancelled etc.)",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "description": "The origin of the income plan (from the applicant, from TR, etc.)",
+            "nullable": true
+          },
+          "incomeTypeLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomeTypeLine"
+            },
+            "description": "A list of income type lines. Each income type line is one source of income, such as salary, pension etc.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomeTypeLine": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the income type in Icelandic (lífeyrissjóður, laun etc.)",
+            "nullable": true
+          },
+          "totalSum": {
+            "type": "integer",
+            "description": "The total annual sum of this payment type, ie. the amount paid per year",
+            "format": "int32"
+          },
+          "currency": {
+            "type": "string",
+            "description": "A 3-letter currency code for this income type, such as ISK, EUR, USD etc.",
             "nullable": true
           }
         },
