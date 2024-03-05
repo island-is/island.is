@@ -138,6 +138,23 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
 
   const maxLength = (slice.configJson?.maxLength ?? 11) + currencySuffix.length
 
+  const thorkatlaPaymentDisclaimer = n(
+    'thorkatlaPaymentDisclaimer',
+    'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
+  )
+  const purchaseAgreementPaymentDisclaimer = n(
+    'purchaseAgreementPaymentDisclaimer',
+    '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
+  )
+  const closingResultDisclaimer = n(
+    'closingResultDisclaimer',
+    '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
+  )
+  const loanDisclaimer = n(
+    'loanDisclaimer',
+    'Samtal er enn í gangi við lífeyrissjóði um þátttöku þeirra í úrræðinu. Vonast er til þess að niðurstaða liggi fyrir fljótlega',
+  )
+
   return (
     <Stack space={5}>
       <Box
@@ -349,30 +366,16 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
           </Stack>
 
           <Stack space={2}>
-            <Text variant="small">
-              {n(
-                'thorkatlaPaymentDisclaimer',
-                'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'purchaseAgreementPaymentDisclaimer',
-                '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'closingResultDisclaimer',
-                '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'loanDisclaimer',
-                'Samtal er enn í gangi við lífeyrissjóði um þátttöku þeirra í úrræðinu. Vonast er til þess að niðurstaða liggi fyrir fljótlega',
-              )}
-            </Text>
+            {thorkatlaPaymentDisclaimer && (
+              <Text variant="small">{thorkatlaPaymentDisclaimer}</Text>
+            )}
+            {purchaseAgreementPaymentDisclaimer && (
+              <Text variant="small">{purchaseAgreementPaymentDisclaimer}</Text>
+            )}
+            {closingResultDisclaimer && (
+              <Text variant="small">{closingResultDisclaimer}</Text>
+            )}
+            {loanDisclaimer && <Text variant="small">{loanDisclaimer}</Text>}
           </Stack>
         </Stack>
       </Box>
