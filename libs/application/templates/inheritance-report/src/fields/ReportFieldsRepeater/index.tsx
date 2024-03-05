@@ -192,7 +192,8 @@ export const ReportFieldsRepeater: FC<
         : []
 
     if (
-      !(application?.answers as any)?.assets?.realEstate?.hasModified &&
+      (!(application?.answers as any)?.assets?.realEstate?.hasModified ||
+        props.fromExternalData !== 'assets') &&
       fields.length === 0 &&
       extData.length
     ) {

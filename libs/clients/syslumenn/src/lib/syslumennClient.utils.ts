@@ -541,7 +541,7 @@ const mapInheritanceReportAssets = (
   const flyers: Array<InheritanceReportAsset> = []
   const otherAssets: Array<InheritanceReportAsset> = []
   const stocks: Array<InheritanceReportAsset> = []
-  const bankBalances: Array<InheritanceReportAsset> = []
+  const bankAccounts: Array<InheritanceReportAsset> = []
   const depositsAndMoney: Array<InheritanceReportAsset> = []
   const guns: Array<InheritanceReportAsset> = []
   const sharesAndClaims: Array<InheritanceReportAsset> = []
@@ -577,7 +577,11 @@ const mapInheritanceReportAssets = (
         stocks.push(asset)
         break
       case TegundAndlags.NUMBER_8:
-        bankBalances.push(asset)
+        bankAccounts.push({
+          ...asset,
+          accountNumber: asset.assetNumber,
+          assetNumber: undefined,
+        })
         break
       case TegundAndlags.NUMBER_9:
         depositsAndMoney.push(asset)
@@ -616,7 +620,7 @@ const mapInheritanceReportAssets = (
     flyers,
     otherAssets,
     stocks,
-    bankBalances,
+    bankAccounts,
     depositsAndMoney,
     guns,
     sharesAndClaims,

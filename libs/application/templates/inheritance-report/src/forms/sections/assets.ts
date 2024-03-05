@@ -283,7 +283,7 @@ export const assets = buildSection({
                   },
                   {
                     title: m.bankAccountBalance.defaultMessage,
-                    id: 'balance',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
@@ -296,7 +296,8 @@ export const assets = buildSection({
                 calcWithShareValue: false,
                 skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
-                sumField: 'balance',
+                sumField: 'propertyValuation',
+                fromExternalData: 'bankAccounts',
               },
             ),
           ],

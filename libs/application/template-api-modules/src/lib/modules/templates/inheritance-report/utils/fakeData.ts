@@ -77,7 +77,7 @@ export const getFakeData = (
     'flyers',
     'otherAssets',
     'stocks',
-    'bankBalances',
+    'bankAccounts',
     'depositsAndMoney',
     'guns',
     'sharesAndClaims',
@@ -98,6 +98,12 @@ export const getFakeData = (
     } else if (k === 'vehicles') {
       assetStructure[k][0].assetNumber = 'JOL25'
       assetStructure[k][1].assetNumber = 'YZ927'
+    } else if (k === 'bankAccounts') {
+      assetStructure[k].forEach((asset) => {
+        asset.accountNumber =
+          String(8999 + Math.round(Math.random() * 1000)) + '-12-345678'
+        asset.assetNumber = undefined
+      })
     }
   })
 

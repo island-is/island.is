@@ -294,6 +294,7 @@ export interface InheritanceReportAsset {
   assetNumber?: string
   share: number
   propertyValuation?: string
+  accountNumber?: string
 }
 
 export interface InheritanceReportInfo {
@@ -304,7 +305,7 @@ export interface InheritanceReportInfo {
   flyers: Array<InheritanceReportAsset>
   otherAssets: Array<InheritanceReportAsset>
   stocks: Array<InheritanceReportAsset>
-  bankBalances: Array<InheritanceReportAsset>
+  bankAccounts: Array<InheritanceReportAsset>
   depositsAndMoney: Array<InheritanceReportAsset>
   guns: Array<InheritanceReportAsset>
   sharesAndClaims: Array<InheritanceReportAsset>

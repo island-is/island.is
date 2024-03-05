@@ -95,7 +95,7 @@ export const expandAnswers = (
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
             accountNumber: account.accountNumber ?? '',
-            balance: account.balance ?? '',
+            propertyValuation: account.propertyValuation ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
           }
         }),
