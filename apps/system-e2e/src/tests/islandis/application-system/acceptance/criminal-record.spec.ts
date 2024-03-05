@@ -32,14 +32,14 @@ applicationTest.describe('Criminal record application payment test', () => {
     async ({ applicationPage }) => {
       const page = applicationPage
 
-      const buttonStaðfesta = label(m.confirm)
+      const buttonStaðfesta = 'Staðfesta'
       const buttonBætaViðKorti = 'Bæta við korti'
       const buttonGreiða = 'Greiða'
       const buttonTextSubmit3DData = 'Submit 3D data'
       const textGervimaðurAfríka = 'Gervimaður Afríka'
       const textGreiðslaTókst = 'Greiðsla tókst'
-      const textUmsóknStaðfest = label(m.successTitle)
-      const textAfgreidd = label(m.actionCardDone)
+      const textUmsóknStaðfest = 'Umsókn þín um sakavottorð hefur verið staðfest'
+      const textAfgreidd = 'Afgreidd'
 
       await applicationTest.step(
         'Create and proceed with application',

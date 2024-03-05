@@ -37,7 +37,7 @@ test.describe('Occupational licenses overview', () => {
         await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
 
         const hasHealthDirectorateLicense = page
-          .locator(`role=button[name="${label(m.view)}"]`)
+          .locator(`role=button[name="${'Skoða'}"]`)
           .first()
 
         // Act
@@ -65,7 +65,7 @@ test.describe('Occupational licenses overview', () => {
         await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
 
         const license = page
-          .locator(`role=button[name="${label(m.view)}"]`)
+          .locator(`role=button[name="${'Skoða'}"]`)
           .last()
 
         // Act

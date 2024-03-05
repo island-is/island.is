@@ -39,7 +39,7 @@ test.describe('MS - Work Machines', () => {
         .getByRole('button', { name: label(m.openFilter) })
         .first()
       const inputField = page.getByRole('textbox', {
-        name: label(m.searchLabel),
+        name: '`Uppfletting ökutækis`',
       })
       await inputField.click()
       await inputField.type('hys', { delay: 200 })
@@ -66,7 +66,7 @@ test.describe('MS - Work Machines', () => {
       await actionCardButton.click()
 
       const basicInfoText = page
-        .getByText(label(messages.baseInfoWorkMachineTitle))
+        .getByText('Grunnupplýsingar tækis')
         .first()
 
       // Assert

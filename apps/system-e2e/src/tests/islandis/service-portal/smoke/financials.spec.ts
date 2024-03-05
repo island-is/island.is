@@ -34,7 +34,7 @@ test.describe('MS - Fjármál overview', () => {
       // Assert
       await expect(
         page
-          .locator(`role=button[name="${label(m.financeBreakdown)}"]`)
+          .locator(`role=button[name="${'Sundurliðun'}"]`)
           .first(),
         {},
       ).toBeVisible({ timeout })
@@ -50,7 +50,7 @@ test.describe('MS - Fjármál overview', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/faerslur'))
 
       const inputField = page.getByRole('textbox', {
-        name: label(m.searchPlaceholder),
+        name: 'Sláðu inn leitarorð',
       })
       await inputField.click()
 
@@ -60,7 +60,7 @@ test.describe('MS - Fjármál overview', () => {
       // Assert
       await expect(
         page
-          .locator(`role=button[name="${label(m.financeBreakdown)}"]`)
+          .locator(`role=button[name="${'Sundurliðun'}"]`)
           .first(),
       ).toBeVisible({ timeout })
 
@@ -83,17 +83,17 @@ test.describe('MS - Fjármál overview', () => {
 
       // Act
       const filterButton = page
-        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .locator(`role=button[name="${'Opna síu'}"]`)
         .first()
       await filterButton.click()
 
-      const inputField = page.getByPlaceholder(label(m.datepickLabel)).first()
+      const inputField = page.getByPlaceholder('Veldu dagsetningu').first()
       await inputField.click()
       await inputField.fill('')
       await inputField.type('15.01.2023', { delay: 200 })
 
       const filterInput = page.getByRole('textbox', {
-        name: label(m.searchPlaceholder),
+        name: 'Sláðu inn leitarorð',
       })
       await filterInput.click()
       await filterInput.type('27.01.2023', { delay: 100 })
@@ -118,11 +118,11 @@ test.describe('MS - Fjármál overview', () => {
 
       // Act
       const filterButton = page
-        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .locator(`role=button[name="${'Opna síu'}"]`)
         .first()
       await filterButton.click()
 
-      const inputField = page.getByPlaceholder(label(m.datepickLabel)).first()
+      const inputField = page.getByPlaceholder('Veldu dagsetningu').first()
       await inputField.click()
       await inputField.fill('')
       await inputField.type('15.10.2021', { delay: 200 })

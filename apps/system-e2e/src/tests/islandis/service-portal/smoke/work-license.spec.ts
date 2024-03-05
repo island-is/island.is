@@ -36,7 +36,7 @@ test.describe('Work licenses', () => {
 
       // Act
       const headline = page.getByRole('heading', {
-        name: label(m.educationLicense),
+        name: 'Starfsleyfi',
       })
       const licenseRenewLink = page
         .locator(`[data-testid="action-card-cta"]`)

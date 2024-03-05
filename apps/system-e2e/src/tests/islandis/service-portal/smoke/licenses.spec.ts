@@ -44,7 +44,7 @@ test.describe('MS - Skírteini', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
 
       // Assert
-      const headline = page.getByRole('heading', { name: label(m.title) })
+      const headline = page.getByRole('heading', { name: 'Skírteinin þín' })
       await expect(headline).toBeVisible()
     })
   })
@@ -58,9 +58,9 @@ test.describe('MS - Skírteini', () => {
     // Act
     const passportLink = page
       .locator('data-testid=passport-card')
-      .getByRole('link', { name: label(m.seeDetails) })
+      .getByRole('link', { name: 'Skoða upplýsingar' })
     await passportLink.click()
-    const title1 = page.getByText(label(m.passportName))
+    const title1 = page.getByText('Nafn einstaklings')
 
     // Assert
     await expect(page).toHaveURL(
@@ -77,15 +77,15 @@ test.describe('MS - Skírteini', () => {
 
     // Act
     const tabButton = page.getByRole('tab', {
-      name: label(m.licenseTabSecondary),
+      name: 'Skírteini barna þinna',
     })
     await tabButton.click()
 
     const childPassportLink = page
-      .locator(`role=button[name="${label(m.seeDetails)}"]`)
+      .locator(`role=button[name="${'Skoða upplýsingar'}"]`)
       .last()
     await childPassportLink.click()
-    const title1 = page.getByText(label(m.passportName))
+    const title1 = page.getByText('Nafn einstaklings')
 
     // Assert
     await expect(page).toHaveURL(

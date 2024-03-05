@@ -39,14 +39,14 @@ test.describe('MS - University graduation', () => {
         await page.waitForLoadState('networkidle')
 
         const viewDetailsButton = page
-          .locator(`role=button[name="${label(m.view)}"]`)
+          .locator(`role=button[name="${'Skoða'}"]`)
           .last()
 
         // Act
         await viewDetailsButton.click()
 
         const title1 = page.getByRole('heading', {
-          name: label(m.educationGraduation),
+          name: 'Brautskráning',
         })
         const schoolName = page.getByText('Háskóli Íslands')
 

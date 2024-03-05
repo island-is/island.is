@@ -48,7 +48,7 @@ applicationTest.describe('Data protection complaint application', () => {
       const agreeToDataProvidersTestId = 'agree-to-data-providers'
       const proceedTestId = 'proceed'
       const gervimadurAfricaText = 'Gervimaður Afríka'
-      const overviewPageText = label(coreMessages.applications)
+      const overviewPageText = 'Þínar umsóknir'
 
       await applicationTest.step('Create a new application', async () => {
         numOfApplicationsAtStart = await createApplication(page)

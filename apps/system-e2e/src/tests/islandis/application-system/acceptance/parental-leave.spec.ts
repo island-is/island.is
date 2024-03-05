@@ -57,12 +57,12 @@ async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
 
   await page
     .getByRole('button', {
-      name: label(coreMessages.buttonApprove),
+      name: 'Samþykkja',
     })
     .click()
 
   await expect(
-    page.getByRole('heading', { name: label(coreMessages.thanks) }),
+    page.getByRole('heading', { name: 'Takk fyrir' }),
   ).toBeVisible()
 }
 

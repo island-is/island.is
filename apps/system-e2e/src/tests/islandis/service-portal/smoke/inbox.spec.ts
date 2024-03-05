@@ -43,7 +43,7 @@ test.describe('MS - Pósthólf overview', () => {
       await inputField.press('Enter')
 
       const btnClearFilter = page.getByRole('button', {
-        name: label(messages.clearFilters),
+        name: 'Hreinsa síu',
       })
 
       await sleep(500)
@@ -51,7 +51,7 @@ test.describe('MS - Pósthólf overview', () => {
       const docFoundText = page.getByTestId('doc-found-text')
 
       // Assert
-      await expect(docFoundText).toContainText(label(messages.found))
+      await expect(docFoundText).toContainText('skjöl fundust')
       await expect(btnClearFilter).toBeVisible()
     })
 
@@ -65,7 +65,7 @@ test.describe('MS - Pósthólf overview', () => {
         .first()
         .click()
       await page
-        .getByRole('button', { name: label(messages.institutionLabel) })
+        .getByRole('button', { name: 'Stofnun' })
         .first()
         .click()
       await page.mouse.wheel(0, 50)
@@ -75,7 +75,7 @@ test.describe('MS - Pósthólf overview', () => {
       await page.getByLabel(institution).click()
 
       // Assert
-      await expect(page.getByRole('main')).toContainText(label(messages.found))
+      await expect(page.getByRole('main')).toContainText('skjöl fundust')
       await expect(
         page
           .getByRole('button', { name: institution })

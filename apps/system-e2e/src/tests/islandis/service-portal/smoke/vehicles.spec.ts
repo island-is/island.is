@@ -112,7 +112,7 @@ test.describe('MS - Vehicles', () => {
       await terms.click()
 
       const inputField = page.getByRole('textbox', {
-        name: label(vehicleMessage.searchLabel),
+        name: 'Leit',
       })
       await inputField.click()
       await inputField.type('ísland.is', { delay: 200 })

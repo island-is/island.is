@@ -30,11 +30,11 @@ test.describe('MS - Mínar upplýsingar', () => {
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
 
     // Act
-    const element = page.getByText(label(m.natreg)).first()
+    const element = page.getByText('Kennitala').first()
 
     // Assert
     await expect(
-      page.getByRole('heading', { name: label(m.myInfo) }),
+      page.getByRole('heading', { name: 'Mín gögn' }),
     ).toBeVisible()
     await expect(element).toBeVisible()
   })
@@ -47,8 +47,8 @@ test.describe('MS - Mínar upplýsingar', () => {
     )
 
     // Act
-    const title1 = page.getByText(label(m.myRegistration))
-    const title2 = page.getByText(label(m.baseInfo))
+    const title1 = page.getByText('Mín skráning')
+    const title2 = page.getByText('Grunnupplýsingar')
     const link = page
       .getByRole('link', { name: label(spmm.changeInNationalReg) })
       .first()
