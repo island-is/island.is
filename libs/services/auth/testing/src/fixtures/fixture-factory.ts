@@ -44,6 +44,7 @@ import {
   CreateClientGrantType,
   CreateClientUri,
   CreateCustomDelegation,
+  CreateCustomDelegationScope,
   CreateIdentityResource,
   CreatePersonalRepresentativeDelegation,
 } from './types'
@@ -312,8 +313,7 @@ export class FixtureFactory {
 
     delegation.delegationScopes = await Promise.all(
       scopes.map(({ scopeName, validFrom, validTo }) =>
-        this.get(DelegationScope).create({
-          id: faker.datatype.uuid(),
+        this.createCustomScope({
           delegationId: delegation.id,
           scopeName,
           validFrom: validFrom ?? startOfDay(new Date()),
@@ -328,6 +328,25 @@ export class FixtureFactory {
     })
 
     return delegation
+  }
+
+  async createCustomScope({
+    scopeName,
+    validFrom,
+    validTo,
+    delegationId,
+  }: CreateCustomDelegationScope & {
+    delegationId: string
+  }): Promise<DelegationScope> {
+    const scope = await this.get(DelegationScope).create({
+      id: faker.datatype.uuid(),
+      delegationId: delegationId,
+      scopeName,
+      validFrom: validFrom ?? startOfDay(new Date()),
+      validTo: validTo ?? addYears(new Date(), 1),
+    })
+
+    return scope
   }
 
   async createPersonalRepresentativeDelegation({

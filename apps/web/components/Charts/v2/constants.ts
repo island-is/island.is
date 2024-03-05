@@ -78,7 +78,7 @@ export const COMPONENT_TYPES_WITH_FILL = [
   ChartComponentType.pie,
 ]
 
-export const DEFAULT_XAXIS_KEY = 'date'
+export const DEFAULT_XAXIS_KEY = 'header'
 export const DEFAULT_XAXIS_VALUE_TYPE = 'date'
 export const DEFAULT_XAXIS_FORMAT = 'MMM yy'
 
@@ -86,3 +86,10 @@ export const BASE_ACCORDION_HEIGHT = 150
 export const CHART_HEIGHT = 500
 
 export const FILL_BACKGROUND_MAIN_COLOR_OPACITY = 0
+
+export const DEFAULT_YAXIS_WIDTH = 60
+export const DEFAULT_XAXIS_HEIGHT = 30
+
+export const DEFAULT_PIE_INNER_RADIUS = 30
+export const DEFAULT_PIE_LABEL_FONT_SIZE = 14
+export const PIE_CHART_MAX_RADIUS = 90
