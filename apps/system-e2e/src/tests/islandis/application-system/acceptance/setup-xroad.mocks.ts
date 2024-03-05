@@ -4,19 +4,70 @@ import {
   wildcard,
 } from '../../../../support/wire-mocks'
 import { HttpMethod, Response } from '@anev/ts-mountebank'
-import { EinstaklingsupplysingarToJSON } from '@island.is/clients/national-registry-v2'
 import {
   Base,
   Labor,
   NationalRegistry,
 } from '../../../../../../../infra/src/dsl/xroad'
-import { PostParentalLeaveResponseToJSON } from '@island.is/clients/vmst'
 import formatISO from 'date-fns/formatISO'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import { getEnvVariables } from '../../../../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { env } from '../../../../support/urls'
 import { EnvironmentConfig } from '../../../../../../../infra/src/dsl/types/charts'
+
+
+// Because Playwright can't import, we copy:
+// import { EinstaklingsupplysingarToJSON } from '@island.is/clients/national-registry-v2'
+export function EinstaklingsupplysingarToJSON(value?: any | null): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return {
+    'kennitala': value.kennitala,
+    'nafn': value.nafn,
+    'eiginnafn': value.eiginnafn,
+    'millinafn': value.millinafn,
+    'kenninafn': value.kenninafn,
+    'fulltNafn': value.fulltNafn,
+    'kynkodi': value.kynkodi,
+    'bannmerking': value.bannmerking,
+    'faedingardagur': (value.faedingardagur.toISOString()),
+    'logheimili': HeimilisfangToJSON(value.logheimili),
+    'adsetur': HeimilisfangToJSON(value.adsetur),
+  };
+}
+export function HeimilisfangToJSON(value?: any | null): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return {
+    'heiti': value.heiti,
+    'postnumer': value.postnumer,
+    'stadur': value.stadur,
+    'sveitarfelagsnumer': value.sveitarfelagsnumer,
+  };
+}
+// import { PostParentalLeaveResponseToJSON } from '@island.is/clients/vmst'
+export function PostParentalLeaveResponseToJSON(value?: any | null): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return {
+
+    'status': value.status,
+    'id': value.id,
+  };
+}
 
 export async function setupXroadMocks() {
   await resetMocks()
@@ -289,11 +340,11 @@ export async function setupXroadMocks() {
     typeof xroadBasePath === 'string'
       ? xroadBasePath
       : xroadBasePath({
-          svc: (args) => {
-            return args as string
-          },
-          env: {} as EnvironmentConfig,
-        })
+        svc: (args) => {
+          return args as string
+        },
+        env: {} as EnvironmentConfig,
+      })
 
   await wildcard(path)
 }
