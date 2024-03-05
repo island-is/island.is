@@ -337,11 +337,12 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'externalData',
-          title: parentalLeaveFormMessages.shared.externalDataSubSection,
+          title: parentalLeaveFormMessages.shared.introductionProvider,
           children: [
             buildExternalDataProvider({
               id: 'approveExternalData',
               title: parentalLeaveFormMessages.shared.introductionProvider,
+              subTitle: parentalLeaveFormMessages.shared.subTitle,
               checkboxLabel: parentalLeaveFormMessages.shared.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
