@@ -147,6 +147,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               : undefined
           }
           onNextButtonClick={handleNextButtonClick}
+          nextIsDisabled={user?.canConfirmAppeal && !appealConfirmationDecision}
         />
       </FormContentContainer>
       <AnimatePresence>
