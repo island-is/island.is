@@ -129,7 +129,6 @@ export enum AnswerValidationConstants {
   // the repeater sends all the periods saved in 'periods'
   // to this validator, which will validate the latest one
   VALIDATE_LATEST_PERIOD = 'periods',
-  EMPLOYERS = 'employers',
 }
 
 export const DATE_FORMAT = 'yyyy-MM-dd'
