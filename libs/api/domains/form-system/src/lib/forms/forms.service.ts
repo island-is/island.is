@@ -6,6 +6,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { CreateFormInput, DeleteFormInput, GetFormInput, GetFormsInput, UpdateFormInput } from "../../dto/forms.input"
 import { FormResponse } from "../../models/formResponse.model"
 import { FormListResponse } from "../../models/formListResponse.model"
+import { GraphqlToRestInputSettings, RESTInputSettings, RestToGraphqlInputSettings } from "../utils/helperFunctions"
 
 
 
@@ -51,7 +52,16 @@ export class FormsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    return response as FormResponse
+    const formattedResponse = {
+      ...response,
+      inputsList: response.form?.inputsList?.map((input) => {
+        return {
+          ...input,
+          inputSettings: RestToGraphqlInputSettings(input.inputSettings as RESTInputSettings)
+        }
+      })
+    }
+    return formattedResponse as FormResponse
   }
 
   async getForms(auth: User, input: GetFormsInput): Promise<FormListResponse> {
@@ -65,6 +75,8 @@ export class FormsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
+
+
     return response as FormListResponse
   }
 
@@ -97,9 +109,19 @@ export class FormsService {
   }
 
   async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
+    const formattedForm = {
+      ...input.form,
+      inputsList: input.form?.inputsList?.map((input) => {
+        return {
+          ...input,
+          inputSettings: GraphqlToRestInputSettings(input.inputSettings)
+        }
+      })
+    }
+
     const request: ApiFormsFormIdPutRequest = {
       formId: input.formId,
-      formUpdateDto: input.form as FormUpdateDto,
+      formUpdateDto: formattedForm as FormUpdateDto,
     }
 
     const response = await this.formsApiWithAuth(auth)

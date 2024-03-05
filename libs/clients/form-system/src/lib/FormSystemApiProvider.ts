@@ -5,9 +5,7 @@ import {
   LazyDuringDevScope,
   IdsClientConfig,
 } from '@island.is/nest/config'
-
 import { FormSystemClientConfig } from './FormSystemClient.config'
-
 import { Configuration, FilesApi, FormsApi, GroupsApi, InputsApi, OrganizationsApi, ServicesApi, StepsApi } from '../../gen/fetch'
 
 

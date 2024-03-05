@@ -1,16 +1,16 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { LanguageType } from '@island.is/clients/form-system'
 import { InputSettings } from './inputSettings.model'
+import { LanguageType } from './global.model'
 
 @ObjectType('FormSystemInput')
 export class Input {
   @Field(() => ID, { nullable: true })
   id?: number
 
-  @Field(() => Object, { nullable: true })
+  @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
 
-  @Field(() => Object, { nullable: true })
+  @Field(() => LanguageType, { nullable: true })
   description?: LanguageType
 
   @Field(() => Boolean, { nullable: true })
@@ -58,10 +58,10 @@ export class UpdateInput {
   @Field(() => ID, { nullable: true })
   id?: number
 
-  @Field(() => Object, { nullable: true })
+  @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
 
-  @Field(() => Object, { nullable: true })
+  @Field(() => LanguageType, { nullable: true })
   description?: LanguageType
 
   @Field(() => Boolean, { nullable: true })
@@ -77,7 +77,7 @@ export class UpdateInput {
   type?: string
 
   @Field(() => InputSettings, { nullable: true })
-  inputSettings?: object
+  inputSettings?: InputSettings
 
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiSet?: boolean
