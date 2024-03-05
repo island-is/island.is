@@ -41,4 +41,8 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payments-received',
     defaultMessage: 'Útborgað',
   },
+  noPaymentsFound: {
+    id: 'sp.social-insurance-maintenance:no-payments-found-for-selected-year',
+    defaultMessage: 'Engin gögn fundust fyrir valið ár ',
+  },
 })
