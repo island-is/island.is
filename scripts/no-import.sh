@@ -6,6 +6,7 @@ set -euo pipefail
 # Define color codes
 RED='\033[0;31m'
 BLUE='\033[0;34m'
+GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
@@ -116,7 +117,7 @@ process_labels() {
       local escapedMessage
       escapedMessage="$(echo "$defaultMessage" | sed 's/[&/\]/\\&/g')" || true
       sed -i "s@label($labelRef)@'${escapedMessage}'@g" "$filename"
-      log "$BLUE" "Replaced '$labelRef' with its defaultMessage."
+      log "$GREEN" "Replaced '$labelRef' with its defaultMessage."
     fi
   done
 }
@@ -139,8 +140,9 @@ main() {
   log "$BLUE" "Resolved path: '$resolvedPath'"
 
   process_labels "$filename" "$resolvedPath"
+  clean_imports "$filename" "$namespace"
 
-  log "$BLUE" "Processing complete."
+  log "$GREEN" "Processing complete."
 }
 
 check_initial_conditions "$@"
