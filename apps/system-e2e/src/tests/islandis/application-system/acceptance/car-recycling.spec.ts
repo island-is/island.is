@@ -5,9 +5,6 @@ import {
 } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
-import { carRecyclingMessages } from '@island.is/application/templates/car-recycling'
-import { label } from '../../../../support/i18n'
-import { coreMessages } from '@island.is/application/core'
 
 const homeUrl = '/umsoknir/skilavottord'
 
@@ -42,14 +39,14 @@ applicationTest.describe('Car recycling', () => {
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(carRecyclingMessages.pre.externalDataSubSection),
+            name: 'Gagnaöflun'
           }),
         ).toBeVisible()
         await page.getByTestId('agree-to-data-providers').click()
 
         await page
           .getByRole('button', {
-            name: label(coreMessages.buttonNext),
+            name: 'Halda áfram',
           })
           .click()
       })
@@ -57,27 +54,27 @@ applicationTest.describe('Car recycling', () => {
       await applicationTest.step('Unregister for recycling', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(carRecyclingMessages.cars.sectionTitle),
+            name: 'Afskrá til endurvinnslu',
           }),
         ).toBeVisible()
 
         await page
           .getByRole('region', {
-            name: label(carRecyclingMessages.cars.sectionTitle),
+            name: 'Afskrá til endurvinnslu',
           })
           .getByRole('button', {
-            name: label(carRecyclingMessages.cars.recycle),
+            name: 'Endurvinna',
           })
           .first()
           .click()
         await expect(
           page.getByRole('heading', {
-            name: label(carRecyclingMessages.cars.selectedTitle),
+            name: 'Ökutæki valin til endurvinnslu',
           }),
         ).toBeVisible()
 
         const mileage = page.getByRole('textbox', {
-          name: label(carRecyclingMessages.cars.mileage),
+          name: 'Kílómetrastaða',
         })
 
         await mileage.selectText()
@@ -92,12 +89,12 @@ applicationTest.describe('Car recycling', () => {
             .locator('form')
             .getByRole('paragraph')
             .filter({
-              hasText: label(carRecyclingMessages.review.confirmSectionTitle),
+              hasText: 'Afskrá til endurvinnslu',
             }),
         ).toBeVisible()
         await page
           .getByRole('button', {
-            name: label(carRecyclingMessages.review.confirmSectionTitle),
+            name: 'Afskrá til endurvinnslu',
           })
           .click()
       })
@@ -107,7 +104,7 @@ applicationTest.describe('Car recycling', () => {
         async () => {
           await expect(
             page.getByRole('heading', {
-              name: label(carRecyclingMessages.conclusionScreen.title),
+              name: 'Umsókn móttekin',
             }),
           ).toBeVisible()
         },

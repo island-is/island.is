@@ -2,8 +2,8 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
-import { messages } from '@island.is/service-portal/assets/messages'
 import { m } from '@island.is/service-portal/core/messages'
+import { messages } from '@island.is/service-portal/assets/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
@@ -36,7 +36,7 @@ test.describe('MS - Work Machines', () => {
 
       // Act
       const filterButton = page
-        .getByRole('button', { name: label(m.openFilter) })
+        .getByRole('button', { name: 'Opna síu' })
         .first()
       const inputField = page.getByRole('textbox', {
         name: '`Uppfletting ökutækis`',
@@ -46,7 +46,7 @@ test.describe('MS - Work Machines', () => {
       const actionCardButton = page.getByTestId('action-card-cta').first()
 
       const closeFilter = page
-        .getByRole('button', { name: label(m.closeFilter) })
+        .getByRole('button', { name: 'Loka síu' })
         .first()
 
       await filterButton.click()

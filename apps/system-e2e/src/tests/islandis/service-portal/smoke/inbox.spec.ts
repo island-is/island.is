@@ -2,9 +2,6 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { sleep } from '../../../../support/utils'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { label } from '../../../../support/i18n'
-import { messages } from '@island.is/service-portal/documents/messages'
-import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
@@ -36,7 +33,7 @@ test.describe('MS - Pósthólf overview', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       const inputField = page.getByRole('textbox', {
-        name: label(m.searchLabel),
+        name: 'Leit',
       })
       await inputField.click()
       await inputField.type('greiðslukvittun', { delay: 100 })
@@ -61,7 +58,7 @@ test.describe('MS - Pósthólf overview', () => {
 
       // Act
       await page
-        .getByRole('button', { name: label(m.openFilter) })
+        .getByRole('button', { name: 'Opna síu' })
         .first()
         .click()
       await page

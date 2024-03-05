@@ -2,8 +2,8 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
-import { m } from '@island.is/service-portal/core/messages'
 import { spmm } from '@island.is/service-portal/information/messages'
+import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -50,7 +50,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     const title1 = page.getByText('Mín skráning')
     const title2 = page.getByText('Grunnupplýsingar')
     const link = page
-      .getByRole('link', { name: label(spmm.changeInNationalReg) })
+      .getByRole('link', { name: 'Breyta í Þjóðskrá' })
       .first()
 
     // Assert
@@ -67,13 +67,13 @@ test.describe('MS - Mínar upplýsingar', () => {
 
     // Act
     const babyButton = page
-      .locator(`role=button[name="${label(spmm.seeInfo)}"]`)
+      .locator(`role=button[name="${'Skoða upplýsingar'}"]`)
       .last()
 
     await babyButton.click()
 
     const registrationButton = page
-      .locator(`role=button[name="${label(spmm.childRegisterModalButton)}"]`)
+      .locator(`role=button[name="${'Gera athugasemd við skráningu'}"]`)
       .first()
 
     // Assert

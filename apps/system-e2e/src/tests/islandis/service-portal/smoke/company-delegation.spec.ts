@@ -3,10 +3,10 @@ import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
 import { label } from '../../../../support/i18n'
-import { coreDelegationsMessages } from '@island.is/application/core/messages'
-import { m } from '@island.is/portals/shared-modules/delegations/messages'
-import { m as coreMessages } from '@island.is/service-portal/core/messages'
 import { mCompany } from '@island.is/service-portal/information/messages'
+import { m } from '@island.is/portals/shared-modules/delegations/messages'
+import { coreDelegationsMessages } from '@island.is/application/core/messages'
+import { m as coreMessages } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 import { switchDelegation } from './auth-utils'
 
@@ -57,14 +57,12 @@ test.describe('Service portal', () => {
     await page.locator('data-testid=user-menu >> visible=true').click()
     await page
       .locator(
-        `role=button[name="${label(
-          coreDelegationsMessages.delegationErrorButton,
-        )}"]`,
+        `role=button[name="${'Skipta um notanda'}"]`,
       )
       .click()
     const firstCompany = page
       .locator(
-        `role=button[name*="${label(m.delegationTypeProcurationHolder)}"]`,
+        `role=button[name*="${'Prókúra'}"]`,
       )
       .first()
     await expect(firstCompany).toBeVisible()
@@ -74,11 +72,11 @@ test.describe('Service portal', () => {
     })
 
     const link = page
-      .getByRole('link', { name: label(coreMessages.companyTitle) })
+      .getByRole('link', { name: 'Um fyrirtæki' })
       .first()
     await link.click()
 
-    const headlineText = page.getByText(label(mCompany.subtitle)).first()
+    const headlineText = page.getByText('Hér má nálgast upplýsingar úr fyrirtækjaskrá hjá Skattinum.').first()
     const dataText = page.getByText('Einkahlutafélag').first()
 
     // Assert
