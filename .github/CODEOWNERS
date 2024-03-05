@@ -132,7 +132,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
 /libs/api/domains/hms-loans/                                                                             @island-is/hugsmidjan
-/libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
+/libs/api/domains/license-service/                                                                       @island-is/hugsmidjan @island-is/aranja
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan @island-is/origo
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
 /libs/api/domains/notifications/                                                                         @island-is/hugsmidjan
@@ -154,7 +154,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
-/libs/clients/license-client/                                                                            @island-is/hugsmidjan
+/libs/clients/license-client/                                                                            @island-is/hugsmidjan @island-is/aranja
 /libs/clients/intellectual-properties/                                                                   @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                      @island-is/hugsmidjan
