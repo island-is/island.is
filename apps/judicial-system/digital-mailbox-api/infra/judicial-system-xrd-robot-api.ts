@@ -6,6 +6,7 @@ export const serviceSetup = (services: {
   service('judicial-system-digital-mailbox-api')
     .namespace('judicial-system')
     .serviceAccount('judicial-system-digital-mailbox-api')
+    .image('judicial-system-digital-mailbox-api')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
@@ -21,9 +22,9 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'judicial-system-digital-mailbox-api',
-          staging: 'judicial-system-digital-mailbox-api',
-          prod: 'judicial-system-digital-mailbox-api',
+          dev: 'judicial-system-digital-mailbox-api-xrd',
+          staging: 'judicial-system-digital-mailbox-api-xrd',
+          prod: 'judicial-system-digital-mailbox-api-xrd',
         },
         paths: ['/'],
         public: false,
