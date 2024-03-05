@@ -225,9 +225,7 @@ test.describe('Admin portal application', () => {
           .click()
 
         // Assert - check if slidingRefreshTokenLifetime is visible
-        await expect(
-          page.locator(slidingRefreshTokenLifetime),
-        ).toBeHidden()
+        await expect(page.locator(slidingRefreshTokenLifetime)).toBeHidden()
 
         // Assert - save button is enabled
         await buttonSaveTest(title, false)
