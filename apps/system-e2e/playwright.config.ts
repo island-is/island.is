@@ -3,7 +3,16 @@ import { nxE2EPreset } from '@nx/playwright/preset'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:3000'
+// const baseURL = process.env['BASE_URL'] || 'http://localhost:3000'
+const baseUrls = {
+  local: `http://localhost:${process.env.PORT || 4200}`,
+  dev: 'https://beta.dev01.devland.is',
+  staging: 'https://beta.staging01.devland.is',
+  prod: 'https://island.is',
+}
+const testEnv = (process.env.TEST_ENVIRONMENT ??
+  'local') as keyof typeof baseUrls
+const baseURL: string = baseUrls[testEnv]
 
 /**
  * Read environment variables from file.
@@ -16,6 +25,7 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:3000'
  */
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: '.' }),
+  workers: 1,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
