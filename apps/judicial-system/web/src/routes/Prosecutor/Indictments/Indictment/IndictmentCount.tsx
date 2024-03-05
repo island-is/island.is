@@ -288,7 +288,6 @@ export const getIncidentDescription = (
 
   let incidentLocation = ''
   let incidentDate = ''
-  let incidentDescription = ''
 
   if (crimeScene) {
     incidentLocation = crimeScene.place ?? ''
@@ -302,14 +301,17 @@ export const getIncidentDescription = (
     formatMessage,
   )
 
-  incidentDescription = formatMessage(strings.incidentDescriptionAutofill, {
-    incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-    vehicleRegistrationNumber: vehicleRegistrationNumber
-      ? vehicleRegistrationNumber
-      : '[Skráningarnúmer ökutækis]',
-    reason,
-    incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
-  })
+  const incidentDescription = formatMessage(
+    strings.incidentDescriptionAutofill,
+    {
+      incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
+      vehicleRegistrationNumber: vehicleRegistrationNumber
+        ? vehicleRegistrationNumber
+        : '[Skráningarnúmer ökutækis]',
+      reason,
+      incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
+    },
+  )
 
   return incidentDescription
 }
