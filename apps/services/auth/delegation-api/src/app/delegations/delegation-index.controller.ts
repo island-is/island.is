@@ -5,6 +5,7 @@ import {
   Delete,
   Headers,
   Put,
+  UseGuards,
 } from '@nestjs/common'
 import {
   CreateDelegationIndexItemDTO,
@@ -15,6 +16,12 @@ import {
   AuthDelegationType,
 } from '@island.is/shared/types'
 import { Documentation } from '@island.is/nest/swagger'
+import {
+  Auth,
+  CurrentAuth,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/delegation-api/me/delegation-index'
 
@@ -32,6 +39,7 @@ const parseDelegationInfo = (delegationInfo: string) => {
   }
 }
 
+@UseGuards(IdsUserGuard)
 @Controller({
   path: 'delegation-index',
 })
@@ -55,15 +63,20 @@ export class DelegationIndexController {
     },
   })
   async createOrUpdateDelegationIndexItem(
+    @CurrentAuth() auth: Auth,
     @Headers('X-Param-Id') delegationInfo: string,
     @Body() body: CreateDelegationIndexItemDTO,
   ) {
+    if (!auth.delegationProvider) {
+      throw new BadRequestException('Delegation provider missing')
+    }
+
     const parsedDelegationInfo = parseDelegationInfo(delegationInfo)
 
     try {
       await this.delegationIndexService.addOrUpdateDelegationIndexItem({
         ...parsedDelegationInfo,
-        provider: AuthDelegationProvider.NationalRegistry,
+        provider: auth.delegationProvider,
         validTo: body.validTo,
       })
     } catch {
@@ -88,14 +101,19 @@ export class DelegationIndexController {
     },
   })
   async removeDelegationIndexItem(
+    @CurrentAuth() auth: Auth,
     @Headers('X-Param-Id') delegationInfo: string,
   ) {
+    if (!auth.delegationProvider) {
+      throw new BadRequestException('Delegation provider missing')
+    }
+
     const parsedDelegationInfo = parseDelegationInfo(delegationInfo)
 
     try {
       await this.delegationIndexService.deletedDelegationIndexItem({
         ...parsedDelegationInfo,
-        provider: AuthDelegationProvider.NationalRegistry,
+        provider: auth.delegationProvider,
       })
     } catch {
       throw new BadRequestException(
