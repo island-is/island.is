@@ -1,5 +1,4 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { FormUpdateDto } from '@island.is/clients/form-system'
 import { Form } from "../models/form.model";
 
 
@@ -34,5 +33,4 @@ export class UpdateFormInput {
 
   @Field(() => Form, { nullable: true })
   form?: Form
-
 }

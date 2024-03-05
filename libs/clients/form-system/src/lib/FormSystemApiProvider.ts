@@ -3,7 +3,6 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
   LazyDuringDevScope,
-  IdsClientConfig,
 } from '@island.is/nest/config'
 import { FormSystemClientConfig } from './FormSystemClient.config'
 import { Configuration, FilesApi, FormsApi, GroupsApi, InputsApi, OrganizationsApi, ServicesApi, StepsApi } from '../../gen/fetch'
@@ -16,7 +15,6 @@ const provideApi = <T>(
   scope: LazyDuringDevScope,
   useFactory: (
     config: ConfigType<typeof FormSystemClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new Api(
       new Configuration({
@@ -24,15 +22,6 @@ const provideApi = <T>(
           name: 'form-system',
           organizationSlug: 'stafraent-island',
           logErrorResponseBody: true,
-          autoAuth: idsClientConfig.isConfigured
-            ? {
-              mode: 'auto',
-              issuer: idsClientConfig.issuer,
-              clientId: idsClientConfig.clientId,
-              clientSecret: idsClientConfig.clientSecret,
-              scope: config.tokenExchangeScope,
-            }
-            : undefined,
         }),
         basePath: config.basePath,
         headers: {
@@ -40,7 +29,7 @@ const provideApi = <T>(
         },
       }),
     ),
-  inject: [FormSystemClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [FormSystemClientConfig.KEY],
 })
 
 export const FilesApiProvider = provideApi(FilesApi)
