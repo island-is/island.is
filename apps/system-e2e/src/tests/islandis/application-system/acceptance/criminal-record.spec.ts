@@ -86,8 +86,8 @@ applicationTest.describe('Criminal record application payment test', () => {
 
           await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
           await page.getByTestId('application-card').first().isVisible()
-          expect(await page.getByText(textAfgreidd).first().isVisible()).toBe(
-            true,
+          await expect(page.getByText(textAfgreidd).first()).toBeVisible(
+            ,
           )
         },
       )

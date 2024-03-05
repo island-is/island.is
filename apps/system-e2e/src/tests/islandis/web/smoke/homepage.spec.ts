@@ -137,6 +137,6 @@ test.describe('Front page', () => {
       .getByTestId('icon-close')
       .click()
     await expect(page.getByTestId('home-heading')).toBeVisible()
-    await expect(page.getByRole('dialog', { name: 'Menu' })).not.toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeHidden()
   })
 })

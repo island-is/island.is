@@ -67,7 +67,7 @@ applicationTest.describe('Data protection complaint application', () => {
         'Go to the overview page and check the number of applications after creation',
         async () => {
           await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
-          await page.getByText(overviewPageText)
+          page.getByText(overviewPageText)
 
           numberOfApplicationsAfterCreationVisible =
             await countApplicationsVisible(page)
@@ -109,7 +109,7 @@ applicationTest.describe('Data protection complaint application', () => {
               await countApplicationsVisible(page)
             expect(numberOfApplicationsAfterDeletion).toBe(applicationAtStart)
           } else {
-            await page.getByTestId(agreeToDataProvidersTestId)
+            page.getByTestId(agreeToDataProvidersTestId)
             await expect(applicationPage).toBeApplication()
           }
         },
