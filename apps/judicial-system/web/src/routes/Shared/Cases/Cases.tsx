@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -218,33 +219,40 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
                   m.activeRequests.casesAwaitingConfirmationTitle,
                 )}
               />
-              <Box marginBottom={[5, 5, 12]}>
-                {loading || isFiltering ? (
-                  <TableSkeleton />
-                ) : casesAwaitingConfirmation.length > 0 ? (
-                  <ActiveCases
-                    cases={casesAwaitingConfirmation}
-                    isDeletingCase={
-                      isTransitioningCase || isSendingNotification
-                    }
-                    onDeleteCase={deleteCase}
-                  />
-                ) : (
-                  <div className={styles.infoContainer}>
-                    <AlertMessage
-                      type="info"
-                      title={formatMessage(
-                        m.activeRequests
-                          .casesAwaitingConfirmationInfoContainerTitle,
-                      )}
-                      message={formatMessage(
-                        m.activeRequests
-                          .casesAwaitingConfirmationInfoContainerText,
-                      )}
+              <AnimatePresence initial={false}>
+                <Box marginBottom={[5, 5, 12]}>
+                  {loading || isFiltering ? (
+                    <TableSkeleton />
+                  ) : casesAwaitingConfirmation.length > 0 ? (
+                    <ActiveCases
+                      cases={casesAwaitingConfirmation}
+                      isDeletingCase={
+                        isTransitioningCase || isSendingNotification
+                      }
+                      onDeleteCase={deleteCase}
                     />
-                  </div>
-                )}
-              </Box>
+                  ) : (
+                    <motion.div
+                      className={styles.infoContainer}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <AlertMessage
+                        type="info"
+                        title={formatMessage(
+                          m.activeRequests
+                            .casesAwaitingConfirmationInfoContainerTitle,
+                        )}
+                        message={formatMessage(
+                          m.activeRequests
+                            .casesAwaitingConfirmationInfoContainerText,
+                        )}
+                      />
+                    </motion.div>
+                  )}
+                </Box>
+              </AnimatePresence>
             </>
           )}
           <SectionHeading title={formatMessage(m.activeRequests.title)} />
