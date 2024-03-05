@@ -15,6 +15,7 @@ import { Skeleton } from '../skeletons'
 import SignedList from '../../components/SignedList'
 import { useAuth } from '@island.is/auth/react'
 import { SignatureCollection } from '../../types/schema'
+import { sortAlpha } from '@island.is/shared/utils'
 
 const SigneeView = ({
   currentCollection,
@@ -72,8 +73,8 @@ const SigneeView = ({
                 </Text>
               )}
 
-              <Stack space={5}>
-                {listsForUser?.map((list) => {
+              <Stack space={3}>
+                {listsForUser?.sort(sortAlpha('title')).map((list) => {
                   return (
                     <ActionCard
                       key={list.id}
