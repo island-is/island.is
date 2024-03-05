@@ -6,8 +6,7 @@ import { DelegationsIncomingCustomService } from './delegations-incoming-custom.
 import { User } from '@island.is/auth-nest-tools'
 import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
-import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
-import { DelegationType } from './types/delegationType'
+import { DelegationDTO } from './dto/delegation.dto'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
@@ -15,12 +14,17 @@ import {
   DelegationRecordType,
   PersonalRepresentativeDelegationType,
 } from './types/delegationRecord'
+import { validateDelegationTypeAndProvider } from './utils/delegations'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
 
 const getPersonalRepresentativeDelegationType = (right: string) =>
-  `${DelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
+  `${AuthDelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
@@ -170,6 +174,41 @@ export class DelegationsIndexService {
     await this.saveToIndex(delegations)
   }
 
+  /* Add item to index */
+  async addOrUpdateDelegationIndexItem(delegation: DelegationIndexItemDTO) {
+    const valid = validateDelegationTypeAndProvider(
+      delegation.type,
+      delegation.provider,
+    )
+
+    if (!valid) {
+      throw new Error('Invalid delegation type and provider combination')
+    }
+
+    await this.delegationIndexModel.upsert(delegation)
+  }
+
+  /* Delete item from index */
+  async deletedDelegationIndexItem(delegation: DelegationIndexItemDTO) {
+    const valid = validateDelegationTypeAndProvider(
+      delegation.type,
+      delegation.provider,
+    )
+
+    if (!valid) {
+      throw new Error('Invalid delegation type and provider combination')
+    }
+
+    await this.delegationIndexModel.destroy({
+      where: {
+        fromNationalId: delegation.fromNationalId,
+        toNationalId: delegation.toNationalId,
+        provider: delegation.provider,
+        type: delegation.type,
+      },
+    })
+  }
+
   /*
    * Private methods
    * */
@@ -253,8 +292,8 @@ export class DelegationsIndexService {
       {
         where: {
           toNationalId: nationalId,
-          type: DelegationType.Custom,
-          provider: DelegationProvider.Custom,
+          type: AuthDelegationType.Custom,
+          provider: AuthDelegationProvider.Custom,
         },
       },
     )
@@ -295,11 +334,11 @@ export class DelegationsIndexService {
           toNationalId: nationalId,
           type: {
             [Op.in]: [
-              DelegationType.PersonalRepresentative,
+              AuthDelegationType.PersonalRepresentative,
               PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
             ],
           },
-          provider: DelegationProvider.PersonalRepresentativeRegistry,
+          provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
         },
       },
     )
@@ -316,8 +355,8 @@ export class DelegationsIndexService {
       {
         where: {
           toNationalId: user.nationalId,
-          type: DelegationType.ProcurationHolder,
-          provider: DelegationProvider.CompanyRegistry,
+          type: AuthDelegationType.ProcurationHolder,
+          provider: AuthDelegationProvider.CompanyRegistry,
         },
       },
     )
@@ -334,8 +373,8 @@ export class DelegationsIndexService {
       {
         where: {
           toNationalId: user.nationalId,
-          type: DelegationType.LegalGuardian,
-          provider: DelegationProvider.NationalRegistry,
+          type: AuthDelegationType.LegalGuardian,
+          provider: AuthDelegationProvider.NationalRegistry,
         },
       },
     )
