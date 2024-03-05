@@ -4,10 +4,9 @@ import type { User } from '@island.is/auth-nest-tools'
 import { Inject, NotFoundException, UseGuards } from '@nestjs/common'
 import { NotificationsService } from './notifications.service'
 import {
+  MarkAllAsSeenResponse,
   MarkNotificationReadResponse,
   NotificationResponse,
-  NotificationsInput,
-  NotificationsResponse,
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
@@ -21,33 +20,6 @@ export class NotificationsResolver {
     private readonly service: NotificationsService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  @Query(() => NotificationsResponse, {
-    name: 'userNotifications',
-    nullable: true,
-  })
-  async getNotifications(
-    @CurrentUser() user: User,
-    @Args('input', { type: () => NotificationsInput, nullable: true })
-    input: NotificationsInput,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-  ): Promise<NotificationsResponse | null> {
-    let notifications: NotificationsResponse | null
-
-    try {
-      notifications = await this.service.getNotifications(locale, user, input)
-    } catch (e) {
-      this.logger.error('failed to get notifications', {
-        locale,
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
-
-    return notifications
-  }
 
   @Query(() => NotificationResponse, {
     name: 'userNotification',
@@ -83,6 +55,26 @@ export class NotificationsResolver {
     }
 
     return notification
+  }
+
+  @Mutation(() => MarkAllAsSeenResponse, {
+    name: 'markNotificationAsRead',
+    nullable: true,
+  })
+  async markAllNotificationsAsSeen(@CurrentUser() user: User) {
+    let result
+
+    try {
+      result = await this.service.markAllNotificationsAsSeen(user)
+    } catch (e) {
+      this.logger.error('failed to mark all notifications as seen', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
+
+    return result
   }
 
   @Mutation(() => MarkNotificationReadResponse, {

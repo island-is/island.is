@@ -106,9 +106,7 @@ const UserNotifications = () => {
             <ActionCard
               heading={item.message.title}
               text={item.message.body}
-              backgroundColor={
-                item.metadata.status === 'Unread' ? 'blueberry' : undefined
-              }
+              backgroundColor={item.metadata.read ? undefined : 'blueberry'}
               cta={{
                 label: formatMessage(m.seeDetails),
                 variant: 'text',

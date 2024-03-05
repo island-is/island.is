@@ -3,12 +3,10 @@ fragment NotificationMetadataFields on NotificationMetadata {
   updated
   created
   read
-  status
 }
 
 fragment NotificationSenderFields on NotificationSender {
-  name
-  logo
+  id
 }
 
 fragment NotificationMessageFields on NotificationMessage {
@@ -48,6 +46,7 @@ query GetUserNotifications($input: NotificationsInput!) {
       endCursor
     }
     unreadCount
+    unseenCount
     totalCount
   }
 }
@@ -58,6 +57,7 @@ query GetUserNotificationsOverview($input: NotificationsInput!) {
       ...NotificationDataFields
     }
     totalCount
+    unseenCount
   }
 }
 

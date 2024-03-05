@@ -29,9 +29,8 @@ const NotificationButton = ({ setMenuState, showMenu = false }: Props) => {
     },
   })
 
-  const showBadge = data?.userNotificationsOverview?.data.some(
-    (item) => item.metadata.status === 'Unread',
-  )
+  const showBadge = !!data?.userNotificationsOverview?.unseenCount
+
   return (
     <Box position="relative" marginRight={[1, 1, 2]}>
       <Button

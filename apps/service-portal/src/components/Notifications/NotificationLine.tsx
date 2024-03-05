@@ -17,9 +17,7 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
     ? format(new Date(data.metadata.created), dateFormat.is)
     : ''
 
-  const wrapperRef = useRef(null)
-
-  const unread = data.metadata.status === 'Unread'
+  const isRead = data.metadata?.read
 
   return (
     <Box className={styles.lineWrapper}>
@@ -31,16 +29,14 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
         paddingX={2}
         width="full"
         className={cn(styles.line, {
-          [styles.unread]: unread,
+          [styles.unread]: !isRead,
         })}
       >
         {/* {data.img ? (
-          <div ref={wrapperRef}>
-            <AvatarImage
-              img={data.img}
-              background={data.unread ? 'white' : 'blue100'}
-            />
-          </div>
+          <AvatarImage
+            img={data.img}
+            background={data.unread ? 'white' : 'blue100'}
+          />
         ) : undefined} */}
         <Box
           width="full"
@@ -56,7 +52,7 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
               callback={onClickCallback}
             >
               <Text
-                fontWeight={unread ? 'medium' : 'regular'}
+                fontWeight={isRead ? 'regular' : 'medium'}
                 variant="medium"
                 color="blue400"
                 truncate
