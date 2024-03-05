@@ -1,0 +1,718 @@
+import { Test } from '@nestjs/testing'
+import { SocialInsuranceService } from './socialInsurance.service'
+import {
+  ApplicantApi,
+  ApplicationApi,
+  PaymentPlanApi,
+  GeneralApi,
+  PensionCalculatorApi,
+  SocialInsuranceAdministrationClientConfig,
+  SocialInsuranceAdministrationClientModule,
+  SocialInsuranceAdministrationClientService,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+} from '@island.is/clients/social-insurance-administration'
+import { LoggingModule } from '@island.is/logging'
+import { CmsElasticsearchService, CmsModule } from '@island.is/cms'
+import { ConfigModule } from '@nestjs/config'
+import { config } from 'rxjs'
+import { ElasticService } from '@island.is/content-search-toolkit'
+import { User } from '@island.is/auth-nest-tools'
+describe('SocialInsuranceService', () => {
+  let service: SocialInsuranceService
+  let socialInsuranceApi: SocialInsuranceAdministrationClientService
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [LoggingModule],
+      providers: [
+        SocialInsuranceService,
+        {
+          provide: ApplicationApi,
+          useValue: null,
+        },
+        {
+          provide: ApplicantApi,
+          useValue: null,
+        },
+        {
+          provide: PaymentPlanApi,
+          useValue: null,
+        },
+        {
+          provide: GeneralApi,
+          useValue: null,
+        },
+        {
+          provide: PensionCalculatorApi,
+          useValue: null,
+        },
+        {
+          provide: ElasticService,
+          useValue: null,
+        },
+        {
+          provide: SocialInsuranceAdministrationClientService,
+          useFactory: (api1, api2, api3, api4, api5) =>
+            new SocialInsuranceAdministrationClientService(
+              api1,
+              api2,
+              api3,
+              api4,
+              api5,
+            ),
+          inject: [
+            ApplicationApi,
+            ApplicantApi,
+            PaymentPlanApi,
+            GeneralApi,
+            PensionCalculatorApi,
+          ],
+        },
+        {
+          provide: CmsElasticsearchService,
+          useFactory: (service) => new CmsElasticsearchService(service),
+          inject: [ElasticService],
+        },
+      ],
+    }).compile()
+
+    socialInsuranceApi = module.get(SocialInsuranceAdministrationClientService)
+
+    jest
+      .spyOn(socialInsuranceApi, 'getPaymentPlan')
+      .mockImplementation(async (user: User) => {
+        const mockData: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto =
+          {
+            paymentPlan: {
+              groups: [
+                {
+                  name: '',
+                  group: 'Skattskyldar greiðslutegundir',
+                  groupId: 10,
+                  type: 'LAU',
+                  overviewType: 'A',
+                  order: '01-1.11-77',
+                  monthTotals: [
+                    {
+                      month: 0,
+                      amount: 232892,
+                    },
+                    {
+                      month: 1,
+                      amount: 232892,
+                    },
+                    {
+                      month: 2,
+                      amount: 232892,
+                    },
+                    {
+                      month: 3,
+                      amount: 232892,
+                    },
+                    {
+                      month: 4,
+                      amount: 232892,
+                    },
+                    {
+                      month: 5,
+                      amount: 232892,
+                    },
+                    {
+                      month: 6,
+                      amount: 21460,
+                    },
+                    {
+                      month: 7,
+                      amount: 151072,
+                    },
+                    {
+                      month: 8,
+                      amount: 151072,
+                    },
+                    {
+                      month: 9,
+                      amount: 232892,
+                    },
+                    {
+                      month: 10,
+                      amount: 232892,
+                    },
+                    {
+                      month: 11,
+                      amount: 32669,
+                    },
+                  ],
+                  rows: [
+                    {
+                      name: 'Örorkulífeyrir',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 46036,
+                        },
+                        {
+                          month: 1,
+                          amount: 46036,
+                        },
+                        {
+                          month: 2,
+                          amount: 46036,
+                        },
+                        {
+                          month: 3,
+                          amount: 46036,
+                        },
+                        {
+                          month: 4,
+                          amount: 46036,
+                        },
+                        {
+                          month: 5,
+                          amount: 46036,
+                        },
+                        {
+                          month: 6,
+                          amount: 0,
+                        },
+                        {
+                          month: 7,
+                          amount: 30484,
+                        },
+                        {
+                          month: 8,
+                          amount: 30484,
+                        },
+                        {
+                          month: 9,
+                          amount: 46036,
+                        },
+                        {
+                          month: 10,
+                          amount: 46036,
+                        },
+                        {
+                          month: 11,
+                          amount: 0,
+                        },
+                      ],
+                    },
+                    {
+                      name: 'Aldurstengd örorkuuppbót',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 46036,
+                        },
+                        {
+                          month: 1,
+                          amount: 46036,
+                        },
+                        {
+                          month: 2,
+                          amount: 46036,
+                        },
+                        {
+                          month: 3,
+                          amount: 46036,
+                        },
+                        {
+                          month: 4,
+                          amount: 46036,
+                        },
+                        {
+                          month: 5,
+                          amount: 46036,
+                        },
+                        {
+                          month: 6,
+                          amount: 0,
+                        },
+                        {
+                          month: 7,
+                          amount: 30484,
+                        },
+                        {
+                          month: 8,
+                          amount: 30484,
+                        },
+                        {
+                          month: 9,
+                          amount: 46036,
+                        },
+                        {
+                          month: 10,
+                          amount: 46036,
+                        },
+                        {
+                          month: 11,
+                          amount: 0,
+                        },
+                      ],
+                    },
+                    {
+                      name: 'Tekjutrygging örorkulífeyrisþega',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 140820,
+                        },
+                        {
+                          month: 1,
+                          amount: 140820,
+                        },
+                        {
+                          month: 2,
+                          amount: 140820,
+                        },
+                        {
+                          month: 3,
+                          amount: 140820,
+                        },
+                        {
+                          month: 4,
+                          amount: 140820,
+                        },
+                        {
+                          month: 5,
+                          amount: 140820,
+                        },
+                        {
+                          month: 6,
+                          amount: 0,
+                        },
+                        {
+                          month: 7,
+                          amount: 90104,
+                        },
+                        {
+                          month: 8,
+                          amount: 90104,
+                        },
+                        {
+                          month: 9,
+                          amount: 140820,
+                        },
+                        {
+                          month: 10,
+                          amount: 140820,
+                        },
+                        {
+                          month: 11,
+                          amount: 0,
+                        },
+                      ],
+                    },
+                    {
+                      name: 'Orlofsuppbót á tekjutryggingu',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 0,
+                        },
+                        {
+                          month: 1,
+                          amount: 0,
+                        },
+                        {
+                          month: 2,
+                          amount: 0,
+                        },
+                        {
+                          month: 3,
+                          amount: 0,
+                        },
+                        {
+                          month: 4,
+                          amount: 0,
+                        },
+                        {
+                          month: 5,
+                          amount: 0,
+                        },
+                        {
+                          month: 6,
+                          amount: 21460,
+                        },
+                        {
+                          month: 7,
+                          amount: 0,
+                        },
+                        {
+                          month: 8,
+                          amount: 0,
+                        },
+                        {
+                          month: 9,
+                          amount: 0,
+                        },
+                        {
+                          month: 10,
+                          amount: 0,
+                        },
+                        {
+                          month: 11,
+                          amount: 0,
+                        },
+                      ],
+                    },
+                    {
+                      name: 'Desemberuppbót á tekjutryggingu',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 0,
+                        },
+                        {
+                          month: 1,
+                          amount: 0,
+                        },
+                        {
+                          month: 2,
+                          amount: 0,
+                        },
+                        {
+                          month: 3,
+                          amount: 0,
+                        },
+                        {
+                          month: 4,
+                          amount: 0,
+                        },
+                        {
+                          month: 5,
+                          amount: 0,
+                        },
+                        {
+                          month: 6,
+                          amount: 0,
+                        },
+                        {
+                          month: 7,
+                          amount: 0,
+                        },
+                        {
+                          month: 8,
+                          amount: 0,
+                        },
+                        {
+                          month: 9,
+                          amount: 0,
+                        },
+                        {
+                          month: 10,
+                          amount: 0,
+                        },
+                        {
+                          month: 11,
+                          amount: 32669,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  name: '',
+                  group: 'Óskattskyldar greiðslutegundir',
+                  monthTotals: [
+                    {
+                      month: 0,
+                      amount: 23293,
+                    },
+                    {
+                      month: 1,
+                      amount: 23293,
+                    },
+                    {
+                      month: 2,
+                      amount: 23293,
+                    },
+                    {
+                      month: 3,
+                      amount: 23293,
+                    },
+                    {
+                      month: 4,
+                      amount: 23293,
+                    },
+                    {
+                      month: 5,
+                      amount: 23293,
+                    },
+                    {
+                      month: 6,
+                      amount: 0,
+                    },
+                    {
+                      month: 7,
+                      amount: 23293,
+                    },
+                    {
+                      month: 8,
+                      amount: 23293,
+                    },
+                    {
+                      month: 9,
+                      amount: 23293,
+                    },
+                    {
+                      month: 10,
+                      amount: 23293,
+                    },
+                    {
+                      month: 11,
+                      amount: 0,
+                    },
+                  ],
+                  rows: [
+                    {
+                      name: 'Uppbót v/reksturs bifreiðar (örorkulífeyrir)- Óskattskyld',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 23293,
+                        },
+                        {
+                          month: 1,
+                          amount: 23293,
+                        },
+                        {
+                          month: 2,
+                          amount: 23293,
+                        },
+                        {
+                          month: 3,
+                          amount: 23293,
+                        },
+                        {
+                          month: 4,
+                          amount: 23293,
+                        },
+                        {
+                          month: 5,
+                          amount: 23293,
+                        },
+                        {
+                          month: 6,
+                          amount: 0,
+                        },
+                        {
+                          month: 7,
+                          amount: 23293,
+                        },
+                        {
+                          month: 8,
+                          amount: 23293,
+                        },
+                        {
+                          month: 9,
+                          amount: 23293,
+                        },
+                        {
+                          month: 10,
+                          amount: 23293,
+                        },
+                        {
+                          month: 11,
+                          amount: 0,
+                        },
+                      ],
+                    },
+                    {
+                      name: 'Aldurstengd örorkuuppbót',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 46036,
+                        },
+                        {
+                          month: 1,
+                          amount: 46036,
+                        },
+                        {
+                          month: 2,
+                          amount: 46036,
+                        },
+                        {
+                          month: 3,
+                          amount: 46036,
+                        },
+                        {
+                          month: 4,
+                          amount: 46036,
+                        },
+                        {
+                          month: 5,
+                          amount: 46036,
+                        },
+                        {
+                          month: 6,
+                          amount: 0,
+                        },
+                        {
+                          month: 7,
+                          amount: 30484,
+                        },
+                        {
+                          month: 8,
+                          amount: 30484,
+                        },
+                        {
+                          month: 9,
+                          amount: 46036,
+                        },
+                        {
+                          month: 10,
+                          amount: 46036,
+                        },
+                        {
+                          month: 11,
+                          amount: 0,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  name: '',
+                  group: 'Frádráttur',
+                  monthTotals: [
+                    {
+                      month: 0,
+                      amount: 88383,
+                    },
+                    {
+                      month: 1,
+                      amount: 88522,
+                    },
+                    {
+                      month: 2,
+                      amount: 88452,
+                    },
+                    {
+                      month: 3,
+                      amount: 88452,
+                    },
+                    {
+                      month: 4,
+                      amount: 88452,
+                    },
+                    {
+                      month: 5,
+                      amount: 88452,
+                    },
+                    {
+                      month: 6,
+                      amount: 8151,
+                    },
+                    {
+                      month: 7,
+                      amount: 57377,
+                    },
+                    {
+                      month: 8,
+                      amount: 57377,
+                    },
+                    {
+                      month: 9,
+                      amount: 88452,
+                    },
+                    {
+                      month: 10,
+                      amount: 88452,
+                    },
+                    {
+                      month: 11,
+                      amount: 12408,
+                    },
+                  ],
+                  rows: [
+                    {
+                      name: 'Staðgreiðsla',
+                      months: [
+                        {
+                          month: 0,
+                          amount: 88383,
+                        },
+                        {
+                          month: 1,
+                          amount: 88522,
+                        },
+                        {
+                          month: 2,
+                          amount: 88452,
+                        },
+                        {
+                          month: 3,
+                          amount: 88452,
+                        },
+                        {
+                          month: 4,
+                          amount: 88452,
+                        },
+                        {
+                          month: 5,
+                          amount: 88452,
+                        },
+                        {
+                          month: 6,
+                          amount: 8151,
+                        },
+                        {
+                          month: 7,
+                          amount: 57377,
+                        },
+                        {
+                          month: 8,
+                          amount: 57377,
+                        },
+                        {
+                          month: 9,
+                          amount: 88452,
+                        },
+                        {
+                          month: 10,
+                          amount: 88452,
+                        },
+                        {
+                          month: 11,
+                          amount: 12408,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          }
+        return mockData
+      })
+
+    service = module.get(SocialInsuranceService)
+  })
+
+  describe('Module', () => {
+    it('should be defined', () => {
+      expect(service).toBeTruthy()
+    })
+  })
+
+  describe('getPaymentPlan', () => {
+    it('should return payment plan', async () => {
+      const nationalId = '1234567890'
+      const cacheManagerSpy = jest.spyOn(cacheManager, 'set')
+
+      const result = await discountService.createDiscountCode(
+        createTestUser(),
+        nationalId,
+        [],
+      )
+
+      const uuid = cacheManagerSpy.mock.calls[0][0]
+      expect(cacheManagerSpy.mock.calls[1][1]).toBe(uuid)
+      expect(cacheManagerSpy.mock.calls[2][1]).toBe(uuid)
+
+      expect(cacheManagerSpy).toHaveBeenCalledTimes(3)
+      expect(result.discountCode).toHaveLength(DISCOUNT_CODE_LENGTH)
+    })
+  })
+})
