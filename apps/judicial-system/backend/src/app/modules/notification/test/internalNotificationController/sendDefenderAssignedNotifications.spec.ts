@@ -9,7 +9,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseType,
-  Defendant,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -266,9 +265,9 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: NotificationType.DEFENDER_ASSIGNED,
     }
     const caseId = uuid()
-    const defender1 = { defenderEmail: 'some-email@island.is' } as Defendant
-    const defender2 = { defenderEmail: 'other-email@island.is' } as Defendant
-    const defendants = [defender1, defender2] as Defendant[] | undefined
+    const defender1 = { defenderEmail: 'some-email@island.is' }
+    const defender2 = { defenderEmail: 'other-email@island.is' }
+    const defendants = [defender1, defender2]
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
@@ -299,8 +298,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
       defenderNationalId: '1234567890',
       defenderEmail: 'some-email@island.is',
       defenderName: 'Saul',
-    } as Defendant
-    const defendants = [defender1, defender1] as Defendant[] | undefined
+    }
+    const defendants = [defender1, defender1]
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,

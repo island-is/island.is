@@ -60,7 +60,11 @@ export enum ApplicationTypes {
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  UNIVERSITY = 'University',
+  HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  DEREGISTER_MACHINE = 'DeregisterMachine',
+  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
 }
 
 export enum ApplicationFormTypes {
@@ -115,7 +119,7 @@ export const ApplicationConfigurations: Record<
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
-    translation: 'pl.application',
+    translation: 'pl.application', //['pl.application', 'uiForms.application'],
     formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
@@ -383,9 +387,25 @@ export const ApplicationConfigurations: Record<
     translation: 'aosh.tmo.application',
     formType: ApplicationFormTypes.STATIC,
   },
+  [ApplicationTypes.HOME_SUPPORT]: {
+    slug: 'heimastudningur',
+    translation: 'hst.application',
+  },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekis',
     translation: 'aosh.cms.application',
     formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.UNIVERSITY]: {
+    slug: 'haskolanam',
+    translation: 'uni.application',
+  },
+  [ApplicationTypes.DEREGISTER_MACHINE]: {
+    slug: 'afskraning-taekis',
+    translation: 'aosh.drm.application',
+  },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
+    translation: 'ghb.application',
   },
 }

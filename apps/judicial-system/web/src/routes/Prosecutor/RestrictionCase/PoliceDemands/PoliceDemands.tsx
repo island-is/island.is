@@ -239,6 +239,7 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 }}
                 required
                 blueBox={false}
+                defaultTime="16:00"
               />
             </Box>
             {workingCase.type !== CaseType.TRAVEL_BAN && (
@@ -334,7 +335,6 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'lawsBroken',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   lawsBrokenErrorMessage,
                   setLawsBrokenErrorMessage,
@@ -402,7 +402,6 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'legalBasis',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }
@@ -521,7 +520,6 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     'requestedOtherRestrictions',
                     event.target.value,
                     [],
-                    workingCase,
                     setWorkingCase,
                   )
                 }

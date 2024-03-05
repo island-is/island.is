@@ -1,28 +1,21 @@
-import {
-  PREDEFINED_FILL_PATTERNS,
-  PREDEFINED_PIE_FILL_PATTERNS,
-} from '../constants'
-import { ChartComponentWithRenderProps, ChartType, FillPattern } from '../types'
+import { FILL_BACKGROUND_MAIN_COLOR_OPACITY } from '../constants'
+import { ChartComponentWithRenderProps, FillPattern } from '../types'
 
 interface MultipleFillPatternRendererProps {
   components: ChartComponentWithRenderProps[]
-  chartType: ChartType
 }
 
 export const renderMultipleFillPatterns = ({
   components,
-  chartType,
 }: MultipleFillPatternRendererProps) => {
   return (
     <defs>
       {components.map((c) =>
-        c.hasFill
+        c.patternId && c.pattern
           ? renderSingleFillPattern({
-              id: c.fill!.replace('url(#', '').replace(')', ''),
+              id: c.patternId.replace('url(#', '').replace(')', ''),
               color: c.color,
-              type: (chartType === ChartType.pie
-                ? PREDEFINED_PIE_FILL_PATTERNS
-                : PREDEFINED_FILL_PATTERNS)[c.indexWithinType],
+              type: c.pattern as FillPattern,
             })
           : null,
       )}
@@ -36,6 +29,34 @@ interface SingleFillPatternRendererProps {
   type: FillPattern
 }
 
+interface LinePatternProps {
+  id: string
+  color: string
+  rotation?: number
+  width?: number
+}
+
+const LinePattern = ({ id, color, rotation }: LinePatternProps) => (
+  <pattern
+    id={id}
+    width="6"
+    height="10"
+    patternUnits="userSpaceOnUse"
+    patternTransform={`rotate(${rotation ?? 0})`}
+  >
+    <rect x="0" y="0" width="6" height="10" fill="white" />
+    <rect
+      x="0"
+      y="0"
+      width="6"
+      height="10"
+      fill={color}
+      fillOpacity={FILL_BACKGROUND_MAIN_COLOR_OPACITY}
+    />
+    <line x1="1" y1="0" x2="1" y2="10" stroke={color} strokeWidth="4" />
+  </pattern>
+)
+
 export const renderSingleFillPattern = (
   props: SingleFillPatternRendererProps,
 ) => {
@@ -43,143 +64,14 @@ export const renderSingleFillPattern = (
 
   switch (type) {
     case FillPattern.diagonalSwToNe:
-      return (
-        <pattern id={id} width="20" height="20" patternUnits="userSpaceOnUse">
-          <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
-          <path
-            d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
-            stroke={color}
-            strokeWidth="3"
-          />
-        </pattern>
-      )
+      return <LinePattern id={id} color={color} rotation={45} />
     case FillPattern.diagonalSeToNw:
-      return (
-        <pattern
-          id={id}
-          width="20"
-          height="20"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(90)"
-        >
-          <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
-          <path
-            d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
-            stroke={color}
-            strokeWidth="3"
-          />
-        </pattern>
-      )
-    case FillPattern.diagonalSwToNeDense:
-      return (
-        <pattern id={id} width="10" height="10" patternUnits="userSpaceOnUse">
-          <rect x="0" y="0" width="10" height="10" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="10"
-            height="10"
-            fill={color}
-            opacity={0.65}
-          />
-          <path
-            d="M-5,5 L5,-5 M0,10 L10,0 M5,15 L15,5"
-            stroke={color}
-            strokeWidth="2"
-          />
-        </pattern>
-      )
-    case FillPattern.diagonalSeToNwDense:
-      return (
-        <pattern
-          id={id}
-          width="10"
-          height="10"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(90)"
-        >
-          <rect x="0" y="0" width="10" height="10" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="10"
-            height="10"
-            fill={color}
-            opacity={0.65}
-          />
-          <path
-            d="M-5,5 L5,-5 M0,10 L10,0 M5,15 L15,5"
-            stroke={color}
-            strokeWidth="2"
-          />
-        </pattern>
-      )
+      return <LinePattern id={id} color={color} rotation={-45} />
     case FillPattern.horizontal:
-      return (
-        <pattern
-          id={id}
-          width="20"
-          height="20"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(23)"
-        >
-          <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
-          <path
-            d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
-            stroke={color}
-            strokeWidth="3"
-          />
-        </pattern>
-      )
+      return <LinePattern id={id} color={color} rotation={45} />
     case FillPattern.vertical:
-      return (
-        <pattern
-          id={id}
-          width="20"
-          height="20"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(135)"
-        >
-          <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
-          <path
-            d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
-            stroke={color}
-            strokeWidth="3"
-          />
-        </pattern>
-      )
+      return <LinePattern id={id} color={color} rotation={90} />
+
     case FillPattern.dotsSmall:
       return (
         <pattern
@@ -187,10 +79,17 @@ export const renderSingleFillPattern = (
           width="10"
           height="10"
           patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-25)"
+          patternTransform="rotate(-45)"
         >
           <rect x="0" y="0" width="10" height="10" fill="white" />
-          <rect x="0" y="0" width="10" height="10" fill={color} opacity={0.5} />
+          <rect
+            x="0"
+            y="0"
+            width="10"
+            height="10"
+            fill={color}
+            fillOpacity={FILL_BACKGROUND_MAIN_COLOR_OPACITY}
+          />
           <rect x={5} y={5} width={2} height={2} fill={color} />
         </pattern>
       )
@@ -198,13 +97,20 @@ export const renderSingleFillPattern = (
       return (
         <pattern
           id={id}
-          width="16"
-          height="16"
+          width="12"
+          height="12"
           patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-25)"
+          patternTransform="rotate(-45)"
         >
           <rect x="0" y="0" width="16" height="16" fill="white" />
-          <rect x="0" y="0" width="16" height="16" fill={color} opacity={0.5} />
+          <rect
+            x="0"
+            y="0"
+            width="16"
+            height="16"
+            fill={color}
+            fillOpacity={FILL_BACKGROUND_MAIN_COLOR_OPACITY}
+          />
           <circle cx={8} cy={8} r={2} fill={color} />
         </pattern>
       )
@@ -215,11 +121,44 @@ export const renderSingleFillPattern = (
           width="16"
           height="16"
           patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-25)"
+          patternTransform="rotate(-45)"
         >
           <rect x="0" y="0" width="16" height="16" fill="white" />
-          <rect x="0" y="0" width="16" height="16" fill={color} opacity={0.6} />
+          <rect
+            x="0"
+            y="0"
+            width="16"
+            height="16"
+            fill={color}
+            fillOpacity={FILL_BACKGROUND_MAIN_COLOR_OPACITY}
+          />
           <circle cx={8} cy={8} r={4} fill={color} />
+        </pattern>
+      )
+    case FillPattern.chevron:
+      return (
+        <pattern id={id} width="10" height="10" patternUnits="userSpaceOnUse">
+          <rect x="0" y="0" width="10" height="10" fill="white" />
+          <rect
+            x="0"
+            y="0"
+            width="10"
+            height="10"
+            fill={color}
+            fillOpacity={FILL_BACKGROUND_MAIN_COLOR_OPACITY}
+          />
+          <path
+            stroke={color}
+            strokeLinecap="square"
+            strokeWidth="3"
+            d="M0,8 L5,2"
+          />
+          <path
+            stroke={color}
+            strokeLinecap="square"
+            strokeWidth="3"
+            d="M5,2 L10,8"
+          />
         </pattern>
       )
 

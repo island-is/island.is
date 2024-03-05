@@ -113,15 +113,6 @@ class JudicialSystemApplication extends App<Props> {
                       <ToastContainer useKeyframeStyles />
                     </FormProvider>
                     <style jsx global>{`
-                      p,
-                      h1,
-                      h2,
-                      h3,
-                      h4,
-                      h5,
-                      h6 {
-                        word-break: break-word;
-                      }
                       @font-face {
                         font-family: 'IBM Plex Sans';
                         font-style: normal;

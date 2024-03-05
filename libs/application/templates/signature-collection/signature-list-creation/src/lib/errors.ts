@@ -56,7 +56,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.owner.summary',
+      id: 'slc.application:error.owner.summary#markdown',
       defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },

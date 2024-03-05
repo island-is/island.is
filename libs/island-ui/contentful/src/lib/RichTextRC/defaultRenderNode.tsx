@@ -9,6 +9,7 @@ import {
   Box,
   Table as T,
 } from '@island.is/island-ui/core'
+import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import * as styles from './RichText.css'
 
@@ -237,10 +238,16 @@ export const defaultRenderNodeObject: RenderNode = {
         if (parentSlug) {
           href = `${parentSlug}/${entry?.fields.url?.split('/')?.pop() ?? ''}`
         }
+
+        // Make sure that the href starts with a slash
+        if (href && !href.startsWith('/')) {
+          href = `/${href}`
+        }
+
         return href ? <Hyperlink href={href}>{children}</Hyperlink> : null
       }
       case 'organizationPage': {
-        const prefix = getOrganizationPrefix(entry?.sys?.locale)
+        const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)
         return entry.fields.slug ? (
           <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
             {children}
@@ -248,7 +255,7 @@ export const defaultRenderNodeObject: RenderNode = {
         ) : null
       }
       case 'organizationSubpage': {
-        const prefix = getOrganizationPrefix(entry?.sys?.locale)
+        const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)
         return entry?.fields?.slug &&
           entry.fields.organizationPage?.fields?.slug ? (
           <Hyperlink
@@ -262,11 +269,4 @@ export const defaultRenderNodeObject: RenderNode = {
         return null
     }
   },
-}
-
-const getOrganizationPrefix = (locale: string) => {
-  if (locale && !locale.includes('is')) {
-    return `${locale}/o`
-  }
-  return 's'
 }

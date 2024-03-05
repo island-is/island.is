@@ -43,24 +43,33 @@ export class Chart {
   sourceData?: string
 
   @Field({ nullable: true })
+  flipAxis?: boolean
+
+  @Field({ nullable: true })
   xAxisKey?: string
 
   @Field({ nullable: true })
+  xAxisFormat?: string
+
+  @Field({ nullable: true })
   xAxisValueType?: string
+
+  @Field({ nullable: true })
+  customStyleConfig?: string
 }
 
 export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
   return {
     id: sys.id,
     typename: 'Chart',
-    ...pick(fields, [
-      'title',
-      'chartDescription',
-      'alternativeDescription',
-      'displayAsCard',
-      'xAxisKey',
-      'xAxisValueType',
-    ]),
+    title: fields.title ?? '',
+    chartDescription: fields.chartDescription ?? '',
+    alternativeDescription: fields.alternativeDescription ?? '',
+    displayAsCard: fields.displayAsCard ?? true,
+    flipAxis: fields.flipAxis ?? false,
+    xAxisKey: fields.xAxisKey ?? undefined,
+    xAxisValueType: fields.xAxisValueType ?? undefined,
+    xAxisFormat: fields.xAxisFormat ?? undefined,
     startExpanded: fields.startExpanded ?? false,
     dateFrom: fields.dateFrom ?? undefined,
     dateTo: fields.dateTo ?? undefined,
@@ -68,6 +77,9 @@ export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
     components: fields.components.map(mapChartComponent),
     sourceData: fields.sourceData
       ? JSON.stringify(fields.sourceData)
+      : undefined,
+    customStyleConfig: fields.customStyleConfig
+      ? JSON.stringify(fields.customStyleConfig)
       : undefined,
   }
 }

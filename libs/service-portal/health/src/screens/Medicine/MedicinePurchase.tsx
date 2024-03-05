@@ -13,7 +13,6 @@ import {
   DownloadFileButtons,
   ExpandHeader,
   ExpandRow,
-  IntroHeader,
   LinkResolver,
   UserInfoLine,
   amountFormat,
@@ -36,7 +35,11 @@ import * as styles from './Medicine.css'
 import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
-import { exportMedicineFile } from '../../utils/FileBreakdown'
+import {
+  exportMedicineBill,
+  exportMedicineFile,
+} from '../../utils/FileBreakdown'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const MedicinePurchase = () => {
   useNamespaces('sp.health')
@@ -59,7 +62,7 @@ export const MedicinePurchase = () => {
   const [bills, setBills] = useState<RightsPortalDrugBill[] | null>(null)
   const [billsLoading, setBillsLoading] = useState<boolean>(false)
 
-  const { data, loading } = useGetDrugsDataQuery()
+  const { data, loading, error } = useGetDrugsDataQuery()
 
   const [getPaymentPeriodsQuery] = useGetDrugsBillsLazyQuery()
 
@@ -96,14 +99,22 @@ export const MedicinePurchase = () => {
   return (
     <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
       <Box marginBottom={SECTION_GAP}>
-        <IntroHeader
-          isSubheading
-          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
-          title={messages.medicinePurchaseTitle}
-          intro={messages.medicinePurchaseIntroText}
-        />
+        <Text variant="h5" marginBottom={1}>
+          {formatMessage(messages.medicinePurchaseTitle)}
+        </Text>
+        <Text>{formatMessage(messages.medicinePurchaseIntroText)}</Text>
       </Box>
-      {loading && (
+      {error && !loading && (
+        <Box marginBottom={SECTION_GAP}>
+          <Problem
+            size="small"
+            noBorder={false}
+            type="internal_service_error"
+            error={error}
+          />
+        </Box>
+      )}
+      {!error && loading && (
         <Box marginBottom={CONTENT_GAP}>
           <SkeletonLoader
             repeat={4}
@@ -113,25 +124,22 @@ export const MedicinePurchase = () => {
           />
         </Box>
       )}
-      {!!data?.rightsPortalDrugPeriods?.length && (
+      {!error && !loading && !!data?.rightsPortalDrugPeriods?.length && (
         <Box display="flex" flexDirection="column">
-          <Box marginBottom={1}>
-            <Text color="blue400" variant="eyebrow" as="h3">
-              {formatMessage(messages.medicinePaymentPeriod)}
-            </Text>
-          </Box>
           <Box
             display="flex"
-            marginBottom={CONTENT_GAP}
+            marginBottom={SECTION_GAP}
             justifyContent="flexStart"
           >
             <Select
               name="paymentPeroid"
-              size="sm"
+              size="xs"
+              label={formatMessage(messages.medicinePaymentPeriod)}
               options={data.rightsPortalDrugPeriods.map((period) => ({
                 label: formatDatePeriod(period.dateFrom, period.dateTo),
                 value: period.id,
               }))}
+              backgroundColor="blue"
               value={
                 selectedPeriod &&
                 selectedPeriod?.id &&
@@ -301,32 +309,32 @@ export const MedicinePurchase = () => {
                           <T.Table>
                             <T.Head>
                               <T.Row>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineDrugName)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineStrength)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineQuantity)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineAmount)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineSalePrice)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     <Hyphen>
                                       {formatMessage(
@@ -335,7 +343,7 @@ export const MedicinePurchase = () => {
                                     </Hyphen>
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     <Hyphen>
                                       {formatMessage(
@@ -344,7 +352,7 @@ export const MedicinePurchase = () => {
                                     </Hyphen>
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(
                                       messages.medicinePaidByCustomer,
@@ -471,6 +479,22 @@ export const MedicinePurchase = () => {
             </>
           )
         )}
+        {bills?.length ? (
+          <DownloadFileButtons
+            BoxProps={{
+              paddingTop: 2,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flexEnd',
+            }}
+            buttons={[
+              {
+                text: formatMessage(m.getAsExcel),
+                onClick: () => exportMedicineBill(bills),
+              },
+            ]}
+          />
+        ) : undefined}
       </Box>
     </MedicineWrapper>
   )

@@ -14,10 +14,10 @@ interface Props {
   onClose: () => void
   onContinue: (explanation: string) => void
 }
-export function getCaseResubmittedText(
+export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
-) {
+) => {
   return formatMessage(strings.text, {
     requestSharedWithDefender:
       (workingCase.requestSharedWithDefender ===

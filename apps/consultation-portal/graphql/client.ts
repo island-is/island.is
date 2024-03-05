@@ -4,7 +4,6 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client'
-import getConfig from 'next/config'
 import authLink from './authLink'
 import httpLink from './httpLink'
 import retryLink from './retryLink'

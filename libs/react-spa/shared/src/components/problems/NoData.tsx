@@ -24,6 +24,7 @@ export const NoData = ({
   imgAlt,
   noBorder,
   dataTestId,
+  titleSize = 'h2',
   ...rest
 }: NoDataProps & TestSupport) => {
   const { formatMessage } = useLocale()
@@ -48,12 +49,12 @@ export const NoData = ({
                 blue: true,
               },
         )}
-        paddingY={[5, 10]}
-        paddingX={[3, 3, 5]}
+        paddingY={[5, 8]}
+        paddingX={[3, 3, 5, 10]}
         rowGap={[7, 7, 0]}
       >
         <Box display="flex" flexDirection="column" rowGap={1}>
-          <Text variant="h2" as="h2" color="dark400">
+          <Text variant={titleSize} as={titleSize} color="dark400">
             {title}
           </Text>
           <Text whiteSpace="preLine">{message}</Text>
@@ -71,7 +72,7 @@ export const NoData = ({
       message={message ?? formatMessage(m.noDataMessage)}
       dataTestId={dataTestId}
       noBorder={noBorder}
-      titleSize="h2"
+      titleSize={titleSize}
       {...rest}
     />
   )

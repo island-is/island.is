@@ -1,20 +1,13 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  NationalRegistry,
-  RskProcuring,
-} from '../../../../../infra/src/dsl/xroad'
+import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 export const serviceSetup =
   (): ServiceBuilder<'services-auth-delegation-api'> => {
     return service('services-auth-delegation-api')
       .namespace('identity-server-delegation')
       .image('services-auth-delegation-api')
-      .postgres({
-        username: 'servicesauth',
+      .db({
         name: 'servicesauth',
-        passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
       })
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
@@ -60,7 +53,7 @@ export const serviceSetup =
           '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
       })
       .xroad(Base, Client, RskProcuring)
-      .readiness('/liveness')
+      .readiness('/health/check')
       .liveness('/liveness')
       .replicaCount({
         default: 2,

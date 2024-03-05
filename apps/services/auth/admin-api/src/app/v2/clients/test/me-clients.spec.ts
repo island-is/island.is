@@ -138,6 +138,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         await createTestClientData(app, otherUser)
@@ -162,6 +163,7 @@ describe('MeClientsController with auth', () => {
       AppModule,
       SequelizeConfigService,
       user: currentUser,
+      dbType: 'postgres',
     })
     const server = request(app.getHttpServer())
     await createTestClientData(app, user)
@@ -195,6 +197,7 @@ describe('MeClientsController with auth', () => {
       AppModule,
       SequelizeConfigService,
       user: currentUser,
+      dbType: 'postgres',
     })
     const server = request(app.getHttpServer())
     const expected = await createTestClientData(app, user)
@@ -219,6 +222,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user: currentUser,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       const expected = await createTestClientData(app, user)
@@ -251,6 +255,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       const clientModel = app.get(getModelToken(Client))
@@ -313,9 +318,6 @@ describe('MeClientsController with auth', () => {
       })
       expect(dbClient).toMatchObject({
         ...clientBaseAttributes,
-        allowRememberConsent: clientBaseAttributes.allowRememberConsent
-          ? '1'
-          : '0',
         clientId: newClient.clientId,
         clientType: newClient.clientType,
         clientName: newClient.clientName,
@@ -350,6 +352,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       const clientModel = app.get(getModelToken(Client))
@@ -413,9 +416,6 @@ describe('MeClientsController with auth', () => {
 
       expect(dbClient).toMatchObject({
         ...clientBaseAttributes,
-        allowRememberConsent: clientBaseAttributes.allowRememberConsent
-          ? '1'
-          : '0',
         clientId: newClientId,
         clientType: newClient.clientType,
         clientName: newClient.clientName,
@@ -451,6 +451,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user: superUser,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       const clientModel = app.get(getModelToken(Client))
@@ -536,9 +537,6 @@ describe('MeClientsController with auth', () => {
 
       expect(dbClient).toMatchObject({
         ...clientBaseAttributes,
-        allowRememberConsent: clientBaseAttributes.allowRememberConsent
-          ? '1'
-          : '0',
         clientId: newClientId,
         clientType: newClient.clientType,
         clientName: newClient.clientName,
@@ -572,6 +570,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       await createTestClientData(app, user)
@@ -602,6 +601,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       await createTestClientData(app, user)
@@ -634,6 +634,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       await createTestClientData(app, user)
@@ -672,6 +673,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         const expected = await createTestClientData(app, user)
@@ -716,6 +718,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         await createTestClientData(app, user)
@@ -757,6 +760,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         await createTestClientData(app, user)
@@ -791,6 +795,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         const expected = await createTestClientData(app, user)

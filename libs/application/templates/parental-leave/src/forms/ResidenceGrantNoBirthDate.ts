@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
@@ -21,7 +20,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
     buildSection({
       id: 'residenceGrantApplicationNoBirthDate.section',
       title: '',
-
       children: [
         buildMultiField({
           title: (application) => {
@@ -71,12 +69,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
                   },
                 },
               ],
-            }),
-            buildCustomField({
-              id: 'residenceGrantApplicationNoBirthDate.image',
-              title: '',
-              defaultValue: 1,
-              component: 'ImageField',
             }),
           ],
         }),

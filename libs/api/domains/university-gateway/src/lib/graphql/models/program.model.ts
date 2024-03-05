@@ -110,6 +110,12 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
   @Field({ nullable: true })
   costInformationEn?: string
 
+  @Field({ nullable: true })
+  arrangementIs?: string
+
+  @Field({ nullable: true })
+  arrangementEn?: string
+
   @Field()
   allowException!: boolean
 

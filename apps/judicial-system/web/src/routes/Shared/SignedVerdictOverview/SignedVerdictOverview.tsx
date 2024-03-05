@@ -355,10 +355,10 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: undefined,
-        })
+        }))
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
@@ -379,8 +379,8 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: {
             id: institution?.value as string,
             name: institution?.label as string,
@@ -389,10 +389,10 @@ export const SignedVerdictOverview: React.FC = () => {
             modified: new Date().toString(),
             active: true,
           },
-          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
+          isHeightenedSecurityLevel: prevWorkingCase.isHeightenedSecurityLevel
             ? false
-            : workingCase.isHeightenedSecurityLevel,
-        })
+            : prevWorkingCase.isHeightenedSecurityLevel,
+        }))
 
         updateCase(workingCase.id, {
           sharedWithProsecutorsOfficeId: institution?.value as string,
@@ -411,7 +411,7 @@ export const SignedVerdictOverview: React.FC = () => {
       return false
     }
 
-    setWorkingCase((theCase) => ({ ...theCase, ...update }))
+    setWorkingCase((prevWorkingCase) => ({ ...prevWorkingCase, ...update }))
 
     return true
   }
@@ -599,24 +599,36 @@ export const SignedVerdictOverview: React.FC = () => {
                         title: formatMessage(core.appealCaseNumberHeading),
                         value: workingCase.appealCaseNumber,
                       },
-                      {
-                        title: formatMessage(core.appealAssistantHeading),
-                        value: workingCase.appealAssistant?.name,
-                      },
-                      {
-                        title: formatMessage(core.appealJudgesHeading),
-                        value: (
-                          <>
-                            {sortByIcelandicAlphabet([
-                              workingCase.appealJudge1?.name || '',
-                              workingCase.appealJudge2?.name || '',
-                              workingCase.appealJudge3?.name || '',
-                            ]).map((judge, index) => (
-                              <Text key={index}>{judge}</Text>
-                            ))}
-                          </>
-                        ),
-                      },
+                      ...(workingCase.appealAssistant
+                        ? [
+                            {
+                              title: formatMessage(core.appealAssistantHeading),
+                              value: workingCase.appealAssistant.name,
+                            },
+                          ]
+                        : []),
+                      ...(workingCase.appealJudge1 &&
+                      workingCase.appealJudge2 &&
+                      workingCase.appealJudge3
+                        ? [
+                            {
+                              title: formatMessage(core.appealJudgesHeading),
+                              value: (
+                                <>
+                                  {sortByIcelandicAlphabet([
+                                    workingCase.appealJudge1.name || '',
+                                    workingCase.appealJudge2.name || '',
+                                    workingCase.appealJudge3.name || '',
+                                  ]).map((judge, index) => (
+                                    <Text key={`${judge}_${index}`}>
+                                      {judge}
+                                    </Text>
+                                  ))}
+                                </>
+                              ),
+                            },
+                          ]
+                        : []),
                     ]
                   : undefined
               }
@@ -658,8 +670,9 @@ export const SignedVerdictOverview: React.FC = () => {
               />
             </Box>
           )}
-
-          <AppealCaseFilesOverview />
+          <Box marginBottom={5}>
+            <AppealCaseFilesOverview />
+          </Box>
           <CaseDocuments
             isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
             handleRequestCourtRecordSignature={

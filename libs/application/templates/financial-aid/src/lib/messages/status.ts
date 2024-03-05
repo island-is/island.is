@@ -116,13 +116,13 @@ export const aidAmount = defineMessages({
 export const missingFilesCard = defineMessages({
   title: {
     id: 'fa.application:section.missingFilesCard.title',
-    defaultMessage: 'Vantar gögn',
+    defaultMessage: 'Vantar upplýsingar',
     description: 'Title of the card',
   },
   description: {
     id: 'fa.application:section.missingFilesCard.description',
     defaultMessage:
-      'Við þurfum að fá gögn frá þér áður en við getum haldið áfram með umsóknina.',
+      'Við þurfum að fá upplýsingar frá þér áður en við getum haldið áfram með umsóknina.',
     description: 'Description of the card',
   },
   action: {

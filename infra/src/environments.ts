@@ -3,8 +3,7 @@ import { merge } from 'lodash'
 import { FeatureNames } from './dsl/features'
 const dev01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
-  auroraReplica:
-    'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+  auroraReplica: 'postgres-applications-reader.internal',
   redisHost: JSON.stringify([
     'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
   ]),

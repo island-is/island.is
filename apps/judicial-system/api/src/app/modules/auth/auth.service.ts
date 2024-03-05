@@ -20,7 +20,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { DefenderService } from '../defender/defender.service'
+import { DefenderService } from '../defender'
 import { authModuleConfig } from './auth.config'
 
 @Injectable()
@@ -88,6 +88,7 @@ export class AuthService {
           id: uuid(),
           created: new Date().toString(),
           modified: new Date().toString(),
+          canConfirmAppeal: false,
         } as User
       }
     } catch (error) {

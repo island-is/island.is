@@ -19,7 +19,7 @@ import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
 
 const WeekLifeCycle: StateLifeCycle = {
-  shouldBeListed: true,
+  shouldBeListed: false,
   shouldBePruned: true,
   whenToPrune: 1000 * 3600 * 24 * 7,
 }
@@ -117,7 +117,6 @@ const CreateListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: WeekLifeCycle,
-
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,

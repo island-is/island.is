@@ -3,14 +3,16 @@ import {
   Box,
   SkeletonLoader,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { useGetDrugCertificatesQuery } from './Medicine.generated'
 import { SECTION_GAP } from './constants'
-import { ActionCard, IntroHeader, m } from '@island.is/service-portal/core'
+import { ActionCard, m } from '@island.is/service-portal/core'
 import { HealthPaths } from '../../lib/paths'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()
@@ -20,18 +22,17 @@ export const MedicineLicense = () => {
   return (
     <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates}>
       <Box marginBottom={SECTION_GAP}>
-        <IntroHeader
-          title={formatMessage(messages.medicineLicenseIntroTitle)}
-          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
-          intro={formatMessage(messages.medicineLicenseIntroText)}
-          isSubheading
-        />
+        <Text variant="h5" marginBottom={1}>
+          {formatMessage(messages.medicineLicenseTitle)}
+        </Text>
+        <Text>{formatMessage(messages.medicineLicenseIntroText)}</Text>
       </Box>
       {error ? (
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.errorTitle)}
-          message={formatMessage(m.errorFetch)}
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} />

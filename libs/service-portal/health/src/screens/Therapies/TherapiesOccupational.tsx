@@ -24,13 +24,14 @@ const Therapies = () => {
   return (
     <TherapiesWrapper
       loading={loading}
-      error={!!error}
+      error={error}
       pathname={HealthPaths.HealthTherapiesOccupational}
     >
       <TherapiesTabContent
         data={occupationalTherapyData}
         link={formatMessage(messages.occupationalDescriptionLink)}
         linkText={formatMessage(messages.occupationalLink)}
+        loading={loading}
       />
     </TherapiesWrapper>
   )

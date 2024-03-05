@@ -13,10 +13,12 @@ import {
 } from '../../graphql/queries.graphql.generated'
 import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
 import { withApollo } from '../../graphql/withApollo'
+import { Error500 } from '../../components'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
+  is500: boolean
 }
 
 export const getServerSideProps = async (ctx) => {
@@ -49,14 +51,17 @@ export const getServerSideProps = async (ctx) => {
         props: {
           cases: consultationPortalGetCases.cases,
           types: consultationPortalAllTypes,
+          is500: false,
         },
       }
     } catch (e) {
       console.error(e)
     }
     return {
-      redirect: {
-        destination: '/500',
+      props: {
+        cases: null,
+        types: null,
+        is500: true,
       },
     }
   } else {
@@ -64,11 +69,13 @@ export const getServerSideProps = async (ctx) => {
       props: {
         cases: [],
         types: { policyAreas: {}, institutions: {} },
+        is500: false,
       },
     }
   }
 }
-export const Index = ({ cases, types }: SubProps) => {
+export const Index = ({ cases, types, is500 }: SubProps) => {
+  if (is500) return <Error500 />
   return <SubscriptionScreen cases={cases} types={types} />
 }
 export default withApollo(Index)

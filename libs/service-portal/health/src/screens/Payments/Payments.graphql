@@ -1,17 +1,12 @@
 query getCopaymentStatus {
   rightsPortalCopaymentStatus {
-    items {
-      insuranceStatus {
-        display
-        code
-      }
-      maximumMonthlyPayment
-      maximumPayment
-      basePayment
+    insuranceStatus {
+      display
+      code
     }
-    errors {
-      status
-    }
+    maximumMonthlyPayment
+    maximumPayment
+    basePayment
   }
 }
 

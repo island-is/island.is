@@ -13,14 +13,13 @@ import { getSessionType } from '../../utils/utils'
 import * as styles from '../LogTable/LogTable.css'
 import Person from '../PersonIcon/PersonIcon'
 import { Client } from '../Client/Client'
-import { getCountryByCode, Country } from '@island.is/shared/utils'
+import { Country, getCountryByCode } from '@island.is/shared/utils'
 
 interface LogTableProps {
   data: SessionsSession[]
 }
-const LogTable: React.FC<React.PropsWithChildren<LogTableProps>> = ({
-  data,
-}) => {
+
+const LogTable = ({ data }: LogTableProps) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const { formatDate, formatTime } = useIntl()
@@ -36,7 +35,7 @@ const LogTable: React.FC<React.PropsWithChildren<LogTableProps>> = ({
               textAlign={'center'}
               columnGap={'smallGutter'}
             >
-              {formatMessage(m.geolocation)}{' '}
+              {formatMessage(m.geolocation)}
               <Tooltip
                 placement="right"
                 as="button"
@@ -80,13 +79,9 @@ const LogTable: React.FC<React.PropsWithChildren<LogTableProps>> = ({
                 <div className={styles.textEllipsis}>{session.device}</div>
                 {!session.ipLocation && <div>{session.ip}</div>}
                 {session.ipLocation && (
-                  <Tooltip
-                    text={formatMessage(m.ipLocation) + ' ' + session.ip}
-                  >
-                    <div style={{ width: 'fit-content' }}>
-                      {country?.name ?? session.ipLocation}
-                    </div>
-                  </Tooltip>
+                  <div style={{ width: 'fit-content' }}>
+                    {country?.name ?? session.ipLocation} {`(${session.ip})`}
+                  </div>
                 )}
               </Table.Data>
               <Table.Data>

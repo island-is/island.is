@@ -25,10 +25,16 @@ Run api:
 
 - `yarn start financial-aid-api`
 
-Run Ósk or Veita client:
+Run Veita client:
+
+- `yarn start financial-aid-web-veita`
+
+Run Ósk:
 
 - `yarn start financial-aid-web-osk`
-- `yarn start financial-aid-web-veita`
+  NOTE web-osk is not in use anymore
+  The application ósk is in the application system
+  For documentation look here <https://github.com/island-is/island.is/blob/cde4392eda5b82877dd2f79fd1854f6f4fb2a09e/apps/application-system/README.md?plain=1#L3>
 
 Go to localhost:4200.
 

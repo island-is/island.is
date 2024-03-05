@@ -14,6 +14,7 @@ import {
   StaffModule,
   PersonalTaxReturnModule,
   MunicipalityNationalRegistryModule,
+  ApiKeyModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -42,6 +43,7 @@ const autoSchemaFile = environment.production
     FileModule,
     MunicipalityNationalRegistryModule,
     StaffModule,
+    ApiKeyModule,
     PersonalTaxReturnModule,
     ConfigModule.forRoot({
       isGlobal: true,
