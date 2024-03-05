@@ -89,16 +89,16 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
-      this.delegationsIncomingCustomService.findAllValidIncoming(
-        user.nationalId,
+      this.delegationsIncomingCustomService.findAllValidIncoming({
+        nationalId: user.nationalId,
         domainName,
-      ),
+      }),
     )
 
     delegationPromises.push(
-      this.delegationsIncomingRepresentativeService.findAllIncoming(
-        user.nationalId,
-      ),
+      this.delegationsIncomingRepresentativeService.findAllIncoming({
+        nationalId: user.nationalId,
+      }),
     )
 
     const delegationSets = await Promise.all(delegationPromises)
@@ -183,11 +183,11 @@ export class DelegationsIncomingService {
     ) {
       delegationPromises.push(
         this.delegationsIncomingRepresentativeService
-          .findAllIncoming(
-            user.nationalId,
+          .findAllIncoming({
+            nationalId: user.nationalId,
             clientAllowedApiScopes,
-            client?.requireApiScopes,
-          )
+            requireApiScopes: client?.requireApiScopes,
+          })
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),
