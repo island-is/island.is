@@ -55,7 +55,10 @@ export class DocumentResolver {
   }
 
   @Scopes(DocumentsScope.main)
-  @Query(() => [Document], { nullable: true })
+  @Query(() => [Document], {
+    nullable: true,
+    deprecationReason: 'Use newer function',
+  })
   listDocuments(@CurrentUser() user: User): Promise<Array<Document>> {
     return this.documentService.listDocuments(user.nationalId)
   }

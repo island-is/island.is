@@ -21,6 +21,7 @@ import { ActionMailBody } from './models/actionMail.model'
 import { PostBulkMailActionInput } from './dto/postBulkMailActionInput'
 import { DocumentPageResponse } from './models/documentPage.model'
 import { GetDocumentPageInput } from './dto/documentPageInput'
+import { DocumentsClientV2Service } from '@island.is/clients/documents-v2'
 
 const LOG_CATEGORY = 'documents-api'
 @Injectable()
@@ -28,6 +29,7 @@ export class DocumentService {
   constructor(
     private documentClient: DocumentClient,
     private documentBuilder: DocumentBuilder,
+    private documentV2Service: DocumentsClientV2Service,
   ) {}
 
   async findByDocumentId(
