@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common/decorators/core'
-
+import { lastValueFrom } from 'rxjs'
 import { HttpService } from '@nestjs/axios/dist'
 import { environment } from '../../environments'
-import { lastValueFrom } from 'rxjs/internal/lastValueFrom'
 import { logger } from '@island.is/logging'
 import { VehicleModel, VehicleService } from '../modules/vehicle'
 import { VehicleOwnerModel } from '../modules/vehicleOwner'
