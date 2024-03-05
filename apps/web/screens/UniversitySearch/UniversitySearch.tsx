@@ -148,6 +148,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   universities,
 }) => {
   useEffect(() => {
+    if (!filterOptions) return
+
     // Re-ordering filters.
     const index = filterOptions.findIndex(
       (filter) => filter.field === 'universityId',
@@ -158,9 +160,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
       movedField.options.sort((x, y) => {
         const titleX =
-          universities.filter((uni) => uni.id === x)[0].contentfulTitle || ''
+          universities.filter((uni) => uni.id === x)[0]?.contentfulTitle || ''
         const titleY =
-          universities.filter((uni) => uni.id === y)[0].contentfulTitle || ''
+          universities.filter((uni) => uni.id === y)[0]?.contentfulTitle || ''
         return titleX.localeCompare(titleY)
       })
       filterOptions.splice(2, 0, movedField)
@@ -312,7 +314,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const applicationUrlParser = (universityId: string) => {
     const university =
       universities.filter((uni) => uni.id === universityId)[0]
-        .contentfulTitle || ''
+        ?.contentfulTitle || ''
 
     switch (university) {
       case 'Háskóli Íslands':
@@ -324,7 +326,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       case 'Háskólinn á Hólum':
         return 'https://ugla.holar.is/namsumsoknir/'
       case 'Háskólinn í Reykjavík':
-        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+        return 'https://umsoknir.ru.is/'
       case 'Landbúnaðarháskóli Íslands':
         return 'https://ugla.lbhi.is/namsumsoknir/'
       case 'Listaháskóli Íslands':
@@ -440,6 +442,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       }?comparison=${JSON.stringify(selectedComparison.map((i) => i.id))}`,
     )
   }
+
   const navList: NavigationItem[] =
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
@@ -493,7 +496,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const formatFilterStrings = (tag: string, field: string) => {
     if (field === 'universityId') {
-      return universities.filter((x) => x.id === tag)[0].contentfulTitle || ''
+      return universities.filter((x) => x.id === tag)[0]?.contentfulTitle || ''
     } else if (tag === 'OPEN') {
       return `${n('openForApplication', 'Opið fyrir umsóknir')}`
     } else {
@@ -705,7 +708,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               {n('searchResults', 'Leitarniðurstöður')}
             </Text>
             <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
               value={query}
@@ -768,13 +771,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   <Tag onClick={() => resetFilteredList()}>
                     {n('showAll', 'Sýna allt')}
                   </Tag>
-                  {filterOptions.map((option) => {
-                    if (
-                      option.field === 'degreeType' ||
-                      option.field === 'universityId'
-                    ) {
-                      return option.options.map((item) => {
-                        if (item !== 'OTHER') {
+                  {filterOptions &&
+                    filterOptions.map((option) => {
+                      if (
+                        option.field === 'degreeType' ||
+                        option.field === 'universityId'
+                      ) {
+                        return option.options.map((item) => {
+                          if (item === 'OTHER') return null
                           return (
                             <Tag
                               onClick={() => handleFilters('degreeType', item)}
@@ -782,19 +786,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               {n(
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle || ''
+                                      ?.contentfulTitle || ''
                                   : item,
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle
+                                      ?.contentfulTitle
                                   : item,
                               )}
                             </Tag>
                           )
-                        }
-                      })
-                    }
-                  })}
+                        })
+                      }
+                    })}
                 </Inline>
               </Box>
             </ContentBlock>
@@ -948,7 +951,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 src={
                                   universities.filter(
                                     (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl || ''
+                                  )[0]?.contentfulLogoUrl || ''
                                 }
                                 alt={`Logo fyrir ${
                                   locale === 'en'
@@ -1086,7 +1089,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               iconText={
                                 universities.filter(
                                   (x) => x.id === dataItem.universityId,
-                                )[0].contentfulTitle || ''
+                                )[0]?.contentfulTitle || ''
                               }
                               heading={
                                 locale === 'en'
@@ -1099,7 +1102,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   src={
                                     universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl || ''
+                                    )[0]?.contentfulLogoUrl || ''
                                   }
                                   alt={`Logo fyrir ${
                                     locale === 'en'

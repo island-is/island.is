@@ -77,7 +77,7 @@ yargs(hideBin(process.argv))
 
       const { Parameter } = await ssm.getParameter(parameterInput).promise()
       if (Parameter) {
-        return logger.debug(Parameter.Value)
+        return logger.info(Parameter.Value)
       }
     },
   )

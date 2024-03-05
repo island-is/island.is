@@ -8,11 +8,13 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import * as m from '../lib/messages'
+import Logo from '../assets/Logo'
 
 export const Approved: Form = buildForm({
   id: 'GrindavikHousingBuyoutApproved',
   title: m.application.general.name,
   mode: FormModes.APPROVED,
+  logo: Logo,
   children: [
     buildSection({
       id: 'applicationApproved',

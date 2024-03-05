@@ -61,6 +61,7 @@ export enum ApplicationTypes {
   UNIVERSITY = 'University',
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  DEREGISTER_MACHINE = 'DeregisterMachine',
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
 }
 
@@ -91,7 +92,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
-    translation: 'pl.application',
+    translation: ['pl.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
@@ -316,6 +317,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNIVERSITY]: {
     slug: 'haskolanam',
     translation: 'uni.application',
+  },
+  [ApplicationTypes.DEREGISTER_MACHINE]: {
+    slug: 'afskraning-taekis',
+    translation: 'aosh.drm.application',
   },
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',

@@ -13,3 +13,8 @@ export type VehiclesCurrentVehicle = {
   hasReceivedSubsidy?: boolean | null
   vehicleGrantItemCode?: string | null
 }
+
+export type VehiclesWithTotalCount = {
+  vehicles?: Array<VehiclesCurrentVehicle> | null
+  totalRecords?: number | null
+}
