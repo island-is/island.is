@@ -167,6 +167,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/deregister-machine'),
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
     import('@island.is/application/templates/grindavik-housing-buyout'),
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
+    import('@island.is/application/templates/aosh/request-for-inspection'),
 }
 
 export default templates

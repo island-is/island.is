@@ -63,7 +63,7 @@ export enum ApplicationTypes {
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
   DEREGISTER_MACHINE = 'DeregisterMachine',
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
-  REQUEST_MACHINE_FOR_INSPECTION = 'RequestMachineForInspection',
+  REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
 }
 
 export const ApplicationConfigurations = {
@@ -327,8 +327,8 @@ export const ApplicationConfigurations = {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
     translation: 'ghb.application',
   },
-  [ApplicationTypes.REQUEST_MACHINE_FOR_INSPECTION]: {
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     slug: 'beidni-um-skodun-taekis',
-    translation: 'aosh.rmfi.application',
+    translation: 'aosh.rifm.application',
   },
 }
