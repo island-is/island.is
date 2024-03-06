@@ -8,11 +8,23 @@
   "generators": {},
   "targets": {
     "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["{projectRoot}/build.sh"],
+        "outputPath": "dist/apps/system-e2e",
+        "parallel": false
+      },
+      "configurations": {
+        "production": {}
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/system-e2e"]
+    },
+    "build-new": {
       "executor": "@nx/esbuild:esbuild",
       "options": {
         "main": "{projectRoot}/playwright.config.ts",
         "tsConfig": "{projectRoot}/tsconfig.json",
-        "external": ["@nx/*"],
+        "external": ["@nx/*", "fs"],
         "generatePackageJson": true,
         "sourceMap:": true,
         "deleteOutputPath": true,
