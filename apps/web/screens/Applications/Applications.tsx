@@ -222,6 +222,7 @@ const Applications: Screen<CategoryProps> = ({
                 <Pagination
                   page={page ?? 1}
                   totalPages={totalPages}
+                  variant="blue"
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
