@@ -13,6 +13,14 @@
         "main": "{projectRoot}/playwright.config.ts",
         "tsConfig": "{projectRoot}/tsconfig.json",
         "external": ["@nx/*"],
+        "generatePackageJson": true,
+        "sourceMap:": true,
+        "deleteOutputPath": true,
+        "format": [
+          // "esm",
+          "cjs"
+        ],
+        "thirdParty": true,
         "outputPath": "dist/{projectRoot}"
       }
     },
