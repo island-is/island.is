@@ -119,7 +119,7 @@ export interface ComparisonProps {
 
 interface UniversityProgramsQuery {
   universityGatewayPrograms: {
-    data: Array<UniversityGatewayProgram> // You might want to replace `any` with the actual type of your data items
+    data: Array<UniversityGatewayProgram>
   }
 }
 interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
