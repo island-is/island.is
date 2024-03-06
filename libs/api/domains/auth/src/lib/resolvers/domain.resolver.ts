@@ -32,6 +32,9 @@ export class DomainResolver {
     organizationLogoLoader: OrganizationLogoDataLoader,
     @Parent() domain: Domain,
   ): Promise<LogoUrl> {
-    return organizationLogoLoader.load(domain.organisationLogoKey)
+    return organizationLogoLoader.load({
+      key: domain.organisationLogoKey,
+      field: 'title',
+    })
   }
 }

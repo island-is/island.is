@@ -4,14 +4,14 @@ import { UniversityGatewayUniversity } from './models'
 import { Loader } from '@island.is/nest/dataloader'
 import {
   OrganizationLinkByReferenceIdLoader,
-  OrganizationLogoByReferenceIdLoader,
+  OrganizationLogoLoader,
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
 import type {
   LogoUrl,
   OrganizationLink,
   OrganizationLinkByReferenceIdDataLoader,
-  OrganizationLogoByReferenceIdDataLoader,
+  OrganizationLogoDataLoader,
   OrganizationTitleByReferenceIdDataLoader,
   ShortTitle,
 } from '@island.is/cms'
@@ -27,11 +27,14 @@ export class UniversityResolver {
 
   @ResolveField('contentfulLogoUrl', () => String, { nullable: true })
   async resolveContentfulLogoUrl(
-    @Loader(OrganizationLogoByReferenceIdLoader)
-    organizationLogoLoader: OrganizationLogoByReferenceIdDataLoader,
+    @Loader(OrganizationLogoLoader)
+    organizationLogoLoader: OrganizationLogoDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<LogoUrl> {
-    return await organizationLogoLoader.load(university.contentfulKey)
+    return await organizationLogoLoader.load({
+      key: university.contentfulKey,
+      field: 'referenceIdentifier',
+    })
   }
 
   @ResolveField('contentfulTitle', () => String, { nullable: true })

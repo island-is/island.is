@@ -2736,6 +2736,9 @@ export interface IOrganizationFields {
 
   /** Reference Identifier */
   referenceIdentifier?: string | undefined
+
+  /** Kennitala */
+  kennitala?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
