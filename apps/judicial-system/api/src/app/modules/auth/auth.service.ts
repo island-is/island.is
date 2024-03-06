@@ -88,7 +88,6 @@ export class AuthService {
           id: uuid(),
           created: new Date().toString(),
           modified: new Date().toString(),
-          canConfirmAppeal: false,
         } as User
       }
     } catch (error) {

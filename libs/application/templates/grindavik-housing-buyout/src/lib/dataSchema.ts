@@ -47,8 +47,10 @@ export const GrindavikHousingBuyoutSchema = z.object({
     )
     .optional(),
   confirmLoanTakeover: z.array(z.enum([YES])),
-  userConfirmation: z.array(z.enum([YES])),
-  preemptiveRightWish: z.string(z.enum([YES, NO])).refine((v) => !!v, required),
+  preemptiveRightWish: z.array(z.enum([YES])),
+  userConfirmation: z
+    .array(z.enum([YES]))
+    .refine((v) => v.includes(YES), { params: errors.fields.requiredCheckbox }),
 })
 
 export type GrindavikHousingBuyout = z.TypeOf<

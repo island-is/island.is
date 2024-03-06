@@ -6,14 +6,13 @@ import {
   buildForm,
   buildKeyValueField,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildStaticTableField,
   buildSubmitField,
   buildTableRepeaterField,
   coreMessages,
 } from '@island.is/application/core'
-import { Form, FormModes, NO, YES } from '@island.is/application/types'
+import { Form, FormModes, YES } from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
@@ -136,9 +135,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 provider: {
                   component: 'select',
                   label: m.application.loanStatus.loanProvider,
-                  options: loanProviders.map((provider) => ({
-                    value: provider,
-                    label: provider,
+                  options: loanProviders.map((bank) => ({
+                    value: bank,
+                    label: bank,
                   })),
                 },
                 status: {
@@ -250,7 +249,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           description: m.application.sellerStatement.text,
           children: [
             buildCheckboxField({
-              id: 'userConfirmation',
+              id: 'preemptiveRightWish',
               title: '',
               defaultValue: [],
               options: [
@@ -407,21 +406,18 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               value: ({ answers }) => {
                 return (
                   answers as GrindavikHousingBuyout
-                ).userConfirmation?.includes(YES)
+                ).preemptiveRightWish?.includes(YES)
                   ? coreMessages.radioYes
                   : coreMessages.radioNo
               },
             }),
-            buildDividerField({}),
 
-            buildRadioField({
-              id: 'preemptiveRightWish',
-              title: m.application.overview.checkboxText,
-              width: 'half',
-              required: true,
+            buildCheckboxField({
+              id: 'userConfirmation',
+              title: '',
+              defaultValue: [],
               options: [
-                { label: coreMessages.radioYes, value: YES },
-                { label: coreMessages.radioNo, value: NO },
+                { label: m.application.overview.checkboxText, value: YES },
               ],
             }),
 

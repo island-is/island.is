@@ -3198,9 +3198,6 @@ export interface IProjectPageFields {
   /** Sidebar */
   sidebar: boolean
 
-  /** Sidebar Frontpage Link */
-  sidebarFrontpageLink: boolean
-
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
 
