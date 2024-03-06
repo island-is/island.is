@@ -1,7 +1,7 @@
 import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { UniversityGatewayApi } from '../universityGateway.service'
-import { UniversityGatewayUniversity } from './models'
 import { Loader } from '@island.is/nest/dataloader'
+import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
+import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
   OrganizationLinkByReferenceIdLoader,
   OrganizationLogoByReferenceIdLoader,
@@ -15,16 +15,22 @@ import type {
   OrganizationTitleByReferenceIdDataLoader,
   ShortTitle,
 } from '@island.is/cms'
+import { UniversityGatewayApi } from '../universityGateway.service'
+import { UniversityGatewayUniversity } from './models'
+
+const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
 @Resolver(UniversityGatewayUniversity)
 export class UniversityResolver {
   constructor(private readonly universityGatewayApi: UniversityGatewayApi) {}
 
+  @CacheControl(defaultCache)
   @Query(() => [UniversityGatewayUniversity])
   universityGatewayUniversities() {
     return this.universityGatewayApi.getUniversities()
   }
 
+  @CacheControl(defaultCache)
   @ResolveField('contentfulLogoUrl', () => String, { nullable: true })
   async resolveContentfulLogoUrl(
     @Loader(OrganizationLogoByReferenceIdLoader)
@@ -34,6 +40,7 @@ export class UniversityResolver {
     return await organizationLogoLoader.load(university.contentfulKey)
   }
 
+  @CacheControl(defaultCache)
   @ResolveField('contentfulTitle', () => String, { nullable: true })
   async resolveContentfulTitle(
     @Loader(OrganizationTitleByReferenceIdLoader)
@@ -43,6 +50,7 @@ export class UniversityResolver {
     return organizationTitleLoader.load(university.contentfulKey)
   }
 
+  @CacheControl(defaultCache)
   @ResolveField('contentfulLink', () => String, { nullable: true })
   async resolveContentfulLink(
     @Loader(OrganizationLinkByReferenceIdLoader)
