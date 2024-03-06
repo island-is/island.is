@@ -21,7 +21,6 @@ interface Rule {
 export const caseStateMachine: (type: CaseType) => Map<CaseTransition, Rule> = (
   type,
 ) => {
-  console.log('type', type)
   return new Map([
     [
       CaseTransition.OPEN,
