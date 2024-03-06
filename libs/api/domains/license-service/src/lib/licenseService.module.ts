@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common'
 
 import { LicenseServiceResolver } from './licenseService.resolver'
 import { LicenseServiceService } from './licenseService.service'
-import { LicenseMapperModule } from './modules/licenseMapper.module'
+import { LicenseMapperModule } from './mappers/licenseMapper.module'
 
 import {
   LicenseMapperProvider,
