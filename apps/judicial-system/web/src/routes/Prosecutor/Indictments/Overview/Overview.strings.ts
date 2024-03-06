@@ -55,8 +55,7 @@ export const overview = {
   }),
   caseSubmitModalText: defineMessage({
     id: 'judicial.system.indictments:overview.case_submit_modal_text',
-    defaultMessage:
-      'Ákæran verður send á Héraðsdóm Reykjavíkur ásamt skjölum og málsgögnum.',
+    defaultMessage: 'Ákæran verður send á dómstól ásamt skjölum og málsgögnum.',
     description: 'Texti í modal glugga á Yfirlit ákæru skefi í ákærum.',
   }),
   caseSubmitPrimaryButtonText: defineMessage({
