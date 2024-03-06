@@ -273,6 +273,11 @@ export const core = defineMessages({
     defaultMessage: 'Loka glugga',
     description: 'Notaður fyrir texta í Loka glugga takka í modölum.',
   },
+  stopModal: {
+    id: 'judicial.system.core:stop_modal',
+    defaultMessage: 'Hætta við',
+    description: 'Notaður fyrir texta í Hætta við takka í modölum.',
+  },
   uploadBoxTitle: {
     id: 'judicial.system.core:upload_box_title',
     defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',

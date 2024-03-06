@@ -28,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import * as strings from './Overview.strings'
 import * as styles from './Overview.css'
 
@@ -36,11 +37,13 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const { user } = useContext(UserContext)
   const [modal, setModal] = useState<
-    'noModal' | 'caseSubmittedModal' | 'caseSentForConfirmationModal'
+    | 'noModal'
+    | 'indictmentSubmittedModal'
+    | 'indictmentSentForConfirmationModal'
+    | 'indictmentDeniedModal'
   >('noModal')
-  const [appealConfirmationDecision, setAppealConfirmationDecision] = useState<
-    'confirmAppeal' | 'denyAppeal'
-  >()
+  const [indictmentConfirmationRequest, setIndictmentConfirmationRequest] =
+    useState<'confirmIndictment' | 'denyIndictment'>()
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
@@ -57,12 +60,16 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
     if (isNewIndictment) {
       transitionType = CaseTransition.ASK_FOR_CONFIRMATION
-      modalType = 'caseSentForConfirmationModal'
+      modalType = 'indictmentSentForConfirmationModal'
     } else if (user?.canConfirmAppeal) {
-      transitionType = CaseTransition.SUBMIT
-      modalType = 'caseSubmittedModal'
+      if (indictmentConfirmationRequest === 'confirmIndictment') {
+        transitionType = CaseTransition.SUBMIT
+        modalType = 'indictmentSubmittedModal'
+      } else if (indictmentConfirmationRequest === 'denyIndictment') {
+        modalType = 'indictmentDeniedModal'
+      }
     } else if (workingCase.state === CaseState.WAITING_FOR_CONFIRMATION) {
-      modalType = 'caseSentForConfirmationModal'
+      modalType = 'indictmentSentForConfirmationModal'
     }
 
     if (transitionType) {
@@ -112,30 +119,36 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         {user?.canConfirmAppeal && (
           <Box marginBottom={10}>
             <SectionHeading
-              title={formatMessage(strings.overview.appealConfirmationTitle)}
+              title={formatMessage(
+                strings.overview.indictmentConfirmationTitle,
+              )}
               required
             />
             <BlueBox>
               <div className={styles.gridRowEqual}>
                 <RadioButton
                   large
-                  name="appealConfirmationDecision"
-                  id="confirmAppeal"
+                  name="indictmentConfirmationRequest"
+                  id="confirmIndictment"
                   backgroundColor="white"
-                  label={formatMessage(strings.overview.confirmAppeal)}
-                  checked={appealConfirmationDecision === 'confirmAppeal'}
+                  label={formatMessage(strings.overview.confirmIndictment)}
+                  checked={
+                    indictmentConfirmationRequest === 'confirmIndictment'
+                  }
                   onChange={() =>
-                    setAppealConfirmationDecision('confirmAppeal')
+                    setIndictmentConfirmationRequest('confirmIndictment')
                   }
                 />
                 <RadioButton
                   large
-                  name="appealConfirmationDecision"
-                  id="denyAppeal"
+                  name="indictmentConfirmationRequest"
+                  id="denyIndictment"
                   backgroundColor="white"
-                  label={formatMessage(strings.overview.denyAppeal)}
-                  checked={appealConfirmationDecision === 'denyAppeal'}
-                  onChange={() => setAppealConfirmationDecision('denyAppeal')}
+                  label={formatMessage(strings.overview.denyIndictment)}
+                  checked={indictmentConfirmationRequest === 'denyIndictment'}
+                  onChange={() =>
+                    setIndictmentConfirmationRequest('denyIndictment')
+                  }
                 />
               </div>
             </BlueBox>
@@ -160,15 +173,17 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
             caseHasBeenReceivedByCourt
-              ? formatMessage(strings.overview.caseSendToCourt)
+              ? formatMessage(strings.overview.indictmentSentToCourt)
               : undefined
           }
           onNextButtonClick={handleNextButtonClick}
-          nextIsDisabled={user?.canConfirmAppeal && !appealConfirmationDecision}
+          nextIsDisabled={
+            user?.canConfirmAppeal && !indictmentConfirmationRequest
+          }
         />
       </FormContentContainer>
       <AnimatePresence>
-        {modal === 'caseSubmittedModal' ? (
+        {modal === 'indictmentSubmittedModal' ? (
           <Modal
             title={formatMessage(strings.overview.modalHeading)}
             onClose={() => router.push(constants.CASES_ROUTE)}
@@ -177,15 +192,26 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             }}
             primaryButtonText={formatMessage(core.closeModal)}
           />
-        ) : modal === 'caseSentForConfirmationModal' ? (
+        ) : modal === 'indictmentSentForConfirmationModal' ? (
           <Modal
-            title={formatMessage(strings.overview.caseSentForConfirmation)}
-            text={formatMessage(strings.overview.caseSentForConfirmationText)}
+            title={formatMessage(
+              strings.overview.indictmentSentForConfirmation,
+            )}
+            text={formatMessage(
+              strings.overview.indictmentSentForConfirmationText,
+            )}
             onClose={() => router.push(constants.CASES_ROUTE)}
             onPrimaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
             primaryButtonText={formatMessage(core.closeModal)}
+          />
+        ) : modal === 'indictmentDeniedModal' ? (
+          <DenyIndictmentCaseModal
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            onClose={() => setModal('noModal')}
+            onComplete={() => router.push(constants.CASES_ROUTE)}
           />
         ) : null}
       </AnimatePresence>

@@ -24,20 +24,20 @@ export const overview = {
     description:
       'Notaður sem titill á "brot" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
   }),
-  appealConfirmationTitle: defineMessage({
-    id: 'judicial.system.indictments:overview.appeal_confirmation_title',
+  indictmentConfirmationTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_confirmation_title',
     defaultMessage: 'Afstaða staðfestingaraðila til ákæru',
     description:
       'Notaður sem titill á "Afstaða staðfestingaraðila til ákæru" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
   }),
-  confirmAppeal: defineMessage({
-    id: 'judicial.system.indictments:overview.confirm_appeal',
+  confirmIndictment: defineMessage({
+    id: 'judicial.system.indictments:overview.confirm_indictment',
     defaultMessage: 'Staðfesta ákæru og senda á dómstól',
     description:
       'Notaður sem texti í valmöguleika um að staðfesta ákæru á yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
   }),
-  denyAppeal: defineMessage({
-    id: 'judicial.system.indictments:overview.deny_appeal',
+  denyIndictment: defineMessage({
+    id: 'judicial.system.indictments:overview.deny_indictment',
     defaultMessage: 'Hafna ákæru og endursenda til ákæranda',
     description:
       'Notaður sem texti í valmöguleika um að hafna ákæru á yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
@@ -53,20 +53,20 @@ export const overview = {
     defaultMessage: 'Ákæra hefur verið send á dómstól',
     description: 'Titill í modal glugga á Yfirlit ákæru skefi í ákærum.',
   }),
-  caseSendToCourt: defineMessage({
-    id: 'judicial.system.indictments:overview.case_send_to_court',
+  indictmentSentToCourt: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_sent_to_court',
     defaultMessage: 'Ákæra hefur verið send dómstól',
     description:
       'Texti í info boxi þegar ákæra hefur verið send á Yfirlit ákæru skefi í ákærum.',
   }),
-  caseSentForConfirmation: defineMessage({
-    id: 'judicial.system.indictments:overview.case_sent_for_confirmation',
+  indictmentSentForConfirmation: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_sent_for_confirmation',
     defaultMessage: 'Ákæra hefur verið send til staðfestingar',
     description:
       'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
   }),
-  caseSentForConfirmationText: defineMessage({
-    id: 'judicial.system.indictments:overview.case_sent_for_confirmation',
+  indictmentSentForConfirmationText: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_sent_for_confirmation',
     defaultMessage: 'Að staðfestingu lokinni sendist ákæran á héraðsdómstól',
     description:
       'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
