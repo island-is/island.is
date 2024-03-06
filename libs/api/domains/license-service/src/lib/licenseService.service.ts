@@ -17,7 +17,6 @@ import {
 import { Cache as CacheManager } from 'cache-manager'
 import { LicenseType } from '@island.is/shared/constants'
 
-import pick from 'lodash/pick'
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
@@ -53,6 +52,7 @@ export type GetGenericLicenseOptions = {
 }
 
 const { randomUUID } = new ShortUniqueId({ length: 10 })
+const BARCODE_EXPIRE_TIME_IN_SEC = 60
 
 @Injectable()
 export class LicenseServiceService {
@@ -507,7 +507,7 @@ export class LicenseServiceService {
         t: genericUserLicense.license.type,
         c: code,
       },
-      { expiresIn: '1m' },
+      { expiresIn: BARCODE_EXPIRE_TIME_IN_SEC },
     )
 
     // Store license data in cache so that we can fetch data quickly in the verify resolver method
@@ -518,7 +518,7 @@ export class LicenseServiceService {
         licenseType,
         extraData,
       },
-      60 * 1000,
+      BARCODE_EXPIRE_TIME_IN_SEC * 1000,
     )
 
     const [token] = await Promise.all([createTokenPromise, redisPromise])
