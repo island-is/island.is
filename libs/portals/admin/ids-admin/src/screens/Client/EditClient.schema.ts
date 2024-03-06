@@ -170,6 +170,7 @@ export const schema = {
       allowOfflineAccess: booleanCheckbox,
       supportTokenExchange: booleanCheckbox,
       requireConsent: booleanCheckbox,
+      singleSession: booleanCheckbox,
       accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {

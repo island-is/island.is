@@ -23,7 +23,7 @@ import {
 } from './pdfHelpers'
 
 // Credit: https://stackoverflow.com/a/41358305
-function roman(num: number) {
+const roman = (num: number) => {
   const roman: { [key: string]: number } = {
     M: 1000,
     CM: 900,
