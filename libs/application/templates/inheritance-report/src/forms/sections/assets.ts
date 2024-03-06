@@ -222,6 +222,10 @@ export const assets = buildSection({
               id: 'assets.guns.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'modifiers.guns.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -277,6 +281,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.bankAccounts.total',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'modifiers.bankAccounts.hasModified',
               title: '',
             }),
             buildCustomField(

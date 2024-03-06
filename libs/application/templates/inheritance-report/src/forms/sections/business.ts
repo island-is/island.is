@@ -36,6 +36,10 @@ export const business = buildSection({
               id: 'business.businessAssets.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'modifiers.assetsInBusiness.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',

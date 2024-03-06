@@ -142,7 +142,6 @@ export const expandAnswers = (
             share: realEstate.share ?? '0',
           }
         }),
-        hasModified: answers.assets.realEstate?.hasModified ?? false,
         total: answers.assets.realEstate?.total ?? 0,
       },
       stocks: {
@@ -165,7 +164,6 @@ export const expandAnswers = (
             propertyValuation: vehicle.propertyValuation ?? '',
           }
         }),
-        hasModified: answers.assets.vehicles?.hasModified ?? false,
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
@@ -173,8 +171,8 @@ export const expandAnswers = (
       businessAssets: {
         data: (answers.business.businessAssets?.data ?? []).map((asset) => {
           return {
-            businessAsset: asset.businessAsset ?? '',
-            businessAssetValue: asset.businessAssetValue ?? 0,
+            description: asset.description ?? '',
+            propertyValuation: asset.propertyValuation ?? 0,
           }
         }),
         total: answers.business.businessAssets?.total ?? 0,

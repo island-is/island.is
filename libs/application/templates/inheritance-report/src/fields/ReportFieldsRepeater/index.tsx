@@ -192,13 +192,13 @@ export const ReportFieldsRepeater: FC<
         : []
 
     if (
-      (!(application?.answers as any)?.assets?.realEstate?.hasModified ||
-        props.fromExternalData !== 'assets') &&
-      fields.length === 0 &&
-      extData.length
+      extData.length &&
+      !(application?.answers as any)?.modifiers?.[props?.fromExternalData ?? '']
+        ?.hasModified &&
+      fields.length === 0
     ) {
       replace(extData)
-      setValue('assets.realEstate.hasModified', true)
+      setValue(`modifiers.${props?.fromExternalData}.hasModified`, true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

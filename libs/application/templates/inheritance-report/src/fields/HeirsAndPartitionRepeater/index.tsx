@@ -213,13 +213,18 @@ export const HeirsAndPartitionRepeater: FC<
   const [total, setTotal] = useState(0)
 
   useEffect(() => {
-    if (fields.length === 0 && estateData?.inheritanceReportInfo?.heirs) {
+    if (
+      fields.length === 0 &&
+      estateData?.inheritanceReportInfo?.heirs &&
+      !(application.answers as any).heirs.hasModified
+    ) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
       // despite checking on the length of the fields
       // so now using "replace" instead, for the initial setup
       replace(estateData.inheritanceReportInfo?.heirs)
+      setValue('heirs.hasModified', true)
     }
-  }, [estateData?.inheritanceReportInfo?.heirs, fields.length, replace])
+  }, [])
 
   return (
     <Box>

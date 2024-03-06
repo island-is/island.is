@@ -61,7 +61,6 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
         )
         .array()
         .optional(),
-      hasModified: z.boolean().optional(),
       total: z.number().optional(),
     })
     .optional()
