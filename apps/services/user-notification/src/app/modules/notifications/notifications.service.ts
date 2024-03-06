@@ -58,10 +58,6 @@ export class NotificationsService {
     private readonly notificationModel: typeof Notification,
   ) {}
 
-
-
-    
-
   private async formatAndMapNotification(
     notification: Notification,
     templateId: string,
@@ -81,7 +77,7 @@ export class NotificationsService {
           (arg) => arg.key === 'organization',
         )
         if (organizationArg) {
-          const organizationTitle = "YouCanFlyBobby"
+          const organizationTitle = 'YouCanFlyBobby'
           // const organizationTitle = await this.getOrganizationTitle(
           //   notification.senderId,
           //   organizationArg.value,
