@@ -1,43 +1,44 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
   forwardRef,
   ReactElement,
+  useCallback,
+  useEffect,
   useReducer,
+  useRef,
+  useState,
 } from 'react'
-import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
+import Downshift from 'downshift'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
-import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+
 import {
   AsyncSearchInput,
+  AsyncSearchInputProps,
   AsyncSearchSizes,
   Box,
-  Text,
-  Stack,
   Link,
-  AsyncSearchInputProps,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
-import {
-  GetSearchResultsQuery,
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  Article,
-  SubArticle,
-  SearchableContentTypes,
-  AnchorPage,
-  News,
-  OrganizationSubpage,
-  LifeEventPage,
-} from '@island.is/web/graphql/schema'
-
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
+import { Locale } from '@island.is/shared/types'
+import {
+  AnchorPage,
+  Article,
+  ContentLanguage,
+  GetSearchResultsQuery,
+  LifeEventPage,
+  News,
+  OrganizationSubpage,
+  QuerySearchResultsArgs,
+  SearchableContentTypes,
+  SearchableTags,
+  SubArticle,
+} from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
 
 import * as styles from './SearchInput.css'
@@ -90,10 +91,11 @@ const useSearch = (
   locale: Locale,
   term?: string,
   autocomplete?: boolean,
+  organization?: string,
 ): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, initialSearchState)
   const client = useApolloClient()
-  const timer = useRef(null)
+  const timer = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (!autocomplete) {
@@ -110,52 +112,52 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-    const thisTimerId =
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      (timer.current = setTimeout(async () => {
-        client
-          .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
-            query: GET_SEARCH_RESULTS_QUERY,
-            variables: {
-              query: {
-                queryString: term?.trim() ?? '',
-                language: locale as ContentLanguage,
-                types: [
-                  // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
-                  SearchableContentTypes['WebArticle'],
-                  SearchableContentTypes['WebSubArticle'],
-                  SearchableContentTypes['WebProjectPage'],
-                  SearchableContentTypes['WebOrganizationPage'],
-                  SearchableContentTypes['WebOrganizationSubpage'],
-                  SearchableContentTypes['WebDigitalIcelandService'],
-                  SearchableContentTypes['WebDigitalIcelandCommunityPage'],
-                  SearchableContentTypes['WebManual'],
-                ],
-                highlightResults: true,
-                useQuery: 'suggestions',
-              },
+    const thisTimerId = (timer.current = setTimeout(async () => {
+      client
+        .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
+          query: GET_SEARCH_RESULTS_QUERY,
+          variables: {
+            query: {
+              queryString: term?.trim() ?? '',
+              language: locale as ContentLanguage,
+              types: [
+                // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
+                SearchableContentTypes['WebArticle'],
+                SearchableContentTypes['WebSubArticle'],
+                SearchableContentTypes['WebProjectPage'],
+                SearchableContentTypes['WebOrganizationPage'],
+                SearchableContentTypes['WebOrganizationSubpage'],
+                SearchableContentTypes['WebDigitalIcelandService'],
+                SearchableContentTypes['WebDigitalIcelandCommunityPage'],
+                SearchableContentTypes['WebManual'],
+              ],
+              highlightResults: true,
+              useQuery: 'suggestions',
+              tags: organization
+                ? [{ key: organization, type: SearchableTags.Organization }]
+                : undefined,
             },
-          })
-          .then(({ data: { searchResults: results } }) => {
-            dispatch({
-              type: 'searchResults',
-              results,
-            })
-          })
-
-        // the api only completes single terms get only single terms
-        if (term) {
-          const indexOfLastSpace = term.lastIndexOf(' ')
-          const hasSpace = indexOfLastSpace !== -1
-          const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+          },
+        })
+        .then(({ data: { searchResults: results } }) => {
           dispatch({
-            type: 'searchString',
-            term,
-            prefix,
+            type: 'searchResults',
+            results,
           })
-        }
-      }, DEBOUNCE_TIMER))
+        })
+
+      // the api only completes single terms get only single terms
+      if (term) {
+        const indexOfLastSpace = term.lastIndexOf(' ')
+        const hasSpace = indexOfLastSpace !== -1
+        const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+        dispatch({
+          type: 'searchString',
+          term,
+          prefix,
+        })
+      }
+    }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -169,7 +171,11 @@ type SubmitType = {
   string: string
 }
 
-const useSubmit = (locale: Locale, onRouting?: () => void) => {
+const useSubmit = (
+  locale: Locale,
+  onRouting?: () => void,
+  organization?: string,
+) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -181,6 +187,10 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
 
       if (Router.query.referencedBy) {
         query.referencedBy = Router.query.referencedBy
+      }
+
+      if (organization) {
+        query.organization = organization
       }
 
       Router.push({
@@ -217,6 +227,7 @@ interface SearchInputProps {
   onRouting?: () => void
   skipContext?: boolean
   quickContentLabel?: string
+  organization?: string
 }
 
 export const SearchInput = forwardRef<
@@ -239,13 +250,14 @@ export const SearchInput = forwardRef<
       skipContext,
       quickContentLabel,
       dataTestId,
+      organization,
     },
     ref,
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
-    const search = useSearch(locale, searchTerm, autocomplete)
+    const search = useSearch(locale, searchTerm, autocomplete, organization)
 
-    const onSubmit = useSubmit(locale)
+    const onSubmit = useSubmit(locale, undefined, organization)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
