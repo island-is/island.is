@@ -122,7 +122,7 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
-import { CmsModule, PowerBiConfig } from '@island.is/cms'
+import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
@@ -156,6 +156,9 @@ import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectua
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
+import { FormSystemClientConfig } from '@island.is/clients/form-system'
+import { FormSystemModule } from '@island.is/api/domains/form-system'
+
 
 const environment = getConfig
 
@@ -302,6 +305,7 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
+    FormSystemModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -373,8 +377,9 @@ const environment = getConfig
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
+        FormSystemClientConfig,
       ],
     }),
   ],
 })
-export class AppModule {}
+export class AppModule { }

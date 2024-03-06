@@ -35,4 +35,4 @@ import { StepsResolver } from './steps/steps.resolver'
     FormSystemClientModule
   ]
 })
-export class ApiDomainsFormSystemModule { }
+export class FormSystemModule { }

@@ -10,7 +10,7 @@ export const FormSystemClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      basePath: env.required('FORM_SYSTEM_API_BASE_PATH', 'http://localhost:3333/api'),
+      basePath: env.required('FORM_SYSTEM_API_BASE_PATH', 'http://localhost:4200'),
     }
   }
 })

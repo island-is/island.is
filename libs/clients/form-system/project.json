@@ -48,5 +48,8 @@
     }
   },
   "schema": "libs/client/form-system/gen/fetch/api.graphql",
-  "tags": []
+  "tags": [
+    "lib:client",
+    "scope:client"
+  ]
 }

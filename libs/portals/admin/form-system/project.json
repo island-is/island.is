@@ -1,7 +1,7 @@
 {
-  "name": "api/domains/form-system",
+  "name": "form-system",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/domains/form-system/src",
+  "sourceRoot": "libs/portals/admin/form-system/src",
   "projectType": "library",
   "targets": {
     "lint": {
@@ -11,7 +11,7 @@
       ],
       "options": {
         "lintFilePatterns": [
-          "libs/api/domains/form-system/**/*.ts"
+          "libs/portals/admin/form-system/**/*.ts"
         ]
       }
     },
@@ -21,7 +21,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/form-system/jest.config.ts",
+        "jestConfig": "libs/portals/admin/form-system/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -30,10 +30,14 @@
           "codeCoverage": true
         }
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/form-system/src/**/*.graphql.ts",
+        "command": "graphql-codegen --config libs/portals/admin/form-system/codegen.yml"
+      }
     }
   },
-  "tags": [
-    "lib:api",
-    "scope:api"
-  ]
+  "tags": []
 }
