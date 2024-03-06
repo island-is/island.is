@@ -1,12 +1,22 @@
 import { useRef, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import isEqual from 'lodash/isEqual'
 
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Stack,
+  Text,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 import { formatCurrency } from '@island.is/web/utils/currency'
+
+import * as styles from './GrindavikResidentialPropertyPurchaseCalculator.css'
 
 interface ResultState {
   thorkatlaPayment: number
@@ -17,9 +27,7 @@ interface ResultState {
 
 interface InputState {
   fireInsuranceValue: number
-  loan1: number
-  loan2: number
-  loan3: number
+  loans: { value: number | undefined }[]
 }
 
 interface GrindavikResidentialPropertyPurchaseCalculatorProps {
@@ -47,15 +55,13 @@ const calculateResultState = (
   thorkatlaPurchasePrice: number,
 ) => {
   let thorkatlaPayment = thorkatlaPurchasePrice
-  if (inputState.loan1) {
-    thorkatlaPayment -= Number(inputState.loan1)
+
+  for (const loan of inputState.loans) {
+    if (loan.value) {
+      thorkatlaPayment -= Number(loan.value)
+    }
   }
-  if (inputState.loan2) {
-    thorkatlaPayment -= Number(inputState.loan2)
-  }
-  if (inputState.loan3) {
-    thorkatlaPayment -= Number(inputState.loan3)
-  }
+
   const closingPayment = 0.05 * thorkatlaPurchasePrice
 
   const purchaseAgreementPayment = thorkatlaPayment - closingPayment
@@ -68,23 +74,41 @@ const calculateResultState = (
   }
 }
 
+const focusLoanInput = (index: number, delay = 100) => {
+  setTimeout(() => {
+    const appendedElement = document
+      .getElementsByName(`loans[${index}].value`)
+      .item(0)
+    if (appendedElement) {
+      appendedElement.focus()
+    }
+  }, delay)
+}
+
 const GrindavikResidentialPropertyPurchaseCalculator = ({
   slice,
 }: GrindavikResidentialPropertyPurchaseCalculatorProps) => {
   const n = useNamespace(slice.json ?? {})
-  const methods = useForm<InputState>()
+  const methods = useForm<InputState>({
+    defaultValues: { loans: [{ value: undefined }] },
+  })
+  const loansFieldArray = useFieldArray({
+    name: 'loans',
+    control: methods.control,
+  })
+  const { activeLocale } = useI18n()
   const resultContainerRef = useRef<HTMLDivElement>(null)
 
   const fireInsuranceValue = methods.watch('fireInsuranceValue')
-  const loan1 = methods.watch('loan1')
-  const loan2 = methods.watch('loan2')
-  const loan3 = methods.watch('loan3')
+
+  const loans = useWatch({
+    control: methods.control,
+    name: 'loans',
+  })
 
   const inputState: InputState = {
     fireInsuranceValue,
-    loan1,
-    loan2,
-    loan3,
+    loans,
   }
 
   const [resultState, setResultState] = useState<ResultState | null>(null)
@@ -93,7 +117,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
 
   const onSubmit = (inputState: InputState) => {
     setTimeout(() => {
-      // Only scroll results container into view it isn't already in view
+      // Only scroll results container into view if it isn't already in view
       if (!isElementInView(resultContainerRef.current)) {
         resultContainerRef.current?.scrollIntoView({
           behavior: 'smooth',
@@ -113,6 +137,23 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
   const canCalculate = !isEqual(resultState?.inputState, inputState)
 
   const maxLength = (slice.configJson?.maxLength ?? 11) + currencySuffix.length
+
+  const thorkatlaPaymentDisclaimer = n(
+    'thorkatlaPaymentDisclaimer',
+    'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
+  )
+  const purchaseAgreementPaymentDisclaimer = n(
+    'purchaseAgreementPaymentDisclaimer',
+    '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
+  )
+  const closingResultDisclaimer = n(
+    'closingResultDisclaimer',
+    '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
+  )
+  const loanDisclaimer = n(
+    'loanDisclaimer',
+    'Samtal er enn í gangi við lífeyrissjóði um þátttöku þeirra í úrræðinu. Vonast er til þess að niðurstaða liggi fyrir fljótlega',
+  )
 
   return (
     <Stack space={5}>
@@ -158,42 +199,83 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
               <Stack space={3}>
                 <Text variant="h4">{n('loanHeading', 'Áhvílandi lán')}</Text>
                 <Stack space={2}>
-                  <InputController
-                    id="loan1"
-                    name="loan1"
-                    label={n('loan1Label', 'Lán 1')}
-                    currency={true}
-                    maxLength={maxLength}
-                    placeholder={n('currencyInputPlaceholder', 'kr.')}
-                    type="number"
-                    size="sm"
-                    inputMode="numeric"
-                    suffix={currencySuffix}
-                  />
-                  <InputController
-                    id="loan2"
-                    name="loan2"
-                    label={n('loan2Label', 'Lán 2')}
-                    currency={true}
-                    maxLength={maxLength}
-                    placeholder={n('currencyInputPlaceholder', 'kr.')}
-                    type="number"
-                    size="sm"
-                    inputMode="numeric"
-                    suffix={currencySuffix}
-                  />
-                  <InputController
-                    id="loan3"
-                    name="loan3"
-                    label={n('loan3Label', 'Lán 3')}
-                    currency={true}
-                    maxLength={maxLength}
-                    placeholder={n('currencyInputPlaceholder', 'kr.')}
-                    type="number"
-                    size="sm"
-                    inputMode="numeric"
-                    suffix={currencySuffix}
-                  />
+                  {loansFieldArray.fields.map((field, index) => {
+                    const name = `loans[${index}].value`
+                    return (
+                      <Box
+                        width="full"
+                        display="flex"
+                        flexDirection="row"
+                        flexWrap="nowrap"
+                        alignItems="center"
+                        columnGap={2}
+                      >
+                        <Box className={styles.fullWidth}>
+                          <InputController
+                            key={field.id}
+                            id={name}
+                            name={name}
+                            label={`${n('loanLabel', 'Lán')} ${index + 1}`}
+                            currency={true}
+                            maxLength={maxLength}
+                            placeholder={n('currencyInputPlaceholder', 'kr.')}
+                            type="number"
+                            size="sm"
+                            inputMode="numeric"
+                            suffix={currencySuffix}
+                          />
+                        </Box>
+                        <Box
+                          role="button"
+                          userSelect="none"
+                          onKeyDown={(ev) => {
+                            if (ev.key === ' ' || ev.key === 'Enter') {
+                              loansFieldArray.remove(index)
+                              ev.preventDefault()
+                            }
+                          }}
+                          tabIndex={0}
+                          cursor="pointer"
+                          onClick={() => {
+                            loansFieldArray.remove(index)
+                          }}
+                        >
+                          <VisuallyHidden>
+                            {n(
+                              'removeLoan',
+                              activeLocale === 'is'
+                                ? 'Eyða láni'
+                                : 'Remove loan',
+                            )}
+                          </VisuallyHidden>
+                          <Icon
+                            icon="removeCircle"
+                            type="outline"
+                            color="dark200"
+                          />
+                        </Box>
+                      </Box>
+                    )
+                  })}
+                  <Box display="flex" justifyContent="center">
+                    <Button
+                      disabled={
+                        typeof slice.configJson?.maxLoanCount === 'number' &&
+                        loans.length >= slice.configJson.maxLoanCount
+                      }
+                      onClick={() => {
+                        loansFieldArray.append({
+                          value: undefined,
+                        })
+                        focusLoanInput(loansFieldArray.fields.length)
+                      }}
+                      icon="add"
+                      size="small"
+                      variant="utility"
+                    >
+                      {n('appendLoan', 'Bæta við láni')}
+                    </Button>
+                  </Box>
                 </Stack>
               </Stack>
 
@@ -284,24 +366,16 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
           </Stack>
 
           <Stack space={2}>
-            <Text variant="small">
-              {n(
-                'thorkatlaPaymentDisclaimer',
-                'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'purchaseAgreementPaymentDisclaimer',
-                '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
-              )}
-            </Text>
-            <Text variant="small">
-              {n(
-                'closingResultDisclaimer',
-                '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
-              )}
-            </Text>
+            {thorkatlaPaymentDisclaimer && (
+              <Text variant="small">{thorkatlaPaymentDisclaimer}</Text>
+            )}
+            {purchaseAgreementPaymentDisclaimer && (
+              <Text variant="small">{purchaseAgreementPaymentDisclaimer}</Text>
+            )}
+            {closingResultDisclaimer && (
+              <Text variant="small">{closingResultDisclaimer}</Text>
+            )}
+            {loanDisclaimer && <Text variant="small">{loanDisclaimer}</Text>}
           </Stack>
         </Stack>
       </Box>
