@@ -47,7 +47,7 @@ export type GetGenericLicenseOptions = {
   onlyList?: boolean
 }
 
-const { randomUUID } = new ShortUniqueId({ length: 10 })
+const { randomUUID } = new ShortUniqueId({ length: 16 })
 
 @Injectable()
 export class LicenseServiceService {
