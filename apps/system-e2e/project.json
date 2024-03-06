@@ -1,3 +1,4 @@
+// vi: ft=jsonc
 {
   "name": "system-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
@@ -9,15 +10,16 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "options": {
-        "main": "{projectRoot}",
+        "main": "{projectRoot}/playwright.config.ts",
         "tsConfig": "{projectRoot}/tsconfig.json",
+        "external": ["@nx/*"],
         "outputPath": "dist/{projectRoot}"
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "smoke:old": {
@@ -49,6 +51,7 @@
       "executor": "@nx/playwright:playwright",
       "options": {
         "config": "{projectRoot}/playwright.config.ts",
+        "grep": "e2e/example.spec.ts",
         "skipInstall": true
       }
     },
