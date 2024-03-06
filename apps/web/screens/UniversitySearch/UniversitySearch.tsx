@@ -171,9 +171,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [filteredResults, setFilteredResults] = useState<Array<any>>([])
   const [gridView, setGridView] = useState<boolean>(true)
   const { linkResolver } = useLinkResolver()
-  const [totalPages, setTotalPages] = useState<number>(
-    0,
-  )
+  const [totalPages, setTotalPages] = useState<number>(0)
   const [filters, setFilters] = useState<FilterProps>(
     JSON.parse(JSON.stringify(initialFilters)),
   )
