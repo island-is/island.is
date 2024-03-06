@@ -13,3 +13,8 @@ export type VehiclesCurrentVehicle = {
   hasReceivedSubsidy?: boolean
   vehicleGrantItemCode?: string
 }
+
+export type CurrentVehiclesAndRecords = {
+  totalRecords: number
+  vehicles: VehiclesCurrentVehicle[]
+}
