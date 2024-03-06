@@ -1159,7 +1159,6 @@ describe('getApplicationExternalData', () => {
         },
       },
     })
-
     expect(getApplicationExternalData(application.externalData)).toEqual({
       applicantGenderCode: 'Mock gender code',
       applicantName: 'Mock name',
