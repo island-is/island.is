@@ -10,8 +10,8 @@ import {
 
 export class VerifyLicenseRequest {
   @ApiProperty({ description: 'PDF417 barcode scanner data' })
-  @IsJSON()
-  //Dont really need to verify, the proper service destination shall do that. Just need to check which type to know where to send
+  @IsString()
+  // Don't really need to verify, the proper service destination shall do that. Just need to check which type to know where to send
   readonly barcodeData!: string
   @IsOptional()
   @ApiProperty({ description: 'Optional request id for logging purposes' })

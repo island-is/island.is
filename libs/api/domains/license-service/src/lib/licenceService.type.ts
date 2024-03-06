@@ -243,26 +243,3 @@ export interface GenericLicenseMapper {
     labels?: GenericLicenseLabels,
   ) => Array<GenericUserLicensePayload>
 }
-
-export interface LicenseConfig {
-  barcodeSecretKey: string
-}
-
-/**
- * License token data used to generate a license token
- * The reason for the one letter fields is to keep the token as small as possible, since it will be used to generate barcodes
- */
-export type LicenseTokenData = {
-  /**
-   * Version
-   */
-  v: string
-  /**
-   * License type UUID
-   */
-  t: string
-  /**
-   * Code (Reference to redis record with license data)
-   */
-  c: string
-}

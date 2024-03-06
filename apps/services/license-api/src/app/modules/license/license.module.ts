@@ -1,3 +1,7 @@
+import {
+  LicenseServiceCacheProvider,
+  BarcodeService,
+} from '@island.is/api/domains/license-service'
 import { Module } from '@nestjs/common'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { LicenseUpdateClientModule } from '@island.is/clients/license-client'
@@ -15,6 +19,8 @@ import { LicenseService } from './license.service'
       useValue: logger,
     },
     LicenseService,
+    BarcodeService,
+    LicenseServiceCacheProvider,
   ],
 })
 export class LicenseModule {}

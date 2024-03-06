@@ -350,6 +350,8 @@ export class DrivingLicenseClient
       this.logger.warn(errorMsg, { category: LOG_CATEGORY })
 
       throw new BadRequestException(res.error.message)
+    } else if (!res.data) {
+      throw new BadRequestException('No license found')
     }
 
     return res.data

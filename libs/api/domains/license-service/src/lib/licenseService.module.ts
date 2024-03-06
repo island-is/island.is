@@ -7,20 +7,20 @@ import { LicenseServiceService } from './licenseService.service'
 import { LicenseMapperModule } from './modules/licenseMapper.module'
 
 import {
-  CacheProvider,
   LicenseMapperProvider,
+  LicenseServiceCacheProvider,
   LoggerProvider,
-  TokenServiceProvider,
 } from './providers'
+import { BarcodeService } from './services/barcode.service'
 
 @Module({
   imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
   providers: [
     LicenseServiceResolver,
     LicenseServiceService,
-    TokenServiceProvider,
+    BarcodeService,
     LoggerProvider,
-    CacheProvider,
+    LicenseServiceCacheProvider,
     LicenseMapperProvider,
   ],
   exports: [LicenseServiceService],

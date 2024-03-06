@@ -32,7 +32,7 @@ export interface LicenseResults {
 export interface VerifyExtraDataResult {
   [LicenseType.AdrLicense]: void
   [LicenseType.DisabilityLicense]: void
-  [LicenseType.DriversLicense]: DriverLicenseDto | null
+  [LicenseType.DriversLicense]: DriverLicenseDto
   [LicenseType.Ehic]: void
   [LicenseType.FirearmLicense]: void
   [LicenseType.HuntingLicense]: void
@@ -163,5 +163,4 @@ export interface LicenseClient<Type extends LicenseType> {
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'
 export const LICENSE_UPDATE_CLIENT_FACTORY = 'license-client-factory'
-
 export const CONFIG_PROVIDER = 'config_provider'

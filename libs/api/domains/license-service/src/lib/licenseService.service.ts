@@ -15,7 +15,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { Cache as CacheManager } from 'cache-manager'
 
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
@@ -29,7 +28,6 @@ import {
   GenericUserLicenseFetchStatus,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
-  LicenseTokenData,
   LicenseTypeKey,
   PkPassVerification,
 } from './licenceService.type'
@@ -37,10 +35,8 @@ import {
   AVAILABLE_LICENSES,
   DEFAULT_LICENSE_ID,
   LICENSE_MAPPER_FACTORY,
-  LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
-  TOKEN_SERVICE_PROVIDER,
 } from './licenseService.constants'
-import { TokenService } from './services/token.service'
+import { BarcodeService } from './services/barcode.service'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -52,16 +48,12 @@ export type GetGenericLicenseOptions = {
 }
 
 const { randomUUID } = new ShortUniqueId({ length: 10 })
-const BARCODE_EXPIRE_TIME_IN_SEC = 60
 
 @Injectable()
 export class LicenseServiceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(LICENSE_SERVICE_CACHE_MANAGER_PROVIDER)
-    private readonly cacheManager: CacheManager,
-    @Inject(TOKEN_SERVICE_PROVIDER)
-    private readonly tokenService: TokenService<LicenseTokenData>,
+    private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
     private readonly cmsContentfulService: CmsContentfulService,
 
@@ -495,28 +487,19 @@ export class LicenseServiceService {
       }
     }
 
-    // Create a token with the version, license type and a server reference (Redis key) code
-    const createTokenPromise = this.tokenService.createToken(
-      {
+    const [token] = await Promise.all([
+      // Create a token with the version and a server reference (Redis key) code
+      this.barcodeService.createToken({
         v: '2',
-        t: genericUserLicense.license.type,
         c: code,
-      },
-      { expiresIn: BARCODE_EXPIRE_TIME_IN_SEC },
-    )
-
-    // Store license data in cache so that we can fetch data quickly in the verify resolver method
-    const redisPromise = this.cacheManager.set(
-      code,
-      {
+      }),
+      // Store license data in cache so that we can fetch data quickly when verifying the barcode
+      this.barcodeService.setCache(code, {
         nationalId: user.nationalId,
         licenseType,
         extraData,
-      },
-      BARCODE_EXPIRE_TIME_IN_SEC * 1000,
-    )
-
-    const [token] = await Promise.all([createTokenPromise, redisPromise])
+      }),
+    ])
 
     return token
   }

@@ -4,7 +4,7 @@ import { FactoryProvider } from '@nestjs/common'
 import { LicenseServiceConfig } from '../licenseService.config'
 import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from '../licenseService.constants'
 
-export const CacheProvider: FactoryProvider = {
+export const LicenseServiceCacheProvider: FactoryProvider = {
   provide: LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
   scope: LazyDuringDevScope,
   useFactory: (licenseServiceConfig: ConfigType<typeof LicenseServiceConfig>) =>

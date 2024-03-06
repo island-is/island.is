@@ -1,22 +1,23 @@
-import { Module } from '@nestjs/common'
-
-import { AuditModule } from '@island.is/nest/audit'
-
-import { environment } from '../environments'
-import { LicenseModule } from './modules/license/license.module'
-import { LoggingModule } from '@island.is/logging'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { LicenseServiceConfig } from '@island.is/api/domains/license-service'
+import { AuthModule } from '@island.is/auth-nest-tools'
+import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { OpenFirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
-import { ProblemModule } from '@island.is/nest/problem'
 import {
   AdrDigitalLicenseClientConfig,
   DisabilityDigitalLicenseClientConfig,
+  DrivingDigitalLicenseClientConfig,
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
-  DrivingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
-import { AuthModule } from '@island.is/auth-nest-tools'
-import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+import { LoggingModule } from '@island.is/logging'
+
+import { AuditModule } from '@island.is/nest/audit'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { ProblemModule } from '@island.is/nest/problem'
+import { Module } from '@nestjs/common'
+
+import { environment } from '../environments'
+import { LicenseModule } from './modules/license/license.module'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
         DrivingDigitalLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
+        LicenseServiceConfig,
       ],
     }),
     LicenseModule,
