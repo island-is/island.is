@@ -313,14 +313,13 @@ export class LicenseService {
         },
       }
     } catch (error) {
-      const message = 'Failed to verify barcode token'
-      this.logger.error(message, {
+      this.logger.error(error.message, {
         category: LOG_CATEGORY,
         requestId,
         error,
       })
 
-      throw new BadRequestException(message)
+      throw new BadRequestException(error.message)
     }
   }
 

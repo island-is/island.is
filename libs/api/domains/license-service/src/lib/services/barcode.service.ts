@@ -1,6 +1,6 @@
 import { LicenseVerifyExtraDataResult } from '@island.is/clients/license-client'
-import { LicenseType } from '@island.is/shared/constants'
 import { ConfigType } from '@island.is/nest/config'
+import { LicenseType } from '@island.is/shared/constants'
 import { Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager/dist/caching'
 import { sign, SignOptions, verify } from 'jsonwebtoken'
@@ -43,6 +43,12 @@ export class BarcodeService {
     return new Promise((resolve, reject) =>
       verify(token, this.config.barcodeSecretKey, (err, decoded) => {
         if (err) {
+          if (err.name === 'TokenExpiredError') {
+            throw new Error('Token expired')
+          } else if (err.name === 'JsonWebTokenError') {
+            throw new Error('Token malformed')
+          }
+
           return reject(err)
         }
 
