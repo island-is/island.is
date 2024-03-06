@@ -106,12 +106,14 @@ export class LicenseServiceResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
+    const pkpassUrl = await this.licenseServiceService.generatePkPassUrl(
+      user,
+      locale,
+      input.licenseType,
+    )
+
     return {
-      pkpassUrl: await this.licenseServiceService.generatePkPassUrl(
-        user,
-        locale,
-        input.licenseType,
-      ),
+      pkpassUrl,
     }
   }
 
@@ -123,12 +125,14 @@ export class LicenseServiceResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
+    const pkpassQRCode = await this.licenseServiceService.generatePkPassQRCode(
+      user,
+      locale,
+      input.licenseType,
+    )
+
     return {
-      pkpassQRCode: await this.licenseServiceService.generatePkPassQRCode(
-        user,
-        locale,
-        input.licenseType,
-      ),
+      pkpassQRCode,
     }
   }
 
