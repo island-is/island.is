@@ -923,7 +923,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
                     )
                     .map((item, index) => {
-                      console.log(item)
                       const dataItem =
                         item.item as UniversityGatewayProgramWithStatus
                       const specializedName =
