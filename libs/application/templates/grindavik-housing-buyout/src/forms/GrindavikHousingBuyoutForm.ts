@@ -6,13 +6,14 @@ import {
   buildForm,
   buildKeyValueField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildStaticTableField,
   buildSubmitField,
   buildTableRepeaterField,
   coreMessages,
 } from '@island.is/application/core'
-import { Form, FormModes, YES } from '@island.is/application/types'
+import { Form, FormModes, NO, YES } from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
@@ -406,18 +407,25 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               value: ({ answers }) => {
                 return (
                   answers as GrindavikHousingBuyout
-                ).preemptiveRightWish?.includes(YES)
+                ).userConfirmation?.includes(YES)
                   ? coreMessages.radioYes
                   : coreMessages.radioNo
               },
             }),
+            buildDividerField({}),
 
-            buildCheckboxField({
+            buildRadioField({
               id: 'preemptiveRightWish',
-              title: '',
-              defaultValue: [],
+              title: m.application.overview.checkboxText,
+              width: 'half',
+              required: true,
+              condition: (a) => {
+                console.log(a)
+                return true
+              },
               options: [
-                { label: m.application.overview.checkboxText, value: YES },
+                { label: coreMessages.radioYes, value: YES },
+                { label: coreMessages.radioNo, value: NO },
               ],
             }),
 
