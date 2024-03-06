@@ -75,8 +75,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
 
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
-    const wishesForPreemptiveRights =
-      answers.preemptiveRightWish?.includes(YES) ?? false
+    const wishesForPreemptiveRights = answers.preemptiveRightWish === YES
 
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
