@@ -41,7 +41,7 @@ export const mapProjectSubpage = ({
 }: IProjectSubpage): ProjectSubpage => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  slug: (fields.slug ?? '').trim(),
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],

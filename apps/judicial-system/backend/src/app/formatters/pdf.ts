@@ -14,6 +14,7 @@ interface TextOptions {
   bold?: boolean
   pageLink?: PageLink
   marginTop?: number
+  marginBottom?: number
   maxWidth?: number
   newLine?: boolean
   position?: { x?: number; y?: number }
@@ -221,6 +222,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         bold = false,
         pageLink,
         marginTop,
+        marginBottom,
         maxWidth,
         newLine = true,
         position,
@@ -263,7 +265,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         x,
         y,
         marginTop,
-        undefined,
+        marginBottom,
         pageLink,
         newLine,
       )

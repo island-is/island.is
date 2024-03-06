@@ -14,25 +14,5 @@ export enum NotificationType {
   APPEAL_COMPLETED = 'APPEAL_COMPLETED',
   APPEAL_JUDGES_ASSIGNED = 'APPEAL_JUDGES_ASSIGNED',
   APPEAL_CASE_FILES_UPDATED = 'APPEAL_CASE_FILES_UPDATED',
-}
-
-export interface Recipient {
-  success: boolean
-  address?: string
-}
-
-export interface Notification {
-  id: string
-  created: string
-  caseId: string
-  type: NotificationType
-  recipients: Recipient[]
-}
-
-export interface SendNotification {
-  type: NotificationType
-}
-
-export interface SendNotificationResponse {
-  notificationSent: boolean
+  APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
 }

@@ -20,6 +20,8 @@ import { CriminalRecordProviderService } from './criminal-record/criminal-record
 import { CriminalRecordProviderModule } from './criminal-record/criminal-record.module'
 import { DirectorateOfImmigrationModule } from './directorate-of-immigration/directorate-of-immigration.module'
 import { DirectorateOfImmigrationService } from './directorate-of-immigration/directorate-of-immigration.service'
+import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
+import { HealthInsuranceService } from './health-insurance/health-insurance.service'
 
 export const modules = [
   NationalRegistryModule,
@@ -33,6 +35,7 @@ export const modules = [
   PassportModule,
   CriminalRecordProviderModule,
   DirectorateOfImmigrationModule,
+  HealthInsuranceModule,
 ]
 
 export const services = [
@@ -47,4 +50,5 @@ export const services = [
   PassportService,
   CriminalRecordProviderService,
   DirectorateOfImmigrationService,
+  HealthInsuranceService,
 ]

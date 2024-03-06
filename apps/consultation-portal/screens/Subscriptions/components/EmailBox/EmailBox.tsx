@@ -30,6 +30,7 @@ export const EmailBox = ({
   const LogIn = useLogIn()
   const [userEmail, setUserEmail] = useState('')
   const [inputVal, setInputVal] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   const client = initApollo()
   const [postEmailMutation, { loading: postEmailLoading }] = useMutation(
@@ -44,7 +45,9 @@ export const EmailBox = ({
     if (!getUserEmailLoading) {
       setUserEmail(email)
       setIsVerified(emailVerified)
+      setIsLoading(false)
     }
+    return () => setIsLoading(true)
   }, [getUserEmailLoading])
 
   const onChangeEmail = (e: BaseSyntheticEvent) => {
@@ -76,7 +79,7 @@ export const EmailBox = ({
     setIsVerified(false)
   }
 
-  if (userLoading || getUserEmailLoading) {
+  if (isLoading) {
     return <LoadingDots />
   }
 

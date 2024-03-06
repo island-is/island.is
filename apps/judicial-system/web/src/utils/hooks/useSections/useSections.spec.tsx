@@ -48,6 +48,7 @@ describe('useSections getSections', () => {
     role: UserRole.PROSECUTOR,
     email: faker.internet.email(),
     active: true,
+    canConfirmAppeal: false,
     institution: {
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
@@ -121,11 +122,7 @@ describe('useSections getSections', () => {
       { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: false, name: expect.any(String) },
-      {
-        children: generateSubsteps(4),
-        isActive: false,
-        name: expect.any(String),
-      },
+      { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: true, name: 'Heimvísun' },
     ])
   })

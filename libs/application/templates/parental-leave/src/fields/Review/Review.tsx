@@ -1,12 +1,13 @@
 import { FC } from 'react'
 import get from 'lodash/get'
 import has from 'lodash/has'
-
 import { Application, RecordObject, Field } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
-import { ReviewGroup } from '@island.is/application/ui-components'
-
-import { getSelectedChild } from '../../lib/parentalLeaveUtils'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { ReviewGroup, DataValue } from '@island.is/application/ui-components'
+import {
+  getApplicationAnswers,
+  getSelectedChild,
+} from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
@@ -20,18 +21,16 @@ import {
   PARENTAL_GRANT,
   YES,
   PARENTAL_GRANT_STUDENTS,
+  Languages,
 } from '../../constants'
 import { SummaryRights } from '../Rights/SummaryRights'
-import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { OtherParent } from './review-groups/OtherParent'
-
 import { Payments } from './review-groups/Payments'
 import { PersonalAllowance } from './review-groups/PersonalAllowance'
 import { SpousePersonalAllowance } from './review-groups/SpousePersonalAllowance'
 import { Employment } from './review-groups/Employment'
 import { Periods } from './review-groups/Periods'
-import { PrintButton } from '../PrintButton'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
@@ -50,8 +49,8 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   errors,
 }) => {
   const editable = field.props?.editable ?? false
-  const [{ applicationType, otherParent, employerLastSixMonths }] =
-    useStatefulAnswers(application)
+  const { applicationType, otherParent, employerLastSixMonths, language } =
+    getApplicationAnswers(application.answers)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -80,19 +79,30 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   return (
     <>
       {state === `${States.DRAFT}` && (
-        <Box>
-          <PrintButton />
-          <Box marginBottom={2}>
-            <Text variant="h2">
-              {formatMessage(parentalLeaveFormMessages.confirmation.title)}
-            </Text>
+        <Box display="flex" justifyContent="spaceBetween">
+          <Box>
+            <Box marginBottom={2}>
+              <Text variant="h2">
+                {formatMessage(parentalLeaveFormMessages.confirmation.title)}
+              </Text>
+            </Box>
+            <Box marginBottom={10}>
+              <Text variant="default">
+                {formatMessage(
+                  parentalLeaveFormMessages.confirmation.description,
+                )}
+              </Text>
+            </Box>
           </Box>
-          <Box marginBottom={10}>
-            <Text variant="default">
-              {formatMessage(
-                parentalLeaveFormMessages.confirmation.description,
-              )}
-            </Text>
+          <Box>
+            <Button
+              variant="utility"
+              icon="print"
+              onClick={(e) => {
+                e.preventDefault()
+                window.print()
+              }}
+            />
           </Box>
         </Box>
       )}
@@ -111,6 +121,20 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
         <SummaryRights application={application} />
       </ReviewGroup>
       <Periods {...childProps} />
+      <ReviewGroup
+        isLast={true}
+        isEditable={editable}
+        editAction={() => goToScreen?.('infoSection')}
+      >
+        <DataValue
+          label={formatMessage(parentalLeaveFormMessages.reviewScreen.language)}
+          value={formatMessage(
+            language === Languages.EN
+              ? parentalLeaveFormMessages.applicant.english
+              : parentalLeaveFormMessages.applicant.icelandic,
+          )}
+        />
+      </ReviewGroup>
 
       {/**
        * TODO: Bring back payment calculation info, once we have an api

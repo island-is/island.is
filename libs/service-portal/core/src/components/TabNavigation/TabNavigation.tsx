@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { Box, FocusableBox, Select } from '@island.is/island-ui/core'
+import {
+  Box,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Inline,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
@@ -9,6 +18,8 @@ import { useWindowSize } from 'react-use'
 import { SubTabItem } from './SubTabItem'
 import * as styles from './TabNavigation.css'
 import LinkResolver from '../LinkResolver/LinkResolver'
+import { useOrganization } from '@island.is/service-portal/graphql'
+import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 
 interface Props {
   pathname?: string
@@ -27,6 +38,10 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const navigate = useNavigate()
   const { width } = useWindowSize()
 
+  const { data: organization, loading } = useOrganization(
+    activeItem?.serviceProvider,
+  )
+
   useEffect(() => {
     const activeItem = items.filter((itm) => itm.active)?.[0] ?? undefined
     setActiveItem(activeItem)
@@ -39,6 +54,10 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
     }
   }
 
+  const descriptionText =
+    activeItemChildren?.find((itemChild) => pathname === itemChild.path)
+      ?.description ?? activeItem?.description
+
   const isMobile = width < theme.breakpoints.md
   return (
     <>
@@ -49,8 +68,11 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
             key={index}
             id={item.path}
             justifyContent="center"
+            alignItems="center"
+            padding={1}
             className={cn(styles.tab, {
               [styles.tabSelected]: item.active,
+              [styles.tabNotSelected]: !item.active,
             })}
             href={item.path}
           >
@@ -77,29 +99,69 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
           />
         </Box>
       )}
-      {activeItem && activeItemChildren && activeItemChildren?.length > 1 ? (
-        <Box
-          display="flex"
-          flexDirection="row"
-          marginTop={5}
-          marginBottom={[2, 1, 0]}
-        >
-          {activeItemChildren?.map((itemChild, ii) => (
-            <SubTabItem
-              key={`subnav-${ii}`}
-              href={itemChild.path ?? '/'}
-              onClick={
-                itemChild.path
-                  ? () => tabChangeHandler(itemChild.path)
-                  : undefined
-              }
-              title={formatMessage(itemChild.name)}
-              colorScheme={pathname === itemChild.path ? 'default' : 'light'}
-              marginLeft={ii === 0 ? 0 : 2}
-            />
-          ))}
+      {activeItem && (
+        <Box marginTop={[1, 1, 2, 4, 4]}>
+          <GridContainer>
+            <GridRow>
+              {(!!activeItem.description || !!activeItemChildren?.length) && (
+                <GridColumn span="6/8">
+                  <Box className={styles.description}>
+                    {(activeItemChildren?.length ?? 0) > 1 && (
+                      <Inline>
+                        {activeItemChildren?.map((itemChild, ii) => (
+                          <SubTabItem
+                            key={`subnav-${ii}`}
+                            href={itemChild.path ?? '/'}
+                            onClick={
+                              itemChild.path
+                                ? () => tabChangeHandler(itemChild.path)
+                                : undefined
+                            }
+                            title={formatMessage(itemChild.name)}
+                            isActive={pathname === itemChild.path}
+                            marginLeft={0}
+                          />
+                        ))}
+                      </Inline>
+                    )}
+                    {descriptionText && (
+                      <Box>
+                        <Text marginBottom={4}>
+                          {formatMessage(descriptionText, {
+                            br: (
+                              <>
+                                <br />
+                                <br />
+                              </>
+                            ),
+                          })}
+                        </Text>
+                      </Box>
+                    )}
+                  </Box>
+                </GridColumn>
+              )}
+              {activeItem.displayServiceProviderLogo && !isMobile && (
+                <GridColumn span="1/8" offset="1/8">
+                  {organization?.logo && (
+                    <InstitutionPanel
+                      loading={loading}
+                      linkHref={organization.link ?? ''}
+                      img={organization.logo?.url ?? ''}
+                      tooltipText={
+                        activeItem.serviceProviderTooltip
+                          ? formatMessage(activeItem.serviceProviderTooltip)
+                          : ''
+                      }
+                      imgContainerDisplay={isMobile ? 'block' : 'flex'}
+                    />
+                  )}
+                </GridColumn>
+              )}
+            </GridRow>
+          </GridContainer>
         </Box>
-      ) : null}
+      )}
     </>
   )
 }

@@ -22,6 +22,7 @@ type CardProps = {
   href: string
   checkboxId?: string
   checked?: boolean
+  subHeading?: string
 }
 
 export const ListViewCard = ({
@@ -34,6 +35,7 @@ export const ListViewCard = ({
   heading,
   checked,
   href,
+  subHeading,
 }: CardProps) => {
   return (
     <Box>
@@ -74,36 +76,51 @@ export const ListViewCard = ({
             variant="h4"
             color="blue400"
             truncate={false}
-            title={heading}
-            paddingBottom={3}
+            paddingBottom={subHeading ? 0 : 3}
+            lineHeight="sm"
           >
             {heading}
           </Text>
+          <Box style={{ paddingTop: '4px' }}>
+            <Text
+              variant="eyebrow"
+              color="blue400"
+              truncate={false}
+              title={subHeading}
+              paddingBottom={3}
+              lineHeight="sm"
+            >
+              {subHeading}
+            </Text>
+          </Box>
         </LinkV2>
         {infoItems.map((item) => {
           return (
             <Box
+              key={item.title}
               display="flex"
               flexDirection="row"
               width="full"
               paddingBottom={1}
             >
               <Box paddingRight={2}>{item.icon}</Box>
-              <Text whiteSpace="nowrap" variant="small">
+              <Text whiteSpace="normal" variant="small">
                 {item.title}
               </Text>
             </Box>
           )
         })}
-        <Box>
-          <Checkbox
-            label="Setja í samanburð"
-            labelVariant="small"
-            onChange={onCheck}
-            id={checkboxId}
-            checked={checked}
-          />
-        </Box>
+        {checkboxId && (
+          <Box>
+            <Checkbox
+              label="Setja í samanburð"
+              labelVariant="small"
+              onChange={onCheck}
+              id={checkboxId}
+              checked={checked}
+            />
+          </Box>
+        )}
         <Box paddingTop={3} width="full">
           <Button
             {...(cta.buttonType ?? { variant: cta.variant })}

@@ -6,7 +6,11 @@ import isCircular from 'is-circular'
 import { IAnchorPage } from '../../generated/contentfulTypes'
 import { mapAnchorPage } from '../../models/anchorPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 
 @Injectable()
 export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
@@ -28,7 +32,9 @@ export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAnchorPage(entry)
-          const content = extractStringsFromObject(mapped.content)
+          const content = extractStringsFromObject(
+            mapped.content.map(pruneNonSearchableSliceUnionFields),
+          )
 
           return {
             _id: mapped.id,

@@ -92,6 +92,32 @@ export const getEstateMembersDescriptionText = (
       m.estateMembersDescriptionDivisionOfEstateByHeirs
 }
 
+export const getEstateDataFromApplication = (
+  application: Application<FormValue>,
+): { estate?: EstateInfo } => {
+  const selectedEstate = application.answers.estateInfoSelection
+
+  let estateData = (
+    application.externalData.syslumennOnEntry?.data as {
+      estates?: Array<EstateInfo>
+    }
+  ).estates?.find((estate) => estate.caseNumber === selectedEstate)
+
+  // TODO: remove singular estate property when legacy applications
+  //       have cleared out of the system
+  if (!estateData) {
+    estateData = (
+      application.externalData.syslumennOnEntry?.data as {
+        estate: EstateInfo
+      }
+    ).estate
+  }
+
+  return {
+    estate: estateData,
+  }
+}
+
 export const customCurrencyFormat = (input: number | string): string => {
   if (typeof input === 'number') {
     return `${input.toLocaleString('de-DE')} kr.`
@@ -126,4 +152,11 @@ const getDecimal = (input: string): false | string => {
   }
 
   return false
+}
+
+export const isValidRealEstate = (value: string) => {
+  const lotRegex = /^[Ll]\d{6}$/
+  const houseRegex = /^[Ff]\d{7}$/
+
+  return lotRegex.test(value) || houseRegex.test(value)
 }

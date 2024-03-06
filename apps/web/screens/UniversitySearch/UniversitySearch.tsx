@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
 import getConfig from 'next/config'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
 import {
@@ -19,7 +20,8 @@ import {
   Icon,
   Inline,
   Input,
-  LinkV2,
+  Navigation,
+  NavigationItem,
   Pagination,
   Stack,
   Tag,
@@ -33,13 +35,19 @@ import {
   ActionCategoryCard,
   CTAProps,
   ListViewCard,
+  OrganizationFooter,
+  OrganizationHeader,
+  Webreader,
 } from '@island.is/web/components'
 import {
+  ContentLanguage,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayProgramFiltersQuery,
   GetUniversityGatewayProgramsQuery,
   GetUniversityGatewayUniversitiesQuery,
+  Query,
+  QueryGetOrganizationPageArgs,
   UniversityGatewayProgram,
   UniversityGatewayProgramFilter,
   UniversityGatewayUniversity,
@@ -51,7 +59,8 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 
-import { GET_NAMESPACE_QUERY } from '../queries'
+import SidebarLayout from '../Layouts/SidebarLayout'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_FILTERS,
   GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
@@ -59,11 +68,13 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
+import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
+import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
-const ITEMS_PER_PAGE = 9
+const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
@@ -73,10 +84,12 @@ interface UniversitySearchProps {
   filterOptions: Array<UniversityGatewayProgramFilter>
   locale: string
   universities: Array<UniversityGatewayUniversity>
+  organizationPage?: Query['getOrganizationPage']
   searchQuery: string
 }
 
 interface FilterProps {
+  applicationStatus: Array<string>
   degreeType: Array<string>
   modeOfDelivery: Array<string>
   universityId: Array<string>
@@ -85,6 +98,7 @@ interface FilterProps {
 }
 
 const initialFilters: FilterProps = {
+  applicationStatus: [],
   degreeType: [],
   modeOfDelivery: [],
   durationInYears: [],
@@ -104,18 +118,65 @@ export interface ComparisonProps {
   iconSrc: string
 }
 
+interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
+  applicationStatus: string
+}
+
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items ?? []) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
 const UniversitySearch: Screen<UniversitySearchProps> = ({
   data,
   filterOptions,
   namespace,
   searchQuery,
   locale,
+  organizationPage,
   universities,
 }) => {
+  useEffect(() => {
+    if (!filterOptions) return
+
+    // Re-ordering filters.
+    const index = filterOptions.findIndex(
+      (filter) => filter.field === 'universityId',
+    )
+
+    if (index !== -1) {
+      const movedField = filterOptions.splice(index, 1)[0]
+
+      movedField.options.sort((x, y) => {
+        const titleX =
+          universities.filter((uni) => uni.id === x)[0]?.contentfulTitle || ''
+        const titleY =
+          universities.filter((uni) => uni.id === y)[0]?.contentfulTitle || ''
+        return titleX.localeCompare(titleY)
+      })
+      filterOptions.splice(2, 0, movedField)
+      const lastElement = filterOptions[filterOptions.length - 1]
+      filterOptions[filterOptions.length - 1] =
+        filterOptions[filterOptions.length - 2]
+      filterOptions[filterOptions.length - 2] = lastElement
+    }
+  }, [filterOptions, universities])
+
   const router = useRouter()
   const { width } = useWindowSize()
-
   const n = useNamespace(namespace)
+  useSetZIndexOnHeader()
 
   const isMobileScreenWidth = width < theme.breakpoints.lg
   const isTabletScreenWidth = width < theme.breakpoints.xl
@@ -126,17 +187,33 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   >([])
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
-  const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    data &&
-      [...data]
-        .sort((x, y) => {
-          if (x.nameIs > y.nameIs) return 1
-          return -1
-        })
-        .map((item: UniversityGatewayProgram, index: number) => {
-          return { item, refIndex: index, score: 1 }
-        }),
+
+  const getApplicationStatus = (item: UniversityGatewayProgram) => {
+    const now = new Date()
+    return new Date(item.applicationStartDate) <= now &&
+      new Date(item.applicationEndDate) >= now
+      ? 'OPEN'
+      : 'CLOSED'
+  }
+
+  // TODO Create proper types here
+  const [originalSortedResults, setOriginalSortedList] = useState<any>(
+    [...data]
+      // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
+      .sort(() => Math.random() - 0.5)
+      .map((item: UniversityGatewayProgram, index: number) => {
+        const itemWithStatus = {
+          ...item,
+          applicationStatus: getApplicationStatus(item),
+        }
+        return { item: itemWithStatus, refIndex: index, score: 1 }
+      }),
   )
+
+  const [filteredResults, setFilteredResults] = useState<Array<any>>(
+    originalSortedResults,
+  )
+
   const { linkResolver } = useLinkResolver()
 
   //creating a deep copy to avoid original being affected by changes to filters
@@ -175,31 +252,40 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (searchQuery) {
       setQuery(searchQuery)
-
+      sessionStorage.setItem('query', searchQuery)
       //also set deep copy here
       setFilters(JSON.parse(JSON.stringify(initialFilters)))
+    } else if (sessionStorage.getItem('query')) {
+      setQuery(sessionStorage.getItem('query') || '')
     }
   }, [])
 
   const fuseOptions = {
-    threshold: 0.2,
+    threshold: 0.3,
+    findAllMatches: true,
+    ignoreLocation: true,
     keys: [
-      'nameIs',
-      'departmentNameIs',
-      'descriptionIs',
+      `name${locale === 'is' ? 'Is' : 'En'}`,
+      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
       'durationInYears',
       'universityId',
+      'applicationStatus',
     ],
   }
 
-  const fuseInstance = new Fuse(data, fuseOptions)
+  const fuseInstance = new Fuse(
+    data.map((item) => {
+      return { ...item, applicationStatus: getApplicationStatus(item) }
+    }),
+    fuseOptions,
+  )
 
   useEffect(() => {
     const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
-    Object.keys(filters).forEach(function (key) {
+    Object.keys(filters).forEach((key) => {
       const str = key as keyof typeof filters
       if (filters[str].length > 0) {
         activeFiltersFound.push({ key, value: filters[str] })
@@ -213,6 +299,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         fuseInstance,
         query,
         activeFilters: activeFiltersFound,
+        locale,
       })
 
       setFilteredResults(results)
@@ -221,25 +308,45 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [filters, query])
 
   const resetFilteredList = () => {
-    const resultProducts: Array<any> = data.map(
-      (item: UniversityGatewayProgram, index: number) => {
-        return { item, refIndex: index, score: 1 }
-      },
-    )
-    setFilteredResults(resultProducts)
+    setFilteredResults(originalSortedResults)
   }
 
-  const createPrimaryCTA = (item: UniversityGatewayProgram) => {
-    const now = new Date()
+  const applicationUrlParser = (universityId: string) => {
+    const university =
+      universities.filter((uni) => uni.id === universityId)[0]
+        ?.contentfulTitle || ''
+
+    switch (university) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://umsoknir.ru.is/'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
+  }
+
+  const createPrimaryCTA = (item: UniversityGatewayProgramWithStatus) => {
     const CTA: CTAProps = {
       label: n('apply', 'Sækja um'),
       variant: 'primary',
       size: 'small',
       icon: 'arrowForward',
       iconType: 'outline',
-      disabled:
-        new Date(item.applicationStartDate) > now ||
-        new Date(item.applicationEndDate) < now,
+      disabled: item.applicationStatus === 'CLOSED',
+      onClick: () => {
+        window.open(applicationUrlParser(item.universityId))
+      },
     }
     return CTA
   }
@@ -326,6 +433,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     e: React.ChangeEvent<HTMLInputElement>,
     filterKey: string,
   ) => {
+    setSelectedPage(1)
     handleFilters(filterKey, e.target.value)
   }
 
@@ -337,173 +445,261 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     )
   }
 
-  return (
-    <GridContainer>
-      <LinkV2 href={linkResolver('universitylandingpage').href} skipTab>
-        <Button
-          preTextIcon="arrowBack"
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="text"
-          truncate
-        >
-          {n('pageTitle', 'Háskólanám')}
-        </Button>
-      </LinkV2>
-      <Box marginBottom={8} marginTop={5}>
-        <Box
-          display="flex"
-          flexDirection="row"
-          columnGap={15}
-          paddingBottom={8}
-        >
-          <Hidden below="md">
-            <Box
-              height="full"
-              className={styles.filterWrapper}
-              display="flex"
-              flexDirection="column"
-            >
-              <Box display="inline" marginBottom={3}>
-                <Text title="Sía niðurstöður" variant="h3" as="h2">
-                  {n('filterResults', 'Sía leitarniðurstöður')}
-                </Text>
-              </Box>
-              <Box
-                display="inline"
-                style={{ alignSelf: 'flex-end' }}
-                marginBottom={1}
-              >
-                <Button
-                  variant="text"
-                  icon="add"
-                  size="small"
-                  onClick={() =>
-                    isOpen.filter((x) => x === false).length > 0
-                      ? toggleOpenAll()
-                      : toggleCloseAll()
-                  }
-                >
-                  {`${
-                    isOpen.filter((x) => x === false).length > 0
-                      ? n('openAllFilters', 'opna allar síur')
-                      : n('closeAllFilters', 'loka öllum síum')
-                  }`}
-                </Button>
-              </Box>
-              <Accordion
-                singleExpand={false}
-                dividerOnTop={false}
-                dividerOnBottom={false}
-              >
-                {filterOptions &&
-                  filterOptions.map((filter, index) => {
-                    return (
-                      <AccordionItem
-                        key={filter.field}
-                        id={filter.field}
-                        label={n(
-                          filter.field,
-                          TranslationDefaults[filter.field],
-                        )}
-                        labelUse="p"
-                        labelVariant="h5"
-                        iconVariant="small"
-                        expanded={isOpen[index]}
-                        onToggle={() => toggleIsOpen(index, !isOpen[index])}
-                      >
-                        <Stack space={[1, 1, 2]}>
-                          {filter.options.map((option) => {
-                            let keyField = option
-                            const str = filter.field as keyof typeof filters
+  const navList: NavigationItem[] =
+    organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
+      title: primaryLink?.text ?? '',
+      href: primaryLink?.url,
+      active: primaryLink?.url === router.pathname,
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
+    })) ?? []
 
-                            if (str === 'universityId') {
-                              keyField =
-                                universities.filter((x) => x.id === option)[0]
-                                  .contentfulTitle || ''
-                            }
-                            if (keyField !== 'OTHER') {
-                              return (
-                                <Checkbox
-                                  label={
-                                    <span
-                                      className={
-                                        filter.field !== 'durationInYears'
-                                          ? styles.capitalizeText
-                                          : ''
-                                      }
-                                    >
-                                      {n(keyField, keyField)}
-                                      {filter.field === 'durationInYears'
-                                        ? locale === 'en'
-                                          ? keyField === '1'
-                                            ? ' year'
-                                            : ' years'
-                                          : ' ár'
-                                        : ''}
-                                    </span>
-                                  }
-                                  id={keyField}
-                                  value={option}
-                                  checked={
-                                    filters[str].filter((x) => x === option)
-                                      .length > 0
-                                  }
-                                  onChange={(e) =>
-                                    checkboxEventHandler(e, filter.field)
-                                  }
-                                />
-                              )
-                            }
-                          })}
-                        </Stack>
-                        <Box
-                          display="flex"
-                          width="full"
-                          flexDirection="row"
-                          justifyContent="flexEnd"
-                          marginTop={1}
-                        >
-                          <Button
-                            variant="text"
-                            icon="reload"
-                            size="small"
-                            onClick={() =>
-                              setFilters({ ...filters, [filter.field]: [] })
-                            }
-                          >
-                            {n('clearFilter', 'Hreinsa val')}
-                          </Button>
-                        </Box>
-                      </AccordionItem>
-                    )
-                  })}
-              </Accordion>
-              <Box
-                background="blue100"
-                width="full"
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-                style={{ height: 72 }}
-              >
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() =>
-                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
-                  }
+  const handleRemoveTag = (key: keyof FilterProps, tag: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: prevFilters[key].filter((existingTag) => existingTag !== tag),
+    }))
+  }
+
+  const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
+    const length = items.length
+
+    if (length === 0) {
+      return ''
+    }
+
+    if (length === 1) {
+      return n(items[0], TranslationDefaults[items[0]])
+    }
+
+    if (length === 2) {
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
+    }
+
+    const formattedList = items.map((item, index) => {
+      if (index === length - 1) {
+        return `${n('or', 'eða')} ${n(item, TranslationDefaults[item])}`
+      } else {
+        return `${n(item, TranslationDefaults[item])}, `
+      }
+    })
+
+    return formattedList.join('')
+  }
+
+  const formatFilterStrings = (tag: string, field: string) => {
+    if (field === 'universityId') {
+      return universities.filter((x) => x.id === tag)[0]?.contentfulTitle || ''
+    } else if (tag === 'OPEN') {
+      return `${n('openForApplication', 'Opið fyrir umsóknir')}`
+    } else {
+      return n(tag, TranslationDefaults[tag])
+    }
+  }
+
+  return (
+    <Box>
+      {organizationPage && (
+        <OrganizationHeader organizationPage={organizationPage} />
+      )}
+      <GridContainer>
+        <SidebarLayout
+          paddingTop={[2, 2, 9]}
+          paddingBottom={[4, 4, 4]}
+          isSticky={false}
+          fullWidthContent={true}
+          sidebarContent={
+            <Box>
+              <Navigation
+                baseId="pageNav"
+                items={navList}
+                title={n('navigationTitle', 'Efnisyfirlit')}
+                activeItemTitle="Námsleit"
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href} legacyBehavior>
+                      {link}
+                    </NextLink>
+                  ) : (
+                    link
+                  )
+                }}
+              />
+              <Hidden below="md">
+                <Box
+                  height="full"
+                  className={styles.filterWrapper}
+                  display="flex"
+                  flexDirection="column"
+                  paddingTop={4}
                 >
-                  {n('clearAllFilters', 'Hreinsa allar síur')}
-                </Button>
+                  <Box display="inline" marginBottom={3}>
+                    <Text title="Sía niðurstöður" variant="h3" as="h2">
+                      {n('filterResults', 'Sía leitarniðurstöður')}
+                    </Text>
+                  </Box>
+                  <Box
+                    display="inline"
+                    style={{ alignSelf: 'flex-end' }}
+                    marginBottom={1}
+                  >
+                    <Button
+                      variant="text"
+                      icon="add"
+                      size="small"
+                      onClick={() =>
+                        isOpen.filter((x) => x === false).length > 0
+                          ? toggleOpenAll()
+                          : toggleCloseAll()
+                      }
+                    >
+                      {`${
+                        isOpen.filter((x) => x === false).length > 0
+                          ? n('openAllFilters', 'opna allar síur')
+                          : n('closeAllFilters', 'loka öllum síum')
+                      }`}
+                    </Button>
+                  </Box>
+                  <Accordion
+                    singleExpand={false}
+                    dividerOnTop={false}
+                    dividerOnBottom={false}
+                  >
+                    {filterOptions &&
+                      filterOptions.map((filter, index) => {
+                        return (
+                          <AccordionItem
+                            key={filter.field}
+                            id={filter.field}
+                            label={n(
+                              filter.field,
+                              TranslationDefaults[filter.field],
+                            )}
+                            labelUse="p"
+                            labelVariant="h5"
+                            iconVariant="small"
+                            expanded={isOpen[index]}
+                            onToggle={() => toggleIsOpen(index, !isOpen[index])}
+                          >
+                            <Stack space={[1, 1, 2]}>
+                              {filter.options.map((option) => {
+                                const str = filter.field as keyof typeof filters
+
+                                if (option === 'OTHER') {
+                                  return null
+                                }
+
+                                return (
+                                  <Checkbox
+                                    key={option}
+                                    label={
+                                      <Box
+                                        display="flex"
+                                        flexDirection="column"
+                                      >
+                                        <span>
+                                          {formatFilterStrings(option, str)}
+                                        </span>
+                                        {filter.field === 'degreeType' && (
+                                          <span>
+                                            {n(`${option}_EXTRA`, '')}
+                                          </span>
+                                        )}
+                                      </Box>
+                                    }
+                                    id={option}
+                                    value={option}
+                                    checked={
+                                      filters[str].filter((x) => x === option)
+                                        .length > 0
+                                    }
+                                    onChange={(e) =>
+                                      checkboxEventHandler(e, filter.field)
+                                    }
+                                  />
+                                )
+                              })}
+                            </Stack>
+                            <Box
+                              display="flex"
+                              width="full"
+                              flexDirection="row"
+                              justifyContent="flexEnd"
+                              marginTop={1}
+                            >
+                              <Button
+                                variant="text"
+                                icon="reload"
+                                size="small"
+                                onClick={() =>
+                                  setFilters({ ...filters, [filter.field]: [] })
+                                }
+                              >
+                                {n('clearFilter', 'Hreinsa val')}
+                              </Button>
+                            </Box>
+                          </AccordionItem>
+                        )
+                      })}
+                  </Accordion>
+                  <Box
+                    background="blue100"
+                    width="full"
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ height: 72 }}
+                  >
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      size="small"
+                      onClick={() =>
+                        setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                      }
+                    >
+                      {n('clearAllFilters', 'Hreinsa allar síur')}
+                    </Button>
+                  </Box>
+                </Box>
+              </Hidden>
+            </Box>
+          }
+        >
+          {isMobileScreenWidth && (
+            <Box className={organizationStyles.menuStyle}>
+              <Box marginY={2}>
+                <Navigation
+                  baseId="pageNavMobile"
+                  isMenuDialog={true}
+                  items={navList}
+                  title={n('navigationTitle', 'Efnisyfirlit')}
+                  activeItemTitle="Námsleit"
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
               </Box>
             </Box>
-          </Hidden>
-
-          <Box width="full" minWidth={0}>
+          )}
+          <Box minWidth={0} className={styles.mainContentWrapper}>
+            <Webreader />
             <Text
               marginTop={0}
               marginBottom={2}
@@ -514,7 +710,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               {n('searchResults', 'Leitarniðurstöður')}
             </Text>
             <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
               value={query}
@@ -523,21 +719,68 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setSelectedPage(1)
                 searchTermHasBeenInitialized.current = true
                 setQuery(e.target.value)
+                sessionStorage.setItem('query', e.target.value)
               }}
             />
+            <Box
+              paddingTop={2}
+              display={'flex'}
+              justifyContent={'spaceBetween'}
+            >
+              <Box display={'flex'} style={{ gap: '0.5rem' }}>
+                {Object.keys(filters).map((key) =>
+                  filters[key as keyof FilterProps].map((tag) => (
+                    <Tag key={tag}>
+                      <Box
+                        display={'flex'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        style={{ gap: '0.5rem' }}
+                      >
+                        {formatFilterStrings(tag, key)}
+                        <button
+                          aria-label="remove tag"
+                          style={{ alignSelf: 'end' }}
+                          onClick={() =>
+                            handleRemoveTag(key as keyof FilterProps, tag)
+                          }
+                        >
+                          <Icon icon={'close'} size="small" />
+                        </button>
+                      </Box>
+                    </Tag>
+                  )),
+                )}
+              </Box>
+              <Box style={{ flexShrink: 0 }}>
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => {
+                    setSelectedPage(1)
+                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                  }}
+                >
+                  {n('clearAllFilters', 'Hreinsa allar síur')}
+                </Button>
+              </Box>
+            </Box>
+
             <ContentBlock>
               <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
                   <Tag onClick={() => resetFilteredList()}>
                     {n('showAll', 'Sýna allt')}
                   </Tag>
-                  {filterOptions.map((option) => {
-                    if (
-                      option.field === 'degreeType' ||
-                      option.field === 'universityId'
-                    ) {
-                      return option.options.map((item) => {
-                        if (item !== 'OTHER') {
+                  {filterOptions &&
+                    filterOptions.map((option) => {
+                      if (
+                        option.field === 'degreeType' ||
+                        option.field === 'universityId'
+                      ) {
+                        return option.options.map((item) => {
+                          if (item === 'OTHER') return null
                           return (
                             <Tag
                               onClick={() => handleFilters('degreeType', item)}
@@ -545,23 +788,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               {n(
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle || ''
+                                      ?.contentfulTitle || ''
                                   : item,
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle
+                                      ?.contentfulTitle
                                   : item,
                               )}
                             </Tag>
                           )
-                        }
-                      })
-                    }
-                  })}
+                        })
+                      }
+                    })}
                 </Inline>
               </Box>
             </ContentBlock>
-
             <Hidden above="md">
               <Box width="full" marginTop={2}>
                 <Filter
@@ -602,24 +843,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               filters: filter.options
                                 .filter((x) => x !== 'OTHER')
                                 .map((option) => {
-                                  let keyField = option
-
-                                  if (str === 'universityId') {
-                                    keyField =
-                                      universities.filter(
-                                        (x) => x.id === option,
-                                      )[0].contentfulTitle || ''
-                                  }
                                   return {
-                                    label: `${n(keyField, keyField)}${
-                                      filter.field === 'durationInYears'
-                                        ? locale === 'en'
-                                          ? keyField === '1'
-                                            ? ' year'
-                                            : ' years'
-                                          : ' ár'
-                                        : ''
-                                    }`,
+                                    label: formatFilterStrings(option, str),
                                     value: option,
                                   }
                                 }),
@@ -631,7 +856,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Filter>
               </Box>
             </Hidden>
-
             <Box
               display="flex"
               flexDirection="row"
@@ -639,25 +863,20 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              <Text variant="intro">{`${filteredResults.length} ${n(
-                'searchResults',
-                'Leitarniðurstöður',
-              )}`}</Text>
+              <Box display="flex">
+                <Text variant="intro" fontWeight="semiBold" as="h2">
+                  {`${filteredResults.length}`}{' '}
+                </Text>
+                <Box paddingLeft={1}>
+                  {' '}
+                  <Text variant="intro" as="h2">{`${n(
+                    'visiblePrograms',
+                    'námsleiðir sýnilegar',
+                  )}`}</Text>
+                </Box>
+              </Box>
               <Hidden below="md">
                 <Box>
-                  <button
-                    onClick={() => setGridView(true)}
-                    className={styles.iconButton}
-                  >
-                    <VisuallyHidden>
-                      {n('changeToTable', 'Breyta niðurstöðum í töflu')}
-                    </VisuallyHidden>
-                    <Icon
-                      icon={'gridView'}
-                      type="outline"
-                      color={gridView ? 'blue400' : 'dark200'}
-                    />
-                  </button>
                   <button
                     onClick={() => setGridView(false)}
                     className={styles.iconButton}
@@ -672,11 +891,23 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       useStroke
                     />
                   </button>
+                  <button
+                    onClick={() => setGridView(true)}
+                    className={styles.iconButton}
+                  >
+                    <VisuallyHidden>
+                      {n('changeToTable', 'Breyta niðurstöðum í töflu')}
+                    </VisuallyHidden>
+                    <Icon
+                      icon={'gridView'}
+                      type="outline"
+                      color={gridView ? 'blue400' : 'dark200'}
+                    />
+                  </button>
                 </Box>
               </Hidden>
             </Box>
-
-            {gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
+            {!gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
               <Box>
                 {filteredResults &&
                   filteredResults
@@ -685,11 +916,22 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
                     )
                     .map((item, index) => {
-                      const dataItem = item.item
+                      const dataItem =
+                        item.item as UniversityGatewayProgramWithStatus
+                      const specializedName =
+                        locale === 'en'
+                          ? dataItem.specializationNameEn ?? undefined
+                          : dataItem.specializationNameIs ?? undefined
+                      const subHeading =
+                        specializedName !== undefined
+                          ? (locale === 'en'
+                              ? 'Specialization: '
+                              : 'Kjörsvið: ') + specializedName
+                          : undefined
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard
-                            key={index}
+                            key={`${index}-${dataItem.id}`}
                             href={
                               linkResolver('universitysearchdetails', [
                                 dataItem.id,
@@ -700,6 +942,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 ? dataItem.nameEn
                                 : dataItem.nameIs
                             }
+                            subHeading={subHeading}
                             text={
                               locale === 'en'
                                 ? stripHtml(dataItem.descriptionEn)
@@ -710,38 +953,13 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 src={
                                   universities.filter(
                                     (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl || ''
+                                  )[0]?.contentfulLogoUrl || ''
                                 }
                                 alt={`Logo fyrir ${
                                   locale === 'en'
                                     ? dataItem.nameEn
                                     : dataItem.nameIs
                                 }`}
-                              />
-                            }
-                            customBottomContent={
-                              <Checkbox
-                                label={n('compare', 'Setja í samanburð')}
-                                labelVariant="default"
-                                onChange={() =>
-                                  handleComparisonChange({
-                                    id: dataItem.id,
-                                    nameIs:
-                                      locale === 'en'
-                                        ? dataItem.nameEn
-                                        : dataItem.nameIs,
-                                    iconSrc:
-                                      universities.filter(
-                                        (x) => x.id === dataItem.universityId,
-                                      )[0].contentfulLogoUrl || '',
-                                  })
-                                }
-                                checked={
-                                  selectedComparison.filter(
-                                    (x) => x.id === dataItem.id,
-                                  ).length > 0
-                                }
-                                id={dataItem.id}
                               />
                             }
                             sidePanelConfig={{
@@ -759,22 +977,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${n(
                                     dataItem.degreeType,
                                     TranslationDefaults[dataItem.degreeType],
-                                  )}`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'calendar'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${n('begins', 'Hefst')} ${n(
-                                    dataItem.startingSemesterSeason,
-                                    TranslationDefaults[
-                                      dataItem.startingSemesterSeason
-                                    ],
-                                  )} ${dataItem.startingSemesterYear}`,
+                                  )}, ${dataItem.degreeAbbreviation}`,
                                 },
                                 {
                                   icon: (
@@ -784,10 +987,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${n(
-                                    'educationLength',
-                                    'Námstími',
-                                  )}: ${dataItem.durationInYears} ${
+                                  title: `${dataItem.credits} ${n(
+                                    'units',
+                                    'einingar',
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
@@ -803,27 +1008,43 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.modeOfDelivery.map(
-                                    (delivery: string) => {
-                                      return ` ${n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )}`
-                                    },
-                                  )}`,
+                                  title: formatModeOfDelivery(
+                                    dataItem.modeOfDelivery,
+                                  ),
                                 },
                                 {
                                   icon: (
                                     <Icon
-                                      icon={'wallet'}
+                                      icon={'calendar'}
                                       type="outline"
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${
-                                    dataItem.costPerYear &&
-                                    dataItem.costPerYear.toLocaleString('de-DE')
-                                  } kr.`,
+                                  title: `${n(
+                                    dataItem.startingSemesterSeason,
+                                    TranslationDefaults[
+                                      dataItem.startingSemesterSeason
+                                    ],
+                                  )} ${dataItem.startingSemesterYear}`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'time'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title:
+                                    dataItem.applicationStatus === 'OPEN'
+                                      ? `${n(
+                                          'openForApplication',
+                                          'Opið fyrir umsóknir',
+                                        )}`
+                                      : `${n(
+                                          'closedForApplication',
+                                          'Lokað fyrir umsóknir',
+                                        )}`,
                                 },
                               ],
                             }}
@@ -833,7 +1054,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     })}
               </Box>
             )}
-            {(!gridView || isMobileScreenWidth || isTabletScreenWidth) && (
+            {(gridView || isMobileScreenWidth || isTabletScreenWidth) && (
               <GridContainer className={styles.gridContainer}>
                 <GridRow rowGap={3}>
                   {filteredResults &&
@@ -843,7 +1064,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
                       )
                       .map((item, index) => {
-                        const dataItem = item.item
+                        const dataItem =
+                          item.item as UniversityGatewayProgramWithStatus
+                        const specializedName =
+                          locale === 'en'
+                            ? dataItem.specializationNameEn ?? undefined
+                            : dataItem.specializationNameIs ?? undefined
+                        const subHeading =
+                          specializedName !== undefined
+                            ? (locale === 'en'
+                                ? 'Specialization: '
+                                : 'Kjörsvið: ') + specializedName
+                            : undefined
                         return (
                           <GridColumn
                             span={
@@ -856,23 +1088,23 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             key={index}
                           >
                             <ListViewCard
-                              key={index}
                               iconText={
                                 universities.filter(
                                   (x) => x.id === dataItem.universityId,
-                                )[0].contentfulTitle || ''
+                                )[0]?.contentfulTitle || ''
                               }
                               heading={
                                 locale === 'en'
                                   ? dataItem.nameEn
                                   : dataItem.nameIs
                               }
+                              subHeading={subHeading}
                               icon={
                                 <img
                                   src={
                                     universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl || ''
+                                    )[0]?.contentfulLogoUrl || ''
                                   }
                                   alt={`Logo fyrir ${
                                     locale === 'en'
@@ -881,27 +1113,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   }`}
                                 />
                               }
-                              onCheck={() =>
-                                handleComparisonChange({
-                                  id: dataItem.id,
-                                  nameIs:
-                                    locale === 'en'
-                                      ? dataItem.nameEn
-                                      : dataItem.nameIs,
-                                  iconSrc:
-                                    universities.filter(
-                                      (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl || '',
-                                })
-                              }
-                              checked={
-                                selectedComparison.filter(
-                                  (x) => x.id === dataItem.id,
-                                ).length > 0
-                              }
                               buttonLabel={n('apply', 'Sækja um')}
-                              checkboxLabel={n('compare', 'Setja í samanburð')}
-                              checkboxId={dataItem.id}
                               cta={createPrimaryCTA(dataItem)}
                               href={
                                 linkResolver('universitysearchdetails', [
@@ -920,22 +1132,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${n(
                                     dataItem.degreeType,
                                     TranslationDefaults[dataItem.degreeType],
-                                  )}`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'calendar'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${n('begins', 'Hefst')} ${n(
-                                    dataItem.startingSemesterSeason,
-                                    TranslationDefaults[
-                                      dataItem.startingSemesterSeason
-                                    ],
-                                  )} ${dataItem.startingSemesterYear}`,
+                                  )}, ${dataItem.degreeAbbreviation}`,
                                 },
                                 {
                                   icon: (
@@ -945,10 +1142,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${n(
-                                    'educationLength',
-                                    'Námstími',
-                                  )}: ${dataItem.durationInYears} ${
+                                  title: `${dataItem.credits} ${n(
+                                    'units',
+                                    'einingar',
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
@@ -964,34 +1163,43 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.modeOfDelivery.map(
-                                    (delivery: string, index: number) => {
-                                      if (index !== 0) {
-                                        return `, ${n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )}`
-                                      } else {
-                                        return n(
-                                          delivery,
-                                          TranslationDefaults[delivery],
-                                        )
-                                      }
-                                    },
-                                  )}`,
+                                  title: formatModeOfDelivery(
+                                    dataItem.modeOfDelivery,
+                                  ),
                                 },
                                 {
                                   icon: (
                                     <Icon
-                                      icon={'wallet'}
+                                      icon={'calendar'}
                                       type="outline"
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${
-                                    dataItem.costPerYear &&
-                                    dataItem.costPerYear.toLocaleString('de-DE')
-                                  } kr.`,
+                                  title: `${n(
+                                    dataItem.startingSemesterSeason,
+                                    TranslationDefaults[
+                                      dataItem.startingSemesterSeason
+                                    ],
+                                  )} ${dataItem.startingSemesterYear}`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'time'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title:
+                                    dataItem.applicationStatus === 'OPEN'
+                                      ? `${n(
+                                          'openForApplication',
+                                          'Opið fyrir umsóknir',
+                                        )}`
+                                      : `${n(
+                                          'closedForApplication',
+                                          'Lokað fyrir umsóknir',
+                                        )}`,
                                 },
                               ]}
                             />
@@ -1001,7 +1209,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </GridRow>
               </GridContainer>
             )}
-
             <Box
               marginTop={2}
               marginBottom={selectedComparison.length > 0 ? 4 : 0}
@@ -1014,6 +1221,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
+                    aria-label={selectedPage < page ? 'Next' : 'Previous'}
                     onClick={() => {
                       setSelectedPage(page)
                     }}
@@ -1024,7 +1232,13 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               />
             </Box>
           </Box>
-        </Box>
+        </SidebarLayout>
+        <Box
+          display="flex"
+          flexDirection="row"
+          columnGap={15}
+          paddingBottom={8}
+        ></Box>
         {selectedComparison.length > 0 &&
           !isTabletScreenWidth &&
           !isMobileScreenWidth && (
@@ -1165,13 +1379,27 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Box>
           )}
+        {/* <Box marginBottom={8} marginTop={5}>
+        </Box> */}
+        <ToastContainer></ToastContainer>
+      </GridContainer>
+      <Box className="rs_read">
+        <OrganizationFooter
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizations={[organizationPage.organization]}
+          force={true}
+        />
       </Box>
-      <ToastContainer></ToastContainer>
-    </GridContainer>
+    </Box>
   )
 }
 
-UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
+UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=3300, stale-while-revalidate=300',
+  )
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -1205,31 +1433,50 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Page not found')
   }
 
-  const newResponse =
-    await apolloClient.query<GetUniversityGatewayProgramsQuery>({
+  const [
+    {
+      data: { getOrganizationPage },
+    },
+    {
+      data: { universityGatewayPrograms },
+    },
+    filters,
+    {
+      data: { universityGatewayUniversities },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<GetUniversityGatewayProgramsQuery>({
       query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    })
-
-  const data = newResponse.data.universityGatewayPrograms.data
-
-  const filters =
-    await apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
+    }),
+    apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
       query: GET_UNIVERSITY_GATEWAY_FILTERS,
-    })
-
-  const universities =
-    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+    }),
+    apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-    })
+    }),
+  ])
 
   return {
-    data,
+    data: universityGatewayPrograms.data,
     searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
     namespace,
-    universities: universities.data.universityGatewayUniversities,
+    organizationPage: getOrganizationPage,
+    universities: universityGatewayUniversities,
   }
 }
 
-export default withMainLayout(UniversitySearch, { showFooter: false })
+export default withMainLayout(UniversitySearch, {
+  showFooter: false,
+  headerColorScheme: 'white',
+})

@@ -31,6 +31,7 @@ const user: User = {
   role: UserRole.PROSECUTOR,
   institution: undefined,
   active: true,
+  canConfirmAppeal: false,
 }
 
 export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -55,7 +56,8 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
       user.title &&
       user.mobileNumber &&
       user.email &&
-      user.active &&
+      user.active !== undefined &&
+      user.active !== null &&
       user.institution
     ) {
       await createUserMutation({
@@ -64,11 +66,12 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
             name: user.name,
             nationalId: user.nationalId,
             role: user.role,
-            institutionId: user.institution?.id,
+            institutionId: user.institution.id,
             title: user.title,
             mobileNumber: user.mobileNumber,
             email: user.email,
             active: user.active,
+            canConfirmAppeal: user.canConfirmAppeal,
           },
         },
       })

@@ -3,6 +3,27 @@ import { EstateInfo } from '@island.is/clients/syslumenn'
 
 export const getFakeData = (
   application: ApplicationWithAttachments,
+): Array<EstateInfo> => {
+  const fakes = [
+    getFakeEstateInfo(application, 'Lizzy B. Gone', '0101301234'),
+    getFakeEstateInfo(application, 'Johnny Bye Bye', '0101309876'),
+    getFakeEstateInfo(application, 'Rita Ingrid Petersen', '0101305555'),
+    getFakeEstateInfo(application, 'Devin Godsend', '0101302299'),
+  ]
+
+  if (
+    application.applicant.startsWith('010130') &&
+    application.applicant.endsWith('7789')
+  ) {
+    fakes.push(getFakeEstateInfo(application, 'Dr. No Errors', '0101304499'))
+  }
+  return fakes
+}
+
+export const getFakeEstateInfo = (
+  application: ApplicationWithAttachments,
+  nameOfDeceased: string,
+  nationalIdOfDeceased: string,
 ): EstateInfo => {
   const data: EstateInfo = {
     addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
@@ -60,7 +81,7 @@ export const getFakeData = (
         nationalId: '0101303019',
       },
       {
-        name: 'Gervimaður Færeyja',
+        name: 'Gervimaður Færeyjar',
         relation: 'Maki',
         nationalId: '0101302399',
       },
@@ -70,10 +91,10 @@ export const getFakeData = (
         nationalId: '0101304929',
       },
     ],
-    caseNumber: '2020-000123',
+    caseNumber: `2020-00012${nationalIdOfDeceased.slice(-1)}`,
     dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
-    nameOfDeceased: 'Lizzy B. Gone',
-    nationalIdOfDeceased: '0101301234',
+    nameOfDeceased,
+    nationalIdOfDeceased,
     districtCommissionerHasWill: true,
   }
 
@@ -96,8 +117,10 @@ export const getFakeData = (
     email: '',
   }
 
-  if (application.applicant.endsWith('7789')) {
-    // Uncomment the following line to test for <18 rejections
+  if (
+    application.applicant.endsWith('7789') &&
+    nameOfDeceased !== 'Dr. No Errors'
+  ) {
     data.estateMembers.push(fakeChild)
 
     // I'm just a programmer. I had little direction about what these validation messages might be.

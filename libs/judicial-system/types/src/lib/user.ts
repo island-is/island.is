@@ -26,29 +26,9 @@ export interface User {
   role: UserRole
   institution?: Institution
   active: boolean
+  canConfirmAppeal: boolean
   latestLogin?: string
   loginCount?: number
-}
-
-export interface CreateUser {
-  nationalId: string
-  name: string
-  title: string
-  mobileNumber: string
-  email: string
-  role: UserRole
-  institutionId: string
-  active: boolean
-}
-
-export interface UpdateUser {
-  name?: string
-  title?: string
-  mobileNumber?: string
-  email?: string
-  role?: UserRole
-  institutionId?: string
-  active?: boolean
 }
 
 interface InstitutionUser {

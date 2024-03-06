@@ -22,8 +22,8 @@ import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroa
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 
-import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/ws'
-import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/web'
+import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
+import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
 
 import { serviceSetup as serviceDocumentsSetup } from '../../../apps/services/documents/infra/documents-service'
 import { serviceSetup as serviceNameRegistryBackendSetup } from '../../../apps/icelandic-names-registry/backend/infra/icelandic-names-registry-backend'
@@ -43,11 +43,11 @@ import {
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
-import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/backend'
+import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/air-discount-scheme-backend'
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
-import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
+import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/regulations-admin-backend'
 
 import {
   serviceSetup as universityGatewaySetup,
@@ -174,6 +174,9 @@ export const Services: EnvironmentServices = {
     sessionsService,
     sessionsWorker,
     sessionsGeoip,
+    universityGatewayService,
+    universityGatewayWorker,
+    contentfulApps,
   ],
   staging: [
     appSystemApi,
@@ -207,6 +210,8 @@ export const Services: EnvironmentServices = {
     sessionsService,
     sessionsWorker,
     sessionsGeoip,
+    universityGatewayService,
+    universityGatewayWorker,
   ],
   dev: [
     appSystemApi,
@@ -260,5 +265,4 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
-  universityGatewayWorker,
 ]

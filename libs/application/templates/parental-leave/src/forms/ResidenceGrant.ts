@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
@@ -41,14 +40,9 @@ export const ResidenceGrant: Form = buildForm({
                 parentalLeaveFormMessages.residenceGrantMessage
                   .residenceGrantPeriodDescriptionLineTwo,
             }),
-            buildCustomField({
-              id: 'imagefield.submit',
-              title: '',
-              defaultValue: 2,
-              component: 'ImageField',
-            }),
           ],
         }),
+
         buildFileUploadField({
           id: 'fileUpload.residenceGrant',
           title:
@@ -92,12 +86,6 @@ export const ResidenceGrant: Form = buildForm({
                   type: 'primary',
                 },
               ],
-            }),
-            buildCustomField({
-              id: 'imagefield.submit',
-              title: '',
-              defaultValue: 1,
-              component: 'ImageField',
             }),
           ],
         }),
