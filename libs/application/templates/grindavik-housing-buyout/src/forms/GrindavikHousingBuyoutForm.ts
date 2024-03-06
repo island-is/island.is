@@ -419,10 +419,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               title: m.application.overview.checkboxText,
               width: 'half',
               required: true,
-              condition: (a) => {
-                console.log(a)
-                return true
-              },
               options: [
                 { label: coreMessages.radioYes, value: YES },
                 { label: coreMessages.radioNo, value: NO },
