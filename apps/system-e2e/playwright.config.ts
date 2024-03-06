@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig } from '@playwright/test'
 import { nxE2EPreset } from '@nx/playwright/preset'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
