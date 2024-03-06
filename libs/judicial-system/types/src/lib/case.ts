@@ -184,7 +184,7 @@ export enum DefendantPlea {
 
 export const indictmentCases = [CaseType.INDICTMENT]
 
-export function isIndictmentCase(type?: string | null): boolean {
+export const isIndictmentCase = (type?: string | null): boolean => {
   return Boolean(type) && indictmentCases.includes(type as CaseType)
 }
 
@@ -194,7 +194,7 @@ export const restrictionCases = [
   CaseType.TRAVEL_BAN,
 ]
 
-export function isRestrictionCase(type?: CaseType | null): boolean {
+export const isRestrictionCase = (type?: CaseType | null): boolean => {
   return Boolean(type && restrictionCases.includes(type))
 }
 
@@ -218,7 +218,7 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export function isInvestigationCase(type?: CaseType | null): boolean {
+export const isInvestigationCase = (type?: CaseType | null): boolean => {
   return Boolean(type && investigationCases.includes(type))
 }
 
@@ -227,9 +227,9 @@ export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
-export function isAcceptingCaseDecision(
+export const isAcceptingCaseDecision = (
   decision?: CaseDecision | null,
-): boolean {
+): boolean => {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
 }
 
@@ -239,19 +239,19 @@ export const completedCaseStates = [
   CaseState.DISMISSED,
 ]
 
-export function isCompletedCase(state?: CaseState | null): boolean {
+export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
-export function getStatementDeadline(appealReceived: Date): string {
+export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
 }
 
-export function prosecutorCanSelectDefenderForInvestigationCase(
+export const prosecutorCanSelectDefenderForInvestigationCase = (
   type?: CaseType | null,
-): boolean {
+): boolean => {
   return Boolean(
     type &&
       [

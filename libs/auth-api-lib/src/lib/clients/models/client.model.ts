@@ -357,7 +357,7 @@ export class Client extends Model {
   backChannelLogoutUri?: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   })

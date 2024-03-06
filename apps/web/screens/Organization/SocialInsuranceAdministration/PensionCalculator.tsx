@@ -61,6 +61,29 @@ import * as styles from './PensionCalculator.css'
 
 const CURRENCY_INPUT_MAX_LENGTH = 15
 
+const lowercaseFirstLetter = (value: string | undefined) => {
+  if (!value) return value
+  return value[0].toLowerCase() + value.slice(1)
+}
+
+const hasDisabilityAssessment = (
+  typeOfBasePension: BasePensionType | null | undefined,
+) => {
+  return (
+    typeOfBasePension === BasePensionType.Disability ||
+    typeOfBasePension === BasePensionType.Rehabilitation
+  )
+}
+
+const hasStartDate = (
+  typeOfBasePension: BasePensionType | null | undefined,
+) => {
+  return (
+    typeOfBasePension === BasePensionType.Retirement ||
+    typeOfBasePension === BasePensionType.HalfRetirement
+  )
+}
+
 interface NumericInputFieldWrapperProps {
   heading: string
   description: string
@@ -320,6 +343,15 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     const baseUrl = linkResolver('pensioncalculatorresults').href
     const queryParams = convertToQueryParams({
       ...data,
+      ...(!hasDisabilityAssessment(data.typeOfBasePension) && {
+        ageOfFirst75DisabilityAssessment: undefined,
+      }),
+      ...(!hasStartDate(data.typeOfBasePension) && {
+        birthMonth: undefined,
+        birthYear: undefined,
+        startMonth: undefined,
+        startYear: undefined,
+      }),
       dateOfCalculations: data.dateOfCalculations
         ? data.dateOfCalculations
         : dateOfCalculationsOptions[0].value,
@@ -441,6 +473,31 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ?.label ?? dateOfCalculationsOptions[0].label
   }`
 
+  const startMonthOptions = useMemo(() => {
+    if (
+      startYear === startYearOptions?.[0]?.value &&
+      typeof birthMonth === 'number' &&
+      typeof startMonth === 'number'
+    ) {
+      if (startMonth < birthMonth) {
+        methods.setValue('startMonth', birthMonth)
+      }
+      return monthOptions.slice(birthMonth)
+    }
+    return monthOptions
+  }, [
+    birthMonth,
+    methods,
+    monthOptions,
+    startMonth,
+    startYear,
+    startYearOptions,
+  ])
+
+  const selectedBirthMonthLabel = monthOptions.find(
+    (option) => option.value === birthMonth,
+  )?.label
+
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -526,9 +583,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                     className={styles.fullWidth}
                   >
                     <Stack space={5}>
-                      {(typeOfBasePension === BasePensionType.Retirement ||
-                        typeOfBasePension ===
-                          BasePensionType.HalfRetirement) && (
+                      {hasStartDate(typeOfBasePension) && (
                         <Stack space={3}>
                           <Box className={styles.textMaxWidth}>
                             <Text variant="h2" as="h2">
@@ -598,10 +653,13 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 {formatMessage(
                                   translationStrings.startMonthAndYearDescription,
                                   {
-                                    month: monthOptions.find(
-                                      (option) => option.value === birthMonth,
-                                    )?.label,
-                                    year: startYearOptions?.[0]?.label,
+                                    month:
+                                      activeLocale !== 'en'
+                                        ? lowercaseFirstLetter(
+                                            selectedBirthMonthLabel,
+                                          )
+                                        : selectedBirthMonthLabel,
+                                    year: startYearOptions?.[2]?.label,
                                   },
                                 )}
                               </Text>
@@ -617,7 +675,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     name={
                                       'startMonth' as keyof CalculationInput
                                     }
-                                    options={monthOptions}
+                                    options={startMonthOptions}
                                     label={formatMessage(
                                       translationStrings.startMonthLabel,
                                     )}
@@ -768,7 +826,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   )
                                 }
                                 type="number"
-                                maxLength={7}
+                                maxLength={
+                                  formatMessage(
+                                    translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                                  ).length + 3
+                                }
                               />
                             </Box>
                           )}
@@ -829,7 +891,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   ' ' +
                                   formatMessage(translationStrings.yearsSuffix)
                                 }
-                                maxLength={5}
+                                maxLength={
+                                  formatMessage(translationStrings.yearsSuffix)
+                                    .length + 3
+                                }
                               />
                             </Box>
                           )}
@@ -1185,8 +1250,6 @@ PensionCalculator.getProps = async ({
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
-    livingConditionRatio: 100,
-    taxCard: 0,
   }
 
   return {

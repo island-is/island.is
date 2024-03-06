@@ -1,3 +1,12 @@
+import type { CSSProperties } from 'react'
+import type { VerticalAlignmentType } from 'recharts/types/component/DefaultLegendContent'
+import type {
+  AxisDomain,
+  AxisInterval,
+  BaseAxisProps,
+  Margin,
+} from 'recharts/types/util/types'
+
 import {
   ChartComponent,
   GetMultipleStatisticsQuery,
@@ -51,4 +60,34 @@ export interface ComponentStyle {
   shouldRenderBorderRadius: boolean
   renderIndex: number
   renderIndexForType: number
+}
+
+export interface CustomStyleConfig {
+  chart?: {
+    margin?: Margin
+  }
+  legend?: {
+    verticalAlign?: VerticalAlignmentType
+    wrapperStyle: CSSProperties
+  }
+  yAxis?: {
+    width?: number
+    fontSize?: number
+    domain?: AxisDomain
+    interval?: AxisInterval
+    tick?: BaseAxisProps['tick']
+  }
+  xAxis?: {
+    height?: number
+    fontSize?: number
+    domain?: AxisDomain
+    angle?: number
+    interval?: AxisInterval
+    tick?: BaseAxisProps['tick']
+  }
+  pie?: {
+    innerRadius?: number
+    outerRadius?: number
+    fontSize?: number
+  }
 }

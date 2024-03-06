@@ -13,6 +13,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
+  isProsecutionUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
@@ -25,7 +26,6 @@ import {
   Gender,
   InstitutionType,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -75,7 +75,7 @@ const useSections = (
         caseType: type,
       }),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isRestrictionCase(type) &&
         !isCompletedCase(state) &&
         !parentCase,
@@ -238,7 +238,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isInvestigationCase(type) &&
         !isCompletedCase(state) &&
         !parentCase,
@@ -405,8 +405,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
-        (user?.role === UserRole.PROSECUTOR ||
-          user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) &&
+        isProsecutionUser(user) &&
         isIndictmentCase(type) &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
@@ -598,7 +597,9 @@ const useSections = (
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
-        isDistrictCourtUser(user) && !isCompletedCase(state) && !parentCase,
+        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
+        !isCompletedCase(state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
@@ -743,7 +744,9 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       isActive:
-        isDistrictCourtUser(user) && !isCompletedCase(state) && !parentCase,
+        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
+        !isCompletedCase(state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
@@ -894,7 +897,9 @@ const useSections = (
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
-      isActive: isDistrictCourtUser(user) && !isCompletedCase(state),
+      isActive:
+        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
+        !isCompletedCase(state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
@@ -995,7 +1000,7 @@ const useSections = (
     return {
       name: formatMessage(sections.extensionSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isRestrictionCase(type) &&
         Boolean(parentCase) &&
         !isCompletedCase(state),
@@ -1085,7 +1090,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        isProsecutionUser(user) &&
         isInvestigationCase(type) &&
         Boolean(parentCase) &&
         !isCompletedCase(state),
@@ -1197,104 +1202,115 @@ const useSections = (
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          isCourtOfAppealsUser(user) &&
-          appealState !== CaseAppealState.COMPLETED,
-        children: [
-          {
-            name: formatMessage(sections.courtOfAppealSection.overview),
-            isActive: isActive(constants.COURT_OF_APPEAL_OVERVIEW_ROUTE),
-            href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
-          },
-          ...(!useAppealWithdrawnSections
-            ? [
-                {
-                  name: formatMessage(sections.courtOfAppealSection.reception),
-                  isActive: isActive(constants.COURT_OF_APPEAL_CASE_ROUTE),
-                  href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
-                  onClick:
-                    !isActive(constants.COURT_OF_APPEAL_CASE_ROUTE) &&
-                    validateFormStepper(
-                      isValid,
-                      [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
-                      workingCase,
-                    ) &&
-                    onNavigationTo
-                      ? async () =>
-                          await onNavigationTo(
+          appealState === CaseAppealState.APPEALED ||
+          appealState === CaseAppealState.RECEIVED ||
+          appealState === CaseAppealState.WITHDRAWN,
+        children: isCourtOfAppealsUser(user)
+          ? [
+              {
+                name: formatMessage(sections.courtOfAppealSection.overview),
+                isActive: isActive(constants.COURT_OF_APPEAL_OVERVIEW_ROUTE),
+                href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+              },
+              ...(!useAppealWithdrawnSections
+                ? [
+                    {
+                      name: formatMessage(
+                        sections.courtOfAppealSection.reception,
+                      ),
+                      isActive: isActive(constants.COURT_OF_APPEAL_CASE_ROUTE),
+                      href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+                      onClick:
+                        !isActive(constants.COURT_OF_APPEAL_CASE_ROUTE) &&
+                        validateFormStepper(
+                          isValid,
+                          [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                          workingCase,
+                        ) &&
+                        onNavigationTo
+                          ? async () =>
+                              await onNavigationTo(
+                                constants.COURT_OF_APPEAL_CASE_ROUTE,
+                              )
+                          : undefined,
+                    },
+                    {
+                      name: formatMessage(sections.courtOfAppealSection.ruling),
+                      isActive: isActive(
+                        constants.COURT_OF_APPEAL_RULING_ROUTE,
+                      ),
+                      href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
+                      onClick:
+                        !isActive(constants.COURT_OF_APPEAL_RULING_ROUTE) &&
+                        validateFormStepper(
+                          isValid,
+                          [
+                            constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
                             constants.COURT_OF_APPEAL_CASE_ROUTE,
-                          )
-                      : undefined,
-                },
-                {
-                  name: formatMessage(sections.courtOfAppealSection.ruling),
-                  isActive: isActive(constants.COURT_OF_APPEAL_RULING_ROUTE),
-                  href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
-                  onClick:
-                    !isActive(constants.COURT_OF_APPEAL_RULING_ROUTE) &&
-                    validateFormStepper(
-                      isValid,
-                      [
-                        constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
-                        constants.COURT_OF_APPEAL_CASE_ROUTE,
-                      ],
-                      workingCase,
-                    ) &&
-                    onNavigationTo
-                      ? async () =>
-                          await onNavigationTo(
-                            constants.COURT_OF_APPEAL_RULING_ROUTE,
-                          )
-                      : undefined,
-                },
-              ]
-            : []),
-          ...(useAppealWithdrawnSections
-            ? [
-                {
-                  name: formatMessage(sections.courtOfAppealSection.withdrawal),
-                  isActive: isActive(
-                    constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
-                  ),
-                  href: `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
-                  onClick:
-                    !isActive(constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE) &&
-                    validateFormStepper(
-                      isValid,
-                      [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
-                      workingCase,
-                    ) &&
-                    onNavigationTo
-                      ? async () =>
-                          await onNavigationTo(
-                            constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
-                          )
-                      : undefined,
-                },
-              ]
-            : []),
-          {
-            name: formatMessage(sections.courtOfAppealSection.summary),
-            isActive: isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE),
-            href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
-            onClick:
-              !isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE) &&
-              validateFormStepper(
-                isValid,
-                [
-                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
-                  constants.COURT_OF_APPEAL_CASE_ROUTE,
-                  constants.COURT_OF_APPEAL_RULING_ROUTE,
-                ],
-                workingCase,
-              ) &&
-              onNavigationTo
-                ? async () =>
-                    await onNavigationTo(
-                      constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
-                    )
-                : undefined,
-          },
-        ],
+                          ],
+                          workingCase,
+                        ) &&
+                        onNavigationTo
+                          ? async () =>
+                              await onNavigationTo(
+                                constants.COURT_OF_APPEAL_RULING_ROUTE,
+                              )
+                          : undefined,
+                    },
+                  ]
+                : []),
+              ...(useAppealWithdrawnSections
+                ? [
+                    {
+                      name: formatMessage(
+                        sections.courtOfAppealSection.withdrawal,
+                      ),
+                      isActive: isActive(
+                        constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+                      ),
+                      href: `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
+                      onClick:
+                        !isActive(
+                          constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+                        ) &&
+                        validateFormStepper(
+                          isValid,
+                          [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                          workingCase,
+                        ) &&
+                        onNavigationTo
+                          ? async () =>
+                              await onNavigationTo(
+                                constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
+                              )
+                          : undefined,
+                    },
+                  ]
+                : []),
+              {
+                name: formatMessage(sections.courtOfAppealSection.summary),
+                isActive: isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE),
+                href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
+                onClick:
+                  !isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE) &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                      constants.COURT_OF_APPEAL_CASE_ROUTE,
+                      constants.COURT_OF_APPEAL_RULING_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
+                        )
+                    : undefined,
+              },
+            ]
+          : [],
       },
       {
         name:
@@ -1350,7 +1366,8 @@ const useSections = (
             : workingCase.state,
         ),
         isActive:
-          workingCase.appealState === CaseAppealState.WITHDRAWN ||
+          (workingCase.appealState === CaseAppealState.WITHDRAWN &&
+            !workingCase.appealReceivedByCourtDate) ||
           (!workingCase.parentCase &&
             isCompletedCase(workingCase.state) &&
             !workingCase.prosecutorPostponedAppealDate &&
@@ -1382,7 +1399,8 @@ const useSections = (
           ]
         : []),
       ...(!workingCase.appealState ||
-      workingCase.appealState === CaseAppealState.WITHDRAWN
+      (workingCase.appealState === CaseAppealState.WITHDRAWN &&
+        !workingCase.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]

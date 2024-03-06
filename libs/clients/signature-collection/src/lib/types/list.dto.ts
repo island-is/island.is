@@ -36,6 +36,7 @@ export interface List {
   slug: string
   maxReached: boolean
   reviewed: boolean
+  isExtended: boolean
 }
 
 export interface SignedList extends List {
@@ -78,7 +79,14 @@ export const mapList = (
     svaedi: areas,
     dagsetningLokar: endTime,
   } = list
-  if (!id || !collection || !candidate || !candidate.id || !areas || !endTime) {
+  if (
+    !id ||
+    !collection?.sofnunEnd ||
+    !candidate ||
+    !candidate.id ||
+    !areas ||
+    !endTime
+  ) {
     logger.warn(
       'Received partial collection information from the national registry.',
       list,
@@ -89,12 +97,17 @@ export const mapList = (
   }
   const area = mapArea(areas)
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
+
+  const isActive = endTime > new Date()
+  const isExtended = endTime > collection.sofnunEnd
+  const reviewed = list.lokadHandvirkt ?? false
+
   return {
     id: list.id?.toString() ?? '',
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
     title: list.listiNafn ?? '',
     startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
-    endTime: list.dagsetningLokar ?? new Date(),
+    endTime,
     collectors: collectors
       ? collectors?.map((collector) => ({
           name: collector.nafn ?? '',
@@ -104,9 +117,10 @@ export const mapList = (
     candidate: mapCandidate(candidate),
     slug: getSlug(candidate.id),
     area,
-    active: endTime > new Date(),
+    active: isActive,
     numberOfSignatures,
     maxReached: area.max <= numberOfSignatures,
-    reviewed: list.lokadHandvirkt ?? false,
+    reviewed,
+    isExtended,
   }
 }

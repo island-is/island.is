@@ -774,12 +774,14 @@ export class AdminClientsService {
         apiScopes.map(({ name }) => name),
       )
 
-    return apiScopes.map((apiScope) =>
-      this.adminTranslationService.mapApiScopeToAdminScopeDTO(
-        apiScope,
-        translations,
-      ),
-    )
+    return apiScopes
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((apiScope) =>
+        this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+          apiScope,
+          translations,
+        ),
+      )
   }
 
   private isSuperAdmin = (user: User) => {

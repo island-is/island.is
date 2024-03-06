@@ -20,14 +20,9 @@ interface ArgItem {
   value: string
 }
 
-export enum NotificationStatus {
-  READ = 'read',
-  UNREAD = 'unread',
-}
 @Table({
   tableName: 'user_notification', // Explicitly setting the table name
 })
-@Table
 export class Notification extends Model<
   InferAttributes<Notification>,
   InferCreationAttributes<Notification>
@@ -59,6 +54,16 @@ export class Notification extends Model<
 
   @Column({
     type: DataType.STRING,
+    defaultValue: null,
+    allowNull: true, // initially nullable if it's optional during transition
+    field: 'sender_id',
+  })
+  senderId?: string
+  // senderId!: CreationOptional<string>;
+  // senderId!: string
+
+  @Column({
+    type: DataType.STRING,
     allowNull: false,
     field: 'template_id',
   })
@@ -86,11 +91,18 @@ export class Notification extends Model<
   updated!: CreationOptional<Date>
 
   @Column({
-    type: DataType.ENUM,
-    values: [NotificationStatus.READ, NotificationStatus.UNREAD],
-    defaultValue: NotificationStatus.UNREAD,
+    type: DataType.BOOLEAN,
+    defaultValue: false,
     allowNull: false,
-    field: 'status',
+    field: 'read',
   })
-  status!: CreationOptional<NotificationStatus>
+  read!: CreationOptional<boolean>
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+    field: 'seen',
+  })
+  seen!: CreationOptional<boolean>
 }
