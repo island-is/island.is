@@ -7,6 +7,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
 import { ApplicationModel } from './models'
+import { ApplicationBackendModel } from './backendModels'
 
 @Controller('api/open/v1')
 export class AppController {
@@ -16,7 +17,10 @@ export class AppController {
   ) {}
 
   @Get('applications')
-  @ApiCreatedResponse({ description: 'Gets application for municipality' })
+  @ApiCreatedResponse({
+    type: [ApplicationBackendModel],
+    description: 'Gets application for municipality',
+  })
   async getApplication(
     @Headers('API-Key') apiKey: string,
     @Headers('Municipality-Code') municipalityCode: string,
