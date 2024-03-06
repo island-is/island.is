@@ -38,9 +38,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseSubmittedModal' | 'caseSentForConfirmationModal'
   >('noModal')
-  const [appealConfirmationDecision, setAppealConfirmationDecision] = useState<
-    'confirmAppeal' | 'denyAppeal'
-  >()
+  const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
+    useState<'confirm' | 'deny'>()
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
@@ -112,7 +111,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         {user?.canConfirmAppeal && (
           <Box marginBottom={10}>
             <SectionHeading
-              title={formatMessage(strings.overview.appealConfirmationTitle)}
+              title={formatMessage(
+                strings.overview.indictmentConfirmationTitle,
+              )}
               required
             />
             <BlueBox>
@@ -122,20 +123,18 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   name="appealConfirmationDecision"
                   id="confirmAppeal"
                   backgroundColor="white"
-                  label={formatMessage(strings.overview.confirmAppeal)}
-                  checked={appealConfirmationDecision === 'confirmAppeal'}
-                  onChange={() =>
-                    setAppealConfirmationDecision('confirmAppeal')
-                  }
+                  label={formatMessage(strings.overview.confirmIndictment)}
+                  checked={indictmentConfirmationDecision === 'confirm'}
+                  onChange={() => setIndictmentConfirmationDecision('confirm')}
                 />
                 <RadioButton
                   large
                   name="appealConfirmationDecision"
                   id="denyAppeal"
                   backgroundColor="white"
-                  label={formatMessage(strings.overview.denyAppeal)}
-                  checked={appealConfirmationDecision === 'denyAppeal'}
-                  onChange={() => setAppealConfirmationDecision('denyAppeal')}
+                  label={formatMessage(strings.overview.denyIndictment)}
+                  checked={indictmentConfirmationDecision === 'deny'}
+                  onChange={() => setIndictmentConfirmationDecision('deny')}
                 />
               </div>
             </BlueBox>
@@ -164,7 +163,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               : undefined
           }
           onNextButtonClick={handleNextButtonClick}
-          nextIsDisabled={user?.canConfirmAppeal && !appealConfirmationDecision}
+          nextIsDisabled={
+            user?.canConfirmAppeal && !indictmentConfirmationDecision
+          }
         />
       </FormContentContainer>
       <AnimatePresence>
