@@ -107,23 +107,23 @@ export const wildcard = async (target: string) => {
 export const addXroadMock = async <Conf extends XroadSectionConfig>(
   options:
     | {
-        config: XroadConf<Conf>
-        orgType?: XRoadMemberClass
-        serviceMemberCode: XRoadEnvs<Conf>
-        prefix: XRoadEnvs<Conf>
-        apiPath: string
-        response: Response | Response[]
-        prefixType: 'base-path-with-env'
-        method?: HttpMethod
-      }
+      config: XroadConf<Conf>
+      orgType?: XRoadMemberClass
+      serviceMemberCode: XRoadEnvs<Conf>
+      prefix: XRoadEnvs<Conf>
+      apiPath: string
+      response: Response | Response[]
+      prefixType: 'base-path-with-env'
+      method?: HttpMethod
+    }
     | {
-        config: XroadConf<Conf>
-        prefix: XRoadEnvs<Conf>
-        response: Response | Response[]
-        apiPath: string
-        prefixType: 'only-base-path'
-        method?: HttpMethod
-      },
+      config: XroadConf<Conf>
+      prefix: XRoadEnvs<Conf>
+      response: Response | Response[]
+      apiPath: string
+      prefixType: 'only-base-path'
+      method?: HttpMethod
+    },
 ) => {
   const method = options.method === undefined ? HttpMethod.GET : options.method
   const { envs } = getEnvVariables(
@@ -140,7 +140,7 @@ export const addXroadMock = async <Conf extends XroadSectionConfig>(
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
   const env =
     options.prefixType === 'base-path-with-env'
-      ? `IS-DEV/${options.orgType ?? 'GOV'}/${options.serviceMemberCode}`
+      ? `IS-DEV/${options.orgType ?? 'GOV'}/${String(options.serviceMemberCode)}`
       : ''
   const stubResponses = Array.isArray(options.response)
     ? options.response
