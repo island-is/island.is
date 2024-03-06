@@ -9,4 +9,7 @@ export class PoliceCaseInfo {
 
   @ApiPropertyOptional()
   date?: Date
+
+  @ApiPropertyOptional()
+  licencePlate?: string
 }

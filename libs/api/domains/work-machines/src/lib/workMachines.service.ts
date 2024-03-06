@@ -136,6 +136,10 @@ export class WorkMachinesService {
     return this.machineService.getMachineDetail(auth, id)
   }
 
+  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
+    return this.machineService.getMachineByRegno(auth, regNumber)
+  }
+
   async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
     return (
       (await this.machineService.isPaymentRequired(auth, regNumber)) || false

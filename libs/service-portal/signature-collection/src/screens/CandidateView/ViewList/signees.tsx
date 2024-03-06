@@ -20,7 +20,7 @@ const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/listar/medmaelalistar/', '')
+  const listId = pathname.replace('/min-gogn/listar/medmaelasofnun/', '')
 
   const [searchTerm, setSearchTerm] = useState('')
   const { listSignees, loadingSignees } = useGetListSignees(listId)
@@ -52,8 +52,8 @@ const Signees = () => {
   }, [searchTerm])
 
   return (
-    <Box marginTop={5}>
-      <Text variant="h5">{formatMessage(m.signeesHeader)}</Text>
+    <Box marginTop={[0, 5]}>
+      <Text variant="h4">{formatMessage(m.signeesHeader)}</Text>
       <Box
         display={['block', 'flex']}
         justifyContent="spaceBetween"

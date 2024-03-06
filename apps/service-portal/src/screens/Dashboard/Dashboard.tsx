@@ -37,6 +37,7 @@ import {
 import * as styles from './Dashboard.css'
 import cn from 'classnames'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { DocumentsScope } from '@island.is/auth/scopes'
 
 export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const { userInfo } = useAuth()
@@ -50,6 +51,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+  const hasDelegationAccess = userInfo?.scopes?.includes(DocumentsScope.main)
 
   useEffect(() => {
     PlausiblePageviewDetail(
@@ -244,27 +246,38 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                     <Text variant="h3">
                       {formatMessage(m.emptyDocumentsList)}
                     </Text>
+                    {!hasDelegationAccess && (
+                      <Icon
+                        color="blue600"
+                        type="outline"
+                        icon="lockClosed"
+                        size="small"
+                        className={styles.lock}
+                      />
+                    )}
                   </Box>
                 )}
 
-                <Box
-                  textAlign="center"
-                  marginBottom={1}
-                  printHidden
-                  marginY={3}
-                >
-                  <LinkResolver href={DocumentsPaths.ElectronicDocumentsRoot}>
-                    <Button
-                      icon="arrowForward"
-                      iconType="filled"
-                      size="small"
-                      type="button"
-                      variant="text"
-                    >
-                      {formatMessage(m.openDocuments)}
-                    </Button>
-                  </LinkResolver>
-                </Box>
+                {hasDelegationAccess && (
+                  <Box
+                    textAlign="center"
+                    marginBottom={1}
+                    printHidden
+                    marginY={3}
+                  >
+                    <LinkResolver href={DocumentsPaths.ElectronicDocumentsRoot}>
+                      <Button
+                        icon="arrowForward"
+                        iconType="filled"
+                        size="small"
+                        type="button"
+                        variant="text"
+                      >
+                        {formatMessage(m.openDocuments)}
+                      </Button>
+                    </LinkResolver>
+                  </Box>
+                )}
               </Box>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>

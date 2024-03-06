@@ -95,12 +95,13 @@ export const processDataFromSource = (data: string) => {
   // Column 1 in all data rows should contain category
   // Column 2 in all data rows should contain subcategory
   for (let i = 3; i < headers.length; i += 1) {
-    const currentDate = headers[i]?.trim()
+    const currentHeader = headers[i]?.trim()
 
-    const asDate = _tryToGetDate(currentDate)
+    const asDate = _tryToGetDate(currentHeader)
+    let header = currentHeader
 
-    if (!asDate) {
-      continue
+    if (asDate) {
+      header = asDate.getTime().toString()
     }
 
     for (const lineColumns of dataLines) {
@@ -134,7 +135,7 @@ export const processDataFromSource = (data: string) => {
           : null
 
       result[key].push({
-        date: asDate,
+        header,
         value,
       })
     }
@@ -217,13 +218,15 @@ export const getStatistics = ({
     return []
   }
 
+  const isDateHeader = _tryToGetDate(allSourceDataForKey[0]?.header) !== null
+
   const mapped = allSourceDataForKey.map((item) => ({
     ...item,
-    date: new Date(item.date),
+    header: item.header,
   }))
 
   const dropLeft = (item: SourceValue) => {
-    if (dateFrom && item.date < dateFrom) {
+    if (isDateHeader && dateFrom && new Date(item.header) < dateFrom) {
       return true
     }
 
@@ -235,7 +238,7 @@ export const getStatistics = ({
   }
 
   const dropRight = (item: SourceValue) => {
-    if (dateTo && item.date > dateTo) {
+    if (isDateHeader && dateTo && new Date(item.header) > dateTo) {
       return true
     }
 
@@ -246,17 +249,18 @@ export const getStatistics = ({
     return false
   }
 
-  // After running this we have only valid dates if range is selected
-  // And we have trimmed non numerical values from left and right ends
+  // After running this we have only valid items if range is selected
+  // And we have trimmed empty values from left and right ends
   return dropWhile(dropRightWhile(mapped, dropRight), dropLeft)
 }
 
 export interface DataItem {
-  statisticsForDate: {
+  statisticsForHeader: {
     key: string
     value: number | null
   }[]
-  date: Date
+  header: string
+  headerType: 'date' | 'string' | 'number'
 }
 
 /**
@@ -285,34 +289,33 @@ export const getMultipleStatistics = async (
     }),
   )
 
-  const byDate = data.reduce((result, d, i) => {
+  const byHeader = data.reduce((result, d, i) => {
     const sourceDataKey = query.sourceDataKeys[i]
 
     for (const dataPoint of d) {
-      const dateAsString = dataPoint.date.toISOString()
-
-      if (!result[dateAsString]) {
-        result[dateAsString] = {}
+      if (!result[dataPoint.header]) {
+        result[dataPoint.header] = {}
       }
 
-      result[dateAsString][sourceDataKey] = dataPoint.value
+      result[dataPoint.header][sourceDataKey] = dataPoint.value
     }
     return result
   }, {} as Record<string, Record<string, SourceValue['value']>>)
 
-  const dates = Object.keys(byDate)
-  dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+  const headers = Object.keys(byHeader)
+  headers.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
 
-  const result = dates.map((d) => ({
-    statisticsForDate: Object.keys(byDate[d]).map((key) => ({
+  const result = headers.map((d) => ({
+    statisticsForHeader: Object.keys(byHeader[d]).map((key) => ({
       key,
-      value: byDate[d][key],
+      value: byHeader[d][key],
     })),
-    date: new Date(d),
-  }))
+    header: d.toString(),
+    headerType: d, // TODO: type
+  })) as DataItem[]
 
   const dropIncompleteEntries = (item: typeof result[number]) =>
-    item.statisticsForDate.length !== query.sourceDataKeys.length
+    item.statisticsForHeader.length !== query.sourceDataKeys.length
 
   // Trim from both ends results that do not have data for all keys
   const trimmedResult = dropRightWhile(

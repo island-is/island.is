@@ -1,4 +1,9 @@
-export const formatCurrency = (answer: number | null | undefined) => {
+export const formatCurrency = (
+  answer: number | null | undefined,
+  suffix = ' kr.',
+) => {
   if (typeof answer !== 'number') return answer
-  return String(answer).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+  return (
+    String(Math.floor(answer)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + suffix
+  )
 }

@@ -576,6 +576,9 @@ export interface IChartFields {
 
   /** X Axis Format */
   xAxisFormat?: string | undefined
+
+  /** Custom Style Config */
+  customStyleConfig?: Record<string, any> | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -2941,7 +2944,7 @@ export interface IOrganizationSubpageFields {
     | undefined
 
   /** Slice Custom Renderer */
-  sliceCustomRenderer?: 'SliceDropdown' | undefined
+  sliceCustomRenderer?: 'SliceDropdown' | 'SliceTableOfContents' | undefined
 
   /** Slice Extra Text */
   sliceExtraText?: string | undefined
@@ -3194,6 +3197,9 @@ export interface IProjectPageFields {
 
   /** Sidebar */
   sidebar: boolean
+
+  /** Sidebar Frontpage Link */
+  sidebarFrontpageLink: boolean
 
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
