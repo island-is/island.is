@@ -1416,7 +1416,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
     {
       data: { universityGatewayUniversities },
     },
-    namespaceResponse
+    namespaceResponse,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -1433,18 +1433,15 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
     apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     }),
-    apolloClient.query<
-    GetNamespaceQuery,
-    GetNamespaceQueryVariables
-  >({
-    query: GET_NAMESPACE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        namespace: 'universityGateway',
+    apolloClient.query<GetNamespaceQuery, GetNamespaceQueryVariables>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+          namespace: 'universityGateway',
+        },
       },
-    },
-  })
+    }),
   ])
 
   const { search } = query
