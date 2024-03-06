@@ -231,21 +231,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       : 'CLOSED'
   }
 
-  // TODO Create proper types here
-
-  // [...data]
-  // // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
-  // .sort(() => Math.random() - 0.5)
-  // .map((item: UniversityGatewayProgram, index: number) => {
-  //   const itemWithStatus = {
-  //     ...item,
-  //     applicationStatus: getApplicationStatus(item),
-  //   }
-  //   return { item: itemWithStatus, refIndex: index, score: 1 }
-  // }),
-
-  //creating a deep copy to avoid original being affected by changes to filters
-
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
   }, [filteredResults])
@@ -1421,9 +1406,35 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   res.setHeader(
     'Cache-Control',
-    'public, s-maxage=3300, stale-while-revalidate=300',
+    'public, s-maxage=1650, stale-while-revalidate=300',
   )
-  const namespaceResponse = await apolloClient.query<
+
+  const [
+    {
+      data: { getOrganizationPage },
+    },
+    filters,
+    {
+      data: { universityGatewayUniversities },
+    },
+    namespaceResponse
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
+      query: GET_UNIVERSITY_GATEWAY_FILTERS,
+    }),
+    apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    }),
+    apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
   >({
@@ -1435,6 +1446,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
       },
     },
   })
+  ])
 
   const { search } = query
 
@@ -1455,32 +1467,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   if (!showPagesFeatureFlag) {
     throw new CustomNextError(404, 'Page not found')
   }
-
-  const [
-    {
-      data: { getOrganizationPage },
-    },
-    filters,
-    {
-      data: { universityGatewayUniversities },
-    },
-  ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
-      query: GET_UNIVERSITY_GATEWAY_FILTERS,
-    }),
-    apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
-      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-    }),
-  ])
 
   return {
     searchQuery: search as string,
