@@ -980,6 +980,7 @@ export class CaseService {
           update.state = transitionCase(
             CaseTransition.RECEIVE,
             theCase.state,
+            theCase.type,
             theCase.appealState,
           ).state
         }

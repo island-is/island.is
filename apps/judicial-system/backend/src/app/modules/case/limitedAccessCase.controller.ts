@@ -160,6 +160,7 @@ export class LimitedAccessCaseController {
     const update: LimitedAccessUpdateCase = transitionCase(
       transition.transition,
       theCase.state,
+      theCase.type,
       theCase.appealState,
     )
 
