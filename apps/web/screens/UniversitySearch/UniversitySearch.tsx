@@ -173,7 +173,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const { linkResolver } = useLinkResolver()
   const [totalPages, setTotalPages] = useState<number>(
     0,
-    //Math.ceil(data.length / ITEMS_PER_PAGE),
   )
   const [filters, setFilters] = useState<FilterProps>(
     JSON.parse(JSON.stringify(initialFilters)),
@@ -184,7 +183,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       const temp = [
         ...(data?.universityGatewayPrograms.data as UniversityGatewayProgram[]),
       ]
-        // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
         .sort(() => Math.random() - 0.5)
         .map((item: UniversityGatewayProgram, index: number) => {
           const itemWithStatus = {
