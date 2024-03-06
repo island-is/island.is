@@ -172,7 +172,7 @@ const EstateTemplate: ApplicationTemplate<
           name: 'Approved',
           status: 'approved',
           progress: 1,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,
