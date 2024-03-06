@@ -1,5 +1,5 @@
 import { style, styleVariants } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const variants = styleVariants({
   purple: {},
@@ -15,7 +15,7 @@ export const link = style({
   height: 40,
   lineHeight: '40px',
   borderRadius: '20px',
-  margin: '0 4px',
+  margin: '0px',
   padding: '0 8px',
   transition: 'all .1s',
   border: '1px solid transparent',
@@ -35,6 +35,11 @@ export const link = style({
       backgroundColor: theme.color.white,
     },
   },
+  ...themeUtils.responsiveStyle({
+    sm: {
+      margin: '0 2px',
+    },
+  }),
 })
 
 export const linkCurrent = style({
@@ -92,11 +97,16 @@ export const linkDisabled = style({
 export const gap = style({
   display: 'inline-block',
   textAlign: 'center',
-  margin: '0 4px',
-  minWidth: 40,
+  margin: '0px',
+  minWidth: 25,
   selectors: {
     [`${variants.blue} &`]: {
       color: theme.color.blue600,
     },
   },
+  ...themeUtils.responsiveStyle({
+    sm: {
+      margin: '0 4px',
+    },
+  }),
 })
