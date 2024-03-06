@@ -84,6 +84,7 @@ export interface CrimeSceneMap {
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
+  WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
   ACCEPTED = 'ACCEPTED',
@@ -101,6 +102,7 @@ export enum CaseAppealState {
 
 export enum CaseTransition {
   OPEN = 'OPEN',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
