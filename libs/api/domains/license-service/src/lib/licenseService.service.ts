@@ -69,8 +69,6 @@ export class LicenseServiceService {
   ) {
     return this.cmsContentfulService.getOrganization(slug, locale)
   }
-  private mapLicenseType = <Type extends LicenseType>(type: LicenseType) =>
-    this.licenseClient.getClientByLicenseType<Type>(type)
 
   private async getLicenseLabels(locale: Locale) {
     const licenseLabels = await this.cmsContentfulService.getNamespace(
@@ -191,7 +189,9 @@ export class LicenseServiceService {
       (i) => i.type === licenseType,
     )
 
-    const licenseService = await this.mapLicenseType(licenseType)
+    const licenseService = await this.licenseClient.getClientByLicenseType(
+      licenseType,
+    )
 
     if (!licenseTypeDefinition || !licenseService) {
       this.logger.error(`Invalid license type. type: ${licenseType}`, {
@@ -301,7 +301,7 @@ export class LicenseServiceService {
   }
 
   async getClient<Type extends LicenseType>(type: LicenseType) {
-    const client = await this.mapLicenseType<Type>(type)
+    const client = await this.licenseClient.getClientByLicenseType<Type>(type)
 
     if (!client) {
       const msg = `Invalid license type. "${type}"`
