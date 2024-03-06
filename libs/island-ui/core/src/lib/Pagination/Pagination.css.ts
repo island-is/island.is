@@ -37,7 +37,7 @@ export const link = style({
   },
   ...themeUtils.responsiveStyle({
     sm: {
-      margin: '0 2px',
+      margin: '0 4px',
     },
   }),
 })
@@ -107,6 +107,7 @@ export const gap = style({
   ...themeUtils.responsiveStyle({
     sm: {
       margin: '0 4px',
+      minWidth: 40,
     },
   }),
 })
