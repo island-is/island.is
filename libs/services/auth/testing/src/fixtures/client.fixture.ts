@@ -13,6 +13,7 @@ export type CreateClient = Pick<
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
   | 'requireApiScopes'
+  | 'singleSession'
 > & {
   redirectUris?: string[]
   postLogoutRedirectUris?: string[]
@@ -32,6 +33,7 @@ const createRandomClient = (): CreateClient => {
     supportsProcuringHolders: false,
     supportsPersonalRepresentatives: false,
     requireApiScopes: false,
+    singleSession: false,
   }
 }
 

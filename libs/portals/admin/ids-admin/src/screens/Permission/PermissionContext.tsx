@@ -46,9 +46,6 @@ export const PermissionProvider: FC<React.PropsWithChildren<unknown>> = ({
   const { environment: selectedPermission, updateEnvironment } =
     useEnvironmentQuery(permissionResult.environments)
 
-  const [currentEnvironment, setCurrentEnvironment] =
-    useState<AuthAdminEnvironment>(selectedPermission.environment)
-
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)
 
@@ -61,22 +58,12 @@ export const PermissionProvider: FC<React.PropsWithChildren<unknown>> = ({
   }
 
   const changeEnvironment = (environment: AuthAdminEnvironment) => {
-    setCurrentEnvironment(environment)
     updateEnvironment(environment)
   }
 
   const updatePublishData = (publishData: PublishData) => {
     setPublishData(publishData)
   }
-
-  useEffect(() => {
-    if (
-      permissionResult &&
-      selectedPermission.environment !== currentEnvironment
-    ) {
-      updateEnvironment(currentEnvironment)
-    }
-  }, [permissionResult])
 
   return (
     <PermissionContext.Provider

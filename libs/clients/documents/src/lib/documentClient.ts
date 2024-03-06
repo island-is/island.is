@@ -18,6 +18,8 @@ import { PaperMailResponse } from './models/PaperMailRes'
 import { RequestPaperDTO } from './models/RequestPaperDTO'
 import { MessageActionDTO } from './models/MessageActionDTO'
 import { BulkMailActionDTO } from './models/BulkMailActionDTO'
+import { DocumentPageInput } from './models/DocumentPageInput'
+import { DocumentPageNumberRes } from './models/DocumentPageNumberRes'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -181,6 +183,14 @@ export class DocumentClient {
   async customersSenders(nationalId: string): Promise<SendersResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/senders`
     return await this.getRequest<SendersResponse>(requestRoute)
+  }
+
+  async getDocumentPageNumber(
+    requestParameters: DocumentPageInput,
+  ): Promise<DocumentPageNumberRes | null> {
+    const { nationalId, messageId, pageSize } = requestParameters
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/${messageId}/page?pageSize=${pageSize}`
+    return await this.getRequest<DocumentPageNumberRes>(requestRoute)
   }
 
   async requestPaperMail(

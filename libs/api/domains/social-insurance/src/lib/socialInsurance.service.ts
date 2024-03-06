@@ -15,7 +15,7 @@ import { PensionCalculationResponse } from './models/pensionCalculation.model'
 import { PaymentPlan } from './models/paymentPlan.model'
 import { PaymentGroup } from './models/paymentGroup'
 import {
-  getPensionCalculationHighlightedItem,
+  getPensionCalculationHighlightedItems,
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
@@ -126,13 +126,13 @@ export class SocialInsuranceService {
     )
 
     const groups = groupPensionCalculationItems(calculation, pageData)
-    const highlightedItem = getPensionCalculationHighlightedItem(
+    const highlightedItems = getPensionCalculationHighlightedItems(
       calculation,
       pageData,
     )
 
     return {
-      highlightedItem,
+      highlightedItems,
       groups,
     }
   }

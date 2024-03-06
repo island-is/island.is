@@ -3,7 +3,7 @@ type SelectOption = {
   value: string
 }
 
-export function getSelectOptionLabel(options: SelectOption[], id?: string) {
+export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
   if (id === undefined) {
     return undefined
   }

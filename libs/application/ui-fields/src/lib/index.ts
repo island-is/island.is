@@ -21,6 +21,8 @@ export { PaymentChargeOverviewFormField } from './PaymentChargeOverviewFormField
 export { ImageFormField } from './ImageFormField/ImageFormField'
 export { PdfLinkButtonFormField } from './PdfLinkButtonFormField/PdfLinkButtonFormField'
 export { NationalIdWithNameFormField } from './NationalIdWithNameFormField/NationalIdWithNameFormField'
+export { HiddenInputFormField } from './HiddenInputFormField/HiddenInputFormField'
 export { ActionCardListFormField } from './ActionCardListFormField/ActionCardListFormField'
 export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFormField'
 export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'
+export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'

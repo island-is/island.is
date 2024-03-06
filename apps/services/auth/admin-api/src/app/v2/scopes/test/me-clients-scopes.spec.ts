@@ -176,6 +176,7 @@ describe('MeClientScopesController', () => {
           AppModule,
           SequelizeConfigService,
           user: testCase.user,
+          dbType: 'postgres',
         })
         server = request(app.getHttpServer())
 

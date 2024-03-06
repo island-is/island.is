@@ -357,7 +357,7 @@ export class Client extends Model {
   backChannelLogoutUri?: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   })
@@ -501,6 +501,16 @@ export class Client extends Model {
     example: true,
   })
   requireApiScopes!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  singleSession!: boolean
 
   @CreatedAt
   @ApiProperty()

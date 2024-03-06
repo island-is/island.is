@@ -11,14 +11,18 @@ import {
 import { Chart as IChart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
-import { CHART_HEIGHT, DEFAULT_XAXIS_VALUE_TYPE } from '../constants'
+import {
+  CHART_HEIGHT,
+  DEFAULT_XAXIS_KEY,
+  DEFAULT_XAXIS_VALUE_TYPE,
+} from '../constants'
 import {
   useGetChartBaseComponent,
   useGetChartComponentsWithRenderProps,
   useGetChartData,
 } from '../hooks'
 import { messages } from '../messages'
-import { ChartType } from '../types'
+import { ChartType, CustomStyleConfig } from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
   createTickFormatter,
@@ -36,6 +40,14 @@ type ChartProps = {
 }
 
 export const Chart = ({ slice }: ChartProps) => {
+  const customStyleConfig = useMemo(() => {
+    if (!slice.customStyleConfig) {
+      return {}
+    }
+
+    return JSON.parse(slice.customStyleConfig)
+  }, [slice.customStyleConfig]) as CustomStyleConfig
+
   const chartType = decideChartBase(slice.components)
   const queryResult = useGetChartData({
     ...slice,
@@ -64,8 +76,9 @@ export const Chart = ({ slice }: ChartProps) => {
         chartUsesGrid,
         slice,
         tickFormatter,
+        customStyleConfig,
       }),
-    [activeLocale, chartUsesGrid, slice, tickFormatter],
+    [activeLocale, chartUsesGrid, slice, tickFormatter, customStyleConfig],
   )
 
   if (BaseChartComponent === null || chartType === null) {
@@ -85,9 +98,18 @@ export const Chart = ({ slice }: ChartProps) => {
     )
   }
 
-  const data = slice.sourceData
-    ? JSON.parse(slice.sourceData)
-    : queryResult.data ?? []
+  const xAxisKey = slice.xAxisKey || DEFAULT_XAXIS_KEY
+  const xAxisValueType = slice.xAxisValueType || DEFAULT_XAXIS_VALUE_TYPE
+
+  const data = (
+    slice.sourceData ? JSON.parse(slice.sourceData) : queryResult.data ?? []
+  ).map((d: Record<string, unknown>) => ({
+    ...d,
+    [xAxisKey]:
+      xAxisValueType === 'date' || xAxisValueType === 'number'
+        ? Number(d[xAxisKey])
+        : d[xAxisKey],
+  }))
 
   if (!data || data.length === 0) {
     return messages[activeLocale].noDataForChart
@@ -122,11 +144,16 @@ export const Chart = ({ slice }: ChartProps) => {
       >
         <Box width="full" height="full" marginTop={2}>
           <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-            <BaseChartComponent data={data} width={400} height={400}>
+            <BaseChartComponent
+              data={data}
+              layout={slice.flipAxis ? 'vertical' : 'horizontal'}
+              margin={customStyleConfig.chart?.margin ?? undefined}
+            >
               {cartesianGridComponents}
               {renderLegend({
                 componentsWithAddedProps,
-                data: data,
+                data,
+                customStyleConfig,
               })}
               {renderTooltip({
                 slice,
@@ -139,8 +166,9 @@ export const Chart = ({ slice }: ChartProps) => {
               {renderChartComponents({
                 componentsWithAddedProps,
                 chartType,
-                data: data,
+                data,
                 activeLocale,
+                customStyleConfig,
               })}
             </BaseChartComponent>
           </ResponsiveContainer>
