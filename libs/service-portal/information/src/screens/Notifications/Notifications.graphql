@@ -7,6 +7,7 @@ fragment NotificationMetadataFields on NotificationMetadata {
 
 fragment NotificationSenderFields on NotificationSender {
   id
+  logoUrl
 }
 
 fragment NotificationMessageFields on NotificationMessage {
@@ -66,5 +67,11 @@ mutation MarkUserNotificationAsRead($id: Float!) {
     data {
       ...NotificationDataFields
     }
+  }
+}
+
+mutation MarkAllNotificationsAsSeen {
+  markAllNotificationsSeen {
+    success
   }
 }

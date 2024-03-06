@@ -34,6 +34,9 @@ export class NotificationMetadata {
 export class NotificationSender {
   @Field({ nullable: true })
   id?: string
+
+  @Field({ nullable: true })
+  logoUrl?: string
 }
 
 @ObjectType()

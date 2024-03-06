@@ -58,7 +58,7 @@ export class NotificationsResolver {
   }
 
   @Mutation(() => MarkAllAsSeenResponse, {
-    name: 'markNotificationAsRead',
+    name: 'markAllNotificationsSeen',
     nullable: true,
   })
   async markAllNotificationsAsSeen(@CurrentUser() user: User) {

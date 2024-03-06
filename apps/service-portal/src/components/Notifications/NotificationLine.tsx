@@ -6,6 +6,7 @@ import format from 'date-fns/format'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
 import { Notification } from '@island.is/api/schema'
+import { AvatarImage } from '@island.is/service-portal/documents'
 
 interface Props {
   data: Omit<Notification, 'recipient'>
@@ -32,12 +33,12 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
           [styles.unread]: !isRead,
         })}
       >
-        {/* {data.img ? (
+        {data.sender?.logoUrl ? (
           <AvatarImage
-            img={data.img}
-            background={data.unread ? 'white' : 'blue100'}
+            img={data.sender.logoUrl}
+            background={!isRead ? 'white' : 'blue100'}
           />
-        ) : undefined} */}
+        ) : undefined}
         <Box
           width="full"
           display="flex"

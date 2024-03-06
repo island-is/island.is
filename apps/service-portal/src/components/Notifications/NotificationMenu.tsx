@@ -43,6 +43,7 @@ const NotificationMenu = ({
   const onClose = () => {
     closeNotificationMenu()
   }
+
   const closeButton = (
     <button
       className={styles.closeButton}
@@ -151,9 +152,8 @@ const NotificationMenu = ({
       hideOnClickOutside={true}
       hideOnEsc={true}
       modalLabel={formatMessage({
-        id: 'service.portal:menu-button-aria',
-        description: 'Lýsing á notendavalmynd fyrir skjálesara',
-        defaultMessage: 'Valmynd fyrir yfirlit',
+        id: 'service.portal:notification-button-aria',
+        defaultMessage: 'Valmynd fyrir tilkynningar',
       })}
       removeOnClose={true}
       preventBodyScroll={false}

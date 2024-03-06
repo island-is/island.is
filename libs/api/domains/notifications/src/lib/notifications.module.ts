@@ -3,7 +3,10 @@ import { UserNotificationClientModule } from '@island.is/clients/user-notificati
 import { Module } from '@nestjs/common'
 
 import { NotificationsResolver } from './notifications.resolver'
-import { NotificationsListResolver } from './notificationsList.resolver'
+import {
+  NotificationsListResolver,
+  NotificationSenderResolver,
+} from './notificationsList.resolver'
 import { NotificationsService } from './notifications.service'
 
 @Module({
@@ -11,6 +14,7 @@ import { NotificationsService } from './notifications.service'
   providers: [
     NotificationsResolver,
     NotificationsListResolver,
+    NotificationSenderResolver,
     NotificationsService,
   ],
   exports: [],

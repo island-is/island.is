@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -8,7 +8,10 @@ import { m } from '@island.is/service-portal/core'
 import NotificationMenu from './NotificationMenu'
 import { MenuTypes } from '../Header/Header'
 import * as styles from './Notifications.css'
-import { useGetUserNotificationsOverviewQuery } from '@island.is/service-portal/information'
+import {
+  useGetUserNotificationsOverviewQuery,
+  useMarkAllNotificationsAsSeenMutation,
+} from '@island.is/service-portal/information'
 
 interface Props {
   setMenuState: (val: MenuTypes) => void
@@ -17,6 +20,8 @@ interface Props {
 
 const NotificationButton = ({ setMenuState, showMenu = false }: Props) => {
   const { formatMessage } = useLocale()
+  const [hasMarkedLocally, setHasMarkedLocally] = useState(false)
+  const [markAllAsSeen] = useMarkAllNotificationsAsSeenMutation()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const ref = useRef<HTMLButtonElement>(null)
@@ -29,7 +34,15 @@ const NotificationButton = ({ setMenuState, showMenu = false }: Props) => {
     },
   })
 
-  const showBadge = !!data?.userNotificationsOverview?.unseenCount
+  const showBadge =
+    !!data?.userNotificationsOverview?.unseenCount && !hasMarkedLocally
+
+  useEffect(() => {
+    if (showMenu && showBadge) {
+      markAllAsSeen()
+      setHasMarkedLocally(true)
+    }
+  }, [showMenu, showBadge])
 
   return (
     <Box position="relative" marginRight={[1, 1, 2]}>

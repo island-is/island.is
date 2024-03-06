@@ -5,17 +5,22 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Parent,
 } from '@nestjs/graphql'
 import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
+import { OrganizationLogoLoader } from '@island.is/cms'
+import type { LogoUrl, OrganizationLogoDataLoader } from '@island.is/cms'
 import { NotificationsService } from './notifications.service'
 import {
+  NotificationSender,
   NotificationsInput,
   NotificationsResponse,
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Loader } from '@island.is/nest/dataloader'
 
 const LOG_CATEGORY = 'notification-list-resolver'
 
@@ -72,5 +77,30 @@ export class NotificationsListResolver {
   ): Promise<number | undefined> {
     const res = await this.service.getUnreadCount(user)
     return res?.unreadCount
+  }
+}
+
+@UseGuards(IdsUserGuard)
+@Resolver(() => NotificationSender)
+export class NotificationSenderResolver {
+  constructor(
+    private readonly service: NotificationsService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
+
+  @ResolveField('logoUrl', () => String, { nullable: true })
+  async resolveOrganisationLogoUrl(
+    @Loader(OrganizationLogoLoader)
+    organizationLogoLoader: OrganizationLogoDataLoader,
+    @Parent() sender: NotificationSender,
+  ): Promise<LogoUrl> {
+    this.logger.info('NotificationSenderResolver: sender', {
+      sender,
+    })
+    // return await organizationLogoLoader.load(sender?.id ?? '')
+    return organizationLogoLoader.load({
+      key: sender?.id ?? '',
+      field: 'kennitala',
+    })
   }
 }

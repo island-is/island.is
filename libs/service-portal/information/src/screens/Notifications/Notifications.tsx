@@ -26,8 +26,7 @@ const UserNotifications = () => {
   const { formatMessage } = useLocale()
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const [postMarkAsRead, { loading: mutationLoading, error: mutationError }] =
-    useMarkUserNotificationAsReadMutation()
+  const [postMarkAsRead] = useMarkUserNotificationAsReadMutation()
 
   const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
     variables: {
@@ -119,10 +118,14 @@ const UserNotifications = () => {
                     },
                   }),
               }}
-              // image={{
-              //   type: 'image',
-              //   url: 'https://images.ctfassets.net/8k0h54kbe6bj/3EumKpWqbPFygVWxWteoW/2961b0d9c162e8528e5771ab1707a368/Samgongustofa-stakt-400-400.png',
-              // }}
+              image={
+                item.sender?.logoUrl
+                  ? {
+                      type: 'image',
+                      url: item.sender.logoUrl,
+                    }
+                  : undefined
+              }
               key={item.notificationId}
             />
           ))}
