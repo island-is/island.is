@@ -1,6 +1,5 @@
 query Case($input: CaseQueryInput!) {
   case(input: $input) {
-    id
     created
     modified
     type
