@@ -136,9 +136,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 provider: {
                   component: 'select',
                   label: m.application.loanStatus.loanProvider,
-                  options: loanProviders.map((bank) => ({
-                    value: bank,
-                    label: bank,
+                  options: loanProviders.map((provider) => ({
+                    value: provider,
+                    label: provider,
                   })),
                 },
                 status: {
