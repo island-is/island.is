@@ -30,6 +30,7 @@ query GetClient($input: AuthAdminClientInput!) {
       requireApiScopes
       requireConsent
       requirePkce
+      singleSession
       accessTokenLifetime
       customClaims {
         type

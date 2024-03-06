@@ -381,6 +381,44 @@ export const dataSchema = z.object({
         params: errorMessages.requiredAttachment,
       }),
   }),
+  employers: z
+    .array(
+      z
+        .object({
+          email: z
+            .string()
+            .email()
+            .refine((x) => x.trim().length > 0, {
+              params: errorMessages.employerEmail,
+            }),
+          phoneNumber: z
+            .string()
+            .refine(
+              (p) => {
+                const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+                const phoneNumberStartStr = ['6', '7', '8']
+                if (phoneNumber)
+                  return (
+                    phoneNumber.isValid() &&
+                    phoneNumberStartStr.some((substr) =>
+                      phoneNumber.nationalNumber.startsWith(substr),
+                    )
+                  )
+                else return true
+              },
+              { params: errorMessages.phoneNumber },
+            )
+            .optional(),
+          ratio: z.string(),
+          stillEmployed: z.enum([YES, NO]).optional(),
+        })
+        .refine((e) => ('stillEmployed' in e ? !!e.stillEmployed : true), {
+          path: ['stillEmployed'],
+        }),
+    )
+    .refine((e) => e === undefined || e.length > 0, {
+      params: errorMessages.employersRequired,
+    }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

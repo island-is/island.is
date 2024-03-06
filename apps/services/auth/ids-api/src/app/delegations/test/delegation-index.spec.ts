@@ -7,13 +7,15 @@ import {
   DelegationsIndexService,
   DelegationIndex,
   DelegationIndexMeta,
+  Delegation,
+  DelegationScope,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { indexingTestcases } from './delegation-index-test-cases'
 import { setupWithAuth } from '../../../../test/setup'
 import { Sequelize } from 'sequelize-typescript'
 import { Type } from '@nestjs/common'
-import { user } from './delegations-filters-types'
+import { domainName, user } from './delegations-filters-types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import faker from 'faker'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
@@ -29,6 +31,8 @@ describe('DelegationsIndexService', () => {
   let sequelize: Sequelize
   let nationalRegistryApi: NationalRegistryClientService
   let rskApi: RskRelationshipsClient
+  let delegationModel: typeof Delegation
+  let delegationScopeModel: typeof DelegationScope
 
   beforeAll(async () => {
     app = await setupWithAuth({
@@ -39,6 +43,8 @@ describe('DelegationsIndexService', () => {
 
     delegationIndexModel = app.get(getModelToken(DelegationIndex))
     delegationIndexMetaModel = app.get(getModelToken(DelegationIndexMeta))
+    delegationModel = app.get(getModelToken(Delegation))
+    delegationScopeModel = app.get(getModelToken(DelegationScope))
 
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
@@ -61,22 +67,23 @@ describe('DelegationsIndexService', () => {
     await app.cleanUp()
   })
 
-  beforeEach(async () => {
-    const mockedDate = testDate
-
-    jest.useFakeTimers()
-    jest.setSystemTime(mockedDate)
-
-    // remove all delegation meta and delegations
-    await delegationIndexMetaModel.destroy({ where: {} })
-  })
-
-  afterEach(() => {
-    jest.useRealTimers()
-  })
-
   describe('indexDelegations', () => {
     describe('delegation index meta logic', () => {
+      beforeEach(async () => {
+        // remove all delegation meta and delegations
+        await delegationIndexMetaModel.destroy({ where: {} })
+        await delegationIndexModel.destroy({ where: {} })
+
+        const mockedDate = testDate
+
+        jest.useFakeTimers()
+        jest.setSystemTime(mockedDate)
+      })
+
+      afterEach(() => {
+        jest.useRealTimers()
+      })
+
       it('should not index delegations if next reindex date is in the future', async () => {
         const nextReindex = new Date(testDate.getTime() + 1000) // future date
         const lastFullReindex = new Date(testDate.getTime() - 1000)
@@ -150,6 +157,7 @@ describe('DelegationsIndexService', () => {
             ),
           )
 
+          // create personal representation delegations
           await Promise.all(
             testcase.personalRepresentativeDelegation.map((d) =>
               factory.createPersonalRepresentativeDelegation(d),
@@ -195,6 +203,14 @@ describe('DelegationsIndexService', () => {
         await Promise.all(
           testcase.apiScopes.map((scope) => factory.createApiScope(scope)),
         )
+      })
+
+      beforeEach(async () => {
+        // remove all data
+        await delegationIndexMetaModel.destroy({ where: {} })
+        await delegationIndexModel.destroy({ where: {} })
+        await delegationModel.destroy({ where: {} })
+        await delegationScopeModel.destroy({ where: {} })
 
         // create custom delegations
         await Promise.all(
@@ -217,6 +233,252 @@ describe('DelegationsIndexService', () => {
           expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
           expect(delegation.toNationalId).toBe(user.nationalId)
         })
+      })
+
+      it('should remove delegations from index that are no longer valid', async () => {
+        // Act
+        await delegationIndexService.indexDelegations(user)
+        // remove custom delegations
+        await delegationModel.destroy({
+          where: {
+            fromNationalId: testcase.customDelegations[0].fromNationalId,
+            toNationalId: user.nationalId,
+          },
+        })
+        // delete delegation index meta to force reindex
+        await delegationIndexMetaModel.destroy({
+          where: {
+            nationalId: user.nationalId,
+          },
+        })
+
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll()
+
+        expect(delegations.length).toBe(testcase.expectedFrom.length - 1)
+        expect(delegations[0].fromNationalId).toBe(
+          testcase.customDelegations[1].fromNationalId,
+        )
+      })
+
+      it('should update delegation index item if delegation has changed', async () => {
+        // Act
+        await delegationIndexService.indexDelegations(user)
+
+        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const updatedValidTo = new Date(new Date().getTime() + 1000)
+
+        // Change valid to date of delegation
+        const delegation = await delegationModel.findOne({
+          where: {
+            fromNationalId,
+            toNationalId: user.nationalId,
+          },
+        })
+
+        if (delegation) {
+          await delegationScopeModel.update(
+            { validTo: updatedValidTo },
+            {
+              where: {
+                delegationId: delegation.id,
+              },
+            },
+          )
+        }
+
+        // delete delegation index meta to force reindex
+        await delegationIndexMetaModel.destroy({
+          where: {
+            nationalId: user.nationalId,
+          },
+        })
+
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll()
+
+        expect(delegations.length).toBe(testcase.expectedFrom.length)
+        expect(
+          delegations.find((d) => d.fromNationalId === fromNationalId)?.validTo,
+        ).toStrictEqual(updatedValidTo)
+      })
+
+      it('should remove scopes from custom delegations index item', async () => {
+        // Act
+        await delegationIndexService.indexDelegations(user)
+
+        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const testDelegation = await delegationModel.findOne({
+          where: {
+            fromNationalId,
+            toNationalId: user.nationalId,
+          },
+        })
+
+        // Add remove scope from delegation
+        if (testDelegation) {
+          await delegationScopeModel.destroy({
+            where: {
+              delegationId: testDelegation.id,
+              scopeName: 'cu1',
+            },
+          })
+        }
+
+        // delete delegation index meta to force reindex
+        await delegationIndexMetaModel.destroy({
+          where: {
+            nationalId: user.nationalId,
+          },
+        })
+
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll()
+        const delegation = delegations.find(
+          (d) => d.fromNationalId === fromNationalId,
+        )
+
+        expect(delegations.length).toBe(testcase.expectedFrom.length)
+        expect(delegation?.customDelegationScopes).toHaveLength(1)
+        expect(delegation?.customDelegationScopes).not.toContain('cu1')
+      })
+
+      it('should add new scopes to custom delegation index item', async () => {
+        // Act
+        await delegationIndexService.indexDelegations(user)
+
+        const testDelegationScope = 'test-scope'
+        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const testDelegation = await delegationModel.findOne({
+          where: {
+            fromNationalId,
+            toNationalId: user.nationalId,
+          },
+        })
+
+        // Add new scope to delegation
+        if (testDelegation) {
+          await factory.createApiScope({
+            name: testDelegationScope,
+            domainName: domainName,
+            allowExplicitDelegationGrant: true,
+            isAccessControlled: false,
+          })
+
+          await factory.createCustomScope({
+            scopeName: testDelegationScope,
+            delegationId: testDelegation.id,
+          })
+        }
+
+        // delete delegation index meta to force reindex
+        await delegationIndexMetaModel.destroy({
+          where: {
+            nationalId: user.nationalId,
+          },
+        })
+
+        await delegationIndexService.indexDelegations(user)
+
+        // Assert
+        const delegations = await delegationIndexModel.findAll()
+        const delegation = delegations.find(
+          (d) => d.fromNationalId === fromNationalId,
+        )
+
+        expect(delegations.length).toBe(testcase.expectedFrom.length)
+        expect(delegation?.customDelegationScopes).toHaveLength(3)
+        expect(delegation?.customDelegationScopes).toContain(
+          testDelegationScope,
+        )
+      })
+    })
+  })
+
+  describe('indexCustomDelegations', () => {
+    const testcase = indexingTestcases.custom
+
+    beforeAll(async () => {
+      await truncate(sequelize)
+
+      await factory.createDomain(testcase.domain)
+      await factory.createClient(testcase.client)
+
+      await Promise.all(
+        testcase.apiScopes.map((scope) => factory.createApiScope(scope)),
+      )
+
+      // create custom delegations
+      await Promise.all(
+        testcase.customDelegations.map((delegation) =>
+          factory.createCustomDelegation(delegation),
+        ),
+      )
+    })
+
+    it('should index custom delegations', async () => {
+      // Arrange
+      const nationalId = user.nationalId
+
+      // Act
+      await delegationIndexService.indexCustomDelegations(nationalId)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: nationalId,
+        },
+      })
+
+      expect(delegations.length).toEqual(testcase.expectedFrom.length)
+      delegations.forEach((delegation) => {
+        expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+        expect(delegation.toNationalId).toBe(user.nationalId)
+      })
+    })
+  })
+
+  describe('indexRepresentativeDelegations', () => {
+    const testcase = indexingTestcases.personalRepresentative
+
+    beforeAll(async () => {
+      await truncate(sequelize)
+
+      await factory.createDomain(testcase.domain)
+      await factory.createClient(testcase.client)
+
+      // create personal representation delegations
+      await Promise.all(
+        testcase.personalRepresentativeDelegation.map((d) =>
+          factory.createPersonalRepresentativeDelegation(d),
+        ),
+      )
+    })
+
+    it('should index personal representation delegations', async () => {
+      // Arrange
+      const nationalId = user.nationalId
+
+      // Act
+      await delegationIndexService.indexRepresentativeDelegations(nationalId)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: nationalId,
+        },
+      })
+
+      expect(delegations.length).toEqual(testcase.expectedFrom.length)
+      delegations.forEach((delegation) => {
+        expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+        expect(delegation.toNationalId).toBe(user.nationalId)
       })
     })
   })
