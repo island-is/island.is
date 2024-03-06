@@ -34,6 +34,20 @@ const validationTestcases = [
     )}`,
     responseDetail: 'Invalid delegation information',
   },
+  {
+    message: 'should return status 400 if toNationalId is invalid',
+    param: `${
+      AuthDelegationType.ProcurationHolder
+    }_invalidToNationalId_${createNationalId('person')}`,
+    responseDetail: 'Invalid national id',
+  },
+  {
+    message: 'should return status 400 if fromNationalId is invalid',
+    param: `${AuthDelegationType.ProcurationHolder}_${createNationalId(
+      'person',
+    )}_invalidToNationalId`,
+    responseDetail: 'Invalid national id',
+  },
 ]
 
 const delegationTypeAndProviderMapTestcases: Record<

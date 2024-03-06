@@ -7,6 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common'
+import * as kennitala from 'kennitala'
 import {
   CreateDelegationIndexItemDTO,
   DelegationsIndexService,
@@ -22,6 +23,10 @@ const parseDelegationInfo = (delegationInfo: string) => {
 
   if (!type || !toNationalId || !fromNationalId) {
     throw new BadRequestException('Invalid delegation information')
+  }
+
+  if (!kennitala.isValid(toNationalId) || !kennitala.isValid(fromNationalId)) {
+    throw new BadRequestException('Invalid national id')
   }
 
   return {
