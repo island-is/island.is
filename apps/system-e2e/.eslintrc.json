@@ -14,6 +14,10 @@
     {
       "files": ["*.js", "*.jsx"],
       "rules": {}
+    },
+    {
+      "files": ["e2e/**/*.{ts,js,tsx,jsx}"],
+      "rules": {}
     }
   ]
 }
