@@ -29,7 +29,7 @@ export class DelegationIndexItemDTO {
   validTo?: Date | null
 }
 
-export class CreateDelegationIndexItemDTO extends DelegationIndexItemDTO {
+export class CreateDelegationIndexItemDTO {
   @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ nullable: true, type: Date })

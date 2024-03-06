@@ -11,17 +11,9 @@ import {
   CreateDelegationIndexItemDTO,
   DelegationsIndexService,
 } from '@island.is/auth-api-lib'
-import {
-  AuthDelegationProvider,
-  AuthDelegationType,
-} from '@island.is/shared/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { Documentation } from '@island.is/nest/swagger'
-import {
-  Auth,
-  CurrentAuth,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { Auth, CurrentAuth, IdsUserGuard } from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/delegation-api/me/delegation-index'
 
@@ -51,7 +43,7 @@ export class DelegationIndexController {
   @Put('.id')
   @Documentation({
     description: 'Create or update a delegation index item.',
-    response: { status: 200 },
+    response: { status: 204 },
     request: {
       header: {
         'X-Param-Id': {
@@ -74,7 +66,7 @@ export class DelegationIndexController {
     const parsedDelegationInfo = parseDelegationInfo(delegationInfo)
 
     try {
-      await this.delegationIndexService.addOrUpdateDelegationIndexItem({
+      await this.delegationIndexService.createOrUpdateDelegationIndexItem({
         ...parsedDelegationInfo,
         provider: auth.delegationProvider,
         validTo: body.validTo,
@@ -89,7 +81,7 @@ export class DelegationIndexController {
   @Delete('.id')
   @Documentation({
     description: 'Delete a delegation index item.',
-    response: { status: 200 },
+    response: { status: 204 },
     request: {
       header: {
         'X-Param-Id': {

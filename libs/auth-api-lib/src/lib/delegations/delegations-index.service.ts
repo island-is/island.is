@@ -175,7 +175,7 @@ export class DelegationsIndexService {
   }
 
   /* Add item to index */
-  async addOrUpdateDelegationIndexItem(delegation: DelegationIndexItemDTO) {
+  async createOrUpdateDelegationIndexItem(delegation: DelegationIndexItemDTO) {
     const valid = validateDelegationTypeAndProvider(
       delegation.type,
       delegation.provider,
