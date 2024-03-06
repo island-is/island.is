@@ -174,6 +174,7 @@ export const prosecutorTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.OPEN,
+    CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
@@ -215,6 +216,7 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.OPEN,
+    CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
   ],
