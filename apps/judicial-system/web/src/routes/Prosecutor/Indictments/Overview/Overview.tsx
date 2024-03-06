@@ -42,8 +42,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     | 'indictmentSentForConfirmationModal'
     | 'indictmentDeniedModal'
   >('noModal')
-  const [indictmentConfirmationRequest, setIndictmentConfirmationRequest] =
-    useState<'confirmIndictment' | 'denyIndictment'>()
+  const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
+    useState<'confirm' | 'deny'>()
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
@@ -62,10 +62,10 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
       transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       modalType = 'indictmentSentForConfirmationModal'
     } else if (user?.canConfirmAppeal) {
-      if (indictmentConfirmationRequest === 'confirmIndictment') {
+      if (indictmentConfirmationDecision === 'confirm') {
         transitionType = CaseTransition.SUBMIT
         modalType = 'indictmentSubmittedModal'
-      } else if (indictmentConfirmationRequest === 'denyIndictment') {
+      } else if (indictmentConfirmationDecision === 'deny') {
         modalType = 'indictmentDeniedModal'
       }
     } else if (workingCase.state === CaseState.WAITING_FOR_CONFIRMATION) {
@@ -133,10 +133,10 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   backgroundColor="white"
                   label={formatMessage(strings.overview.confirmIndictment)}
                   checked={
-                    indictmentConfirmationRequest === 'confirmIndictment'
+                    indictmentConfirmationDecision === 'confirm'
                   }
                   onChange={() =>
-                    setIndictmentConfirmationRequest('confirmIndictment')
+                    setIndictmentConfirmationDecision('confirm')
                   }
                 />
                 <RadioButton
@@ -145,9 +145,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   id="denyIndictment"
                   backgroundColor="white"
                   label={formatMessage(strings.overview.denyIndictment)}
-                  checked={indictmentConfirmationRequest === 'denyIndictment'}
+                  checked={indictmentConfirmationDecision === 'deny'}
                   onChange={() =>
-                    setIndictmentConfirmationRequest('denyIndictment')
+                    setIndictmentConfirmationDecision('deny')
                   }
                 />
               </div>
@@ -178,7 +178,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           }
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={
-            user?.canConfirmAppeal && !indictmentConfirmationRequest
+            user?.canConfirmAppeal && !indictmentConfirmationDecision
           }
         />
       </FormContentContainer>

@@ -138,7 +138,7 @@ export const cases = {
       id: 'judicial.system.core:cases.active_requests.cases_waiting_for_confirmation_info_container_text',
       defaultMessage: 'Engin mál hafa verið send til staðfestingar.',
       description:
-        'Notaður sem texti í upplýsingasvæði sem segir að engin virk mál sem bíða staðfestingar fundust á heimaskjá fangelsisstarfsmanna.',
+        'Notaður sem texti í upplýsingasvæði sem segir að engin virk mál sem bíða staðfestingar fundust á heimaskjá.',
     }),
     prisonStaffUsers: defineMessages({
       title: {
