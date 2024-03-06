@@ -87,13 +87,6 @@ const FinanceSchedule = () => {
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-      <FinanceIntro
-        text={formatMessage({
-          id: 'sp.finance-schedule:intro-text',
-          defaultMessage:
-            'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
-        })}
-      />
       <Stack space={2}>
         {!isDelegation && (
           <GridRow>

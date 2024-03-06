@@ -93,7 +93,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
-    translation: 'pl.application',
+    translation: ['pl.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',

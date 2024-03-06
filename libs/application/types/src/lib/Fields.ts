@@ -74,6 +74,7 @@ export type TableRepeaterItem = {
   width?: 'half' | 'full'
   required?: boolean
   condition?: (application: Application) => boolean
+  dataTestId?: string
 } & (
   | {
       component: 'input'
@@ -531,6 +532,8 @@ export interface FindVehicleField extends BaseField {
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
+  isEnergyFunds?: boolean
+  energyFundsMessages?: Record<string, FormText>
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
