@@ -1,5 +1,6 @@
 query Case($input: CaseQueryInput!) {
   case(input: $input) {
+    id
     created
     modified
     type
@@ -62,6 +63,7 @@ query Case($input: CaseQueryInput!) {
       title
       email
       canConfirmAppeal
+      active
     }
     sharedWithProsecutorsOffice {
       id
