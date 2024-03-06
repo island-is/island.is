@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test'
 import { nxE2EPreset } from '@nx/playwright/preset'
-import { urls, env } from './src/support/urls'
+import { urls } from './src/support/urls'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // For CI, you may want to set BASE_URL to the deployed application.
