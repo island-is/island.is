@@ -25,12 +25,13 @@ const baseURL: string = baseUrls[testEnv]
  */
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: '.' }),
-  workers: 1,
+  forbidOnly: !!process.env.CI,
+  retries: !!process.env.CI ? 1 : 0,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: !!process.env.CI ? 'retain-on-failure' : 'on',
   },
   /* Run your local dev server before starting the tests */ // webServer: {
   //   command: 'npm run start',
