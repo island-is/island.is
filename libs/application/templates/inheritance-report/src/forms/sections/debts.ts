@@ -14,6 +14,7 @@ import { format as formatNationalId } from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { AllDebts, ApplicationDebts } from '../../types'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 
 export const debts = buildSection({
   id: 'debts',
@@ -98,6 +99,13 @@ export const debts = buildSection({
               id: 'debts.publicCharges',
               width: 'half',
               variant: 'currency',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    ?.inheritanceReportInfo?.officialFees?.[0]
+                    ?.propertyValuation ?? '0'
+                )
+              },
             }),
           ],
         }),

@@ -266,8 +266,8 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            businessAsset: z.string(),
-            businessAssetValue: z.string().refine((v) => v),
+            description: z.string(),
+            propertyValuation: z.string().refine((v) => v),
           })
           .array()
           .optional(),

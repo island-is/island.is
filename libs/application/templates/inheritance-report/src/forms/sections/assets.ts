@@ -8,6 +8,8 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { overviewAssets } from '../OverviewSections/OverviewAssets'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import { Application } from '@island.is/application/types'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -109,12 +111,24 @@ export const assets = buildSection({
               title: m.inventoryTextField,
               placeholder: m.inventoryTextField,
               variant: 'textarea',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    .inheritanceReportInfo?.cash[0].description ?? ''
+                )
+              },
               rows: 7,
             }),
             buildTextField({
               id: 'assets.inventory.value',
               title: m.inventoryValueTitle,
               width: 'half',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    .inheritanceReportInfo?.cash[0].propertyValuation ?? '0'
+                )
+              },
               variant: 'currency',
             }),
           ],
@@ -450,6 +464,13 @@ export const assets = buildSection({
               title: m.moneyText,
               placeholder: m.moneyPlaceholder,
               variant: 'textarea',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    .inheritanceReportInfo?.depositsAndMoney[0].description ??
+                  ''
+                )
+              },
               rows: 7,
             }),
             buildTextField({
@@ -457,6 +478,13 @@ export const assets = buildSection({
               title: m.moneyValue,
               width: 'half',
               variant: 'currency',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    .inheritanceReportInfo?.depositsAndMoney[0]
+                    .propertyValuation ?? '0'
+                )
+              },
             }),
           ],
         }),
@@ -483,12 +511,25 @@ export const assets = buildSection({
               placeholder: m.otherAssetsPlaceholder,
               variant: 'textarea',
               rows: 7,
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    .inheritanceReportInfo?.otherAssets[0].description ?? ''
+                )
+              },
             }),
             buildTextField({
               id: 'assets.otherAssets.value',
               title: m.otherAssetsValue,
               width: 'half',
               variant: 'currency',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    .inheritanceReportInfo?.otherAssets[0].propertyValuation ??
+                  '0'
+                )
+              },
             }),
           ],
         }),

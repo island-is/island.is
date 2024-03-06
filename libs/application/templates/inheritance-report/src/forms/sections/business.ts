@@ -47,11 +47,11 @@ export const business = buildSection({
                 fields: [
                   {
                     title: m.businessAsset.defaultMessage,
-                    id: 'businessAsset',
+                    id: 'description',
                   },
                   {
                     title: m.businessAssetAmount.defaultMessage,
-                    id: 'businessAssetValue',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                     width: 'half',
@@ -59,7 +59,8 @@ export const business = buildSection({
                 ],
                 repeaterButtonText:
                   m.businessAssetRepeaterButton.defaultMessage,
-                sumField: 'businessAssetValue',
+                sumField: 'propertyValuation',
+                fromExternalData: 'assetsInBusiness',
               },
             ),
           ],
