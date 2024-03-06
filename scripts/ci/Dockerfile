@@ -4,24 +4,26 @@ ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
 RUN apk add -U git
+RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
 # Adding and installing packages
-ADD package.json yarn.lock .yarnrc.yml ./
-ADD apps/native/app/package.json ./apps/native/app/
-COPY .yarn/ ./.yarn
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-RUN CI=true yarn install --immutable
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY apps/native/app/package.json ./apps/native/app/
+COPY .yarn/releases/ ./.yarn/releases/
+COPY .yarn/patches/ ./.yarn/patches/
+RUN ls -lah ./.yarn/ ./
+RUN CI=true yarn install --immutable && yarn cache clean
 
 FROM deps as src
 
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+RUN wget -qO /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-ADD . .
+COPY apps/ libs/ *.* ./
 
 FROM src as builder
 ARG APP
@@ -95,9 +97,9 @@ RUN apk update && \
   apk upgrade && \
   apk add bash nodejs
 
-ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
-ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
-ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
+COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
+COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
+COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base as output-jest
@@ -130,21 +132,24 @@ ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
 
-COPY --from=builder /build/${APP_DIST_HOME} .
-COPY ${APP_HOME}/package.json .
-RUN chown -R pwuser:pwuser .
-
-USER pwuser
-ADD .yarnrc.yml ./
-RUN mkdir ./.yarn
+# Common slow-changing dependencies
+COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/releases ./.yarn/releases
+ENV PLAYWRIGHT_BROWSER=chromium
+RUN yarn install --immutable \
+  && yarn playwright install ${PLAYWRIGHT_BROWSER}
+
+COPY --from=builder /build/${APP_DIST_HOME} .
+
 RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY ${APP_HOME}/entrypoint.sh .
 
+RUN chown -R pwuser:pwuser .
+USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
 
 
