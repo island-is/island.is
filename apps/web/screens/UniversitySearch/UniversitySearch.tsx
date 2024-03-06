@@ -1446,17 +1446,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  let showPagesFeatureFlag = false
-
-  if (publicRuntimeConfig?.environment === 'prod') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
-  } else {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
-  }
-
-  if (!showPagesFeatureFlag) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Page not found')
   }
 
