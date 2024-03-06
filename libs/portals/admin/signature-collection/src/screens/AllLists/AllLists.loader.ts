@@ -5,9 +5,15 @@ import {
 } from './graphql/getAllSignatureLists.generated'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import {
-  CollectionStatusDocument,
-  CollectionStatusQuery,
+  CollectionDocument,
+  CollectionQuery,
 } from './graphql/getCollectionStatus.generated'
+
+export interface ListsLoaderReturn {
+  allLists: SignatureCollectionList[]
+  collectionStatus: string
+  collectionId: string
+}
 
 export const listsLoader: WrappedLoaderFn = ({ client }) => {
   return async ({
@@ -15,27 +21,28 @@ export const listsLoader: WrappedLoaderFn = ({ client }) => {
   }): Promise<{
     allLists: SignatureCollectionList[]
     collectionStatus: string
+    collectionId: string
   }> => {
+    const { data: collectionStatusData } = await client.query<CollectionQuery>({
+      query: CollectionDocument,
+      fetchPolicy: 'network-only',
+    })
+    const collectionId =
+      collectionStatusData?.signatureCollectionAdminCurrent?.id
     const { data } = await client.query<AllListsQuery>({
       query: AllListsDocument,
       fetchPolicy: 'network-only',
-    })
-
-    const { data: collectionStatusData } =
-      await client.query<CollectionStatusQuery>({
-        query: CollectionStatusDocument,
-        fetchPolicy: 'network-only',
-        variables: {
-          input: {
-            id: params.id,
-          },
+      variables: {
+        input: {
+          collectionId,
         },
-      })
+      },
+    })
 
     const allLists = data?.signatureCollectionAdminLists ?? []
     const collectionStatus =
-      collectionStatusData?.signatureCollectionAdminStatus.status ?? ''
+      collectionStatusData?.signatureCollectionAdminCurrent?.status
 
-    return { allLists, collectionStatus }
+    return { allLists, collectionStatus, collectionId }
   }
 }

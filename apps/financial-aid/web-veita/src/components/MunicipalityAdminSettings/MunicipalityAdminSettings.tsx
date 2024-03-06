@@ -339,7 +339,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           )
         })}
       </Box>
-      {/* <Box className={`contentUp`}>
+      <Box className={`contentUp`}>
         <Box marginBottom={[2, 2, 7]} id="apiKeySettings">
           <Box display="flex" justifyContent="spaceBetween" alignItems="center">
             <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
@@ -355,7 +355,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           </Box>
           <ApiKeyInfo apiKeyInfo={apiKeyInfo} />
         </Box>
-      </Box> */}
+      </Box>
 
       {EmailSiteAidContent.map((el, index) => {
         return (

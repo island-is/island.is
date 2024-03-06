@@ -19,6 +19,7 @@ import { UserIdentity } from './models/user-identity.model'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+
     UserIdentitiesModule,
   ],
 })

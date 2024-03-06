@@ -31,6 +31,7 @@ judicial-system-api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -110,10 +111,11 @@ judicial-system-backend:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     S3_BUCKET: 'island-is-dev-upload-judicial-system'
@@ -162,6 +164,7 @@ judicial-system-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -172,7 +175,7 @@ judicial-system-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'judicial_system'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -231,6 +234,76 @@ judicial-system-backend:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-backend'
     create: true
     name: 'judicial-system-backend'
+judicial-system-digital-mailbox-api:
+  enabled: true
+  env:
+    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+    AUDIT_TRAIL_REGION: 'eu-west-1'
+    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
+    BACKEND_URL: 'http://web-judicial-system-backend'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-digital-mailbox-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'judicial-system-digital-mailbox-api-xrd.internal.dev01.devland.is'
+          paths:
+            - '/'
+  namespace: 'judicial-system'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-digital-mailbox-api'
+    create: true
+    name: 'judicial-system-digital-mailbox-api'
 judicial-system-message-handler:
   args:
     - '--no-experimental-fetch'
@@ -240,6 +313,7 @@ judicial-system-message-handler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
@@ -295,6 +369,76 @@ judicial-system-message-handler:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-message-handler'
     create: true
     name: 'judicial-system-message-handler'
+judicial-system-robot-api:
+  enabled: true
+  env:
+    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+    AUDIT_TRAIL_REGION: 'eu-west-1'
+    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
+    BACKEND_URL: 'http://web-judicial-system-backend'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-robot-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'judicial-system-robot-api-xrd.internal.dev01.devland.is'
+          paths:
+            - '/'
+  namespace: 'judicial-system'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-robot-api'
+    create: true
+    name: 'judicial-system-robot-api'
 judicial-system-scheduler:
   args:
     - '--no-experimental-fetch'
@@ -304,6 +448,7 @@ judicial-system-scheduler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     TIME_TO_LIVE_MINUTES: '30'
@@ -356,6 +501,7 @@ judicial-system-web:
   env:
     API_URL: 'https://judicial-system.dev01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -421,6 +567,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:

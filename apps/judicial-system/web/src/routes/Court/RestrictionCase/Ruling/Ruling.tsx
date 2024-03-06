@@ -48,7 +48,7 @@ import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/valida
 
 import { rcRuling as m } from './Ruling.strings'
 
-export function getConclusionAutofill(
+export const getConclusionAutofill = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
@@ -56,7 +56,7 @@ export function getConclusionAutofill(
   validToDate?: string | null,
   isCustodyIsolation?: boolean | null,
   isolationToDate?: string | null,
-) {
+) => {
   const isolationEndsBeforeValidToDate =
     validToDate &&
     isolationToDate &&

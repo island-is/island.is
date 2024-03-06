@@ -29,6 +29,7 @@ import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
 import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
+import { CustomPageSyncService } from './importers/customPage.service'
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { ManualChapterItemSyncService } from './importers/manualChapterItem.serv
     EventSyncService,
     ManualSyncService,
     ManualChapterItemSyncService,
+    CustomPageSyncService,
   ],
   exports: [CmsSyncService],
 })

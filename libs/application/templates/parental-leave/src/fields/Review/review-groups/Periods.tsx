@@ -7,7 +7,7 @@ import {
   getBeginningOfMonth3MonthsAgo,
 } from '../../../lib/parentalLeaveUtils'
 import { useLocale } from '@island.is/localization'
-import { errorMessages } from '../../..'
+import { errorMessages } from '../../../lib/messages'
 import addDays from 'date-fns/addDays'
 
 export const Periods = ({

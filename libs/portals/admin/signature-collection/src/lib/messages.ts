@@ -9,7 +9,13 @@ export const m = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection:signatureLists',
-    defaultMessage: 'Yfirlit meðmælasafnanna',
+    defaultMessage: 'Meðmælasafnanir',
+    description: '',
+  },
+  signatureListsDescription: {
+    id: 'admin-portal.signature-collection:signatureListsDescription',
+    defaultMessage:
+      'Yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið.',
     description: '',
   },
   signatureListsIntro: {
@@ -23,10 +29,40 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
-  signatureCollectionProcessingComplete: {
-    id: 'admin-portal.signature-collection:signatureCollectionProcessingComplete',
+  signatureCollectionInInitialReview: {
+    id: 'admin-portal.signature-collection:signatureCollectionInInitialReview',
     defaultMessage:
-      'Úrvinnslu safnanna fyrir upphaflegan söfnunartíma hefur verið lokið.',
+      'Tímabili söfnunnar hefur verið lokið. Opið er fyrir úrvinnslu.',
+    description: '',
+  },
+  signatureCollectionProcessing: {
+    id: 'admin-portal.signature-collection:signatureCollectionProcessing',
+    defaultMessage:
+      'Úrvinnslu hefur verið lokið á öllum listum. Hægt er að ljúka úrvinnslu á söfnuninni allri.',
+    description: '',
+  },
+  signatureCollectionProcessed: {
+    id: 'admin-portal.signature-collection:signatureCollectionProcessed',
+    defaultMessage:
+      'Úrvinnslu safnanna fyrir upphaflegan söfnunartíma hefur verið lokið. Hægt er að framlengja lista.',
+    description: '',
+  },
+  signatureCollectionActive: {
+    id: 'admin-portal.signature-collection:signatureCollectionActive',
+    defaultMessage:
+      'Söfnunin er opin. Til staðar eru listar sem hafa verið framlengdir. Einnig er hægt að framlengja fleiri lista.',
+    description: '',
+  },
+  signatureCollectionReviewDone: {
+    id: 'admin-portal.signature-collection:signatureCollectionReviewDone',
+    defaultMessage:
+      'Úrvinnslu er lokið á meðmælasöfnunum fyrir forsetaframboð 2024',
+    description: '',
+  },
+  signatureCollectionInReview: {
+    id: 'admin-portal.signature-collection:signatureCollectionInReview',
+    defaultMessage:
+      'Söfnunartíma lokið á þeim listum sem hafa verið framlengdir. Opið er fyrir úrvinnslu.',
     description: '',
   },
   filter: {
@@ -111,7 +147,12 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engin meðmælasöfnun',
+    defaultMessage: 'Engin söfnun í gangi',
+    description: '',
+  },
+  noListsDescription: {
+    id: 'admin-portal.signature-collection:noListsDescription',
+    defaultMessage: 'Engin meðmælasöfnun hefur verið stöfnuð að því stöddu.',
     description: '',
   },
   noListsFoundBySearch: {
@@ -256,7 +297,7 @@ export const m = defineMessages({
     description: '',
   },
   listReviewedModalDescriptionToggleBack: {
-    id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
+    id: 'admin-portal.signature-collection:listReviewedModalDescriptionToggleBack#markdown',
     defaultMessage:
       'Þegar þörf eru á að fara yfir meðmælasöfnun aftur skal ýta á hnappinn.',
     description: '',

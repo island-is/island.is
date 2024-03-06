@@ -6,12 +6,13 @@ import {
   CreateClient,
   CreateCustomDelegation,
   CreateDomain,
+  CreatePersonalRepresentativeDelegation,
 } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
 
 export const clientId = '@island.is/webapp'
-
+export const domainName = '@island.is'
 export const user = createCurrentUser({
   nationalIdType: 'person',
   scope: ['@identityserver.api/authentication'],
@@ -35,7 +36,7 @@ export interface ITestCaseOptions {
 }
 
 export class TestCase {
-  domainName = '@island.is'
+  domainName = domainName
   user: User
   client: CreateClient
   fromChildren: string[]
@@ -111,6 +112,13 @@ export class TestCase {
         name: '',
       })),
     }
+  }
+
+  get personalRepresentativeDelegation(): CreatePersonalRepresentativeDelegation[] {
+    return this.fromRepresentative.map((d: string) => ({
+      toNationalId: this.user.nationalId,
+      fromNationalId: d,
+    }))
   }
 
   get apiScopeUserAccess(): CreateApiScopeUserAccess[] {

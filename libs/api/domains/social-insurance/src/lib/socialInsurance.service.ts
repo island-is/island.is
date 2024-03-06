@@ -1,19 +1,31 @@
 import { Inject, Injectable } from '@nestjs/common'
+import addYears from 'date-fns/addYears'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { User } from '@island.is/auth-nest-tools'
-import { PaymentPlan } from './models/paymentPlan.model'
 import { handle404 } from '@island.is/clients/middlewares'
-import { PaymentGroup } from './models/paymentGroup'
 import { isDefined } from '@island.is/shared/utils'
-import addYears from 'date-fns/addYears'
+import {
+  CmsElasticsearchService,
+  CustomPageUniqueIdentifier,
+} from '@island.is/cms'
+import { PensionCalculationInput } from './dtos/pensionCalculation.input'
+import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PaymentPlan } from './models/paymentPlan.model'
+import { PaymentGroup } from './models/paymentGroup'
+import {
+  getPensionCalculationHighlightedItems,
+  groupPensionCalculationItems,
+  mapPensionCalculationInput,
+} from './utils'
 
 @Injectable()
 export class SocialInsuranceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly socialInsuranceApi: SocialInsuranceAdministrationClientService,
+    private readonly cmsElasticService: CmsElasticsearchService,
   ) {}
 
   async getPaymentPlan(
@@ -98,5 +110,30 @@ export class SocialInsuranceService {
     }
 
     return data
+  }
+
+  async getPensionCalculation(
+    input: PensionCalculationInput,
+  ): Promise<PensionCalculationResponse> {
+    const pageData = await this.cmsElasticService.getCustomPage({
+      lang: 'is',
+      uniqueIdentifier: CustomPageUniqueIdentifier.PensionCalculator,
+    })
+
+    const mappedInput = mapPensionCalculationInput(input, pageData)
+    const calculation = await this.socialInsuranceApi.getPensionCalculation(
+      mappedInput,
+    )
+
+    const groups = groupPensionCalculationItems(calculation, pageData)
+    const highlightedItems = getPensionCalculationHighlightedItems(
+      calculation,
+      pageData,
+    )
+
+    return {
+      highlightedItems,
+      groups,
+    }
   }
 }

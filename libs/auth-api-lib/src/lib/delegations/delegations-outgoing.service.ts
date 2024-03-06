@@ -28,6 +28,7 @@ import { NamesService } from './names.service'
 import { getDelegationNoActorWhereClause } from './utils/delegations'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { DelegationDirection } from './types/delegationDirection'
+import { DelegationsIndexService } from './delegations-index.service'
 
 /**
  * Service class for outgoing delegations.
@@ -40,6 +41,7 @@ export class DelegationsOutgoingService {
     private delegationModel: typeof Delegation,
     private delegationScopeService: DelegationScopeService,
     private delegationResourceService: DelegationResourcesService,
+    private delegationIndexService: DelegationsIndexService,
     private namesService: NamesService,
   ) {}
 
@@ -59,11 +61,11 @@ export class DelegationsOutgoingService {
         },
         domainName ? { domainName } : {},
         getDelegationNoActorWhereClause(user),
-        ...this.delegationResourceService.apiScopeFilter({
+        ...(await this.delegationResourceService.apiScopeFilter({
           user,
           prefix: 'delegationScopes->apiScope',
           direction: DelegationDirection.OUTGOING,
-        }),
+        })),
       ),
       include: [
         {
@@ -219,6 +221,11 @@ export class DelegationsOutgoingService {
       )
     }
 
+    // Index custom delegations for the toNationalId
+    void this.delegationIndexService.indexCustomDelegations(
+      createDelegation.toNationalId,
+    )
+
     return newDelegation
   }
 
@@ -284,7 +291,14 @@ export class DelegationsOutgoingService {
       )
     }
 
-    return this.findById(user, delegationId)
+    const delegation = await this.findById(user, delegationId)
+
+    // Index custom delegations for the toNationalId
+    void this.delegationIndexService.indexCustomDelegations(
+      delegation.toNationalId,
+    )
+
+    return delegation
   }
 
   async delete(user: User, delegationId: string): Promise<void> {
@@ -313,6 +327,11 @@ export class DelegationsOutgoingService {
         },
       })
     }
+
+    // Index custom delegations for the toNationalId
+    void this.delegationIndexService.indexCustomDelegations(
+      delegation.toNationalId,
+    )
   }
 
   private async findOneInternal(
