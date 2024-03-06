@@ -479,6 +479,10 @@ const Search: Screen<CategoryProps> = ({
     },
   ]
 
+  const selectedOrganization = countResults?.tagCounts?.find(
+    (tag) => tag?.type === 'organization' && tag?.key === query.organization,
+  )?.value
+
   const filterLabels: FilterLabels = {
     labelClearAll: n('labelClearAll', 'Hreinsa allar síur'),
     labelClear: n('labelClear', 'Hreinsa síu'),
@@ -573,7 +577,30 @@ const Search: Screen<CategoryProps> = ({
                       </FilterTag>
                     </Inline>
                   )}
-                  {!referencedBy && (
+
+                  {selectedOrganization && (
+                    <Inline alignY="center" space={1}>
+                      <Text>
+                        {n(
+                          'filteredByPrefix',
+                          activeLocale === 'is' ? 'Síað eftir' : 'Filtered by',
+                        )}
+                        :
+                      </Text>
+
+                      <FilterTag
+                        active={true}
+                        onClick={() => {
+                          dispatch({
+                            type: ActionType.RESET_SEARCH,
+                          })
+                        }}
+                      >
+                        {selectedOrganization}
+                      </FilterTag>
+                    </Inline>
+                  )}
+                  {!referencedBy && !selectedOrganization && (
                     <Inline space={1}>
                       {countResults.total > 0 && (
                         <Tag
@@ -667,6 +694,75 @@ const Search: Screen<CategoryProps> = ({
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
                 </Inline>
+
+                {!referencedBy && selectedOrganization && (
+                  <Box paddingTop={3}>
+                    <Inline space={1}>
+                      {countResults.total > 0 && (
+                        <Tag
+                          variant="blue"
+                          active={!query?.type?.length}
+                          onClick={() => {
+                            dispatch({
+                              type: ActionType.RESET_SEARCH,
+                            })
+                          }}
+                        >
+                          {n('showAllResults', 'Sýna allt')}
+                        </Tag>
+                      )}
+                      {tagsList
+                        .filter((x) => x.count > 0)
+                        .map(({ title, key }, index) => (
+                          <Tag
+                            key={index}
+                            variant="blue"
+                            active={
+                              query?.processentry !== 'true' &&
+                              query?.type?.includes(key)
+                            }
+                            onClick={() => {
+                              dispatch({
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    processentry: false,
+                                    ...getSearchParams(key),
+                                    category: [],
+                                    organization: [],
+                                  },
+                                  searchLocked: false,
+                                },
+                              })
+                            }}
+                          >
+                            {title}
+                          </Tag>
+                        ))}
+                      {typeof countResults.processEntryCount == 'number' &&
+                        countResults.processEntryCount > 0 && (
+                          <Tag
+                            variant="blue"
+                            active={query?.processentry === 'true'}
+                            onClick={() => {
+                              dispatch({
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    processentry: true,
+                                    ...getSearchParams('webArticle'),
+                                  },
+                                  searchLocked: false,
+                                },
+                              })
+                            }}
+                          >
+                            {n('processEntry', 'Umsóknir')}
+                          </Tag>
+                        )}
+                    </Inline>
+                  </Box>
+                )}
               </Box>
               {nothingFound && !!q ? (
                 <>
