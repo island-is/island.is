@@ -90,9 +90,6 @@
       "@island.is/api/domains/documents": [
         "libs/api/domains/documents/src/index.ts"
       ],
-      "@island.is/api/domains/documents-v2": [
-        "libs/api/domains/documents-v2/src/index.ts"
-      ],
       "@island.is/api/domains/driving-license": [
         "libs/api/domains/driving-license/src/index.ts"
       ],

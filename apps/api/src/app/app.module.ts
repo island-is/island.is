@@ -19,7 +19,6 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { DocumentModule } from '@island.is/api/domains/documents'
-import { DocumentsV2Module } from '@island.is/api/domains/documents-v2'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
@@ -117,10 +116,7 @@ import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { InnaClientConfig } from '@island.is/clients/inna'
-import {
-  DocumentsClientV2Config,
-  DocumentsClientV2Module,
-} from '@island.is/clients/documents-v2'
+import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
@@ -204,7 +200,6 @@ const environment = getConfig
     DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule,
-    DocumentsV2Module,
     DocumentProviderModule.register({
       test: {
         basePath: environment.documentProviderService.test.basePath!,

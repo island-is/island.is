@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
-import { Document, DocumentListResponse } from './models/document.model'
+import { Document, DocumentListResponse } from './models/v1/document.model'
 import {
   CategoryDTO,
   DocumentInfoDTO,
@@ -7,21 +7,20 @@ import {
   TypeDTO,
 } from '@island.is/clients/documents'
 import { logger } from '@island.is/logging'
-import { DocumentDetails } from './models/documentDetails.model'
-import { DocumentCategory } from './models/documentCategory.model'
+import { DocumentDetails } from './models/v1/documentDetails.model'
+import { DocumentCategory } from './models/v1/documentCategory.model'
 import { DocumentClient } from '@island.is/clients/documents'
 import { DocumentBuilder } from './documentBuilder'
 import { GetDocumentListInput } from './dto/getDocumentListInput'
-import { DocumentType } from './models/documentType.model'
-import { DocumentSender } from './models/documentSender.model'
-import { PaperMailBody } from './models/paperMail.model'
+import { DocumentType } from './models/v1/documentType.model'
+import { DocumentSender } from './models/v1/documentSender.model'
+import { PaperMailBody } from './models/v1/paperMail.model'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { PostMailActionInput } from './dto/postMailActionInput'
-import { ActionMailBody } from './models/actionMail.model'
+import { ActionMailBody } from './models/v1/actionMail.model'
 import { PostBulkMailActionInput } from './dto/postBulkMailActionInput'
-import { DocumentPageResponse } from './models/documentPage.model'
+import { DocumentPageResponse } from './models/v1/documentPage.model'
 import { GetDocumentPageInput } from './dto/documentPageInput'
-import { DocumentsClientV2Service } from '@island.is/clients/documents-v2'
 
 const LOG_CATEGORY = 'documents-api'
 @Injectable()
@@ -29,7 +28,6 @@ export class DocumentService {
   constructor(
     private documentClient: DocumentClient,
     private documentBuilder: DocumentBuilder,
-    private documentV2Service: DocumentsClientV2Service,
   ) {}
 
   async findByDocumentId(

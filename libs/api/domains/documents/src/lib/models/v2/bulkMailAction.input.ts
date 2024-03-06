@@ -12,8 +12,8 @@ export enum MailAction {
 
 registerEnumType(MailAction, { name: 'DocumentsV2MailAction' })
 
-@InputType('DocumentsV2BulkMailActionInput')
-export class BulkMailActionInput {
+@InputType('DocumentsV2MailActionInput')
+export class MailActionInput {
   @Field(() => [String])
   @IsArray()
   documentIds!: Array<string>

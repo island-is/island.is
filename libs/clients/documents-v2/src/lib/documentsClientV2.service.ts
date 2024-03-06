@@ -10,6 +10,7 @@ import { ListDocumentsInputDto } from './dto/listDocuments.input'
 import { ListDocumentsDto } from './dto/documentList.dto'
 import { isDefined } from '@island.is/shared/utils'
 import { mapToDocumentInfoDto } from './dto/documentInfo.dto'
+import { MailAction } from './dto/mailAction.dto'
 
 @Injectable()
 export class DocumentsClientV2Service {
@@ -57,6 +58,20 @@ export class DocumentsClientV2Service {
 
     return mapToDocument(document)
   }
+
+  async getPageNumber(
+    nationalId: string,
+    documentId: string,
+    pageSize: number,
+  ): Promise<number | null> {
+    const res = await this.api.customersGetDocumentPage({
+      kennitala: nationalId,
+      messageId: documentId,
+      pageSize,
+    })
+
+    return res.messagePage ?? null
+  }
   getCustomersCategories(nationalId: string) {
     return this.api.customersCategories({ kennitala: nationalId })
   }
@@ -78,57 +93,87 @@ export class DocumentsClientV2Service {
       },
     })
   }
-  archiveMail(nationalId: string, documentId: string) {
-    return this.api.customersArchive({
+  async archiveMail(nationalId: string, documentId: string) {
+    await this.api.customersArchive({
       kennitala: nationalId,
       messageId: documentId,
     })
+    return {
+      success: true,
+      ids: [documentId],
+    }
   }
-  unarchiveMail(nationalId: string, documentId: string) {
-    return this.api.customersUnarchive({
+  async unarchiveMail(nationalId: string, documentId: string) {
+    await this.api.customersUnarchive({
       kennitala: nationalId,
       messageId: documentId,
     })
+    return {
+      success: true,
+      ids: [documentId],
+    }
   }
-  bookmarkMail(nationalId: string, documentId: string) {
-    return this.api.customersBookmark({
+  async bookmarkMail(nationalId: string, documentId: string) {
+    await this.api.customersBookmark({
       kennitala: nationalId,
       messageId: documentId,
     })
+    return {
+      success: true,
+      ids: [documentId],
+    }
   }
-  unbookmarkMail(nationalId: string, documentId: string) {
-    return this.api.customersUnbookmark({
+  async unbookmarkMail(nationalId: string, documentId: string) {
+    await this.api.customersUnbookmark({
       kennitala: nationalId,
       messageId: documentId,
     })
+    return {
+      success: true,
+      ids: [documentId],
+    }
   }
 
-  batchArchiveMail(
+  async batchArchiveMail(
+    nationalId: string,
+    documentIds: Array<string>,
+    status: boolean,
+  ): Promise<MailAction | null> {
+    await this.api.customersBatchArchive({
+      kennitala: nationalId,
+      batchRequest: { ids: documentIds, status },
+    })
+
+    return {
+      success: true,
+      ids: documentIds,
+    }
+  }
+
+  async batchBookmarkMail(
     nationalId: string,
     documentIds: Array<string>,
     status: boolean,
   ) {
-    return this.api.customersBatchArchive({
+    await this.api.customersBatchBookmark({
       kennitala: nationalId,
       batchRequest: { ids: documentIds, status },
     })
+
+    return {
+      success: true,
+      ids: documentIds,
+    }
   }
 
-  batchBookmarkMail(
-    nationalId: string,
-    documentIds: Array<string>,
-    status: boolean,
-  ) {
-    return this.api.customersBatchBookmark({
-      kennitala: nationalId,
-      batchRequest: { ids: documentIds, status },
-    })
-  }
-
-  batchReadMail(nationalId: string, documentIds: Array<string>) {
-    return this.api.customersBatchReadDocuments({
+  async batchReadMail(nationalId: string, documentIds: Array<string>) {
+    await this.api.customersBatchReadDocuments({
       kennitala: nationalId,
       request: { ids: documentIds },
     })
+    return {
+      success: true,
+      ids: documentIds,
+    }
   }
 }

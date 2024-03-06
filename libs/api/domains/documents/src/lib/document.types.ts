@@ -1,4 +1,4 @@
-import { FileType } from './models/documentContent.model'
+import { FileType } from './models/v2/documentContent.model'
 
 export const HEALTH_CATEGORY_ID = '3'
 

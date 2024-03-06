@@ -1,26 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  CategoryDTO,
-  DocumentInfoDTO,
-  SenderDTO,
-  TypeDTO,
-} from '@island.is/clients/documents'
 import { DocumentsClientV2Service } from '@island.is/clients/documents-v2'
-import { Document, PaginatedDocuments } from './models/document.model'
-import { FileType } from './models/documentContent.model'
-import { DocumentsInput } from './models/listDocuments.input'
-import { Category } from './models/category.model'
-import { isDefined } from '@island.is/shared/utils'
-import { HEALTH_CATEGORY_ID, customDocuments } from './document.types'
-import { Type } from './models/type.model'
-import { Sender } from './models/sender.model'
-import { PaperMailPreferences } from './models/paperMailPreferences.model'
-import { MailAction } from './models/bulkMailAction.input'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { isDefined } from '@island.is/shared/utils'
+import { Category } from './models/v2/category.model'
+import { MailAction } from './models/v2/bulkMailAction.input'
+import { PaginatedDocuments, Document } from './models/v2/document.model'
+import { DocumentsInput } from './models/v2/listDocuments.input'
+import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
+import { Sender } from './models/v2/sender.model'
+import { FileType } from './models/v2/documentContent.model'
+import { HEALTH_CATEGORY_ID } from './document.types'
+import { Type } from './models/v2/type.model'
 
-const LOG_CATEGORY = 'documents-api'
+const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
-export class DocumentService {
+export class DocumentServiceV2 {
   constructor(
     private documentService: DocumentsClientV2Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -185,6 +179,20 @@ export class DocumentService {
         })
         .filter(isDefined) ?? []
     )
+  }
+
+  async getPageNumber(
+    nationalId: string,
+    documentId: string,
+    pageSize: number,
+  ): Promise<number> {
+    const res = await this.documentService.getPageNumber(
+      nationalId,
+      documentId,
+      pageSize,
+    )
+
+    return res ?? 1
   }
 
   async getPaperMailInfo(
