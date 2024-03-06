@@ -92,14 +92,18 @@ export const schema = {
           ? AuthAdminRefreshTokenExpiration.Sliding
           : AuthAdminRefreshTokenExpiration.Absolute
       }),
-      slidingRefreshTokenLifetime: z.string().transform((s) => {
-        return Number(s)
+      slidingRefreshTokenLifetime: z.optional(z.string()).transform((s) => {
+        return typeof s === 'string' && s.length > 0 ? Number(s) : undefined
       }),
     })
     .merge(defaultEnvironmentSchema)
     .refine(
       (data) => {
-        if (data.refreshTokenExpiration) {
+        if (
+          data.refreshTokenExpiration ===
+            AuthAdminRefreshTokenExpiration.Sliding &&
+          data.slidingRefreshTokenLifetime !== undefined
+        ) {
           return checkIfStringIsPositiveNumber(
             data.slidingRefreshTokenLifetime.toString(),
           )
