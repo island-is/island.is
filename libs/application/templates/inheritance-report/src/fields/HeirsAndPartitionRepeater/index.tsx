@@ -216,7 +216,7 @@ export const HeirsAndPartitionRepeater: FC<
     if (
       fields.length === 0 &&
       estateData?.inheritanceReportInfo?.heirs &&
-      !(application.answers as any).heirs.hasModified
+      !(application.answers as any)?.heirs?.hasModified
     ) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
       // despite checking on the length of the fields
