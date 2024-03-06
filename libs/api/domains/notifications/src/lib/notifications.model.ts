@@ -6,11 +6,7 @@ import {
   Int,
   InputType,
 } from '@nestjs/graphql'
-import {
-  PageInfoDto,
-  PaginatedResponse,
-  PaginationInput,
-} from '@island.is/nest/pagination'
+import { PaginatedResponse, PaginationInput } from '@island.is/nest/pagination'
 
 @ObjectType()
 export class NotificationMetadata {

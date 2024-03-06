@@ -1,4 +1,3 @@
-// ADDING A LINE TO TRIGGER SERVICE ON FEATURE DEPLOY
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
