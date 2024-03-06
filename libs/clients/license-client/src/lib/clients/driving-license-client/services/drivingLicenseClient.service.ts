@@ -15,7 +15,6 @@ import {
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
-  VerifyExtraDataInput,
 } from '../../../licenseClient.type'
 import {
   Pass,
@@ -341,22 +340,18 @@ export class DrivingLicenseClient
     }
   }
 
-  async verifyExtraData({ nationalId, licenseId }: VerifyExtraDataInput) {
-    const license = await this.drivingApi.getCurrentLicenseV4({
-      nationalId,
-    })
+  async verifyExtraData(user: User) {
+    const res = await this.fetchLicense(user)
 
-    if (!license) {
-      const errorMsg = 'No license found for national id'
+    if (!res.ok) {
+      const errorMsg = res.error.message
+        ? res.error.message
+        : 'License fetch failed'
       this.logger.warn(errorMsg, { category: LOG_CATEGORY })
 
-      throw new BadRequestException(errorMsg)
+      throw new BadRequestException(res.error.message)
     }
 
-    return {
-      nationalId,
-      name: license.name ?? null,
-      photo: license.photo?.image ?? null,
-    }
+    return res.data
   }
 }

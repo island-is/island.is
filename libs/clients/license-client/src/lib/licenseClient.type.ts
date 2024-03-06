@@ -9,7 +9,6 @@ import { Passport } from '@island.is/clients/passports'
 import { Locale } from '@island.is/shared/types'
 import { FlattenedAdrDto } from './clients/adr-license-client'
 import { FirearmLicenseDto } from './clients/firearm-license-client'
-import { DrivingLicenseVerifyExtraDataResult } from './clients/driving-license-client/types'
 import { LicenseType } from '@island.is/shared/constants'
 
 export type LicenseLabelsObject = {
@@ -33,7 +32,7 @@ export interface LicenseResults {
 export interface VerifyExtraDataResult {
   [LicenseType.AdrLicense]: void
   [LicenseType.DisabilityLicense]: void
-  [LicenseType.DriversLicense]: DrivingLicenseVerifyExtraDataResult
+  [LicenseType.DriversLicense]: DriverLicenseDto | null
   [LicenseType.Ehic]: void
   [LicenseType.FirearmLicense]: void
   [LicenseType.HuntingLicense]: void
@@ -91,11 +90,6 @@ export type VerifyInputData = {
   date: string
   passTemplateName?: string
   passTemplateId?: string
-}
-
-export type VerifyExtraDataInput = {
-  nationalId: string
-  licenseId?: string
 }
 
 export type PassVerificationData = {
@@ -164,9 +158,7 @@ export interface LicenseClient<Type extends LicenseType> {
     data: string,
     passTemplateId: string,
   ) => Promise<Result<PkPassVerification>>
-  verifyExtraData?: (
-    input: VerifyExtraDataInput,
-  ) => Promise<LicenseVerifyExtraDataResult<Type>>
+  verifyExtraData?: (input: User) => Promise<LicenseVerifyExtraDataResult<Type>>
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'

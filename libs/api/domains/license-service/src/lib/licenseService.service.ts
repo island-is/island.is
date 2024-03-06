@@ -7,6 +7,7 @@ import {
 import { CmsContentfulService } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LicenseType } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import {
   BadRequestException,
@@ -15,7 +16,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
-import { LicenseType } from '@island.is/shared/constants'
 
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
@@ -25,12 +25,12 @@ import {
   GenericLicenseFetchResult,
   GenericLicenseMapper,
   GenericLicenseOrganizationSlug,
-  LicenseTypeKey,
   GenericLicenseUserdata,
   GenericUserLicenseFetchStatus,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   LicenseTokenData,
+  LicenseTypeKey,
   PkPassVerification,
 } from './licenceService.type'
 import {
@@ -477,20 +477,15 @@ export class LicenseServiceService {
     return verification.data
   }
 
-  async createBarcode(
-    { nationalId }: User,
-    genericUserLicense: GenericUserLicense,
-  ) {
+  async createBarcode(user: User, genericUserLicense: GenericUserLicense) {
     const code = randomUUID()
     const licenseType = genericUserLicense.license.type
+
     const client = await this.getClient<typeof licenseType>(licenseType)
     let extraData: LicenseVerifyExtraDataResult<LicenseType> | undefined
 
     if (client?.verifyExtraData) {
-      extraData = await client.verifyExtraData({
-        licenseId: genericUserLicense.payload?.metadata?.licenseId,
-        nationalId,
-      })
+      extraData = await client.verifyExtraData(user)
 
       if (!extraData) {
         const msg = `Unable to verify extra data for license: ${licenseType}`
@@ -514,7 +509,7 @@ export class LicenseServiceService {
     const redisPromise = this.cacheManager.set(
       code,
       {
-        nationalId,
+        nationalId: user.nationalId,
         licenseType,
         extraData,
       },
