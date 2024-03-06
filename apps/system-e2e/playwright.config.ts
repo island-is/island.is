@@ -26,6 +26,22 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: !!process.env.CI ? 'retain-on-failure' : 'on',
   },
+  reporter: !!process.env.CI
+    ? [
+        ['line'],
+        [
+          'playwright-tesults-reporter',
+          {
+            'tesults-target': process.env.TESULTS_TOKEN,
+            'tesults-build-name': process.env.COMMIT_INFO,
+            'tesults-build-result': 'pass',
+            'tesults-build-reason': 'Always succeed 💯',
+            'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
+          },
+        ],
+      ]
+    : undefined,
+
   /* Run your local dev server before starting the tests */ // webServer: {
   //   command: 'npm run start',
   //   url: 'http://127.0.0.1:3000',
