@@ -27,6 +27,17 @@ export const getWeekendDates = (
   return weekdays
 }
 
+export const addWeekdays = (date: Date, days: number) => {
+  let result = new Date(date)
+  while (days > 0) {
+    result = addDays(result, 1)
+    if (isWeekday(result)) {
+      days--
+    }
+  }
+  return result
+}
+
 export const getWeekdayDates = (
   startDate = new Date(),
   endDate = addYears(new Date(), 1),

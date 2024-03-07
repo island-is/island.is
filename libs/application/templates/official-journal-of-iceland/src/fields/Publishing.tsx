@@ -10,6 +10,7 @@ import { publishing } from '../lib/messages'
 import {
   AnswerOption,
   DEBOUNCE_INPUT_TIMER,
+  FIRST_AVAILABLE_DATE_OFFSET,
   INITIAL_ANSWERS,
 } from '../lib/constants'
 import { useCallback, useEffect, useState } from 'react'
@@ -21,7 +22,7 @@ import {
 import { getErrorViaPath } from '@island.is/application/core'
 import { Box, Icon, Select, Tag } from '@island.is/island-ui/core'
 import addYears from 'date-fns/addYears'
-import { getWeekendDates } from '../lib/utils'
+import { addWeekdays, getWeekendDates } from '../lib/utils'
 import { useMutation, useQuery } from '@apollo/client'
 import { CATEGORIES_QUERY } from '../graphql/queries'
 import { ChannelList } from '../components/communicationChannels/ChannelList'
@@ -67,9 +68,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
 
   const [state, setState] = useState<LocalState>({
     date: answers.publishing?.date ?? '',
-    fastTrack: answers.publishing?.fastTrack
-      ? AnswerOption.YES
-      : AnswerOption.NO,
+    fastTrack: answers.publishing?.fastTrack ?? AnswerOption.NO,
     contentCategories:
       answers.publishing?.contentCategories ?? ([] as CategoryOption[]),
     communicationChannels:
@@ -167,7 +166,11 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             placeholder={f(publishing.inputs.datepicker.placeholder)}
             backgroundColor="blue"
             size="sm"
-            minDate={today}
+            locale="is"
+            minDate={addWeekdays(
+              today,
+              state.fastTrack ? 0 : FIRST_AVAILABLE_DATE_OFFSET,
+            )}
             maxDate={maxEndDate}
             defaultValue={answers.publishing?.date ?? ''}
             excludeDates={getWeekendDates(today, maxEndDate)}
@@ -184,6 +187,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             large={false}
             defaultValue={[state.fastTrack]}
             onSelect={(options) => {
+              console.log('wtf', options)
               setState({
                 ...state,
                 fastTrack: options.includes(AnswerOption.YES)
