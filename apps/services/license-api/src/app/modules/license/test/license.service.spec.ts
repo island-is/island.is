@@ -1,33 +1,63 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Test } from '@nestjs/testing'
-import { LicenseService } from '../license.service'
 import {
-  LicenseId,
-  LicenseUpdateType,
-  PASS_TEMPLATE_IDS,
-} from '../license.types'
+  BaseLicenseUpdateClient,
+  LicenseType,
+  LicenseUpdateClientService,
+} from '@island.is/clients/license-client'
 import {
+  Pass,
   PassDataInput,
   Result,
-  Pass,
   RevokePassData,
-  VerifyPassData,
   SmartSolutionsApi,
+  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { VerifyInputData } from '../dto/verifyLicense.input'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
+import {
+  BarcodeData,
+  BarcodeService,
+  LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
+  LicenseConfig,
+} from '@island.is/services/license'
 import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import ShortUniqueId from 'short-unique-id'
+import { VerifyInputData } from '../dto/verifyLicense.input'
+import { LicenseService } from '../license.service'
 import {
-  BaseLicenseUpdateClient,
-  LicenseUpdateClientService,
-} from '@island.is/clients/license-client'
+  LicenseId,
+  LicenseUpdateType,
+  PASS_TEMPLATE_IDS,
+} from '../license.types'
 
+const { randomUUID } = new ShortUniqueId({ length: 16 })
+const cacheStore = new Map<string, unknown>()
 const licenseIds = Object.values(LicenseId)
+
+const createCahceData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
+  nationalId: '1234567890',
+  licenseType: getLicenseType(licenseId),
+  extraData: {
+    name: 'John Doe',
+  },
+})
+
+const getLicenseType = (id: LicenseId) => {
+  switch (id) {
+    case LicenseId.DRIVING_LICENSE:
+      return LicenseType.DrivingLicense
+    case LicenseId.DISABILITY_LICENSE:
+      return LicenseType.DisabilityLicense
+    case LicenseId.FIREARM_LICENSE:
+      return LicenseType.FirearmLicense
+  }
+}
 
 @Injectable()
 export class MockUpdateClient extends BaseLicenseUpdateClient {
@@ -37,6 +67,7 @@ export class MockUpdateClient extends BaseLicenseUpdateClient {
   ) {
     super(logger, smartApi)
   }
+
   pushUpdate = (inputData: PassDataInput, nationalId: string) => {
     if (nationalId === 'success') {
       return Promise.resolve<Result<Pass | undefined>>({
@@ -185,16 +216,31 @@ export class MockUpdateClient extends BaseLicenseUpdateClient {
 
 describe('LicenseService', () => {
   let licenseService: LicenseService
+  let barcodeService: BarcodeService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [LicenseConfig],
+        }),
+      ],
       providers: [
         LicenseService,
+        BarcodeService,
         {
           provide: LOGGER_PROVIDER,
           useClass: jest.fn(() => ({
             debug: () => ({}),
             error: () => ({}),
+          })),
+        },
+        {
+          provide: LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
+          useClass: jest.fn(() => ({
+            get: (key: string) => cacheStore.get(key),
+            set: (key: string, value: unknown) => cacheStore.set(key, value),
           })),
         },
         {
@@ -225,6 +271,7 @@ describe('LicenseService', () => {
     }).compile()
 
     licenseService = moduleRef.get<LicenseService>(LicenseService)
+    barcodeService = moduleRef.get<BarcodeService>(BarcodeService)
   })
 
   describe.each(licenseIds)('given %s license type id', (licenseId) => {
@@ -245,6 +292,75 @@ describe('LicenseService', () => {
           valid: true,
         })
       })
+
+      it.skip(`should verify barcodeData as token for the ${licenseId} license`, async () => {
+        // Act
+        const code = randomUUID()
+        const data = createCahceData(licenseId)
+
+        // Create token
+        const token = await barcodeService.createToken({
+          v: '1',
+          c: code,
+        })
+
+        // Put data in cache
+        await barcodeService.setCache(code, data)
+
+        const result = await licenseService.verifyLicense({
+          barcodeData: token,
+        })
+
+        // Assert
+        // Only driver's license is able to get extra data from the token for now
+        if (
+          licenseId === LicenseId.FIREARM_LICENSE ||
+          licenseId === LicenseId.DISABILITY_LICENSE
+        ) {
+          expect(result).toMatchObject({
+            valid: false,
+          })
+        } else {
+          expect(result).toMatchObject({
+            valid: true,
+            passIdentity: {
+              nationalId: data.nationalId,
+              name: data.extraData?.name,
+            },
+          })
+        }
+      })
+
+      it(`should fail to verify barcodeData token because of token expire time for the ${licenseId} license`, async () => {
+        // Act
+        const code = randomUUID()
+        const data = createCahceData(licenseId)
+
+        // Create token
+        const token = await barcodeService.createToken(
+          {
+            v: '1',
+            c: code,
+          },
+          { expiresIn: 1 },
+        )
+
+        // Put data in cache
+        await barcodeService.setCache(code, data)
+
+        // Wait for token to expire, before verifying
+        setTimeout(async () => {
+          const result = await licenseService.verifyLicense({
+            barcodeData: token,
+          })
+
+          // Assert
+          await expect(result).rejects.toThrow(
+            new BadRequestException('Token expired'),
+          )
+        }, 1000)
+      })
+
       it(`should fail to verify the ${licenseId}  license`, async () => {
         //act
         const result = await licenseService.verifyLicense({

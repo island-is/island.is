@@ -8,7 +8,7 @@ import {
 import { CmsContentfulService } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BarcodeService } from '@island.is/services/license'
+import { BarcodeData, BarcodeService } from '@island.is/services/license'
 
 import { Locale } from '@island.is/shared/types'
 import {
@@ -21,6 +21,10 @@ import {
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
+import {
+  DriverLicenseResult,
+  VerifyBarcodeDataUnion,
+} from './dto/VerifyBarcodeData.dto'
 
 import {
   GenericLicenseFetchResult,
@@ -494,7 +498,7 @@ export class LicenseServiceService {
 
       if (!extraData) {
         const msg = `Unable to verify extra data for license: ${licenseType}`
-        this.logger.warn(msg, { category: LOG_CATEGORY })
+        this.logger.error(msg, { category: LOG_CATEGORY })
 
         throw new InternalServerErrorException(msg)
       }
@@ -515,5 +519,47 @@ export class LicenseServiceService {
     ])
 
     return token
+  }
+
+  mapDrivingLicenseData(data: BarcodeData<LicenseType.DrivingLicense>) {
+    return {
+      nationalId: data.nationalId,
+      name: data.extraData.name ?? '',
+      ...(data.extraData?.photo?.image && {
+        picture: data.extraData?.photo?.image,
+      }),
+    }
+  }
+
+  async verifyBarcode(token: string): Promise<typeof VerifyBarcodeDataUnion> {
+    try {
+      const { c } = await this.barcodeService.verifyToken(token)
+      const data = await this.barcodeService.getCache(c)
+
+      if (!data) {
+        const noDataFoundMsg = 'No data found in cache'
+        this.logger.error(noDataFoundMsg, {
+          category: LOG_CATEGORY,
+        })
+
+        throw new Error('Invalid barcode')
+      }
+
+      if (data.licenseType === LicenseType.DrivingLicense) {
+        const drivingData = this.mapDrivingLicenseData(
+          data as BarcodeData<LicenseType.DrivingLicense>,
+        )
+        return new DriverLicenseResult(drivingData)
+      }
+
+      throw new Error('Invalid license type')
+    } catch (error) {
+      this.logger.error(error.message, {
+        category: LOG_CATEGORY,
+        error,
+      })
+
+      throw new BadRequestException(error.message)
+    }
   }
 }

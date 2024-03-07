@@ -7,6 +7,7 @@ export {
   LicenseType,
   LicenseClient,
   LicenseVerifyExtraDataResult,
+  VerifyExtraDataResult,
 } from './lib/licenseClient.type'
 export { EhicCardResponse } from './lib/clients/ehic-card-client'
 export * from './lib/clients/adr-license-client'

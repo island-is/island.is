@@ -26,6 +26,8 @@ import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { GetGenericLicenseInput } from './dto/GetGenericLicense.input'
 import { GetGenericLicensesInput } from './dto/GetGenericLicenses.input'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
+import { VerifyBarcodeInput } from './dto/VerifyBarcode.input'
+import { VerifyBarcodeDataUnion } from './dto/VerifyBarcodeData.dto'
 import { VerifyPkPassInput } from './dto/VerifyPkPass.input'
 import { LicenseServiceService } from './licenseService.service'
 
@@ -140,11 +142,19 @@ export class LicenseServiceResolver {
   @Mutation(() => GenericPkPassVerification)
   @Audit()
   async verifyPkPass(
-    @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @Args('input') input: VerifyPkPassInput,
+    @Args('input')
+    input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
     return this.licenseServiceService.verifyPkPass(input.data)
+  }
+
+  @Scopes(ApiScope.internal, ApiScope.licensesVerify)
+  @Mutation(() => VerifyBarcodeDataUnion)
+  @Audit()
+  async verifyBarcode(
+    @Args('input') { token }: VerifyBarcodeInput,
+  ): Promise<typeof VerifyBarcodeDataUnion> {
+    return this.licenseServiceService.verifyBarcode(token)
   }
 }

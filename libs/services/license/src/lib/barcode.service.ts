@@ -26,9 +26,9 @@ export type LicenseTokenData = {
   c: string
 }
 
-type BarcodeCacheData<Type extends LicenseType> = {
+export type BarcodeData<Type extends LicenseType> = {
   nationalId: string
-  licenseType: LicenseType
+  licenseType: Type
   extraData: LicenseVerifyExtraDataResult<Type>
 }
 
@@ -87,14 +87,14 @@ export class BarcodeService {
 
   async setCache<Type extends LicenseType>(
     key: string,
-    value: BarcodeCacheData<Type>,
+    value: BarcodeData<Type>,
   ) {
     return this.cacheManager.set(key, value, BARCODE_EXPIRE_TIME_IN_SEC * 1000)
   }
 
   async getCache<Type extends LicenseType>(
     key: string,
-  ): Promise<BarcodeCacheData<Type> | undefined> {
+  ): Promise<BarcodeData<Type> | undefined> {
     return this.cacheManager.get(key)
   }
 }

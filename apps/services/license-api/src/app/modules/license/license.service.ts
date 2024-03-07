@@ -6,7 +6,7 @@ import {
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BarcodeService } from '@island.is/services/license'
+import { BarcodeData, BarcodeService } from '@island.is/services/license'
 import {
   BadRequestException,
   Inject,
@@ -295,35 +295,50 @@ export class LicenseService {
     token: string,
     requestId: string,
   ): Promise<VerifyLicenseResponse> {
+    const invalidResponse = {
+      valid: false,
+    }
+
     try {
       const { c } = await this.barcodeService.verifyToken(token)
       const data = await this.barcodeService.getCache(c)
 
       if (!data) {
-        return {
-          valid: false,
-        }
-      }
-
-      if (!data.extraData?.name) {
-        this.logger.error('Name is missing in cache data', {
+        this.logger.error('No data found in cache', {
           category: LOG_CATEGORY,
           requestId,
         })
 
+        return invalidResponse
+      }
+
+      if (data.licenseType === LicenseType.DrivingLicense) {
+        const drivingLicenseData =
+          data as BarcodeData<LicenseType.DrivingLicense>
+
+        if (!drivingLicenseData?.extraData?.name) {
+          this.logger.error(
+            `Name is missing in ${LicenseType.DrivingLicense} cache data`,
+            {
+              category: LOG_CATEGORY,
+              requestId,
+            },
+          )
+
+          return invalidResponse
+        }
+
         return {
-          valid: false,
+          valid: true,
+          passIdentity: {
+            name: drivingLicenseData.extraData?.name,
+            nationalId: drivingLicenseData.nationalId,
+            picture: drivingLicenseData.extraData?.photo?.image ?? undefined,
+          },
         }
       }
 
-      return {
-        valid: true,
-        passIdentity: {
-          name: data.extraData.name,
-          nationalId: data.nationalId,
-          picture: data.extraData?.photo?.image ?? undefined,
-        },
-      }
+      return invalidResponse
     } catch (error) {
       this.logger.error(error.message, {
         category: LOG_CATEGORY,
