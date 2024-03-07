@@ -114,22 +114,6 @@ export const mapStatusEnumToStatus = (status?: string) => {
   }
 }
 
-export const mapIdToType = (id?: TypeIds | string) => {
-  if (!id) return ''
-  switch (id) {
-    case TypeIds.AUGLYSING:
-      return 'Auglýsing'
-    case TypeIds.GJALDSKRA:
-      return 'Gjaldskrá'
-    case TypeIds.REGLUGERDIR:
-      return 'Reglugerðir'
-    case TypeIds.SKIPULAGSSKRA:
-      return 'Skipulagsskrá'
-    default:
-      return ''
-  }
-}
-
 export const dotToObj = (dotString: string, obj = {}, value = '') => {
   const keys = dotString.split('.').filter(Boolean)
   const lastIndex = keys.length - 1
