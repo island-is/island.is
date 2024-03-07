@@ -1,9 +1,8 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { Routes, TypeIds, emailRegex } from './constants'
-import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationContext, RecordObject } from '@island.is/application/types'
+import { Routes, emailRegex } from './constants'
+import { RecordObject } from '@island.is/application/types'
 import { LocalError } from './types'
 import get from 'lodash/get'
 

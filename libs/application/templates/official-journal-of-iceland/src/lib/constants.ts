@@ -12,7 +12,7 @@ export enum AnswerOption {
   NO = 'no',
 }
 
-export const FIRST_AVAILABLE_DATE_OFFSET = 10
+export const MINIMUM_WEEKDAYS = 10
 
 export enum Routes {
   TEST = 'test',

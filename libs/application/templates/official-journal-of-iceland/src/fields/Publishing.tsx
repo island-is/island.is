@@ -10,7 +10,7 @@ import { publishing } from '../lib/messages'
 import {
   AnswerOption,
   DEBOUNCE_INPUT_TIMER,
-  FIRST_AVAILABLE_DATE_OFFSET,
+  MINIMUM_WEEKDAYS,
   INITIAL_ANSWERS,
 } from '../lib/constants'
 import { useCallback, useEffect, useState } from 'react'
@@ -167,10 +167,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             backgroundColor="blue"
             size="sm"
             locale="is"
-            minDate={addWeekdays(
-              today,
-              state.fastTrack ? 0 : FIRST_AVAILABLE_DATE_OFFSET,
-            )}
+            minDate={addWeekdays(today, state.fastTrack ? 0 : MINIMUM_WEEKDAYS)}
             maxDate={maxEndDate}
             defaultValue={answers.publishing?.date ?? ''}
             excludeDates={getWeekendDates(today, maxEndDate)}
@@ -187,7 +184,6 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             large={false}
             defaultValue={[state.fastTrack]}
             onSelect={(options) => {
-              console.log('wtf', options)
               setState({
                 ...state,
                 fastTrack: options.includes(AnswerOption.YES)
