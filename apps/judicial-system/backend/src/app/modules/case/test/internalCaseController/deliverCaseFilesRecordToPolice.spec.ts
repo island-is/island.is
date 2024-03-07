@@ -2,16 +2,19 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseState, User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { nowFactory } from '../../../../factories'
 import { createCaseFilesRecord } from '../../../../formatters'
+import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../../../court'
+import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
+jest.mock('../../../../factories')
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 
 interface Then {
@@ -25,41 +28,49 @@ type GivenWhenThen = (
   theCase: Case,
 ) => Promise<Then>
 
-describe('InternalCaseController - Deliver case files record to court', () => {
+describe('InternalCaseController - Deliver case files record to police', () => {
+  const date = randomDate()
   const user = { id: uuid() } as User
   const caseId = uuid()
+  const caseType = CaseType.INDICTMENT
+  const caseState = CaseState.ACCEPTED
   const policeCaseNumber = uuid()
+  const defendantNationalId = '0123456789'
   const courtId = uuid()
   const courtCaseNumber = uuid()
   const theCase = {
     id: caseId,
-    state: CaseState.ACCEPTED,
+    type: caseType,
+    state: caseState,
     policeCaseNumbers: [policeCaseNumber],
+    defendants: [{ nationalId: defendantNationalId }],
     courtId,
     courtCaseNumber,
   } as Case
   const pdf = Buffer.from('test case files record')
 
   let mockAwsS3Service: AwsS3Service
-  let mockCourtService: CourtService
+  let mockPoliceService: PoliceService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const mockGet = createCaseFilesRecord as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const { awsS3Service, courtService, internalCaseController } =
+    const { awsS3Service, policeService, internalCaseController } =
       await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
+    mockPoliceService = policeService
+
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
-
-    mockCourtService = courtService
-    const mockCreateDocument = mockCourtService.createDocument as jest.Mock
-    mockCreateDocument.mockRejectedValue(new Error('Some error'))
+    const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
+    mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (
       caseId: string,
@@ -69,7 +80,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCaseFilesRecordToCourt(caseId, policeCaseNumber, theCase, {
+        .deliverCaseFilesRecordToPolice(caseId, policeCaseNumber, theCase, {
           user,
         })
         .then((result) => (then.result = result))
@@ -85,57 +96,48 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     beforeEach(async () => {
       const mockGet = createCaseFilesRecord as jest.Mock
       mockGet.mockResolvedValueOnce(pdf)
-      const mockCreateDocument = mockCourtService.createDocument as jest.Mock
-      mockCreateDocument.mockResolvedValueOnce(uuid())
+      const mockUpdatePoliceCase =
+        mockPoliceService.updatePoliceCase as jest.Mock
+      mockUpdatePoliceCase.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(caseId, policeCaseNumber, theCase)
     })
 
-    it('should try to get the pdf from AWS S3 indictment completed folder', () => {
+    it('should update the police case', () => {
       expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
         1,
         `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
-    })
-
-    it('should try to get the pdf from AWS S3 indictment folder', () => {
       expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
         2,
         `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
-    })
-
-    it('should generate the case files record', async () => {
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
         policeCaseNumber,
         [],
         expect.any(Function),
       )
-    })
-
-    it('should store the case files record in AWS S3', async () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
         `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString(),
       )
-    })
-
-    it('should create a case files record at court', async () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+      expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
-        courtId,
-        courtCaseNumber,
-        CourtDocumentFolder.CASE_DOCUMENTS,
-        `Skjalaskrá ${policeCaseNumber}`,
-        `Skjalaskrá ${policeCaseNumber}.pdf`,
-        'application/pdf',
-        pdf,
+        caseType,
+        caseState,
+        policeCaseNumber,
+        defendantNationalId,
+        date,
+        '',
+        [
+          {
+            type: CourtDocumentType.RVMG,
+            courtDocument: pdf.toString('binary'),
+          },
+        ],
       )
-    })
-
-    it('should return a success response', async () => {
       expect(then.result).toEqual({ delivered: true })
     })
   })
@@ -149,16 +151,21 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
 
     it('should use the AWS S3 pdf', () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+      expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
-        courtId,
-        courtCaseNumber,
-        CourtDocumentFolder.CASE_DOCUMENTS,
-        `Skjalaskrá ${policeCaseNumber}`,
-        `Skjalaskrá ${policeCaseNumber}.pdf`,
-        'application/pdf',
-        pdf,
+        caseType,
+        caseState,
+        policeCaseNumber,
+        defendantNationalId,
+        date,
+        '',
+        [
+          {
+            type: CourtDocumentType.RVMG,
+            courtDocument: pdf.toString('binary'),
+          },
+        ],
       )
     })
   })
@@ -173,16 +180,21 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
 
     it('should use the AWS S3 pdf', () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+      expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
-        courtId,
-        courtCaseNumber,
-        CourtDocumentFolder.CASE_DOCUMENTS,
-        `Skjalaskrá ${policeCaseNumber}`,
-        `Skjalaskrá ${policeCaseNumber}.pdf`,
-        'application/pdf',
-        pdf,
+        caseType,
+        caseState,
+        policeCaseNumber,
+        defendantNationalId,
+        date,
+        '',
+        [
+          {
+            type: CourtDocumentType.RVMG,
+            courtDocument: pdf.toString('binary'),
+          },
+        ],
       )
     })
   })
@@ -203,7 +215,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
   })
 
-  describe('delivery to court fails', () => {
+  describe('delivery to police fails', () => {
     let then: Then
 
     beforeEach(async () => {
