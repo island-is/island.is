@@ -24,7 +24,22 @@
           "codeCoverage": true
         }
       }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/university-of-akureyri/gen/fetch -i libs/clients/university-of-akureyri/src/clientConfig.yaml"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10054/UNAK-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/clientConfig.yaml",
+        "parallel": false,
+        "cwd": "libs/clients/university-of-akureyri"
+      }
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }
