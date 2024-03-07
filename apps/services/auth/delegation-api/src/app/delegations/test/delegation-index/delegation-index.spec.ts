@@ -1,7 +1,5 @@
 import { TestApp, truncate } from '@island.is/testing/nest'
-
 import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
-
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import {
   DelegationsIndexService,
@@ -9,16 +7,19 @@ import {
   DelegationIndexMeta,
   Delegation,
   DelegationScope,
+  PersonalRepresentative,
+  DelegationType,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { indexingTestcases } from './delegation-index-test-cases'
-import { setupWithAuth } from '../../../../test/setup'
+import { indexingTestcases, prRight1 } from './delegation-index-test-cases'
+
 import { Sequelize } from 'sequelize-typescript'
 import { Type } from '@nestjs/common'
-import { domainName, user } from './delegations-filters-types'
+import { domainName, user } from './delegations-index-types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import faker from 'faker'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { setupWithAuth } from '../../../../../test/setup'
 
 const testDate = new Date(2024, 2, 1)
 
@@ -33,6 +34,7 @@ describe('DelegationsIndexService', () => {
   let rskApi: RskRelationshipsClient
   let delegationModel: typeof Delegation
   let delegationScopeModel: typeof DelegationScope
+  let personalRepresentativeModel: typeof PersonalRepresentative
 
   beforeAll(async () => {
     app = await setupWithAuth({
@@ -45,6 +47,7 @@ describe('DelegationsIndexService', () => {
     delegationIndexMetaModel = app.get(getModelToken(DelegationIndexMeta))
     delegationModel = app.get(getModelToken(Delegation))
     delegationScopeModel = app.get(getModelToken(DelegationScope))
+    personalRepresentativeModel = app.get(getModelToken(PersonalRepresentative))
 
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
@@ -74,10 +77,8 @@ describe('DelegationsIndexService', () => {
         await delegationIndexMetaModel.destroy({ where: {} })
         await delegationIndexModel.destroy({ where: {} })
 
-        const mockedDate = testDate
-
         jest.useFakeTimers()
-        jest.setSystemTime(mockedDate)
+        jest.setSystemTime(testDate)
       })
 
       afterEach(() => {
@@ -446,19 +447,23 @@ describe('DelegationsIndexService', () => {
 
   describe('indexRepresentativeDelegations', () => {
     const testcase = indexingTestcases.personalRepresentative
+    let representative: PersonalRepresentative
 
     beforeAll(async () => {
       await truncate(sequelize)
 
       await factory.createDomain(testcase.domain)
       await factory.createClient(testcase.client)
-
       // create personal representation delegations
-      await Promise.all(
-        testcase.personalRepresentativeDelegation.map((d) =>
-          factory.createPersonalRepresentativeDelegation(d),
-        ),
+      representative = await factory.createPersonalRepresentativeDelegation(
+        testcase.personalRepresentativeDelegation[0],
       )
+    })
+
+    beforeEach(async () => {
+      // remove all data
+      await delegationIndexMetaModel.destroy({ where: {} })
+      await delegationIndexModel.destroy({ where: {} })
     })
 
     it('should index personal representation delegations', async () => {
@@ -479,7 +484,35 @@ describe('DelegationsIndexService', () => {
       delegations.forEach((delegation) => {
         expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
         expect(delegation.toNationalId).toBe(user.nationalId)
+        expect(delegation.type).toBe(
+          `${DelegationType.PersonalRepresentative}:${prRight1}`,
+        )
       })
+    })
+
+    it('should create delegation index item for each right of personal representative delegation', async () => {
+      // Arrange
+      // Add new delegation right to existing personal representation delegation
+      const rightType = await factory.createPersonalRepresentativeRightType({
+        code: 'prRight2',
+      })
+      await factory.createPersonalRepresentativeRight({
+        rightTypeCode: rightType.code,
+        personalRepresentativeId: representative.id,
+      })
+
+      // Act
+      await delegationIndexService.indexRepresentativeDelegations(
+        user.nationalId,
+      )
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: user.nationalId,
+        },
+      })
+      expect(delegations.length).toEqual(2)
     })
   })
 })
