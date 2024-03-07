@@ -105,7 +105,7 @@ export const INITIAL_ANSWERS = {
   },
   [Routes.PUBLISHING]: {
     date: '',
-    fastTrack: AnswerOption.NO,
+    fastTrack: '',
     contentCategories: [],
     communicationChannels: [],
     message: '',

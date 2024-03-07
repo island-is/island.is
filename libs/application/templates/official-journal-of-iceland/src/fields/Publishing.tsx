@@ -56,8 +56,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
 
   const today = new Date()
   const maxEndDate = addYears(today, 5)
-
-  const { setValue } = useFormContext()
+  const { setValue, clearErrors } = useFormContext()
 
   const [channelState, setChannelState] = useState<Channel>({
     email: '',
@@ -145,7 +144,23 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
         },
       },
     })
-  }, [application.answers, application.id, locale, state, updateApplication])
+
+    setValue(InputFields.publishing.date, state.date)
+    setValue(InputFields.publishing.fastTrack, state.fastTrack)
+    setValue(InputFields.publishing.contentCategories, state.contentCategories)
+    setValue(
+      InputFields.publishing.communicationChannels,
+      state.communicationChannels,
+    )
+    setValue(InputFields.publishing.message, state.message)
+  }, [
+    application.answers,
+    application.id,
+    locale,
+    setValue,
+    state,
+    updateApplication,
+  ])
 
   const updateState = useCallback((newState: typeof state) => {
     setState((prev) => ({ ...prev, ...newState }))
@@ -155,6 +170,11 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
     updateHandler()
   }, [updateHandler])
   const debouncedStateUpdate = debounce(updateState, DEBOUNCE_INPUT_TIMER)
+
+  const minDate = addWeekdays(
+    today,
+    state.fastTrack === AnswerOption.YES ? 0 : MINIMUM_WEEKDAYS,
+  )
 
   return (
     <>
@@ -167,9 +187,9 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             backgroundColor="blue"
             size="sm"
             locale="is"
-            minDate={addWeekdays(today, state.fastTrack ? 0 : MINIMUM_WEEKDAYS)}
+            minDate={minDate}
             maxDate={maxEndDate}
-            defaultValue={answers.publishing?.date ?? ''}
+            defaultValue={answers.publishing?.date}
             excludeDates={getWeekendDates(today, maxEndDate)}
             onChange={(date) => setState({ ...state, date })}
             error={
@@ -189,7 +209,9 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
                 fastTrack: options.includes(AnswerOption.YES)
                   ? AnswerOption.YES
                   : AnswerOption.NO,
+                date: '',
               })
+              setValue(InputFields.publishing.date, '')
             }}
             options={[
               {
@@ -207,9 +229,24 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             name={InputFields.publishing.contentCategories}
             label={f(publishing.inputs.contentCategories.label)}
             options={categories}
+            hasError={
+              props.errors &&
+              !!getErrorViaPath(
+                props.errors,
+                InputFields.publishing.contentCategories,
+              )
+            }
+            errorMessage={
+              props.errors &&
+              getErrorViaPath(
+                props.errors,
+                InputFields.publishing.contentCategories,
+              )
+            }
             onChange={(opt) => {
               if (!opt) return
-              return onSelect({ label: opt.label, value: opt.value })
+              clearErrors(InputFields.publishing.contentCategories)
+              onSelect({ label: opt.label, value: opt.value })
             }}
           />
           <Box
