@@ -47,7 +47,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  //featureFlag: Features.ChangeMachineSupervisor,
+  featureFlag: Features.RequestInspection,
   translationNamespaces: [
     ApplicationConfigurations.RequestInspectionForMachine.translation,
   ],

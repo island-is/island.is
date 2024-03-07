@@ -72,7 +72,7 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
         400,
       )
     }
-    console.log('answers', answers)
+
     const machineId = answers.machine.id || answers.pickMachine.id
     if (!machineId) {
       throw new Error('Machine has not been selected')
