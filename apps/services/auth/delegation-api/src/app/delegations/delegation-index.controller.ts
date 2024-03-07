@@ -14,7 +14,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Documentation } from '@island.is/nest/swagger'
-import { Auth, CurrentAuth, IdsUserGuard } from '@island.is/auth-nest-tools'
+import { Auth, CurrentAuth, IdsAuthGuard } from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/delegation-api/me/delegation-index'
 
@@ -36,7 +36,7 @@ const parseDelegationInfo = (delegationInfo: string) => {
   }
 }
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsAuthGuard)
 @Controller({
   path: 'delegation-index',
 })

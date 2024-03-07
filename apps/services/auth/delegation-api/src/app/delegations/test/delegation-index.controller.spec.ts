@@ -7,10 +7,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 import { setupWithAuth } from '../../../../test/setup'
-import {
-  DelegationIndex,
-  DelegationsIndexService,
-} from '@island.is/auth-api-lib'
+import { DelegationIndex } from '@island.is/auth-api-lib'
 import { getModelToken } from '@nestjs/sequelize'
 import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
 
