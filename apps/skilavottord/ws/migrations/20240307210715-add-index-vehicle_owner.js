@@ -5,7 +5,7 @@ module.exports = {
   up: (queryInterface) => {
     return queryInterface.sequelize.query(`
       BEGIN;
-        CREATE INDEX idx_vehicle_owner_national_id ON recycling_partner(national_id);;
+        CREATE INDEX idx_vehicle_owner_national_id ON vehicle_owner(national_id);;
       COMMIT;
     `)
   },
