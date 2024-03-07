@@ -12,5 +12,11 @@ export const errors = {
       defaultMessage: 'Vantar samþykki',
       description: 'Error message a required checkbox is not checked',
     },
+    otherLoanProviders: {
+      id: 'ghb.application:errors.otherLoanProviders',
+      defaultMessage:
+        'Skylda er að annaðhvort fylla út stöðu lána hér fyrir ofan eða staðfesta að þú sért með lán frá öðrum lánveitanda',
+      description: 'Error message when no loan providers are added',
+    },
   }),
 }

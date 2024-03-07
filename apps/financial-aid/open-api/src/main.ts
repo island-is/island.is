@@ -7,6 +7,6 @@ bootstrap({
   appModule: AppModule,
   name: 'financial-aid-open-api',
   port: 3355,
-  swaggerPath: 'api/swagger',
+  swaggerPath: '/api/open/swagger',
   openApi,
 })
