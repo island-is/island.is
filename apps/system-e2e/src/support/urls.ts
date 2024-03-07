@@ -104,9 +104,8 @@ const envs: {
   },
 }
 
-export const env = !!process.env.CI
-  ? 'dev'
-  : ((process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment)
+export const env = ((process.env.TEST_ENVIRONMENT ?? (!!process.env.CI
+  ? 'dev' : 'local')) as TestEnvironment)
 const hotEnv = process.env.TEST_URL
   ? { islandisBaseUrl: process.env.TEST_URL }
   : {}
