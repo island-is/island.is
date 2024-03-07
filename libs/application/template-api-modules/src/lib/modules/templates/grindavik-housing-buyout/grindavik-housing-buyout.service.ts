@@ -78,7 +78,10 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const hasLoanFromOtherProvider =
       answers.loanProviders.loans?.findIndex((x) => !!x.otherProvider) !== -1 ??
       false
-    const hasNoLoans = answers.loanProviders.hasNoLoans?.includes(YES) ?? false
+    const noLoanCheckbox =
+      answers.loanProviders.hasNoLoans?.includes(YES) ?? false
+    const hasNoLoans =
+      noLoanCheckbox && answers.loanProviders.loans?.length === 0
     const wishesForPreemptiveRights =
       answers.preemptiveRight.preemptiveRightWish === YES
     const preemptiveRightType =
