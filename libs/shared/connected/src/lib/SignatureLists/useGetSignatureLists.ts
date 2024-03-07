@@ -25,6 +25,7 @@ export const GetCurrentCollection = gql`
         collectionId
         name
       }
+      isActive
     }
   }
 `
