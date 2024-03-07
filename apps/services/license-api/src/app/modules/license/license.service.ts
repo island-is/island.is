@@ -305,10 +305,21 @@ export class LicenseService {
         }
       }
 
+      if (!data.extraData?.name) {
+        this.logger.error('Name is missing in cache data', {
+          category: LOG_CATEGORY,
+          requestId,
+        })
+
+        return {
+          valid: false,
+        }
+      }
+
       return {
         valid: true,
         passIdentity: {
-          name: data.extraData?.name ?? 'Name missing',
+          name: data.extraData.name,
           nationalId: data.nationalId,
           picture: data.extraData?.photo?.image ?? undefined,
         },
