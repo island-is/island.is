@@ -351,7 +351,7 @@ export class LicenseService {
         requestId,
       })
 
-      throw this.getException('BadRequest', jsonErrorMsg)
+      throw new BadRequestException(jsonErrorMsg)
     }
 
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
