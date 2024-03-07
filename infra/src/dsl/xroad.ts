@@ -320,6 +320,16 @@ export const UniversityOfIceland = new XroadConf({
   },
 })
 
+export const UniversityOfAkureyri = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_OF_AKURERYI_PATH: {
+      dev: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1',
+      prod: 'IS/EDU/5206871229/UNAK-Protected/brautskraning-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {

@@ -733,6 +733,9 @@
       "@island.is/clients/university-application/university-of-iceland": [
         "libs/clients/university-application/university-of-iceland/src/index.ts"
       ],
+      "@island.is/clients/university-careers": [
+        "libs/clients/university-careers/src/index.ts"
+      ],
       "@island.is/clients/university-gateway-api": [
         "libs/clients/university-gateway-api/src/index.ts"
       ],

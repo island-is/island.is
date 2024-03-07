@@ -1,1 +1,2 @@
-export * from './lib/clients-university-of-akureyri.module'
+export * from './lib/universityOfAkureyriClient.module.ts'
+export * from './lib/universityOfAkureyriClient.config'
