@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
+
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { User } from '@island.is/auth-nest-tools'
 import { DelegationIndex } from './models/delegation-index.model'
-import { InjectModel } from '@nestjs/sequelize'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { DelegationType } from './types/delegationType'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import { PersonalRepresentativeDelegationType } from './types/delegationIndexItem'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -22,6 +25,10 @@ export type DelegationIndexInfo = Pick<
   | 'validTo'
   | 'customDelegationScopes'
 >
+
+type DelegationDTOWithStringType = Omit<DelegationDTO, 'type'> & {
+  type: string
+}
 
 type SortedDelegations = {
   created: DelegationIndexInfo[]
@@ -50,7 +57,7 @@ const hasAllSameScopes = (
 }
 
 const toDelegationIndexInfo = (
-  delegation: DelegationDTO,
+  delegation: DelegationDTOWithStringType,
 ): DelegationIndexInfo => ({
   fromNationalId: delegation.fromNationalId,
   toNationalId: delegation.toNationalId,
@@ -193,7 +200,8 @@ export class DelegationsIndexService {
     const { created, updated } = newItems.reduce(
       (acc, curr) => {
         const existing = currItems.find(
-          (d) => d.fromNationalId === curr.fromNationalId,
+          (d) =>
+            d.fromNationalId === curr.fromNationalId && d.type === curr.type,
         )
 
         if (existing) {
@@ -220,7 +228,11 @@ export class DelegationsIndexService {
 
     const deleted = currItems.filter(
       (delegation) =>
-        !newItems.some((d) => d.fromNationalId === delegation.fromNationalId),
+        !newItems.some(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.type === delegation.type,
+        ),
     )
 
     return { deleted, created, updated }
@@ -250,13 +262,38 @@ export class DelegationsIndexService {
   ) {
     const delegations = await this.delegationsIncomingRepresentativeService
       .findAllIncoming({ nationalId }, useMaster)
-      .then((d) => d.map(toDelegationIndexInfo))
+      .then((d) => {
+        // append the personal representative right type code to the delegation type in index
+        const delegationsWithRights = d.reduce(
+          (acc: DelegationDTOWithStringType[], delegation) => {
+            if (!delegation.rights) {
+              return acc
+            }
+
+            const delegations = delegation.rights.map((right) => ({
+              ...delegation,
+              type: `${delegation.type}:${right.code}`,
+              rights: [right],
+            }))
+
+            return [...acc, ...delegations]
+          },
+          [],
+        )
+
+        return delegationsWithRights.map(toDelegationIndexInfo)
+      })
 
     const currentDelegationIndexItems = await this.delegationIndexModel.findAll(
       {
         where: {
           toNationalId: nationalId,
-          type: DelegationType.PersonalRepresentative,
+          type: {
+            [Op.in]: [
+              DelegationType.PersonalRepresentative,
+              PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
+            ],
+          },
           provider: DelegationProvider.PersonalRepresentativeRegistry,
         },
       },
