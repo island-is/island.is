@@ -371,6 +371,9 @@ export interface KeyValueField extends BaseField {
   value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
