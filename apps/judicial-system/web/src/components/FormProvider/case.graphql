@@ -55,12 +55,15 @@ query Case($input: CaseQueryInput!) {
       id
       name
       title
+      canConfirmAppeal
     }
     prosecutor {
       id
       name
       title
       email
+      canConfirmAppeal
+      active
     }
     sharedWithProsecutorsOffice {
       id
@@ -103,11 +106,13 @@ query Case($input: CaseQueryInput!) {
       name
       title
       email
+      canConfirmAppeal
     }
     courtRecordSignatory {
       id
       name
       title
+      canConfirmAppeal
     }
     courtRecordSignatureDate
     registrar {
@@ -115,6 +120,7 @@ query Case($input: CaseQueryInput!) {
       name
       title
       email
+      canConfirmAppeal
     }
     parentCase {
       id
@@ -211,18 +217,22 @@ query Case($input: CaseQueryInput!) {
     appealAssistant {
       id
       name
+      canConfirmAppeal
     }
     appealJudge1 {
       id
       name
+      canConfirmAppeal
     }
     appealJudge2 {
       id
       name
+      canConfirmAppeal
     }
     appealJudge3 {
       id
       name
+      canConfirmAppeal
     }
     appealRulingModifiedHistory
     appealValidToDate

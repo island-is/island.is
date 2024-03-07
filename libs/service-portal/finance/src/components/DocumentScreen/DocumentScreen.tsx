@@ -36,7 +36,6 @@ import { DocumentsListItemTypes } from './DocumentScreen.types'
 import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 import * as styles from '../../screens/Finance.css'
-import FinanceIntro from '../FinanceIntro'
 import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -44,7 +43,7 @@ const ITEMS_ON_PAGE = 20
 
 interface Props {
   title: string
-  intro: string
+  intro?: string
   listPath: string
   defaultDateRangeMonths?: number
 }

@@ -589,9 +589,24 @@ export const m = defineMessages({
     id: 'service.portal:finance-status',
     defaultMessage: 'Staða',
   },
+  financeStatusDescription: {
+    id: 'service.portal:finance-status-description',
+    defaultMessage:
+      'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum',
+  },
   financeTransactions: {
     id: 'service.portal:finance-transactions',
     defaultMessage: 'Hreyfingar',
+  },
+  financeTransactionsDescription: {
+    id: 'service.portal:finance-transactions-description',
+    defaultMessage:
+      'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+  },
+  financeTransactionPeriodsDescription: {
+    id: 'service.portal:finance-transaction-periods-description',
+    defaultMessage:
+      'Hér sérð þú þær hreyfingar sem tilheyra ákveðnum reikningi eða álagningu. Þeir gjaldflokkar sem birtast hér að neðan eru þeir gjaldflokkar sem hafa haft hreyfingu síðustu 12 mánuði. Veldu gjaldflokk með því að smella á hann og síðan þann gjaldgrunn og tímabil sem við á. {br} Ef þú vilt annað tímabil eða gjaldflokka geturðu valið það með því að opna síuna',
   },
   financeTransactionsCategories: {
     id: 'service.portal:finance-transactions-categories',
@@ -601,25 +616,56 @@ export const m = defineMessages({
     id: 'service.portal:finance-transaction-periods',
     defaultMessage: 'Gjaldtímabil',
   },
+  financePayments: {
+    id: 'service.portal:finance-payments',
+    defaultMessage: 'Greiðslur',
+  },
   financeBills: {
     id: 'service.portal:finance-bills',
-    defaultMessage: 'Greiðsluseðlar og -kvittanir',
+    defaultMessage: 'Greiðsluseðlar og kvittanir',
+  },
+  financeBillsDescription: {
+    id: 'service.portal:finance-bills-description',
+    defaultMessage:
+      'Hér er að finna greidda og ógreidda greiðsluseðla fyrir valið tímabil. Einnig eru hér greiðslukvittanir nema þar sem greiðsluseðill hefur verið greiddur beint í banka.',
   },
   financeSchedules: {
     id: 'service.portal:finance-schedules',
     defaultMessage: 'Greiðsluáætlanir',
   },
+  financeSchedulesDescription: {
+    id: 'service.portal:finance-schedules-description',
+    defaultMessage:
+      'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
+  },
+  financeClaims: {
+    id: 'service.portal:finance-claims',
+    defaultMessage: 'Kröfur',
+  },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
     defaultMessage: 'Launagreiðendakröfur',
+  },
+  financeEmployeeClaimsDescription: {
+    id: 'service.portal:finance-employee-claims-description',
+    defaultMessage:
+      'Hér er að finna opinber gjöld utan staðgreiðslu sem dregin eru af starfsmönnum.',
   },
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
   },
+  financeLocalTaxDescription: {
+    id: 'service.portal:finance-local-tax-description',
+    defaultMessage: 'Sýnir þá staðgreiðslu sem skilað er til sveitafélaga.',
+  },
   financeLoans: {
     id: 'service.portal:finance-loans',
     defaultMessage: 'Lán',
+  },
+  financeLoansDescription: {
+    id: 'service.portal:finance-loans-description',
+    defaultMessage: 'Virk lán hjá HMS',
   },
   searchLabel: {
     id: 'service.portal:search-label',

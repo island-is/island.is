@@ -8,6 +8,8 @@ import {
   Button,
   GridColumn,
   GridRow,
+  Hidden,
+  Inline,
   SkeletonLoader,
   Stack,
   Table as T,

@@ -15,13 +15,38 @@ const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
-  'toNationalId' | 'fromNationalId' | 'provider' | 'type' | 'validTo'
+  | 'toNationalId'
+  | 'fromNationalId'
+  | 'provider'
+  | 'type'
+  | 'validTo'
+  | 'customDelegationScopes'
 >
 
 type SortedDelegations = {
   created: DelegationIndexInfo[]
   updated: DelegationIndexInfo[]
   deleted: DelegationIndexInfo[]
+}
+
+const hasAllSameScopes = (
+  a: string[] | undefined,
+  b: string[] | undefined,
+): boolean => {
+  // Only custom delegations have scopes and they are never undefined
+  if (!a && !b) {
+    return true
+  }
+
+  if (!a || !b) {
+    return false
+  }
+
+  if (a.length !== b.length) {
+    return false
+  }
+
+  return a.every((s) => b.includes(s))
 }
 
 const toDelegationIndexInfo = (
@@ -32,6 +57,7 @@ const toDelegationIndexInfo = (
   type: delegation.type,
   provider: delegation.provider,
   validTo: delegation.validTo,
+  customDelegationScopes: delegation.scopes?.map((s) => s.scopeName),
 })
 
 /**
@@ -118,13 +144,16 @@ export class DelegationsIndexService {
 
   /* Index incoming custom delegations */
   async indexCustomDelegations(nationalId: string) {
-    const delegations = await this.getCustomDelegations(nationalId)
+    const delegations = await this.getCustomDelegations(nationalId, true)
     await this.saveToIndex(delegations)
   }
 
   /* Index incoming personal representative delegations */
   async indexRepresentativeDelegations(nationalId: string) {
-    const delegations = await this.getRepresentativeDelegations(nationalId)
+    const delegations = await this.getRepresentativeDelegations(
+      nationalId,
+      true,
+    )
     await this.saveToIndex(delegations)
   }
 
@@ -168,7 +197,13 @@ export class DelegationsIndexService {
         )
 
         if (existing) {
-          if (existing.validTo !== curr.validTo) {
+          if (
+            existing.validTo !== curr.validTo ||
+            !hasAllSameScopes(
+              existing.customDelegationScopes,
+              curr.customDelegationScopes,
+            )
+          ) {
             acc.updated.push(curr)
           }
         } else {
@@ -191,9 +226,9 @@ export class DelegationsIndexService {
     return { deleted, created, updated }
   }
 
-  private async getCustomDelegations(nationalId: string) {
+  private async getCustomDelegations(nationalId: string, useMaster = false) {
     const delegations = await this.delegationsIncomingCustomService
-      .findAllValidIncoming(nationalId)
+      .findAllValidIncoming({ nationalId }, useMaster)
       .then((d) => d.map(toDelegationIndexInfo))
 
     const currentDelegationIndexItems = await this.delegationIndexModel.findAll(
@@ -209,9 +244,12 @@ export class DelegationsIndexService {
     return this.sortDelegation(currentDelegationIndexItems, delegations)
   }
 
-  private async getRepresentativeDelegations(nationalId: string) {
+  private async getRepresentativeDelegations(
+    nationalId: string,
+    useMaster = false,
+  ) {
     const delegations = await this.delegationsIncomingRepresentativeService
-      .findAllIncoming(nationalId)
+      .findAllIncoming({ nationalId }, useMaster)
       .then((d) => d.map(toDelegationIndexInfo))
 
     const currentDelegationIndexItems = await this.delegationIndexModel.findAll(

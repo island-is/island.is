@@ -25,6 +25,7 @@ describe('MeLoginRestrictionsController', () => {
         const app = await setupAppWithoutAuth({
           AppModule,
           SequelizeConfigService,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
 
@@ -54,7 +55,12 @@ describe('MeLoginRestrictionsController', () => {
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
         const user = createCurrentUser()
-        const app = await setupApp({ AppModule, SequelizeConfigService, user })
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user,
+          dbType: 'postgres',
+        })
         const server = request(app.getHttpServer())
 
         // Act
