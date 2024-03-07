@@ -33,6 +33,7 @@ export enum Features {
   DeregisterMachine = 'isDeregisterMachineEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   RequestInspection = 'isRequestInspectionForMachineEnabled',
+  officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

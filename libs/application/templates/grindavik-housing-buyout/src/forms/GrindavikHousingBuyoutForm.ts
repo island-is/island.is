@@ -6,12 +6,14 @@ import {
   buildForm,
   buildKeyValueField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildStaticTableField,
   buildSubmitField,
   buildTableRepeaterField,
+  coreMessages,
 } from '@island.is/application/core'
-import { Form, FormModes, YES } from '@island.is/application/types'
+import { Form, FormModes, NO, YES } from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
@@ -34,7 +36,13 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../assets/Logo'
 
-const banks = ['Arion banki', 'Landsbankinn', 'Íslandsbanki']
+const loanProviders = [
+  'Arion banki',
+  'HMS',
+  'Íbúðalánasjóður',
+  'Íslandsbanki',
+  'Landsbankinn',
+]
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -117,9 +125,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           id: 'loanStatusMultiField',
           title: m.application.loanStatus.sectionTitle,
           description: m.application.loanStatus.addLoanDescription,
+          space: [4, 6],
           children: [
             buildTableRepeaterField({
-              id: 'loans',
+              id: 'loanProviders.loans',
               marginTop: 2,
               title: '',
               addItemButtonText: m.application.loanStatus.addNewLoan,
@@ -128,7 +137,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 provider: {
                   component: 'select',
                   label: m.application.loanStatus.loanProvider,
-                  options: banks.map((bank) => ({ value: bank, label: bank })),
+                  options: loanProviders.map((provider) => ({
+                    value: provider,
+                    label: provider,
+                  })),
                 },
                 status: {
                   component: 'input',
@@ -142,11 +154,15 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 },
               },
             }),
-            buildDescriptionField({
-              id: 'loanStatusAdditionalInfo',
+            buildCheckboxField({
+              id: 'loanProviders.hasOtherLoanProvider',
               title: '',
-              marginTop: [4, 6],
-              description: m.application.loanStatus.additionalInfo,
+              options: [
+                {
+                  label: m.application.loanStatus.checkboxText,
+                  value: YES,
+                },
+              ],
             }),
           ],
         }),
@@ -173,12 +189,8 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 m.application.results.tableValue,
               ],
               rows: (application) => {
-                const {
-                  fireInsuranceValue,
-                  buyoutPrice,
-                  totalLoans,
-                  closingPayment,
-                } = calculateBuyoutPrice(application)
+                const { fireInsuranceValue, buyoutPrice, totalLoans } =
+                  calculateBuyoutPrice(application)
                 return [
                   [
                     m.application.results.fireAssessment,
@@ -192,19 +204,19 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                     m.application.results.totalLoan,
                     formatCurrency((-totalLoans).toString()),
                   ],
-                  [
-                    m.application.results.closingPayment,
-                    formatCurrency((-closingPayment).toString()),
-                  ],
                 ]
               },
               summary: (application) => {
-                const { result, buyoutPriceWithLoans } =
+                const { result, closingPayment, buyoutPriceWithLoans } =
                   calculateBuyoutPrice(application)
                 return [
                   {
                     label: m.application.results.payment,
                     value: formatCurrency(result.toString()),
+                  },
+                  {
+                    label: m.application.results.closingPayment,
+                    value: formatCurrency(closingPayment.toString()),
                   },
                   {
                     label: m.application.results.total,
@@ -217,6 +229,34 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               id: 'infoText',
               title: '',
               description: m.application.results.infoText,
+            }),
+            buildCheckboxField({
+              id: 'confirmLoanTakeover',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  label: m.application.results.confirmLoanTakeover,
+                  value: YES,
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'sellerStatement',
+      title: m.application.sellerStatement.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'sellerStatementMultiField',
+          title: m.application.sellerStatement.sectionTitle,
+          children: [
+            buildDescriptionField({
+              id: 'sellerStatementText',
+              title: '',
+              description: m.application.sellerStatement.text,
             }),
           ],
         }),
@@ -340,14 +380,27 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 return formatCurrency(buyoutPriceWithLoans.toString())
               },
             }),
+            buildKeyValueField({
+              label: m.application.results.confirmLoanTakeover,
+              colSpan: ['1/1', '6/12'],
+              value: ({ answers }) => {
+                return (
+                  answers as GrindavikHousingBuyout
+                ).confirmLoanTakeover?.includes(YES)
+                  ? coreMessages.radioYes
+                  : coreMessages.radioNo
+              },
+            }),
             buildDividerField({}),
 
-            buildCheckboxField({
-              id: 'userConfirmation',
-              title: '',
-              defaultValue: [],
+            buildRadioField({
+              id: 'preemptiveRightWish',
+              title: m.application.overview.checkboxText,
+              width: 'half',
+              required: true,
               options: [
-                { label: m.application.overview.checkboxText, value: YES },
+                { label: coreMessages.radioYes, value: YES },
+                { label: coreMessages.radioNo, value: NO },
               ],
             }),
 
