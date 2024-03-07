@@ -559,9 +559,6 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
-      "@island.is/clients/bifrost-university": [
-        "libs/clients/bifrost-university/src/index.ts"
-      ],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -741,6 +738,9 @@
       ],
       "@island.is/clients/university-careers/agricultural-university-of-iceland": [
         "libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/src/index.ts"
+      ],
+      "@island.is/clients/university-careers/bifrost-university": [
+        "libs/clients/university-careers/src/lib/clients/bifrost-university/src/index.ts"
       ],
       "@island.is/clients/university-careers/university-of-akureyri": [
         "libs/clients/university-careers/src/lib/clients/university-of-akureyri/src/index.ts"
