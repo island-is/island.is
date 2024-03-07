@@ -493,8 +493,9 @@ describe('DelegationsIndexService', () => {
     it('should create delegation index item for each right of personal representative delegation', async () => {
       // Arrange
       // Add new delegation right to existing personal representation delegation
+      const prRight2 = 'prRight2'
       const rightType = await factory.createPersonalRepresentativeRightType({
-        code: 'prRight2',
+        code: prRight2,
       })
       await factory.createPersonalRepresentativeRight({
         rightTypeCode: rightType.code,
@@ -513,6 +514,18 @@ describe('DelegationsIndexService', () => {
         },
       })
       expect(delegations.length).toEqual(2)
+      expect(
+        delegations.find(
+          (d) =>
+            d.type === `${DelegationType.PersonalRepresentative}:${prRight1}`,
+        ),
+      ).not.toBeNull()
+      expect(
+        delegations.find(
+          (d) =>
+            d.type === `${DelegationType.PersonalRepresentative}:${prRight2}`,
+        ),
+      ).not.toBeNull()
     })
   })
 })
