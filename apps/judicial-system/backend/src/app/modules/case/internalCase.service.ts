@@ -36,6 +36,7 @@ import {
 import { nowFactory, uuidFactory } from '../../factories'
 import {
   createCaseFilesRecord,
+  createIndictment,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
   getCustodyNoticePdfAsString,
@@ -364,9 +365,11 @@ export class InternalCaseService {
     policeCaseNumber: string,
     user: TUser,
   ): Promise<boolean> {
-    // Serialize all case files pdf uploads in this process
+    // Serialize all case files record pdf deliveries in this process
     await this.throttle.catch((reason) => {
-      this.logger.info('Previous case files pdf generation failed', { reason })
+      this.logger.info('Previous case files record pdf delivery failed', {
+        reason,
+      })
     })
 
     await this.refreshFormatMessage()
@@ -825,43 +828,86 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    return this.refreshFormatMessage()
-      .then(async () => {
-        const courtDocuments = theCase.caseFiles
-          ? await Promise.all(
-              theCase.caseFiles
-                .filter(
-                  (caseFile) =>
-                    caseFile.category &&
-                    [
-                      CaseFileCategory.COURT_RECORD,
-                      CaseFileCategory.RULING,
-                    ].includes(caseFile.category) &&
-                    caseFile.key,
-                )
-                .map(async (caseFile) => {
-                  const file = await this.awsS3Service.getObject(
-                    caseFile.key ?? '',
-                  )
+    return Promise.all(
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.category &&
+            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
+              caseFile.category,
+            ) &&
+            caseFile.key,
+        )
+        .map(async (caseFile) => {
+          const file = await this.awsS3Service.getObject(caseFile.key ?? '')
 
-                  return {
-                    type:
-                      caseFile.category === CaseFileCategory.COURT_RECORD
-                        ? CourtDocumentType.RVTB
-                        : CourtDocumentType.RVDO,
-                    courtDocument: Base64.btoa(file.toString('binary')),
-                  }
-                }),
-            )
-          : []
-
-        return this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments)
-      })
+          return {
+            type:
+              caseFile.category === CaseFileCategory.COURT_RECORD
+                ? CourtDocumentType.RVTB
+                : CourtDocumentType.RVDO,
+            courtDocument: Base64.btoa(file.toString('binary')),
+          }
+        }) ?? [],
+    )
+      .then((courtDocuments) =>
+        this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
+      )
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
           reason,
         })
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverIndictmentCaseIndictmentToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return Promise.all(
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.category === CaseFileCategory.INDICTMENT && caseFile.key,
+        )
+        .map(async (caseFile) => {
+          const file = await this.awsS3Service.getObject(caseFile.key ?? '')
+
+          return {
+            type: CourtDocumentType.RVAS,
+            courtDocument: Base64.btoa(file.toString('binary')),
+          }
+        }) ?? [],
+    )
+      .then(async (indictmentDocuments) => {
+        if (indictmentDocuments.length === 0) {
+          const file = await this.refreshFormatMessage().then(async () =>
+            createIndictment(theCase, this.formatMessage),
+          )
+
+          indictmentDocuments.push({
+            type: CourtDocumentType.RVAS,
+            courtDocument: Base64.btoa(file.toString('binary')),
+          })
+        }
+
+        return this.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          indictmentDocuments,
+        )
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver indictment for case ${theCase.id} to police`,
+          {
+            reason,
+          },
+        )
 
         return { delivered: false }
       })
