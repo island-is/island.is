@@ -745,6 +745,9 @@
       "@island.is/clients/university-careers/bifrost-university": [
         "libs/clients/university-careers/src/lib/clients/bifrost-university/src/index.ts"
       ],
+      "@island.is/clients/university-careers/holar-university": [
+        "libs/clients/university-careers/src/lib/clients/holar-university/src/index.ts"
+      ],
       "@island.is/clients/university-careers/university-of-akureyri": [
         "libs/clients/university-careers/src/lib/clients/university-of-akureyri/src/index.ts"
       ],
