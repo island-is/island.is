@@ -23,5 +23,10 @@ export const errors = {
       defaultMessage: 'Þú verður að velja að minnsta kosti einn forgangsrétt',
       description: 'Error message when no preemptive right type is selected',
     },
+    bankInfo: {
+      id: 'ghb.application:errors.bankInfo',
+      defaultMessage: 'Bankaupplýsingar þurfa að vera á sniðinu ####-##-######',
+      description: 'Error message when bank info is missing',
+    },
   }),
 }
