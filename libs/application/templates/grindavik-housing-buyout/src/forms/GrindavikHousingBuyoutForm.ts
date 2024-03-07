@@ -125,9 +125,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           id: 'loanStatusMultiField',
           title: m.application.loanStatus.sectionTitle,
           description: m.application.loanStatus.addLoanDescription,
+          space: [4, 6],
           children: [
             buildTableRepeaterField({
-              id: 'loans',
+              id: 'loanProviders.loans',
               marginTop: 2,
               title: '',
               addItemButtonText: m.application.loanStatus.addNewLoan,
@@ -153,11 +154,15 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 },
               },
             }),
-            buildDescriptionField({
-              id: 'loanStatusAdditionalInfo',
+            buildCheckboxField({
+              id: 'loanProviders.hasOtherLoanProvider',
               title: '',
-              marginTop: [4, 6],
-              description: m.application.loanStatus.additionalInfo,
+              options: [
+                {
+                  label: m.application.loanStatus.checkboxText,
+                  value: YES,
+                },
+              ],
             }),
           ],
         }),
@@ -247,18 +252,11 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
         buildMultiField({
           id: 'sellerStatementMultiField',
           title: m.application.sellerStatement.sectionTitle,
-          description: m.application.sellerStatement.text,
           children: [
-            buildCheckboxField({
-              id: 'userConfirmation',
+            buildDescriptionField({
+              id: 'sellerStatementText',
               title: '',
-              defaultValue: [],
-              options: [
-                {
-                  label: m.application.sellerStatement.confirmationLabel,
-                  value: YES,
-                },
-              ],
+              description: m.application.sellerStatement.text,
             }),
           ],
         }),
@@ -389,25 +387,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 return (
                   answers as GrindavikHousingBuyout
                 ).confirmLoanTakeover?.includes(YES)
-                  ? coreMessages.radioYes
-                  : coreMessages.radioNo
-              },
-            }),
-            buildDividerField({}),
-
-            // Seller statement
-            buildDescriptionField({
-              id: 'sellerStatementOverview',
-              title: m.application.sellerStatement.sectionTitle,
-              titleVariant: 'h3',
-            }),
-            buildKeyValueField({
-              label: m.application.sellerStatement.confirmationLabel,
-              colSpan: '1/1',
-              value: ({ answers }) => {
-                return (
-                  answers as GrindavikHousingBuyout
-                ).userConfirmation?.includes(YES)
                   ? coreMessages.radioYes
                   : coreMessages.radioNo
               },
