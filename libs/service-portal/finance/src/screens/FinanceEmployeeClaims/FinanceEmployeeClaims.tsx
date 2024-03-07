@@ -11,11 +11,6 @@ const EmployeeClaims = () => {
     <DynamicWrapper>
       <DocumentScreen
         title={formatMessage(m.financeEmployeeClaims)}
-        intro={formatMessage({
-          id: 'sp.employee-claims:intro',
-          defaultMessage:
-            'Hér er að finna opinber gjöld utan staðgreiðslu sem dregin eru af starfsmönnum.',
-        })}
         listPath="employeeClaims"
         defaultDateRangeMonths={12}
       />

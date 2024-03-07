@@ -56,11 +56,11 @@ import {
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
-function buildApplication(data?: {
+const buildApplication = (data?: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
-}): Application {
+}): Application => {
   const { answers = {}, externalData = {}, state = 'draft' } = data ?? {}
 
   return {
@@ -79,7 +79,7 @@ function buildApplication(data?: {
   }
 }
 
-function buildField(): Field {
+const buildField = (): Field => {
   return {
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,

@@ -95,132 +95,130 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
 
   return (
     <>
-      <Box marginBottom={10}>
-        <SectionHeading title={formatMessage(strings.title)} />
-        {coverLetters && coverLetters.length > 0 && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.coverLetterSection)}
-            </Text>
-            <RenderFiles
-              caseFiles={coverLetters}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          </Box>
-        )}
-        {indictments && indictments.length > 0 && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.indictmentSection)}
-            </Text>
-            <RenderFiles
-              caseFiles={indictments}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          </Box>
-        )}
-        {showTrafficViolationCaseFiles && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.indictmentSection)}
-            </Text>
-            <Box marginBottom={2} key={`indictment-${workingCase.id}`}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-                pdfType={'indictment'}
-                renderAs="row"
-              />
-            </Box>
-          </Box>
-        )}
-        {criminalRecords && criminalRecords.length > 0 && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.criminalRecordSection)}
-            </Text>
-            <RenderFiles
-              caseFiles={criminalRecords}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          </Box>
-        )}
-        {costBreakdowns && costBreakdowns.length > 0 && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.costBreakdownSection)}
-            </Text>
-            <RenderFiles
-              caseFiles={costBreakdowns}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          </Box>
-        )}
-        {others && others.length > 0 && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.otherDocumentsSection)}
-            </Text>
-            <RenderFiles
-              caseFiles={others}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          </Box>
-        )}
-
+      <SectionHeading title={formatMessage(strings.title)} />
+      {coverLetters && coverLetters.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(strings.caseFileTitle)}
+            {formatMessage(caseFiles.coverLetterSection)}
           </Text>
-          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-            <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(strings.caseFileButtonText, {
-                  policeCaseNumber,
-                })}
-                pdfType={'caseFilesRecord'}
-                policeCaseNumber={policeCaseNumber}
-                renderAs="row"
+          <RenderFiles
+            caseFiles={coverLetters}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
+        </Box>
+      )}
+      {indictments && indictments.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(caseFiles.indictmentSection)}
+          </Text>
+          <RenderFiles
+            caseFiles={indictments}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
+        </Box>
+      )}
+      {showTrafficViolationCaseFiles && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(caseFiles.indictmentSection)}
+          </Text>
+          <Box marginBottom={2} key={`indictment-${workingCase.id}`}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
+              pdfType={'indictment'}
+              renderAs="row"
+            />
+          </Box>
+        </Box>
+      )}
+      {criminalRecords && criminalRecords.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(caseFiles.criminalRecordSection)}
+          </Text>
+          <RenderFiles
+            caseFiles={criminalRecords}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
+        </Box>
+      )}
+      {costBreakdowns && costBreakdowns.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(caseFiles.costBreakdownSection)}
+          </Text>
+          <RenderFiles
+            caseFiles={costBreakdowns}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
+        </Box>
+      )}
+      {others && others.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(caseFiles.otherDocumentsSection)}
+          </Text>
+          <RenderFiles
+            caseFiles={others}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
+        </Box>
+      )}
+
+      <Box marginBottom={5}>
+        <Text variant="h4" as="h4" marginBottom={1}>
+          {formatMessage(strings.caseFileTitle)}
+        </Text>
+        {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
+          <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(strings.caseFileButtonText, {
+                policeCaseNumber,
+              })}
+              pdfType={'caseFilesRecord'}
+              policeCaseNumber={policeCaseNumber}
+              renderAs="row"
+            />
+          </Box>
+        ))}
+      </Box>
+
+      {isDistrictCourtUser(user) || isCompletedCase(workingCase.state) ? (
+        <>
+          {courtRecords && courtRecords.length > 0 && (
+            <Box marginBottom={5}>
+              <Text variant="h4" as="h4" marginBottom={1}>
+                {formatMessage(courtRecord.courtRecordTitle)}
+              </Text>
+              <RenderFiles
+                caseFiles={courtRecords}
+                onOpenFile={onOpen}
+                workingCase={workingCase}
               />
             </Box>
-          ))}
-        </Box>
-
-        {isDistrictCourtUser(user) || isCompletedCase(workingCase.state) ? (
-          <>
-            {courtRecords && courtRecords.length > 0 && (
-              <Box marginBottom={5}>
-                <Text variant="h4" as="h4" marginBottom={1}>
-                  {formatMessage(courtRecord.courtRecordTitle)}
-                </Text>
-                <RenderFiles
-                  caseFiles={courtRecords}
-                  onOpenFile={onOpen}
-                  workingCase={workingCase}
-                />
-              </Box>
-            )}
-            {rulings && rulings.length > 0 && (
-              <Box marginBottom={5}>
-                <Text variant="h4" as="h4" marginBottom={1}>
-                  {formatMessage(courtRecord.rulingTitle)}
-                </Text>
-                <RenderFiles
-                  caseFiles={rulings}
-                  onOpenFile={onOpen}
-                  workingCase={workingCase}
-                />
-              </Box>
-            )}
-          </>
-        ) : null}
-      </Box>
+          )}
+          {rulings && rulings.length > 0 && (
+            <Box marginBottom={5}>
+              <Text variant="h4" as="h4" marginBottom={1}>
+                {formatMessage(courtRecord.rulingTitle)}
+              </Text>
+              <RenderFiles
+                caseFiles={rulings}
+                onOpenFile={onOpen}
+                workingCase={workingCase}
+              />
+            </Box>
+          )}
+        </>
+      ) : null}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

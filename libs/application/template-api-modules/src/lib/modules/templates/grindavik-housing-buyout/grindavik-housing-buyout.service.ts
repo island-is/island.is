@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes, YES } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import {
@@ -21,6 +21,7 @@ import {
 
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 type CheckResidence = {
   residenceHistory: ResidenceHistoryEntryDto[]
@@ -36,6 +37,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     private propertiesApi: FasteignirApi,
   ) {
     super(ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT)
+  }
+
+  private getRealEstatesWithAuth(auth: User) {
+    return this.propertiesApi.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
+    )
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -66,6 +73,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         type: PersonType.CounterParty,
       })) ?? []
 
+    const confirmsLoanTakeover =
+      answers.confirmLoanTakeover?.includes(YES) ?? false
+    const hasLoanFromOtherProvider =
+      answers.loanProviders.hasOtherLoanProvider?.includes(YES) ?? false
+    const wishesForPreemptiveRights = answers.preemptiveRightWish === YES
+
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
       residenceData: JSON.stringify(
@@ -74,7 +87,10 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       propertyData: JSON.stringify(
         application.externalData.getGrindavikHousing.data,
       ),
-      loans: JSON.stringify(answers.loans),
+      loans: JSON.stringify(answers.loanProviders.loans),
+      hasLoanFromOtherProvider: hasLoanFromOtherProvider.toString(),
+      confirmsLoanTakeover: confirmsLoanTakeover.toString(),
+      wishesForPreemptiveRights: wishesForPreemptiveRights.toString(),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
@@ -187,7 +203,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       property = this.mockGetFasteign(realEstateId)
     } else {
-      property = await this.propertiesApi.fasteignirGetFasteign({
+      property = await this.getRealEstatesWithAuth(auth).fasteignirGetFasteign({
         fasteignanumer: realEstateId,
       })
     }

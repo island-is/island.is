@@ -63,6 +63,7 @@ export enum ApplicationTypes {
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
   DEREGISTER_MACHINE = 'DeregisterMachine',
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
+  OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
 }
 
 export const ApplicationConfigurations = {
@@ -92,7 +93,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
-    translation: 'pl.application',
+    translation: ['pl.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
@@ -325,5 +326,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
     translation: 'ghb.application',
+  },
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
+    slug: 'stjornartidindi',
+    translation: 'ojoi.application',
   },
 }
