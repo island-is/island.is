@@ -73,7 +73,10 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
-  condition?: (application: Application) => boolean
+  condition?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => boolean
   dataTestId?: string
 } & (
   | {
