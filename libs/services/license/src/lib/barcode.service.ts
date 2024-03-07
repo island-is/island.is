@@ -4,7 +4,7 @@ import {
 } from '@island.is/clients/license-client'
 import { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
-import { Cache as CacheManager } from 'cache-manager/dist/caching'
+import { Cache as CacheManager } from 'cache-manager'
 import { sign, SignOptions, verify } from 'jsonwebtoken'
 import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
 import { LicenseConfig } from './license.config'
