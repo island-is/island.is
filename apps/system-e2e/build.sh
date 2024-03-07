@@ -50,4 +50,7 @@ esbuild \
   --platform=node \
   "${processedDependencies[@]}"
 
-cp package.json "$DIST_ROOT"
+# https://stackoverflow.com/questions/31034746/how-do-i-update-a-single-value-in-a-json-document-using-jq
+# jq '.foo.bar = "new value"' file.json
+echo "Generating minimal package.json"
+jq ".scripts = {} | .devDependencies = {}" package.json >"$DIST_ROOT/package.json"
