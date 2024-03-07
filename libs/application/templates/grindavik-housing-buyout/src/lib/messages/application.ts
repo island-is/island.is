@@ -62,6 +62,26 @@ export const application = {
       defaultMessage: 'Brunabótamat fasteignar',
       description: 'Fire insurance value',
     },
+    deliveryDateTitle: {
+      id: 'ghb.application:propertyInformation.deliveryDateTitle',
+      defaultMessage: 'Afhendingardagur sem óskað er eftir',
+      description: 'Delivery date title',
+    },
+    deliveryDateDescription: {
+      id: 'ghb.application:propertyInformation.deliveryDateDescription',
+      defaultMessage: 'Veldu dagsetningu sem þér hentar best.',
+      description: 'Delivery date description',
+    },
+    deliveryDateLabel: {
+      id: 'ghb.application:propertyInformation.deliveryDateLabel',
+      defaultMessage: 'Afhendingardagur',
+      description: 'Delivery date label',
+    },
+    deliveryDatePlaceholder: {
+      id: 'ghb.application:propertyInformation.deliveryDatePlaceholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Delivery date placeholder',
+    },
   }),
   additionalOwners: defineMessages({
     sectionTitle: {
@@ -113,6 +133,16 @@ export const application = {
       defaultMessage: 'Lánveitandi',
       description: 'Loan provider',
     },
+    otherOrganization: {
+      id: 'ghb.application:loanStatus.otherOrganization',
+      defaultMessage: 'Önnur lánastofnun',
+      description: 'Other organization',
+    },
+    otherLoanProvider: {
+      id: 'ghb.application:loanStatus.otherLoanProvider',
+      defaultMessage: 'Nafn annars lánveitanda',
+      description: 'Other loan provider',
+    },
     addNewLoan: {
       id: 'ghb.application:loanStatus.addNewLoan',
       defaultMessage: 'Bæta við láni',
@@ -132,7 +162,7 @@ export const application = {
     checkboxText: {
       id: 'ghb.application:loanStatus.checkboxText',
       defaultMessage:
-        'Ég er með húsnæðislán hjá lánveitanda sem er ekki í felliglugganum hér fyrir ofan',
+        'Ég er ekki með nein áhvílandi lán á eigninni sem um ræðir',
       description: 'Loan status screen checkbox text',
     },
   }),
@@ -268,8 +298,29 @@ export const application = {
     },
     checkboxText: {
       id: 'ghb.application:overview.checkboxText',
-      defaultMessage: 'Ég skil að...',
+      defaultMessage:
+        'Ég óska eftir forgangsrétt á eigninni þegar hún verður seld',
       description: 'Checkbox text',
+    },
+    preemptiveRightTypeTitle: {
+      id: 'ghb.application:overview.preemptiveRightTypeTitle',
+      defaultMessage: 'Veldu forgangsrétt',
+      description: 'Preemptive right type title',
+    },
+    purchaseRight: {
+      id: 'ghb.application:overview.purchaseRight',
+      defaultMessage: 'Kaupréttur',
+      description: 'Purchase right',
+    },
+    prePurchaseRight: {
+      id: 'ghb.application:overview.prePurchaseRight',
+      defaultMessage: 'Forkaupsréttur',
+      description: 'Pre purchase right',
+    },
+    preLeaseRight: {
+      id: 'ghb.application:overview.preLeaseRight',
+      defaultMessage: 'Forleiguréttur',
+      description: 'Pre lease right',
     },
   }),
 }
