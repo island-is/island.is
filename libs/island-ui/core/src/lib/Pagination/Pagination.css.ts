@@ -98,7 +98,7 @@ export const gap = style({
   display: 'inline-block',
   textAlign: 'center',
   margin: '0px',
-  minWidth: 25,
+  minWidth: 20,
   selectors: {
     [`${variants.blue} &`]: {
       color: theme.color.blue600,
