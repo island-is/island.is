@@ -39,6 +39,7 @@ export type CTAProps = {
   icon?: IconMapIcon
   iconType?: 'filled' | 'outline'
   onClick?: () => void
+  href?: string
   disabled?: boolean
 }
 
@@ -141,17 +142,34 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
             flexDirection="row"
           >
             <Box>
-              <Button
-                {...(cta.buttonType ?? { variant: cta.variant })}
-                size={cta.size}
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
-                iconType={cta.iconType}
-                nowrap
-              >
-                {cta.label}
-              </Button>
+              {cta.href ? (
+                <a href={cta.href} target="_blank" rel="noreferrer" style={{textDecoration: 'none'}}>
+                  <Button
+                    {...(cta.buttonType ?? { variant: cta.variant })}
+                    size={cta.size}
+                    fluid
+                    disabled={cta.disabled}
+                    icon={cta.icon}
+                    iconType={cta.iconType}
+                    nowrap
+                  >
+                    {cta.label}
+                  </Button>
+                </a>
+              ) : (
+                <Button
+                  {...(cta.buttonType ?? { variant: cta.variant })}
+                  size={cta.size}
+                  fluid
+                  onClick={cta.onClick && cta.onClick}
+                  disabled={cta.disabled}
+                  icon={cta.icon}
+                  iconType={cta.iconType}
+                  nowrap
+                >
+                  {cta.label}
+                </Button>
+              )}
             </Box>
           </Box>
         )
