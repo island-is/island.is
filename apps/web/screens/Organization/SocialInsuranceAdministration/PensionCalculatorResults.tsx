@@ -178,29 +178,47 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                             )}
                           </Inline>
 
-                          <Box display="flex">
-                            <Box textAlign="right" paddingRight={4}>
-                              <Stack space={1}>
-                                <Text variant={numericVariant}>
-                                  {formatCurrency(
-                                    highlightedItem?.monthlyAmount,
-                                  )}
-                                </Text>
-                                <Text variant="small">{perMonthText}</Text>
-                              </Stack>
+                          <Box className={styles.grid}>
+                            <Box>
+                              <Box
+                                display="flex"
+                                flexDirection="column"
+                                rowGap={1}
+                                className={styles.fitContent}
+                              >
+                                <Box>
+                                  <Text variant={numericVariant}>
+                                    {formatCurrency(
+                                      highlightedItem?.monthlyAmount,
+                                    )}
+                                  </Text>
+                                </Box>
+                                <Box className={styles.alignSelfToFlexEnd}>
+                                  <Text variant="small">{perMonthText}</Text>
+                                </Box>
+                              </Box>
                             </Box>
                             <Box>
                               <Box className={styles.line} />
                             </Box>
-                            <Box textAlign="right" paddingLeft={4}>
-                              <Stack space={1}>
-                                <Text variant={numericVariant}>
-                                  {formatCurrency(
-                                    highlightedItem?.yearlyAmount,
-                                  )}
-                                </Text>
-                                <Text variant="small">{perYearText}</Text>
-                              </Stack>
+                            <Box paddingLeft={4}>
+                              <Box
+                                display="flex"
+                                flexDirection="column"
+                                rowGap={1}
+                                className={styles.fitContent}
+                              >
+                                <Box>
+                                  <Text variant={numericVariant}>
+                                    {formatCurrency(
+                                      highlightedItem?.yearlyAmount,
+                                    )}
+                                  </Text>
+                                </Box>
+                                <Box className={styles.alignSelfToFlexEnd}>
+                                  <Text variant="small">{perYearText}</Text>
+                                </Box>
+                              </Box>
                             </Box>
                           </Box>
                         </Stack>
