@@ -34,7 +34,6 @@ describe('DelegationsIndexService', () => {
   let rskApi: RskRelationshipsClient
   let delegationModel: typeof Delegation
   let delegationScopeModel: typeof DelegationScope
-  let personalRepresentativeModel: typeof PersonalRepresentative
 
   beforeAll(async () => {
     app = await setupWithAuth({
@@ -47,7 +46,6 @@ describe('DelegationsIndexService', () => {
     delegationIndexMetaModel = app.get(getModelToken(DelegationIndexMeta))
     delegationModel = app.get(getModelToken(Delegation))
     delegationScopeModel = app.get(getModelToken(DelegationScope))
-    personalRepresentativeModel = app.get(getModelToken(PersonalRepresentative))
 
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
