@@ -11,7 +11,7 @@ import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 
 export const preSelection = buildSection({
   id: 'deceasedPreselection',
-  title: m.irSubmitTitle,
+  title: m.preDataCollectionChooseEstateSelectTitle,
   children: [
     buildExternalDataProvider({
       id: 'preApproveExternalData',

@@ -27,8 +27,8 @@ export const m = defineMessages({
 
   preDataCollectionChooseEstateSelectTitle: {
     id: 'ir.application:preDataCollectionChooseEstateSelectTitle',
-    defaultMessage: 'Erfðafjárskýrsla',
-    description: '',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Title for pre-collection of data',
   },
 
   // Application begin
