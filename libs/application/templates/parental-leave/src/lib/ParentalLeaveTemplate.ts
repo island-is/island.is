@@ -76,7 +76,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: determineNameFromApplicationAnswers,
   institution: parentalLeaveFormMessages.shared.institution,
-  translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
+  translationNamespaces: ApplicationConfigurations.ParentalLeave.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -821,12 +821,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.RESIDENCE_GRANT_APPLICATION]: {
         entry: ['assignToVMST', 'setResidenceGrant'],
-        exit: [
-          'setParam',
-          'setResidenceGrantPeriod',
-          'setPreviousState',
-          'setHasAppliedForReidenceGrant',
-        ],
+        exit: ['setPreviousState', 'setHasAppliedForReidenceGrant'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRANT_APPLICATION,
@@ -853,6 +848,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
+            triggerEvent: DefaultEvents.APPROVE,
             params: FileType.DOCUMENTPERIOD,
             throwOnError: true,
           }),

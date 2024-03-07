@@ -345,7 +345,9 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
     share:
-      assetRaw.eignarhlutfall !== undefined ? assetRaw.eignarhlutfall : 100,
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
   }
 }
 
@@ -647,4 +649,10 @@ export const mapEstateToInheritanceReportInfo = (
     heirs: mapInheritanceReportHeirs(estate.erfingar ?? []),
     ...mapInheritanceReportAssets(estate.eignir),
   }
+}
+// This has untested behaviour if share is outside of [0, 100].
+// That should be fine since it is the DC's responsibility to return
+// valid percentages.
+export const parseShare = (share: string | number): number => {
+  return typeof share === 'string' ? parseFloat(share.replace(',', '.')) : share
 }

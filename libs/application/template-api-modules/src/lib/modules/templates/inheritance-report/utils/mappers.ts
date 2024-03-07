@@ -172,7 +172,9 @@ export const expandAnswers = (
         data: (answers.business.businessAssets?.data ?? []).map((asset) => {
           return {
             description: asset.description ?? '',
-            propertyValuation: asset.propertyValuation ?? 0,
+            propertyValuation: asset.propertyValuation ?? '',
+            assetType: asset.assetType ?? '',
+            assetNumber: asset.assetNumber ?? '',
           }
         }),
         total: answers.business.businessAssets?.total ?? 0,

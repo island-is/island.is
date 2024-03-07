@@ -267,7 +267,41 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             propertyValuation: z.string().refine((v) => v),
+            assetType: z.enum(['asset', 'estate']),
+            assetNumber: z.string().optional(),
           })
+          .refine(
+            ({ assetType, assetNumber }) => {
+              if (assetType === 'estate') {
+                return isValidString(assetNumber)
+              }
+
+              return true
+            },
+            {
+              path: ['assetNumber'],
+            },
+          )
+          .refine(
+            ({ propertyValuation }) => {
+              return propertyValuation !== ''
+            },
+            {
+              path: ['propertyValuation'],
+            },
+          )
+          .refine(
+            ({ assetType, description }) => {
+              if (assetType === 'estate') {
+                return isValidString(description)
+              }
+
+              return true
+            },
+            {
+              path: ['description'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
