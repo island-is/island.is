@@ -140,25 +140,23 @@ RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 ARG APP_HOME
 ARG APP_DIST_HOME=dist/apps/${APP}
 
-WORKDIR ${APP_DIST_HOME}
+WORKDIR /dist
 
 # Common slow-changing dependencies
-COPY package.json yarn.lock .yarnrc.yml ./
+COPY package.json .yarnrc.yml ./
 COPY .yarn/releases ./.yarn/releases
 COPY .yarn/patches ./.yarn/patches
-ENV PLAYWRIGHT_BROWSER=chromium
-RUN --mount=type=cache,id=playwright-cache,target=./.yarn/cache --mount=type=cache,id=playwright-node_modules,target=node_modules \
-  yarn install \
-  && yarn playwright install ${PLAYWRIGHT_BROWSER}
 
+ARG PLAYWRIGHT_BROWSER=chromium
+RUN --mount=type=cache,id=playwright-cache,target=./.yarn/cache --mount=type=cache,id=playwright-node_modules,target=./node_modules \
+  export CI=true && yarn add playwright && yarn playwright install ${PLAYWRIGHT_BROWSER}
+
+# Move to workdir
+WORKDIR /${APP_DIST_HOME}
+# Built app
 COPY --from=builder /build/${APP_DIST_HOME} .
-
-RUN yarn install
-
-ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
-
 COPY ${APP_HOME}/entrypoint.sh .
+
 
 RUN chown -R pwuser:pwuser .
 USER pwuser
