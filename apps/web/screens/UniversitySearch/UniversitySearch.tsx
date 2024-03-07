@@ -347,9 +347,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
-      onClick: () => {
-        window.open(applicationUrlParser(item.universityId))
-      },
+      href: applicationUrlParser(item.universityId)
     }
     return CTA
   }
