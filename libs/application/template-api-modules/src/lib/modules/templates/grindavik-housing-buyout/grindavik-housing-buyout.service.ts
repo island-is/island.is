@@ -21,6 +21,7 @@ import {
 
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 type CheckResidence = {
   residenceHistory: ResidenceHistoryEntryDto[]
@@ -36,6 +37,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     private propertiesApi: FasteignirApi,
   ) {
     super(ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT)
+  }
+
+  private getRealEstatesWithAuth(auth: User) {
+    return this.propertiesApi.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
+    )
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -68,8 +75,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
 
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
-    const wishesForPreemptiveRights =
-      answers.preemptiveRightWish?.includes(YES) ?? false
+    const wishesForPreemptiveRights = answers.preemptiveRightWish === YES
 
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
@@ -194,7 +200,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       property = this.mockGetFasteign(realEstateId)
     } else {
-      property = await this.propertiesApi.fasteignirGetFasteign({
+      property = await this.getRealEstatesWithAuth(auth).fasteignirGetFasteign({
         fasteignanumer: realEstateId,
       })
     }
