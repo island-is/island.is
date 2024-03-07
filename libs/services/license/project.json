@@ -26,5 +26,5 @@
       }
     }
   },
-  "tags": ["lib:nest", "lib:license","scope:license"]
+  "tags": ["lib:nest", "lib:license", "scope:license"]
 }
