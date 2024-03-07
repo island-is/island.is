@@ -274,6 +274,14 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_WITHDRAWN },
         )
         break
+      case MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.INDICTMENT_DENIED },
+        )
+        break
       default:
         this.logger.error('Unknown message type', { msg: message })
     }

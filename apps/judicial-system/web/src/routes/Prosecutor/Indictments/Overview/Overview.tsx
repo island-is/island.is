@@ -132,12 +132,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   id="confirmIndictment"
                   backgroundColor="white"
                   label={formatMessage(strings.overview.confirmIndictment)}
-                  checked={
-                    indictmentConfirmationDecision === 'confirm'
-                  }
-                  onChange={() =>
-                    setIndictmentConfirmationDecision('confirm')
-                  }
+                  checked={indictmentConfirmationDecision === 'confirm'}
+                  onChange={() => setIndictmentConfirmationDecision('confirm')}
                 />
                 <RadioButton
                   large
@@ -146,9 +142,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   backgroundColor="white"
                   label={formatMessage(strings.overview.denyIndictment)}
                   checked={indictmentConfirmationDecision === 'deny'}
-                  onChange={() =>
-                    setIndictmentConfirmationDecision('deny')
-                  }
+                  onChange={() => setIndictmentConfirmationDecision('deny')}
                 />
               </div>
             </BlueBox>
