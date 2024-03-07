@@ -736,8 +736,8 @@
       "@island.is/clients/university-careers": [
         "libs/clients/university-careers/src/index.ts"
       ],
-      "@island.is/clients/university-careers/university-of-akureyri": [
-        "libs/clients/university-careers/university-of-akureyri/src/index.ts"
+      "@island.is/clients/university-careers/clients/university-of-akureyri": [
+        "libs/clients/university-careers/clients/university-of-akureyri/src/index.ts"
       ],
       "@island.is/clients/university-gateway-api": [
         "libs/clients/university-gateway-api/src/index.ts"
