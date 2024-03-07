@@ -616,9 +616,6 @@
         "libs/clients/health-directorate/src/index.ts"
       ],
       "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
-      "@island.is/clients/holar-university": [
-        "libs/clients/holar-university/src/index.ts"
-      ],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
