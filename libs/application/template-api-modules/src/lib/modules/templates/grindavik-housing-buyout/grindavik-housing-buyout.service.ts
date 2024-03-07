@@ -75,6 +75,8 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
 
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
+    const hasLoanFromOtherProvider =
+      answers.loanProviders.hasOtherLoanProvider?.includes(YES) ?? false
     const wishesForPreemptiveRights = answers.preemptiveRightWish === YES
 
     const extraData: { [key: string]: string } = {
@@ -85,7 +87,8 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       propertyData: JSON.stringify(
         application.externalData.getGrindavikHousing.data,
       ),
-      loans: JSON.stringify(answers.loans),
+      loans: JSON.stringify(answers.loanProviders.loans),
+      hasLoanFromOtherProvider: hasLoanFromOtherProvider.toString(),
       confirmsLoanTakeover: confirmsLoanTakeover.toString(),
       wishesForPreemptiveRights: wishesForPreemptiveRights.toString(),
     }
