@@ -9,6 +9,9 @@ const required = { params: errors.fields.required }
 export const GrindavikHousingBuyoutSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema(),
+  applicantBankInfo: z
+    .string()
+    .refine((v) => !!v && v.length === 12, { params: errors.fields.bankInfo }),
   additionalOwners: z
     .array(
       z.object({
@@ -30,6 +33,9 @@ export const GrindavikHousingBuyoutSchema = z.object({
           .length(11)
           .or(z.undefined())
           .refine((v) => !!v, required),
+        bankInfo: z.string().refine((v) => !!v && v.length === 12, {
+          params: errors.fields.bankInfo,
+        }),
       }),
     )
     .optional(),
