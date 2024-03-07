@@ -10,8 +10,8 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["{projectRoot}/build.sh"],
-        "outputPath": "dist/apps/system-e2e",
+        "commands": ["bash {projectRoot}/build.sh"],
+        "outputPath": "dist/{projectRoot}",
         "parallel": false
       },
       "configurations": {
