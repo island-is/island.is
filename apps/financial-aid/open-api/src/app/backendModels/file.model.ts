@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
 import { Optional } from 'sequelize/types'
+import { Column, DataType, Model, Table } from 'sequelize-typescript'
+
+import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationFile, FileType } from '@island.is/financial-aid/shared/lib'
 

@@ -12,11 +12,12 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+
 import {
-  ApplicationFileBackendModel,
-  StaffBackendModel,
   AmountBackendModel,
+  ApplicationFileBackendModel,
   DirectTaxPaymentBackendModel,
+  StaffBackendModel,
 } from './index'
 
 @Table({

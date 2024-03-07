@@ -1,7 +1,9 @@
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
+
 import { Amount } from '@island.is/financial-aid/shared/lib'
+
 import { DeductionFactorsBackendModel } from './deductionFactors.model'
 
 @Table({

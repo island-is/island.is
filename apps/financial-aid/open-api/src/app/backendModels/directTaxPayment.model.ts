@@ -1,7 +1,9 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
+
 import { DirectTaxPayment, UserType } from '@island.is/financial-aid/shared/lib'
+
 import { DirectTaxPaymentModel } from '../models'
 
 @Table({

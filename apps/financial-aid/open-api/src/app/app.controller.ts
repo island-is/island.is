@@ -6,8 +6,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
-import { ApplicationModel } from './models'
 import { ApplicationBackendModel } from './backendModels'
+import { ApplicationModel } from './models'
 
 @Controller('api/open/v1')
 export class AppController {
