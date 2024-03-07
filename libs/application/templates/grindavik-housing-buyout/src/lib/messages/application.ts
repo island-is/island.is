@@ -129,6 +129,12 @@ export const application = {
         'Ef þú ert ekki með lán hjá neinum lánveitanda hér fyrir ofan þá getur þú xxx ...',
       description: 'Loan status info',
     },
+    checkboxText: {
+      id: 'ghb.application:loanStatus.checkboxText',
+      defaultMessage:
+        'Ég er með húsnæðislán hjá lánveitanda sem er ekki í felliglugganum hér fyrir ofan',
+      description: 'Loan status screen checkbox text',
+    },
   }),
   results: defineMessages({
     sectionTitle: {

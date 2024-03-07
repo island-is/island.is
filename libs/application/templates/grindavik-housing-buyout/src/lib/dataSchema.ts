@@ -32,25 +32,43 @@ export const GrindavikHousingBuyoutSchema = z.object({
       }),
     )
     .optional(),
-  loans: z
-    .array(
-      z.object({
-        status: z
-          .string()
-          .or(z.undefined())
-          .refine((v) => !!v, required),
-        provider: z
-          .string()
-          .or(z.undefined())
-          .refine((v) => !!v, required),
-      }),
-    )
-    .optional(),
+  loanProviders: z
+    .object({
+      loans: z
+        .array(
+          z.object({
+            status: z
+              .string()
+              .or(z.undefined())
+              .refine((v) => !!v, required),
+            provider: z
+              .string()
+              .or(z.undefined())
+              .refine((v) => !!v, required),
+          }),
+        )
+        .optional(),
+      hasOtherLoanProvider: z.array(z.enum([YES])),
+    })
+    .superRefine((v, ctx) => {
+      /**
+       * If no loans are added and the user has not selected that
+       * they have loans from other providers we need to show a
+       * custom error message
+       */
+      if (
+        (!v.loans || v.loans.length === 0) &&
+        !v.hasOtherLoanProvider?.includes(YES)
+      ) {
+        return ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['hasOtherLoanProvider'],
+          params: errors.fields.otherLoanProviders,
+        })
+      }
+    }),
   confirmLoanTakeover: z.array(z.enum([YES])),
-  preemptiveRightWish: z.array(z.enum([YES])),
-  userConfirmation: z
-    .array(z.enum([YES]))
-    .refine((v) => v.includes(YES), { params: errors.fields.requiredCheckbox }),
+  preemptiveRightWish: z.string(z.enum([YES, NO])).refine((v) => !!v, required),
 })
 
 export type GrindavikHousingBuyout = z.TypeOf<
