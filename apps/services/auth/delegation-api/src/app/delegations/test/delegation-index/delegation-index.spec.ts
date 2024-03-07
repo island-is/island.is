@@ -34,6 +34,7 @@ describe('DelegationsIndexService', () => {
   let rskApi: RskRelationshipsClient
   let delegationModel: typeof Delegation
   let delegationScopeModel: typeof DelegationScope
+  let personalRepresentativeModel: typeof PersonalRepresentative
 
   const setup = async (testcase: TestCase) => {
     await truncate(sequelize)
@@ -79,6 +80,7 @@ describe('DelegationsIndexService', () => {
     delegationIndexMetaModel = app.get(getModelToken(DelegationIndexMeta))
     delegationModel = app.get(getModelToken(Delegation))
     delegationScopeModel = app.get(getModelToken(DelegationScope))
+    personalRepresentativeModel = app.get(getModelToken(PersonalRepresentative))
 
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
@@ -475,14 +477,22 @@ describe('DelegationsIndexService', () => {
     it('should create delegation index item for each right of personal representative delegation', async () => {
       // Arrange
       // Add new delegation right to existing personal representation delegation
+      const personalRepresentative = await personalRepresentativeModel.findOne({
+        where: {
+          nationalIdPersonalRepresentative: user.nationalId,
+        },
+      })
       const prRight2 = 'prRight2'
-      const rightType = await factory.createPersonalRepresentativeRightType({
-        code: prRight2,
-      })
-      await factory.createPersonalRepresentativeRight({
-        rightTypeCode: rightType.code,
-        personalRepresentativeId: representative.id,
-      })
+
+      if (personalRepresentative) {
+        const rightType = await factory.createPersonalRepresentativeRightType({
+          code: prRight2,
+        })
+        await factory.createPersonalRepresentativeRight({
+          rightTypeCode: rightType.code,
+          personalRepresentativeId: personalRepresentative.id,
+        })
+      }
 
       // Act
       await delegationIndexService.indexRepresentativeDelegations(
