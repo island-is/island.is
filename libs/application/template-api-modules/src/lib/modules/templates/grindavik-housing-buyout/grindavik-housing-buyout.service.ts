@@ -12,7 +12,10 @@ import {
   NationalRegistryClientService,
   ResidenceHistoryEntryDto,
 } from '@island.is/clients/national-registry-v2'
-import { getDomicileOnDate } from './grindavik-housing-buyout.utils'
+import {
+  getDomicileOnDate,
+  formatBankInfo,
+} from './grindavik-housing-buyout.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   GrindavikHousingBuyoutAnswers,
@@ -86,9 +89,14 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       answers.preemptiveRight.preemptiveRightWish === YES
     const preemptiveRightType =
       answers.preemptiveRight.preemptiveRightType ?? []
+    const otherOwnersBankInfo = answers.additionalOwners?.map((x) => ({
+      nationalId: x.nationalId,
+      bankInfo: formatBankInfo(x.bankInfo),
+    }))
 
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
+      applicantBankInfo: formatBankInfo(answers.applicantBankInfo),
       residenceData: JSON.stringify(
         application.externalData.checkResidence.data,
       ),
@@ -96,6 +104,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
         application.externalData.getGrindavikHousing.data,
       ),
       preferredDeliveryDate: answers.deliveryDate ?? '',
+      otherOwnersBankInfo: JSON.stringify(otherOwnersBankInfo),
       loans: JSON.stringify(answers.loanProviders.loans),
       hasLoanFromOtherProvider: hasLoanFromOtherProvider.toString(),
       hasNoLoans: hasNoLoans.toString(),
