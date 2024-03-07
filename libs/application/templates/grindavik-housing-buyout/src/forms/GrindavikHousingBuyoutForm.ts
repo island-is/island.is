@@ -44,6 +44,7 @@ import { format as formatNationalId } from 'kennitala'
 import Logo from '../assets/Logo'
 import addMonths from 'date-fns/addMonths'
 import { OTHER_PROVIDER, PreemptiveRight } from '../lib/constants'
+import format from 'date-fns/format'
 
 const loanProvidersOptions = [
   { label: 'Arion banki', value: 'Arion banki' },
@@ -401,6 +402,14 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               value: ({ answers }) => {
                 const total = calculateTotalLoanFromAnswers(answers)
                 return formatCurrency(total.toString())
+              },
+            }),
+            buildKeyValueField({
+              label: m.application.propertyInformation.deliveryDateTitle,
+              colSpan: ['1/1', '6/12'],
+              value: ({ answers }) => {
+                const date = (answers as GrindavikHousingBuyout).deliveryDate
+                return format(new Date(date), 'dd.MM.yyyy')
               },
             }),
             buildDividerField({}),
