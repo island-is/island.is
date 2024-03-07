@@ -5,5 +5,5 @@ export const licenseTypeToScope: Record<LicenseId, LicenseApiScope> = {
   firearm: LicenseApiScope.licensesFirearm,
   disability: LicenseApiScope.licensesDisability,
   driving: LicenseApiScope.licensesDriving,
-  hunting: LicenseApiScope.licensesDisability,
+  hunting: LicenseApiScope.licensesHunting,
 }
