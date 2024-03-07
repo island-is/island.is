@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'aosh.rifm.application:name',
-    defaultMessage: 'Beiðni um skoðun',
+    defaultMessage: 'Beiðni um skoðun tækis {value}',
     description: `Application's name`,
   },
   institutionName: {

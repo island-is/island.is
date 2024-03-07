@@ -9,29 +9,29 @@ import { contactInformation } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const contactInformationSubSection = buildSubSection({
-  id: 'contactInformation',
+  id: 'contactInformationSubSection',
   title: contactInformation.general.title,
   children: [
     buildMultiField({
-      id: 'contactInformationMultiField',
+      id: 'contactInformation',
       title: contactInformation.general.title,
       description: contactInformation.general.description,
       children: [
         buildTextField({
-          id: 'name',
+          id: 'contactInformation.name',
           title: contactInformation.labels.name,
           width: 'half',
           variant: 'text',
           required: true,
         }),
         buildPhoneField({
-          id: 'phoneNumber',
+          id: 'contactInformation.phoneNumber',
           title: contactInformation.labels.phoneNumber,
           width: 'half',
           required: true,
         }),
         buildTextField({
-          id: 'email',
+          id: 'contactInformation.email',
           title: contactInformation.labels.email,
           width: 'half',
           variant: 'email',

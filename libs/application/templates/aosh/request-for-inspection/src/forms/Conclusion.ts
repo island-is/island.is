@@ -23,8 +23,7 @@ export const Conclusion: Form = buildForm({
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
-      alertTitle: conclusion.default.accordionTitle,
-      alertMessage: conclusion.default.alertMessage,
+      alertTitle: conclusion.default.alertTitle,
       expandableHeader: conclusion.default.accordionTitle,
       expandableDescription: conclusion.default.accordionText,
     }),

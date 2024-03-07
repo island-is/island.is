@@ -26,8 +26,13 @@ export const conclusion = {
   default: defineMessages({
     alertMessage: {
       id: 'aosh.rifm.application:conclusion.default.alertMessage',
-      defaultMessage: 'Skráning móttekin!',
+      defaultMessage: 'Beiðni um skoðun á tæki hefur verið móttekin!',
       description: 'Conclusion seller alert message',
+    },
+    alertTitle: {
+      id: 'aosh.rifm.application:conclusion.default.alertMessage',
+      defaultMessage: 'Beiðni um skoðun á tæki hefur verið móttekin!',
+      description: 'Conclusion seller alert title',
     },
     accordionTitle: {
       id: 'aosh.rifm.application:conclusion.default.accordionTitle',
@@ -36,7 +41,7 @@ export const conclusion = {
     },
     accordionText: {
       id: 'aosh.rifm.application:conclusion.default.accordionText',
-      defaultMessage: `Nú hefur nýr umráðamaður verið skráður hjá Vinnueftirlitinu.`,
+      defaultMessage: `Nú hefur beiðni um skðun verið skráð hjá Vinnueftirlitinu.`,
       description: 'Conclusion seller accordion text',
     },
     goToStatusButton: {

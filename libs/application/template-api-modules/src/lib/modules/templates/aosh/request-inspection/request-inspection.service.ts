@@ -88,6 +88,7 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
       contactName: answers.contactInformation.name,
       phoneNumber: cleanPhoneNumber(answers.contactInformation.phoneNumber),
       email: answers.contactInformation.email,
+      city: answers.location.city,
     })
   }
 }

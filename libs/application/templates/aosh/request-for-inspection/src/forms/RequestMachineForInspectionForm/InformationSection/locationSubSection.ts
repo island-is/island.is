@@ -6,11 +6,11 @@ import {
 import { location } from '../../../lib/messages'
 
 export const locationSubSection = buildSubSection({
-  id: 'location',
+  id: 'locationSubSection',
   title: location.general.title,
   children: [
     buildMultiField({
-      id: 'locationMultiField',
+      id: 'location',
       title: location.general.title,
       description: location.general.description,
       children: [

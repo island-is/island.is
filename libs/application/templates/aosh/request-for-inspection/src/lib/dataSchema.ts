@@ -17,21 +17,23 @@ export const MachineAnswersSchema = z.object({
   }),
   approveExternalData: z.boolean(),
   location: z.object({
-    address: z.string(),
+    address: z.string().min(1),
+    city: z.string().min(1),
     postalCode: z
       .string()
+      .min(1)
       .refine(
         (data): data is string =>
           typeof data === 'string' &&
           !isNaN(Number(data)) &&
           (data.length === 3 || data.length === 0),
       ),
-    comment: z.string(),
+    comment: z.string().min(1),
   }),
   contactInformation: z.object({
-    name: z.string(),
-    phoneNumber: z.string(),
-    email: z.string(),
+    name: z.string().min(1),
+    phoneNumber: z.string().min(1),
+    email: z.string().min(1),
   }),
 })
 
