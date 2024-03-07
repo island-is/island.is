@@ -147,7 +147,8 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/releases ./.yarn/releases
 COPY .yarn/patches ./.yarn/patches
 ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn install --immutable \
+RUN --mount=type=cache,id=playwright-cache,target=./.yarn/cache --mount=type=cache,id=playwright-node_modules,target=node_modules \
+  yarn install \
   && yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
