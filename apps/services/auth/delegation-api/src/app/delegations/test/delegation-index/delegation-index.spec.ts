@@ -440,7 +440,6 @@ describe('DelegationsIndexService', () => {
 
   describe('indexRepresentativeDelegations', () => {
     const testcase = indexingTestcases.personalRepresentative
-    let representative: PersonalRepresentative
 
     beforeAll(async () => setup(testcase))
 
@@ -476,7 +475,6 @@ describe('DelegationsIndexService', () => {
 
     it('should create delegation index item for each right of personal representative delegation', async () => {
       // Arrange
-      // Add new delegation right to existing personal representation delegation
       const personalRepresentative = await personalRepresentativeModel.findOne({
         where: {
           nationalIdPersonalRepresentative: user.nationalId,
@@ -484,6 +482,7 @@ describe('DelegationsIndexService', () => {
       })
       const prRight2 = 'prRight2'
 
+      // Add new delegation right to existing personal representation delegation
       if (personalRepresentative) {
         const rightType = await factory.createPersonalRepresentativeRightType({
           code: prRight2,
