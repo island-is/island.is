@@ -1,7 +1,7 @@
 {
-  "name": "clients-agricultural-university-of-iceland",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/agricultural-university-of-iceland/src",
+  "name": "clients-careers-agricultural-university-of-iceland",
+  "$schema": "../../../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/src",
   "projectType": "library",
   "targets": {
     "lint": {
@@ -9,7 +9,7 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/clients/agricultural-university-of-iceland/**/*.ts"
+          "libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/**/*.ts"
         ]
       }
     },
@@ -17,7 +17,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/clients/agricultural-university-of-iceland/jest.config.ts",
+        "jestConfig": "libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -35,18 +35,17 @@
           "prettier --write src/clientConfig.yaml"
         ],
         "parallel": false,
-        "cwd": "libs/clients/agricultural-university-of-iceland"
+        "cwd": "libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn openapi-generator -o libs/clients/agricultural-university-of-iceland/gen/fetch -i libs/clients/agricultural-university-of-iceland/src/clientConfig.yaml"
+          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/gen/fetch -i libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/src/clientConfig.yaml"
         ]
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -534,9 +534,6 @@
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
-      "@island.is/clients/agricultural-university-of-iceland": [
-        "libs/clients/agricultural-university-of-iceland/src/index.ts"
-      ],
       "@island.is/clients/air-discount-scheme": [
         "libs/clients/air-discount-scheme/src/index.ts"
       ],
@@ -739,14 +736,17 @@
       "@island.is/clients/university-careers": [
         "libs/clients/university-careers/src/index.ts"
       ],
+      "@island.is/clients/university-careers/agricultural-university-of-iceland": [
+        "libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/src/index.ts"
+      ],
+      "@island.is/clients/university-careers/university-of-akureyri": [
+        "libs/clients/university-careers/src/lib/clients/university-of-akureyri/src/index.ts"
+      ],
       "@island.is/clients/university-gateway-api": [
         "libs/clients/university-gateway-api/src/index.ts"
       ],
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
-      ],
-      "@island.is/clients/unversity-careers/university-of-akureyri": [
-        "libs/clients/university-careers/src/lib/clients/university-of-akureyri/src/index.ts"
       ],
       "@island.is/clients/user-notification": [
         "libs/clients/user-notification/src/index.ts"
