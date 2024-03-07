@@ -1,26 +1,20 @@
 import { LicenseClientModule } from '@island.is/clients/license-client'
 import { CmsModule } from '@island.is/cms'
+import { LicenseModule } from '@island.is/services/license'
 import { Module } from '@nestjs/common'
 
 import { LicenseServiceResolver } from './licenseService.resolver'
 import { LicenseServiceService } from './licenseService.service'
 import { LicenseMapperModule } from './mappers/licenseMapper.module'
 
-import {
-  LicenseMapperProvider,
-  LicenseServiceCacheProvider,
-  LoggerProvider,
-} from './providers'
-import { BarcodeService } from './services/barcode.service'
+import { LicenseMapperProvider, LoggerProvider } from './providers'
 
 @Module({
-  imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
+  imports: [LicenseClientModule, LicenseMapperModule, CmsModule, LicenseModule],
   providers: [
     LicenseServiceResolver,
     LicenseServiceService,
-    BarcodeService,
     LoggerProvider,
-    LicenseServiceCacheProvider,
     LicenseMapperProvider,
   ],
   exports: [LicenseServiceService],

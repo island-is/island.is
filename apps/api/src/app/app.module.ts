@@ -141,7 +141,7 @@ import {
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
-import { LicenseServiceConfig } from '@island.is/api/domains/license-service'
+import { LicenseConfig } from '@island.is/services/license'
 
 import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
@@ -376,7 +376,7 @@ const environment = getConfig
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
-        LicenseServiceConfig,
+        LicenseConfig,
       ],
     }),
   ],

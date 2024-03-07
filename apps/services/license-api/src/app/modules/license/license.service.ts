@@ -1,4 +1,3 @@
-import { BarcodeService } from '@island.is/api/domains/license-service'
 import {
   BaseLicenseUpdateClient,
   LicenseType,
@@ -7,6 +6,7 @@ import {
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BarcodeService } from '@island.is/services/license'
 import {
   BadRequestException,
   Inject,

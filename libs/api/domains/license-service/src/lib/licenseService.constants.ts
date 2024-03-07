@@ -5,16 +5,9 @@ import {
 } from './licenceService.type'
 import { LicenseType } from '@island.is/shared/constants'
 
-export const DEFAULT_CACHE_TTL = 1 * 1000 // 1 minute
-
 export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
 
-export const TOKEN_SERVICE_PROVIDER = 'token_service_provider'
-
 export const DEFAULT_LICENSE_ID = 'default'
-
-export const LICENSE_SERVICE_CACHE_MANAGER_PROVIDER =
-  'license_service_cache_manager_provider'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {

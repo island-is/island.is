@@ -4,10 +4,10 @@ import { LicenseType } from '@island.is/shared/constants'
 import { Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager/dist/caching'
 import { sign, SignOptions, verify } from 'jsonwebtoken'
-import { LicenseServiceConfig } from '../licenseService.config'
-import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from '../licenseService.constants'
+import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
+import { LicenseConfig } from './license.config'
 
-const BARCODE_EXPIRE_TIME_IN_SEC = 5000
+const BARCODE_EXPIRE_TIME_IN_SEC = 60
 
 /**
  * License token data used to generate a license token
@@ -33,8 +33,8 @@ type BarcodeCacheData<Type extends LicenseType> = {
 @Injectable()
 export class BarcodeService {
   constructor(
-    @Inject(LicenseServiceConfig.KEY)
-    private readonly config: ConfigType<typeof LicenseServiceConfig>,
+    @Inject(LicenseConfig.KEY)
+    private readonly config: ConfigType<typeof LicenseConfig>,
     @Inject(LICENSE_SERVICE_CACHE_MANAGER_PROVIDER)
     private readonly cacheManager: CacheManager,
   ) {}
@@ -87,11 +87,7 @@ export class BarcodeService {
     key: string,
     value: BarcodeCacheData<Type>,
   ) {
-    const redisPromise = this.cacheManager.set(
-      key,
-      value,
-      BARCODE_EXPIRE_TIME_IN_SEC * 1000,
-    )
+    return this.cacheManager.set(key, value, BARCODE_EXPIRE_TIME_IN_SEC * 1000)
   }
 
   async getCache<Type extends LicenseType>(

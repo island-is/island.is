@@ -5,6 +5,7 @@ import {
   LicenseVerifyExtraDataResult,
 } from '@island.is/clients/license-client'
 import { CmsContentfulService } from '@island.is/cms'
+import { BarcodeService } from '@island.is/services/license'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { LicenseType } from '@island.is/shared/constants'
@@ -36,7 +37,6 @@ import {
   DEFAULT_LICENSE_ID,
   LICENSE_MAPPER_FACTORY,
 } from './licenseService.constants'
-import { BarcodeService } from './services/barcode.service'
 
 const LOG_CATEGORY = 'license-service'
 

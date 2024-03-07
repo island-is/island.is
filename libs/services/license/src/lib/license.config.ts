@@ -1,6 +1,7 @@
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
-import { DEFAULT_CACHE_TTL } from './licenseService.constants'
+
+export const DEFAULT_CACHE_TTL = 1 * 1000 // 1 minute
 
 const LicenseServiceConfigSchema = z.object({
   barcodeSecretKey: z.string(),
@@ -11,7 +12,7 @@ const LicenseServiceConfigSchema = z.object({
   }),
 })
 
-export const LicenseServiceConfig = defineConfig({
+export const LicenseConfig = defineConfig({
   name: 'LicenseServiceConfig',
   schema: LicenseServiceConfigSchema,
   load: (env) => ({
