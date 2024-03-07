@@ -736,6 +736,9 @@
       "@island.is/clients/university-gateway-api": [
         "libs/clients/university-gateway-api/src/index.ts"
       ],
+      "@island.is/clients/university-of-akureyri": [
+        "libs/clients/university-of-akureyri/src/index.ts"
+      ],
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
       ],
