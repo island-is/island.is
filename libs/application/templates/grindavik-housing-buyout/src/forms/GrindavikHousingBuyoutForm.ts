@@ -43,15 +43,15 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../assets/Logo'
 import addMonths from 'date-fns/addMonths'
-import { OTHER_PROVIDER, PreemptiveRight } from '../lib/constants'
+import {
+  OTHER_PROVIDER,
+  PreemptiveRight,
+  loanProviders,
+} from '../lib/constants'
 import format from 'date-fns/format'
 
 const loanProvidersOptions = [
-  { label: 'Arion banki', value: 'Arion banki' },
-  { label: 'HMS', value: 'HMS' },
-  { label: 'Íbúðalánasjóður', value: 'Íbúðalánasjóður' },
-  { label: 'Íslandsbanki', value: 'Íslandsbanki' },
-  { label: 'Landsbankinn', value: 'Landsbankinn' },
+  ...loanProviders.map((x) => ({ label: x, value: x })),
   { label: m.application.loanStatus.otherOrganization, value: OTHER_PROVIDER },
 ]
 
