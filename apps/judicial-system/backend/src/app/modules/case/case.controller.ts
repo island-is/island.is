@@ -282,7 +282,6 @@ export class CaseController {
     const states = transitionCase(
       transition.transition,
       theCase.state,
-      theCase.type,
       theCase.appealState,
     )
 
@@ -316,7 +315,6 @@ export class CaseController {
             ...transitionCase(
               CaseTransition.APPEAL,
               states.state ?? theCase.state,
-              theCase.type,
               states.appealState ?? theCase.appealState,
             ),
           }
