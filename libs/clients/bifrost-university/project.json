@@ -24,7 +24,27 @@
           "codeCoverage": true
         }
       }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10057/Bifrost-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/clientConfig.yaml",
+          "prettier --write src/clientConfig.yaml"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/bifrost-university"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/bifrost-university/gen/fetch -i libs/clients/bifrost-university/src/clientConfig.yaml"
+        ]
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }
