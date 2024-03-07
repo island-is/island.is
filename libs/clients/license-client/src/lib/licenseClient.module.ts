@@ -62,7 +62,7 @@ import { EhicClient, EhicModule } from './clients/ehic-card-client'
           switch (type) {
             case LicenseType.FirearmLicense:
               return firearmClient
-            case LicenseType.DriversLicense:
+            case LicenseType.DrivingLicense:
               return drivingClient
             case LicenseType.AdrLicense:
               return adrClient

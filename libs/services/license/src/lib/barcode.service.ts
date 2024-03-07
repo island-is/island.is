@@ -1,6 +1,8 @@
-import { LicenseVerifyExtraDataResult } from '@island.is/clients/license-client'
+import {
+  LicenseType,
+  LicenseVerifyExtraDataResult,
+} from '@island.is/clients/license-client'
 import { ConfigType } from '@island.is/nest/config'
-import { LicenseType } from '@island.is/shared/constants'
 import { Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager/dist/caching'
 import { sign, SignOptions, verify } from 'jsonwebtoken'

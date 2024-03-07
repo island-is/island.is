@@ -1,10 +1,10 @@
-import { LicenseType } from '@island.is/shared/constants'
 import { Field, InputType } from '@nestjs/graphql'
+import { GenericLicenseType } from '../licenceService.type'
 
 @InputType()
 export class GetGenericLicenseInput {
   @Field(() => String)
-  licenseType!: LicenseType
+  licenseType!: GenericLicenseType
 
   @Field(() => String, { nullable: true })
   licenseId?: string

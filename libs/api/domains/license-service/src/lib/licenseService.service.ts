@@ -2,13 +2,14 @@ import { User } from '@island.is/auth-nest-tools'
 import {
   LicenseClient,
   LicenseClientService,
+  LicenseType,
   LicenseVerifyExtraDataResult,
 } from '@island.is/clients/license-client'
 import { CmsContentfulService } from '@island.is/cms'
-import { BarcodeService } from '@island.is/services/license'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { LicenseType } from '@island.is/shared/constants'
+import { BarcodeService } from '@island.is/services/license'
+
 import { Locale } from '@island.is/shared/types'
 import {
   BadRequestException,
@@ -25,11 +26,12 @@ import {
   GenericLicenseFetchResult,
   GenericLicenseMapper,
   GenericLicenseOrganizationSlug,
+  GenericLicenseType,
+  GenericLicenseTypeType,
   GenericLicenseUserdata,
   GenericUserLicenseFetchStatus,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
-  LicenseTypeKey,
   PkPassVerification,
 } from './licenceService.type'
 import {
@@ -41,8 +43,8 @@ import {
 const LOG_CATEGORY = 'license-service'
 
 export type GetGenericLicenseOptions = {
-  includedTypes?: Array<LicenseTypeKey>
-  excludedTypes?: Array<LicenseTypeKey>
+  includedTypes?: Array<GenericLicenseTypeType>
+  excludedTypes?: Array<GenericLicenseTypeType>
   force?: boolean
   onlyList?: boolean
 }
@@ -59,7 +61,7 @@ export class LicenseServiceService {
 
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
-      type: LicenseType,
+      type: GenericLicenseType,
     ) => Promise<GenericLicenseMapper | null>,
   ) {}
 
@@ -69,6 +71,14 @@ export class LicenseServiceService {
   ) {
     return this.cmsContentfulService.getOrganization(slug, locale)
   }
+
+  /**
+   * Maps the generic license type to the actual license type used by the license clients
+   */
+  private mapLicenseType = (type: GenericLicenseType) =>
+    type === GenericLicenseType.DriversLicense
+      ? LicenseType.DrivingLicense
+      : (type as unknown as LicenseType)
 
   private async getLicenseLabels(locale: Locale) {
     const licenseLabels = await this.cmsContentfulService.getNamespace(
@@ -183,15 +193,16 @@ export class LicenseServiceService {
   async getLicensesOfType(
     user: User,
     locale: Locale,
-    licenseType: LicenseType,
+    licenseType: GenericLicenseType,
   ): Promise<Array<GenericUserLicense> | null> {
     const licenseTypeDefinition = AVAILABLE_LICENSES.find(
       (i) => i.type === licenseType,
     )
 
-    const licenseService = await this.licenseClient.getClientByLicenseType(
-      licenseType,
-    )
+    const mappedLicenseType = this.mapLicenseType(licenseType)
+    const licenseService = await this.licenseClient.getClientByLicenseType<
+      typeof mappedLicenseType
+    >(mappedLicenseType)
 
     if (!licenseTypeDefinition || !licenseService) {
       this.logger.error(`Invalid license type. type: ${licenseType}`, {
@@ -283,7 +294,7 @@ export class LicenseServiceService {
   async getLicense(
     user: User,
     locale: Locale,
-    licenseType: LicenseType,
+    licenseType: GenericLicenseType,
     licenseId?: string,
   ): Promise<GenericUserLicense | null> {
     const licensesOfType =
@@ -316,9 +327,10 @@ export class LicenseServiceService {
   async generatePkPassUrl(
     user: User,
     locale: Locale,
-    licenseType: LicenseType,
+    licenseType: GenericLicenseType,
   ): Promise<string> {
-    const client = await this.getClient(licenseType)
+    const mappedLicenseType = this.mapLicenseType(licenseType)
+    const client = await this.getClient(mappedLicenseType)
 
     if (!client.clientSupportsPkPass) {
       this.logger.warn('client does not support pkpass', {
@@ -374,9 +386,10 @@ export class LicenseServiceService {
   async generatePkPassQRCode(
     user: User,
     locale: Locale,
-    licenseType: LicenseType,
+    licenseType: GenericLicenseType,
   ): Promise<string> {
-    const client = await this.getClient(licenseType)
+    const mappedLicenseType = this.mapLicenseType(licenseType)
+    const client = await this.getClient(mappedLicenseType)
 
     if (!client.clientSupportsPkPass) {
       this.logger.warn('client does not support pkpass', {
@@ -471,7 +484,7 @@ export class LicenseServiceService {
 
   async createBarcode(user: User, genericUserLicense: GenericUserLicense) {
     const code = randomUUID()
-    const licenseType = genericUserLicense.license.type
+    const licenseType = this.mapLicenseType(genericUserLicense.license.type)
 
     const client = await this.getClient<typeof licenseType>(licenseType)
     let extraData: LicenseVerifyExtraDataResult<LicenseType> | undefined

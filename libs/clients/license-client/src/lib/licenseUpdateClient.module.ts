@@ -48,7 +48,7 @@ import {
               return firearmClient
             case LicenseType.DisabilityLicense:
               return disabilityClient
-            case LicenseType.DriversLicense:
+            case LicenseType.DrivingLicense:
               return drivingClient
             default:
               return null

@@ -28,7 +28,7 @@ const LOG_CATEGORY = 'drivinglicense-service'
 
 @Injectable()
 export class DrivingLicenseClient
-  implements LicenseClient<LicenseType.DriversLicense>
+  implements LicenseClient<LicenseType.DrivingLicense>
 {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
