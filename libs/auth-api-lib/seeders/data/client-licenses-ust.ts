@@ -12,6 +12,10 @@ export const up = compose(
     clientType: 'machine',
     displayName: 'UST digital license machine client',
     description: 'Enables acccess to the license-api',
-    allowedScopes: ['openid', '@island.is/licenses:hunting'],
+    allowedScopes: [
+      'openid',
+      '@island.is/licenses:hunting',
+      '@island.is/licenses:verify',
+    ],
   }),
 )
