@@ -6,8 +6,14 @@ export const uppercase = style({
 })
 
 export const removeFieldButton = style({
-  top: theme.spacing['8'],
-  right: -theme.spacing['6'],
+  top: 0,
+  right: 0,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      top: theme.spacing['9'],
+      right: -theme.spacing['6'],
+    },
+  },
 })
 
 export const printButton = style({
