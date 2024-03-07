@@ -1,0 +1,18 @@
+'use strict'
+
+//add mileage change
+module.exports = {
+  up: (queryInterface) => {
+    return queryInterface.sequelize.query(`
+      BEGIN;
+        CREATE INDEX idx_vehicle_owner_national_id ON recycling_partner(national_id);;
+      COMMIT;
+    `)
+  },
+
+  down: (queryInterface) => {
+    return queryInterface.sequelize.query(`
+      DROP INDEX idx_vehicle_owner_national_id;
+    `)
+  },
+}
