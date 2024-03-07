@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState, useEffect, useCallback, ChangeEvent } from 'react'
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { FC, useState, useEffect, useCallback, FocusEvent, useRef } from 'react'
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { GET_VEHICLE_QUERY, SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import {
@@ -71,12 +76,13 @@ export const AssetsRepeater: FC<
 
     const total = values.reduce((acc: number, current: any) => {
       const propertyValuation = valueToNumber(current[props.sumField])
-      const shareValue = valueToNumber(current?.share)
+      const shareValue = valueToNumber(current?.share, '.')
 
       return (
         Number(acc) +
         (calcWithShareValue
-          ? Math.floor(propertyValuation * (shareValue / 100))
+          ? // TODO?: might need to fix the total value to support decimals
+            Math.round(propertyValuation * (shareValue / 100))
           : propertyValuation)
       )
     }, 0)
@@ -128,7 +134,7 @@ export const AssetsRepeater: FC<
       replace(
         extData.map((x) => ({
           ...x,
-          share: '100',
+          share: '0',
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
@@ -178,6 +184,7 @@ export const AssetsRepeater: FC<
                     field={field}
                     fieldName={fieldName}
                     error={error}
+                    calculateTotal={calculateTotal}
                   />
                 )
               })}
@@ -230,6 +237,7 @@ interface FieldComponentProps {
   field: Record<string, any>
   fieldIndex: string
   fieldName: string
+  calculateTotal?: () => void
   error?: string
 }
 
@@ -242,12 +250,60 @@ const FieldComponent = ({
   field,
   fieldIndex,
   fieldName,
+  calculateTotal,
   error,
 }: FieldComponentProps) => {
+  const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
+  const { control, watch } = useFormContext()
+
+  const watchedField = watch(fieldName)
 
   let content = null
+
+  const onFocusInput = (
+    e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement
+    const len = target?.value?.length ?? 0
+    target.setSelectionRange(len - 1, len - 1)
+  }
+
+  const onClickInput = (e: Event) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement
+    const len = target?.value?.length ?? 0
+    target.setSelectionRange(len - 1, len - 1)
+  }
+
+  const onKeydownInput: EventListener = (evt: Event) => {
+    const e = evt as KeyboardEvent
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement
+    const len = target?.value?.length ?? 0
+
+    if (
+      e.key === 'Backspace' &&
+      target.selectionStart === len &&
+      target.selectionEnd === len
+    ) {
+      target.setSelectionRange(len - 1, len - 1)
+    }
+  }
+
+  useEffect(() => {
+    const currentRef = ref?.current
+
+    if (currentRef) {
+      currentRef.addEventListener('click', onClickInput)
+      currentRef.addEventListener('keydown', onKeydownInput)
+    }
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('click', onClickInput)
+        currentRef.removeEventListener('keydown', onKeydownInput)
+      }
+    }
+  }, [ref])
 
   let defaultProps = {
     id: fieldName,
@@ -266,6 +322,18 @@ const FieldComponent = ({
     onChange: () => onAfterChange?.(),
     error: error,
     ...field,
+  }
+
+  const percentageRegex = new RegExp(/^(\d{1,2}|100)?(,)?(\d+)?$/)
+
+  let shareError = ''
+
+  if (field.id === 'share') {
+    const shareValue = valueToNumber(watchedField, ',')
+
+    if (shareValue < 0 || shareValue > 100) {
+      shareError = formatMessage(m.invalidShareValue)
+    }
   }
 
   switch (field.id) {
@@ -313,21 +381,46 @@ const FieldComponent = ({
       }
 
       content = (
-        <InputController
-          {...defaultProps}
-          onChange={(
-            e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-          ) => {
-            const value = valueToNumber(e.target.value)
+        <Controller
+          control={control}
+          name={fieldName}
+          defaultValue="0"
+          render={({ field: { onChange, value, name } }) => (
+            <Input
+              ref={ref}
+              label={'hey'}
+              placeholder={'hey'}
+              id={name}
+              name={name}
+              backgroundColor="blue"
+              value={`${(value ?? '')?.replace('.', ',') ?? '0'}%`}
+              onFocus={onFocusInput}
+              onChange={(e) => {
+                e.preventDefault()
 
-            if (value >= 0 && value <= 100) {
-              onAfterChange?.()
-            }
+                let val = (e.target.value || '').replace('%', '') ?? ''
+                const len = val.length ?? 0
 
-            if (value === 0) {
-              setValue(fieldName, '0%')
-            }
-          }}
+                if (len > 1 && val.startsWith('0')) {
+                  val = val.substring(1)
+                }
+
+                const validInput = percentageRegex.test(val)
+
+                if (val === '') {
+                  onChange('0')
+                  return calculateTotal?.()
+                }
+
+                if (validInput) {
+                  onChange(val.replace(',', '.'))
+                  return calculateTotal?.()
+                }
+              }}
+              hasError={!!shareError}
+              errorMessage={shareError}
+            />
+          )}
         />
       )
 

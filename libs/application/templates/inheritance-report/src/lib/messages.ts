@@ -1254,6 +1254,11 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn athugasemdir hér',
     description: '',
   },
+  invalidShareValue: {
+    id: 'ir.application:invalidShareValue',
+    defaultMessage: 'Ógilt eignarhlutfall',
+    description: '',
+  },
   totalPercentage: {
     id: 'ir.application:totalPercentage',
     defaultMessage: 'Samtals arfshlutfall',
