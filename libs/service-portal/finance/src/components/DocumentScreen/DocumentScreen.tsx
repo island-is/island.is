@@ -38,6 +38,7 @@ import { exportGeneralDocuments } from '../../utils/filesGeneral'
 import * as styles from '../../screens/Finance.css'
 import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import FinanceIntro from '../FinanceIntro'
 
 const ITEMS_ON_PAGE = 20
 
