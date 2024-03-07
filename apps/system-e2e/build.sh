@@ -18,24 +18,24 @@ readarray -t externalDependencies < <(
   jq -r '.dependencies|keys[]|(""+.)' package.json
 )
 externalDependencies+=(
-  node_modules
+  @angular-devkit
   @nestjs/microservices
   @nestjs/websockets
-  fsevents
-  class-transformer
-  canvas
-  playwright
-  aws-sdk
+  @nx/playwright
   @swc-node/core
   @swc-node/register
-  @angular-devkit
-  @nx/playwright
+  aws-sdk
+  canvas
+  class-transformer
+  fsevents
+  node_modules
+  playwright
   ts-node/esm
 )
 
 processedDependencies=()
 for dep in "${externalDependencies[@]}"; do
-  echo "Processing external dependency '$dep'"
+  # echo "Processing external dependency '$dep'"
   # Append
   processedDependencies+=(
     "--external:$dep"
