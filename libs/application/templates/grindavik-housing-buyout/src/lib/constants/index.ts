@@ -7,3 +7,11 @@ export enum States {
   APPROVED = 'approved',
   REJECTED = 'rejected',
 }
+
+export const OTHER_PROVIDER = 'OTHER'
+
+export enum PreemptiveRight {
+  PURCHASE_RIGHT = 'kauprettur',
+  PRE_PURCHASE_RIGHT = 'forkaupsrettur',
+  PRE_LEASE_RIGHT = 'forleigurettur',
+}
