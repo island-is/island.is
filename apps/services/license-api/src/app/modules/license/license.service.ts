@@ -13,6 +13,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { isJSON } from 'class-validator'
 import { uuid } from 'uuidv4'
 import {
   RevokeLicenseRequest,
@@ -330,6 +331,16 @@ export class LicenseService {
 
     if (this.barcodeService.validateStrAsJwt(inputData.barcodeData)) {
       return this.getDataFromToken(inputData.barcodeData, requestId)
+    }
+
+    if (!isJSON(inputData.barcodeData)) {
+      const jsonErrorMsg = 'Barcode data must be in JSON format'
+      this.logger.error(jsonErrorMsg, {
+        category: LOG_CATEGORY,
+        requestId,
+      })
+
+      throw this.getException('BadRequest', jsonErrorMsg)
     }
 
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
