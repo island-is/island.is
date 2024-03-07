@@ -13,6 +13,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
           order: '01-1.11-77',
           monthTotals: [
             {
+              month: 0,
+              amount: 2219409,
+            },
+            {
               month: 1,
               amount: 232892,
             },
@@ -65,6 +69,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
             {
               name: 'Örorkulífeyrir',
               months: [
+                {
+                  month: 0,
+                  amount: 429256,
+                },
                 {
                   month: 1,
                   amount: 46036,
@@ -119,6 +127,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
               name: 'Aldurstengd örorkuuppbót',
               months: [
                 {
+                  month: 0,
+                  amount: 429256,
+                },
+                {
                   month: 1,
                   amount: 46036,
                 },
@@ -171,6 +183,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
             {
               name: 'Tekjutrygging örorkulífeyrisþega',
               months: [
+                {
+                  month: 0,
+                  amount: 1306768,
+                },
                 {
                   month: 1,
                   amount: 140820,
@@ -225,6 +241,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
               name: 'Orlofsuppbót á tekjutryggingu',
               months: [
                 {
+                  month: 0,
+                  amount: 21460,
+                },
+                {
                   month: 1,
                   amount: 0,
                 },
@@ -277,6 +297,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
             {
               name: 'Desemberuppbót á tekjutryggingu',
               months: [
+                {
+                  month: 0,
+                  amount: 32669,
+                },
                 {
                   month: 1,
                   amount: 0,
@@ -334,6 +358,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
           group: 'Óskattskyldar greiðslutegundir',
           monthTotals: [
             {
+              month: 0,
+              amount: 232930,
+            },
+            {
               month: 1,
               amount: 23293,
             },
@@ -387,6 +415,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
               name: 'Uppbót v/reksturs bifreiðar (örorkulífeyrir)- Óskattskyld',
               months: [
                 {
+                  month: 0,
+                  amount: 232930,
+                },
+                {
                   month: 1,
                   amount: 23293,
                 },
@@ -429,59 +461,6 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
                 {
                   month: 11,
                   amount: 23293,
-                },
-                {
-                  month: 12,
-                  amount: 0,
-                },
-              ],
-            },
-            {
-              name: 'Aldurstengd örorkuuppbót',
-              months: [
-                {
-                  month: 1,
-                  amount: 46036,
-                },
-                {
-                  month: 2,
-                  amount: 46036,
-                },
-                {
-                  month: 3,
-                  amount: 46036,
-                },
-                {
-                  month: 4,
-                  amount: 46036,
-                },
-                {
-                  month: 5,
-                  amount: 46036,
-                },
-                {
-                  month: 6,
-                  amount: 46036,
-                },
-                {
-                  month: 7,
-                  amount: 0,
-                },
-                {
-                  month: 8,
-                  amount: 30484,
-                },
-                {
-                  month: 9,
-                  amount: 30484,
-                },
-                {
-                  month: 10,
-                  amount: 46036,
-                },
-                {
-                  month: 11,
-                  amount: 46036,
                 },
                 {
                   month: 12,
@@ -495,6 +474,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
           name: '',
           group: 'Frádráttur',
           monthTotals: [
+            {
+              month: 0,
+              amount: 842930,
+            },
             {
               month: 1,
               amount: 88383,
@@ -548,6 +531,10 @@ export const MOCK_DATA: TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPl
             {
               name: 'Staðgreiðsla',
               months: [
+                {
+                  month: 0,
+                  amount: 842930,
+                },
                 {
                   month: 1,
                   amount: 88383,

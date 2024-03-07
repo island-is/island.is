@@ -51,10 +51,8 @@ export class SocialInsuranceService {
           }
           return {
             type: g.group,
-            totalYearCumulativeAmount: g.monthTotals?.reduce(
-              (total, current) => (total += current.amount ?? 0),
-              0,
-            ),
+            totalYearCumulativeAmount:
+              g.monthTotals?.shift()?.amount ?? undefined,
             monthlyPaymentHistory:
               g.monthTotals
                 ?.map((mt) => {
@@ -75,10 +73,8 @@ export class SocialInsuranceService {
                   }
                   return {
                     type: r.name,
-                    totalYearCumulativeAmount: r.months?.reduce(
-                      (total, current) => (total += current.amount ?? 0),
-                      0,
-                    ),
+                    totalYearCumulativeAmount:
+                      r.months?.shift()?.amount ?? undefined,
                     monthlyPaymentHistory:
                       r.months
                         ?.map((m) => {
