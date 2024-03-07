@@ -1,7 +1,7 @@
 {
   "name": "clients-careers-university-of-akureyri",
-  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/university-careers/clients/university-of-akureyri/src",
+  "$schema": "../../../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/university-careers/src/lib/clients/university-of-akureyri/src",
   "projectType": "library",
   "targets": {
     "lint": {
@@ -9,7 +9,7 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/clients/university-careers/clients/university-of-akureyri/**/*.ts"
+          "libs/clients/university-careers/src/lib/clients/university-of-akureyri/**/*.ts"
         ]
       }
     },
@@ -17,7 +17,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/clients/university-careers/clients/university-of-akureyri/jest.config.ts",
+        "jestConfig": "libs/clients/university-careers/src/lib/clients/university-of-akureyri/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
