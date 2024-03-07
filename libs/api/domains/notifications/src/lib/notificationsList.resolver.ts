@@ -83,24 +83,19 @@ export class NotificationsListResolver {
 @UseGuards(IdsUserGuard)
 @Resolver(() => NotificationSender)
 export class NotificationSenderResolver {
-  constructor(
-    private readonly service: NotificationsService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
-
   @ResolveField('logoUrl', () => String, { nullable: true })
   async resolveOrganisationLogoUrl(
     @Loader(OrganizationLogoLoader)
     organizationLogoLoader: OrganizationLogoDataLoader,
     @Parent() sender: NotificationSender,
-  ): Promise<LogoUrl> {
-    this.logger.info('NotificationSenderResolver: sender', {
-      sender,
-    })
-    // return await organizationLogoLoader.load(sender?.id ?? '')
-    return organizationLogoLoader.load({
-      key: sender?.id ?? '',
-      field: 'kennitala',
-    })
+  ): Promise<LogoUrl | undefined> {
+    try {
+      return organizationLogoLoader.load({
+        key: sender?.id ?? '',
+        field: 'kennitala',
+      })
+    } catch {
+      return undefined
+    }
   }
 }
