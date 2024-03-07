@@ -4,7 +4,9 @@ ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
 RUN apk add -U git
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add --update --no-cache \
+  python3 build-base gcc bash \
+  && ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
@@ -14,7 +16,9 @@ COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/releases/ ./.yarn/releases/
 COPY .yarn/patches/ ./.yarn/patches/
 RUN ls -lah ./.yarn/ ./
-RUN CI=true yarn install --immutable && yarn cache clean
+RUN --mount=type=cache,target=./.yarn/cache --mount=type=cache,target=.cache --mount=type=cache,target=/root/.cache \
+  CI=true yarn install --immutable
+
 
 FROM deps as src
 
@@ -23,15 +27,21 @@ RUN wget -qO /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-COPY apps/ libs/ *.* ./
+# COPY *.* ./
+COPY *.js *.json *.yaml *.yml *.ts *.lock ./
+COPY .*.js .*.json .*.yaml .*.yml .*.ts .*.lock ./
+COPY infra/ infra/
+COPY libs/ libs/
+COPY apps/ apps/
 
 FROM src as builder
 ARG APP
-ARG APP_DIST_HOME
+ARG APP_DIST_HOME=dist/apps/${APP}
 ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
+RUN id && pwd && ls -lah ./ .yarn ./apps/${APP}
 RUN yarn run build ${APP} --prod
 
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
@@ -44,7 +54,7 @@ ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_SHA=${GIT_SHA}
 ARG APP
 ARG APP_HOME
-ARG APP_DIST_HOME
+ARG APP_DIST_HOME=dist/apps/${APP}
 ENV APP=${APP}
 ENV NODE_ENV=production
 
@@ -82,7 +92,7 @@ ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 
 ARG APP
-ARG APP_DIST_HOME
+ARG APP_DIST_HOME=dist/apps/${APP}
 ARG GIT_BRANCH
 ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
@@ -128,13 +138,14 @@ FROM playwright-base as output-playwright
 RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
-ARG APP_DIST_HOME
+ARG APP_DIST_HOME=dist/apps/${APP}
 
 WORKDIR ${APP_DIST_HOME}
 
 # Common slow-changing dependencies
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/releases ./.yarn/releases
+COPY .yarn/patches ./.yarn/patches
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn install --immutable \
   && yarn playwright install ${PLAYWRIGHT_BROWSER}
