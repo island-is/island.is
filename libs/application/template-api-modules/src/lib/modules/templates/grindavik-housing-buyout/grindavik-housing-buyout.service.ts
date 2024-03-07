@@ -76,8 +76,16 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
     const hasLoanFromOtherProvider =
-      answers.loanProviders.hasOtherLoanProvider?.includes(YES) ?? false
-    const wishesForPreemptiveRights = answers.preemptiveRightWish === YES
+      answers.loanProviders.loans?.findIndex((x) => !!x.otherProvider) !== -1 ??
+      false
+    const noLoanCheckbox =
+      answers.loanProviders.hasNoLoans?.includes(YES) ?? false
+    const hasNoLoans =
+      noLoanCheckbox && answers.loanProviders.loans?.length === 0
+    const wishesForPreemptiveRights =
+      answers.preemptiveRight.preemptiveRightWish === YES
+    const preemptiveRightType =
+      answers.preemptiveRight.preemptiveRightType ?? []
 
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
@@ -87,10 +95,13 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       propertyData: JSON.stringify(
         application.externalData.getGrindavikHousing.data,
       ),
+      preferredDeliveryDate: answers.deliveryDate ?? '',
       loans: JSON.stringify(answers.loanProviders.loans),
       hasLoanFromOtherProvider: hasLoanFromOtherProvider.toString(),
+      hasNoLoans: hasNoLoans.toString(),
       confirmsLoanTakeover: confirmsLoanTakeover.toString(),
       wishesForPreemptiveRights: wishesForPreemptiveRights.toString(),
+      preemptiveRightType: JSON.stringify(preemptiveRightType),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
