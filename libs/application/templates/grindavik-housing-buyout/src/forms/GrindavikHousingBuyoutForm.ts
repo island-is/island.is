@@ -1,6 +1,7 @@
 import {
   buildCheckboxField,
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -13,7 +14,13 @@ import {
   buildTableRepeaterField,
   coreMessages,
 } from '@island.is/application/core'
-import { Form, FormModes, NO, YES } from '@island.is/application/types'
+import {
+  Comparators,
+  Form,
+  FormModes,
+  NO,
+  YES,
+} from '@island.is/application/types'
 import {
   applicantInformationMessages,
   applicantInformationMultiField,
@@ -35,13 +42,17 @@ import {
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../assets/Logo'
+import addMonths from 'date-fns/addMonths'
+import {
+  OTHER_PROVIDER,
+  PreemptiveRight,
+  loanProviders,
+} from '../lib/constants'
+import format from 'date-fns/format'
 
-const loanProviders = [
-  'Arion banki',
-  'HMS',
-  'Íbúðalánasjóður',
-  'Íslandsbanki',
-  'Landsbankinn',
+const loanProvidersOptions = [
+  ...loanProviders.map((x) => ({ label: x, value: x })),
+  { label: m.application.loanStatus.otherOrganization, value: OTHER_PROVIDER },
 ]
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
@@ -91,6 +102,25 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 ]
               },
             }),
+            buildDescriptionField({
+              id: 'dateTitle',
+              title: m.application.propertyInformation.deliveryDateTitle,
+              titleVariant: 'h3',
+              marginTop: [4, 6],
+              marginBottom: 1,
+              description:
+                m.application.propertyInformation.deliveryDateDescription,
+            }),
+            buildDateField({
+              id: 'deliveryDate',
+              defaultValue: '',
+              title: m.application.propertyInformation.deliveryDateLabel,
+              required: true,
+              minDate: addMonths(new Date(), 1),
+              maxDate: addMonths(new Date(), 4),
+              placeholder:
+                m.application.propertyInformation.deliveryDatePlaceholder,
+            }),
           ],
         }),
       ],
@@ -137,10 +167,19 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 provider: {
                   component: 'select',
                   label: m.application.loanStatus.loanProvider,
-                  options: loanProviders.map((provider) => ({
-                    value: provider,
-                    label: provider,
-                  })),
+                  options: loanProvidersOptions,
+                },
+                otherProvider: {
+                  component: 'input',
+                  label: m.application.loanStatus.otherLoanProvider,
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      (activeField &&
+                        activeField.provider === OTHER_PROVIDER) ??
+                      false
+                    )
+                  },
                 },
                 status: {
                   component: 'input',
@@ -151,12 +190,22 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               table: {
                 format: {
                   status: (v) => formatCurrency(v),
+                  provider: (v) =>
+                    v === OTHER_PROVIDER
+                      ? m.application.loanStatus.otherOrganization
+                          .defaultMessage
+                      : v,
                 },
               },
             }),
             buildCheckboxField({
-              id: 'loanProviders.hasOtherLoanProvider',
+              id: 'loanProviders.hasNoLoans',
               title: '',
+              condition: (answers) => {
+                const loans = (answers as GrindavikHousingBuyout)?.loanProviders
+                  ?.loans
+                return !loans || loans.length === 0
+              },
               options: [
                 {
                   label: m.application.loanStatus.checkboxText,
@@ -355,6 +404,14 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 return formatCurrency(total.toString())
               },
             }),
+            buildKeyValueField({
+              label: m.application.propertyInformation.deliveryDateTitle,
+              colSpan: ['1/1', '6/12'],
+              value: ({ answers }) => {
+                const date = (answers as GrindavikHousingBuyout).deliveryDate
+                return format(new Date(date), 'dd.MM.yyyy')
+              },
+            }),
             buildDividerField({}),
 
             // Calculation
@@ -394,13 +451,37 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             buildDividerField({}),
 
             buildRadioField({
-              id: 'preemptiveRightWish',
+              id: 'preemptiveRight.preemptiveRightWish',
               title: m.application.overview.checkboxText,
               width: 'half',
               required: true,
               options: [
                 { label: coreMessages.radioYes, value: YES },
                 { label: coreMessages.radioNo, value: NO },
+              ],
+            }),
+            buildCheckboxField({
+              id: 'preemptiveRight.preemptiveRightType',
+              title: m.application.overview.preemptiveRightTypeTitle,
+              condition: {
+                questionId: 'preemptiveRight.preemptiveRightWish',
+                isMultiCheck: false,
+                value: YES,
+                comparator: Comparators.EQUALS,
+              },
+              options: [
+                {
+                  label: m.application.overview.purchaseRight,
+                  value: PreemptiveRight.PURCHASE_RIGHT,
+                },
+                {
+                  label: m.application.overview.prePurchaseRight,
+                  value: PreemptiveRight.PRE_PURCHASE_RIGHT,
+                },
+                {
+                  label: m.application.overview.preLeaseRight,
+                  value: PreemptiveRight.PRE_LEASE_RIGHT,
+                },
               ],
             }),
 
