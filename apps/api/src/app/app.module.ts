@@ -65,7 +65,6 @@ import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
-import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import {
@@ -95,6 +94,7 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
 import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
+import { UniversityCareersModule } from '@island.is/api/domains/university-careers'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
@@ -271,6 +271,7 @@ const environment = getConfig
     ShipRegistryModule,
     IntellectualPropertiesModule,
     StatisticsModule,
+    UniversityCareersModule,
     MinistryOfJusticeModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
@@ -306,7 +307,6 @@ const environment = getConfig
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     EnergyFundsServiceModule,
-    UniversityOfIcelandModule,
     WorkMachinesModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
     UniversityGatewayApiModule,

@@ -17,4 +17,4 @@ import { UniversityOfIcelandCareerClientProvider } from './clients/university-of
   ],
   exports: [UniversityCareersClientService],
 })
-export class UniversityCareersModule {}
+export class UniversityCareersClientModule {}

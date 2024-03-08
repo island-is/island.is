@@ -1,5 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   BifrostApi,
   BifrostFerillLocale,
@@ -31,6 +31,7 @@ import {
 import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 import { StudentTrackOverviewDto } from './dto/studentTrackOverviewDto'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class UniversityCareersClientService implements UniversityCareerService {
@@ -40,6 +41,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
     private readonly holarApi: HolarApi,
     private readonly bifrostApi: BifrostApi,
     private readonly hiApi: HIApi,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   getApi = (

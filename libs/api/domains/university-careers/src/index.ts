@@ -1,1 +1,1 @@
-export * from './lib/api-domains-university-careers.module'
+export * from './lib/universityCareers.module'

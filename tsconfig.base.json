@@ -228,9 +228,6 @@
       "@island.is/api/domains/university-gateway": [
         "libs/api/domains/university-gateway/src/index.ts"
       ],
-      "@island.is/api/domains/university-of-iceland": [
-        "libs/api/domains/university-of-iceland/src/index.ts"
-      ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
       ],

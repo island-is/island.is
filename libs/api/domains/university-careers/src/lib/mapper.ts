@@ -2,8 +2,9 @@ import {
   StudentTrackDto,
   StudentTrackOverviewDto,
 } from '@island.is/clients/university-careers'
-import { Student, StudentTrackModel } from './models/studentInfo.model'
 import { isDefined } from '@island.is/shared/utils'
+import { StudentTrack } from './models/studentTrack.model'
+import { Student } from './models/student.model'
 
 export const mapToStudent = (data: StudentTrackDto): Student | null => {
   if (
@@ -38,7 +39,7 @@ export const mapToStudent = (data: StudentTrackDto): Student | null => {
 
 export const mapToStudentTrackModel = (
   data: StudentTrackOverviewDto,
-): StudentTrackModel | null => {
+): StudentTrack | null => {
   if (
     !data.transcript ||
     !data?.body?.description ||

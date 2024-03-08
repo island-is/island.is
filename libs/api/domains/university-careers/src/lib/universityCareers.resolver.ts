@@ -12,7 +12,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { StudentInfoInput } from './dto/studentInfo.input'
-import { StudentInfo, StudentTrackModel } from './models/studentInfo.model'
+import { StudentInfo } from './models/studentInfo.model'
 import {
   UniversityCareersClientService,
   UniversityId,
@@ -20,21 +20,24 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { mapToStudent, mapToStudentTrackModel } from './mapper'
+import { StudentTrack } from './models/studentTrack.model'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver(() => StudentInfo)
-@Audit({ namespace: '@island.is/api/university-of-iceland' })
-export class UniversityOfIcelandResolver {
+@Audit({ namespace: '@island.is/api/university-careers' })
+export class UniversityCareersResolver {
   constructor(
     private universityCareers: UniversityCareersClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
   ) {}
 
-  @Query(() => StudentInfo, { name: 'universityOfIcelandStudentInfo' })
+  @Query(() => StudentInfo, { name: 'universityCareersStudentInfo' })
   @Audit()
   async studentInfo(
     @CurrentUser() user: User,
@@ -42,7 +45,7 @@ export class UniversityOfIcelandResolver {
   ): Promise<StudentInfo | null> {
     const data = await this.universityCareers.getStudentInfo(
       user,
-      UniversityId.UniversityOfIceland,
+      input.universityId ?? UniversityId.UniversityOfIceland,
       input.locale as Locale,
     )
 
@@ -57,19 +60,19 @@ export class UniversityOfIcelandResolver {
     }
   }
 
-  @ResolveField('track', () => StudentTrackModel)
+  @ResolveField('track', () => StudentTrack)
   @Audit()
   async resolveTrack(
     @Args('input') input: StudentInfoInput,
     @CurrentUser() user: User,
-  ): Promise<StudentTrackModel | null> {
+  ): Promise<StudentTrack | null> {
     if (!input.trackNumber) {
       return null
     }
     const data = await this.universityCareers.getStudentCareer(
       user,
       input.trackNumber,
-      UniversityId.UniversityOfIceland,
+      input.universityId ?? UniversityId.UniversityOfIceland,
       input.locale as Locale,
     )
 
