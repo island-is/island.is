@@ -1,1 +1,1 @@
-export * from './lib/clients-university-careers.module'
+export * from './lib/universityCareers.module'

@@ -359,7 +359,6 @@ const environment = getConfig
         ChargeFjsV2ClientConfig,
         EnergyFundsClientConfig,
         ZenterSignupConfig,
-        UniversityOfAkureyriClientConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,

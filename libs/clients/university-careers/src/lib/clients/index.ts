@@ -1,0 +1,4 @@
+export * from './bifrost-university'
+export * from './holar-university'
+export * from './agricultural-university-of-iceland'
+export * from './university-of-akureyri'
