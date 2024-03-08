@@ -128,7 +128,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       animated: true,
     })
   })
-  
+
   // Filter licenses
   const licenseItems = useMemo(() => {
     if (!res.loading && !res.error) {

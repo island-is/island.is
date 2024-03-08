@@ -83,7 +83,6 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
         if (DisabilityTemplateIds.includes(parsed?.passTemplateId)) {
           setScanResult(ScanResult.DISABILITY_LICENSE)
         }
-       
       }
       // else if (type === Constants.BarCodeType.qr) {
       //   if (data.startsWith('HC1')) {
