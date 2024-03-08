@@ -832,6 +832,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Ellilífeyrir sjómanna',
     description: 'Niðurstöðuskjár, Ellilífeyrir sjómanna',
   },
+  'REIKNH.FRADRSKATTUR1': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR1',
+    defaultMessage: 'Frádreginn skattur',
+    description: 'Niðurstöðuskjár, Frádreginn skattur',
+  },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
     defaultMessage: 'Þar af greiðslur frá TR',

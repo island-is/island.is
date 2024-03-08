@@ -2375,15 +2375,6 @@ export class NotificationService {
         case NotificationType.READY_FOR_COURT:
           messages = this.getReadyForCourtNotificationMessages(user, theCase)
           break
-        case NotificationType.RECEIVED_BY_COURT:
-          messages = [
-            this.getNotificationMessage(
-              MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
-              user,
-              theCase,
-            ),
-          ]
-          break
         case NotificationType.COURT_DATE:
           if (notification.eventOnly) {
             this.eventService.postEvent(
@@ -2409,15 +2400,6 @@ export class NotificationService {
               ),
             ]
           }
-          break
-        case NotificationType.REVOKED:
-          messages = [
-            this.getNotificationMessage(
-              MessageType.SEND_REVOKED_NOTIFICATION,
-              user,
-              theCase,
-            ),
-          ]
           break
         case NotificationType.DEFENDER_ASSIGNED:
           messages = [
@@ -2446,16 +2428,6 @@ export class NotificationService {
             ),
           ]
           break
-        case NotificationType.APPEAL_WITHDRAWN:
-          messages = [
-            this.getNotificationMessage(
-              MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
-              user,
-              theCase,
-            ),
-          ]
-          break
-
         default:
           throw new InternalServerErrorException(
             `Invalid notification type ${notification.type}`,
