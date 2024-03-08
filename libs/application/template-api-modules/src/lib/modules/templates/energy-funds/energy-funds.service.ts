@@ -28,7 +28,20 @@ export class EnergyFundsService extends BaseTemplateApiService {
   }
 
   async getCurrentVehiclesWithDetails({ auth }: TemplateApiModuleActionProps) {
-    const countResult =
+    const totalCount =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+          onlyMileageRequiredVehicles: false,
+        })
+      ).totalRecords || 0
+    const electricCount =
       (
         await this.vehiclesApiWithAuth(
           auth,
@@ -41,9 +54,19 @@ export class EnergyFundsService extends BaseTemplateApiService {
           onlyMileageRequiredVehicles: true,
         })
       ).totalRecords || 0
-    if (countResult && countResult > 20) {
+
+    if (electricCount === 0) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.electricVehicleListEmptyOwner,
+          summary: coreErrorMessages.electricVehicleListEmptyOwner,
+        },
+        400,
+      )
+    }
+    if (totalCount && totalCount > 20) {
       return {
-        totalRecords: countResult,
+        totalRecords: totalCount,
         vehicles: [],
       }
     }
