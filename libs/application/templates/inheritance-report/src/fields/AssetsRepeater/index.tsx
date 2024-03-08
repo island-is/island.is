@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState, useEffect, useCallback, FocusEvent, useRef } from 'react'
-import {
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form'
+import { FC, useState, useEffect, useCallback } from 'react'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { GET_VEHICLE_QUERY, SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import {
@@ -31,6 +26,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { isValidRealEstate, valueToNumber } from '../../lib/utils/helpers'
+import ShareInput from '../../components/ShareInput'
 
 type RepeaterProps = {
   field: {
@@ -184,7 +180,6 @@ export const AssetsRepeater: FC<
                     field={field}
                     fieldName={fieldName}
                     error={error}
-                    calculateTotal={calculateTotal}
                   />
                 )
               })}
@@ -237,7 +232,6 @@ interface FieldComponentProps {
   field: Record<string, any>
   fieldIndex: string
   fieldName: string
-  calculateTotal?: () => void
   error?: string
 }
 
@@ -250,62 +244,14 @@ const FieldComponent = ({
   field,
   fieldIndex,
   fieldName,
-  calculateTotal,
   error,
 }: FieldComponentProps) => {
-  const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
   const { formatMessage } = useLocale()
   const { control, watch } = useFormContext()
 
-  const watchedField = watch(fieldName)
-
   let content = null
 
-  const onFocusInput = (
-    e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const target = e.target as HTMLInputElement | HTMLTextAreaElement
-    const len = target?.value?.length ?? 0
-    target.setSelectionRange(len - 1, len - 1)
-  }
-
-  const onClickInput = (e: Event) => {
-    const target = e.target as HTMLInputElement | HTMLTextAreaElement
-    const len = target?.value?.length ?? 0
-    target.setSelectionRange(len - 1, len - 1)
-  }
-
-  const onKeydownInput: EventListener = (evt: Event) => {
-    const e = evt as KeyboardEvent
-    const target = e.target as HTMLInputElement | HTMLTextAreaElement
-    const len = target?.value?.length ?? 0
-
-    if (
-      e.key === 'Backspace' &&
-      target.selectionStart === len &&
-      target.selectionEnd === len
-    ) {
-      target.setSelectionRange(len - 1, len - 1)
-    }
-  }
-
-  useEffect(() => {
-    const currentRef = ref?.current
-
-    if (currentRef) {
-      currentRef.addEventListener('click', onClickInput)
-      currentRef.addEventListener('keydown', onKeydownInput)
-    }
-
-    return () => {
-      if (currentRef) {
-        currentRef.removeEventListener('click', onClickInput)
-        currentRef.removeEventListener('keydown', onKeydownInput)
-      }
-    }
-  }, [ref])
-
-  let defaultProps = {
+  const defaultProps = {
     id: fieldName,
     name: fieldName,
     format: field.format,
@@ -322,18 +268,6 @@ const FieldComponent = ({
     onChange: () => onAfterChange?.(),
     error: error,
     ...field,
-  }
-
-  const percentageRegex = new RegExp(/^(\d{1,2}|100)?(,)?(\d+)?$/)
-
-  let shareError = ''
-
-  if (field.id === 'share') {
-    const shareValue = valueToNumber(watchedField, ',')
-
-    if (shareValue < 0 || shareValue > 100) {
-      shareError = formatMessage(m.invalidShareValue)
-    }
   }
 
   switch (field.id) {
@@ -375,52 +309,13 @@ const FieldComponent = ({
 
       break
     case 'share':
-      defaultProps = {
-        ...defaultProps,
-        label: formatMessage(m.propertyShare),
-      }
-
       content = (
-        <Controller
+        <ShareInput
           control={control}
           name={fieldName}
-          defaultValue="0"
-          render={({ field: { onChange, value, name } }) => (
-            <Input
-              ref={ref}
-              label={'hey'}
-              placeholder={'hey'}
-              id={name}
-              name={name}
-              backgroundColor="blue"
-              value={`${(value ?? '')?.replace('.', ',') ?? '0'}%`}
-              onFocus={onFocusInput}
-              onChange={(e) => {
-                e.preventDefault()
-
-                let val = (e.target.value || '').replace('%', '') ?? ''
-                const len = val.length ?? 0
-
-                if (len > 1 && val.startsWith('0')) {
-                  val = val.substring(1)
-                }
-
-                const validInput = percentageRegex.test(val)
-
-                if (val === '') {
-                  onChange('0')
-                  return calculateTotal?.()
-                }
-
-                if (validInput) {
-                  onChange(val.replace(',', '.'))
-                  return calculateTotal?.()
-                }
-              }}
-              hasError={!!shareError}
-              errorMessage={shareError}
-            />
-          )}
+          label={formatMessage(m.propertyShare)}
+          value={watch(fieldName)}
+          onAfterChange={onAfterChange}
         />
       )
 

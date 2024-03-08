@@ -71,10 +71,10 @@ export const SpouseEstateShare: FC<
 
   const getUpdatedValues = useCallback(() => getValues(id), [getValues, id])
 
-  const [
-    localSpouseTotalSeparateProperty,
-    setLocalSpouseTotalSeparateProperty,
-  ] = useState<number>(getUpdatedValues()?.spouseTotalSeparateProperty ?? 0)
+  // const [
+  //   localSpouseTotalSeparateProperty,
+  //   setLocalSpouseTotalSeparateProperty,
+  // ] = useState<number>(getUpdatedValues()?.spouseTotalSeparateProperty ?? 0)
   const [localSpouseTotalDeduction, setLocalSpouseTotalDeduction] =
     useState<number>(getUpdatedValues()?.spouseTotalDeduction ?? 0)
   const [wasInCohabitation, setWasInCohabitation] = useState<
