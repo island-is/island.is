@@ -24,7 +24,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.OPEN,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -38,12 +37,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.OPEN,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.OPEN, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -61,12 +55,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.OPEN,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.OPEN, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -87,7 +76,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.ASK_FOR_CONFIRMATION,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -104,7 +92,6 @@ describe('Transition Case', () => {
             transitionCase(
               CaseTransition.ASK_FOR_CONFIRMATION,
               fromState,
-              type,
               fromAppealState,
             )
 
@@ -126,7 +113,6 @@ describe('Transition Case', () => {
               transitionCase(
                 CaseTransition.ASK_FOR_CONFIRMATION,
                 fromState,
-                type,
                 fromAppealState,
               )
 
@@ -150,7 +136,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.SUBMIT,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -164,12 +149,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.SUBMIT,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -187,12 +167,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.SUBMIT,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -213,7 +188,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.SUBMIT,
             fromState,
-            CaseType.INDICTMENT,
             fromAppealState,
           )
 
@@ -227,12 +201,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.SUBMIT,
-              fromState,
-              CaseType.INDICTMENT,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -250,12 +219,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.SUBMIT,
-              fromState,
-              CaseType.INDICTMENT,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -276,7 +240,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.RECEIVE,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -290,12 +253,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.RECEIVE,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.RECEIVE, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -313,12 +271,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.RECEIVE,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.RECEIVE, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -345,7 +298,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.DELETE,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -359,12 +311,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.DELETE,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.DELETE, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -382,12 +329,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.DELETE,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.DELETE, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -411,7 +353,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.ACCEPT,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -431,12 +372,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.ACCEPT,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.ACCEPT, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -460,7 +396,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.REJECT,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -480,12 +415,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.REJECT,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.REJECT, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -509,7 +439,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.DISMISS,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -529,12 +458,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.DISMISS,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.DISMISS, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -562,7 +486,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.REOPEN,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -582,12 +505,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.REOPEN,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.REOPEN, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -612,7 +530,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.APPEAL,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -626,12 +543,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.APPEAL,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -649,12 +561,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.APPEAL,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -682,7 +589,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.WITHDRAW_APPEAL,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -696,12 +602,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.APPEAL,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -719,12 +620,7 @@ describe('Transition Case', () => {
         (fromAppealState) => {
           // Arrange
           const act = () =>
-            transitionCase(
-              CaseTransition.APPEAL,
-              fromState,
-              type,
-              fromAppealState,
-            )
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)
@@ -749,7 +645,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.RECEIVE_APPEAL,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -768,7 +663,6 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.RECEIVE_APPEAL,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -790,7 +684,6 @@ describe('Transition Case', () => {
             transitionCase(
               CaseTransition.RECEIVE_APPEAL,
               fromState,
-              type,
               fromAppealState,
             )
 
@@ -820,7 +713,6 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.COMPLETE_APPEAL,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -839,7 +731,6 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.COMPLETE_APPEAL,
             fromState,
-            type,
             fromAppealState,
           )
 
@@ -861,7 +752,6 @@ describe('Transition Case', () => {
             transitionCase(
               CaseTransition.COMPLETE_APPEAL,
               fromState,
-              type,
               fromAppealState,
             )
 
@@ -888,7 +778,7 @@ describe('Transition Case', () => {
           const res = transitionCase(
             CaseTransition.REOPEN_APPEAL,
             fromState,
-            type,
+
             fromAppealState,
           )
 
@@ -907,7 +797,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.REOPEN_APPEAL,
             fromState,
-            type,
+
             fromAppealState,
           )
 
@@ -929,7 +819,7 @@ describe('Transition Case', () => {
             transitionCase(
               CaseTransition.REOPEN_APPEAL,
               fromState,
-              type,
+
               fromAppealState,
             )
 
