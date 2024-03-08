@@ -45,6 +45,7 @@ import {
   OTHER_PROVIDER,
   PreemptiveRight,
   loanProviders,
+  preemptiveRightLabels,
 } from '../lib/constants'
 import format from 'date-fns/format'
 import { applicantInformationMultiField } from '../sections'
@@ -528,9 +529,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 return (rights && rights.length > 0) ?? false
               },
               value: ({ answers }) => {
-                return (
-                  answers as GrindavikHousingBuyout
-                ).preemptiveRight.preemptiveRightType?.join(', ')
+                const rights = (answers as GrindavikHousingBuyout)
+                  .preemptiveRight.preemptiveRightType
+                return rights?.map((right) => preemptiveRightLabels[right])
               },
             }),
 
