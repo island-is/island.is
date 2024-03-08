@@ -1,3 +1,4 @@
+import { CacheField } from '@island.is/nest/graphql'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('UniversityGatewayProgram')
@@ -80,7 +81,7 @@ export class UniversityGatewayProgram {
   @Field()
   iscedCode!: string
 
-  @Field(() => [String])
+  @CacheField(() => [String])
   modeOfDelivery!: string[]
 }
 
@@ -122,10 +123,10 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
   @Field()
   allowThirdLevelQualification!: boolean
 
-  @Field(() => [UniversityGatewayProgramCourse])
+  @CacheField(() => [UniversityGatewayProgramCourse])
   courses!: UniversityGatewayProgramCourse[]
 
-  @Field(() => [UniversityGatewayProgramExtraApplicationField])
+  @CacheField(() => [UniversityGatewayProgramExtraApplicationField])
   extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]
 }
 
