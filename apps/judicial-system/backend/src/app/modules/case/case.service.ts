@@ -144,6 +144,7 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
+    | 'indictmentDeniedExplanation'
   > {
   type?: CaseType
   state?: CaseState

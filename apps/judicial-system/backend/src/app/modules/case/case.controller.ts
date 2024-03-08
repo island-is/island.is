@@ -293,10 +293,13 @@ export class CaseController {
         break
 
       case CaseTransition.SUBMIT:
-        if (isIndictmentCase(theCase.type) && !user.canConfirmAppeal) {
-          throw new ForbiddenException(
-            `User ${user.id} does not have permission to confirm indictments`,
-          )
+        if (isIndictmentCase(theCase.type)) {
+          if (!user.canConfirmAppeal) {
+            throw new ForbiddenException(
+              `User ${user.id} does not have permission to confirm indictments`,
+            )
+          }
+          update.indictmentDeniedExplanation = ''
         }
         break
       case CaseTransition.ACCEPT:

@@ -83,13 +83,14 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     let modalType: typeof modal = 'noModal'
 
     if (userCanSendCaseToCourt) {
-      modalType = 'caseSubmitModal'
+      if (indictmentConfirmationDecision === 'confirm') {
+        modalType = 'caseSubmitModal'
+      } else if (indictmentConfirmationDecision === 'deny') {
+        modalType = 'caseDeniedModal'
+      }
     } else if (isNewIndictment) {
       transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       modalType = 'caseSentForConfirmationModal'
-    } else if (user?.canConfirmAppeal) {
-      transitionType = CaseTransition.SUBMIT
-      modalType = 'caseSubmitModal'
     } else if (workingCase.state === CaseState.WAITING_FOR_CONFIRMATION) {
       modalType = 'caseSentForConfirmationModal'
     }
