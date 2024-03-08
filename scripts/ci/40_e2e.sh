@@ -2,5 +2,10 @@
 set -euxo pipefail
 
 APP="${1:-$APP}"
+TARGET="${2:-e2e-ci}"
 
-yarn nx run "$APP":e2e-ci
+# Exit gracefully if the target is not defined
+if [ -z "$(nx show projects --projects "$APP" --with-target "$TARGET")" ]; then
+  exit 0
+fi
+yarn nx run "$APP":"$TARGET"
