@@ -383,6 +383,12 @@ export class CaseController {
           update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
         }
         break
+      case CaseTransition.DENY_INDICTMENT:
+        if (!user.canConfirmAppeal) {
+          throw new ForbiddenException(
+            `User ${user.id} does not have permission to reject indictments`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(
