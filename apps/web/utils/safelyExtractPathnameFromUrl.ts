@@ -12,5 +12,16 @@ export const safelyExtractPathnameFromUrl = (url?: string) => {
     pathname = pathname.slice(0, pathname.indexOf(JSON_ENDING))
   }
 
+  // Handle client side getServerSideProps calls
+  if (pathname.startsWith('/_next/data')) {
+    // The pathname looks like this then: '/_next/data/${bundleId}/...'
+
+    // We split it to get: ['', '_next', 'data', `${bundleId}`, ...]
+    const sections = pathname.split('/')
+
+    // Then join the sections back together only keeping what makes up the url
+    pathname = `/${sections.slice(4).join('/')}`
+  }
+
   return pathname
 }

@@ -28,6 +28,48 @@ export class EnergyFundsService extends BaseTemplateApiService {
   }
 
   async getCurrentVehiclesWithDetails({ auth }: TemplateApiModuleActionProps) {
+    const totalCount =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+          onlyMileageRequiredVehicles: false,
+        })
+      ).totalRecords || 0
+    const electricCount =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+          onlyMileageRequiredVehicles: true,
+        })
+      ).totalRecords || 0
+
+    if (electricCount === 0) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.electricVehicleListEmptyOwner,
+          summary: coreErrorMessages.electricVehicleListEmptyOwner,
+        },
+        400,
+      )
+    }
+    if (totalCount && totalCount > 20) {
+      return {
+        totalRecords: totalCount,
+        vehicles: [],
+      }
+    }
     const results = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -78,37 +120,40 @@ export class EnergyFundsService extends BaseTemplateApiService {
       )
     }
 
-    return await Promise.all(
-      onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
-        let hasReceivedSubsidy: boolean | undefined
+    return {
+      vehicles: await Promise.all(
+        onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
+          let hasReceivedSubsidy: boolean | undefined
 
-        // Only validate if fewer than 6 items
-        if (onlyElectricVehiclesWithGrant.length < 6) {
-          // Get subsidy status
-          hasReceivedSubsidy =
-            await this.energyFundsClientService.checkVehicleSubsidyAvilability(
-              auth,
-              vehicle.vin || '',
-            )
-        }
+          // Only validate if fewer than 6 items
+          if (onlyElectricVehiclesWithGrant.length < 6) {
+            // Get subsidy status
+            hasReceivedSubsidy =
+              await this.energyFundsClientService.checkVehicleSubsidyAvilability(
+                auth,
+                vehicle.vin || '',
+              )
+          }
 
-        return {
-          permno: vehicle.permno,
-          vin: vehicle.vin,
-          make: vehicle.make,
-          color: vehicle.color,
-          role: vehicle.role,
-          firstRegistrationDate: vehicle.firstRegistrationDate,
-          newRegistrationDate: vehicle.newRegistrationDate,
-          fuelCode: vehicle.fuelCode,
-          vehicleRegistrationCode: vehicle.vehicleRegistrationCode,
-          importCode: vehicle.importCode,
-          vehicleGrant: vehicle.vehicleGrant,
-          vehicleGrantItemCode: vehicle.vehicleGrantItemCode,
-          hasReceivedSubsidy: hasReceivedSubsidy,
-        }
-      }),
-    )
+          return {
+            permno: vehicle.permno,
+            vin: vehicle.vin,
+            make: vehicle.make,
+            color: vehicle.color,
+            role: vehicle.role,
+            firstRegistrationDate: vehicle.firstRegistrationDate,
+            newRegistrationDate: vehicle.newRegistrationDate,
+            fuelCode: vehicle.fuelCode,
+            vehicleRegistrationCode: vehicle.vehicleRegistrationCode,
+            importCode: vehicle.importCode,
+            vehicleGrant: vehicle.vehicleGrant,
+            vehicleGrantItemCode: vehicle.vehicleGrantItemCode,
+            hasReceivedSubsidy: hasReceivedSubsidy,
+          }
+        }),
+      ),
+      totalRecords: onlyElectricVehiclesWithGrant.length,
+    }
   }
 
   async submitApplication({

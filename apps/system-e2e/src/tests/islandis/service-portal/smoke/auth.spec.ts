@@ -6,6 +6,32 @@ import { switchDelegation } from './auth-utils'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
+export async function switchDelegation(
+  page: Page,
+  delegationType: 'Prókúra' | 'Forsjá',
+) {
+  await page.locator('data-testid=user-menu >> visible=true').click()
+  await page.locator('role=button[name="Skipta um notanda"]').click()
+
+  const firstDelegation = page
+    .locator(`role=button[name*="${delegationType}"]`)
+    .first()
+  await expect(firstDelegation).toBeVisible()
+
+  const delegationName = await firstDelegation
+    .locator('.identity-card--name')
+    .textContent()
+
+  expect(delegationName).toBeTruthy()
+
+  await firstDelegation.click()
+  await page.waitForURL(new RegExp(homeUrl), {
+    waitUntil: 'domcontentloaded',
+  })
+
+  return delegationName
+}
+
 test.describe('Service portal', () => {
   let context: BrowserContext
 
@@ -69,7 +95,11 @@ test('Service portal can use english sign-in', async ({ browser }) => {
   await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
 
   // Act
-  await page.getByRole('link', { name: 'English' }).click()
+  /**
+   * Not using accessible selector here because this test needs to work on both the new and current login page at the same time to handle the transition gracefully
+   * TODO: use accessible selector when the new login pages is out
+   */
+  await page.getByText('English').click()
 
   // Assert
   await expect(

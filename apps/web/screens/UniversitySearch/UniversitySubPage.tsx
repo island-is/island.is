@@ -451,5 +451,4 @@ UniversitySubPage.getProps = async ({ apolloClient, locale, query, req }) => {
 
 export default withMainLayout(UniversitySubPage, {
   showFooter: false,
-  headerColorScheme: 'white',
 })

@@ -20,7 +20,10 @@ import { setupXroadMocks } from './setup-xroad.mocks'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
+const getEmployerEmailAndApprove = async (
+  employer: EmailAccount,
+  page: Page,
+) => {
   const { proceed } = helpers(page)
 
   const email = await employer.getLastEmail(6)
@@ -37,8 +40,7 @@ async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
   const employerUrl = employerUrlMatch[1]
   if (!employerUrl)
     throw new Error(`Could not find url for employer in email: ${email.html}`)
-  await page.goto(employerUrl, { waitUntil: 'load' })
-  await expect(page).toBeApplication()
+  await page.goto(employerUrl, { waitUntil: 'networkidle' })
 
   await page
     .getByRole('region', {
@@ -100,8 +102,6 @@ test.describe('Parental leave', () => {
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'load' })
     const { proceed } = helpers(page)
 
-    applicationID = page.url().split('/').slice(-1)[0]
-
     // Mock data
     await expect(
       page.getByRole('heading', {
@@ -114,6 +114,8 @@ test.describe('Parental leave', () => {
       })
       .click()
     await proceed()
+
+    applicationID = page.url().split('/').slice(-1)[0]
 
     // Type of application
     await expect(
@@ -157,13 +159,22 @@ test.describe('Parental leave', () => {
       name: 'Netfang',
     })
     await emailBox.selectText()
-    await emailBox.type(`${applicant.email}`)
+    await emailBox.type(applicant.email)
 
     const phoneNumber = page.getByRole('textbox', {
       name: 'Símanúmer',
     })
     await phoneNumber.selectText()
     await phoneNumber.type('6555555')
+
+    await page
+      .getByRole('region', {
+        name: label(parentalLeaveFormMessages.applicant.languageTitle),
+      })
+      .getByRole('radio', {
+        name: label(parentalLeaveFormMessages.applicant.icelandic),
+      })
+      .click()
     await proceed()
 
     // Child's parents
@@ -173,35 +184,11 @@ test.describe('Parental leave', () => {
       }),
     ).toBeVisible()
     await page
-      .getByRole('radio', {
-        name: 'Hitt foreldrið er:',
+      .getByRole('region', {
+        name: label(parentalLeaveFormMessages.shared.otherParentSubSection),
       })
-      .click()
-
-    const otherParentName = page.getByRole('textbox', {
-      name: 'Nafn hins foreldrisins',
-    })
-    await otherParentName.selectText()
-    await otherParentName.type('Gervimaður Ameríku')
-
-    const otherParentKt = page.getByRole('textbox', {
-      name: 'Kennitala hins foreldrisins',
-    })
-    await otherParentKt.selectText()
-    // eslint-disable-next-line local-rules/disallow-kennitalas
-    await otherParentKt.type('0101302989')
-    await proceed()
-
-    // Confirmation of right of access to a non-custodial parent
-    await expect(
-      page.getByRole('heading', {
-        name: 'Staðfesting á umgengnisrétti forsjárlauss foreldris',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Ég veiti forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
-      })
+      .getByRole('radio')
+      .first()
       .click()
     await proceed()
 
@@ -256,6 +243,15 @@ test.describe('Parental leave', () => {
     await page.getByTestId('use-as-much-as-possible').click()
     await proceed()
 
+    // Spouse's personal allowance
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.personalAllowance.spouseTitle),
+      }),
+    ).toBeVisible()
+    await page.getByTestId('dont-use-personal-finance').click()
+    await proceed()
+
     // Are you self employed?
     await expect(page.getByText('Ertu sjálfstætt starfandi?')).toBeVisible()
     await page
@@ -275,7 +271,19 @@ test.describe('Parental leave', () => {
     // Register an employer
     await expect(
       page.getByRole('heading', {
-        name: 'Skráning vinnuveitanda',
+        name: label(parentalLeaveFormMessages.employer.title),
+      }),
+    ).toBeVisible()
+
+    await page
+      .getByRole('button', {
+        name: label(parentalLeaveFormMessages.employer.addEmployer),
+      })
+      .click()
+
+    await expect(
+      page.getByRole('paragraph').filter({
+        hasText: label(parentalLeaveFormMessages.employer.registration),
       }),
     ).toBeVisible()
     await page.getByTestId('employer-email').type(employer.email)
@@ -283,14 +291,11 @@ test.describe('Parental leave', () => {
     const employmentRatio = page.getByTestId('employment-ratio')
     await employmentRatio.type('100%')
     await employmentRatio.press('Enter')
-    await proceed()
-
-    // Who is your employer?
-    await expect(
-      page.getByRole('heading', {
-        name: 'Vinnuveitendur',
-      }),
-    ).toBeVisible()
+    await page
+      .getByRole('button', {
+        name: label(parentalLeaveFormMessages.employer.registerEmployer),
+      })
+      .click()
     await proceed()
 
     // Additional documentation for application
@@ -310,6 +315,11 @@ test.describe('Parental leave', () => {
     await proceed()
 
     // Transferal of rights
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.shared.transferRightsTitle),
+      }),
+    ).toBeVisible()
     await page
       .getByRole('region', {
         name: 'Tilfærsla réttinda',
@@ -321,6 +331,11 @@ test.describe('Parental leave', () => {
     await proceed()
 
     // Start of parental leave
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.firstPeriodStart.title),
+      }),
+    ).toBeVisible()
     await page
       .getByRole('region', {
         name: 'Upphaf fæðingarorlofs',
@@ -345,8 +360,8 @@ test.describe('Parental leave', () => {
     await proceed()
 
     await expect(
-      page.getByRole('region', {
-        name: 'Lengd fæðingarorlofs',
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.duration.title),
       }),
     ).toBeVisible()
     await page
@@ -358,6 +373,11 @@ test.describe('Parental leave', () => {
     await proceed()
 
     // What percent off your employment ratio will you take for the leave?
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.ratio.title),
+      }),
+    ).toBeVisible()
     const selectPercentageUse = page.getByTestId('select-percentage-use')
     await selectPercentageUse.focus()
     await page.keyboard.type('50%')
@@ -473,13 +493,22 @@ test.describe('Parental leave', () => {
       name: 'Netfang',
     })
     await emailBox.selectText()
-    await emailBox.type(`${applicant.email}`)
+    await emailBox.type(applicant.email)
 
     const phoneNumber = page.getByRole('textbox', {
       name: 'Símanúmer',
     })
     await phoneNumber.selectText()
     await phoneNumber.type('6555555')
+
+    await page
+      .getByRole('region', {
+        name: label(parentalLeaveFormMessages.applicant.languageTitle),
+      })
+      .getByRole('radio', {
+        name: label(parentalLeaveFormMessages.applicant.icelandic),
+      })
+      .click()
     await proceed()
 
     // Payment information
@@ -552,7 +581,19 @@ test.describe('Parental leave', () => {
     // Register an employer
     await expect(
       page.getByRole('heading', {
-        name: 'Skráning vinnuveitanda',
+        name: label(parentalLeaveFormMessages.employer.title),
+      }),
+    ).toBeVisible()
+
+    await page
+      .getByRole('button', {
+        name: label(parentalLeaveFormMessages.employer.addEmployer),
+      })
+      .click()
+
+    await expect(
+      page.getByRole('paragraph').filter({
+        hasText: label(parentalLeaveFormMessages.employer.registration),
       }),
     ).toBeVisible()
     await page.getByTestId('employer-email').type(employer.email)
@@ -560,14 +601,11 @@ test.describe('Parental leave', () => {
     const employmentRatio = page.getByTestId('employment-ratio')
     await employmentRatio.type('100%')
     await employmentRatio.press('Enter')
-    await proceed()
-
-    // Who is your employer?
-    await expect(
-      page.getByRole('heading', {
-        name: 'Vinnuveitendur',
-      }),
-    ).toBeVisible()
+    await page
+      .getByRole('button', {
+        name: label(parentalLeaveFormMessages.employer.registerEmployer),
+      })
+      .click()
     await proceed()
 
     // Additional documentation for application
@@ -579,6 +617,11 @@ test.describe('Parental leave', () => {
     await proceed()
 
     // Start of parental leave
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.firstPeriodStart.title),
+      }),
+    ).toBeVisible()
     await page
       .getByRole('region', {
         name: 'Upphaf fæðingarorlofs',
@@ -603,8 +646,8 @@ test.describe('Parental leave', () => {
     await proceed()
 
     await expect(
-      page.getByRole('region', {
-        name: 'Lengd fæðingarorlofs',
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.duration.title),
       }),
     ).toBeVisible()
     await page
@@ -616,6 +659,11 @@ test.describe('Parental leave', () => {
     await proceed()
 
     // What percent off your employment ratio will you take for the leave?
+    await expect(
+      page.getByRole('heading', {
+        name: label(parentalLeaveFormMessages.ratio.title),
+      }),
+    ).toBeVisible()
     const selectPercentageUse = page.getByTestId('select-percentage-use')
     await selectPercentageUse.focus()
     await page.keyboard.type('50%')
