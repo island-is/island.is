@@ -226,6 +226,18 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/air-discount', async (passProps) => {
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.AirDiscountScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/finance', async (passProps) => {
     await Navigation.dismissAllModals()
     await Navigation.popToRoot(StackRegistry.MoreStack)

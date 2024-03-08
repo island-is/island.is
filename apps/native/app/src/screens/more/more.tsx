@@ -8,6 +8,7 @@ import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
+import airplaneIcon from '../../assets/icons/airplain.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -130,6 +131,17 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
               }
             />
           )}
+          <ListButton
+            title={intl.formatMessage({ id: 'profile.air' })}
+            onPress={() => navigateTo(`/air-discount`)}
+            icon={
+              <Image
+                source={airplaneIcon as any}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            }
+          />
         </Row>
       </ScrollView>
       <BottomTabsIndicator index={4} total={5} />

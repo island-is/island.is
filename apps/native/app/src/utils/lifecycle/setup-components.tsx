@@ -35,8 +35,10 @@ import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass'
 import { WalletPassportScreen } from '../../screens/wallet-passport/wallet-passport'
 import { WalletScreen } from '../../screens/wallet/wallet'
 import { WebViewScreen } from '../../screens/webview/webview'
+import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
 import { ComponentRegistry as CR } from '../component-registry'
 import { registerComponent } from '../register-component'
+
 
 export function registerAllComponents() {
   // dev only
@@ -86,5 +88,6 @@ export function registerAllComponents() {
   registerComponent(CR.CognitoAuthScreen, CognitoAuthScreen)
   registerComponent(CR.FinanceScreen, FinanceScreen)
   registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen)
+  registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
 }

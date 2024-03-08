@@ -282,6 +282,7 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
+  'profile.air': 'Air discount scheme',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -472,4 +473,7 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
+
+    // air discount screen
+    'airDiscount.screenTitle': 'Air discount scheme',
 }

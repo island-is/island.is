@@ -191,6 +191,7 @@ export const is = {
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
+  'profile.air': 'Loftbrú',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -472,4 +473,7 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
+
+  // air discount screen
+  'airDiscount.screenTitle': 'Loftbrú',
 }
