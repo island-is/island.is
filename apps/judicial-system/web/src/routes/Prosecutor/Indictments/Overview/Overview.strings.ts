@@ -74,20 +74,18 @@ export const overview = {
     description:
       'Texti í info boxi þegar ákæra hefur verið send á Yfirlit ákæru skefi í ákærum.',
   }),
-  indictmentSentForConfirmation: defineMessage({
-    id: 'judicial.system.indictments:overview.indictment_sent_for_confirmation',
+  indictmentSentForConfirmationTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_sent_for_confirmation_title',
     defaultMessage: 'Ákæra hefur verið send til staðfestingar',
     description:
       'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
   }),
-
   indictmentSentForConfirmationText: defineMessage({
-    id: 'judicial.system.indictments:overview.indictment_sent_for_confirmation',
+    id: 'judicial.system.indictments:overview.indictment_sent_for_confirmation_text',
     defaultMessage: 'Að staðfestingu lokinni sendist ákæran á héraðsdómstól',
     description:
       'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
   }),
-
   indictmentDeniedExplanationTitle: defineMessage({
     id: 'judicial.system.indictments:overview.indictment_denied_explanation_title',
     defaultMessage: 'Ástæða höfnunar',
