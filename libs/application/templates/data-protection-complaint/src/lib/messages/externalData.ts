@@ -1,4 +1,4 @@
-import { defineMessage, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 export const externalData = {
   general: defineMessages({
@@ -27,7 +27,7 @@ export const externalData = {
       description: 'externalData page description',
     },
   }),
-  labels: defineMessage({
+  labels: defineMessages({
     nationalRegistryTitle: {
       id: 'dpac.application:section.externalData.labels.nationRegistryTitle',
       defaultMessage: 'Grunnupplýsingar frá Þjóðskrá Íslands',
