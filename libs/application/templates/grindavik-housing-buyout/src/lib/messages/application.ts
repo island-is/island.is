@@ -20,9 +20,29 @@ export const application = {
   }),
   applicant: defineMessages({
     sectionTitle: {
-      id: 'ghb.application:applicant:section.title',
+      id: 'ghb.application:applicant.section.title',
       defaultMessage: 'Upplýsingar um þig',
       description: 'Applicant information section title',
+    },
+    bankInfo: {
+      id: 'ghb.application:applicant.labels.bankInfo',
+      defaultMessage: 'Bankaupplýsingar',
+      description: 'Bank information',
+    },
+    bankNumber: {
+      id: 'ghb.application:applicant.labels.bankNumber',
+      defaultMessage: 'Bankanúmer',
+      description: 'Bank number',
+    },
+    bankLedger: {
+      id: 'ghb.application:applicant.labels.bankLedger',
+      defaultMessage: 'Höfuðbók',
+      description: 'Ledger',
+    },
+    accountNumber: {
+      id: 'ghb.application:applicant.labels.accountNumber',
+      defaultMessage: 'Reikningsnúmer',
+      description: 'Account number',
     },
   }),
   propertyInformation: defineMessages({
@@ -249,6 +269,13 @@ export const application = {
       description: 'Confirmation label',
     },
   }),
+  preemptiveRight: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:preemptiveRight.section.title',
+      defaultMessage: 'Forgangsréttur',
+      description: 'Preemptive right section title',
+    },
+  }),
   overview: defineMessages({
     sectionTitle: {
       id: 'ghb.application:overview.section.title',
@@ -306,6 +333,11 @@ export const application = {
       id: 'ghb.application:overview.preemptiveRightTypeTitle',
       defaultMessage: 'Veldu forgangsrétt',
       description: 'Preemptive right type title',
+    },
+    preemptiveRightsLabel: {
+      id: 'ghb.application:overview.preemptiveRightsLabel',
+      defaultMessage: 'Valdir forgangsréttir',
+      description: 'Preemptive rights label',
     },
     purchaseRight: {
       id: 'ghb.application:overview.purchaseRight',

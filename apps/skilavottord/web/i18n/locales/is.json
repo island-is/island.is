@@ -599,11 +599,6 @@
       "select": "/deregister-vehicle/select",
       "deregister": "/deregister-vehicle/[id]"
     },
-    "deregisterVehicleKM": {
-      "baseRoute": "/en/deregister-vehicle-km",
-      "select": "/en/deregister-vehicle-km/select",
-      "deregister": "/en/deregister-vehicle-km/[id]"
-    },
     "recycledVehicles": "/recycled-vehicles",
     "accessControl": "/access-control",
     "accessControlCompany": "/access-control-company",
