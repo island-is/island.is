@@ -137,10 +137,10 @@ FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 RUN apt-get update -y && apt-get install -y zip awscli make g++ && apt-get purge
 
-ARG APP_HOME
-ARG APP_DIST_HOME=/dist/apps/${APP}
+ARG APP_HOME=apps/system-e2e
+ARG APP_DIST_HOME=dist/apps/${APP}
 
-WORKDIR /dist
+WORKDIR /data
 
 # Common slow-changing dependencies
 COPY package.json yarn.lock .yarnrc.yml ./
@@ -152,15 +152,15 @@ RUN --mount=type=cache,id=playwright-cache,target=./.yarn/cache --mount=type=cac
   export CI=true && yarn add playwright && yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 # Built app
-COPY --from=builder /build/${APP_DIST_HOME} ${APP_DIST_HOME}
-COPY ${APP_HOME}/entrypoint.sh ${APP_DIST_HOME}
+COPY --from=builder /build/${APP_DIST_HOME} ${APP_HOME}
+COPY ${APP_HOME}/entrypoint.sh ${APP_HOME}
 
 
 RUN chown -R pwuser:pwuser .
 USER pwuser
 RUN --mount=type=cache,id=playwright-cache,target=./.yarn/cache --mount=type=cache,id=playwright-node_modules,target=./node_modules \
   yarn install
-ENV PATH="${APP_DIST_HOME}:${PATH}"
+ENV PATH="${APP_HOME}:${PATH}"
 ENTRYPOINT ["entrypoint.sh"]
 
 
