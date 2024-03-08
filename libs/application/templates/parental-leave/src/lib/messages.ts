@@ -1582,8 +1582,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     additionalAttachmentDescription: {
       id: 'pl.application:fileUpload.new.employer.attachment.description',
       defaultMessage:
-        'Ef þú ert að skipta um vinnuveitanda vinsamlegast hlaðið upp skjali því til staðfestingar.',
-      description: 'If you are changing your employer, please sumbit a document confirmation.',
+        'Ef þú ert að skipta um vinnuveitanda þarf að skila inn starfslokavottorði frá fyrri vinnuveitanda því til staðfestingar. Vinsamlegast hlaðið skjalinu upp hér að neðan.',
+      description: 'If you are changing your employer you must submit a document from your previous employer confirming this. Please upload the document below.',
     },
     additionalDocumentsEditSubmit: {
       id: 'pl.application:fileUpload.additionalDocumentsEditSubmit',
