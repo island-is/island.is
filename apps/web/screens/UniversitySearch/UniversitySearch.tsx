@@ -262,8 +262,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     ignoreLocation: true,
     includeScore: true,
     keys: [
-      `name${locale === 'is' ? 'Is' : 'En'}`,
-      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+      {
+        name: `name${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 2,
+      },
+      {
+        name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
