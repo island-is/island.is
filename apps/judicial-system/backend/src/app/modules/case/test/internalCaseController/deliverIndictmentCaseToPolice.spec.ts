@@ -11,14 +11,14 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { nowFactory } from '../../../factories'
 import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: DeliverResponse

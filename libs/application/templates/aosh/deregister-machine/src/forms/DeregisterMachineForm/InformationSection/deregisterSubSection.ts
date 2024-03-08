@@ -49,7 +49,7 @@ export const deregisterSubSection = buildSubSection({
           title: deregister.labels.fateOfMachine,
           width: 'full',
           variant: 'textarea',
-          required: false,
+          required: true,
           rows: 5,
         }),
         buildSubmitField({
