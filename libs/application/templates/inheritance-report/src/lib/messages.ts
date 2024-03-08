@@ -969,6 +969,11 @@ export const m = defineMessages({
     defaultMessage: 'Búshluti eftirlifandi maka',
     description: '',
   },
+  deceasedSeparateProperty: {
+    id: 'ir.application:deceasedSeparateProperty',
+    defaultMessage: 'Séreign hins látna',
+    description: '',
+  },
   spousesShareDescription: {
     id: 'ir.application:spousesShareDescription',
     defaultMessage:

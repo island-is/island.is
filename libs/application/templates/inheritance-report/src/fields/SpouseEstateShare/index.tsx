@@ -71,10 +71,10 @@ export const SpouseEstateShare: FC<
 
   const getUpdatedValues = useCallback(() => getValues(id), [getValues, id])
 
-  // const [
-  //   localSpouseTotalSeparateProperty,
-  //   setLocalSpouseTotalSeparateProperty,
-  // ] = useState<number>(getUpdatedValues()?.spouseTotalSeparateProperty ?? 0)
+  const [
+    localSpouseTotalSeparateProperty,
+    setLocalSpouseTotalSeparateProperty,
+  ] = useState<number>(getUpdatedValues()?.spouseTotalSeparateProperty ?? 0)
   const [localSpouseTotalDeduction, setLocalSpouseTotalDeduction] =
     useState<number>(getUpdatedValues()?.spouseTotalDeduction ?? 0)
   const [wasInCohabitation, setWasInCohabitation] = useState<
@@ -229,7 +229,7 @@ export const SpouseEstateShare: FC<
               id={spouseTotalDeductionField}
               name={spouseTotalDeductionField}
               value={formatCurrency(String(localSpouseTotalDeduction ?? '0'))}
-              label={formatMessage(m.spousesShare)}
+              label={formatMessage(m.deceasedSeparateProperty)}
               backgroundColor="white"
               readOnly
             />
@@ -261,8 +261,9 @@ export const SpouseEstateShare: FC<
                 clearErrors()
                 const value = e.target.value
 
-                setValue(spouseTotalSeparatePropertyField, valueToNumber(value))
-                setLocalSpouseTotalDeduction(valueToNumber(value))
+                console.log(value, valueToNumber(value))
+                setValue(spouseTotalSeparatePropertyField, valueToNumber(value, ','))
+                setLocalSpouseTotalDeduction(valueToNumber(value, ','))
               }}
               currency
             />
