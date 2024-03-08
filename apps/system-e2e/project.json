@@ -67,6 +67,12 @@
         "grep": "/acceptance/"
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No unit tests for e2e'"
+      }
+    },
     "e2e": {
       "executor": "@nx/playwright:playwright",
       "options": {
