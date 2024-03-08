@@ -90,9 +90,7 @@ const sortIntoBuckets = (dataArray: FuseQueryResult[]) => {
     )
 
     const orderedList: FuseQueryResult[] = []
-    // Outer loop to iterate over each index up to the maximum length
     for (let i = 0; i < maxLength; i++) {
-      // Inner loop to iterate over each key
       for (let j = 0; j < keys.length; j++) {
         const currentKey = keys[j]
 
