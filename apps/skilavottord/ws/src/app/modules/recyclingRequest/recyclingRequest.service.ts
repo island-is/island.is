@@ -34,7 +34,7 @@ export class RecyclingRequestService {
     private recycllingPartnerService: RecyclingPartnerService,
     private vehicleService: VehicleService,
     private icelandicTransportAuthorityServices: IcelandicTransportAuthorityServices,
-  ) {}
+  ) { }
 
   async deRegisterVehicle(
     vehiclePermno: string,
@@ -89,10 +89,12 @@ export class RecyclingRequestService {
         )
       }
     } catch (err) {
+      delete err.data
+      this.logger.error(`Failed to deregister vehicle`, { error: err })
       throw new Error(
-        `Failed on deregistered vehicle ${vehiclePermno.slice(
+        `Failed to deregister vehicle ${vehiclePermno.slice(
           -3,
-        )} because: ${err}`,
+        )}`
       )
     }
   }
@@ -472,10 +474,12 @@ export class RecyclingRequestService {
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
         } catch (err) {
+          delete err.data
           // Payment succeed but we could not log it in database
           this.logger.error(
             `car-recycling: Failed on inserting requestType 'paymentInitiated' for vehicle's number: ${loggedPermno}
-            )} in database with error: ${err} but payment has succeed.`,
+            )} in database with error, but payment has succeed.`,
+            { error: err },
           )
         }
         console.timeEnd('car-recycling:Timer-Payment-total')
@@ -492,10 +496,11 @@ export class RecyclingRequestService {
 
       return status
     } catch (err) {
+      delete err.data
       this.logger.error(
         `car-recycling: Something went wrong while saving request for ${loggedPermno}`,
         {
-          err,
+          error: err,
         },
       )
 
