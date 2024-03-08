@@ -72,8 +72,6 @@ import { TranslationDefaults } from './TranslationDefaults'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
-
 const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
@@ -264,6 +262,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     threshold: 0.3,
     findAllMatches: true,
     ignoreLocation: true,
+    includeScore: true,
     keys: [
       `name${locale === 'is' ? 'Is' : 'En'}`,
       `specializationName${locale === 'is' ? 'Is' : 'En'}`,
@@ -347,7 +346,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
-      href: applicationUrlParser(item.universityId)
+      href: applicationUrlParser(item.universityId),
     }
     return CTA
   }
