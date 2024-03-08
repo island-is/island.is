@@ -1,6 +1,8 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
 
-export const parentalLeaveFormMessages = {
+type MessageDir = Record<string, Record<string, MessageDescriptor>>
+
+export const parentalLeaveFormMessages: MessageDir = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
     institution: {
