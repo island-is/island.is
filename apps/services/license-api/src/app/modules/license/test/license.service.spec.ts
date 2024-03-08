@@ -26,7 +26,10 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
+import { Cache } from 'cache-manager'
+import * as faker from 'faker'
 import ShortUniqueId from 'short-unique-id'
 import { VerifyInputData } from '../dto/verifyLicense.input'
 import { LicenseService } from '../license.service'
@@ -41,10 +44,10 @@ const cacheStore = new Map<string, unknown>()
 const licenseIds = Object.values(LicenseId)
 
 const createCahceData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
-  nationalId: '1234567890',
+  nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
   licenseType: getLicenseType(licenseId),
   extraData: {
-    name: 'John Doe',
+    name: faker.name.firstName(),
   },
 })
 
@@ -266,6 +269,18 @@ describe('LicenseService', () => {
                 new MockUpdateClient(logger, smart),
           }),
           inject: [LOGGER_PROVIDER, SmartSolutionsApi],
+        },
+        {
+          provide: BarcodeService,
+          useFactory: () => {
+            return new BarcodeService(
+              {
+                barcodeSecretKey: 'secret',
+              } as ConfigType<typeof LicenseConfig>,
+              cacheStore as unknown as Cache,
+            )
+          },
+          inject: [LicenseConfig.KEY],
         },
       ],
     }).compile()
