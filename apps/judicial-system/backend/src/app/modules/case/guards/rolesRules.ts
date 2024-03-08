@@ -200,7 +200,8 @@ export const prosecutorTransitionRule: RolesRule = {
 
     if (
       !isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.DENY_INDICTMENT
+      (request.body.transition === CaseTransition.DENY_INDICTMENT ||
+        request.body.transition === CaseTransition.ASK_FOR_CONFIRMATION)
     ) {
       return false
     }
