@@ -122,8 +122,8 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
   @Field()
   allowThirdLevelQualification!: boolean
 
-  @Field(() => [UniversityGatewayProgramCourse])
-  courses!: UniversityGatewayProgramCourse[]
+  // @Field(() => [UniversityGatewayProgramCourse])
+  // courses!: UniversityGatewayProgramCourse[]
 
   @Field(() => [UniversityGatewayProgramExtraApplicationField])
   extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]

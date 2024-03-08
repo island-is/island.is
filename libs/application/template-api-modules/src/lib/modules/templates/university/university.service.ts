@@ -18,20 +18,13 @@ import {
   ApplicationApi,
   CreateApplicationDtoModeOfDeliveryEnum,
   CreateApplicationEducationDto,
-  CreateApplicationDto,
   UniversityApplicationControllerCreateApplicationRequest,
   CreateApplicationDtoEducationOptionEnum,
 } from '@island.is/clients/university-gateway-api'
 
 import { UniversityAnswers } from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import {
-  InlineResponse2001Items,
-  InlineResponse200Items,
-  InnaClientService,
-} from '@island.is/clients/inna'
-import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { InnaClientService } from '@island.is/clients/inna'
 
 @Injectable()
 export class UniversityService extends BaseTemplateApiService {
@@ -58,7 +51,7 @@ export class UniversityService extends BaseTemplateApiService {
   }
 
   async getPrograms({ application, auth }: TemplateApiModuleActionProps) {
-    const res = await this.programApi.programControllerGetPrograms({
+    const res = await this.programApi.programControllerGetApplicationPrograms({
       active: true,
     })
 
@@ -73,10 +66,6 @@ export class UniversityService extends BaseTemplateApiService {
       specializationNameEn: item.specializationNameEn,
       universityId: item.universityId,
       universityContentfulKey: item.universityDetails.contentfulKey,
-      departmentNameIs: item.departmentNameIs,
-      departmentNameEn: item.departmentNameEn,
-      startingSemesterYear: item.startingSemesterYear,
-      startingSemesterSeason: item.startingSemesterSeason.toString(),
       applicationStartDate: item.applicationStartDate,
       applicationEndDate: item.applicationEndDate,
       schoolAnswerDate: item.schoolAnswerDate,
@@ -84,13 +73,10 @@ export class UniversityService extends BaseTemplateApiService {
       degreeType: item.degreeType.toString(),
       degreeAbbreviation: item.degreeAbbreviation,
       credits: item.credits,
-      descriptionIs: item.descriptionIs,
-      descriptionEn: item.descriptionEn,
-      durationInYears: item.durationInYears,
-      costPerYear: item.costPerYear,
-      iscedCode: item.iscedCode,
       modeOfDelivery: item.modeOfDelivery,
       allowException: item.allowException,
+      allowThirdLevelQualification: item.allowThirdLevelQualification,
+      extraApplicationFields: item.extraApplicationFields,
     }))
   }
 

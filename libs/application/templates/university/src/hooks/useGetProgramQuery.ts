@@ -6,7 +6,7 @@ import { useLazyQuery } from './useLazyQuery'
 export const useGetProgramQuery = () => {
   return useLazyQuery<
     {
-      program: UniversityGatewayProgramDetails
+      universityGatewayProgram: UniversityGatewayProgramDetails
     },
     {
       input: {

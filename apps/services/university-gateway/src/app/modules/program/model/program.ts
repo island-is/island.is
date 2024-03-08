@@ -311,17 +311,6 @@ export class ProgramBase extends Model<
   })
   tmpActive!: boolean
 
-  @ApiProperty({
-    description:
-      'Whether the program allows applicants to apply using exception',
-    example: true,
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  allowException!: boolean
-
   @ApiHideProperty()
   @CreatedAt
   readonly created!: CreationOptional<Date>
@@ -330,6 +319,9 @@ export class ProgramBase extends Model<
   @UpdatedAt
   readonly modified!: CreationOptional<Date>
 }
+/*
+  This Model is for program information that are passed into the application, it doesn't need all the values passed to the Program model or ProgramBase so a new model was created with the necessary information
+*/
 
 @Table({
   tableName: 'program',
@@ -441,6 +433,17 @@ export class Program extends ProgramBase {
 
   @ApiProperty({
     description:
+      'Whether the program allows applicants to apply using exception',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  allowException!: boolean
+
+  @ApiProperty({
+    description:
       'Whether the program allows applicants to apply using third level qualification',
     example: true,
   })
@@ -450,12 +453,12 @@ export class Program extends ProgramBase {
   })
   allowThirdLevelQualification!: boolean
 
-  @ApiProperty({
-    description: 'List of courses that belong to this program',
-    type: [ProgramCourse],
-  })
-  @HasMany(() => ProgramCourse)
-  courses!: ProgramCourse[]
+  // @ApiProperty({
+  //   description: 'List of courses that belong to this program',
+  //   type: [ProgramCourse],
+  // })
+  // @HasMany(() => ProgramCourse)
+  // courses!: ProgramCourse[]
 
   @ApiProperty({
     description:
