@@ -68,6 +68,7 @@ export const overview = {
     defaultMessage: 'Hætta við',
     description: 'Texti í takka í modal glugga á Yfirlit ákæru skefi í ákærum.',
   }),
+
   indictmentSentToCourt: defineMessage({
     id: 'judicial.system.indictments:overview.indictment_sent_to_court',
     defaultMessage: 'Ákæra hefur verið send dómstól',

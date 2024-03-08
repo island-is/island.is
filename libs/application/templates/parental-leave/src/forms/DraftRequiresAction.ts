@@ -1,11 +1,12 @@
 import {
-  buildCustomField,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
-
+import { DefaultEvents, Form } from '@island.is/application/types'
 import Logo from '../assets/Logo'
+import { States as ApplicationStates } from '../constants'
 import {
   inReviewFormMessages,
   parentalLeaveFormMessages,
@@ -15,16 +16,38 @@ export const DraftRequiresAction: Form = buildForm({
   id: 'ParentalLeaveSubmissionNeedsAction',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REJECTED,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'draftRequiresAction.section',
-      title: parentalLeaveFormMessages.draftFlow.draftNotApprovedTitle,
+      title: '',
       children: [
-        buildCustomField({
-          id: 'draftRequiresAction.field',
+        buildMultiField({
+          id: 'draftRequiresAction.multiField',
           title: parentalLeaveFormMessages.draftFlow.draftNotApprovedTitle,
-          component: 'DraftRequiresAction',
+          description: (application) => {
+            return application.state === ApplicationStates.OTHER_PARENT_ACTION
+              ? parentalLeaveFormMessages.draftFlow
+                  .draftNotApprovedOtherParentDesc
+              : application.state === ApplicationStates.EMPLOYER_ACTION
+              ? parentalLeaveFormMessages.draftFlow.draftNotApprovedEmployerDesc
+              : parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc
+          },
+          children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  type: 'sign',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
