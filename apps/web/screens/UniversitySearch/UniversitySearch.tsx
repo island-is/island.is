@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
-import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -44,7 +43,6 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayProgramFiltersQuery,
-  GetUniversityGatewayProgramsQuery,
   GetUniversityGatewayUniversitiesQuery,
   Query,
   QueryGetOrganizationPageArgs,
@@ -70,8 +68,6 @@ import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
-
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
@@ -261,10 +257,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseOptions = {
     threshold: 0.3,
     findAllMatches: true,
-    ignoreLocation: true,
+    includeScore: true,
     keys: [
-      `name${locale === 'is' ? 'Is' : 'En'}`,
-      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+      {
+        name: `name${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 2,
+      },
+      {
+        name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
