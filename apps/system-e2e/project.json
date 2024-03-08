@@ -11,6 +11,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["bash {projectRoot}/build.sh"],
+
         "outputPath": "dist/{projectRoot}",
         "parallel": false
       },
@@ -25,6 +26,7 @@
         "main": "{projectRoot}/playwright.config.ts",
         "tsConfig": "{projectRoot}/tsconfig.json",
         "external": ["@nx/*", "fs"],
+
         "generatePackageJson": true,
         "sourceMap:": true,
         "deleteOutputPath": true,
@@ -57,19 +59,21 @@
     "smoke": {
       "executor": "@nx/playwright:playwright",
       "options": {
-        "config": "{projectRoot}/playwright.config.ts",
-        "skipInstall": true
+        "config": "{projectRoot}/playwright.config.ts"
       }
     },
     "acceptance": {
       "executor": "@nx/playwright:playwright",
       "options": {
+        "config": "{projectRoot}/playwright.config.ts",
         "grep": "/acceptance/"
       }
     },
     "e2e:all": {
       "executor": "@nx/playwright:playwright",
-      "options": {}
+      "options": {
+        "config": "{projectRoot}/playwright.config.ts"
+      }
     },
     "e2e": {
       "executor": "@nx/playwright:playwright",
