@@ -67,6 +67,10 @@
         "grep": "/acceptance/"
       }
     },
+    "e2e:all": {
+      "executor": "@nx/playwright:playwright",
+      "options": {}
+    },
     "e2e": {
       "executor": "@nx/playwright:playwright",
       "options": {
