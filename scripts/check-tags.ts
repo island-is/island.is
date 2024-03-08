@@ -14,25 +14,35 @@ const hasValidTags = async (filePath: string) => {
   const project = JSON.parse(projectText) as Project
   const tagsRaw = project.tags ?? []
   const tags = tagsRaw.map((tag) => tag.split(':'))
-  // Only allow a single "scope:*" tag or a tuple of "scope:*" and "lib:*"
-  const isNormal =
-    (tags.length === 1 && tags[0][0] === 'scope') ||
-    (tags.length === 2 &&
-      tags.find(([key]) => key === 'scope' || key === 'lib') &&
-      tags[0][1] === tags[1][1])
+
   const isEmpty = tags.length === 0
+  // Only allow 'scope:*' or 'lib:*' tags
+  const validPrefix = tags.every(([key]) => key === 'scope' || key === 'lib')
+  // Must have at least one scope tag or be empty
+  const hasScopePrefix = tags.some(([key]) => key === 'scope') || isEmpty
+  // Are all tags the same?
+  const singularTag = (new Set(tags.map(([, value]) => value))).size === 1
 
-  if (isEmpty) {
-    console.log(chalk.red.underline(filePath))
-    console.log('Missing nx tags for project boundaries\n')
-    return false
-  } else if (!isNormal) {
-    console.log(chalk.yellow.underline(filePath))
-    console.log('Unexpected nx tags:', tagsRaw.join(','), '\n')
-    return false
+  // Exit early for good projects
+  if (!isEmpty && validPrefix && hasScopePrefix && singularTag) {
+    return true
   }
+  console.log(chalk.red.underline(filePath))
+  if (isEmpty) {
+    console.log('- Missing NX tags for project boundaries')
+  }
+  if (!hasScopePrefix) {
+    console.log('- Missing scope tag')
+  }
+  if (!validPrefix) {
+    console.log('- Unexpected NX tags')
+  }
+  if (!singularTag) {
+    console.log('- All tags must be the same')
+  }
+  console.log('NX tags:', tagsRaw, '\n')
 
-  return true
+  return false
 }
 
 const checkProjects = async () => {
@@ -54,7 +64,7 @@ const checkProjects = async () => {
   if (invalidProjects.length > 0) {
     console.log(chalk.red('Found errors in project files'))
     console.log(
-      'All projects should have a configured NX tags which controls which project can import what. For more information see: https://docs.devland.is/repository/nx-tags',
+      'All projects should have a configured NX tags which controls which project can import what. For more information see: https://docs.devland.is/repository/NX-tags',
     )
     console.log('Invalid projects:', invalidProjects)
     process.exit(1)
