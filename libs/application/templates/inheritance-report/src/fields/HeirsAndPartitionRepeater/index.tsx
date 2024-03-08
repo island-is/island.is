@@ -186,7 +186,6 @@ export const HeirsAndPartitionRepeater: FC<
     setTotal(total)
   }, [getValues, id, props.sumField, setValue])
 
-  
   useEffect(() => {
     fields.forEach((field: any, mainIndex: number) => {
       const fieldIndex = `${id}[${mainIndex}]`
