@@ -259,7 +259,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseOptions = {
     threshold: 0.3,
     findAllMatches: true,
-    ignoreLocation: true,
     includeScore: true,
     keys: [
       {

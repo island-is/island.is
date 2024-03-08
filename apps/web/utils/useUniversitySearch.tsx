@@ -52,8 +52,10 @@ export const SearchProducts = ({
     })
     queryMaker.$and.push({ $or: orFilters })
   })
+
   const result = fuseInstance.search(queryMaker)
   const sortedResults = sortIntoBuckets(result as FuseQueryResult[])
+
   return [...Object.values(sortedResults)].flat() || []
 }
 
