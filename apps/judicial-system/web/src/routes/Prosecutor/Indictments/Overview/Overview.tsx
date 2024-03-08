@@ -171,17 +171,14 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
-            user?.canConfirmAppeal
+            user?.canConfirmAppeal &&
+            workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
               ? undefined
               : formatMessage(strings.nextButtonText, {
                   isNewIndictment,
                 })
           }
-          hideNextButton={
-            caseHasBeenReceivedByCourt ||
-            (user?.canConfirmAppeal &&
-              workingCase.state !== CaseState.WAITING_FOR_CONFIRMATION)
-          }
+          hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
             caseHasBeenReceivedByCourt
               ? formatMessage(strings.caseSendToCourt)
@@ -189,7 +186,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           }
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={
-            user?.canConfirmAppeal && !indictmentConfirmationDecision
+            userCanSendCaseToCourt &&
+            workingCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
+            !indictmentConfirmationDecision
           }
         />
       </FormContentContainer>
