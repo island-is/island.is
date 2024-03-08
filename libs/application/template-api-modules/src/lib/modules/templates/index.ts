@@ -121,6 +121,8 @@ import { DeregisterMachineTemplateModule } from './aosh/deregister-machine/dereg
 import { DeregisterMachineTemplateService } from './aosh/deregister-machine/deregister-machine.service'
 import { GrindavikHousingBuyoutModule } from './grindavik-housing-buyout/grindavik-housing-buyout.module'
 import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grindavik-housing-buyout.service'
+import { StreetRegistrationTemplateModule } from './aosh/street-registration/street-registration.module'
+import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -185,6 +187,7 @@ export const modules = [
   DeregisterMachineTemplateModule,
   GrindavikHousingBuyoutModule,
   OfficialJournalOfIcelandModule,
+  StreetRegistrationTemplateModule,
 ]
 
 export const services = [
@@ -250,4 +253,5 @@ export const services = [
   DeregisterMachineTemplateService,
   GrindavikHousingBuyoutService,
   OfficialJournalOfIcelandService,
+  StreetRegistrationTemplateService,
 ]

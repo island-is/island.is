@@ -9,6 +9,8 @@ import {
   MachineHateoasDto,
   MachineOwnerChangeApi,
   MachineStatusChangeApi,
+  MachineStreetRegistrationApi,
+  MachineStreetRegistrationCreateDto,
   MachineSupervisorChangeApi,
   MachinesApi,
   MachinesDocumentApi,
@@ -39,6 +41,7 @@ export class WorkMachinesClientService {
     private readonly machineCategoryApi: MachineCategoryApi,
     private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
     private readonly machineStatusApi: MachineStatusChangeApi,
+    private readonly machineStreetApi: MachineStreetRegistrationApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -63,6 +66,10 @@ export class WorkMachinesClientService {
 
   private machineStatusApiWithAuth(auth: Auth) {
     return this.machineStatusApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineStreetApiWithAuth(auth: Auth) {
+    return this.machineStreetApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   getWorkMachines = async (
@@ -180,5 +187,14 @@ export class WorkMachinesClientService {
     await this.machineStatusApiWithAuth(auth).apiMachineStatusChangePost(
       deregisterMachine,
     )
+  }
+
+  async streetRegistration(
+    auth: Auth,
+    streetRegistration: MachineStreetRegistrationCreateDto,
+  ) {
+    await this.machineStreetApiWithAuth(auth).apiMachineStreetRegistrationPost({
+      machineStreetRegistrationCreateDto: streetRegistration,
+    })
   }
 }
