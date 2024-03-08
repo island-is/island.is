@@ -11,7 +11,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
 import { EnergyFundsClientService } from '@island.is/clients/energy-funds'
 import format from 'date-fns/format'
-import { VehiclesCurrentVehicle } from './types'
+import { VehiclesCurrentVehicle, VehiclesWithTotalCount } from './types'
 
 @Injectable()
 export class EnergyFundsService extends BaseTemplateApiService {
@@ -162,10 +162,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     const applicationAnswers = application.answers as EnergyFundsAnswers
     const currentVehicleList = application.externalData?.currentVehicles
-      ?.data as Array<VehiclesCurrentVehicle>
-    const currentvehicleDetails = currentVehicleList.find(
-      (x) => x.permno === applicationAnswers.selectVehicle.plate,
-    )
+      ?.data as VehiclesWithTotalCount
+    const currentvehicleDetails =
+      currentVehicleList?.vehicles?.find(
+        (x) => x.permno === applicationAnswers.selectVehicle.plate,
+      ) || undefined
 
     try {
       const vehicleApiDetails = await this.vehiclesApiWithAuth(
