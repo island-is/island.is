@@ -326,7 +326,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
-    translation: 'ghb.application',
+    translation: ['ghb.application', 'uiForms.application'],
   },
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     slug: 'beidni-um-skodun-taekis',

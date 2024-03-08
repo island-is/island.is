@@ -29,4 +29,7 @@ const getDomicileOnDate = (
   })
 }
 
-export { getDomicileOnDate, getDomicileAtPostalCodeOnDate }
+const formatBankInfo = (bankInfo: string) =>
+  bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
+
+export { getDomicileOnDate, getDomicileAtPostalCodeOnDate, formatBankInfo }
