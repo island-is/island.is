@@ -124,12 +124,24 @@ export class IcelandicTransportAuthorityServices {
   }
 
   async checkIfCurrentUser(permno: string): Promise<boolean> {
+    //Get the latest vehicle information from Samgongustofa
     const result = await this.getVehicleInformation(permno)
 
     if (result && result.data) {
       const currentOwnerInfo = result.data.owners.find((owner) => {
         return owner.current
       })
+
+      if (!currentOwnerInfo) {
+        logger.error(
+          `car-recycling: Didnt find the current owner in the basic info ${permno.slice(
+            -3,
+          )}`,
+        )
+        throw new Error(
+          'car-recycling: Didnt find the current owner in the basic info',
+        )
+      }
 
       // If current owner hasn't sent in an car-recycling application, then he is not registered in Vehicle_Owner and therefore he needs to be registered.
       const owner = new VehicleOwnerModel()
@@ -138,7 +150,7 @@ export class IcelandicTransportAuthorityServices {
 
       const isOwner = await this.ownerService.create(owner)
 
-      // If the owner has been found or created in the database, then we can create the vehicle
+      // If the owner has been found or created in the database, then we can update the vehicle owner if needed
       if (isOwner) {
         const vehicle = new VehicleModel()
         vehicle.vehicleId = permno
@@ -149,6 +161,13 @@ export class IcelandicTransportAuthorityServices {
       }
       return true
     }
+
+    logger.error(
+      `car-recycling: Failed to get current owner info in checkIfCurrentUser when deregistering vehicle  ${permno.slice(
+        -3,
+      )}`,
+    )
+
     throw new Error(
       'car-recycling: Failed to get current owner info in checkIfCurrentUser when deregistering vehicle',
     )
