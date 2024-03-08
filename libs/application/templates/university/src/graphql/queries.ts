@@ -33,21 +33,6 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = `
       costInformationEn
       costInformationIs
       costPerYear
-      courses {
-        credits
-        descriptionEn
-        descriptionIs
-        externalId
-        externalUrlEn
-        externalUrlIs
-        id
-        nameEn
-        nameIs
-        requirement
-        semesterSeason
-        semesterYear
-        semesterYearNumber
-      }
       credits
       degreeAbbreviation
       degreeType

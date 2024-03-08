@@ -105,14 +105,23 @@ describe('getRegulation', () => {
     // @ts-expect-error  (testing bad input)
     const watName: RegQueryName = ExpectedResult.SERVER_ERROR
 
-    await expect(
-      regulationsService.getRegulation(RegulationViewTypes.original, emptyName),
-    ).rejects.toThrow()
-    await expect(
-      regulationsService.getRegulation(RegulationViewTypes.current, badName),
-    ).rejects.toThrow()
-    await expect(
-      regulationsService.getRegulation(RegulationViewTypes.original, watName),
-    ).rejects.toThrow()
+    expect(
+      await regulationsService.getRegulation(
+        RegulationViewTypes.original,
+        emptyName,
+      ),
+    ).toBe(null)
+    expect(
+      await regulationsService.getRegulation(
+        RegulationViewTypes.current,
+        badName,
+      ),
+    ).toBe(null)
+    expect(
+      await regulationsService.getRegulation(
+        RegulationViewTypes.original,
+        watName,
+      ),
+    ).toBe(null)
   })
 })

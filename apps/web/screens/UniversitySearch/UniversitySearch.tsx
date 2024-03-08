@@ -3,6 +3,7 @@ import Fuse from 'fuse.js'
 import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client/react/hooks/useQuery'
 
 import {
   Accordion,
@@ -68,7 +69,6 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
@@ -79,7 +79,6 @@ const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
-  data: Array<UniversityGatewayProgram>
   namespace: Record<string, string>
   filterOptions: Array<UniversityGatewayProgramFilter>
   locale: string
@@ -118,6 +117,11 @@ export interface ComparisonProps {
   iconSrc: string
 }
 
+interface UniversityProgramsQuery {
+  universityGatewayPrograms: {
+    data: Array<UniversityGatewayProgram>
+  }
+}
 interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
   applicationStatus: string
 }
@@ -139,7 +143,6 @@ const getActiveNavigationItemTitle = (
 }
 
 const UniversitySearch: Screen<UniversitySearchProps> = ({
-  data,
   filterOptions,
   namespace,
   searchQuery,
@@ -147,6 +150,49 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   organizationPage,
   universities,
 }) => {
+  const { data, loading } = useQuery<UniversityProgramsQuery>(
+    GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
+    { ssr: false },
+  )
+
+  const router = useRouter()
+  const { width } = useWindowSize()
+  const n = useNamespace(namespace)
+  const isMobileScreenWidth = width < theme.breakpoints.lg
+  const isTabletScreenWidth = width < theme.breakpoints.xl
+
+  const [selectedPage, setSelectedPage] = useState(1)
+  const [selectedComparison, setSelectedComparison] = useState<
+    Array<ComparisonProps>
+  >([])
+  const [query, setQuery] = useState('')
+  const searchTermHasBeenInitialized = useRef(false)
+  const [originalSortedResults, setOriginalSortedList] = useState<any>([])
+  const [filteredResults, setFilteredResults] = useState<Array<any>>([])
+  const [gridView, setGridView] = useState<boolean>(true)
+  const { linkResolver } = useLinkResolver()
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [filters, setFilters] = useState<FilterProps>(
+    JSON.parse(JSON.stringify(initialFilters)),
+  )
+
+  useEffect(() => {
+    if (!loading) {
+      const temp = [
+        ...(data?.universityGatewayPrograms.data as UniversityGatewayProgram[]),
+      ]
+        .sort(() => Math.random() - 0.5)
+        .map((item: UniversityGatewayProgram, index: number) => {
+          const itemWithStatus = {
+            ...item,
+            applicationStatus: getApplicationStatus(item),
+          }
+          return { item: itemWithStatus, refIndex: index, score: 1 }
+        })
+      setOriginalSortedList(temp)
+    }
+  }, [data, loading])
+
   useEffect(() => {
     if (!filterOptions) return
 
@@ -173,21 +219,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }, [filterOptions, universities])
 
-  const router = useRouter()
-  const { width } = useWindowSize()
-  const n = useNamespace(namespace)
-  useSetZIndexOnHeader()
-
-  const isMobileScreenWidth = width < theme.breakpoints.lg
-  const isTabletScreenWidth = width < theme.breakpoints.xl
-
-  const [selectedPage, setSelectedPage] = useState(1)
-  const [selectedComparison, setSelectedComparison] = useState<
-    Array<ComparisonProps>
-  >([])
-  const [query, setQuery] = useState('')
-  const searchTermHasBeenInitialized = useRef(false)
-
   const getApplicationStatus = (item: UniversityGatewayProgram) => {
     const now = new Date()
     return new Date(item.applicationStartDate) <= now &&
@@ -195,37 +226,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       ? 'OPEN'
       : 'CLOSED'
   }
-
-  // TODO Create proper types here
-  const [originalSortedResults, setOriginalSortedList] = useState<any>(
-    [...data]
-      // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
-      .sort(() => Math.random() - 0.5)
-      .map((item: UniversityGatewayProgram, index: number) => {
-        const itemWithStatus = {
-          ...item,
-          applicationStatus: getApplicationStatus(item),
-        }
-        return { item: itemWithStatus, refIndex: index, score: 1 }
-      }),
-  )
-
-  const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    originalSortedResults,
-  )
-
-  const { linkResolver } = useLinkResolver()
-
-  //creating a deep copy to avoid original being affected by changes to filters
-  const [filters, setFilters] = useState<FilterProps>(
-    JSON.parse(JSON.stringify(initialFilters)),
-  )
-
-  const [gridView, setGridView] = useState<boolean>(true)
-
-  const [totalPages, setTotalPages] = useState<number>(
-    Math.ceil(data.length / ITEMS_PER_PAGE),
-  )
 
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
@@ -276,14 +276,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     ],
   }
 
-  const fuseInstance = new Fuse(
-    data.map((item) => {
-      return { ...item, applicationStatus: getApplicationStatus(item) }
-    }),
-    fuseOptions,
-  )
+  const resetFilteredList = () => {
+    setFilteredResults(originalSortedResults)
+  }
 
   useEffect(() => {
+    if (loading) return
+
+    let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
+    if (originalSortedResults.length > 0) {
+      fuseInstance = new Fuse(
+        data?.universityGatewayPrograms.data || [],
+        fuseOptions,
+      )
+    }
+
     const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
     Object.keys(filters).forEach((key) => {
       const str = key as keyof typeof filters
@@ -305,11 +312,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       setFilteredResults(results)
     }
     localStorage.setItem('savedFilters', JSON.stringify(filters))
-  }, [filters, query])
-
-  const resetFilteredList = () => {
-    setFilteredResults(originalSortedResults)
-  }
+  }, [filters, query, data, loading, originalSortedResults, locale])
 
   const applicationUrlParser = (universityId: string) => {
     const university =
@@ -1396,52 +1399,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   res.setHeader(
     'Cache-Control',
-    'public, s-maxage=3300, stale-while-revalidate=300',
+    'public, s-maxage=1650, stale-while-revalidate=300',
   )
-  const namespaceResponse = await apolloClient.query<
-    GetNamespaceQuery,
-    GetNamespaceQueryVariables
-  >({
-    query: GET_NAMESPACE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        namespace: 'universityGateway',
-      },
-    },
-  })
-
-  const { search } = query
-
-  const namespace = JSON.parse(
-    namespaceResponse?.data?.getNamespace?.fields || '{}',
-  ) as Record<string, string>
-
-  let showPagesFeatureFlag = false
-
-  if (publicRuntimeConfig?.environment === 'prod') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
-  } else {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
-  }
-
-  if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Page not found')
-  }
 
   const [
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { universityGatewayPrograms },
-    },
     filters,
     {
       data: { universityGatewayUniversities },
     },
+    namespaceResponse,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -1452,19 +1421,34 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
         },
       },
     }),
-    apolloClient.query<GetUniversityGatewayProgramsQuery>({
-      query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    }),
     apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
       query: GET_UNIVERSITY_GATEWAY_FILTERS,
     }),
     apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     }),
+    apolloClient.query<GetNamespaceQuery, GetNamespaceQueryVariables>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+          namespace: 'universityGateway',
+        },
+      },
+    }),
   ])
 
+  const { search } = query
+
+  const namespace = JSON.parse(
+    namespaceResponse?.data?.getNamespace?.fields || '{}',
+  ) as Record<string, string>
+
+  if (!getOrganizationPage) {
+    throw new CustomNextError(404, 'Page not found')
+  }
+
   return {
-    data: universityGatewayPrograms.data,
     searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
@@ -1476,5 +1460,4 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
 
 export default withMainLayout(UniversitySearch, {
   showFooter: false,
-  headerColorScheme: 'white',
 })

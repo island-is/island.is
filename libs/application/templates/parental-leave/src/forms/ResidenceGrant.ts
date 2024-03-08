@@ -6,8 +6,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form } from '@island.is/application/types'
-
+import { DefaultEvents, Form } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -16,6 +15,8 @@ export const ResidenceGrant: Form = buildForm({
   id: 'residenceGrantApplication',
   title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
   logo: Logo,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'residenceGrant',
@@ -42,31 +43,25 @@ export const ResidenceGrant: Form = buildForm({
             }),
           ],
         }),
-
-        buildFileUploadField({
-          id: 'fileUpload.residenceGrant',
+        buildMultiField({
           title:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantAttachmentTitle,
-          introduction:
-            parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantAttachmentDescription,
-          maxSize: FILE_SIZE_LIMIT,
-          maxSizeErrorText: '',
-          uploadAccept: '.pdf',
-          uploadHeader: '',
-          uploadDescription:
-            parentalLeaveFormMessages.selfEmployed.uploadDescription,
-          uploadButtonLabel:
-            parentalLeaveFormMessages.selfEmployed.attachmentButton,
-        }),
-        buildMultiField({
-          title: parentalLeaveFormMessages.confirmation.title,
           id: 'residenceGrant.multiTwo',
           description:
             parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantSelectPeriodSubmitDescription,
+              .residenceGrantAttachmentDescription,
           children: [
+            buildFileUploadField({
+              id: 'fileUpload.residenceGrant',
+              title: '',
+              maxSize: FILE_SIZE_LIMIT,
+              uploadAccept: '.pdf',
+              uploadDescription:
+                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
             buildSubmitField({
               id: 'residenceGrant.submit',
               placement: 'footer',
@@ -74,13 +69,12 @@ export const ResidenceGrant: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'REJECT',
-                  name: parentalLeaveFormMessages.residenceGrantMessage
-                    .residenceGrantReject,
+                  event: DefaultEvents.REJECT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
                   type: 'reject',
                 },
                 {
-                  event: 'APPROVE',
+                  event: DefaultEvents.APPROVE,
                   name: parentalLeaveFormMessages.residenceGrantMessage
                     .residenceGrantSubmit,
                   type: 'primary',
@@ -88,11 +82,6 @@ export const ResidenceGrant: Form = buildForm({
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),

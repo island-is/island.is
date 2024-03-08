@@ -95,12 +95,6 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
       (program) => program.universityId === chosenUniversity,
     )
 
-    if (chosenProgram && chosenProgram.id) {
-      getProgramDetailsCallback({ id: chosenProgram.id }).then((response) => {
-        console.log('response', response)
-      })
-    }
-
     const extra =
       lang === 'is' && chosenProgram
         ? chosenProgram.specializationNameIs
@@ -121,19 +115,6 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
     setChosenProgram(value)
     setValue(`${Routes.PROGRAMINFORMATION}.programName`, programName)
   }
-
-  const getProgramDetails = useGetProgramQuery()
-  const getProgramDetailsCallback = useCallback(
-    async ({ id }: { id: string }) => {
-      const { data } = await getProgramDetails({
-        input: {
-          id,
-        },
-      })
-      return data
-    },
-    [getProgramDetails],
-  )
 
   return !loadingUniversities && !loadingPreAnswer ? (
     <Box>
