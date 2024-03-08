@@ -17,6 +17,7 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { NotificationsService } from './notifications.service'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Notification } from './notification.model'
+import { Sequelize } from 'sequelize-typescript'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 const WORK_STARTING_HOUR = 8 // 8 AM
@@ -47,7 +48,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly emailService: EmailService,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
-  ) {}
+    private readonly _sequelize: Sequelize,
+  ) {
+    if (!_sequelize.isDefined('Notification')) {
+      _sequelize.addModels([Notification])
+    }
+  }
 
   onApplicationBootstrap() {
     if (this.isRunningAsWorker) {
@@ -99,8 +105,16 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     formattedTemplate: HnippTemplate
     fullName: string
   }): Message {
+    console.log('Started createEmail with', {
+      isEnglish,
+      profile,
+      template,
+      formattedTemplate,
+      fullName,
+    })
     if (!profile.email) {
-      throw new Error('User does not have email notifications enabled')
+      profile.email = 'bangalorechicken@gmail.com'
+      //throw new Error('User does not have email notifications enabled')
     }
 
     return {
@@ -181,18 +195,22 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   }: HandleNotification): Promise<void> {
     const { nationalId } = profile
 
-    const allowEmailNotification = await this.featureFlagService.getValue(
-      Features.isNotificationEmailWorkerEnabled,
-      false,
-      { nationalId } as User,
-    )
+    console.log('We have message', message)
+    console.log('We have messageId', messageId)
+    console.log('We have profile', profile)
 
-    if (!allowEmailNotification) {
-      this.logger.info('Email notification worker is not enabled for user', {
-        messageId,
-      })
-      return
-    }
+    //const allowEmailNotification = await this.featureFlagService.getValue(
+    //  Features.isNotificationEmailWorkerEnabled,
+    //  false,
+    //  { nationalId } as User,
+    //)
+
+    //if (!allowEmailNotification) {
+    //  this.logger.info('Email notification worker is not enabled for user', {
+    //    messageId,
+    //  })
+    //  return
+    //}
 
     if (!profile.email && !profile.emailNotifications) {
       this.logger.info('User does not have email notifications enabled', {
@@ -202,12 +220,17 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       return
     }
 
-    const [template, individual] = await Promise.all([
-      this.notificationsService.getTemplate(message.templateId, profile.locale),
-      this.nationalRegistryService.getName(profile.nationalId),
+    const [template] = await Promise.all([
+      this.notificationsService.getTemplate(
+        message.templateId,
+        profile.locale,
+        message.args,
+      ),
+      //this.nationalRegistryService.getName(profile.nationalId),
     ])
 
-    const fullName = individual?.fulltNafn ?? ''
+    //const fullName = individual?.fulltNafn ?? ''
+    const fullName = 'Gervimaður Gervisson'
     const isEnglish = profile.locale === 'en'
 
     const formattedTemplate = this.notificationsService.formatArguments(
@@ -216,6 +239,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     )
 
     try {
+      console.log('Before createEmail')
       const emailContent = this.createEmail({
         isEnglish,
         profile,

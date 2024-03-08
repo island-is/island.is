@@ -161,10 +161,14 @@ export class NotificationsService {
   async getTemplate(
     templateId: string,
     locale?: string | null | undefined,
+    templateArgs: ArgumentDto[] = [],
   ): Promise<HnippTemplate> {
     locale = this.mapLocale(locale)
     //check cache
-    const cacheKey = `${templateId}-${locale}`
+    let cacheKey = `${templateId}-${locale}`
+    if (arguments.length) {
+      cacheKey += templateArgs.map((arg) => `${arg.key}|${arg.value}`).join('-')
+    }
     const cachedTemplate = await this.getFromCache(cacheKey)
 
     if (cachedTemplate) {

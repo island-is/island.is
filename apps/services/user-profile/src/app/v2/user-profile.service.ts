@@ -27,7 +27,11 @@ export class UserProfileService {
     private readonly verificationService: VerificationService,
     private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
-  ) {}
+  ) {
+    if (!this.sequelize.isDefined('UserProfile')) {
+      this.sequelize.addModels([UserProfile])
+    }
+  }
 
   async findById(
     nationalId: string,

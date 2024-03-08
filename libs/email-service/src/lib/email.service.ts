@@ -79,18 +79,25 @@ export class EmailService {
     let messageId = ''
 
     try {
+      console.log('Before getTransport')
       const transport = await this.getTransport()
+      console.log('After getTransport, before createTransport')
       const transporter = nodemailer.createTransport(transport)
+      console.log('After createTransport')
 
       if (message.template) {
+        console.log('Before buildCustomTemplate')
         const { html, attachments } =
           await this.adapterService.buildCustomTemplate(message.template)
+        console.log('After buildCustomTemplate')
 
         message.html = html
         message.attachments = (message.attachments ?? []).concat(attachments)
       }
 
+      console.log('Before sendMail')
       const info = await transporter.sendMail(message)
+      console.log('After sendmail')
 
       messageId = `${info.messageId}`
 
