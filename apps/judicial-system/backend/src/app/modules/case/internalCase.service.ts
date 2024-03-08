@@ -63,7 +63,6 @@ import { caseModuleConfig } from './case.config'
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
   'demands',
-  'lawsBroken',
   'requestedOtherRestrictions',
   'caseFacts',
   'legalArguments',
