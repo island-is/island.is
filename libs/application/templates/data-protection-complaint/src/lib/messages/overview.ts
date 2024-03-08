@@ -1,4 +1,4 @@
-import { defineMessage, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 export const overview = {
   general: defineMessages({
@@ -18,7 +18,7 @@ export const overview = {
       description: 'confirmation page title',
     },
   }),
-  labels: defineMessage({
+  labels: defineMessages({
     sendApplication: {
       id: 'dpac.application:section.overview.labels.sendApplication',
       defaultMessage: 'Senda',
