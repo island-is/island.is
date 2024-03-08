@@ -166,8 +166,12 @@ export class NotificationsService {
     locale = this.mapLocale(locale)
     //check cache
     let cacheKey = `${templateId}-${locale}`
-    if (arguments.length) {
-      cacheKey += templateArgs.map((arg) => `${arg.key}|${arg.value}`).join('-')
+    if (
+      templateArgs.length &&
+      templateArgs.find((arg) => arg.key == 'organization')
+    ) {
+      let organization = templateArgs.find((arg) => arg.key == 'organization')
+      cacheKey += `-organization-${organization?.value}`
     }
     const cachedTemplate = await this.getFromCache(cacheKey)
 

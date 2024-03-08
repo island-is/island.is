@@ -13,7 +13,6 @@ import { UserProfile } from './userProfile.model'
 import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
-import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class UserProfileService {
@@ -24,15 +23,7 @@ export class UserProfileService {
     private logger: Logger,
     @InjectModel(UserDeviceTokens)
     private readonly userDeviceTokensModel: typeof UserDeviceTokens,
-    private readonly sequelize: Sequelize,
-  ) {
-    if (!this.sequelize.isDefined('UserProfile')) {
-      this.sequelize.addModels([UserProfile])
-    }
-    if (!this.sequelize.isDefined('UserDeviceTokens')) {
-      this.sequelize.addModels([UserDeviceTokens])
-    }
-  }
+  ) {}
 
   async findById(id: string): Promise<UserProfile | null> {
     this.logger.debug(`Finding user profile by id "${id}"`)
