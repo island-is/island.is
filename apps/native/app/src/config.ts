@@ -45,10 +45,12 @@ export const bundleId = DeviceInfo.getBundleId()
 
 export const isTestingApp =
   bundleId.endsWith('.staging') || bundleId.endsWith('.dev')
+export const isScannerApp = bundleId.endsWith('.scanner') || true;
 
 export const config = {
   bundleId,
   isTestingApp,
+  isScannerApp,
   idsClientId: '@island.is/app',
   idsScopes: [
     'openid',

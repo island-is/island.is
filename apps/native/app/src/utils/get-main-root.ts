@@ -9,6 +9,7 @@ import {
 } from './component-registry'
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { testIDs } from './test-ids'
+import { config } from '../config'
 
 export const getRightButtons = ({
   unreadCount = notificationsStore.getState().unreadCount,
@@ -51,6 +52,22 @@ export const getRightButtons = ({
  * @returns Layout
  */
 export function getMainRoot(): Layout {
+  if (config.isScannerApp) {
+    return {
+      stack: {
+        id: StackRegistry.HomeStack,
+        children: [
+          {
+            component: {
+              id: ComponentRegistry.ScannerAppHomeScreen,
+              name: ComponentRegistry.ScannerAppHomeScreen,
+            },
+          },
+        ],
+      },
+    }
+  }
+
   const rightButtons = getRightButtons()
   return {
     bottomTabs: {

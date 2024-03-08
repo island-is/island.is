@@ -21,6 +21,7 @@ import styled from 'styled-components/native'
 import flashligth from '../../assets/icons/flashlight.png'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { config } from '../../config'
 
 const BottomRight = styled.View`
   position: absolute;
@@ -65,7 +66,7 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-const isSimulator = Platform.OS === 'ios' && DeviceInfo.isEmulatorSync()
+const isSimulator = Platform.OS === 'ios' || DeviceInfo.isEmulatorSync()
 
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
@@ -115,6 +116,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
     if (type === Constants.BarCodeType.pdf417) {
       if (!data.includes('TGLJZW') && !data.includes('passTemplateId')) {
+        console.log('is pass template. invalid.')
         invalidTimeout.current = setTimeout(() => {
           setInvalid(false)
         }, 2000)
@@ -136,20 +138,42 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     impactAsync(ImpactFeedbackStyle.Heavy)
     setInvalid(false)
     setActive(false)
-    Navigation.push(componentId, {
-      component: {
-        name: ComponentRegistry.LicenseScanDetailScreen,
-        passProps: { type, data, isExpired },
-        options: {
-          topBar: {
-            visible: true,
-            title: {
-              text: intl.formatMessage({ id: 'licenseScanner.title' }),
-            },
+
+    const component = {
+      name: ComponentRegistry.LicenseScanDetailScreen,
+      passProps: { type, data, isExpired },
+      options: {
+        topBar: {
+          visible: true,
+          title: {
+            text: intl.formatMessage({ id: 'licenseScanner.title' }),
           },
         },
       },
-    })
+    }
+
+    if (config.isScannerApp) {
+      Navigation.showModal({
+        stack: {
+          children: [
+            {
+              component,
+            },
+          ],
+        },
+      }).then((modalComponentId) => {
+        const modal = Navigation.events().registerModalDismissedListener(
+          (evt) => {
+            if (evt.componentId === modalComponentId) {
+              setActive(true)
+              modal.remove()
+            }
+          },
+        )
+      })
+    } else {
+      Navigation.push(componentId, { component })
+    }
   }, [])
 
   const prepareRatio = async () => {
@@ -194,13 +218,12 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
         <Button
           title="Paste barcode"
           onPress={() => {
-            Alert.prompt('Paste barcode', '', (text) => {
-              console.log('oki', text)
-              void onBarCodeScanned({
-                type: Constants.BarCodeType.pdf417,
-                data: text,
-              } as any)
-            })
+            const text =
+              '{"code":"ArvTfz3QSMtHW60D","date":"2024-03-08T14:05:25.762903739Z","passTemplateName":"Ã–kuskÃ­rteini_RLS","passTemplateId":"3d2a9e02-24ef-446b-ab4a-f34b26850460"}'
+            void onBarCodeScanned({
+              type: Constants.BarCodeType.pdf417,
+              data: text,
+            } as any)
           }}
         />
       </View>

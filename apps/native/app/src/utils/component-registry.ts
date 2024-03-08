@@ -7,6 +7,9 @@ export const ComponentRegistry = {
   DevtoolsStorybookScreen: `${prefix}.screens.DevStorybook`,
   DevtoolsCognitoAuthScreen: `${prefix}.screens.DevCognitoAuth`,
 
+  // Scanner screens
+  ScannerAppHomeScreen: `${prefix}.screens.ScannerAppHome`,
+
   // screens
   LoginScreen: `${prefix}.screens.${isTestingApp ? `TestingLogin` : `Login`}`,
   CognitoAuthScreen: `${prefix}.screens.CognitoAuth`,

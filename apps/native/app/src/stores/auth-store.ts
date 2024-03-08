@@ -44,6 +44,23 @@ const getAppAuthConfig = () => {
   const config = getConfig()
   const android =
     Platform.OS === 'android' && !config.isTestingApp ? '.auth' : ''
+  console.log(JSON.stringify(config, null, 2));
+  if (config.isScannerApp) {
+    return {
+      issuer: 'https://innskra.island.is',
+      scopes: [
+        'openid',
+        'profile',
+        'offline_access',
+        // '@island.is/user-profile:read',
+        '@island.is/licenses:verify',
+        // '@island.is/licenses',
+      ],
+      clientId: '@island.is/apps/scanner',
+      redirectUrl: `${config.bundleId}://oauth`,
+    }
+  }
+
   return {
     issuer: config.idsIssuer,
     clientId: config.idsClientId,
@@ -114,6 +131,8 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
   async login() {
     const appAuthConfig = getAppAuthConfig()
+    console.log(JSON.stringify(appAuthConfig, null, 2));
+
     const authorizeResult = await authorize({
       ...appAuthConfig,
       additionalParameters: {

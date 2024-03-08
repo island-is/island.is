@@ -110,13 +110,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "is.island.app"
+        applicationId "is.island"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 134
         versionName "1.2.4"
         manifestPlaceholders = [
-            appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
+            appAuthRedirectScheme: "is.island" // project.config.get("BUNDLE_ID_ANDROID")
         ]
     }
 
@@ -159,11 +159,15 @@ android {
     productFlavors {
       dev {
         resValue "string", "app_name", "Ísland.dev"
-        applicationIdSuffix ".dev"
+        applicationIdSuffix ".app.dev"
       }
       prod {
         resValue "string", "app_name", "Ísland.is"
-        applicationIdSuffix ""
+        applicationIdSuffix ".app"
+      }
+      scanner {
+        resValue "string", "app_name", "Skilríkja Skanni"
+        applicationIdSuffix ".scanner"
       }
     }
 

@@ -1,5 +1,5 @@
 import { AppLockScreen } from '../../screens/app-lock/app-lock'
-import { isTestingApp } from '../../config'
+import { config, isTestingApp } from '../../config'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
@@ -37,6 +37,8 @@ import { WalletScreen } from '../../screens/wallet/wallet'
 import { WebViewScreen } from '../../screens/webview/webview'
 import { ComponentRegistry as CR } from '../component-registry'
 import { registerComponent } from '../register-component'
+import { ScannerAppLoginScreen } from '../../screens/scanner-app/scanner-app-login.screen'
+import { ScannerAppHomeScreen } from '../../screens/scanner-app/scanner-app-home.screen'
 
 export function registerAllComponents() {
   // dev only
@@ -45,10 +47,18 @@ export function registerAllComponents() {
     // registerComponent(CR.DevtoolsCognitoAuthScreen, CognitoAuthScreen)
   }
 
+  if (config.isScannerApp) {
+    registerComponent(CR.ScannerAppHomeScreen, ScannerAppHomeScreen);
+  }
+
   // screens
   registerComponent(
     CR.LoginScreen,
-    isTestingApp ? TestingLoginScreen : LoginScreen,
+    config.isScannerApp
+      ? ScannerAppLoginScreen
+      : isTestingApp
+      ? TestingLoginScreen
+      : LoginScreen,
   )
   registerComponent(CR.OnboardingPinCodeScreen, OnboardingPinCodeScreen)
   registerComponent(CR.OnboardingBiometricsScreen, OnboardingBiometricsScreen)

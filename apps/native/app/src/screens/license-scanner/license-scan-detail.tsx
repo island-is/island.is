@@ -1,6 +1,6 @@
-import { ScanResultCard } from '@ui'
+import { Button, ScanResultCard, font } from '@ui'
 import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { View } from 'react-native'
 import {
@@ -10,6 +10,8 @@ import {
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import { StackRegistry } from '../../utils/component-registry'
 import { LicenseScanResult } from './scan-results/license-scan-result'
+import styled from 'styled-components/native'
+import { config } from '../../config'
 
 enum ScanResult {
   DRIVER_LICENCE = 'DriversLicense',
@@ -42,11 +44,32 @@ const DisabilityTemplateIds = [
   'c78364b6-33a8-4242-84ca-24de0854fe00',
 ]
 
+const Timer = styled.View`
+  align-items: center;
+  margin-bottom: 32px;
+`
+const TimerTitle = styled.Text`
+  ${font({
+    fontSize: 20,
+    fontWeight: '400',
+  })}
+`
+const TimerCounter = styled.Text`
+  ${font({
+    fontSize: 24,
+    fontWeight: '600',
+  })}
+`
+const Actions = styled.View``
+const VIEW_TIMEOUT = 60
+
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
   BarCodeEvent & { isExpired: boolean }
-> = ({ data, type, isExpired }) => {
+> = ({ data, type, isExpired, componentId }) => {
   const [loaded, setLoaded] = useState(false)
+  const [timer, setTimer] = useState<number>(VIEW_TIMEOUT)
   const [scanResult, setScanResult] = useState<ScanResult>(ScanResult.UNKNOWN)
+  const interval = useRef<NodeJS.Timeout>()
   const intl = useIntl()
 
   useNavigationButtonPress(({ buttonId }) => {
@@ -94,6 +117,28 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
     }
   }, [data, type, isExpired])
 
+  useEffect(() => {
+    if (loaded && config.isScannerApp) {
+      const timeStamp = Date.now()
+      interval.current = setInterval(() => {
+        setTimer((t) => {
+          const remaining =
+            Math.floor(Date.now() / 1000) - Math.floor(timeStamp / 1000)
+
+          if (remaining > VIEW_TIMEOUT) {
+            interval.current && clearInterval(interval.current)
+            Navigation.dismissAllModals()
+            return 0
+          }
+          return VIEW_TIMEOUT - remaining
+        })
+      }, 1000)
+    }
+    return () => {
+      interval.current && clearInterval(interval.current)
+    }
+  }, [loaded])
+
   return (
     <View style={{ flex: 1, padding: 16 }}>
       {isExpired === true ? (
@@ -113,8 +158,22 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
           {/* {scanResult === ScanResult.COVID_CERTIFICATE && (
             <CovidCertificateScanResult data={data} onLoad={setLoaded} />
           )} */}
+
+          {config.isScannerApp && <Timer>
+            <TimerTitle>Rennur út eftir</TimerTitle>
+            <TimerCounter>{timer} sekúndur</TimerCounter>
+          </Timer>}
         </>
       )}
+      {config.isScannerApp && <Actions>
+        <Button
+          title="Skanna aftur"
+          disabled={!loaded && !isExpired}
+          onPress={() => {
+            Navigation.dismissModal(componentId)
+          }}
+        />
+      </Actions>}
     </View>
   )
 }
