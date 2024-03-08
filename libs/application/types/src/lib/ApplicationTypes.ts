@@ -325,7 +325,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
-    translation: 'ghb.application',
+    translation: ['ghb.application', 'uiForms.application'],
   },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',
