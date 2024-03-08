@@ -306,6 +306,8 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
   dtoFieldValues: [
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
   ],
@@ -317,20 +319,15 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny certain transactions on non indictment cases
-    if (
-      !isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.ACCEPT
-    ) {
-      return false
-    }
-
     // Deny certain transitions on indictment cases
     if (
       isIndictmentCase(theCase.type) &&
-      [CaseTransition.REOPEN, CaseTransition.RECEIVE_APPEAL].includes(
-        request.body.transition,
-      )
+      [
+        CaseTransition.REJECT,
+        CaseTransition.DISMISS,
+        CaseTransition.REOPEN,
+        CaseTransition.RECEIVE_APPEAL,
+      ].includes(request.body.transition)
     ) {
       return false
     }
