@@ -57,6 +57,9 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
 
+    const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
+    mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
+
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
@@ -83,8 +86,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGet = createCaseFilesRecord as jest.Mock
-      mockGet.mockResolvedValueOnce(pdf)
+      const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
+      mockCreateCaseFilesRecord.mockResolvedValueOnce(pdf)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValueOnce(uuid())
 
@@ -207,8 +210,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGet = createCaseFilesRecord as jest.Mock
-      mockGet.mockResolvedValueOnce(pdf)
+      const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
+      mockCreateCaseFilesRecord.mockResolvedValueOnce(pdf)
 
       then = await givenWhenThen(caseId, policeCaseNumber, theCase)
     })

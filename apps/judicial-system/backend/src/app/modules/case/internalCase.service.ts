@@ -729,39 +729,35 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
   ): Promise<boolean> {
-    return this.refreshFormatMessage().then(async () => {
-      const originalAncestor = await this.findOriginalAncestor(theCase)
+    const originalAncestor = await this.findOriginalAncestor(theCase)
 
-      const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-        (ids, defendant) =>
-          !defendant.noNationalId && defendant.nationalId
-            ? [...ids, defendant.nationalId]
-            : ids,
-        [],
-      )
+    const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+      (ids, defendant) =>
+        !defendant.noNationalId && defendant.nationalId
+          ? [...ids, defendant.nationalId]
+          : ids,
+      [],
+    )
 
-      const validToDate =
-        (restrictionCases.includes(theCase.type) &&
-          theCase.state === CaseState.ACCEPTED &&
-          theCase.validToDate) ||
-        nowFactory() // The API requires a date so we send now as a dummy date
+    const validToDate =
+      (restrictionCases.includes(theCase.type) &&
+        theCase.state === CaseState.ACCEPTED &&
+        theCase.validToDate) ||
+      nowFactory() // The API requires a date so we send now as a dummy date
 
-      return this.policeService.updatePoliceCase(
-        user,
-        originalAncestor.id,
-        theCase.type,
-        theCase.state,
-        theCase.policeCaseNumbers.length > 0
-          ? theCase.policeCaseNumbers[0]
-          : '',
-        defendantNationalIds && defendantNationalIds[0]
-          ? defendantNationalIds[0].replace('-', '')
-          : '',
-        validToDate,
-        theCase.conclusion ?? '', // Indictments do not have a conclusion
-        courtDocuments,
-      )
-    })
+    return this.policeService.updatePoliceCase(
+      user,
+      originalAncestor.id,
+      theCase.type,
+      theCase.state,
+      theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
+      defendantNationalIds && defendantNationalIds[0]
+        ? defendantNationalIds[0].replace('-', '')
+        : '',
+      validToDate,
+      theCase.conclusion ?? '', // Indictments do not have a conclusion
+      courtDocuments,
+    )
   }
 
   async deliverCaseToPolice(
@@ -968,27 +964,19 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    const delivered = await this.refreshFormatMessage()
-      .then(async () => {
-        const courtDocuments = theCase.caseFiles
-          ? await Promise.all(
-              theCase.caseFiles
-                .filter(
-                  (file) => file.category === CaseFileCategory.APPEAL_RULING,
-                )
-                .map(async (caseFile) => {
-                  const file = await this.awsS3Service.getObject(
-                    caseFile.key ?? '',
-                  )
+    const delivered = await Promise.all(
+      theCase.caseFiles
+        ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
+        .map(async (caseFile) => {
+          const file = await this.awsS3Service.getObject(caseFile.key ?? '')
 
-                  return {
-                    type: CourtDocumentType.RVUL,
-                    courtDocument: Base64.btoa(file.toString('binary')),
-                  }
-                }),
-            )
-          : []
-
+          return {
+            type: CourtDocumentType.RVUL,
+            courtDocument: Base64.btoa(file.toString('binary')),
+          }
+        }) ?? [],
+    )
+      .then(async (courtDocuments) => {
         return this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments)
       })
       .catch((reason) => {
