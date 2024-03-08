@@ -21,7 +21,7 @@ const hasValidTags = async (filePath: string) => {
   // Must have at least one scope tag or be empty
   const hasScopePrefix = tags.some(([key]) => key === 'scope') || isEmpty
   // Are all tags the same?
-  const singularTag = (new Set(tags.map(([, value]) => value))).size === 1
+  const singularTag = new Set(tags.map(([, value]) => value)).size === 1
 
   // Exit early for good projects
   if (!isEmpty && validPrefix && hasScopePrefix && singularTag) {
