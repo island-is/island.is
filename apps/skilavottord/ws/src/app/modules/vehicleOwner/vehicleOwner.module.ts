@@ -13,5 +13,6 @@ import { VehicleOwnerAppSysResolver } from './vehicleOwnerAppSys.resolver'
     VehicleOwnerResolver,
     VehicleOwnerService,
   ],
+  exports: [VehicleOwnerService],
 })
 export class VehicleOwnerModule {}
