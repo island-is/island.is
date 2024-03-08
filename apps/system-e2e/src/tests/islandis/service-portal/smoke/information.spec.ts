@@ -1,9 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { label } from '../../../../support/i18n'
-import { spmm } from '@island.is/service-portal/information/messages'
-import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -59,7 +56,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     const page = await context.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('load')
 
     // Act
     const babyButton = page

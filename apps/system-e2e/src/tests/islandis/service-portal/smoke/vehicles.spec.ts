@@ -63,7 +63,7 @@ test.describe('MS - Vehicles', () => {
       await page.goto(
         icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/min-okutaeki'),
       )
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState()
 
       // Act
       const viewLink = page.getByText('Skoða nánar').first()

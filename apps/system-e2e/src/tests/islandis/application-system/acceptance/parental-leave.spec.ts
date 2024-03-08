@@ -37,7 +37,7 @@ async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
   const employerUrl = employerUrlMatch[1]
   if (!employerUrl)
     throw new Error(`Could not find url for employer in email: ${email.html}`)
-  await page.goto(employerUrl, { waitUntil: 'networkidle' })
+  await page.goto(employerUrl, { waitUntil: 'load' })
   await expect(page).toBeApplication()
 
   await page
@@ -97,7 +97,7 @@ test.describe('Parental leave', () => {
 
     const apiUrl = applicationSystemApi[env]
 
-    await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'networkidle' })
+    await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'load' })
     const { proceed } = helpers(page)
 
     applicationID = page.url().split('/').slice(-1)[0]
@@ -401,7 +401,7 @@ test.describe('Parental leave', () => {
 
     const apiUrl = applicationSystemApi[env]
 
-    await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'networkidle' })
+    await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'load' })
     const { proceed } = helpers(page)
 
     // Mock data

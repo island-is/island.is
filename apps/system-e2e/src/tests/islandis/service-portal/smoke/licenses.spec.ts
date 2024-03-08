@@ -1,8 +1,6 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { label } from '../../../../support/i18n'
-import { m } from '@island.is/service-portal/licenses/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
@@ -53,7 +51,7 @@ test.describe('MS - Skírteini', () => {
     const page = await contextFaereyjar.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('load')
 
     // Act
     const passportLink = page
@@ -73,7 +71,7 @@ test.describe('MS - Skírteini', () => {
     const page = await contextAmerika.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('load')
 
     // Act
     const tabButton = page.getByRole('tab', {

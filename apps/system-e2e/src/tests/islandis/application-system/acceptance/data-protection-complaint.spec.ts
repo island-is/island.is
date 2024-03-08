@@ -58,7 +58,7 @@ applicationTest.describe('Data protection complaint application', () => {
       await applicationTest.step(
         'Go to the overview page and check the number of applications after creation',
         async () => {
-          await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
+          await page.goto(`${homeUrl}`, { waitUntil: 'load' })
           page.getByText(overviewPageText)
 
           numberOfApplicationsAfterCreationVisible =
@@ -84,7 +84,7 @@ applicationTest.describe('Data protection complaint application', () => {
           const page = applicationPage
           const applicationAtStart = await createApplication(page)
 
-          await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
+          await page.goto(`${homeUrl}`, { waitUntil: 'load' })
           const visibleApplicationsAfterCreation =
             await countApplicationsVisible(page)
           await page.getByTestId(iconTrashTestId).first().click()

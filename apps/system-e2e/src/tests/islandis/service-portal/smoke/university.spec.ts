@@ -1,8 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { label } from '../../../../support/i18n'
-import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
@@ -36,7 +34,7 @@ test.describe('MS - University graduation', () => {
         await page.goto(
           icelandicAndNoPopupUrl('/minarsidur/menntun/haskoli/brautskraning'),
         )
-        await page.waitForLoadState('networkidle')
+        await page.waitForLoadState()
 
         const viewDetailsButton = page
           .locator(`role=button[name="${'Skoða'}"]`)

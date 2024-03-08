@@ -30,7 +30,7 @@ test.describe('Work licenses', () => {
     await test.step('Renders the page', async () => {
       // Arrange
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('load')
 
       // Act
       const headline = page.getByRole('heading', {
