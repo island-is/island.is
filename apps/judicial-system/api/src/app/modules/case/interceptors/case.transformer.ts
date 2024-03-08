@@ -67,7 +67,7 @@ const getAppealInfo = (theCase: Case): AppealInfo => {
   return appealInfo
 }
 
-export function transformCase(theCase: Case): Case {
+export const transformCase = (theCase: Case): Case => {
   const appealInfo = getAppealInfo(theCase)
 
   return {
