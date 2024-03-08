@@ -170,7 +170,7 @@ export class NotificationsService {
       templateArgs.length &&
       templateArgs.find((arg) => arg.key == 'organization')
     ) {
-      let organization = templateArgs.find((arg) => arg.key == 'organization')
+      const organization = templateArgs.find((arg) => arg.key == 'organization')
       cacheKey += `-organization-${organization?.value}`
     }
     const cachedTemplate = await this.getFromCache(cacheKey)
