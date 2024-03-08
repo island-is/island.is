@@ -135,15 +135,15 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
+RUN apt-get update -y && apt-get install -y zip awscli make g++ && apt-get purge
 
 ARG APP_HOME
-ARG APP_DIST_HOME=dist/apps/${APP}
+ARG APP_DIST_HOME=/dist/apps/${APP}
 
 WORKDIR /dist
 
 # Common slow-changing dependencies
-COPY package.json .yarnrc.yml ./
+COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/releases ./.yarn/releases
 COPY .yarn/patches ./.yarn/patches
 
@@ -151,16 +151,17 @@ ARG PLAYWRIGHT_BROWSER=chromium
 RUN --mount=type=cache,id=playwright-cache,target=./.yarn/cache --mount=type=cache,id=playwright-node_modules,target=./node_modules \
   export CI=true && yarn add playwright && yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-# Move to workdir
-WORKDIR /${APP_DIST_HOME}
 # Built app
-COPY --from=builder /build/${APP_DIST_HOME} .
-COPY ${APP_HOME}/entrypoint.sh .
+COPY --from=builder /build/${APP_DIST_HOME} ${APP_DIST_HOME}
+COPY ${APP_HOME}/entrypoint.sh ${APP_DIST_HOME}
 
 
 RUN chown -R pwuser:pwuser .
 USER pwuser
-ENTRYPOINT ["./entrypoint.sh"]
+RUN --mount=type=cache,id=playwright-cache,target=./.yarn/cache --mount=type=cache,id=playwright-node_modules,target=./node_modules \
+  yarn install
+ENV PATH="${APP_DIST_HOME}:${PATH}"
+ENTRYPOINT ["entrypoint.sh"]
 
 
 FROM playwright-base as output-local
