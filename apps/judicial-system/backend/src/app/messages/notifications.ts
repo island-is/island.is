@@ -787,7 +787,7 @@ export const notifications = {
     body: {
       id: 'judicial.system.backend:notifications.indictment_denied.body',
       defaultMessage:
-        'Ákæra vegna lögreglumáls númer {caseNumber} hefur verið hafnað. Þú getur nálgast samantekt málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
+        'Ákæru vegna lögreglumáls númer {caseNumber} hefur verið hafnað. Þú getur nálgast samantekt málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
       description: 'Texti í pósti til sækjanda máls þegar ákæru er hafnað',
     },
   }),
