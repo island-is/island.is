@@ -29,6 +29,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
       state: [
         CaseState.NEW,
         CaseState.DRAFT,
+        CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
         CaseState.ACCEPTED,

@@ -14,6 +14,7 @@ type Props = {
     props: {
       cards: (application: Application) => {
         title?: string
+        titleRequired?: boolean
         description?:
           | string
           | string[]
@@ -31,27 +32,29 @@ export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
   return (
     <GridRow marginBottom={2}>
       {field.props.cards(application).length ? (
-        field.props.cards(application).map(({ title, description }, idx) => {
-          return (
-            <GridColumn span={['12/12', '12/12', '6/12']} key={idx}>
-              {title && title !== '' ? (
-                <Box paddingY={'gutter'}>
-                  <ProfileCard
-                    heightFull
-                    title={title}
-                    description={
-                      typeof description === 'function'
-                        ? description(formatMessage)
-                        : description
-                    }
-                  />
-                </Box>
-              ) : (
-                <NotFilledOut />
-              )}
-            </GridColumn>
-          )
-        })
+        field.props
+          .cards(application)
+          .map(({ title, description, titleRequired = true }, idx) => {
+            return (
+              <GridColumn span={['12/12', '12/12', '6/12']} key={idx}>
+                {!titleRequired || (title && title !== '') ? (
+                  <Box paddingY={'gutter'}>
+                    <ProfileCard
+                      heightFull
+                      title={title ?? ''}
+                      description={
+                        typeof description === 'function'
+                          ? description(formatMessage)
+                          : description
+                      }
+                    />
+                  </Box>
+                ) : (
+                  <NotFilledOut />
+                )}
+              </GridColumn>
+            )
+          })
       ) : (
         <GridColumn>
           <NotFilledOut />

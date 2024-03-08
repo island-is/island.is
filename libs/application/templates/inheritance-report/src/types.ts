@@ -221,6 +221,9 @@ interface DomesticAndForeignDebts {
 }
 
 export interface BuisnessAssetsData {
+  assetType: 'estate' | 'asset'
+  assetNumber: string
+  description: string
   businessAsset: string
   businessAssetValue: string
   taxFreeInheritance: number

@@ -11,7 +11,8 @@
           {
             "paths": ["lodash", "date-fns", "date-fns/locale", "."]
           }
-        ]
+        ],
+        "func-style": "off"
       }
     },
     { "files": ["*.ts", "*.tsx"], "rules": {} },
