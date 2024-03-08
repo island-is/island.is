@@ -77,8 +77,11 @@ export const ShareInput = ({
   }, [ref])
 
   let shareError = errorMessage
-  
-  if (!errorMessage && ((watchedField && watchedField < 0) || watchedField > 100)) {
+
+  if (
+    !errorMessage &&
+    ((watchedField && watchedField < 0) || watchedField > 100)
+  ) {
     shareError = formatMessage(m.invalidShareValue)
   }
 
