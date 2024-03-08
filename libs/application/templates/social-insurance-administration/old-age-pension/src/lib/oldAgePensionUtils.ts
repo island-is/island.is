@@ -279,11 +279,9 @@ export const getStartDateAndEndDate = (
   const thisYearBirthdayPlusOneMonth = addMonths(thisYearBirthday, 1)
   const nextMonth = addMonths(today, 1)
 
-  // startDate is 1st day of the month after birhday this year
-  let startDate = addDays(
-    thisYearBirthdayPlusOneMonth,
-    thisYearBirthdayPlusOneMonth.getDate() + 1,
-  )
+  // startDate is the next month after birhday this year
+  let startDate = thisYearBirthdayPlusOneMonth
+
   const endDate = addMonths(today, 6)
 
   if (thisYearAge >= oldAgePensionAge) {
