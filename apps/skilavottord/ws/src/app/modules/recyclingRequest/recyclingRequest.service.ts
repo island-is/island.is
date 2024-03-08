@@ -34,7 +34,7 @@ export class RecyclingRequestService {
     private recycllingPartnerService: RecyclingPartnerService,
     private vehicleService: VehicleService,
     private icelandicTransportAuthorityServices: IcelandicTransportAuthorityServices,
-  ) { }
+  ) {}
 
   async deRegisterVehicle(
     vehiclePermno: string,
@@ -91,11 +91,7 @@ export class RecyclingRequestService {
     } catch (err) {
       delete err.data
       this.logger.error(`Failed to deregister vehicle`, { error: err })
-      throw new Error(
-        `Failed to deregister vehicle ${vehiclePermno.slice(
-          -3,
-        )}`
-      )
+      throw new Error(`Failed to deregister vehicle ${vehiclePermno.slice(-3)}`)
     }
   }
 
