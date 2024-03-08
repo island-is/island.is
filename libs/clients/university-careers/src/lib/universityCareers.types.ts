@@ -3,7 +3,6 @@ import { Locale } from 'locale'
 import { z } from 'zod'
 import { StudentTrackDto } from './dto/studentTrackDto'
 import { StudentTrackOverviewDto } from './dto/studentTrackOverviewDto'
-import { BifrostApi, LbhiApi, UnakApi } from './clients'
 
 export const schema = z.object({
   xroadPath: z.string(),
@@ -15,6 +14,7 @@ export enum UniversityId {
   BifrostUniversity = 'BifrostUniversity',
   HolarUniversity = 'HolarUniversity',
   AgriculturalUniversityOfIceland = 'AgriculturalUniversityOfIceland',
+  UniversityOfIceland = 'UniversityOfIceland',
 }
 
 export interface UniversityCareerService {

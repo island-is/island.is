@@ -5,6 +5,10 @@ import {
   BifrostFerillLocale,
   BifrostLocale,
   BifrostTranscriptLocale,
+  HIApi,
+  HIFerillLocale,
+  HILocale,
+  HITranscriptLocale,
   HolarApi,
   HolarFerillLocale,
   HolarLocale,
@@ -35,29 +39,33 @@ export class UniversityCareersClientService implements UniversityCareerService {
     private readonly unakApi: UnakApi,
     private readonly holarApi: HolarApi,
     private readonly bifrostApi: BifrostApi,
+    private readonly hiApi: HIApi,
   ) {}
 
   getApi = (
     type: UniversityId,
     user: User,
   ): {
-    api: LbhiApi | UnakApi | HolarApi | BifrostApi
+    api: LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi
     locales: {
       studentLocale:
         | typeof UnakLocale
         | typeof LbhiLocale
         | typeof BifrostLocale
         | typeof HolarLocale
+        | typeof HILocale
       studentTranscriptLocale:
         | typeof UnakTranscriptLocale
         | typeof LbhiTranscriptLocale
         | typeof BifrostTranscriptLocale
         | typeof HolarTranscriptLocale
+        | typeof HITranscriptLocale
       studentTrackLocale:
         | typeof UnakFerillLocale
         | typeof LbhiFerillLocale
         | typeof BifrostFerillLocale
         | typeof HolarFerillLocale
+        | typeof HIFerillLocale
     }
   } => {
     switch (type) {
@@ -95,6 +103,15 @@ export class UniversityCareersClientService implements UniversityCareerService {
             studentLocale: UnakLocale,
             studentTranscriptLocale: UnakTranscriptLocale,
             studentTrackLocale: UnakFerillLocale,
+          },
+        }
+      case UniversityId.UniversityOfIceland:
+        return {
+          api: this.hiApi.withMiddleware(new AuthMiddleware(user as Auth)),
+          locales: {
+            studentLocale: HILocale,
+            studentTranscriptLocale: HITranscriptLocale,
+            studentTrackLocale: HIFerillLocale,
           },
         }
     }

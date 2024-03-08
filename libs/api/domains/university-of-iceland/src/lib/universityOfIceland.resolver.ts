@@ -1,8 +1,6 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
-
 import { Inject, UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
-
 import {
   CurrentUser,
   IdsUserGuard,
@@ -10,20 +8,18 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  UniversityOfIcelandService,
-  NemandiGetLocaleEnum,
-  NemandiFerillFerillGetLocaleEnum,
-} from '@island.is/clients/university-of-iceland'
 import { ApiScope } from '@island.is/auth/scopes'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { StudentInfoInput } from './dto/studentInfo.input'
+import { StudentInfo, StudentTrackModel } from './models/studentInfo.model'
 import {
-  StudentInfo,
-  Student,
-  StudentTrackModel,
-} from './models/studentInfo.model'
+  UniversityCareersClientService,
+  UniversityId,
+} from '@island.is/clients/university-careers'
+import { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
+import { mapToStudent, mapToStudentTrackModel } from './mapper'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -31,7 +27,7 @@ import {
 @Audit({ namespace: '@island.is/api/university-of-iceland' })
 export class UniversityOfIcelandResolver {
   constructor(
-    private universityOfIcelandApi: UniversityOfIcelandService,
+    private universityCareers: UniversityCareersClientService,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
@@ -44,12 +40,20 @@ export class UniversityOfIcelandResolver {
     @CurrentUser() user: User,
     @Args('input') input: StudentInfoInput,
   ): Promise<StudentInfo | null> {
-    const data = await this.universityOfIcelandApi.studentInfo(
+    const data = await this.universityCareers.getStudentInfo(
       user,
-      input.locale as NemandiGetLocaleEnum,
+      UniversityId.UniversityOfIceland,
+      input.locale as Locale,
     )
+
+    const mappedData = data?.map((d) => mapToStudent(d)).filter(isDefined)
+
+    if (!mappedData) {
+      return null
+    }
+
     return {
-      transcripts: data?.transcripts as Array<Student>,
+      transcripts: mappedData,
     }
   }
 
@@ -62,20 +66,25 @@ export class UniversityOfIcelandResolver {
     if (!input.trackNumber) {
       return null
     }
-    const data = (await this.universityOfIcelandApi.studentCareer(
+    const data = await this.universityCareers.getStudentCareer(
       user,
       input.trackNumber,
-      input.locale as NemandiFerillFerillGetLocaleEnum,
-    )) as StudentTrackModel
+      UniversityId.UniversityOfIceland,
+      input.locale as Locale,
+    )
 
-    const transcriptData = {
-      ...data.transcript,
-      graduationDate: data.transcript.graduationDate,
+    if (!data) {
+      return null
     }
+
+    const studentTrack = mapToStudentTrackModel(data)
+
+    if (!studentTrack) {
+      return null
+    }
+
     return {
-      transcript: transcriptData,
-      files: data.files,
-      body: data.body,
+      ...studentTrack,
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
     }
   }

@@ -4,6 +4,7 @@ import { BifrostUniversityCareerClientProvider } from './clients/bifrost-univers
 import { HolarUniversityCareerClientProvider } from './clients/holar-university/holarUniversityCareerClient.provider'
 import { UniversityOfAkureyriCareerClientProvider } from './clients/university-of-akureyri/universityOfAkureyriCareerClient.provider'
 import { UniversityCareersClientService } from './universityCareers.service'
+import { UniversityOfIcelandCareerClientProvider } from './clients/university-of-iceland/universityOfIcelandCareerClient.provider'
 
 @Module({
   providers: [
@@ -11,6 +12,7 @@ import { UniversityCareersClientService } from './universityCareers.service'
     BifrostUniversityCareerClientProvider,
     HolarUniversityCareerClientProvider,
     UniversityOfAkureyriCareerClientProvider,
+    UniversityOfIcelandCareerClientProvider,
     UniversityCareersClientService,
   ],
   exports: [UniversityCareersClientService],

@@ -166,7 +166,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
-/libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
+/libs/clients/university-careers/                                                                        @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
 /libs/clients/inna/                                                                                      @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                 @island-is/hugsmidjan
@@ -176,7 +176,6 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/icelandic-health-insurance/rights-portal/                                                  @island-is/hugsmidjan
 /libs/clients/health-directorate                                                                         @island-is/hugsmidjan @island-is/origo
 /libs/portals/admin/air-discount-scheme                                                                  @island-is/hugsmidjan
-
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
 /libs/application/templates/institution-collaboration/                                                   @island-is/norda @island-is/fuglar
 /libs/application/templates/login-service/                                                               @island-is/norda

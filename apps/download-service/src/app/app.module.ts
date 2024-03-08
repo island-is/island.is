@@ -28,9 +28,9 @@ import {
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
 import {
-  UniversityOfIcelandClientConfig,
-  UniversityOfIcelandClientModule,
-} from '@island.is/clients/university-of-iceland'
+  UniversityCareersModule,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
 import {
   RegulationsClientConfig,
   RegulationsClientModule,
@@ -71,10 +71,10 @@ import {
     }),
     FinanceClientModule,
     VehiclesClientModule,
-    UniversityOfIcelandClientModule,
     RegulationsAdminClientModule,
     RegulationsClientModule,
     WorkMachinesClientModule,
+    UniversityCareersModule,
     MMSClientModule,
     RightsPortalClientModule,
     ConfigModule.forRoot({
@@ -84,7 +84,7 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
-        UniversityOfIcelandClientConfig,
+        UniversityOfIcelandCareerClientConfig,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         WorkMachinesClientConfig,

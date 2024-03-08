@@ -159,6 +159,13 @@ import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
 import { HealthController } from './health.controller'
+import {
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  UniversityOfAkureyriCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
 
 const environment = getConfig
 
@@ -377,6 +384,11 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
+        AgriculturalUniversityOfIcelandCareerClientConfig,
+        UniversityOfIcelandCareerClientConfig,
+        UniversityOfAkureyriCareerClientConfig,
+        HolarUniversityCareerClientConfig,
+        BifrostUniversityCareerClientConfig,
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,

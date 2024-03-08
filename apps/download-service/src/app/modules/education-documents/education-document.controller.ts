@@ -12,10 +12,6 @@ import { Response } from 'express'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  NemandiFerillFerillFileTranscriptGetLocaleEnum,
-  UniversityOfIcelandService,
-} from '@island.is/clients/university-of-iceland'
-import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -23,13 +19,18 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 import { GetEducationGraduationDocumentDto } from './dto/getEducationGraduationDocument'
+import {
+  UniversityCareersClientService,
+  UniversityId,
+} from '@island.is/clients/university-careers'
+import { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Controller('education')
 export class EducationController {
   constructor(
-    private readonly universityOfIcelandApi: UniversityOfIcelandService,
+    private readonly universitiesApi: UniversityCareersClientService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -52,10 +53,11 @@ export class EducationController {
       authorization: `Bearer ${resource.__accessToken}`,
     }
 
-    const documentResponse = await this.universityOfIcelandApi.studentCareerPDF(
+    const documentResponse = await this.universitiesApi.getStudentCareerPdf(
       authUser,
       parseInt(trackNumber),
-      lang as NemandiFerillFerillFileTranscriptGetLocaleEnum,
+      UniversityId.UniversityOfIceland,
+      lang as Locale,
     )
 
     if (documentResponse) {

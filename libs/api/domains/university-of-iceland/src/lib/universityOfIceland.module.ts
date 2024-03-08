@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { UniversityOfIcelandClientModule } from '@island.is/clients/university-of-iceland'
+import { UniversityCareersModule } from '@island.is/clients/university-careers'
 import { UniversityOfIcelandResolver } from './universityOfIceland.resolver'
 
 @Module({
   providers: [UniversityOfIcelandResolver],
-  imports: [UniversityOfIcelandClientModule],
+  imports: [UniversityCareersModule],
 })
 export class UniversityOfIcelandModule {}
