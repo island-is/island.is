@@ -6,7 +6,6 @@ import { switchDelegation } from './auth-utils'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-
 test.describe('Service portal', () => {
   let context: BrowserContext
 
