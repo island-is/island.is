@@ -127,7 +127,6 @@ import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
-import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
@@ -371,7 +370,6 @@ const environment = getConfig
         CommunicationsConfig,
         HealthDirectorateClientConfig,
         DmrClientConfig,
-        UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
