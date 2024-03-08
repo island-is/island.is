@@ -1,4 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
 
-yarn nx run "$1":e2e-ci
+APP="${1:-$APP}"
+
+yarn nx run "$APP":e2e-ci
