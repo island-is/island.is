@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -99,6 +99,17 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         title={formatMessage(titles.prosecutor.indictments.overview)}
       />
       <FormContentContainer>
+        {workingCase.indictmentDeniedExplanation && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(
+                strings.overview.indictmentDeniedExplanationTitle,
+              )}
+              message={workingCase.indictmentDeniedExplanation}
+              type="info"
+            ></AlertMessage>
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(strings.overview.heading)}

@@ -28,7 +28,6 @@ const DenyIndictmentCaseModal: React.FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { updateCase, transitionCase } = useCase()
-
   const [indictmentDeniedExplanation, setIndictmentDeniedExplanation] =
     useState<string>()
   const [
@@ -40,7 +39,6 @@ const DenyIndictmentCaseModal: React.FC<React.PropsWithChildren<Props>> = ({
     const { isValid } = validate([[reason, ['empty']]])
 
     setIndictmentDeniedExplanation(reason)
-
     if (isValid) {
       setIndictmentDeniedExplanationErrorMessage('')
     }
@@ -55,6 +53,7 @@ const DenyIndictmentCaseModal: React.FC<React.PropsWithChildren<Props>> = ({
       setIndictmentDeniedExplanationErrorMessage(errorMessage)
     }
   }
+
   const handleDenyIndictmentCase = async () => {
     if (!indictmentDeniedExplanation) {
       return

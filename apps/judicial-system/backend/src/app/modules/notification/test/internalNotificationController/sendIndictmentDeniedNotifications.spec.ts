@@ -90,7 +90,7 @@ describe('InternalNotificationController - Send indictment denied notification',
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Ákæru hafnað`,
-          html: `Ákæru ${policeCaseNumbers[0]} hefur verið hafnað. Þú getur nálgast samantekt málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+          html: `Ákæra vegna lögreglumáls númer ${policeCaseNumbers[0]} hefur verið hafnað. Þú getur nálgast samantekt málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
         }),
       )
 

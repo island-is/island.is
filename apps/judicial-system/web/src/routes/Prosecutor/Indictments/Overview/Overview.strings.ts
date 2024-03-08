@@ -72,4 +72,11 @@ export const overview = {
     description:
       'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
   }),
+
+  indictmentDeniedExplanationTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_denied_explanation_title',
+    defaultMessage: 'Ástæða höfnunar',
+    description:
+      'Notaður sem titill á "Hafna aðkæra" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
+  }),
 }
