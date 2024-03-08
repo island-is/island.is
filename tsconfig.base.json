@@ -222,6 +222,9 @@
       "@island.is/api/domains/transport-authority": [
         "libs/api/domains/transport-authority/src/index.ts"
       ],
+      "@island.is/api/domains/university-careers": [
+        "libs/api/domains/university-careers/src/index.ts"
+      ],
       "@island.is/api/domains/university-gateway": [
         "libs/api/domains/university-gateway/src/index.ts"
       ],
