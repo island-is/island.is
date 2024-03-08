@@ -63,7 +63,6 @@ query Case($input: CaseQueryInput!) {
       title
       email
       canConfirmAppeal
-      active
     }
     sharedWithProsecutorsOffice {
       id
