@@ -498,6 +498,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     (option) => option.value === birthMonth,
   )?.label
 
+  const maxLivingConditionAbroadInYears: number =
+    customPageData?.configJson?.maxLivingConditionAbroadInYears ?? 52
+
+  const maxTaxCardRatio: number =
+    customPageData?.configJson?.maxTaxCardRatio ?? 100
+
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -887,14 +893,22 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   translationStrings.livingConditionAbroadInYearsPlaceholder,
                                 )}
                                 type="number"
-                                suffix={
-                                  ' ' +
-                                  formatMessage(translationStrings.yearsSuffix)
-                                }
-                                maxLength={
-                                  formatMessage(translationStrings.yearsSuffix)
-                                    .length + 3
-                                }
+                                suffix={` ${formatMessage(
+                                  translationStrings.yearsSuffix,
+                                )}`}
+                                format={(value) => {
+                                  if (
+                                    Number(value) >
+                                    maxLivingConditionAbroadInYears
+                                  ) {
+                                    value = String(
+                                      maxLivingConditionAbroadInYears,
+                                    )
+                                  }
+                                  return `${value} ${formatMessage(
+                                    translationStrings.yearsSuffix,
+                                  )}`
+                                }}
                               />
                             </Box>
                           )}
@@ -918,7 +932,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               placeholder="%"
                               type="number"
                               suffix="%"
-                              maxLength={4}
+                              format={(value) => {
+                                if (Number(value) > maxTaxCardRatio) {
+                                  value = String(maxTaxCardRatio)
+                                }
+                                return `${value}%`
+                              }}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
