@@ -262,7 +262,10 @@ export const SpouseEstateShare: FC<
                 const value = e.target.value
 
                 console.log(value, valueToNumber(value))
-                setValue(spouseTotalSeparatePropertyField, valueToNumber(value, ','))
+                setValue(
+                  spouseTotalSeparatePropertyField,
+                  valueToNumber(value, ','),
+                )
                 setLocalSpouseTotalDeduction(valueToNumber(value, ','))
               }}
               currency
