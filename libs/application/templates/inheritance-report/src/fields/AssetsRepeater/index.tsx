@@ -247,7 +247,6 @@ const FieldComponent = ({
   error,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
-  const { control, watch } = useFormContext()
 
   let content = null
 
@@ -311,10 +310,8 @@ const FieldComponent = ({
     case 'share':
       content = (
         <ShareInput
-          control={control}
           name={fieldName}
           label={formatMessage(m.propertyShare)}
-          value={watch(fieldName)}
           onAfterChange={onAfterChange}
         />
       )

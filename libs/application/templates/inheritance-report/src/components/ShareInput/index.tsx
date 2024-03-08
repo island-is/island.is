@@ -1,14 +1,12 @@
 import { Input } from '@island.is/island-ui/core'
 import { FocusEvent, useRef, useEffect } from 'react'
-import { Control, Controller, FieldValues } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { valueToNumber } from '../../lib/utils/helpers'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
 interface ShareInputProps {
-  control: Control<FieldValues> | undefined
   name: string
-  value?: string
   placeholder?: string
   label?: string
   errorMessage?: string
@@ -48,9 +46,7 @@ const onKeydownInput: EventListener = (evt: Event) => {
 const percentageRegex = new RegExp(/^(\d{1,2}|100)?(,)?(\d+)?$/)
 
 export const ShareInput = ({
-  control,
   name,
-  value,
   placeholder,
   label,
   errorMessage,
@@ -59,7 +55,10 @@ export const ShareInput = ({
   required,
 }: ShareInputProps) => {
   const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+  const { control, watch } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const watchedField = watch(name)
 
   useEffect(() => {
     const currentRef = ref?.current
@@ -78,10 +77,8 @@ export const ShareInput = ({
   }, [ref])
 
   let shareError = errorMessage
-
-  const shareValue = valueToNumber(value, ',')
-
-  if (!errorMessage && shareValue && (shareValue < 0 || shareValue > 100)) {
+  
+  if (!errorMessage && ((watchedField && watchedField < 0) || watchedField > 100)) {
     shareError = formatMessage(m.invalidShareValue)
   }
 
@@ -101,7 +98,6 @@ export const ShareInput = ({
     }
   }, [ref])
 
-  console.log('shareInptu value', value)
   return (
     <Controller
       control={control}
@@ -120,9 +116,7 @@ export const ShareInput = ({
           onBlur={(e) => {
             const val = e.target.value ?? ''
             if (val.endsWith(',%')) {
-              console.log('oldVal', val)
               const newVal = val.replace(',%', '')
-              console.log('newVal', newVal)
               onChange(newVal)
             }
           }}
@@ -150,7 +144,7 @@ export const ShareInput = ({
             }
           }}
           hasError={!!shareError}
-          errorMessage={errorMessage ?? shareError}
+          errorMessage={shareError}
           disabled={disabled}
           required={required}
         />

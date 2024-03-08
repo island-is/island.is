@@ -36,8 +36,8 @@ export const overviewAssets = [
           ?.realEstate?.data
 
         return (realEstateAssets ?? []).map((asset: any) => {
-          const propertyValuation = parseInt(asset.propertyValuation, 10)
-          const propertyShare = parseInt(asset.share, 10)
+          const propertyValuation = parseFloat(asset.propertyValuation)
+          const propertyShare = parseFloat(asset.share)
 
           return {
             title: asset.description,

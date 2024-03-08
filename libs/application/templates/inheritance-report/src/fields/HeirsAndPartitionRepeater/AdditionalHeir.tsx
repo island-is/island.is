@@ -264,7 +264,6 @@ export const AdditionalHeir = ({
               ) : customField.id === 'heirsPercentage' ? (
                 <GridColumn span="1/2" paddingBottom={2}>
                   <ShareInput
-                    control={control}
                     name={`${fieldIndex}.${customField.id}`}
                     disabled={!currentHeir.enabled}
                     label={customField.title}

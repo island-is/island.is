@@ -417,7 +417,7 @@ export const m = defineMessages({
   },
   vehicleNumberLabel: {
     id: 'ir.application:vehicleNumberLabel',
-    defaultMessage: 'Skráningarnúmer ökutækis',
+    defaultMessage: 'Fastanúmer ökutækis',
     description: 'Vehicle number label',
   },
   vehicleTypeLabel: {

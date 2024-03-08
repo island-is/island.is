@@ -40,7 +40,7 @@ export const HeirsAndPartitionRepeater: FC<
   const { customFields } = props
 
   const { formatMessage } = useLocale()
-  const { getValues, setError, setValue, control } = useFormContext()
+  const { getValues, setError, setValue } = useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
   })
@@ -366,10 +366,9 @@ export const HeirsAndPartitionRepeater: FC<
                       ) : customField.id === 'heirsPercentage' ? (
                         <GridColumn span="1/2" paddingBottom={2}>
                           <ShareInput
-                            control={control}
                             name={`${fieldIndex}.${customField.id}`}
                             disabled={!member.enabled}
-                            label={customField.title + 'heyhey'}
+                            label={customField.title}
                             onAfterChange={(val) => {
                               updateValues(fieldIndex, val)
                             }}
