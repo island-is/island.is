@@ -198,6 +198,13 @@ export const prosecutorTransitionRule: RolesRule = {
       return false
     }
 
+    if (
+      !isIndictmentCase(theCase.type) &&
+      request.body.transition === CaseTransition.DENY_INDICTMENT
+    ) {
+      return false
+    }
+
     // Deny transition if prosecutor did not appeal the case
     if (
       request.body.transition === CaseTransition.WITHDRAW_APPEAL &&
