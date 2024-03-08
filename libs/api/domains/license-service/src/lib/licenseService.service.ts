@@ -522,12 +522,12 @@ export class LicenseServiceService {
   }
 
   mapDrivingLicenseData(data: BarcodeData<LicenseType.DrivingLicense>) {
+    const picture = data.extraData?.photo?.image
+
     return {
       nationalId: data.nationalId,
       name: data.extraData.name ?? '',
-      ...(data.extraData?.photo?.image && {
-        picture: data.extraData?.photo?.image,
-      }),
+      ...(picture && { picture }),
     }
   }
 
@@ -549,6 +549,7 @@ export class LicenseServiceService {
         const drivingData = this.mapDrivingLicenseData(
           data as BarcodeData<LicenseType.DrivingLicense>,
         )
+
         return new DriverLicenseResult(drivingData)
       }
 

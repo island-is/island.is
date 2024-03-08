@@ -2,7 +2,7 @@ import {
   LicenseType,
   LicenseVerifyExtraDataResult,
 } from '@island.is/clients/license-client'
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
 import { Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
 import { sign, SignOptions, verify } from 'jsonwebtoken'
