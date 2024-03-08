@@ -17,7 +17,7 @@ interface AppealInfo {
   statementDeadline?: string
 }
 
-function getAppealInfo(theCase: Case): AppealInfo {
+const getAppealInfo = (theCase: Case): AppealInfo => {
   const {
     rulingDate,
     appealState,
