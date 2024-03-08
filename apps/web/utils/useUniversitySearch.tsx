@@ -53,16 +53,15 @@ export const SearchProducts = ({
     queryMaker.$and.push({ $or: orFilters })
   })
   const result = fuseInstance.search(queryMaker)
-  const test = sortIntoBuckets(result as FuseQueryResult[])
-  return [...Object.values(test)].flat() || []
+  const sortedResults = sortIntoBuckets(result as FuseQueryResult[])
+  return [...Object.values(sortedResults)].flat() || []
 }
 
-// Function to sort and group objects into buckets
+// Function to sort and group objects into buckets and further sortedBuckets
 const sortIntoBuckets = (dataArray: FuseQueryResult[]) => {
-  // Initialize an object to store buckets
   const buckets: Bucket = {}
 
-  // Group objects into buckets based on the rounded score
+  // Group results into buckets based on the rounded score
   dataArray.forEach((item) => {
     const roundedScore = item.score.toFixed(2)
 
@@ -73,10 +72,9 @@ const sortIntoBuckets = (dataArray: FuseQueryResult[]) => {
     buckets[roundedScore].push(item)
   })
 
-  console.log('buckets', buckets)
-
   const orderedBuckets: Bucket = {}
 
+  // For each bucket sort within so each university gets equal represantation
   Object.values(buckets).forEach((bucket, index) => {
     const universityGroups: Record<string, FuseQueryResult[]> = {}
     bucket.forEach((item) => {
@@ -85,10 +83,8 @@ const sortIntoBuckets = (dataArray: FuseQueryResult[]) => {
       universityGroups[item.item.universityId].push(item)
     })
 
-    // Get an array of all keys in the object
     const keys = Object.keys(universityGroups)
 
-    // Find the maximum length among all arrays
     const maxLength = Math.max(
       ...keys.map((key) => universityGroups[key].length),
     )
@@ -100,15 +96,10 @@ const sortIntoBuckets = (dataArray: FuseQueryResult[]) => {
       for (let j = 0; j < keys.length; j++) {
         const currentKey = keys[j]
 
-        // Check if the current index is within the bounds of the current array
         if (i < universityGroups[currentKey].length) {
           const currentItem = universityGroups[currentKey][i]
 
           orderedList.push(currentItem)
-
-          // Your action goes here
-          // Example: Do something with the current key and item
-          // YourFunction(currentKey, currentItem);
         }
       }
     }
