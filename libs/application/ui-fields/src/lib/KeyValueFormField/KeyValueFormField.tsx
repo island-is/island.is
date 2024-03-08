@@ -32,7 +32,7 @@ export const KeyValueFormField: FC<
           </Text>
         </Box>
         <Box
-          display="flex"
+          display={Array.isArray(values) ? 'block' : 'flex'}
           alignItems="center"
           style={field.display === 'flex' ? { flex: 1 } : undefined}
         >
