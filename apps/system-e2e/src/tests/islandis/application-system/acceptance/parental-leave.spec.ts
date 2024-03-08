@@ -40,7 +40,7 @@ const getEmployerEmailAndApprove = async (
   const employerUrl = employerUrlMatch[1]
   if (!employerUrl)
     throw new Error(`Could not find url for employer in email: ${email.html}`)
-  await page.goto(employerUrl, { waitUntil: 'networkidle' })
+  await page.goto(employerUrl, { waitUntil: 'load' })
 
   await page
     .getByRole('region', {
