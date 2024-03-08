@@ -4,5 +4,5 @@ test('has title', async ({ page }) => {
   await page.goto('/')
 
   // Expect h1 to contain a substring.
-  expect(await page.locator('div').first()).not.toBeEmpty()
+  await expect(page.locator('div').first()).not.toBeEmpty()
 })

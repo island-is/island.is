@@ -19,14 +19,14 @@ const baseURL: string = urls.islandisBaseUrl
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: '.' }),
   forbidOnly: !!process.env.CI,
-  retries: !!process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 1 : 0,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: !!process.env.CI ? 'retain-on-failure' : 'on',
+    trace: process.env.CI ? 'retain-on-failure' : 'on',
   },
-  reporter: !!process.env.CI
+  reporter: process.env.CI
     ? [
         ['line'],
         [
