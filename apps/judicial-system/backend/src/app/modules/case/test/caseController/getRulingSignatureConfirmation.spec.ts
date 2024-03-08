@@ -124,7 +124,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should set the ruling date', () => {
+    it('should set the ruling signature date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
@@ -166,7 +166,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should set the ruling date', () => {
+    it('should set the ruling signature date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
