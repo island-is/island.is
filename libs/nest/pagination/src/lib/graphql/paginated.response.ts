@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { PageInfoDto } from '../dto/pageinfo.dto'
 
@@ -16,13 +17,13 @@ export function PaginatedResponse<TItemsFieldValue>(
 ) {
   @ObjectType({ isAbstract: true })
   abstract class PaginatedResponseClass {
-    @Field(() => [itemsFieldValue])
+    @CacheField(() => [itemsFieldValue])
     data!: TItemsFieldValue[]
 
     @Field()
     totalCount!: number
 
-    @Field(() => PageInfoDto)
+    @CacheField(() => PageInfoDto)
     pageInfo!: PageInfoDto
   }
 
