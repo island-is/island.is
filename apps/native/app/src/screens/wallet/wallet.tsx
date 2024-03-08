@@ -128,7 +128,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       animated: true,
     })
   })
-
+  
   // Filter licenses
   const licenseItems = useMemo(() => {
     if (!res.loading && !res.error) {
@@ -149,7 +149,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       })
     }
     return []
-  }, [res, showDisability, showPCard])
+  }, [res, showDisability, showPCard, showEhic])
 
   // indexing list for spotlight search IOS
   useEffect(() => {

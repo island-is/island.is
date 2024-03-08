@@ -213,12 +213,6 @@ const ScanResultCardPresets = {
     backgroundImage: DisabilityLicenseBg,
     backgroundColor: '#C5D5C8',
   },
-  Ehic: {
-    title: 'Evrópska sjúkratryggingakortið',
-    logo: LogoEhic,
-    backgroundImage: PassportBg,
-    backgroundColor: '#F5E4EC',
-  },
   Unknown: {
     title: 'Ekki þekkt',
     logo: LogoCoatOfArms,
