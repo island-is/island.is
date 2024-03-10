@@ -27,4 +27,9 @@ export const strings = defineMessages({
     defaultMessage: 'Hver er ástæða höfnunar?',
     description: 'Texti í input boxi fyrir ástæðu höfnunar á ákæru.',
   },
+  stopModal: {
+    id: 'judicial.system.core:stop_modal',
+    defaultMessage: 'Hætta við',
+    description: 'Notaður fyrir texta í Hætta við takka í modölum.',
+  },
 })

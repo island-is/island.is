@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
 import { Modal } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -84,7 +83,7 @@ const DenyIndictmentCaseModal: React.FC<React.PropsWithChildren<Props>> = ({
       text={formatMessage(strings.text)}
       onClose={() => onClose()}
       primaryButtonText={formatMessage(strings.denyAndReturnToProsecutor)}
-      secondaryButtonText={formatMessage(core.stopModal)}
+      secondaryButtonText={formatMessage(strings.stopModal)}
       onPrimaryButtonClick={handleDenyIndictmentCase}
       onSecondaryButtonClick={onClose}
     >
