@@ -1511,35 +1511,6 @@ export class NotificationService {
 
   //#endregion
   //#region DEFENDANTS_NOT_UPDATED_AT_COURT notifications
-  //#region INDICTMENT_DENIED notifications
-
-  private async sendIndictmentDeniedNotifications(
-    theCase: Case,
-  ): Promise<SendNotificationResponse> {
-    const subject = this.formatMessage(notifications.indictmentDenied.subject)
-    const html = this.formatMessage(notifications.indictmentDenied.body, {
-      caseNumber: theCase.policeCaseNumbers[0],
-      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
-
-    const recipient = await this.sendEmail(
-      subject,
-      html,
-      theCase.prosecutor?.name,
-      theCase.prosecutor?.email,
-      undefined,
-      true,
-    )
-
-    return this.recordNotification(
-      theCase.id,
-      NotificationType.INDICTMENT_DENIED,
-      [recipient],
-    )
-  }
-
-  //#endregion
   private async sendDefendantsNotUpdatedAtCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -1581,6 +1552,35 @@ export class NotificationService {
       [recipient],
     )
   }
+  //#endregion
+  //#region INDICTMENT_DENIED notifications
+
+  private async sendIndictmentDeniedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(notifications.indictmentDenied.subject)
+    const html = this.formatMessage(notifications.indictmentDenied.body, {
+      caseNumber: theCase.policeCaseNumbers[0],
+      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    const recipient = await this.sendEmail(
+      subject,
+      html,
+      theCase.prosecutor?.name,
+      theCase.prosecutor?.email,
+      undefined,
+      true,
+    )
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.INDICTMENT_DENIED,
+      [recipient],
+    )
+  }
+
   //#endregion
   //#region Appeal notifications
   //#region APPEAL_TO_COURT_OF_APPEALS notifications
