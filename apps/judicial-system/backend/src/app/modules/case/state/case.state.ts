@@ -43,14 +43,6 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     },
   ],
   [
-    CaseTransition.ASK_FOR_CONFIRMATION,
-    {
-      fromStates: [CaseState.DRAFT, CaseState.SUBMITTED],
-      fromAppealStates: [undefined],
-      to: { state: CaseState.WAITING_FOR_CONFIRMATION },
-    },
-  ],
-  [
     CaseTransition.SUBMIT,
     {
       fromStates: [CaseState.DRAFT, CaseState.WAITING_FOR_CONFIRMATION],
