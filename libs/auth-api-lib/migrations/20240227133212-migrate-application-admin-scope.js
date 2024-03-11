@@ -14,7 +14,7 @@ module.exports = {
           AND NOT EXISTS (
             SELECT 1 FROM public.api_scope_user_access t2
             WHERE t2.scope = '@admin.island.is/application-system:admin' and t2.national_id = t.national_id
-          )
+          );
 
       COMMIT;
     `)
