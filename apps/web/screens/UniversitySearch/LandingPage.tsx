@@ -126,7 +126,10 @@ const LandingPage: Screen<LandingPageProps> = ({
                             </Box>
                             <LinkV2
                               href={
-                                university.contentfulLink?.toString() || '/'
+                                locale === 'is'
+                                  ? university.contentfulLink?.toString() || '/'
+                                  : university.contentfulLinkEn?.toString() ||
+                                    '/'
                               }
                             >
                               <Text color="blueberry600">
@@ -164,7 +167,11 @@ const LandingPage: Screen<LandingPageProps> = ({
                         />
                       </Box>
                       <LinkV2
-                        href={university.contentfulLink?.toString() || '/'}
+                        href={
+                          locale === 'is'
+                            ? university.contentfulLink?.toString() || '/'
+                            : university.contentfulLinkEn?.toString() || '/'
+                        }
                       >
                         <Text color="blueberry600">
                           {university.contentfulTitle}
