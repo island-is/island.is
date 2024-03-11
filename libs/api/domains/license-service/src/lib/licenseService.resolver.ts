@@ -153,12 +153,12 @@ export class LicenseServiceResolver {
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => LicenseVerifyResult, {
-    name: 'licenseVerify',
+    name: 'verifyLicense',
   })
   @Audit()
-  async licenseVerify(
+  async verifyLicense(
     @Args('input') input: VerifyInput,
   ): Promise<LicenseVerifyResult> {
-    return this.licenseServiceService.verify(input.data)
+    return this.licenseServiceService.verifyLicense(input.data)
   }
 }

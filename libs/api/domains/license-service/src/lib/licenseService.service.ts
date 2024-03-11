@@ -585,7 +585,7 @@ export class LicenseServiceService {
     }
   }
 
-  async verify(data: string): Promise<LicenseVerifyResult> {
+  async verifyLicense(data: string): Promise<LicenseVerifyResult> {
     if (this.barcodeService.validateStrAsJwt(data)) {
       return this.getDataFromToken(data)
     }
