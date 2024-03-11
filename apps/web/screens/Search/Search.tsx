@@ -21,6 +21,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Inline,
   Link,
   LinkContext,
@@ -79,6 +80,9 @@ import {
 } from '../queries'
 import { CategoriesProps, FilterLabels, FilterMenu } from './FilterMenu'
 import { ActionType, initialState, reducer } from './Search.state'
+import SidebarLayout from '../Layouts/SidebarLayout'
+
+import * as styles from './Search.css'
 
 const PERPAGE = 10
 
@@ -479,10 +483,6 @@ const Search: Screen<CategoryProps> = ({
     },
   ]
 
-  const selectedOrganization = countResults?.tagCounts?.find(
-    (tag) => tag?.type === 'organization' && tag?.key === query.organization,
-  )?.value
-
   const filterLabels: FilterLabels = {
     labelClearAll: n('labelClearAll', 'Hreinsa allar síur'),
     labelClear: n('labelClear', 'Hreinsa síu'),
@@ -495,385 +495,337 @@ const Search: Screen<CategoryProps> = ({
 
   const [referencedBy, setReferencedBy] = useQueryState('referencedBy')
 
+  const filterTags: { label: string; onClick: () => void }[] = []
+
+  if (referencedBy && referencedByTitle) {
+    filterTags.push({
+      label: referencedByTitle,
+      onClick: () => {
+        dispatch({
+          type: ActionType.SET_PARAMS,
+          payload: {
+            referencedBy: null,
+          },
+        })
+      },
+    })
+  }
+
+  for (const category of categories) {
+    for (const selectedCategory of category.selected) {
+      const label = category.filters.find(
+        (c) => c.value === selectedCategory,
+      )?.label
+      filterTags.push({
+        label: typeof label === 'string' ? label : selectedCategory,
+        onClick: () => {
+          dispatch({
+            type: ActionType.SET_PARAMS,
+            payload: {
+              query: {
+                [category.id]: category.selected.filter(
+                  (c) => c !== selectedCategory,
+                ),
+              },
+            },
+          })
+        },
+      })
+    }
+  }
+
   return (
     <>
       <Head>
         <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '8/12']}
-            paddingBottom={6}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            offset={[null, null, null, '2/12']}
-          >
-            <Stack space={[3, 3, 4]}>
-              <Breadcrumbs
-                items={[
-                  {
-                    title: 'Ísland.is',
-                    href: '/',
+      <SidebarLayout
+        sidebarContent={
+          <FilterMenu
+            {...filterLabels}
+            categories={categories}
+            resultCount={totalSearchResults}
+            filter={{
+              category: state.query.category ?? [],
+              organization: state.query.organization ?? [],
+            }}
+            setFilter={(payload) =>
+              dispatch({
+                type: ActionType.SET_PARAMS,
+                payload: {
+                  query: {
+                    ...payload,
                   },
-                ]}
-                renderLink={(link) => {
-                  return (
-                    <NextLink
-                      {...linkResolver('homepage')}
-                      passHref
-                      legacyBehavior
-                    >
-                      {link}
-                    </NextLink>
-                  )
-                }}
-              />
-              <SearchInput
-                id="search_input_search_page"
-                ref={searchRef}
-                size="large"
-                placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
-                quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
-                activeLocale={activeLocale}
-                initialInputValue={q}
-              />
-              <Box width="full">
-                <Inline
-                  justifyContent="spaceBetween"
-                  alignY="center"
-                  space={3}
-                  flexWrap="nowrap"
-                  collapseBelow="md"
-                >
-                  {referencedBy && (
-                    <Inline alignY="center" space={1}>
-                      {referencedByTitle && (
+                },
+              })
+            }
+            clearFilter={() => {
+              setReferencedBy(null)
+              dispatch({ type: ActionType.RESET_SEARCH })
+            }}
+          />
+        }
+      >
+        <GridContainer>
+          <GridRow>
+            <GridColumn className={styles.fullWidth} paddingBottom={6}>
+              <Stack space={[3, 3, 4]}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink
+                        {...linkResolver('homepage')}
+                        passHref
+                        legacyBehavior
+                      >
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
+                <SearchInput
+                  id="search_input_search_page"
+                  ref={searchRef}
+                  size="large"
+                  placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
+                  quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
+                  activeLocale={activeLocale}
+                  initialInputValue={q}
+                />
+                <Box width="full">
+                  <Stack space={3}>
+                    {filterTags.length > 0 && (
+                      <Inline space={1}>
                         <Text>
                           {n(
-                            'referencedByPrefix',
+                            'filteredByPrefix',
                             activeLocale === 'is'
                               ? 'Síað eftir'
                               : 'Filtered by',
                           )}
                           :
                         </Text>
+                        <Inline space={1} alignY="center">
+                          {filterTags.map((tag) => (
+                            <FilterTag active={true} onClick={tag.onClick}>
+                              {tag.label}
+                            </FilterTag>
+                          ))}
+                        </Inline>
+                      </Inline>
+                    )}
+
+                    <Inline space={1}>
+                      {countResults.total > 0 && (
+                        <Tag
+                          variant="blue"
+                          active={!query?.type?.length}
+                          onClick={() => {
+                            dispatch({
+                              type: ActionType.RESET_SEARCH,
+                            })
+                          }}
+                        >
+                          {n('showAllResults', 'Sýna allt')}
+                        </Tag>
                       )}
-                      <FilterTag
-                        onClick={() => {
+                      {tagsList
+                        .filter((x) => x.count > 0)
+                        .map(({ title, key }, index) => (
+                          <Tag
+                            key={index}
+                            variant="blue"
+                            active={
+                              query?.processentry !== 'true' &&
+                              query?.type?.includes(key)
+                            }
+                            onClick={() => {
+                              dispatch({
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    processentry: false,
+                                    ...getSearchParams(key),
+                                    category: [],
+                                    organization: [],
+                                  },
+                                  searchLocked: false,
+                                },
+                              })
+                            }}
+                          >
+                            {title}
+                          </Tag>
+                        ))}
+                      {typeof countResults.processEntryCount == 'number' &&
+                        countResults.processEntryCount > 0 && (
+                          <Tag
+                            variant="blue"
+                            active={query?.processentry === 'true'}
+                            onClick={() => {
+                              dispatch({
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    processentry: true,
+                                    ...getSearchParams('webArticle'),
+                                  },
+                                  searchLocked: false,
+                                },
+                              })
+                            }}
+                          >
+                            {n('processEntry', 'Umsóknir')}
+                          </Tag>
+                        )}
+                    </Inline>
+
+                    <Hidden above="sm">
+                      <FilterMenu
+                        {...filterLabels}
+                        categories={categories}
+                        resultCount={totalSearchResults}
+                        filter={{
+                          category: state.query.category ?? [],
+                          organization: state.query.organization ?? [],
+                        }}
+                        setFilter={(payload) =>
+                          dispatch({
+                            type: ActionType.SET_PARAMS,
+                            payload: {
+                              query: {
+                                ...payload,
+                              },
+                            },
+                          })
+                        }
+                        clearFilter={() => {
                           setReferencedBy(null)
-                          dispatch({
-                            type: ActionType.RESET_SEARCH,
-                          })
+                          dispatch({ type: ActionType.RESET_SEARCH })
                         }}
-                      >
-                        {referencedByTitle ||
-                          n(
-                            'clearSearchFilters',
-                            activeLocale === 'is'
-                              ? 'Hreinsa síu'
-                              : 'Clear filters',
-                          )}
-                      </FilterTag>
-                    </Inline>
-                  )}
-
-                  {selectedOrganization && (
-                    <Inline alignY="center" space={1}>
-                      <Text>
-                        {n(
-                          'filteredByPrefix',
-                          activeLocale === 'is' ? 'Síað eftir' : 'Filtered by',
-                        )}
-                        :
-                      </Text>
-
-                      <FilterTag
-                        active={true}
-                        onClick={() => {
-                          dispatch({
-                            type: ActionType.RESET_SEARCH,
-                          })
-                        }}
-                      >
-                        {selectedOrganization}
-                      </FilterTag>
-                    </Inline>
-                  )}
-                  {!referencedBy && !selectedOrganization && (
-                    <Inline space={1}>
-                      {countResults.total > 0 && (
-                        <Tag
-                          variant="blue"
-                          active={!query?.type?.length}
-                          onClick={() => {
-                            dispatch({
-                              type: ActionType.RESET_SEARCH,
-                            })
-                          }}
-                        >
-                          {n('showAllResults', 'Sýna allt')}
-                        </Tag>
-                      )}
-                      {tagsList
-                        .filter((x) => x.count > 0)
-                        .map(({ title, key }, index) => (
-                          <Tag
-                            key={index}
-                            variant="blue"
-                            active={
-                              query?.processentry !== 'true' &&
-                              query?.type?.includes(key)
-                            }
-                            onClick={() => {
-                              dispatch({
-                                type: ActionType.SET_PARAMS,
-                                payload: {
-                                  query: {
-                                    processentry: false,
-                                    ...getSearchParams(key),
-                                    category: [],
-                                    organization: [],
-                                  },
-                                  searchLocked: false,
-                                },
-                              })
-                            }}
-                          >
-                            {title}
-                          </Tag>
-                        ))}
-                      {typeof countResults.processEntryCount == 'number' &&
-                        countResults.processEntryCount > 0 && (
-                          <Tag
-                            variant="blue"
-                            active={query?.processentry === 'true'}
-                            onClick={() => {
-                              dispatch({
-                                type: ActionType.SET_PARAMS,
-                                payload: {
-                                  query: {
-                                    processentry: true,
-                                    ...getSearchParams('webArticle'),
-                                  },
-                                  searchLocked: false,
-                                },
-                              })
-                            }}
-                          >
-                            {n('processEntry', 'Umsóknir')}
-                          </Tag>
-                        )}
-                    </Inline>
-                  )}
-
-                  <FilterMenu
-                    {...filterLabels}
-                    categories={categories}
-                    resultCount={totalSearchResults}
-                    filter={{
-                      category: state.query.category ?? [],
-                      organization: state.query.organization ?? [],
-                    }}
-                    setFilter={(payload) =>
-                      dispatch({
-                        type: ActionType.SET_PARAMS,
-                        payload: {
-                          query: {
-                            ...getSearchParams('webArticle'),
-                            ...payload,
-                          },
-                        },
-                      })
-                    }
-                    clearFilter={() => {
-                      setReferencedBy(null)
-                      dispatch({ type: ActionType.RESET_SEARCH })
-                    }}
-                    align="right"
-                    variant={isMobile ? 'dialog' : 'popover'}
-                  />
-                </Inline>
-
-                {!referencedBy && selectedOrganization && (
-                  <Box paddingTop={3}>
-                    <Inline space={1}>
-                      {countResults.total > 0 && (
-                        <Tag
-                          variant="blue"
-                          active={!query?.type?.length}
-                          onClick={() => {
-                            dispatch({
-                              type: ActionType.RESET_SEARCH,
-                            })
-                          }}
-                        >
-                          {n('showAllResults', 'Sýna allt')}
-                        </Tag>
-                      )}
-                      {tagsList
-                        .filter((x) => x.count > 0)
-                        .map(({ title, key }, index) => (
-                          <Tag
-                            key={index}
-                            variant="blue"
-                            active={
-                              query?.processentry !== 'true' &&
-                              query?.type?.includes(key)
-                            }
-                            onClick={() => {
-                              dispatch({
-                                type: ActionType.SET_PARAMS,
-                                payload: {
-                                  query: {
-                                    processentry: false,
-                                    ...getSearchParams(key),
-                                    category: [],
-                                    organization: [],
-                                  },
-                                  searchLocked: false,
-                                },
-                              })
-                            }}
-                          >
-                            {title}
-                          </Tag>
-                        ))}
-                      {typeof countResults.processEntryCount == 'number' &&
-                        countResults.processEntryCount > 0 && (
-                          <Tag
-                            variant="blue"
-                            active={query?.processentry === 'true'}
-                            onClick={() => {
-                              dispatch({
-                                type: ActionType.SET_PARAMS,
-                                payload: {
-                                  query: {
-                                    processentry: true,
-                                    ...getSearchParams('webArticle'),
-                                  },
-                                  searchLocked: false,
-                                },
-                              })
-                            }}
-                          >
-                            {n('processEntry', 'Umsóknir')}
-                          </Tag>
-                        )}
-                    </Inline>
-                  </Box>
-                )}
-              </Box>
-              {nothingFound && !!q ? (
-                <>
-                  <Text variant="intro" as="p">
-                    {n(
-                      'nothingFoundWhenSearchingFor',
-                      'Ekkert fannst við leit á',
-                    )}{' '}
-                    <strong>{q}</strong>
+                        align="right"
+                        variant={isMobile ? 'dialog' : 'popover'}
+                      />
+                    </Hidden>
+                  </Stack>
+                </Box>
+                {nothingFound && !!q ? (
+                  <>
+                    <Text variant="intro" as="p">
+                      {n(
+                        'nothingFoundWhenSearchingFor',
+                        'Ekkert fannst við leit á',
+                      )}{' '}
+                      <strong>{q}</strong>
+                      {!!(
+                        state.query.organization?.length ||
+                        state.query.category?.length
+                      ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
+                    </Text>
                     {!!(
                       state.query.organization?.length ||
                       state.query.category?.length
-                    ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
-                  </Text>
-                  {!!(
-                    state.query.organization?.length ||
-                    state.query.category?.length
-                  ) && (
-                    <Button
-                      variant="text"
-                      onClick={() =>
-                        dispatch({
-                          type: ActionType.RESET_SEARCH,
-                        })
-                      }
-                    >
-                      {`${n(
-                        'clickHereToRemoveFilters',
-                        'Smelltu hér til að fjarlægja allar síur.',
-                      )}`}
-                    </Button>
-                  )}
-                  <Text variant="intro" as="p">
-                    {n('nothingFoundExtendedExplanation')}
-                  </Text>
-                  {q.length &&
-                  searchResultsItems.length === 0 &&
-                  activeLocale === 'is' ? (
-                    <EnglishResultsLink q={q} />
-                  ) : null}
-                </>
-              ) : (
-                <Box marginBottom={2}>
-                  <Text variant="intro" as="p">
-                    {totalSearchResults} {searchResultsText}
-                  </Text>
-                </Box>
-              )}
-            </Stack>
-            <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-              <Stack space={2}>
-                {filteredItems.map(
-                  (
-                    {
-                      typename,
-                      image,
-                      thumbnail,
-                      labels,
-                      parentTitle,
-                      ...rest
-                    },
-                    index,
-                  ) => {
-                    const tags: Array<CardTagsProps> = []
-
-                    labels.forEach((label) => {
-                      tags.push({
-                        title: label,
-                        tagProps: {
-                          outlined: true,
-                        },
-                      })
-                    })
-
-                    return (
-                      <Card
-                        key={index}
-                        tags={tags}
-                        dataTestId="search-result"
-                        image={thumbnail ? thumbnail : image}
-                        subTitle={parentTitle}
-                        highlightedResults={true}
-                        {...rest}
-                      />
-                    )
-                  },
-                )}{' '}
-                {totalSearchResults > 0 && (
-                  <Box paddingTop={6}>
-                    <Pagination
-                      page={page}
-                      totalPages={totalPages}
-                      variant="blue"
-                      renderLink={(page, className, children) => (
-                        <Link
-                          href={{
-                            pathname: linkResolver('search').href,
-                            query: { ...query, page },
-                          }}
-                        >
-                          <span className={className}>{children}</span>
-                        </Link>
-                      )}
-                    />
+                    ) && (
+                      <Button
+                        variant="text"
+                        onClick={() =>
+                          dispatch({
+                            type: ActionType.RESET_SEARCH,
+                          })
+                        }
+                      >
+                        {`${n(
+                          'clickHereToRemoveFilters',
+                          'Smelltu hér til að fjarlægja allar síur.',
+                        )}`}
+                      </Button>
+                    )}
+                    <Text variant="intro" as="p">
+                      {n('nothingFoundExtendedExplanation')}
+                    </Text>
+                    {q.length &&
+                    searchResultsItems.length === 0 &&
+                    activeLocale === 'is' ? (
+                      <EnglishResultsLink q={q} />
+                    ) : null}
+                  </>
+                ) : (
+                  <Box marginBottom={2}>
+                    <Text variant="intro" as="p">
+                      {totalSearchResults} {searchResultsText}
+                    </Text>
                   </Box>
                 )}
               </Stack>
-            </ColorSchemeContext.Provider>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+              <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+                <Stack space={2}>
+                  {filteredItems.map(
+                    (
+                      {
+                        typename,
+                        image,
+                        thumbnail,
+                        labels,
+                        parentTitle,
+                        ...rest
+                      },
+                      index,
+                    ) => {
+                      const tags: Array<CardTagsProps> = []
+
+                      labels.forEach((label) => {
+                        tags.push({
+                          title: label,
+                          tagProps: {
+                            outlined: true,
+                          },
+                        })
+                      })
+
+                      return (
+                        <Card
+                          key={index}
+                          tags={tags}
+                          dataTestId="search-result"
+                          image={thumbnail ? thumbnail : image}
+                          subTitle={parentTitle}
+                          highlightedResults={true}
+                          {...rest}
+                        />
+                      )
+                    },
+                  )}{' '}
+                  {totalSearchResults > 0 && (
+                    <Box paddingTop={6}>
+                      <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        variant="blue"
+                        renderLink={(page, className, children) => (
+                          <Link
+                            href={{
+                              pathname: linkResolver('search').href,
+                              query: { ...query, page },
+                            }}
+                          >
+                            <span className={className}>{children}</span>
+                          </Link>
+                        )}
+                      />
+                    </Box>
+                  )}
+                </Stack>
+              </ColorSchemeContext.Provider>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </SidebarLayout>
     </>
   )
 }
