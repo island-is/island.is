@@ -158,8 +158,17 @@ jobs:
       - name: Run codegen
         if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
         run: |
+          set -euo pipefail
+          set -x
           node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
+          touched_files="$(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache)"
+          if [ -z "$touched_files" ]; then
+            echo "## Codegen ⚠" >> "$GITHUB_STEP_SUMMARY"
+            echo "Something very wrong with codegen 💀" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          realpathed_files="$(echo $touched_files | xargs realpath --relative-to $PWD)"
+          tar zcvf generated_files.tar.gz $touched_files
 
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh
