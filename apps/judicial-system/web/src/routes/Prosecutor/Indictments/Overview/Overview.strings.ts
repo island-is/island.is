@@ -74,8 +74,8 @@ export const overview = {
     description:
       'Texti í info boxi þegar ákæra hefur verið send á Yfirlit ákæru skefi í ákærum.',
   }),
-  caseSentForConfirmation: defineMessage({
-    id: 'judicial.system.indictments:overview.case_sent_for_confirmation',
+  caseSentForConfirmationTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.case_sent_for_confirmation_title',
     defaultMessage: 'Ákæra hefur verið send til staðfestingar',
     description:
       'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',

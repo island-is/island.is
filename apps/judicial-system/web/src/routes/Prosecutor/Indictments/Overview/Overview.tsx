@@ -210,7 +210,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
-            title={formatMessage(strings.caseSentForConfirmation)}
+            title={formatMessage(strings.caseSentForConfirmationTitle)}
             text={formatMessage(strings.caseSentForConfirmationText)}
             onClose={() => router.push(constants.CASES_ROUTE)}
             onPrimaryButtonClick={() => {
