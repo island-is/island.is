@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
-import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -70,8 +69,6 @@ import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
-
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
@@ -261,10 +258,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseOptions = {
     threshold: 0.3,
     findAllMatches: true,
-    ignoreLocation: true,
+    includeScore: true,
     keys: [
-      `name${locale === 'is' ? 'Is' : 'En'}`,
-      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+      {
+        name: `name${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 2,
+      },
+      {
+        name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
@@ -1417,20 +1420,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  let showPagesFeatureFlag = false
-
-  if (publicRuntimeConfig?.environment === 'prod') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
-  } else {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
-  }
-
-  if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Page not found')
-  }
-
   const [
     {
       data: { getOrganizationPage },
@@ -1462,6 +1451,10 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     }),
   ])
+
+  if (!getOrganizationPage) {
+    throw new CustomNextError(404, 'Page not found')
+  }
 
   return {
     data: universityGatewayPrograms.data,
