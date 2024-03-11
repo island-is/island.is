@@ -6,6 +6,8 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  Button,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -25,6 +27,7 @@ type WrapperProps = {
   breadcrumbItems?: BreadCrumbItem[]
   children?: ReactNode
   sidebarContent?: ReactNode
+  goBackUrl?: string
 }
 
 export const StjornartidindiWrapper = ({
@@ -35,6 +38,7 @@ export const StjornartidindiWrapper = ({
   breadcrumbItems,
   children,
   sidebarContent,
+  goBackUrl,
 }: WrapperProps) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
@@ -72,7 +76,26 @@ export const StjornartidindiWrapper = ({
           isSticky={false}
           fullWidthContent={true}
           sidebarContent={
-            <Box marginRight={[0, 0, 0, 0, 3]}>{sidebarContent}</Box>
+            <Box marginRight={[0, 0, 0, 0, 3]}>
+              {goBackUrl ? (
+                <Box marginBottom={2}>
+                  <Link href={goBackUrl}>
+                    <Button
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                      as="span"
+                      unfocusable
+                    >
+                      Til baka
+                    </Button>
+                  </Link>
+                </Box>
+              ) : null}
+              {sidebarContent}
+            </Box>
           }
         >
           {breadcrumbItems && (
@@ -91,7 +114,7 @@ export const StjornartidindiWrapper = ({
           )}
 
           <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-            {organizationPage && organizationPage.title}
+            {pageTitle}
           </Text>
 
           {pageDescription && (
@@ -100,7 +123,7 @@ export const StjornartidindiWrapper = ({
             </Box>
           )}
 
-          {isMobile && sidebarContent}
+          {isMobile && <Box marginBottom={SLICE_SPACING}>{sidebarContent}</Box>}
 
           <Box className="rs_read">{children}</Box>
         </SidebarLayout>

@@ -16,6 +16,7 @@ export const valueContainer = style(
         paddingBottom: 0,
         paddingLeft: 0,
         marginLeft: 0,
+        width: '100%', // prevent overflowing value content
       },
     },
   },

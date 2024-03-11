@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Locale } from 'locale'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
@@ -7,12 +7,17 @@ import {
   Box,
   Button,
   Divider,
+  Inline,
   Input,
+  Link,
   Select,
   Stack,
+  Table as T,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
+import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -27,14 +32,16 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   baseUrl,
+  categoriesUrl,
   deildOptions,
   emptyOption,
   findValueOption,
   malaflokkurOptions,
-  mockAdverts,
   removeEmptyFromObject,
   searchUrl,
+  splitArrayIntoGroups,
   StjornartidindiWrapper,
+  yfirflokkurOptions,
 } from '../../../components/Stjornartidindi'
 import { Screen } from '../../../types'
 import {
@@ -42,19 +49,28 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { StjornartidindiSearchGridView } from './StjornartidindiSearchGridView'
-import { StjornartidindiSearchListView } from './StjornartidindiSearchListView'
+
+type MalaflokkarType = Array<{
+  letter: string
+  categories: typeof malaflokkurOptions
+}>
 
 const initialState = {
   q: '',
+  stafur: '',
   deild: '',
-  tegund: '',
-  timabil: '',
-  malaflokkur: '',
-  stofnun: '',
+  yfirflokkur: '',
 }
 
-const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
+const sortCategories = (cats: typeof malaflokkurOptions) => {
+  // Sort pages by importance (which defaults to 0).
+  // If both pages being compared have the same importance we sort by comparing their titles.
+  return cats.sort((a, b) => {
+    return sortAlpha('label')(a, b)
+  })
+}
+
+const StjornartidindiCategoriesPage: Screen<StjornartidindiCategoriesProps> = ({
   organizationPage,
   organization,
   namespace,
@@ -72,19 +88,80 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
   const o = useNamespace(organizationNamespace)
 
   const [searchState, setSearchState] = useState(initialState)
-  const [listView, setListView] = useState(false)
+
+  const sortedCategories = useMemo(() => {
+    return sortCategories(malaflokkurOptions)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [malaflokkurOptions])
+
+  const filterCategories = useCallback(
+    (initial?: boolean) => {
+      const filtered: MalaflokkarType = []
+      sortedCategories.forEach((cat) => {
+        const letter = cat.label.slice(0, 1).toUpperCase()
+
+        const qMatch =
+          !initial && searchState.q
+            ? cat.label.toLowerCase().includes(searchState.q.toLowerCase())
+            : true
+        console.log({ g: searchState.stafur.split('').includes(letter) })
+
+        const letterMatch =
+          !initial && searchState.stafur
+            ? searchState.stafur.split('').includes(letter)
+            : true
+        const deildMatch =
+          !initial && searchState.deild ? cat.deild === searchState.deild : true
+        const flokkurMatch =
+          !initial && searchState.yfirflokkur
+            ? cat.yfirflokkur === searchState.yfirflokkur
+            : true
+
+        if (qMatch && letterMatch && deildMatch && flokkurMatch) {
+          if (!filtered.find((f) => f.letter === letter)) {
+            filtered.push({ letter, categories: [cat] })
+          } else {
+            filtered.find((f) => f.letter === letter)?.categories.push(cat)
+          }
+        }
+      })
+
+      return filtered
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [searchState, sortedCategories],
+  )
+
+  const initialCategories = useMemo(() => {
+    return filterCategories(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedCategories])
+
+  const [categories, setCategories] = useState(initialCategories)
 
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search)
     setSearchState({
       q: searchParams.get('q') ?? '',
+      stafur: searchParams.get('stafur') ?? '',
       deild: searchParams.get('deild') ?? '',
-      tegund: searchParams.get('tegund') ?? '',
-      timabil: searchParams.get('timabil') ?? '',
-      malaflokkur: searchParams.get('malaflokkur') ?? '',
-      stofnun: searchParams.get('stofnun') ?? '',
+      yfirflokkur: searchParams.get('yfirflokkur') ?? '',
     })
   }, [])
+
+  useEffect(() => {
+    if (
+      searchState.q ||
+      searchState.stafur ||
+      searchState.deild ||
+      searchState.yfirflokkur
+    ) {
+      setCategories(filterCategories())
+    } else {
+      setCategories(initialCategories)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchState])
 
   const breadcrumbItems = [
     {
@@ -100,14 +177,14 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
       ).href,
     },
     {
-      title: 'Leitarniðurstöður',
+      title: 'Málaflokkar',
     },
   ]
 
   const updateSearchParams = useMemo(() => {
     return debounce((state: Record<string, string>) => {
       router.replace(
-        searchUrl,
+        categoriesUrl,
         {
           query: removeEmptyFromObject(state),
         },
@@ -126,6 +203,16 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
     updateSearchParams(newState)
   }
 
+  const toggleLetter = (letter: string) => {
+    let letters = searchState.stafur.split('')
+    if (letters.includes(letter)) {
+      letters = letters.filter((l) => l !== letter)
+    } else {
+      letters.push(letter)
+    }
+    updateSearchState('stafur', letters.join(''))
+  }
+
   const resetFilter = () => {
     setSearchState(initialState)
     updateSearchParams(initialState)
@@ -133,7 +220,7 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
 
   return (
     <StjornartidindiWrapper
-      pageTitle={'Leit í Stjórnartíðindum'}
+      pageTitle={'Málaflokkar Stjórnartíðinda'}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       organizationPage={organizationPage!}
@@ -145,14 +232,14 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
           background="blue100"
           padding={[2, 2, 3]}
           borderRadius="large"
-          action={searchUrl}
+          action={categoriesUrl}
         >
           <Stack space={[1, 1, 2]}>
             <Text variant="h4">Leit</Text>
 
             <Input
               name="q"
-              placeholder="Leit í Stjórnartíðindum"
+              placeholder="Leit í flokkum"
               size="xs"
               value={searchState.q}
               onChange={(e) => updateSearchState('q', e.target.value)}
@@ -185,62 +272,104 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
             />
 
             <Select
-              name="malaflokkur"
-              label="Málaflokkur"
+              name="yfirflokkur"
+              label="Yfirflokkur"
               size="xs"
-              placeholder="Veldu málaflokk"
+              placeholder="Veldu yfirflokk"
               options={[
                 { ...emptyOption('Allir flokkar') },
-                ...malaflokkurOptions,
+                ...yfirflokkurOptions,
               ]}
               isClearable
               value={findValueOption(
-                malaflokkurOptions,
-                searchState.malaflokkur,
+                yfirflokkurOptions,
+                searchState.yfirflokkur,
               )}
-              onChange={(v) => updateSearchState('malaflokkur', v?.value ?? '')}
+              onChange={(v) => updateSearchState('yfirflokkur', v?.value ?? '')}
             />
           </Stack>
         </Box>
       }
       breadcrumbItems={breadcrumbItems}
     >
-      <Stack space={3}>
-        <Button
-          onClick={() => setListView(!listView)}
-          size="small"
-          iconType="outline"
-          icon={listView ? 'copy' : 'menu'}
-          variant="utility"
-        >
-          {listView ? 'Sýna sem spjöld' : 'Sýna sem listi'}
-        </Button>
-
-        {listView ? (
-          <StjornartidindiSearchListView adverts={mockAdverts} />
+      <Stack space={[3, 4, 6]}>
+        <Inline space={1}>
+          {initialCategories.map((c) => (
+            <Tag
+              key={c.letter}
+              active={searchState.stafur.includes(c.letter)}
+              onClick={() => {
+                toggleLetter(c.letter)
+              }}
+              variant={
+                searchState.stafur.includes(c.letter)
+                  ? 'blue'
+                  : !categories.find((cat) => cat.letter === c.letter)
+                  ? 'disabled'
+                  : 'white'
+              }
+              outlined={searchState.stafur.includes(c.letter) ? false : true}
+            >
+              {'\u00A0'}
+              {c.letter}
+              {'\u00A0'}
+            </Tag>
+          ))}
+        </Inline>
+        {categories.length === 0 ? (
+          <p>Ekkert fannst fyrir þessi leitarskilyrði</p>
         ) : (
-          <StjornartidindiSearchGridView adverts={mockAdverts} />
+          categories.map((c) => {
+            const groups = splitArrayIntoGroups(c.categories, 3)
+            return (
+              <T.Table key={c.letter}>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData colSpan={3}>{c.letter}</T.HeadData>
+                  </T.Row>
+                </T.Head>
+                <T.Body>
+                  {groups.map((group) => (
+                    <T.Row key={group[0].label}>
+                      {group.map((cat) => (
+                        <T.Data key={cat.label}>
+                          <Link
+                            color="blue400"
+                            underline={'normal'}
+                            underlineVisibility="always"
+                            href={`${searchUrl}?malaflokkur=${cat.value}`}
+                          >
+                            {cat.label}
+                          </Link>
+                        </T.Data>
+                      ))}
+                    </T.Row>
+                  ))}
+                </T.Body>
+              </T.Table>
+            )
+          })
         )}
       </Stack>
     </StjornartidindiWrapper>
   )
 }
 
-interface StjornartidindiSearchProps {
+interface StjornartidindiCategoriesProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
   locale: Locale
 }
 
-const StjornartidindiSearch: Screen<StjornartidindiSearchProps> = ({
+const StjornartidindiCategories: Screen<StjornartidindiCategoriesProps> = ({
   organizationPage,
   organization,
   namespace,
   locale,
 }) => {
   return (
-    <StjornartidindiSearchPage
+    <StjornartidindiCategoriesPage
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -249,7 +378,10 @@ const StjornartidindiSearch: Screen<StjornartidindiSearchProps> = ({
   )
 }
 
-StjornartidindiSearch.getProps = async ({ apolloClient, locale /*, req*/ }) => {
+StjornartidindiCategories.getProps = async ({
+  apolloClient,
+  locale /*, req*/,
+}) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
@@ -313,4 +445,4 @@ StjornartidindiSearch.getProps = async ({ apolloClient, locale /*, req*/ }) => {
   }
 }
 
-export default withMainLayout(StjornartidindiSearch)
+export default withMainLayout(StjornartidindiCategories)

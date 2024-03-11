@@ -3,6 +3,7 @@ import { Locale } from 'locale'
 import NextLink from 'next/link'
 
 import {
+  ArrowLink,
   Box,
   Breadcrumbs,
   CategoryCard,
@@ -26,8 +27,11 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  categoriesUrl,
+  searchUrl,
   StjornartidindiHomeIntro,
   StjornartidindiWrapper,
+  yfirflokkurOptions,
 } from '../../../components/Stjornartidindi'
 import { Screen } from '../../../types'
 import {
@@ -67,8 +71,6 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
     },
   ]
 
-  const searchUrl = '/s/stjornartidindi/leit'
-
   return (
     <StjornartidindiWrapper
       pageTitle={organizationPage?.title ?? ''}
@@ -85,7 +87,10 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
           searchPlaceholder="Leitaðu í stjórnartíðindum"
           searchUrl={searchUrl}
           quickLinks={[
-            { title: 'A deild', href: searchUrl + '?deild=a-deild' },
+            {
+              title: 'A deild',
+              href: searchUrl + '?deild=a-deild',
+            },
             {
               title: 'B deild',
               href: searchUrl + '?deild=b-deild',
@@ -112,38 +117,26 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
 
         <Box background="blue100" paddingTop={8} paddingBottom={8}>
           <GridContainer>
-            <Box>
+            <Box display={'flex'} justifyContent={'spaceBetween'}>
               <Text variant="h3">Yfirflokkar</Text>
+              <ArrowLink href={categoriesUrl}>Málaflokkar A-Ö</ArrowLink>
             </Box>
 
             <GridRow>
-              <GridColumn
-                key={'1'}
-                span={['1/1', '1/2', '1/2', '1/3', '1/4']}
-                paddingTop={3}
-                paddingBottom={4}
-              >
-                <CategoryCard
-                  href={searchUrl + '?flokkur=domstolar'}
-                  heading={'Dómstólar og réttarfar'}
-                  text={
-                    'Hæstiréttur, lögmenn, lögreglumál, lögfræði, kjaradómur, refsilög o.fl.'
-                  }
-                />
-              </GridColumn>
-
-              <GridColumn
-                key={'1'}
-                span={['1/1', '1/2', '1/2', '1/3', '1/4']}
-                paddingTop={3}
-                paddingBottom={4}
-              >
-                <CategoryCard
-                  href={searchUrl + '?flokkur=sjavarutvegur'}
-                  heading={'Sjávarútvegur, fiskveiðar og fiskirækt'}
-                  text={'Sjávarútvegur, Veiði - friðun, fiskeldi og hafnarmál.'}
-                />
-              </GridColumn>
+              {yfirflokkurOptions.map((y, i) => (
+                <GridColumn
+                  key={i}
+                  span={['1/1', '1/2', '1/2', '1/3', '1/4']}
+                  paddingTop={3}
+                  paddingBottom={4}
+                >
+                  <CategoryCard
+                    href={`${searchUrl}?malaflokkur=${y.value}`}
+                    heading={y.label}
+                    text={y.cardDescription ?? ''}
+                  />
+                </GridColumn>
+              ))}
             </GridRow>
           </GridContainer>
         </Box>
