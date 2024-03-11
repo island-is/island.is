@@ -8,6 +8,7 @@ import {
   Configuration,
   MachineCategoryApi,
   MachineOwnerChangeApi,
+  MachineRequestInspectionApi,
   MachineStatusChangeApi,
   MachineStreetRegistrationApi,
   MachineSupervisorChangeApi,
@@ -90,6 +91,11 @@ export const apiProviders = [
   {
     api: MachineStreetRegistrationApi,
     provide: MachineStreetRegistrationApi,
+    acceptHeader: 'application/json-patch+json',
+  },
+  {
+    api: MachineRequestInspectionApi,
+    provide: MachineRequestInspectionApi,
     acceptHeader: 'application/json-patch+json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

@@ -1,13 +1,16 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
   ApiMachinesGetRequest,
   ExcelRequest,
   GetMachineRequest,
   MachineCategoryApi,
   MachineHateoasDto,
+  MachineInspectionRequestCreateDto,
   MachineOwnerChangeApi,
+  MachineRequestInspectionApi,
   MachineStatusChangeApi,
   MachineStreetRegistrationApi,
   MachineStreetRegistrationCreateDto,
@@ -42,6 +45,7 @@ export class WorkMachinesClientService {
     private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
     private readonly machineStatusApi: MachineStatusChangeApi,
     private readonly machineStreetApi: MachineStreetRegistrationApi,
+    private readonly machineRequestInspection: MachineRequestInspectionApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -70,6 +74,12 @@ export class WorkMachinesClientService {
 
   private machineStreetApiWithAuth(auth: Auth) {
     return this.machineStreetApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineRequestInspectionApiWithAuth(auth: Auth) {
+    return this.machineRequestInspection.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   getWorkMachines = async (
@@ -195,6 +205,17 @@ export class WorkMachinesClientService {
   ) {
     await this.machineStreetApiWithAuth(auth).apiMachineStreetRegistrationPost({
       machineStreetRegistrationCreateDto: streetRegistration,
+    })
+  }
+
+  async requestInspection(
+    auth: Auth,
+    requestInspection: MachineInspectionRequestCreateDto,
+  ) {
+    await this.machineRequestInspectionApiWithAuth(
+      auth,
+    ).apiMachineRequestInspectionPost({
+      machineInspectionRequestCreateDto: requestInspection,
     })
   }
 }
