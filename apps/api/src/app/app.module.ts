@@ -12,10 +12,6 @@ import { ApplicationModule } from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
-import {
-  CommunicationsConfig,
-  CommunicationsModule,
-} from '@island.is/api/domains/communications'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
@@ -45,14 +41,6 @@ import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
-import {
-  FirearmDigitalLicenseClientConfig,
-  DisabilityDigitalLicenseClientConfig,
-  AdrDigitalLicenseClientConfig,
-  MachineDigitalLicenseClientConfig,
-  HuntingDigitalLicenseClientConfig,
-  DrivingDigitalLicenseClientConfig,
-} from '@island.is/clients/license-client'
 import {
   CommunicationsConfig,
   CommunicationsModule,
@@ -123,6 +111,7 @@ import {
   AdrDigitalLicenseClientConfig,
   DisabilityDigitalLicenseClientConfig,
   DrivingDigitalLicenseClientConfig,
+  HuntingDigitalLicenseClientConfig,
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
