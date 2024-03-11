@@ -973,9 +973,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(
-        ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS,
-      )
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS)
       expect(newApplication.answers.tempEmployers).toEqual(undefined)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
@@ -1020,9 +1018,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(
-        ApplicationStates.VINNUMALASTOFNUN_APPROVAL,
-      )
+      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
       expect(newApplication.answers.tempEmployers).toEqual(undefined)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
