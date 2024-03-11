@@ -13,6 +13,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -29,13 +30,27 @@ import {
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const plate = getValueViaPath(
+    application.answers,
+    'selectVehicle.plate',
+    undefined,
+  ) as string | undefined
+  console.log('application', application.answers)
+  console.log('plate', plate)
+  return {
+    name: applicationMessage.name,
+    value: plate ? `- ${plate}` : '',
+  }
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.ENERGY_FUNDS,
-  name: applicationMessage.name,
+  name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
   translationNamespaces: [ApplicationConfigurations.EnergyFunds.translation],
   dataSchema: EnergyFundsSchema,
@@ -95,7 +110,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Styrkur vegna kaupa á rafbílum',
+          name: 'Styrkur vegna kaupa á rafbílum 111',
           status: 'draft',
           actionCard: {
             tag: {
