@@ -81,12 +81,8 @@ export const valueToNumber = (value?: unknown, delimiter = ','): number => {
   if (typeof value === 'string') {
     const pattern = new RegExp(`/[^d]${delimiter}/g`)
     const numStr = value.replace(pattern, '')
-    console.log('numStr', numStr)
     const numStrDot = numStr.replace(delimiter, '.')
-    console.log('numStrDot', numStrDot)
     const num = parseFloat(numStrDot)
-
-    console.log('num', num)
 
     return isNaN(num) ? 0 : num
   }

@@ -202,8 +202,11 @@ export const overviewAssets = [
               ? account.accountNumber
               : formatBankInfo(account.accountNumber ?? ''),
             description: [
-              `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
-                account.balance ?? '0',
+              `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
+                account.capital ?? '0',
+              )}`,
+              `${m.bankAccountPenaltyInterestRates.defaultMessage}: ${formatCurrency(
+                account.penalityInterestRates ?? '0',
               )}`,
               `${m.bankAccountForeign.defaultMessage}: ${
                 isForeign ? m.yes.defaultMessage : m.no.defaultMessage

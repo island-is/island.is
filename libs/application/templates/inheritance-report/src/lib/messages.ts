@@ -490,6 +490,16 @@ export const m = defineMessages({
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
     description: '',
   },
+  bankAccountCapital: {
+    id: 'ir.application:bankAccountCapital',
+    defaultMessage: 'Höfuðstóll á dánardegi',
+    description: '',
+  },
+  bankAccountPenaltyInterestRates: {
+    id: 'ir.application:bankAccountPenaltyInterestRates',
+    defaultMessage: 'Áfallnir vextir á dánardegi',
+    description: '',
+  },
   bankAccountPlaceholder: {
     id: 'ir.application:bankAccountPlaceholder',
     defaultMessage: 'xxxx - xx - xxxxxx',
