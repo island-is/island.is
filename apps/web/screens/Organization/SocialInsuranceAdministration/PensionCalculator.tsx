@@ -66,6 +66,24 @@ const lowercaseFirstLetter = (value: string | undefined) => {
   return value[0].toLowerCase() + value.slice(1)
 }
 
+const hasDisabilityAssessment = (
+  typeOfBasePension: BasePensionType | null | undefined,
+) => {
+  return (
+    typeOfBasePension === BasePensionType.Disability ||
+    typeOfBasePension === BasePensionType.Rehabilitation
+  )
+}
+
+const hasStartDate = (
+  typeOfBasePension: BasePensionType | null | undefined,
+) => {
+  return (
+    typeOfBasePension === BasePensionType.Retirement ||
+    typeOfBasePension === BasePensionType.HalfRetirement
+  )
+}
+
 interface NumericInputFieldWrapperProps {
   heading: string
   description: string
@@ -325,6 +343,15 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     const baseUrl = linkResolver('pensioncalculatorresults').href
     const queryParams = convertToQueryParams({
       ...data,
+      ...(!hasDisabilityAssessment(data.typeOfBasePension) && {
+        ageOfFirst75DisabilityAssessment: undefined,
+      }),
+      ...(!hasStartDate(data.typeOfBasePension) && {
+        birthMonth: undefined,
+        birthYear: undefined,
+        startMonth: undefined,
+        startYear: undefined,
+      }),
       dateOfCalculations: data.dateOfCalculations
         ? data.dateOfCalculations
         : dateOfCalculationsOptions[0].value,
@@ -471,6 +498,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     (option) => option.value === birthMonth,
   )?.label
 
+  const maxLivingConditionAbroadInYears: number =
+    customPageData?.configJson?.maxLivingConditionAbroadInYears ?? 52
+
+  const maxTaxCardRatio: number =
+    customPageData?.configJson?.maxTaxCardRatio ?? 100
+
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -556,9 +589,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                     className={styles.fullWidth}
                   >
                     <Stack space={5}>
-                      {(typeOfBasePension === BasePensionType.Retirement ||
-                        typeOfBasePension ===
-                          BasePensionType.HalfRetirement) && (
+                      {hasStartDate(typeOfBasePension) && (
                         <Stack space={3}>
                           <Box className={styles.textMaxWidth}>
                             <Text variant="h2" as="h2">
@@ -801,7 +832,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   )
                                 }
                                 type="number"
-                                maxLength={7}
+                                maxLength={
+                                  formatMessage(
+                                    translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                                  ).length + 3
+                                }
                               />
                             </Box>
                           )}
@@ -858,11 +893,22 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   translationStrings.livingConditionAbroadInYearsPlaceholder,
                                 )}
                                 type="number"
-                                suffix={
-                                  ' ' +
-                                  formatMessage(translationStrings.yearsSuffix)
-                                }
-                                maxLength={5}
+                                suffix={` ${formatMessage(
+                                  translationStrings.yearsSuffix,
+                                )}`}
+                                format={(value) => {
+                                  if (
+                                    Number(value) >
+                                    maxLivingConditionAbroadInYears
+                                  ) {
+                                    value = String(
+                                      maxLivingConditionAbroadInYears,
+                                    )
+                                  }
+                                  return `${value} ${formatMessage(
+                                    translationStrings.yearsSuffix,
+                                  )}`
+                                }}
                               />
                             </Box>
                           )}
@@ -886,7 +932,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               placeholder="%"
                               type="number"
                               suffix="%"
-                              maxLength={4}
+                              format={(value) => {
+                                if (Number(value) > maxTaxCardRatio) {
+                                  value = String(maxTaxCardRatio)
+                                }
+                                return `${value}%`
+                              }}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1218,8 +1269,6 @@ PensionCalculator.getProps = async ({
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
-    livingConditionRatio: 100,
-    taxCard: 0,
   }
 
   return {

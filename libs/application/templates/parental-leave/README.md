@@ -41,7 +41,7 @@ When the primary parent requests transferal of rights, then the other secondary 
 
 #### Other parent requires action
 
-When the primary parent requests transferal of rights and the other parent does not approve the transfer and asks the primary parent for edits. The primary parent's application updates to ask them to edit their application. 
+When the primary parent requests transferal of rights and the other parent does not approve the transfer and asks the primary parent for edits. The primary parent's application updates to ask them to edit their application.
 
 #### Employer waiting to assign
 

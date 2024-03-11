@@ -14,6 +14,7 @@ import { DelegationsIncomingWardService } from './delegations-incoming-ward.serv
 import { ApiScope } from '../resources/models/api-scope.model'
 import { WhereOptions } from 'sequelize'
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
+import { DelegationsIndexService } from './delegations-index.service'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -60,6 +61,7 @@ export class DelegationsIncomingService {
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
     private delegationsIncomingRepresentativeService: DelegationsIncomingRepresentativeService,
     private delegationsIncomingWardService: DelegationsIncomingWardService,
+    private delegationsIndexService: DelegationsIndexService,
   ) {}
 
   async findAllValid(
@@ -73,6 +75,9 @@ export class DelegationsIncomingService {
       )
     }
 
+    // Index incoming delegations
+    void this.delegationsIndexService.indexDelegations(user)
+
     const delegationPromises = []
 
     delegationPromises.push(
@@ -84,14 +89,16 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
-      this.delegationsIncomingCustomService.findAllValidIncoming(
-        user,
+      this.delegationsIncomingCustomService.findAllValidIncoming({
+        nationalId: user.nationalId,
         domainName,
-      ),
+      }),
     )
 
     delegationPromises.push(
-      this.delegationsIncomingRepresentativeService.findAllIncoming(user),
+      this.delegationsIncomingRepresentativeService.findAllIncoming({
+        nationalId: user.nationalId,
+      }),
     )
 
     const delegationSets = await Promise.all(delegationPromises)
@@ -176,11 +183,11 @@ export class DelegationsIncomingService {
     ) {
       delegationPromises.push(
         this.delegationsIncomingRepresentativeService
-          .findAllIncoming(
-            user,
+          .findAllIncoming({
+            nationalId: user.nationalId,
             clientAllowedApiScopes,
-            client?.requireApiScopes,
-          )
+            requireApiScopes: client?.requireApiScopes,
+          })
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),

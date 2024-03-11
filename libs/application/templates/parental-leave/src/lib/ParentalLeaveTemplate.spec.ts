@@ -22,11 +22,11 @@ import {
 import { createNationalId } from '@island.is/testing/fixtures'
 import { goToState } from './parentalLeaveTemplateUtils'
 
-function buildApplication(data: {
+const buildApplication = (data: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
-}): Application {
+}): Application => {
   const {
     answers = {},
     externalData = {
