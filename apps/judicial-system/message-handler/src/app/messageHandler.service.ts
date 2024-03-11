@@ -105,6 +105,20 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverCaseToPolice',
         )
         break
+      case MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverIndictmentCaseToPolice',
+        )
+        break
+      case MessageType.DELIVER_INDICTMENT_CASE_INDICTMENT_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverIndictmentCaseIndictmentToPolice',
+        )
+        break
       case MessageType.DELIVER_APPEAL_TO_POLICE:
         handled = await this.internalDeliveryService.deliver(
           message.user,
@@ -250,6 +264,14 @@ export class MessageHandlerService implements OnModuleDestroy {
           message.caseId,
           'notification',
           { type: NotificationType.APPEAL_CASE_FILES_UPDATED },
+        )
+        break
+      case MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.APPEAL_WITHDRAWN },
         )
         break
       default:

@@ -496,13 +496,26 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages = [
       {
         type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
-    ])
+    ]
+
+    if (
+      theCase.type === CaseType.INDICTMENT &&
+      theCase.origin === CaseOrigin.LOKE
+    ) {
+      messages.push({
+        type: MessageType.DELIVER_INDICTMENT_CASE_INDICTMENT_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForCourtCaseConnectionToQueue(
@@ -637,6 +650,11 @@ export class CaseService {
       this.getIndictmentArchiveMessages(theCase, user, true).concat([
         {
           type: MessageType.SEND_RULING_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+        },
+        {
+          type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
           user,
           caseId: theCase.id,
         },
@@ -791,6 +809,19 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForAppealWithdrawnToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -836,6 +867,8 @@ export class CaseService {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.WITHDRAWN) {
+        await this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }
     }
 

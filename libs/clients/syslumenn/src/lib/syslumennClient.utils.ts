@@ -22,6 +22,7 @@ import {
   Malsvari,
   Meistaraleyfi,
   Okutaeki,
+  ThjodskraSvarSkeyti,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -52,6 +53,7 @@ import {
   VehicleRegistration,
   EstateInfo,
   AvailableSettlements,
+  RegistryPerson,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -336,7 +338,9 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
     share:
-      assetRaw.eignarhlutfall !== undefined ? assetRaw.eignarhlutfall : 100,
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
   }
 }
 
@@ -472,4 +476,23 @@ export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
     profession: licence.idngrein,
     office: licence.embaetti,
   }
+}
+
+export const mapDepartedToRegistryPerson = (
+  departed: ThjodskraSvarSkeyti,
+): RegistryPerson => {
+  return {
+    address: departed.heimili ?? '',
+    city: departed.sveitarfelag ?? '',
+    name: departed.nafn ?? '',
+    nationalId: departed.kennitala ?? '',
+    postalCode: departed.postaritun?.split('-')[0] ?? '',
+  }
+}
+
+// This has untested behaviour if share is outside of [0, 100].
+// That should be fine since it is the DC's responsibility to return
+// valid percentages.
+export const parseShare = (share: string | number): number => {
+  return typeof share === 'string' ? parseFloat(share.replace(',', '.')) : share
 }

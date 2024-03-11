@@ -42,6 +42,7 @@ import {
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
+  Inna,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -61,7 +62,6 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
-
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -358,6 +358,10 @@ export const serviceSetup = (services: {
       CHART_STATISTIC_SOURCE_DATA_PATHS:
         '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
       CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_URL:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -369,6 +373,7 @@ export const serviceSetup = (services: {
       OccupationalLicenses,
       HealthInsurance,
       IntellectualProperties,
+      Inna,
       Labor,
       DrivingLicense,
       Payment,

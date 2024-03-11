@@ -35,7 +35,17 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
-function getChapter(category?: string): number | undefined {
+export enum CourtDocumentType {
+  RVKR = 'RVKR', // Krafa
+  RVTB = 'RVTB', // Þingbók
+  RVUR = 'RVUR', // Úrskurður
+  RVVI = 'RVVI', // Vistunarseðill
+  RVUL = 'RVUL', // Úrskurður Landsréttar
+  RVDO = 'RVDO', // Dómur
+  RVAS = 'RVAS', // Ákæra
+}
+
+const getChapter = (category?: string): number | undefined => {
   if (!category) {
     return undefined
   }
@@ -66,6 +76,7 @@ export class PoliceService {
     vettvangur: z.optional(z.string()),
     brotFra: z.optional(z.string()),
     upprunalegtMalsnumer: z.string(),
+    licencePlate: z.optional(z.string()),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -294,10 +305,12 @@ export class PoliceService {
               upprunalegtMalsnumer: string
               vettvangur?: string
               brotFra?: string
+              licencePlate?: string
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
-              const place = info.vettvangur
+              const place = (info.vettvangur || '').trim()
               const date = info.brotFra ? new Date(info.brotFra) : undefined
+              const licencePlate = info.licencePlate
 
               const foundCase = cases.find(
                 (item) => item.policeCaseNumber === policeCaseNumber,
@@ -308,6 +321,7 @@ export class PoliceService {
               } else if (date && (!foundCase.date || date > foundCase.date)) {
                 foundCase.place = place
                 foundCase.date = date
+                foundCase.licencePlate = licencePlate
               }
             },
           )
@@ -381,11 +395,7 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    requestPdf?: string,
-    courtRecordPdf?: string,
-    rulingPdf?: string,
-    custodyNoticePdf?: string,
-    appealRuling?: string[],
+    courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
@@ -406,29 +416,7 @@ export class PoliceService {
           courtVerdict: caseState,
           expiringDate: validToDate?.toISOString(),
           courtVerdictString: caseConclusion,
-          courtDocuments: [
-            ...(requestPdf
-              ? [{ type: 'RVKR', courtDocument: Base64.btoa(requestPdf) }]
-              : []),
-            ...(courtRecordPdf
-              ? [{ type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) }]
-              : []),
-            ...(rulingPdf
-              ? [{ type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) }]
-              : []),
-            ...(custodyNoticePdf
-              ? [
-                  {
-                    type: 'RVVI',
-                    courtDocument: Base64.btoa(custodyNoticePdf),
-                  },
-                ]
-              : []),
-            ...(appealRuling?.map((ruling) => ({
-              type: 'RVUL',
-              courtDocument: Base64.btoa(ruling),
-            })) ?? []),
-          ],
+          courtDocuments,
         }),
       } as RequestInit,
     )

@@ -1,14 +1,10 @@
 import {
-  buildDescriptionField,
   buildForm,
-  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form } from '@island.is/application/types'
-
-import WomanWithLaptopIllustration from '../assets/Images/WomanWithLaptopIllustration'
+import { DefaultEvents, Form } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { getApplicationExternalData } from '../lib/parentalLeaveUtils'
@@ -18,11 +14,11 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
   title:
     parentalLeaveFormMessages.residenceGrantMessage.residenceGrantClosedTitle,
   logo: Logo,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'residenceGrantApplicationNoBirthDate.section',
       title: '',
-
       children: [
         buildMultiField({
           title: (application) => {
@@ -46,7 +42,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
             return parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantClosedDescription
           },
-
           children: [
             buildSubmitField({
               id: 'residenceGrantApplicationNoBirthDate.reject',
@@ -56,13 +51,13 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
               actions: [
                 {
                   name: parentalLeaveFormMessages.confirmation.cancel,
-                  event: 'REJECT',
+                  event: DefaultEvents.REJECT,
                   type: 'reject',
                 },
                 {
                   name: parentalLeaveFormMessages.residenceGrantMessage
                     .residenceGrantApplyTitle,
-                  event: 'APPROVE',
+                  event: DefaultEvents.APPROVE,
                   type: 'primary',
                   condition: (_, externalData) => {
                     const { dateOfBirth } =
@@ -73,18 +68,7 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
                 },
               ],
             }),
-            buildImageField({
-              id: 'residenceGrantApplicationNoBirthDate.image',
-              title: '',
-              image: WomanWithLaptopIllustration,
-              imageWidth: 'auto',
-            }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),

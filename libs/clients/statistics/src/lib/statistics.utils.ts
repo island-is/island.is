@@ -1,7 +1,9 @@
 import get from 'lodash/get'
 import dropWhile from 'lodash/dropWhile'
 import dropRightWhile from 'lodash/dropRightWhile'
-import lastDayOfMonth from 'date-fns/lastDayOfMonth'
+import endOfMonth from 'date-fns/endOfMonth'
+import endOfDay from 'date-fns/endOfDay'
+import parse from 'date-fns/parse'
 
 import {
   GetSingleStatisticQuery,
@@ -20,13 +22,35 @@ export const _tryToGetDate = (value: string | null) => {
     return null
   }
 
-  const splitChar = value.includes(' ') ? ' ' : value.includes('-') ? '-' : null
+  const trimmedValue = value?.trim()
+
+  if (trimmedValue?.length === 0) {
+    return null
+  }
+
+  const splitChar = trimmedValue.includes('-')
+    ? '-'
+    : trimmedValue.includes(' ')
+    ? ' '
+    : null
 
   if (splitChar === null) {
     return null
   }
 
-  const split = value.split(splitChar)
+  const split = trimmedValue.split(splitChar)?.filter((s) => s?.length > 0)
+
+  if (split.length === 3) {
+    const hasTime = split[2]?.split(' ')?.length > 1
+    const dateFormat = hasTime ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd'
+
+    const defaultDate = new Date(3000, 0, 1)
+    const parsed = parse(value, dateFormat, defaultDate)
+
+    if (parsed !== defaultDate && !Number.isNaN(parsed.getTime())) {
+      return hasTime ? parsed : endOfDay(parsed)
+    }
+  }
 
   const yearIndex = !Number.isNaN(Number(split[0])) ? 0 : 1
   const monthNameIndex = yearIndex === 0 ? 1 : 0
@@ -46,7 +70,7 @@ export const _tryToGetDate = (value: string | null) => {
       const monthTest = MONTH_NAMES[j][i]
 
       if (monthName.startsWith(monthTest)) {
-        return lastDayOfMonth(new Date(year, i))
+        return endOfMonth(new Date(year, i))
       }
     }
   }
@@ -54,8 +78,11 @@ export const _tryToGetDate = (value: string | null) => {
   return null
 }
 
-const processDataFromSource = (data: string) => {
-  const lines = data.split('\r\n')
+export const processDataFromSource = (data: string) => {
+  const lines = data
+    .replace(/\r/g, '')
+    .split('\n')
+    .filter((l) => l.length > 0)
 
   const headers = lines[0].split(',')
   const dataLines = lines.slice(1).map((line) => line.split(','))
@@ -63,19 +90,24 @@ const processDataFromSource = (data: string) => {
   const result: StatisticSourceData['data'] = {}
 
   // Start at i = 3 to start at dates
+  // Row 0 is for headers
+  // Column 0 in all data rows should contain id of data
+  // Column 1 in all data rows should contain category
+  // Column 2 in all data rows should contain subcategory
   for (let i = 3; i < headers.length; i += 1) {
-    const currentDate = headers[i]
+    const currentHeader = headers[i]?.trim()
 
-    const asDate = _tryToGetDate(currentDate)
+    const asDate = _tryToGetDate(currentHeader)
+    let header = currentHeader
 
-    if (!asDate) {
-      continue
+    if (asDate) {
+      header = asDate.getTime().toString()
     }
 
     for (const lineColumns of dataLines) {
-      const key = lineColumns[0]
+      const key = lineColumns[0]?.trim()
 
-      if (!key) {
+      if (!key || key?.length === 0) {
         continue
       }
 
@@ -83,8 +115,8 @@ const processDataFromSource = (data: string) => {
         result[key] = []
       }
 
-      const isPercentage = lineColumns[i].endsWith('%')
-      const rawValue = lineColumns[i].replace('%', '')
+      const isPercentage = lineColumns[i]?.endsWith('%') ?? false
+      const rawValue = lineColumns[i]?.replace('%', '')?.trim()
 
       const isInvalidValue =
         (typeof rawValue === 'string' && rawValue.length === 0) ||
@@ -103,7 +135,7 @@ const processDataFromSource = (data: string) => {
           : null
 
       result[key].push({
-        date: asDate,
+        header,
         value,
       })
     }
@@ -123,6 +155,7 @@ const handleResponse = (response: Response) => {
 
 const processResponse = (result: StatisticSourceData, response: string) => {
   const processed = processDataFromSource(response)
+
   return {
     ...result,
     data: {
@@ -185,13 +218,15 @@ export const getStatistics = ({
     return []
   }
 
+  const isDateHeader = _tryToGetDate(allSourceDataForKey[0]?.header) !== null
+
   const mapped = allSourceDataForKey.map((item) => ({
     ...item,
-    date: new Date(item.date),
+    header: item.header,
   }))
 
   const dropLeft = (item: SourceValue) => {
-    if (dateFrom && item.date < dateFrom) {
+    if (isDateHeader && dateFrom && new Date(item.header) < dateFrom) {
       return true
     }
 
@@ -203,7 +238,7 @@ export const getStatistics = ({
   }
 
   const dropRight = (item: SourceValue) => {
-    if (dateTo && item.date > dateTo) {
+    if (isDateHeader && dateTo && new Date(item.header) > dateTo) {
       return true
     }
 
@@ -214,17 +249,18 @@ export const getStatistics = ({
     return false
   }
 
-  // After running this we have only valid dates if range is selected
-  // And we have trimmed non numerical values from left and right ends
+  // After running this we have only valid items if range is selected
+  // And we have trimmed empty values from left and right ends
   return dropWhile(dropRightWhile(mapped, dropRight), dropLeft)
 }
 
 export interface DataItem {
-  statisticsForDate: {
+  statisticsForHeader: {
     key: string
     value: number | null
   }[]
-  date: Date
+  header: string
+  headerType: 'date' | 'string' | 'number'
 }
 
 /**
@@ -253,34 +289,33 @@ export const getMultipleStatistics = async (
     }),
   )
 
-  const byDate = data.reduce((result, d, i) => {
+  const byHeader = data.reduce((result, d, i) => {
     const sourceDataKey = query.sourceDataKeys[i]
 
     for (const dataPoint of d) {
-      const dateAsString = dataPoint.date.toISOString()
-
-      if (!result[dateAsString]) {
-        result[dateAsString] = {}
+      if (!result[dataPoint.header]) {
+        result[dataPoint.header] = {}
       }
 
-      result[dateAsString][sourceDataKey] = dataPoint.value
+      result[dataPoint.header][sourceDataKey] = dataPoint.value
     }
     return result
   }, {} as Record<string, Record<string, SourceValue['value']>>)
 
-  const dates = Object.keys(byDate)
-  dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+  const headers = Object.keys(byHeader)
+  headers.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
 
-  const result = dates.map((d) => ({
-    statisticsForDate: Object.keys(byDate[d]).map((key) => ({
+  const result = headers.map((d) => ({
+    statisticsForHeader: Object.keys(byHeader[d]).map((key) => ({
       key,
-      value: byDate[d][key],
+      value: byHeader[d][key],
     })),
-    date: new Date(d),
-  }))
+    header: d.toString(),
+    headerType: d, // TODO: type
+  })) as DataItem[]
 
   const dropIncompleteEntries = (item: typeof result[number]) =>
-    item.statisticsForDate.length !== query.sourceDataKeys.length
+    item.statisticsForHeader.length !== query.sourceDataKeys.length
 
   // Trim from both ends results that do not have data for all keys
   const trimmedResult = dropRightWhile(

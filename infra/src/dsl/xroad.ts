@@ -534,6 +534,16 @@ export const Vehicles = new XroadConf({
   },
 })
 
+export const Inna = new XroadConf({
+  env: {
+    XROAD_INNA_PATH: {
+      dev: 'IS-DEV/EDU/10020/MMS-Protected/inna-v1',
+      staging: 'IS-TEST/EDU/5708150320/MMS-Protected/inna-v1',
+      prod: 'IS/EDU/5708150320/MMS-Protected/inna-v1',
+    },
+  },
+})
+
 export const VehiclesMileage = new XroadConf({
   env: {
     XROAD_VEHICLES_MILEAGE_PATH: {
@@ -705,6 +715,16 @@ export const UniversityGatewayUniversityOfAkureyri = new XroadConf({
   },
 })
 
+export const UniversityGatewayBifrostUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5502690239/Bifrost-Protected/umsoknir-v1',
+    },
+  },
+})
+
 export const UniversityGatewayIcelandUniversityOfTheArts = new XroadConf({
   env: {
     XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: {
@@ -731,6 +751,16 @@ export const UniversityGatewayHolarUniversity = new XroadConf({
       dev: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
       staging: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
       prod: 'IS/EDU/5001694359/Holar-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayReykjavikUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10062/RvkUni-Hvin-Protected/umsoknir-v1',
+      staging: 'IS-TEST/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
     },
   },
 })

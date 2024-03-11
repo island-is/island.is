@@ -10125,9 +10125,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.12":
-  version: 0.7.12
-  resolution: "@island.is/regulations-tools@npm:0.7.12"
+"@island.is/regulations-tools@npm:0.7.13":
+  version: 0.7.13
+  resolution: "@island.is/regulations-tools@npm:0.7.13"
   dependencies:
     "@hugsmidjan/htmldiff-js": ^1.2.1
     "@hugsmidjan/qj": ^4.10.2
@@ -10140,7 +10140,7 @@ __metadata:
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 278c2fae6856a3e8abdf029918e490fc7322d6f6477836520ddef2f266eb0d71d50bebad20422c1f7cc427c2e00691bdc2e16a429a69abafecf72395de7909ae
+  checksum: bacdedd4572404c31ee18e038b38da8fa66c670c67ffcc1a6d4edb73e54bd498c61f7c06cc0ac5d578a60a6d24751c7689d919e703ca5530a33de5f6851582f5
   languageName: node
   linkType: hard
 
@@ -11557,19 +11557,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/sequelize@npm:9.0.2":
-  version: 9.0.2
-  resolution: "@nestjs/sequelize@npm:9.0.2"
+"@nestjs/sequelize@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@nestjs/sequelize@npm:10.0.0"
   dependencies:
     uuid: 9.0.0
   peerDependencies:
-    "@nestjs/common": ^8.0.0 || ^9.0.0
-    "@nestjs/core": ^8.0.0 || ^9.0.0
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0
     sequelize: ^6.3.5
     sequelize-typescript: ^2.0.0
-  checksum: f7d6aaf257619b502cab0eac5cd45b554a2c3eed2bfd511b4ac24621f949f600bd58ca236b8de1e864d8c4ac07fa80aabded98c16b263612306e5d00b4450e1e
+  checksum: b1fdb54d2cbeac1080419bdd00fba45798d40938c7b5ee1a2c4f805d260b9b5aa15ec8e7e979ecffea11809199044b179e2045849772a26ec80f0badbe3ea478
   languageName: node
   linkType: hard
 
@@ -11652,6 +11652,61 @@ __metadata:
     typeorm:
       optional: true
   checksum: 16e060b56d4e655ba80a397cf45727a15df4537ab1531e1a1b54be02ff0f03c1101904c68783d9dfbd284fff464131677a8f3989b54bff620edcdfdb99b36adc
+  languageName: node
+  linkType: hard
+
+"@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::locator=island.is%40workspace%3A.":
+  version: 10.2.0
+  resolution: "@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::version=10.2.0&hash=aeebab&locator=island.is%40workspace%3A."
+  dependencies:
+    boxen: 5.1.2
+    check-disk-space: 3.4.0
+  peerDependencies:
+    "@grpc/grpc-js": "*"
+    "@grpc/proto-loader": "*"
+    "@mikro-orm/core": "*"
+    "@mikro-orm/nestjs": "*"
+    "@nestjs/axios": ^1.0.0 || ^2.0.0 || ^3.0.0
+    "@nestjs/common": ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0
+    "@nestjs/microservices": ^9.0.0 || ^10.0.0
+    "@nestjs/mongoose": ^9.0.0 || ^10.0.0
+    "@nestjs/sequelize": ^9.0.0 || ^10.0.0
+    "@nestjs/typeorm": ^9.0.0 || ^10.0.0
+    "@prisma/client": "*"
+    mongoose: "*"
+    reflect-metadata: 0.1.x
+    rxjs: 7.x
+    sequelize: "*"
+    typeorm: "*"
+  peerDependenciesMeta:
+    "@grpc/grpc-js":
+      optional: true
+    "@grpc/proto-loader":
+      optional: true
+    "@mikro-orm/core":
+      optional: true
+    "@mikro-orm/nestjs":
+      optional: true
+    "@nestjs/axios":
+      optional: true
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/mongoose":
+      optional: true
+    "@nestjs/sequelize":
+      optional: true
+    "@nestjs/typeorm":
+      optional: true
+    "@prisma/client":
+      optional: true
+    mongoose:
+      optional: true
+    sequelize:
+      optional: true
+    typeorm:
+      optional: true
+  checksum: e7d412de26628e132bb255e89744ccd4bad72468a1b8247c77e4f556a959e26db2d4f72474c0b799ad5fcd87d79a92b678996aca665b941e01556803d499ee39
   languageName: node
   linkType: hard
 
@@ -21642,10 +21697,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"beygla@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "beygla@npm:1.3.1"
-  checksum: 83516d302aa6c25410233a3f94ae5ade975465339cd21d8ad29a00e007bbcacdd6a072f825468550bf9fafa3ad192cad1b773372e769039591763ea33a7fe60f
+"beygla@npm:1.4.0":
+  version: 1.4.0
+  resolution: "beygla@npm:1.4.0"
+  checksum: b9be107c98e01355a0f11ba335ac52c2996929dc801a8c0b6240269b0f8962a4d0c74490f316020e01d343d07dbddaec2a68c1711f34cbf77a07e30f3f8d71a7
   languageName: node
   linkType: hard
 
@@ -33761,7 +33816,7 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
-    "@island.is/regulations-tools": 0.7.12
+    "@island.is/regulations-tools": 0.7.13
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
@@ -33776,7 +33831,7 @@ __metadata:
     "@nestjs/passport": 8.2.2
     "@nestjs/platform-express": 10.0.5
     "@nestjs/schematics": 10.0.1
-    "@nestjs/sequelize": 9.0.2
+    "@nestjs/sequelize": 10.0.0
     "@nestjs/swagger": 7.1.1
     "@nestjs/terminus": 10.2.0
     "@nestjs/testing": 10.0.5
@@ -33887,7 +33942,7 @@ __metadata:
     babel-loader: 8.2.5
     babel-plugin-transform-class-properties: 6.24.1
     babel-plugin-transform-imports: 2.0.0
-    beygla: ^1.3.1
+    beygla: 1.4.0
     bottleneck: 2.19.5
     bull: 4.10.4
     cache-manager: 5.2.3

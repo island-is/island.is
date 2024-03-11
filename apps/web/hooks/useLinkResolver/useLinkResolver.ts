@@ -99,6 +99,14 @@ export const routesTemplate = {
     is: '/starfatorg/[id]',
     en: '',
   },
+  pensioncalculatorresults: {
+    is: '/s/tryggingastofnun/reiknivel/nidurstodur',
+    en: '/en/o/social-insurance-administration/calculator/results',
+  },
+  pensioncalculator: {
+    is: '/s/tryggingastofnun/reiknivel',
+    en: '/en/o/social-insurance-administration/calculator',
+  },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
     en: '/en/o/digital-iceland/island-services',
@@ -254,6 +262,10 @@ export const routesTemplate = {
   universitysearch: {
     is: '/haskolanam/leit',
     en: '/en/university-studies/search',
+  },
+  universitysub: {
+    is: '/haskolanam/upplysingar/[subSlug]',
+    en: '/en/university-studies/info/[subSlug]',
   },
   universitylandingpage: {
     is: '/haskolanam',

@@ -20,6 +20,7 @@ import {
   RulingModifiedModal,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseTransition,
   NotificationType,
@@ -28,12 +29,19 @@ import {
   getAppealDecision,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  hasSentNotification,
+  shouldUseAppealWithdrawnRoutes,
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { strings } from './Summary.strings'
 
-type ModalType = 'AppealCompleted' | 'AppealRulingModified' | 'none'
+type ModalType =
+  | 'AppealCompleted'
+  | 'AppealRulingModified'
+  | 'AppealDiscontinued'
+  | 'none'
 
 const Summary: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -53,7 +61,9 @@ const Summary: React.FC = () => {
         : true
 
     if (caseTransitioned) {
-      setVisibleModal('AppealCompleted')
+      workingCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+        ? setVisibleModal('AppealDiscontinued')
+        : setVisibleModal('AppealCompleted')
     }
   }
 
@@ -62,7 +72,7 @@ const Summary: React.FC = () => {
       hasSentNotification(
         NotificationType.APPEAL_COMPLETED,
         workingCase.notifications,
-      )
+      ).hasSent
     ) {
       setVisibleModal('AppealRulingModified')
     } else {
@@ -111,7 +121,11 @@ const Summary: React.FC = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={`${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`}
+            previousUrl={
+              shouldUseAppealWithdrawnRoutes(workingCase)
+                ? `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`
+                : `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`
+            }
             nextButtonIcon="checkmark"
             nextButtonText={formatMessage(strings.nextButtonFooter)}
             onNextButtonClick={async () => await handleNextButtonClick()}
@@ -123,7 +137,6 @@ const Summary: React.FC = () => {
             title={formatMessage(strings.appealCompletedModalTitle)}
             text={formatMessage(strings.appealCompletedModalText)}
             secondaryButtonText={formatMessage(core.closeModal)}
-            onClose={() => setVisibleModal('none')}
             onSecondaryButtonClick={() => {
               router.push(
                 `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
@@ -136,6 +149,18 @@ const Summary: React.FC = () => {
             onCancel={() => setVisibleModal('none')}
             onContinue={handleComplete}
             continueDisabled={isTransitioningCase}
+          />
+        )}
+        {visibleModal === 'AppealDiscontinued' && (
+          <Modal
+            title={formatMessage(strings.appealDiscontinuedModalTitle)}
+            text={formatMessage(strings.appealDiscontinuedModalText)}
+            secondaryButtonText={formatMessage(core.closeModal)}
+            onSecondaryButtonClick={() => {
+              router.push(
+                `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+              )
+            }}
           />
         )}
       </PageLayout>

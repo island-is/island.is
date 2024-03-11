@@ -10,9 +10,9 @@
           // Then nestjs packages.
           ["^@nestjs"],
           // Then island.is packages.
-          ["^@island\\.is/(?!judicial-system)"],
-          // Then judicial-system packages.
-          ["^@island\\.is/judicial-system"],
+          ["^@island\\.is/(?!financial-aid)"],
+          // Then financial-aid packages.
+          ["^@island\\.is/financial-aid"],
           // Then all other imports in this order: "../", "./", "./strings", "./css"
           [
             "^\\.\\.(?!/?$)",

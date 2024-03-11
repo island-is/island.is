@@ -18,7 +18,7 @@ import { createFileList, getFileData } from '../../../../lib/utils'
 import { Skeleton } from './skeleton'
 import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
 
-const CompareLists = () => {
+const CompareLists = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
@@ -31,6 +31,7 @@ const CompareLists = () => {
       const res = await compareMutation({
         variables: {
           input: {
+            collectionId,
             nationalIds: nationalIds,
           },
         },
@@ -51,7 +52,7 @@ const CompareLists = () => {
       const res = await unSignMutation({
         variables: {
           input: {
-            id: signatureId,
+            signatureId,
           },
         },
       })
@@ -74,7 +75,7 @@ const CompareLists = () => {
     let data = await getFileData(newFile)
 
     data = data.map((d: { Kennitala: any }) => {
-      return String(d.Kennitala)
+      return String(d.Kennitala).replace('-', '')
     })
 
     compareLists(data)

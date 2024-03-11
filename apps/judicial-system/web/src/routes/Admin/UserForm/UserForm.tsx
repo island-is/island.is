@@ -428,6 +428,18 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             filled
           />
         </Box>
+        <Box marginBottom={2}>
+          <Checkbox
+            name="canConfirmAppeal"
+            label="Notandi getur staðfest kærur"
+            checked={Boolean(user.canConfirmAppeal)}
+            onChange={({ target }) =>
+              setUser({ ...user, canConfirmAppeal: target.checked })
+            }
+            large
+            filled
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

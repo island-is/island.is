@@ -3,7 +3,6 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
-const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
 const geoTmpDir = `${geoDataDir}/tmp`
 
@@ -27,27 +26,15 @@ const geoipVolume: PersistentVolumeClaim[] = [
   },
 ]
 
-const servicePostgresInfo = {
-  // The service has only read permissions
-  username: 'services_sessions_read',
-  name: dbName,
-  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
-}
-
-const workerPostgresInfo = {
-  // Worker has write permissions
-  username: 'services_sessions',
-  name: dbName,
-  passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
-  extensions: ['uuid-ossp'],
-}
-
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
     .image(imageName)
     .redis()
-    .postgres(servicePostgresInfo)
+    .db({
+      readOnly: true,
+      extensions: ['uuid-ossp'],
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -55,14 +42,6 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
-      GEODATADIR: geoDataDir,
-    })
-    .secrets({
-      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
-    })
-    .volumes({
-      ...geoipSetup().serviceDef.volumes[0],
-      useExisting: true,
     })
     .readiness('/liveness')
     .liveness('/liveness')
@@ -102,10 +81,14 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .postgres(workerPostgresInfo)
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: workerPostgresInfo,
+    .db({
+      extensions: ['uuid-ossp'],
+      readOnly: false,
+    })
+    .migrations()
+    .volumes({
+      ...geoipSetup().serviceDef.volumes[0],
+      useExisting: true,
     })
     .liveness('/liveness')
     .readiness('/liveness')
@@ -126,6 +109,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+      GEODATADIR: geoDataDir,
     })
 
 export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>

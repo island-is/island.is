@@ -23,6 +23,7 @@ export type PostgresInfo = {
   name?: string
   username?: string
   passwordSecret?: string
+  readOnly?: boolean
   extensions?: string[]
 }
 export type PostgresInfoForEnv = {
@@ -147,7 +148,10 @@ export interface IngressForEnv {
   extraAnnotations?: { [idx: string]: string | null }
 }
 
-export type PodDisruptionBudget = { minAvailable?: number }
+export type PodDisruptionBudget = {
+  minAvailable?: number
+  maxUnavailable?: number
+}
 export type PersistentVolumeClaim = {
   name?: string
   size: '1Gi' | '5Gi' | '10Gi' | string
@@ -183,17 +187,22 @@ export type ReplicaCount = {
   scalingMagicNumber?: number
 }
 
+type Container = {
+  command: string
+  image?: string
+  args?: string[]
+  name?: string
+  resources?: Resources
+}
+
 export type InitContainers = {
   envs: EnvironmentVariables
   secrets: Secrets
   features: Partial<Features>
-  containers: {
-    command: string
-    image?: string
-    args?: string[]
-    name?: string
-    resources?: Resources
-  }[]
+  containers: Container[]
+  /**
+   * @deprecated Don't pass custom postgres info
+   */
   postgres?: PostgresInfo
 }
 export type InitContainersForEnv = {

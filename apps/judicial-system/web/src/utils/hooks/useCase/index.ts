@@ -53,7 +53,7 @@ export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
   force?: boolean
 }
 
-function isChildKey(key: keyof UpdateCaseInput): key is keyof ChildKeys {
+const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
   return [
     'courtId',
     'prosecutorId',
@@ -219,8 +219,8 @@ const useCase = () => {
             })
 
             if (data?.createCourtCase?.courtCaseNumber && !errors) {
-              setWorkingCase((theCase) => ({
-                ...theCase,
+              setWorkingCase((prevWorkingCase) => ({
+                ...prevWorkingCase,
                 courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
               }))
 
@@ -311,8 +311,8 @@ const useCase = () => {
           }
 
           if (setWorkingCase) {
-            setWorkingCase((theCase) => ({
-              ...theCase,
+            setWorkingCase((prevWorkingCase) => ({
+              ...prevWorkingCase,
               ...(res[resultType] as Case),
             }))
           }
@@ -384,8 +384,8 @@ const useCase = () => {
         return
       }
 
-      setWorkingCase((theCase) => ({
-        ...theCase,
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
         ...updatesToCase,
       }))
 

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
-import { SignatureCollectionList } from './models/signatureList.model'
+import {
+  SignatureCollectionList,
+  SignatureCollectionSignedList,
+} from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import {
@@ -9,7 +12,8 @@ import {
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { User } from '@island.is/auth-nest-tools'
-import { SignatureCollectionIdInput } from './dto/id.input'
+import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
+import { SignatureCollectionIdInput } from './dto/collectionId.input'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -22,8 +26,8 @@ export class SignatureCollectionService {
   }
 
   async allOpenLists({
-    id: collectionId,
-  }: SignatureCollection): Promise<SignatureCollectionList[]> {
+    collectionId,
+  }: SignatureCollectionIdInput): Promise<SignatureCollectionList[]> {
     return await this.signatureCollectionClientService.getLists({
       collectionId,
       onlyActive: true,
@@ -40,17 +44,16 @@ export class SignatureCollectionService {
   }
 
   async listsForUser(
-    collection: SignatureCollection,
+    { collectionId }: SignatureCollectionIdInput,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
-    const { id } = collection
     if (!signee.area || signee.canSignInfo?.includes(ReasonKey.UnderAge)) {
       return []
     }
     return await this.signatureCollectionClientService.getLists(
       {
-        collectionId: id,
+        collectionId: collectionId,
         areaId: signee.area?.id,
         onlyActive: true,
       },
@@ -59,15 +62,13 @@ export class SignatureCollectionService {
   }
 
   async listsForOwner(
-    collection: SignatureCollection,
+    { collectionId }: SignatureCollectionIdInput,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
-    const { id } = collection
-
     return await this.signatureCollectionClientService.getLists(
       {
-        collectionId: id,
+        collectionId: collectionId,
         candidateId: signee.candidate?.id,
       },
       user,
@@ -78,7 +79,9 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getList(listId, user)
   }
 
-  async signedList(user: User): Promise<SignatureCollectionList | null> {
+  async signedList(
+    user: User,
+  ): Promise<SignatureCollectionSignedList[] | null> {
     return await this.signatureCollectionClientService.getSignedList(user)
   }
 
@@ -110,9 +113,9 @@ export class SignatureCollectionService {
   }
 
   async cancel(
-    { id }: SignatureCollectionIdInput,
+    input: SignatureCollectionCancelListsInput,
     user: User,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.removeLists(id, user)
+    return await this.signatureCollectionClientService.removeLists(input, user)
   }
 }
