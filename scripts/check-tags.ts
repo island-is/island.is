@@ -11,7 +11,16 @@ interface Project {
 
 const hasValidTags = async (filePath: string) => {
   const projectText = await readFile(filePath, 'utf8')
-  const project = JSON.parse(projectText) as Project
+  let parsedText
+  try {
+    parsedText = JSON.parse(projectText)
+  }
+  catch (e) {
+    console.error("Invalid JSON", e)
+    return false
+  }
+  const project: Project = parsedText
+
   const tagsRaw = project.tags ?? []
   const tags = tagsRaw.map((tag) => tag.split(':'))
 
@@ -61,7 +70,7 @@ const checkProjects = async () => {
     // hasError = hasError || (await checkTags(project))
 
     // New, and faster
-    if (!(await hasValidTags(project).catch(() => false))) {
+    if (!(await hasValidTags(project))) {
       invalidProjects.push(project)
     }
   }
