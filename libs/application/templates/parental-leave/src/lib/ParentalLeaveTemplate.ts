@@ -737,7 +737,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               cond: (application) =>
-              goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
+                goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
@@ -1233,14 +1233,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
           onEntry: [
             defineTemplateApi({
-              triggerEvent: DefaultEvents.APPROVE, 
+              triggerEvent: DefaultEvents.APPROVE,
               action: ApiModuleActions.sendApplication,
               params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
             defineTemplateApi({
-              triggerEvent: DefaultEvents.SUBMIT, 
+              triggerEvent: DefaultEvents.SUBMIT,
               action: ApiModuleActions.sendApplication,
               params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
