@@ -261,10 +261,12 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.color`, vehicleDetailsWithGrant.color || undefined)
     setValue(
       `${field.id}.newRegistrationDate`,
-      format(
-        new Date(vehicleDetailsWithGrant.newRegistrationDate),
-        'dd.MM.yyyy',
-      ),
+      vehicleDetailsWithGrant.newRegistrationDate
+        ? format(
+            new Date(vehicleDetailsWithGrant.newRegistrationDate),
+            'dd.MM.yyyy',
+          )
+        : '',
     )
     setValue(
       `${field.id}.firstRegistrationDate`,
