@@ -32,7 +32,7 @@ const hasValidTags = async (filePath: string) => {
   // Are all tags the same?
   const singularTag = new Set(tags.map(([, value]) => value)).size === 1
   // Is any tag repeaed?
-  const repeatFreeTags = new Set(tags.map(([, value]) => value)).size !== tags.length
+  const repeatFreeTags = new Set(tagsRaw).size !== tagsRaw.length
 
   // Exit early for good projects
   if (!isEmpty && validPrefix && hasScopePrefix && singularTag && !repeatFreeTags) {
@@ -51,7 +51,7 @@ const hasValidTags = async (filePath: string) => {
   if (!singularTag) {
     console.log('- All tags must be the same')
   }
-  if (!repeatFreeTags) {
+  if (repeatFreeTags) {
     console.log("- Tags can't be repeated")
   }
   console.log('NX tags:', tagsRaw, '\n')
