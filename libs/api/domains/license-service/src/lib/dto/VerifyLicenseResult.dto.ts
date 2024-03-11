@@ -8,18 +8,18 @@ import { DefaultLicenseData } from './licenses/DefaultLicenseData.dto'
 import { GenericLicenseType } from '../licenceService.type'
 import { DriverLicenseData } from './licenses/DriverLicenseData.dto'
 
-export enum LicenseVerifyError {
+export enum VerifyLicenseError {
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
   ERROR = 'ERROR',
 }
 
-registerEnumType(LicenseVerifyError, {
-  name: 'LicenseVerifyError',
+registerEnumType(VerifyLicenseError, {
+  name: 'VerifyLicenseError',
   description: 'Exhaustive list of verify license errors',
 })
 
-export const LicenseVerifyResultUnion = createUnionType({
-  name: 'LicenseVerifyResultUnion',
+export const VerifyLicenseResultUnion = createUnionType({
+  name: 'VerifyLicenseResultUnion',
   types: () => [DriverLicenseData, DefaultLicenseData] as const,
   resolveType: (value) => {
     switch (value.type) {
@@ -32,22 +32,22 @@ export const LicenseVerifyResultUnion = createUnionType({
   },
 })
 
-@ObjectType('LicenseVerifyResult')
-export class LicenseVerifyResult {
-  @Field(() => LicenseVerifyResultUnion, {
+@ObjectType('VerifyLicenseResult')
+export class VerifyLicenseResult {
+  @Field(() => VerifyLicenseResultUnion, {
     nullable: true,
     description: 'Optional data related to the verify verification',
   })
-  data?: typeof LicenseVerifyResultUnion
+  data?: typeof VerifyLicenseResultUnion
 
   @Field(() => String, { nullable: true })
   licenseType?: GenericLicenseType
 
-  @Field(() => LicenseVerifyError, {
+  @Field(() => VerifyLicenseError, {
     nullable: true,
     description: 'Verify result error, if any',
   })
-  error?: LicenseVerifyError
+  error?: VerifyLicenseError
 
   @Field({ description: 'Is the verify valid?' })
   valid!: boolean

@@ -22,7 +22,10 @@ import isString from 'lodash/isString'
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
-import { LicenseVerifyError, LicenseVerifyResult } from './dto/Verify.dto'
+import {
+  VerifyLicenseError,
+  VerifyLicenseResult,
+} from './dto/VerifyLicenseResult.dto'
 
 import {
   GenericLicenseFetchResult,
@@ -54,7 +57,7 @@ export type GetGenericLicenseOptions = {
 const { randomUUID } = new ShortUniqueId({ length: 16 })
 const COMMON_VERIFY_ERROR = {
   valid: false,
-  error: LicenseVerifyError.ERROR,
+  error: VerifyLicenseError.ERROR,
 }
 
 @Injectable()
@@ -543,7 +546,7 @@ export class LicenseServiceService {
     })
   }
 
-  async getDataFromToken(token: string): Promise<LicenseVerifyResult> {
+  async getDataFromToken(token: string): Promise<VerifyLicenseResult> {
     let code: string | undefined
 
     try {
@@ -555,7 +558,7 @@ export class LicenseServiceService {
       if (error.message.includes(this.barcodeService.tokenExpiredError)) {
         return {
           valid: false,
-          error: LicenseVerifyError.TOKEN_EXPIRED,
+          error: VerifyLicenseError.TOKEN_EXPIRED,
         }
       }
 
@@ -585,7 +588,7 @@ export class LicenseServiceService {
     }
   }
 
-  async verifyLicense(data: string): Promise<LicenseVerifyResult> {
+  async verifyLicense(data: string): Promise<VerifyLicenseResult> {
     if (this.barcodeService.validateStrAsJwt(data)) {
       return this.getDataFromToken(data)
     }

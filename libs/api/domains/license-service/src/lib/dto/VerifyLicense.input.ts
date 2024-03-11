@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
-export class VerifyInput {
+@InputType('VerifyLicenseInput')
+export class VerifyLicenseInput {
   @Field(() => String)
   data!: string
 }

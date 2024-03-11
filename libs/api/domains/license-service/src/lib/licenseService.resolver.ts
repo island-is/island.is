@@ -26,8 +26,8 @@ import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { GetGenericLicenseInput } from './dto/GetGenericLicense.input'
 import { GetGenericLicensesInput } from './dto/GetGenericLicenses.input'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
-import { LicenseVerifyResult } from './dto/Verify.dto'
-import { VerifyInput } from './dto/Verify.input'
+import { VerifyLicenseInput } from './dto/VerifyLicense.input'
+import { VerifyLicenseResult } from './dto/VerifyLicenseResult.dto'
 import { VerifyPkPassInput } from './dto/VerifyPkPass.input'
 import { LicenseServiceService } from './licenseService.service'
 
@@ -151,13 +151,13 @@ export class LicenseServiceResolver {
   }
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
-  @Mutation(() => LicenseVerifyResult, {
+  @Mutation(() => VerifyLicenseResult, {
     name: 'verifyLicense',
   })
   @Audit()
   async verifyLicense(
-    @Args('input') input: VerifyInput,
-  ): Promise<LicenseVerifyResult> {
+    @Args('input') input: VerifyLicenseInput,
+  ): Promise<VerifyLicenseResult> {
     return this.licenseServiceService.verifyLicense(input.data)
   }
 }
