@@ -513,10 +513,6 @@ export const inheritanceReportSchema = z.object({
     .refine(
       ({ hadSeparateProperty, spouseTotalSeparateProperty }) => {
         if (hadSeparateProperty && [YES].includes(hadSeparateProperty)) {
-          console.log(
-            'spouseTotalSeparateProperty',
-            spouseTotalSeparateProperty,
-          )
           return spouseTotalSeparateProperty && spouseTotalSeparateProperty > 0
         }
 

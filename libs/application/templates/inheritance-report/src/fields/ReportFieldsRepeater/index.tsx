@@ -83,8 +83,6 @@ export const ReportFieldsRepeater: FC<
 
       const shareValue = !shareValueNumber ? 0 : shareValueNumber / 100
 
-      console.log('calc:', currentValue, shareValue, deductionValue)
-
       return (
         Number(acc) +
         (props?.calcWithShareValue

@@ -261,7 +261,6 @@ export const SpouseEstateShare: FC<
                 clearErrors()
                 const value = e.target.value
 
-                console.log(value, valueToNumber(value))
                 setValue(
                   spouseTotalSeparatePropertyField,
                   valueToNumber(value, ','),
