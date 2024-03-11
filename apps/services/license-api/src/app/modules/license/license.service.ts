@@ -295,10 +295,6 @@ export class LicenseService {
     token: string,
     requestId: string,
   ): Promise<VerifyLicenseResponse> {
-    const invalidResponse = {
-      valid: false,
-    }
-
     try {
       const { c } = await this.barcodeService.verifyToken(token)
       const data = await this.barcodeService.getCache(c)
@@ -309,36 +305,15 @@ export class LicenseService {
           requestId,
         })
 
-        return invalidResponse
-      }
-
-      if (data.licenseType === LicenseType.DrivingLicense) {
-        const drivingLicenseData =
-          data as BarcodeData<LicenseType.DrivingLicense>
-
-        if (!drivingLicenseData?.extraData?.name) {
-          this.logger.error(
-            `Name is missing in ${LicenseType.DrivingLicense} cache data`,
-            {
-              category: LOG_CATEGORY,
-              requestId,
-            },
-          )
-
-          return invalidResponse
-        }
-
         return {
-          valid: true,
-          passIdentity: {
-            name: drivingLicenseData.extraData?.name,
-            nationalId: drivingLicenseData.nationalId,
-            picture: drivingLicenseData.extraData?.photo?.image ?? undefined,
-          },
+          valid: false,
         }
       }
 
-      return invalidResponse
+      return {
+        valid: true,
+        ...(data.extraData && { passIdentity: data.extraData }),
+      }
     } catch (error) {
       this.logger.error(error.message, {
         category: LOG_CATEGORY,
@@ -399,6 +374,7 @@ export class LicenseService {
       error: verifyRes.error,
       requestId,
     })
+
     throw this.getException(this.getErrorTypeByCode(verifyRes.error.code), {
       message: verifyRes.error.message,
       requestId,

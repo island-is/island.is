@@ -1,26 +1,28 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { FetchError } from '@island.is/clients/middlewares'
 import {
   DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
   RemarkCode,
 } from '@island.is/clients/driving-license'
-import {
-  LicenseClient,
-  LicensePkPassAvailability,
-  LicenseType,
-  PkPassVerification,
-  PkPassVerificationInputData,
-  Result,
-} from '../../../licenseClient.type'
+import { FetchError } from '@island.is/clients/middlewares'
 import {
   Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+
+import {
+  LicenseClient,
+  LicensePkPassAvailability,
+  LicenseType,
+  PkPassVerificationInputData,
+  PkPassVerificationV2,
+  Result,
+} from '../../../licenseClient.type'
+import { DrivingLicenseVerifyExtraData } from '../drivingLicenseClient.type'
 import { createPkPassDataInput } from '../drivingLicenseMapper'
 
 /** Category to attach each log message to */
@@ -277,17 +279,34 @@ export class DrivingLicenseClient
     }
   }
 
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+  async verifyPkPassDeprecated(data: string) {
+    const newData = await this.verifyPkPassV2(data)
+
+    if (!newData.ok) {
+      return newData
+    }
+
+    return {
+      ...newData,
+      data: {
+        valid: newData.data.valid,
+        data: JSON.stringify(newData.data.data),
+      },
+    }
+  }
+
+  async verifyPkPassV2(
+    data: string,
+  ): Promise<Result<PkPassVerificationV2<LicenseType.DrivingLicense>>> {
     const parsedInput = JSON.parse(data)
-
     const { code, date } = parsedInput as PkPassVerificationInputData
-
     const result = await this.smartApi.verifyPkPass({ code, date })
 
     if (!result) {
       this.logger.warn('Missing pkpass verify from client', {
         category: LOG_CATEGORY,
       })
+
       return result
     }
 
@@ -320,27 +339,42 @@ export class DrivingLicenseClient
       throw new BadRequestException('No license found for pkass national id')
     }
 
-    const licenseNationalId = license?.socialSecurityNumber
+    const nationalId = license?.socialSecurityNumber
     const name = license?.name
-    const photo = license?.photo?.image ?? ''
+    const picture = license?.photo?.image ?? ''
 
+    // TODO verify that this rawData is not being used anywhere
     const rawData = license ? JSON.stringify(license) : undefined
+
+    if (!nationalId || !name) {
+      const missingDataErrorMsg = 'Missing data. nationalId or name missing'
+      this.logger.error(missingDataErrorMsg, {
+        category: LOG_CATEGORY,
+      })
+
+      return {
+        ok: false,
+        error: {
+          code: 14,
+          message: missingDataErrorMsg,
+        },
+      }
+    }
 
     return {
       ok: true,
       data: {
-        valid: result.data.valid,
-        data: JSON.stringify({
-          nationalId: licenseNationalId,
+        valid: true,
+        data: {
+          nationalId,
           name,
-          photo,
-          rawData,
-        }),
+          picture,
+        },
       },
     }
   }
 
-  async verifyExtraData(user: User) {
+  async verifyExtraData(user: User): Promise<DrivingLicenseVerifyExtraData> {
     const res = await this.fetchLicense(user)
 
     if (!res.ok) {
@@ -352,8 +386,14 @@ export class DrivingLicenseClient
       throw new BadRequestException(res.error.message)
     } else if (!res.data) {
       throw new BadRequestException('No license found')
+    } else if (!res.data.name) {
+      throw new BadRequestException('No name found')
     }
 
-    return res.data
+    return {
+      nationalId: user.nationalId,
+      name: res.data.name,
+      picture: res.data.photo?.image ?? undefined,
+    }
   }
 }

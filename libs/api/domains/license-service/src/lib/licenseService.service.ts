@@ -8,7 +8,7 @@ import {
 import { CmsContentfulService } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BarcodeData, BarcodeService } from '@island.is/services/license'
+import { BarcodeService } from '@island.is/services/license'
 
 import { Locale } from '@island.is/shared/types'
 import {
@@ -17,14 +17,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import isString from 'lodash/isString'
 
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
-import {
-  DriverLicenseResult,
-  VerifyBarcodeDataUnion,
-} from './dto/VerifyBarcodeData.dto'
+import { LicenseVerifyError, LicenseVerifyResult } from './dto/Verify.dto'
 
 import {
   GenericLicenseFetchResult,
@@ -54,6 +52,10 @@ export type GetGenericLicenseOptions = {
 }
 
 const { randomUUID } = new ShortUniqueId({ length: 16 })
+const COMMON_VERIFY_ERROR = {
+  valid: false,
+  error: LicenseVerifyError.ERROR,
+}
 
 @Injectable()
 export class LicenseServiceService {
@@ -83,6 +85,14 @@ export class LicenseServiceService {
     type === GenericLicenseType.DriversLicense
       ? LicenseType.DrivingLicense
       : (type as unknown as LicenseType)
+
+  /**
+   * Maps the client license type to the generic license type
+   */
+  private mapGenericLicenseType = (type: LicenseType) =>
+    type === LicenseType.DrivingLicense
+      ? GenericLicenseType.DriversLicense
+      : (type as unknown as GenericLicenseType)
 
   private async getLicenseLabels(locale: Locale) {
     const licenseLabels = await this.cmsContentfulService.getNamespace(
@@ -429,7 +439,7 @@ export class LicenseServiceService {
     )
   }
 
-  async verifyPkPass(data: string): Promise<PkPassVerification> {
+  async verifyPkPassDeprecated(data: string): Promise<PkPassVerification> {
     if (!data) {
       this.logger.warn('Missing input data for pkpass verification', {
         category: LOG_CATEGORY,
@@ -467,22 +477,26 @@ export class LicenseServiceService {
       )
     }
 
-    if (!licenseService.verifyPkPass) {
-      this.logger.error('License client has no verifyPkPass implementation', {
-        category: LOG_CATEGORY,
-        passTemplateId,
-      })
+    if (!licenseService.verifyPkPassDeprecated) {
+      this.logger.error(
+        'License client has no verifyPkPassDeprecated implementation',
+        {
+          category: LOG_CATEGORY,
+          passTemplateId,
+        },
+      )
       throw new BadRequestException(
-        `License client has no verifyPkPass implementation, passTemplateId: ${passTemplateId}`,
+        `License client has no verifyPkPassDeprecated implementation, passTemplateId: ${passTemplateId}`,
       )
     }
 
-    const verification = await licenseService.verifyPkPass(data, passTemplateId)
+    const verification = await licenseService.verifyPkPassDeprecated(data)
 
     // TODO BETTER ERROR HANDLING
     if (!verification.ok) {
       throw new Error(`Unable to verify pkpass for user`)
     }
+
     return verification.data
   }
 
@@ -508,6 +522,7 @@ export class LicenseServiceService {
       // Create a token with the version and a server reference (Redis key) code
       this.barcodeService.createToken({
         v: '2',
+        t: licenseType,
         c: code,
       }),
       // Store license data in cache so that we can fetch data quickly when verifying the barcode
@@ -521,46 +536,81 @@ export class LicenseServiceService {
     return token
   }
 
-  mapDrivingLicenseData(data: BarcodeData<LicenseType.DrivingLicense>) {
-    const picture = data.extraData?.photo?.image
+  logError(error: Error | string) {
+    this.logger.error(isString(error) ? error : error.message, {
+      category: LOG_CATEGORY,
+      ...(isString(error) ? {} : { error }),
+    })
+  }
+
+  async getDataFromToken(token: string): Promise<LicenseVerifyResult> {
+    let code: string | undefined
+
+    try {
+      const payload = await this.barcodeService.verifyToken(token)
+      code = payload.c
+    } catch (error) {
+      this.logError(error)
+
+      if (error.message.includes(this.barcodeService.tokenExpiredError)) {
+        return {
+          valid: false,
+          error: LicenseVerifyError.TOKEN_EXPIRED,
+        }
+      }
+
+      return COMMON_VERIFY_ERROR
+    }
+
+    const data = await this.barcodeService.getCache(code)
+
+    if (!data) {
+      this.logError('No data found in cache')
+
+      return COMMON_VERIFY_ERROR
+    }
+
+    const licenseType = this.mapGenericLicenseType(data.licenseType)
 
     return {
-      nationalId: data.nationalId,
-      name: data.extraData.name ?? '',
-      ...(picture && { picture }),
+      valid: true,
+      licenseType,
+      data: data.extraData
+        ? {
+            ...data.extraData,
+            // type here is used to resolve the union type in the graphql schema
+            type: licenseType,
+          }
+        : undefined,
     }
   }
 
-  async verifyBarcode(token: string): Promise<typeof VerifyBarcodeDataUnion> {
+  async verify(data: string): Promise<LicenseVerifyResult> {
+    if (this.barcodeService.validateStrAsJwt(data)) {
+      return this.getDataFromToken(data)
+    }
+
+    /**
+     * If the input is not a token, then we fall back to the verifyPkPassDeprecated method
+     * until all clients have been updated to use the new verifyPkPassV2 method
+     */
     try {
-      const { c } = await this.barcodeService.verifyToken(token)
-      const data = await this.barcodeService.getCache(c)
+      const res = await this.verifyPkPassDeprecated(data)
 
-      if (!data) {
-        const noDataFoundMsg = 'No data found in cache'
-        this.logger.error(noDataFoundMsg, {
-          category: LOG_CATEGORY,
-        })
+      if (res.error) {
+        this.logError(res.error.message)
 
-        throw new Error('Invalid barcode')
+        return COMMON_VERIFY_ERROR
       }
 
-      if (data.licenseType === LicenseType.DrivingLicense) {
-        const drivingData = this.mapDrivingLicenseData(
-          data as BarcodeData<LicenseType.DrivingLicense>,
-        )
-
-        return new DriverLicenseResult(drivingData)
+      return {
+        valid: true,
+        data: {
+          value: res.data,
+        },
       }
-
-      throw new Error('Invalid license type')
-    } catch (error) {
-      this.logger.error(error.message, {
-        category: LOG_CATEGORY,
-        error,
-      })
-
-      throw new BadRequestException(error.message)
+    } catch (e) {
+      return COMMON_VERIFY_ERROR
     }
   }
 }

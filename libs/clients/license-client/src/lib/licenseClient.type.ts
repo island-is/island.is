@@ -9,6 +9,7 @@ import { Passport } from '@island.is/clients/passports'
 import { Locale } from '@island.is/shared/types'
 import { FlattenedAdrDto } from './clients/adr-license-client'
 import { FirearmLicenseDto } from './clients/firearm-license-client'
+import { DrivingLicenseVerifyExtraData } from './clients/driving-license-client'
 
 export type LicenseLabelsObject = {
   [x: string]: string
@@ -39,7 +40,18 @@ export interface LicenseResults {
 export interface VerifyExtraDataResult {
   [LicenseType.AdrLicense]: void
   [LicenseType.DisabilityLicense]: void
-  [LicenseType.DrivingLicense]: DriverLicenseDto
+  [LicenseType.DrivingLicense]: DrivingLicenseVerifyExtraData
+  [LicenseType.Ehic]: void
+  [LicenseType.FirearmLicense]: void
+  [LicenseType.MachineLicense]: void
+  [LicenseType.PCard]: void
+  [LicenseType.Passport]: void
+}
+
+export type PkPassVerificationData = {
+  [LicenseType.AdrLicense]: void
+  [LicenseType.DisabilityLicense]: void
+  [LicenseType.DrivingLicense]: DrivingLicenseVerifyExtraData
   [LicenseType.Ehic]: void
   [LicenseType.FirearmLicense]: void
   [LicenseType.MachineLicense]: void
@@ -53,6 +65,9 @@ export type LicenseResult<T extends LicenseType> = T extends LicenseType
 
 export type LicenseVerifyExtraDataResult<T extends LicenseType> =
   T extends LicenseType ? VerifyExtraDataResult[T] : never
+
+export type PkPassVerificationDataResult<T extends LicenseType> =
+  T extends LicenseType ? PkPassVerificationData[T] : never
 
 export type LicenseTypeType = keyof typeof LicenseType
 
@@ -70,20 +85,19 @@ export type PassTemplateIds = {
   drivingLicense: string
 }
 
-export type PkPassVerificationData = {
-  id?: string
-  validFrom?: string
-  expirationDate?: string
-  expirationTime?: string
-  status?: string
-  whenCreated?: string
-  whenModified?: string
-  alreadyPaid?: boolean
+export type WithValid<Data> = {
+  valid: boolean
+  data?: Data
 }
 
 export type PkPassVerification = {
   valid: boolean
   data?: string
+}
+
+export type PkPassVerificationV2<Type extends LicenseType> = {
+  valid: boolean
+  data?: PkPassVerificationDataResult<Type>
 }
 
 export type PkPassVerificationInputData = {
@@ -160,10 +174,8 @@ export interface LicenseClient<Type extends LicenseType> {
   licenseIsValidForPkPass?: (payload: unknown) => LicensePkPassAvailability
   getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
   getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
-  verifyPkPass?: (
-    data: string,
-    passTemplateId: string,
-  ) => Promise<Result<PkPassVerification>>
+  verifyPkPassDeprecated?: (data: string) => Promise<Result<PkPassVerification>>
+  verifyPkPassV2?: (data: string) => Promise<Result<PkPassVerificationV2<Type>>>
   verifyExtraData?: (input: User) => Promise<LicenseVerifyExtraDataResult<Type>>
 }
 

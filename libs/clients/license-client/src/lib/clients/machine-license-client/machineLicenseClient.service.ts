@@ -249,7 +249,10 @@ export class MachineLicenseClient
       data: res.data.distributionUrl,
     }
   }
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+
+  async verifyPkPassDeprecated(
+    data: string,
+  ): Promise<Result<PkPassVerification>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 

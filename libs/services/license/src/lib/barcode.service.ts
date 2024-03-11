@@ -21,6 +21,10 @@ export type LicenseTokenData = {
    */
   v: string
   /**
+   * License type
+   */
+  t: string
+  /**
    * Code (Reference to redis record with license data)
    */
   c: string
@@ -41,14 +45,14 @@ export class BarcodeService {
     private readonly cacheManager: CacheManager,
   ) {}
 
+  public tokenExpiredError = 'TokenExpiredError'
+
   async verifyToken(token: string): Promise<LicenseTokenData> {
     return new Promise((resolve, reject) =>
       verify(token, this.config.barcodeSecretKey, (err, decoded) => {
         if (err) {
-          if (err.name === 'TokenExpiredError') {
-            throw new Error('Token expired')
-          } else if (err.name === 'JsonWebTokenError') {
-            throw new Error('Token malformed')
+          if (err.name === this.tokenExpiredError) {
+            throw new Error(this.tokenExpiredError)
           }
 
           return reject(err)
