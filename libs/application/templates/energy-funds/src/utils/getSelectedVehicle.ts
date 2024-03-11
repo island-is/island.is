@@ -1,6 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { VehiclesCurrentVehicle } from '../shared/types'
+import {
+  CurrentVehiclesAndRecords,
+  VehiclesCurrentVehicle,
+} from '../shared/types'
 
 export const getSelectedVehicle = (
   externalData: ExternalData,
@@ -14,11 +17,12 @@ export const getSelectedVehicle = (
     return vehicle
   }
   const currentVehicleList =
-    (externalData?.currentVehicles?.data as VehiclesCurrentVehicle[]) || []
+    (externalData?.currentVehicles?.data as CurrentVehiclesAndRecords) ||
+    undefined
   const vehicleValue = getValueViaPath(
     answers,
     'selectVehicle.plate',
     '',
   ) as string
-  return currentVehicleList.find((x) => x.permno === vehicleValue)
+  return currentVehicleList.vehicles.find((x) => x.permno === vehicleValue)
 }

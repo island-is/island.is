@@ -48,10 +48,25 @@ export const overview = {
       '{isNewIndictment, select, true {Senda} other {Endursenda}} til staðfestingar',
     description: 'Texti í áfram takka á Yfirlit ákæru skefi í ákærum.',
   }),
-  modalHeading: defineMessage({
-    id: 'judicial.system.indictments:overview.modal_heading',
-    defaultMessage: 'Ákæra hefur verið send á dómstól',
+  caseSubmitModalTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.case_submit_modal_title',
+    defaultMessage: 'Staðfesta ákæru',
     description: 'Titill í modal glugga á Yfirlit ákæru skefi í ákærum.',
+  }),
+  caseSubmitModalText: defineMessage({
+    id: 'judicial.system.indictments:overview.case_submit_modal_text',
+    defaultMessage: 'Ákæran verður send á dómstól ásamt skjölum og málsgögnum.',
+    description: 'Texti í modal glugga á Yfirlit ákæru skefi í ákærum.',
+  }),
+  caseSubmitPrimaryButtonText: defineMessage({
+    id: 'judicial.system.indictments:overview.case_submit_primary_button_text',
+    defaultMessage: 'Staðfesta og senda á dómstól',
+    description: 'Texti í takka í modal glugga á Yfirlit ákæru skefi í ákærum.',
+  }),
+  caseSubmitSecondaryButtonText: defineMessage({
+    id: 'judicial.system.indictments:overview.case_submit_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description: 'Texti í takka í modal glugga á Yfirlit ákæru skefi í ákærum.',
   }),
   caseSendToCourt: defineMessage({
     id: 'judicial.system.indictments:overview.case_send_to_court',
@@ -59,8 +74,8 @@ export const overview = {
     description:
       'Texti í info boxi þegar ákæra hefur verið send á Yfirlit ákæru skefi í ákærum.',
   }),
-  caseSentForConfirmation: defineMessage({
-    id: 'judicial.system.indictments:overview.case_sent_for_confirmation',
+  caseSentForConfirmationTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.case_sent_for_confirmation_title',
     defaultMessage: 'Ákæra hefur verið send til staðfestingar',
     description:
       'Texti í info boxi þegar ákæra hefur verið send til staðfestingar á Yfirlit ákæru skefi í ákærum.',
