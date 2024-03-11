@@ -286,7 +286,7 @@ export class RecyclingRequestService {
       // If we encounter error then update requestType to 'paymentFailed'
       // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
-        // 0. Ee need to be sure that the current owner is registered in our database
+        // 0. We need to be sure that the current owner is registered in our database
         await this.icelandicTransportAuthorityServices.checkIfCurrentUser(
           permno,
         )
