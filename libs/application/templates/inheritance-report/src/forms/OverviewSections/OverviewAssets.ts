@@ -242,6 +242,7 @@ export const overviewAssets = [
         return (
           claims.map((asset: ClaimsData) => ({
             title: asset.issuer,
+            titleRequired: false,
             description: [
               m.claimsAmount.defaultMessage +
                 ': ' +
@@ -281,6 +282,7 @@ export const overviewAssets = [
         return (
           stocks.map((stock: StocksData) => ({
             title: stock.organization,
+            titleRequired: false,
             description: [
               `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
                 stock.nationalId ?? '',

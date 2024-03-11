@@ -30,6 +30,10 @@ export enum Features {
   additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
   homeSupport = 'isHomeSupportEnabled',
   ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
+  DeregisterMachine = 'isDeregisterMachineEnabled',
+  grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
+  RequestInspection = 'isRequestInspectionForMachineEnabled',
+  officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

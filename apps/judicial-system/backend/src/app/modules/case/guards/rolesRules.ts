@@ -174,6 +174,7 @@ export const prosecutorTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.OPEN,
+    CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
@@ -191,6 +192,13 @@ export const prosecutorTransitionRule: RolesRule = {
     if (
       isIndictmentCase(theCase.type) &&
       request.body.transition === CaseTransition.APPEAL
+    ) {
+      return false
+    }
+
+    if (
+      !isIndictmentCase(theCase.type) &&
+      request.body.transition === CaseTransition.ASK_FOR_CONFIRMATION
     ) {
       return false
     }
@@ -215,6 +223,7 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.OPEN,
+    CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
   ],

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
-import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client/react/hooks/useQuery'
 
 import {
   Accordion,
@@ -44,7 +44,6 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayProgramFiltersQuery,
-  GetUniversityGatewayProgramsQuery,
   GetUniversityGatewayUniversitiesQuery,
   Query,
   QueryGetOrganizationPageArgs,
@@ -71,14 +70,11 @@ import { TranslationDefaults } from './TranslationDefaults'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
-
-const ITEMS_PER_PAGE = 9
+const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
-  data: Array<UniversityGatewayProgram>
   namespace: Record<string, string>
   filterOptions: Array<UniversityGatewayProgramFilter>
   locale: string
@@ -117,6 +113,11 @@ export interface ComparisonProps {
   iconSrc: string
 }
 
+interface UniversityProgramsQuery {
+  universityGatewayPrograms: {
+    data: Array<UniversityGatewayProgram>
+  }
+}
 interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
   applicationStatus: string
 }
@@ -138,7 +139,6 @@ const getActiveNavigationItemTitle = (
 }
 
 const UniversitySearch: Screen<UniversitySearchProps> = ({
-  data,
   filterOptions,
   namespace,
   searchQuery,
@@ -146,21 +146,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   organizationPage,
   universities,
 }) => {
-  useEffect(() => {
-    const index = filterOptions.findIndex(
-      (filter) => filter.field === 'universityId',
-    )
-
-    if (index !== -1) {
-      const movedField = filterOptions.splice(index, 1)[0]
-      filterOptions.unshift(movedField)
-    }
-  }, [filterOptions])
+  const { data, loading } = useQuery<UniversityProgramsQuery>(
+    GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
+    { ssr: false },
+  )
 
   const router = useRouter()
   const { width } = useWindowSize()
   const n = useNamespace(namespace)
-
   const isMobileScreenWidth = width < theme.breakpoints.lg
   const isTabletScreenWidth = width < theme.breakpoints.xl
 
@@ -170,6 +163,57 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   >([])
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
+  const [originalSortedResults, setOriginalSortedList] = useState<any>([])
+  const [filteredResults, setFilteredResults] = useState<Array<any>>([])
+  const [gridView, setGridView] = useState<boolean>(true)
+  const { linkResolver } = useLinkResolver()
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [filters, setFilters] = useState<FilterProps>(
+    JSON.parse(JSON.stringify(initialFilters)),
+  )
+
+  useEffect(() => {
+    if (!loading) {
+      const temp = [
+        ...(data?.universityGatewayPrograms.data as UniversityGatewayProgram[]),
+      ]
+        .sort(() => Math.random() - 0.5)
+        .map((item: UniversityGatewayProgram, index: number) => {
+          const itemWithStatus = {
+            ...item,
+            applicationStatus: getApplicationStatus(item),
+          }
+          return { item: itemWithStatus, refIndex: index, score: 1 }
+        })
+      setOriginalSortedList(temp)
+    }
+  }, [data, loading])
+
+  useEffect(() => {
+    if (!filterOptions) return
+
+    // Re-ordering filters.
+    const index = filterOptions.findIndex(
+      (filter) => filter.field === 'universityId',
+    )
+
+    if (index !== -1) {
+      const movedField = filterOptions.splice(index, 1)[0]
+
+      movedField.options.sort((x, y) => {
+        const titleX =
+          universities.filter((uni) => uni.id === x)[0]?.contentfulTitle || ''
+        const titleY =
+          universities.filter((uni) => uni.id === y)[0]?.contentfulTitle || ''
+        return titleX.localeCompare(titleY)
+      })
+      filterOptions.splice(2, 0, movedField)
+      const lastElement = filterOptions[filterOptions.length - 1]
+      filterOptions[filterOptions.length - 1] =
+        filterOptions[filterOptions.length - 2]
+      filterOptions[filterOptions.length - 2] = lastElement
+    }
+  }, [filterOptions, universities])
 
   const getApplicationStatus = (item: UniversityGatewayProgram) => {
     const now = new Date()
@@ -178,37 +222,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       ? 'OPEN'
       : 'CLOSED'
   }
-
-  // TODO Create proper types here
-  const [originalSortedResults, setOriginalSortedList] = useState<any>(
-    [...data]
-      // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
-      .sort(() => Math.random() - 0.5)
-      .map((item: UniversityGatewayProgram, index: number) => {
-        const itemWithStatus = {
-          ...item,
-          applicationStatus: getApplicationStatus(item),
-        }
-        return { item: itemWithStatus, refIndex: index, score: 1 }
-      }),
-  )
-
-  const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    originalSortedResults,
-  )
-
-  const { linkResolver } = useLinkResolver()
-
-  //creating a deep copy to avoid original being affected by changes to filters
-  const [filters, setFilters] = useState<FilterProps>(
-    JSON.parse(JSON.stringify(initialFilters)),
-  )
-
-  const [gridView, setGridView] = useState<boolean>(false)
-
-  const [totalPages, setTotalPages] = useState<number>(
-    Math.ceil(data.length / ITEMS_PER_PAGE),
-  )
 
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
@@ -235,20 +248,27 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (searchQuery) {
       setQuery(searchQuery)
-
+      sessionStorage.setItem('query', searchQuery)
       //also set deep copy here
       setFilters(JSON.parse(JSON.stringify(initialFilters)))
+    } else if (sessionStorage.getItem('query')) {
+      setQuery(sessionStorage.getItem('query') || '')
     }
   }, [])
 
   const fuseOptions = {
-    threshold: 0.4,
+    threshold: 0.3,
     findAllMatches: true,
-    ignoreLocation: true,
+    includeScore: true,
     keys: [
-      `name${locale === 'is' ? 'Is' : 'En'}`,
-      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
-      `description${locale === 'is' ? 'Is' : 'En'}`,
+      {
+        name: `name${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 2,
+      },
+      {
+        name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
@@ -258,14 +278,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     ],
   }
 
-  const fuseInstance = new Fuse(
-    data.map((item) => {
-      return { ...item, applicationStatus: getApplicationStatus(item) }
-    }),
-    fuseOptions,
-  )
+  const resetFilteredList = () => {
+    setFilteredResults(originalSortedResults)
+  }
 
   useEffect(() => {
+    if (loading) return
+
+    let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
+    if (originalSortedResults.length > 0) {
+      fuseInstance = new Fuse(
+        data?.universityGatewayPrograms.data || [],
+        fuseOptions,
+      )
+    }
+
     const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
     Object.keys(filters).forEach((key) => {
       const str = key as keyof typeof filters
@@ -287,10 +314,31 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       setFilteredResults(results)
     }
     localStorage.setItem('savedFilters', JSON.stringify(filters))
-  }, [filters, query])
+  }, [filters, query, data, loading, originalSortedResults, locale])
 
-  const resetFilteredList = () => {
-    setFilteredResults(originalSortedResults)
+  const applicationUrlParser = (universityId: string) => {
+    const university =
+      universities.filter((uni) => uni.id === universityId)[0]
+        ?.contentfulTitle || ''
+
+    switch (university) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://umsoknir.ru.is/'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
   }
 
   const createPrimaryCTA = (item: UniversityGatewayProgramWithStatus) => {
@@ -301,6 +349,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
+      onClick: () => {
+        window.open(applicationUrlParser(item.universityId))
+      },
     }
     return CTA
   }
@@ -387,6 +438,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     e: React.ChangeEvent<HTMLInputElement>,
     filterKey: string,
   ) => {
+    setSelectedPage(1)
     handleFilters(filterKey, e.target.value)
   }
 
@@ -397,6 +449,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       }?comparison=${JSON.stringify(selectedComparison.map((i) => i.id))}`,
     )
   }
+
   const navList: NavigationItem[] =
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
@@ -416,6 +469,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
     const length = items.length
 
     if (length === 0) {
@@ -427,10 +484,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
 
     if (length === 2) {
-      return `${n(items[0], TranslationDefaults[items[0]])} or ${n(
-        items[0],
-        TranslationDefaults[items[0]],
-      )}`
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
     }
 
     const formattedList = items.map((item, index) => {
@@ -446,7 +503,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const formatFilterStrings = (tag: string, field: string) => {
     if (field === 'universityId') {
-      return universities.filter((x) => x.id === tag)[0].contentfulTitle || ''
+      return universities.filter((x) => x.id === tag)[0]?.contentfulTitle || ''
     } else if (tag === 'OPEN') {
       return `${n('openForApplication', 'Opið fyrir umsóknir')}`
     } else {
@@ -658,7 +715,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               {n('searchResults', 'Leitarniðurstöður')}
             </Text>
             <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
               value={query}
@@ -667,6 +724,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setSelectedPage(1)
                 searchTermHasBeenInitialized.current = true
                 setQuery(e.target.value)
+                sessionStorage.setItem('query', e.target.value)
               }}
             />
             <Box
@@ -686,6 +744,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       >
                         {formatFilterStrings(tag, key)}
                         <button
+                          aria-label="remove tag"
                           style={{ alignSelf: 'end' }}
                           onClick={() =>
                             handleRemoveTag(key as keyof FilterProps, tag)
@@ -719,13 +778,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   <Tag onClick={() => resetFilteredList()}>
                     {n('showAll', 'Sýna allt')}
                   </Tag>
-                  {filterOptions.map((option) => {
-                    if (
-                      option.field === 'degreeType' ||
-                      option.field === 'universityId'
-                    ) {
-                      return option.options.map((item) => {
-                        if (item !== 'OTHER') {
+                  {filterOptions &&
+                    filterOptions.map((option) => {
+                      if (
+                        option.field === 'degreeType' ||
+                        option.field === 'universityId'
+                      ) {
+                        return option.options.map((item) => {
+                          if (item === 'OTHER') return null
                           return (
                             <Tag
                               onClick={() => handleFilters('degreeType', item)}
@@ -733,19 +793,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               {n(
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle || ''
+                                      ?.contentfulTitle || ''
                                   : item,
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle
+                                      ?.contentfulTitle
                                   : item,
                               )}
                             </Tag>
                           )
-                        }
-                      })
-                    }
-                  })}
+                        })
+                      }
+                    })}
                 </Inline>
               </Box>
             </ContentBlock>
@@ -899,7 +958,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 src={
                                   universities.filter(
                                     (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl || ''
+                                  )[0]?.contentfulLogoUrl || ''
                                 }
                                 alt={`Logo fyrir ${
                                   locale === 'en'
@@ -1019,7 +1078,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         const subHeading =
                           specializedName !== undefined
                             ? (locale === 'en'
-                                ? 'Field of study: '
+                                ? 'Specialization: '
                                 : 'Kjörsvið: ') + specializedName
                             : undefined
                         return (
@@ -1037,7 +1096,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               iconText={
                                 universities.filter(
                                   (x) => x.id === dataItem.universityId,
-                                )[0].contentfulTitle || ''
+                                )[0]?.contentfulTitle || ''
                               }
                               heading={
                                 locale === 'en'
@@ -1050,7 +1109,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   src={
                                     universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl || ''
+                                    )[0]?.contentfulLogoUrl || ''
                                   }
                                   alt={`Logo fyrir ${
                                     locale === 'en'
@@ -1091,7 +1150,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   title: `${dataItem.credits} ${n(
                                     'units',
                                     'einingar',
-                                  )}, ${dataItem.durationInYears} ${
+                                  )}, ${dataItem.durationInYears.toLocaleString(
+                                    locale === 'is' ? 'de' : 'en',
+                                  )} ${
                                     locale === 'en'
                                       ? dataItem.durationInYears === 1
                                         ? 'year'
@@ -1342,52 +1403,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   res.setHeader(
     'Cache-Control',
-    'public, s-maxage=3300, stale-while-revalidate=300',
+    'public, s-maxage=1650, stale-while-revalidate=300',
   )
-  const namespaceResponse = await apolloClient.query<
-    GetNamespaceQuery,
-    GetNamespaceQueryVariables
-  >({
-    query: GET_NAMESPACE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        namespace: 'universityGateway',
-      },
-    },
-  })
-
-  const { search } = query
-
-  const namespace = JSON.parse(
-    namespaceResponse?.data?.getNamespace?.fields || '{}',
-  ) as Record<string, string>
-
-  let showPagesFeatureFlag = false
-
-  if (publicRuntimeConfig?.environment === 'prod') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
-  } else {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
-  }
-
-  if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Page not found')
-  }
 
   const [
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { universityGatewayPrograms },
-    },
     filters,
     {
       data: { universityGatewayUniversities },
     },
+    namespaceResponse,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -1398,19 +1425,34 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
         },
       },
     }),
-    apolloClient.query<GetUniversityGatewayProgramsQuery>({
-      query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    }),
     apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
       query: GET_UNIVERSITY_GATEWAY_FILTERS,
     }),
     apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     }),
+    apolloClient.query<GetNamespaceQuery, GetNamespaceQueryVariables>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+          namespace: 'universityGateway',
+        },
+      },
+    }),
   ])
 
+  const { search } = query
+
+  const namespace = JSON.parse(
+    namespaceResponse?.data?.getNamespace?.fields || '{}',
+  ) as Record<string, string>
+
+  if (!getOrganizationPage) {
+    throw new CustomNextError(404, 'Page not found')
+  }
+
   return {
-    data: universityGatewayPrograms.data,
     searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
@@ -1420,4 +1462,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   }
 }
 
-export default withMainLayout(UniversitySearch, { showFooter: false })
+export default withMainLayout(UniversitySearch, {
+  showFooter: false,
+})

@@ -30,12 +30,16 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
+  UpdateIndictmentCount,
   useCase,
   useDefendants,
+  useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
+import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
+import { getIncidentDescription } from '../Indictment/IndictmentCount'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -110,6 +114,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     updateDefendantState,
   } = useDefendants()
   const router = useRouter()
+
+  const { updateIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
 
@@ -269,15 +275,61 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
+  const handleUpdateIndictmentCount = (
+    policeCaseNumber: string,
+    crimeScene: CrimeScene,
+  ) => {
+    if (workingCase.indictmentCounts) {
+      workingCase.indictmentCounts
+        .filter((ic) => ic.policeCaseNumber === policeCaseNumber)
+        .forEach((ic) => {
+          const incidentDescription = getIncidentDescription(
+            ic,
+            formatMessage,
+            crimeScene,
+          )
+
+          updateIndictmentCount(workingCase.id, ic.id, {
+            incidentDescription,
+          } as UpdateIndictmentCount)
+        })
+    }
+  }
+
   const handleUpdateDefendant = useCallback(
     (updatedDefendant: UpdateDefendantInput) => {
       updateDefendantState(updatedDefendant, setWorkingCase)
 
       if (workingCase.id) {
         updateDefendant(updatedDefendant)
+
+        if (workingCase.indictmentIntroduction) {
+          setAndSendCaseToServer(
+            [
+              {
+                indictmentIntroduction: getIndictmentIntroductionAutofill(
+                  formatMessage,
+                  workingCase.prosecutorsOffice,
+                  workingCase.court,
+                  workingCase.defendants,
+                )?.join(''),
+                force: true,
+              },
+            ],
+            workingCase,
+            setWorkingCase,
+          )
+        }
       }
     },
-    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
+    [
+      updateDefendantState,
+      setWorkingCase,
+      workingCase,
+      updateDefendant,
+      setAndSendCaseToServer,
+      formatMessage,
+    ],
   )
 
   const handleNavigationTo = useCallback(
@@ -467,6 +519,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                       policeCaseNumberImmutable={
                         workingCase.origin === CaseOrigin.LOKE && index === 0
                       }
+                      updateIndictmentCount={handleUpdateIndictmentCount}
                     />
                   )}
                 </Box>
