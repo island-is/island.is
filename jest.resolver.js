@@ -6,6 +6,14 @@
 const { dirname, extname, join } = require('path')
 const { resolve: resolveExports } = require('resolve.exports')
 const ts = require('typescript')
+const { readProjectConfiguration, workspaceRoot } = require('@nx/devkit')
+/**
+ * Nx UPGRADE WARNING - Nx 16.3.2:
+ * This is a direct import as the FsTree is not a public API of Nx.
+ * We are using FsTree to find the project configuration to read the project root.
+ * This may break in future versions of Nx.
+ */
+const { FsTree } = require('nx/src/generators/tree')
 
 let compilerSetup
 
@@ -71,8 +79,22 @@ module.exports = function (path, options) {
       return
     }
     // Fallback to using typescript
-    ts = ts || require('typescript')
-    compilerSetup = compilerSetup || getCompilerSetup(options.rootDir)
+    // UPGRADE WARNING
+    // Our modification made to the v16.9.0
+    // Adding usage of FsTree and readProjectConfiguration
+    const fsTree = new FsTree(workspaceRoot, false)
+    const project = readProjectConfiguration(
+      fsTree,
+      process.env.NX_TASK_TARGET_PROJECT,
+    )
+
+    compilerSetup =
+      compilerSetup ||
+      getCompilerSetup(
+        // UPGRADE WARNING
+        // Appending project root to find the projects tsconfig.spec.json file
+        (options.rootDir ?? options.basedir) + `/${project.root}`,
+      )
     const { compilerOptions, host } = compilerSetup
     return ts.resolveModuleName(
       path,
