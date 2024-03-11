@@ -22,9 +22,11 @@ const hasValidTags = async (filePath: string) => {
   const hasScopePrefix = tags.some(([key]) => key === 'scope') || isEmpty
   // Are all tags the same?
   const singularTag = new Set(tags.map(([, value]) => value)).size === 1
+  // Is any tag repeaed?
+  const repeatFreeTags = new Set(tags.map(([, value]) => value)).size !== tags.length
 
   // Exit early for good projects
-  if (!isEmpty && validPrefix && hasScopePrefix && singularTag) {
+  if (!isEmpty && validPrefix && hasScopePrefix && singularTag && !repeatFreeTags) {
     return true
   }
   console.log(chalk.red.underline(filePath))
@@ -39,6 +41,9 @@ const hasValidTags = async (filePath: string) => {
   }
   if (!singularTag) {
     console.log('- All tags must be the same')
+  }
+  if (!repeatFreeTags) {
+    console.log("- Tags can't be repeated")
   }
   console.log('NX tags:', tagsRaw, '\n')
 
