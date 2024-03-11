@@ -291,6 +291,14 @@ export class CaseController {
       case CaseTransition.DELETE:
         update.parentCaseId = null
         break
+
+      case CaseTransition.SUBMIT:
+        if (isIndictmentCase(theCase.type) && !user.canConfirmAppeal) {
+          throw new ForbiddenException(
+            `User ${user.id} does not have permission to confirm indictments`,
+          )
+        }
+        break
       case CaseTransition.ACCEPT:
       case CaseTransition.REJECT:
       case CaseTransition.DISMISS:

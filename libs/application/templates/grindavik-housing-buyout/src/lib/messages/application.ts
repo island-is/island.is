@@ -20,9 +20,29 @@ export const application = {
   }),
   applicant: defineMessages({
     sectionTitle: {
-      id: 'ghb.application:applicant:section.title',
+      id: 'ghb.application:applicant.section.title',
       defaultMessage: 'Upplýsingar um þig',
       description: 'Applicant information section title',
+    },
+    bankInfo: {
+      id: 'ghb.application:applicant.labels.bankInfo',
+      defaultMessage: 'Bankaupplýsingar',
+      description: 'Bank information',
+    },
+    bankNumber: {
+      id: 'ghb.application:applicant.labels.bankNumber',
+      defaultMessage: 'Bankanúmer',
+      description: 'Bank number',
+    },
+    bankLedger: {
+      id: 'ghb.application:applicant.labels.bankLedger',
+      defaultMessage: 'Höfuðbók',
+      description: 'Ledger',
+    },
+    accountNumber: {
+      id: 'ghb.application:applicant.labels.accountNumber',
+      defaultMessage: 'Reikningsnúmer',
+      description: 'Account number',
     },
   }),
   propertyInformation: defineMessages({
@@ -61,6 +81,26 @@ export const application = {
       id: 'ghb.application:propertyInformation.fireInsuranceValue',
       defaultMessage: 'Brunabótamat fasteignar',
       description: 'Fire insurance value',
+    },
+    deliveryDateTitle: {
+      id: 'ghb.application:propertyInformation.deliveryDateTitle',
+      defaultMessage: 'Afhendingardagur sem óskað er eftir',
+      description: 'Delivery date title',
+    },
+    deliveryDateDescription: {
+      id: 'ghb.application:propertyInformation.deliveryDateDescription',
+      defaultMessage: 'Veldu dagsetningu sem þér hentar best.',
+      description: 'Delivery date description',
+    },
+    deliveryDateLabel: {
+      id: 'ghb.application:propertyInformation.deliveryDateLabel',
+      defaultMessage: 'Afhendingardagur',
+      description: 'Delivery date label',
+    },
+    deliveryDatePlaceholder: {
+      id: 'ghb.application:propertyInformation.deliveryDatePlaceholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Delivery date placeholder',
     },
   }),
   additionalOwners: defineMessages({
@@ -113,6 +153,16 @@ export const application = {
       defaultMessage: 'Lánveitandi',
       description: 'Loan provider',
     },
+    otherOrganization: {
+      id: 'ghb.application:loanStatus.otherOrganization',
+      defaultMessage: 'Önnur lánastofnun',
+      description: 'Other organization',
+    },
+    otherLoanProvider: {
+      id: 'ghb.application:loanStatus.otherLoanProvider',
+      defaultMessage: 'Nafn annars lánveitanda',
+      description: 'Other loan provider',
+    },
     addNewLoan: {
       id: 'ghb.application:loanStatus.addNewLoan',
       defaultMessage: 'Bæta við láni',
@@ -132,7 +182,7 @@ export const application = {
     checkboxText: {
       id: 'ghb.application:loanStatus.checkboxText',
       defaultMessage:
-        'Ég er með húsnæðislán hjá lánveitanda sem er ekki í felliglugganum hér fyrir ofan',
+        'Ég er ekki með nein áhvílandi lán á eigninni sem um ræðir',
       description: 'Loan status screen checkbox text',
     },
   }),
@@ -219,6 +269,13 @@ export const application = {
       description: 'Confirmation label',
     },
   }),
+  preemptiveRight: defineMessages({
+    sectionTitle: {
+      id: 'ghb.application:preemptiveRight.section.title',
+      defaultMessage: 'Forgangsréttur',
+      description: 'Preemptive right section title',
+    },
+  }),
   overview: defineMessages({
     sectionTitle: {
       id: 'ghb.application:overview.section.title',
@@ -268,8 +325,34 @@ export const application = {
     },
     checkboxText: {
       id: 'ghb.application:overview.checkboxText',
-      defaultMessage: 'Ég skil að...',
+      defaultMessage:
+        'Ég óska eftir forgangsrétt á eigninni þegar hún verður seld',
       description: 'Checkbox text',
+    },
+    preemptiveRightTypeTitle: {
+      id: 'ghb.application:overview.preemptiveRightTypeTitle',
+      defaultMessage: 'Veldu forgangsrétt',
+      description: 'Preemptive right type title',
+    },
+    preemptiveRightsLabel: {
+      id: 'ghb.application:overview.preemptiveRightsLabel',
+      defaultMessage: 'Valdir forgangsréttir',
+      description: 'Preemptive rights label',
+    },
+    purchaseRight: {
+      id: 'ghb.application:overview.purchaseRight',
+      defaultMessage: 'Kaupréttur',
+      description: 'Purchase right',
+    },
+    prePurchaseRight: {
+      id: 'ghb.application:overview.prePurchaseRight',
+      defaultMessage: 'Forkaupsréttur',
+      description: 'Pre purchase right',
+    },
+    preLeaseRight: {
+      id: 'ghb.application:overview.preLeaseRight',
+      defaultMessage: 'Forleiguréttur',
+      description: 'Pre lease right',
     },
   }),
 }
