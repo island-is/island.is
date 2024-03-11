@@ -2,30 +2,30 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   ChargeFjsV2,
-  EnergyFunds,
   Client,
   CriminalRecord,
   DataProtectionComplaint,
+  DirectorateOfImmigration,
   DrivingLicense,
   EHIC,
+  EnergyFunds,
   Finance,
   FishingLicense,
   HealthInsurance,
   Labor,
   MunicipalitiesFinancialAid,
   NationalRegistry,
+  OccupationalLicenses,
   Passports,
   Payment,
   PaymentSchedule,
   Properties,
   RskCompanyInfo,
+  SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
   WorkMachines,
-  DirectorateOfImmigration,
-  SocialInsuranceAdministration,
-  OccupationalLicenses,
   SignatureCollection,
   ArborgWorkpoint,
 } from '../../../../infra/src/dsl/xroad'
@@ -76,7 +76,7 @@ export const workerSetup =
           local: 'http://localhost:4200/umsoknir',
         },
       })
-      .xroad(Base, Client, Payment, EHIC)
+      .xroad(Base, Client, Payment, EHIC, WorkMachines)
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
