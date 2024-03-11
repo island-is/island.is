@@ -205,9 +205,9 @@ export const overviewAssets = [
               `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
                 account.capital ?? '0',
               )}`,
-              `${m.bankAccountPenaltyInterestRates.defaultMessage}: ${formatCurrency(
-                account.penalityInterestRates ?? '0',
-              )}`,
+              `${
+                m.bankAccountPenaltyInterestRates.defaultMessage
+              }: ${formatCurrency(account.penalityInterestRates ?? '0')}`,
               `${m.bankAccountForeign.defaultMessage}: ${
                 isForeign ? m.yes.defaultMessage : m.no.defaultMessage
               }`,
