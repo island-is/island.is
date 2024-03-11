@@ -14,9 +14,8 @@ const hasValidTags = async (filePath: string) => {
   let parsedText
   try {
     parsedText = JSON.parse(projectText)
-  }
-  catch (e) {
-    console.error("Invalid JSON", e)
+  } catch (e) {
+    console.error('Invalid JSON', e)
     return false
   }
   const project: Project = parsedText
@@ -35,7 +34,13 @@ const hasValidTags = async (filePath: string) => {
   const repeatFreeTags = new Set(tagsRaw).size !== tagsRaw.length
 
   // Exit early for good projects
-  if (!isEmpty && validPrefix && hasScopePrefix && singularTag && !repeatFreeTags) {
+  if (
+    !isEmpty &&
+    validPrefix &&
+    hasScopePrefix &&
+    singularTag &&
+    !repeatFreeTags
+  ) {
     return true
   }
   console.log(chalk.red.underline(filePath))
