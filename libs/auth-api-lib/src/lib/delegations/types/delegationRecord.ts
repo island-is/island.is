@@ -3,6 +3,6 @@ export enum PersonalRepresentativeDelegationType {
   PersonalRepresentativePostholf = 'PersonalRepresentative:postholf',
 }
 
-export type DelegationIndexItem =
+export type DelegationRecordType =
   | DelegationType
   | PersonalRepresentativeDelegationType

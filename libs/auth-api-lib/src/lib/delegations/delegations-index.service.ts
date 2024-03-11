@@ -11,10 +11,16 @@ import { DelegationType } from './types/delegationType'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
-import { PersonalRepresentativeDelegationType } from './types/delegationIndexItem'
+import {
+  DelegationRecordType,
+  PersonalRepresentativeDelegationType,
+} from './types/delegationRecord'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
+
+const getPersonalRepresentativeDelegationType = (right: string) =>
+  `${DelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
@@ -27,7 +33,7 @@ export type DelegationIndexInfo = Pick<
 >
 
 type DelegationDTOWithStringType = Omit<DelegationDTO, 'type'> & {
-  type: string
+  type: DelegationRecordType
 }
 
 type SortedDelegations = {
@@ -272,8 +278,7 @@ export class DelegationsIndexService {
 
             const delegations = delegation.rights.map((right) => ({
               ...delegation,
-              type: `${delegation.type}:${right.code}`,
-              rights: [right],
+              type: getPersonalRepresentativeDelegationType(right.code),
             }))
 
             return [...acc, ...delegations]
