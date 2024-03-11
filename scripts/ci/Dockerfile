@@ -1,11 +1,12 @@
+# hadolint global ignore=DL3016,DL3018,DL3008
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
-RUN apk add -U git
-RUN apk add --update --no-cache \
-  python3 build-base gcc bash \
+RUN --mount=type=cache,target=/var/cache/apk/ \
+  apk add --no-cache \
+  git python3 build-base gcc bash \
   && ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
@@ -16,6 +17,8 @@ COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/releases/ ./.yarn/releases/
 COPY .yarn/patches/ ./.yarn/patches/
 RUN ls -lah ./.yarn/ ./
+# We,re using --mount, so no need to `yarn cache clean`
+# hadolint ignore=DL3060
 RUN --mount=type=cache,target=./.yarn/cache --mount=type=cache,target=.cache --mount=type=cache,target=/root/.cache \
   CI=true yarn install --immutable
 
@@ -103,9 +106,9 @@ ENV APP=${APP}
 ENV BASEPATH=/
 
 RUN mkdir -p /etc/nginx/templates
-RUN apk update && \
-  apk upgrade && \
-  apk add bash nodejs
+RUN --mount=type=cache,target=/var/cache/apk/ \
+  apk add --no-cache \
+  bash nodejs
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
@@ -114,9 +117,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base as output-jest
 
-RUN echo 'module.exports = {};' > jest.config.js
-
-RUN npm install -g jest
+RUN echo 'module.exports = {};' > jest.config.js && npm install -g jest
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -135,7 +136,10 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
+RUN --mount=type=cache,target=/apt/foo/bar \
+  apt-get update -y && apt-get install -y --no-install-recommends \
+  zip awscli \
+  && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -147,7 +151,7 @@ COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-ADD .yarnrc.yml ./
+COPY .yarnrc.yml ./
 RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 RUN yarn install
@@ -162,6 +166,7 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 FROM playwright-base as output-local
 ARG APP_HOME
+WORKDIR /app
 
 
 # node user exists in the base image
