@@ -110,7 +110,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Styrkur vegna kaupa á rafbílum 111',
+          name: 'Styrkur vegna kaupa á rafbílum',
           status: 'draft',
           actionCard: {
             tag: {
