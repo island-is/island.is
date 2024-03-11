@@ -39,7 +39,7 @@ const Periods: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
               <Timeline
                 initDate={dobDate}
                 title={formatMessage(
-                  parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
+                  parentalLeaveFormMessages.shared.dateOfBirthTitle,
                 )}
                 titleSmall={formatMessage(
                   parentalLeaveFormMessages.shared.dateOfBirthTitle,

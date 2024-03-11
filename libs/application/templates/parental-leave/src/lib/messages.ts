@@ -1,4 +1,4 @@
-import { defineMessages, MessageDescriptor } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 export const parentalLeaveFormMessages = {
   // Messages shared across the Parental Leave application templates
