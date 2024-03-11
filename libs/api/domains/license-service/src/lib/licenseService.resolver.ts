@@ -144,7 +144,6 @@ export class LicenseServiceResolver {
   })
   @Audit()
   async verifyPkPass(
-    @Args('locale', { type: () => String, nullable: true })
     @Args('input')
     input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
