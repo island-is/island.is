@@ -39,6 +39,10 @@ Valid applicants will be able to advance to this state where they can start the 
 
 When the primary parent requests transferal of rights, then the other secondary parent will need to approve of the transfer. The other parent will receive an email with a link to approve of this request.
 
+#### Other parent requires action
+
+When the primary parent requests transferal of rights and the other parent does not approve the transfer and asks the primary parent for edits. The primary parent's application updates to ask them to edit their application. 
+
 #### Employer waiting to assign
 
 If the applicant is employed by an employer(s) (not self employed, getting benefits or applying for a parental-leave grant), then they are asked to provide an email address which a confirmation email will be sent to. When the employer receives the email they can click a link which automatically assigns them to the application and advances it to the next state. If the applicant has multiple employers we go back to this state after an employer has approved the request until there are no more employers.
@@ -49,13 +53,25 @@ Here the employer will have a chance to review the periods selected by the appli
 
 The employer(s) can then approve or request changes, one employer at a time since just one assignee can be at one state at a time.
 
+#### Employer requires action
+
+When the employer requests edits on changes that have been sent to him for approval. The application updates for the applicant to edit his changes.
+
 #### VMST approval
 
 Applications that have been sent to VMST.
 
+#### VMST requires action
+
+When Vinnumálastofnun requests edits on changes that have been sent to them for approval. The application updates for the applicant to edit his changes.
+
 #### Edit or add periods
 
 Applicants make changes in periods or/and add more periods in their application.
+
+#### Employer waiting to assign for edits
+
+When the applicant has made changes to their application and is employed by an employer(s) (not self employed, getting benefits or applying for a parental-leave grant), then then the employer they registered in their original application receives the email they can click a link which automatically assigns them to the application and advances it to the next state. If the applicant has multiple employers, or added an employer when he made his last changes, we go back to this state after an employer has approved the request until there are no more employers left to approve.
 
 #### Residence grant no birthdate
 
@@ -69,9 +85,17 @@ If the applicant has given birth and it has been less than 6 months they can app
 
 Employers review new periods selected/added by applicants then approve or request changes.
 
+#### Employer requires action on edits
+
+When employers request changes to edits that the applicant has made. The applicant can discard edits or change their edits.
+
 #### VMST approve edits
 
 Application that has been edited (edit perios or applied for residence grant) have been sent to VMST again.
+
+#### VMST requires action on edits
+
+When VMST request changes to edits that the applicant has made. The applicant can discard edits or change their edits.
 
 #### Additional document required
 

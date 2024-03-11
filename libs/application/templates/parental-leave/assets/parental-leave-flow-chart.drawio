@@ -323,9 +323,7 @@
                 <mxCell id="81" value="Additional&lt;br&gt;Documents&lt;br&gt;Required" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="50" y="530" width="80" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="82" value="Send &lt;br&gt;document(s)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry x="130" y="550" width="90" height="40" as="geometry"/>
-                </mxCell>
+                
                 <mxCell id="85" value="Start application" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="690" y="660" width="110" height="30" as="geometry"/>
                 </mxCell>
