@@ -299,7 +299,9 @@ export class CaseController {
               `User ${user.id} does not have permission to confirm indictments`,
             )
           }
-          update.indictmentDeniedExplanation = ''
+          if (theCase.indictmentDeniedExplanation) {
+            update.indictmentDeniedExplanation = ''
+          }
         }
         break
       case CaseTransition.ACCEPT:
