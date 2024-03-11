@@ -20,6 +20,7 @@ import {
   RequestStatus,
 } from './recyclingRequest.model'
 import { VehicleService, VehicleModel } from '../vehicle'
+import { IcelandicTransportAuthorityServices } from '../../services/icelandicTransportAuthority.services'
 
 @Injectable()
 export class RecyclingRequestService {
@@ -32,6 +33,7 @@ export class RecyclingRequestService {
     @Inject(forwardRef(() => RecyclingPartnerService))
     private recycllingPartnerService: RecyclingPartnerService,
     private vehicleService: VehicleService,
+    private icelandicTransportAuthorityServices: IcelandicTransportAuthorityServices,
   ) {}
 
   async deRegisterVehicle(
@@ -88,7 +90,9 @@ export class RecyclingRequestService {
       }
     } catch (err) {
       throw new Error(
-        `Failed on deregistered vehicle ${vehiclePermno} because: ${err}`,
+        `Failed on deregistered vehicle ${vehiclePermno.slice(
+          -3,
+        )} because: ${err}`,
       )
     }
   }
@@ -272,6 +276,7 @@ export class RecyclingRequestService {
 
       // Here is a bit tricky
       // Only Developer and RecyclingCompany may deregistered vehicle
+      // 0. Check if the registered owner is the current owner
       // 1. Check whether lastest vehicle's requestType is 'pendingRecycle' or 'handOver'
       // 2. Set requestType to 'handOver'
       // 3. Then deregistered the vehicle from Samgongustofa
@@ -281,6 +286,11 @@ export class RecyclingRequestService {
       // If we encounter error then update requestType to 'paymentFailed'
       // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
+        // 0. Ee need to be sure that the current owner is registered in our database
+        /* await this.icelandicTransportAuthorityServices.checkIfCurrentUser(
+          permno,
+        )*/
+
         // 1. Check 'pendingRecycle'/'handOver' requestType
         const resRequestType = await this.findAllWithPermno(permno)
         if (!requestType || resRequestType.length == 0) {
