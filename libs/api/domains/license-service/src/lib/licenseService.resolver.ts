@@ -152,7 +152,7 @@ export class LicenseServiceResolver {
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => VerifyLicenseResult, {
-    name: 'verifyLicense',
+    name: 'verifyLicenseBarcode',
   })
   @Audit()
   async verifyLicense(
