@@ -81,12 +81,15 @@ export function addFooter(doc: PDFKit.PDFDocument, smallPrint?: string) {
   }
 }
 
-export function addCoatOfArms(doc: PDFKit.PDFDocument) {
-  doc.translate(270, 70).scale(0.5)
+export function addCoatOfArms(doc: PDFKit.PDFDocument, x?: number, y?: number) {
+  doc.translate(x ?? 270, y ?? 70).scale(0.5)
 
   coatOfArms(doc)
 
-  doc.fillColor('black').scale(2).translate(-270, -70)
+  doc
+    .fillColor('black')
+    .scale(2)
+    .translate(x ? -x : -270, y ? -y : -70)
 }
 
 export function addPoliceStar(doc: PDFKit.PDFDocument) {

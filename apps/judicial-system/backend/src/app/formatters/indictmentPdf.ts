@@ -13,6 +13,7 @@ import { nowFactory } from '../factories'
 import { indictment } from '../messages'
 import { Case } from '../modules/case'
 import {
+  addCoatOfArms,
   addEmptyLines,
   addGiganticHeading,
   addNormalPlusCenteredText,
@@ -74,6 +75,62 @@ export const createIndictment = async (
   const heading = formatMessage(indictment.heading)
 
   setTitle(doc, title)
+
+  doc
+    .rect(32, 32, doc.page.width - doc.page.margins.left, 88)
+    .fill('#FAFAFA')
+    .stroke()
+
+  doc.rect(40, 24, 104, 88).fillAndStroke('white', '#CBCBCB')
+
+  addCoatOfArms(doc, 64, 40)
+
+  doc
+    .rect(40 + 104, 24, doc.page.width - doc.page.margins.left - 104, 32)
+    .fillAndStroke('#FAFAFA', '#CBCBCB')
+
+  doc.fill('black')
+  doc.font('Times-Bold')
+  doc.text('Réttarvörslugátt', 168, 35)
+  doc.font('Times-Roman')
+  doc.text('Skjal samþykkt rafrænt', 260, 35)
+
+  doc
+    .rect(
+      40 + 104,
+      24 + 32,
+      (doc.page.width - doc.page.margins.left - 104 - 104) / 2,
+      88 - 32,
+    )
+    .stroke()
+
+  doc.fill('black')
+  doc.font('Times-Bold')
+  doc.text('Samþykkt af', 40 + 104 + 16, 24 + 32 + 16)
+  doc.font('Times-Roman')
+  doc.text('Nafn', 40 + 104 + 16, 24 + 32 + 32)
+
+  doc
+    .rect(
+      40 + 104 + (doc.page.width - doc.page.margins.left - 104 - 104) / 2,
+      24 + 32,
+      (doc.page.width - doc.page.margins.left - 104 - 104) / 2,
+      88 - 32,
+    )
+    .stroke()
+
+  doc
+    .rect(
+      40 + 104 + (doc.page.width - doc.page.margins.left - 104 - 104),
+      24 + 32,
+      104,
+      88 - 32,
+    )
+    .stroke()
+
+  addEmptyLines(doc, 6)
+
+  doc.fill('black').stroke()
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
