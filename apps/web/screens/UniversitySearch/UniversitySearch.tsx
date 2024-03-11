@@ -43,6 +43,7 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayProgramFiltersQuery,
+  GetUniversityGatewayProgramsQuery,
   GetUniversityGatewayUniversitiesQuery,
   Query,
   QueryGetOrganizationPageArgs,
@@ -1419,20 +1420,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  let showPagesFeatureFlag = false
-
-  if (publicRuntimeConfig?.environment === 'prod') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
-  } else {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
-  }
-
-  if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Page not found')
-  }
-
   const [
     {
       data: { getOrganizationPage },
@@ -1464,6 +1451,10 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     }),
   ])
+
+  if (!getOrganizationPage) {
+    throw new CustomNextError(404, 'Page not found')
+  }
 
   return {
     data: universityGatewayPrograms.data,
