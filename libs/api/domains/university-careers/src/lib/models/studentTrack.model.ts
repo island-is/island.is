@@ -1,18 +1,20 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { Student } from './student.model'
-import { StudentDescription } from './studentDescription.model'
+import { StudentTrackTranscript } from './studentTrackTranscript.model'
+import { StudentTrackMetadata } from './studentTrackMetadata'
 import { StudentFile } from './studentFile.model'
 
 @ObjectType('UniversityCareersStudentTrack')
 export class StudentTrack {
-  @Field(() => Student)
-  transcript!: Student
+  @Field(() => StudentTrackTranscript)
+  transcript!: StudentTrackTranscript
 
-  @Field(() => [StudentFile])
+  @Field(() => [StudentFile], {
+    description: 'Extra info about any available files for download',
+  })
   files!: StudentFile[]
 
-  @Field(() => StudentDescription)
-  body!: StudentDescription
+  @Field(() => StudentTrackMetadata)
+  metadata!: StudentTrackMetadata
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string

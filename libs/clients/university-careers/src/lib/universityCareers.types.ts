@@ -18,20 +18,20 @@ export enum UniversityId {
 }
 
 export interface UniversityCareerService {
-  getStudentInfo: (
+  getStudentTrackHistory: (
     user: User,
     university: UniversityId,
     locale: Locale,
   ) => Promise<Array<StudentTrackDto> | null>
 
-  getStudentCareer: (
+  getStudentTrack: (
     user: User,
     trackNumber: number,
     university: UniversityId,
     locale?: Locale,
   ) => Promise<StudentTrackOverviewDto | null>
 
-  getStudentCareerPdf: (
+  getStudentTrackPdf: (
     user: User,
     trackNumber: number,
     university: UniversityId,

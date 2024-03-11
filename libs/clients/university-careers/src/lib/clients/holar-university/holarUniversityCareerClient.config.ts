@@ -4,4 +4,5 @@ import { UniversityId } from '../../universityCareers.types'
 export const HolarUniversityCareerClientConfig = clientConfigFactory(
   UniversityId.HolarUniversity,
   [],
+  'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1',
 )

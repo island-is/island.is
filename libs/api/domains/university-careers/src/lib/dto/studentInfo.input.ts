@@ -6,17 +6,7 @@ registerEnumType(UniversityId, { name: 'UniversityCareersUniversityId' })
 
 @InputType('UniversityCareersStudentInfoInput')
 export class StudentInfoInput {
-  @Field({ nullable: true })
-  @IsNumber()
-  @IsOptional()
-  trackNumber?: number
-
   @Field()
   @IsString()
   locale!: string
-
-  @Field(() => UniversityId, { nullable: true })
-  @IsEnum(UniversityId)
-  @IsOptional()
-  universityId?: UniversityId
 }

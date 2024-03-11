@@ -4,9 +4,11 @@ import {
 } from '@island.is/clients/university-careers'
 import { isDefined } from '@island.is/shared/utils'
 import { StudentTrack } from './models/studentTrack.model'
-import { Student } from './models/student.model'
+import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 
-export const mapToStudent = (data: StudentTrackDto): Student | null => {
+export const mapToStudent = (
+  data: StudentTrackDto,
+): StudentTrackTranscript | null => {
   if (
     !data ||
     !data?.name ||
@@ -72,7 +74,7 @@ export const mapToStudentTrackModel = (
           }
         })
         .filter(isDefined) ?? [],
-    body: {
+    metadata: {
       description: data?.body?.description,
       footer: data?.body?.footer,
       unconfirmedData: data?.body?.unconfirmedData,

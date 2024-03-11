@@ -10,12 +10,13 @@ const schema = z.object({
 export const clientConfigFactory = (
   universityId: UniversityId,
   scope: Array<string>,
+  backupXRoad?: string,
 ) =>
   defineConfig<z.infer<typeof schema>>({
     name: `${universityId}CareerClientConfig`,
     schema,
     load: (env) => ({
-      xroadPath: env.required(`XROAD_${universityId}_PATH`, ''),
+      xroadPath: env.required(`XROAD_${universityId}_PATH`, backupXRoad),
       scope,
     }),
   })

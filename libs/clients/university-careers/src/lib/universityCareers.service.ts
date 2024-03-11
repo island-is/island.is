@@ -119,7 +119,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
     }
   }
 
-  getStudentInfo = async (
+  getStudentTrackHistory = async (
     user: User,
     university: UniversityId,
     locale?: Locale,
@@ -142,7 +142,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
     )
   }
 
-  getStudentCareer = async (
+  getStudentTrack = async (
     user: User,
     trackNumber: number,
     university: UniversityId,
@@ -172,7 +172,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
     }
   }
 
-  getStudentCareerPdf = async (
+  getStudentTrackPdf = async (
     user: User,
     trackNumber: number,
     university: UniversityId,

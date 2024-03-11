@@ -1,6 +1,6 @@
 import { defineMessage } from 'react-intl'
 
-import { Box, Stack } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
@@ -9,36 +9,19 @@ import {
   UNI_HI_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import { Query } from '@island.is/api/schema'
-import { gql, useQuery } from '@apollo/client'
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { useOrganizations } from '@island.is/service-portal/graphql'
+import { getOrganizationLogoUrl, isDefined } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
-
-const GetStudentInfoQuery = gql`
-  query universityOfIcelandStudentInfo(
-    $input: UniversityOfIcelandStudentInfoInput!
-  ) {
-    universityOfIcelandStudentInfo(input: $input) {
-      transcripts {
-        degree
-        faculty
-        institution {
-          displayName
-        }
-        studyProgram
-        trackNumber
-      }
-    }
-  }
-`
+import { useStudentInfoQuery } from './EducationGraduation.generated'
+import { useMemo } from 'react'
 
 export const EducationGraduation = () => {
   useNamespaces('sp.education-graduation')
   const { lang, formatMessage } = useLocale()
 
-  const { loading, error, data } = useQuery<Query>(GetStudentInfoQuery, {
+  const { loading, error, data } = useStudentInfoQuery({
+    errorPolicy: 'all',
     variables: {
       input: {
         locale: lang,
@@ -46,16 +29,60 @@ export const EducationGraduation = () => {
     },
   })
 
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY, {
-    variables: {
-      input: {
-        lang: lang,
-      },
-    },
-  })
-  const organizations = orgData?.getOrganizations?.items || {}
-  const studentInfo = data?.universityOfIcelandStudentInfo.transcripts || []
-  const noData = !studentInfo.length && !loading && !error
+  const { data: organizations } = useOrganizations()
+
+  const possibleTracks = data?.universityCareersStudentTrackHistory
+
+  const tracks = useMemo(
+    () => [
+      ...(possibleTracks?.agriculturalUniversityOfIceland ?? []),
+      ...(possibleTracks?.universityOfIceland ?? []),
+      ...(possibleTracks?.universityOfAkureyri ?? []),
+      ...(possibleTracks?.bifrostUniversity ?? []),
+      ...(possibleTracks?.holarUniversity ?? []),
+    ],
+    [possibleTracks],
+  )
+
+  const errorString = useMemo(() => {
+    const mapPathsToIssuerString = (paths?: Array<string | number>) => {
+      const mapPath = (path: string | number) => {
+        if (typeof path === 'number') {
+          return
+        }
+        switch (path) {
+          case 'universityOfIceland':
+            return 'hi fail'
+          case 'universityOfAkureyri':
+            return 'unak fail'
+          case 'bifrostUniversity':
+            return 'bifrost fail'
+          case 'holarUniversity':
+            return 'holar fail'
+          case 'agriculturalUniversityOfIceland':
+            return 'lbhi fail'
+          default:
+            return
+        }
+      }
+      if (!paths) {
+        return
+      }
+
+      return paths.map((p) => mapPath(p)).filter(isDefined)
+    }
+    let issuersArray: Array<string> = []
+    if (error?.graphQLErrors) {
+      error.graphQLErrors.forEach((e) => {
+        const paths = e.path ? [...e.path] : []
+        const mappedPaths = mapPathsToIssuerString(paths)
+        if (mappedPaths) {
+          issuersArray = [...issuersArray, ...mappedPaths]
+        }
+      })
+    }
+    return issuersArray.join(', ')
+  }, [error?.graphQLErrors])
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -72,8 +99,8 @@ export const EducationGraduation = () => {
       />
       {loading && !error && <CardLoader />}
       <Stack space={2}>
-        {studentInfo.length > 0 &&
-          studentInfo.map((item, index) => {
+        {!!tracks.length &&
+          tracks.map((item, index) => {
             return (
               <ActionCard
                 key={`education-graduation-${index}`}
@@ -108,15 +135,23 @@ export const EducationGraduation = () => {
               />
             )
           })}
-
-        {error && <Problem noBorder={false} error={error} />}
-        {noData && (
+        {!error && !!tracks.length && !loading && (
           <Problem
             type="no_data"
             noBorder={false}
             title={formatMessage(m.noData)}
             message={formatMessage(m.noDataFoundDetail)}
             imgSrc="./assets/images/sofa.svg"
+          />
+        )}
+        {error && !data && !loading && (
+          <Problem noBorder={false} error={error} />
+        )}
+        {error && !loading && data && (
+          <AlertMessage
+            type="warning"
+            title={'fetch fail'}
+            message={`fetch failed for the following providers; ${errorString}`}
           />
         )}
       </Stack>
