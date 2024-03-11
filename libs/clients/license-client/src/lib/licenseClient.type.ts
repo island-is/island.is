@@ -95,7 +95,7 @@ export type PkPassVerification = {
   data?: string
 }
 
-export type PkPassVerificationV2<Type extends LicenseType> = {
+export type VerifyPkPassV2Result<Type extends LicenseType> = {
   valid: boolean
   data?: PkPassVerificationDataResult<Type>
 }
@@ -175,7 +175,7 @@ export interface LicenseClient<Type extends LicenseType> {
   getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
   getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
   verifyPkPassDeprecated?: (data: string) => Promise<Result<PkPassVerification>>
-  verifyPkPassV2?: (data: string) => Promise<Result<PkPassVerificationV2<Type>>>
+  verifyPkPassV2?: (data: string) => Promise<Result<VerifyPkPassV2Result<Type>>>
   verifyExtraData?: (input: User) => Promise<LicenseVerifyExtraDataResult<Type>>
 }
 

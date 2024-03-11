@@ -19,7 +19,7 @@ import {
   LicensePkPassAvailability,
   LicenseType,
   PkPassVerificationInputData,
-  PkPassVerificationV2,
+  VerifyPkPassV2Result,
   Result,
 } from '../../../licenseClient.type'
 import { DrivingLicenseVerifyExtraData } from '../drivingLicenseClient.type'
@@ -297,7 +297,7 @@ export class DrivingLicenseClient
 
   async verifyPkPassV2(
     data: string,
-  ): Promise<Result<PkPassVerificationV2<LicenseType.DrivingLicense>>> {
+  ): Promise<Result<VerifyPkPassV2Result<LicenseType.DrivingLicense>>> {
     const parsedInput = JSON.parse(data)
     const { code, date } = parsedInput as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
