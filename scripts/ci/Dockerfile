@@ -1,5 +1,10 @@
+##
+## This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
+##
+
+# Ignore package pinning rules
 # hadolint global ignore=DL3016,DL3018,DL3008
-# This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
+
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
