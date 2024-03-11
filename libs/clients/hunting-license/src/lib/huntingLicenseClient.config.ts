@@ -14,6 +14,6 @@ export const HuntingLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
       'XROAD_HUNTING_LICENSE_PATH',
       'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
     ),
-    scope: [''],
+    scope: ['@ust.is/permits'],
   }),
 })
