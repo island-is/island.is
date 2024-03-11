@@ -155,7 +155,7 @@ export class LicenseServiceResolver {
     name: 'verifyLicenseBarcode',
   })
   @Audit()
-  async verifyLicense(
+  async verifyLicenseBarcode(
     @Args('input') input: VerifyLicenseInput,
   ): Promise<VerifyLicenseResult> {
     return this.licenseServiceService.verifyLicense(input.data)

@@ -78,17 +78,6 @@ export class BarcodeService {
     )
   }
 
-  validateStrAsJwt(token: string): boolean {
-    // JWT token consists of three parts separated by dots
-    const tokenParts = token.split('.')
-
-    // A valid JWT token should have exactly 3 parts
-    if (tokenParts.length !== 3) return false
-
-    // Each part should be non-empty
-    return !tokenParts.some((part) => !part)
-  }
-
   async setCache<Type extends LicenseType>(
     key: string,
     value: BarcodeData<Type>,

@@ -6,14 +6,14 @@ import {
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BarcodeData, BarcodeService } from '@island.is/services/license'
+import { BarcodeService } from '@island.is/services/license'
 import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { isJSON } from 'class-validator'
+import { isJSON, isJWT } from 'class-validator'
 import { uuid } from 'uuidv4'
 import {
   RevokeLicenseRequest,
@@ -330,7 +330,7 @@ export class LicenseService {
   ): Promise<VerifyLicenseResponse> {
     const requestId = inputData?.requestId ?? this.generateRequestId()
 
-    if (this.barcodeService.validateStrAsJwt(inputData.barcodeData)) {
+    if (isJWT(inputData.barcodeData)) {
       return this.getDataFromToken(inputData.barcodeData, requestId)
     }
 
