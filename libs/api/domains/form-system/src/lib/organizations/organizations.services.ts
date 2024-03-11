@@ -5,6 +5,10 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApiOrganizationsPostRequest, OrganizationsApi } from "@island.is/clients/form-system"
 import { CreateOrganizationInput } from "../../dto/organization.input"
 import { Organization } from "../../models/organization.model"
+import { Input } from "../../models/input.model"
+import { ListType } from "../../models/listType.model"
+import { Form } from "../../models/form.model"
+import { ExternalEndpoints } from "../../models/externalEndpoints.model"
 
 @Injectable()
 export class OrganizationsService {
@@ -51,9 +55,18 @@ export class OrganizationsService {
       return {}
     }
 
-    return {
-      ...response,
+    const newOrg: Organization = {
+      id: response.id,
+      name: response.name,
       nationalId: response.kennitala,
-    } as Organization
+      inputTypes: response.inputTypes as Input[],
+      documentTypes: response.documentTypes,
+      applicantTypes: response.applicantTypes,
+      listTypes: response.listTypes as ListType[],
+      externalEndpoints: response.externalEndpoints as ExternalEndpoints[],
+      forms: response.forms as Form[],
+    }
+
+    return newOrg
   }
 }

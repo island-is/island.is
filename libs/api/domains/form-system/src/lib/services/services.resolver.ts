@@ -2,6 +2,7 @@ import { Query, Args, Resolver, Mutation } from "@nestjs/graphql";
 import { CurrentUser, type User } from '@island.is/auth-nest-tools'
 import { FormSystemService } from "./services.service";
 import { List } from "../../models/services.model";
+import { GetPropertyInput } from "../../dto/services.input";
 
 
 @Resolver()
@@ -57,7 +58,7 @@ export class FormSystemServicesResolver {
     name: 'formSystemGetProperty'
   })
   async getProperty(
-    @Args('input', { type: () => ({ propertyId: String }) }) input: { propertyId: string },
+    @Args('input', { type: () => GetPropertyInput }) input: GetPropertyInput,
     @CurrentUser() user: User
   ): Promise<List> {
     return this.formSystemServices.getProperty(user, input)

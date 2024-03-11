@@ -4,6 +4,8 @@ import { Input } from "./input.model";
 import { ApplicantType } from "./applicantType.model";
 import { ListType } from "./listType.model";
 import { ExternalEndpoints } from "./externalEndpoints.model";
+import { DocumentType } from "./documentType.model";
+import { Form } from "./form.model";
 
 
 
@@ -16,25 +18,25 @@ export class Organization {
   name?: LanguageType
 
   @Field(() => String, { nullable: true })
-  nationalId?: string
+  nationalId?: string | null
 
   @Field(() => [Input], { nullable: true })
-  inputTypes?: Input[]
+  inputTypes?: Input[] | null
 
   @Field(() => [DocumentType], { nullable: true })
-  documentTypes?: DocumentType[]
+  documentTypes?: DocumentType[] | null
 
   @Field(() => [ApplicantType], { nullable: true })
-  applicantTypes?: ApplicantType[]
+  applicantTypes?: ApplicantType[] | null
 
   @Field(() => [ListType], { nullable: true })
-  listTypes?: ListType[]
+  listTypes?: ListType[] | null
 
-  @Field(() => [Number], { nullable: true })
-  forms?: number[]
+  @Field(() => [Form], { nullable: true })
+  forms?: Form[] | null
 
-  @Field(() => ExternalEndpoints, { nullable: true })
-  externalEndpoints?: ExternalEndpoints
+  @Field(() => [ExternalEndpoints], { nullable: true })
+  externalEndpoints?: ExternalEndpoints[] | null
 }
 
 @ObjectType('FormSystemOrganizationCreation')

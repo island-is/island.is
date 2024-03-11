@@ -13,3 +13,6 @@ generates:
     config:
       scalars:
         DateTime: string
+hooks:
+  afterAllFileWrite:
+  - prettier --write

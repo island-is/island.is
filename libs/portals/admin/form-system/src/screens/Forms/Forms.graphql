@@ -1,0 +1,7 @@
+query formSystemGetForms(
+  $input: FormSystemGetFormsInput!
+) {
+  formSystemGetForms(input: $input) {
+    forms
+  }
+}

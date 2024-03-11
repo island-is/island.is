@@ -4,6 +4,7 @@ import { ApolloError } from "@apollo/client"
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApiServicesFasteignFasteignanumerGetRequest, ServicesApi } from "@island.is/clients/form-system"
 import { List } from "../../models/services.model";
+import { GetPropertyInput } from "../../dto/services.input";
 
 @Injectable()
 export class FormSystemService {
@@ -91,7 +92,7 @@ export class FormSystemService {
     return response as List
   }
 
-  async getProperty(auth: User, input: { propertyId: string }): Promise<List> {
+  async getProperty(auth: User, input: GetPropertyInput): Promise<List> {
     const request: ApiServicesFasteignFasteignanumerGetRequest = {
       fasteignanumer: input.propertyId,
     }

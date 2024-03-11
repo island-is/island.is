@@ -179,6 +179,7 @@ const environment = getConfig
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     ConsultationPortalModule,
+    FormSystemModule,
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
@@ -305,10 +306,10 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
-    FormSystemModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        FormSystemClientConfig,
         WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
@@ -377,7 +378,6 @@ const environment = getConfig
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
-        FormSystemClientConfig,
       ],
     }),
   ],

@@ -32,6 +32,9 @@
       }
     }
   },
+  "implicitDependencies": [
+    "form-system-client"
+  ],
   "tags": [
     "lib:api",
     "scope:api"

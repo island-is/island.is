@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql"
 import { FormsService } from "./forms.service"
 import { FormResponse } from "../../models/formResponse.model"
-import { CreateFormInput, GetFormInput, GetFormsInput, UpdateFormInput } from "../../dto/forms.input"
+import { CreateFormInput, GetFormInput, GetFormsInput, UpdateFormInput, DeleteFormInput } from "../../dto/forms.input"
 import { CurrentUser, type User } from '@island.is/auth-nest-tools'
 import { FormListResponse } from "../../models/formListResponse.model"
 
@@ -49,6 +49,18 @@ export class FormsResolver {
   ): Promise<void> {
     return this.formsService.updateForm(user, input)
   }
+
+  @Mutation(() => FormResponse, {
+    name: 'formSystemDeleteForm'
+  })
+  async deleteForm(
+    @Args('input', { type: () => DeleteFormInput }) input: DeleteFormInput,
+    @CurrentUser() user: User
+  ): Promise<void> {
+    return this.formsService.deleteForm(user, input)
+  }
+
+
 }
 
 
