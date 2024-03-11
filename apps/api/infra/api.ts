@@ -45,6 +45,8 @@ import {
   Inna,
 } from '../../../infra/src/dsl/xroad'
 
+// TODO: remove this comment (this was added to force feature deploy to spin up the api)
+
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
   servicePortalApi: ServiceBuilder<'service-portal-api'>
