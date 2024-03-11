@@ -46,4 +46,4 @@ Additionally a web-based overview can be found at
   https://www.tesults.com/digital-iceland/monorepo
 EOF
 
-exit $TEST_EXIT_CODE
+exit "$TEST_EXIT_CODE"
