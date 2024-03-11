@@ -255,7 +255,6 @@ export class CmsContentfulService {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationFields>(locale, params)
       .catch(errorHandler('getOrganizationLink'))
-    console.log(result);
     
     return organizationKeys.map((key) => {
       if (!result.items) {
