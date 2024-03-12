@@ -23,6 +23,7 @@ import {
   CaseMessage,
   MessageService,
   MessageType,
+  PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -497,7 +498,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages = [
+    const messages: (CaseMessage | PoliceCaseMessage)[] = [
       {
         type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
         user,
@@ -510,10 +511,18 @@ export class CaseService {
       theCase.origin === CaseOrigin.LOKE
     ) {
       messages.push({
-        type: MessageType.DELIVER_INDICTMENT_CASE_INDICTMENT_TO_POLICE,
+        type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
         user,
         caseId: theCase.id,
       })
+      theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+        messages.push({
+          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
+          user,
+          caseId: theCase.id,
+          policeCaseNumber,
+        }),
+      )
     }
 
     return this.messageService.sendMessagesToQueue(messages)
