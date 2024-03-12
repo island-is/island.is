@@ -28,6 +28,8 @@ import {
   InheritanceReportAsset,
   InheritanceReportInfo,
 } from '@island.is/clients/syslumenn'
+import { valueToNumber } from '../../lib/utils/helpers'
+import NumberInput from '../../components/NumberInput'
 
 type RepeaterProps = {
   field: {
@@ -37,6 +39,7 @@ type RepeaterProps = {
       fields: Array<object>
       repeaterButtonText: string
       sumField: string
+      deductionField: string
       fromExternalData?: string
       calcWithShareValue?: boolean
       skipPushRight?: boolean
@@ -79,22 +82,21 @@ export const ReportFieldsRepeater: FC<
     }
 
     const total = values.reduce((acc: number, current: any) => {
-      const propertyValuationNumber = parseInt(current[props.sumField], 10)
-      const shareValueNumber = parseInt(current?.share, 10)
+      const deductionValue = valueToNumber(current[props?.deductionField], ',')
+      let currentValue = valueToNumber(current[props?.sumField], ',')
+      currentValue = currentValue - deductionValue
+      const shareValueNumber = valueToNumber(current?.share, '.')
 
-      const propertyValuation = isNaN(propertyValuationNumber)
-        ? 0
-        : propertyValuationNumber
-      const shareValue = isNaN(shareValueNumber) ? 0 : shareValueNumber / 100
+      const shareValue = !shareValueNumber ? 0 : shareValueNumber / 100
 
-      // TODO: check how precise are these calculations need to be
       return (
         Number(acc) +
         (props?.calcWithShareValue
-          ? Math.floor(propertyValuation * shareValue)
-          : propertyValuation)
+          ? Math.round(currentValue * shareValue)
+          : currentValue)
       )
     }, 0)
+
     const addTotal = id.replace('data', 'total')
     setValue(addTotal, total)
 
@@ -252,6 +254,10 @@ export const ReportFieldsRepeater: FC<
                 const fieldId = `${fieldIndex}.${field.id}`
                 const err = errors && getErrorViaPath(errors, fieldId)
 
+                const shouldRecalculateTotal =
+                  props.sumField === field.id ||
+                  props.deductionField === field.id
+
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
                     <Text
@@ -340,6 +346,17 @@ export const ReportFieldsRepeater: FC<
                         placeholder={field.placeholder}
                         options={relations}
                       />
+                    ) : field.id === 'rateOfExchange' ? (
+                      <NumberInput
+                        name={`${fieldIndex}.${field.id}`}
+                        placeholder={field.placeholder}
+                        onAfterChange={() => {
+                          updateValue(fieldIndex)
+                          calculateTotal()
+                          setIndex(fieldIndex)
+                        }}
+                        label={field.title}
+                      />
                     ) : (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
@@ -363,7 +380,7 @@ export const ReportFieldsRepeater: FC<
                             updateValue(fieldIndex)
                           }
 
-                          if (props.sumField === field.id) {
+                          if (shouldRecalculateTotal) {
                             calculateTotal()
                           }
 

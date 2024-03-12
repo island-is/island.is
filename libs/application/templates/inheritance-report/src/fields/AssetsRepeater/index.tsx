@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState, useEffect, useCallback, ChangeEvent } from 'react'
+import { FC, useState, useEffect, useCallback } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { GET_VEHICLE_QUERY, SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
@@ -31,6 +31,7 @@ import {
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
+import ShareInput from '../../components/ShareInput'
 
 type RepeaterProps = {
   field: {
@@ -76,12 +77,13 @@ export const AssetsRepeater: FC<
 
     const total = values.reduce((acc: number, current: any) => {
       const propertyValuation = valueToNumber(current[props.sumField])
-      const shareValue = valueToNumber(current?.share)
+      const shareValue = valueToNumber(current?.share, '.')
 
       return (
         Number(acc) +
         (calcWithShareValue
-          ? Math.floor(propertyValuation * (shareValue / 100))
+          ? // TODO?: might need to fix the total value to support decimals
+            Math.round(propertyValuation * (shareValue / 100))
           : propertyValuation)
       )
     }, 0)
@@ -134,7 +136,7 @@ export const AssetsRepeater: FC<
       replace(
         extData.map((x) => ({
           ...x,
-          share: '100',
+          share: '0',
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
@@ -251,11 +253,10 @@ const FieldComponent = ({
   error,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
 
   let content = null
 
-  let defaultProps = {
+  const defaultProps = {
     id: fieldName,
     name: fieldName,
     format: field.format,
@@ -313,27 +314,11 @@ const FieldComponent = ({
 
       break
     case 'share':
-      defaultProps = {
-        ...defaultProps,
-        label: formatMessage(m.propertyShare),
-      }
-
       content = (
-        <InputController
-          {...defaultProps}
-          onChange={(
-            e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-          ) => {
-            const value = valueToNumber(e.target.value)
-
-            if (value >= 0 && value <= 100) {
-              onAfterChange?.()
-            }
-
-            if (value === 0) {
-              setValue(fieldName, '0%')
-            }
-          }}
+        <ShareInput
+          name={fieldName}
+          label={formatMessage(m.propertyShare)}
+          onAfterChange={onAfterChange}
         />
       )
 

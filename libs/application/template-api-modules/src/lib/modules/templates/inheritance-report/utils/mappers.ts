@@ -96,6 +96,8 @@ export const expandAnswers = (
           return {
             accountNumber: account.accountNumber ?? '',
             propertyValuation: account.propertyValuation ?? '',
+            capital: account.capital ?? '',
+            penaltyInterestRates: account.penaltyInterestRates ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
           }
         }),
