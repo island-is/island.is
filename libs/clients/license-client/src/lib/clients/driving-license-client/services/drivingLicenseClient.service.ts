@@ -280,17 +280,22 @@ export class DrivingLicenseClient
   }
 
   async verifyPkPassDeprecated(data: string) {
-    const newData = await this.verifyPkPassV2(data)
+    const res = await this.verifyPkPassV2(data)
 
-    if (!newData.ok) {
-      return newData
+    if (!res.ok) {
+      return res
     }
 
+    const newData = res.data.data
+
     return {
-      ...newData,
+      ...res,
       data: {
-        valid: newData.data.valid,
-        data: JSON.stringify(newData.data.data),
+        valid: res.data.valid,
+        data: JSON.stringify({
+          ...newData,
+          photo: newData?.picture,
+        }),
       },
     }
   }

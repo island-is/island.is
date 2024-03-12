@@ -17,6 +17,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { isJWT } from 'class-validator'
 import isString from 'lodash/isString'
 
 import ShortUniqueId from 'short-unique-id'
@@ -589,7 +590,7 @@ export class LicenseServiceService {
   }
 
   async verifyLicense(data: string): Promise<VerifyLicenseResult> {
-    if (this.barcodeService.validateStrAsJwt(data)) {
+    if (isJWT(data)) {
       return this.getDataFromToken(data)
     }
 
