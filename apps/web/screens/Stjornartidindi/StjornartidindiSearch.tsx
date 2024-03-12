@@ -133,7 +133,7 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
 
   return (
     <StjornartidindiWrapper
-      pageTitle={'Leit í Stjórnartíðindum'}
+      pageTitle={n('searchPageTitle', 'Leit í Stjórnartíðindum')}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       organizationPage={organizationPage!}

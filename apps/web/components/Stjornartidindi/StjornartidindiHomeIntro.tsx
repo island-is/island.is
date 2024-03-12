@@ -11,18 +11,19 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { Query } from '@island.is/web/graphql/schema'
+import { Organization, OrganizationPage } from '@island.is/web/graphql/schema'
 
 import * as s from './StjornartidindiHomeIntro.css'
 
 export type StjornartidindiHomeIntroProps = {
-  organizationPage?: Query['getOrganizationPage']
-  organization?: Query['getOrganization']
+  organizationPage?: OrganizationPage
+  organization?: Organization
   namespace: Record<string, string>
   breadCrumbs: ReactNode
   searchPlaceholder: string
   quickLinks: Array<{ title: string; href: string; variant?: TagVariant }>
   searchUrl: string
+  shortcutsTitle: string
 }
 
 export const StjornartidindiHomeIntro = (
@@ -33,7 +34,6 @@ export const StjornartidindiHomeIntro = (
   if (!organizationPage) {
     return null
   }
-  // const o = useNamespace(organizationNamespace)
 
   return (
     <GridContainer>
@@ -67,7 +67,7 @@ export const StjornartidindiHomeIntro = (
 
           <Box paddingTop={4}>
             <Text variant="eyebrow" as="h3" paddingBottom={1} color="purple400">
-              Flýtileiðir
+              {props.shortcutsTitle}
             </Text>
             <Inline space={1}>
               {props.quickLinks.map((q, i) => (

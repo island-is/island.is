@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Locale } from 'locale'
 
 import { MinistryOfJusticeAdvertResponse } from '@island.is/api/schema'
-import { Box, Stack, Table as T, Text } from '@island.is/island-ui/core'
+import { Box, Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -75,21 +75,52 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
       breadcrumbItems={breadcrumbItems}
       goBackUrl={baseUrl}
       sidebarContent={
-        <Box background="blue100" padding={[2, 2, 3]} borderRadius="large">
-          <Stack space={[1, 1, 2]}>
-            <Text variant="h4">Upplýsingar um auglýsingu</Text>
+        <Stack space={[2]}>
+          <Box background="blue100" padding={[2, 2, 3]} borderRadius="large">
+            <Stack space={[1, 1, 2]}>
+              <Text variant="h4">Upplýsingar um auglýsingu</Text>
 
-            <Box>
-              <Text variant="h5">Deild</Text>
-              <Text variant="small">B-Deild</Text>
-            </Box>
+              <Box>
+                <Text variant="h5">Deild</Text>
+                <Text variant="small">B-Deild</Text>
+              </Box>
 
-            <Box>
-              <Text variant="h5">Stofnun</Text>
-              <Text variant="small">Matvælaráðuneytið</Text>
-            </Box>
-          </Stack>
-        </Box>
+              <Box>
+                <Text variant="h5">Stofnun</Text>
+                <Text variant="small">Matvælaráðuneytið</Text>
+              </Box>
+
+              <Box>
+                <Text variant="h5">Málaflokkur</Text>
+                <Text variant="small">Dýrahald</Text>
+              </Box>
+
+              <Box>
+                <Text variant="h5">Skráningardagur</Text>
+                <Text variant="small">12. október 2023</Text>
+              </Box>
+
+              <Box>
+                <Text variant="h5">Útgáfudagur</Text>
+                <Text variant="small">26. október 2023</Text>
+              </Box>
+            </Stack>
+          </Box>
+
+          <Box
+            background="blueberry100"
+            padding={[2, 2, 3]}
+            borderRadius="large"
+          >
+            <Stack space={[1, 1, 2]}>
+              <Box href="/" component={Link}>
+                <Button variant="text" as="span" icon="download">
+                  Sækja PDF
+                </Button>
+              </Box>
+            </Stack>
+          </Box>
+        </Stack>
       }
     >
       <Box>Auglýsing</Box>
@@ -189,7 +220,7 @@ StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   if (!advert) {
-    throw new CustomNextError(404, 'News not found')
+    throw new CustomNextError(404, 'OJOI advert not found')
   }
 
   return {

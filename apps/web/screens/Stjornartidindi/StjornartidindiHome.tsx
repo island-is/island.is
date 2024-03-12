@@ -81,11 +81,15 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
     >
       <Stack space={SLICE_SPACING}>
         <StjornartidindiHomeIntro
-          organizationPage={organizationPage}
-          organization={organization}
+          organizationPage={organizationPage ?? undefined}
+          organization={organization ?? undefined}
           namespace={namespace}
-          searchPlaceholder="Leitaðu í stjórnartíðindum"
+          searchPlaceholder={n(
+            'searchinputPlaceholder',
+            'Leitaðu í stjórnartíðindum',
+          )}
           searchUrl={searchUrl}
+          shortcutsTitle={n('shortcuts', 'Flýtileiðir')}
           quickLinks={[
             {
               title: 'A deild',
@@ -94,6 +98,23 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
             {
               title: 'B deild',
               href: searchUrl + '?deild=b-deild',
+            },
+            {
+              title: 'C deild',
+              href: searchUrl + '?deild=c-deild',
+            },
+            {
+              title: 'Auglýsendur',
+              href: searchUrl + '?deild=auglysendur',
+            },
+            {
+              title: 'Gjaldskrár',
+              href: searchUrl + '?malefni=gjaldskrar',
+              variant: 'purple',
+            },
+            {
+              title: 'Covid 19',
+              href: searchUrl + '?malefni=covid-19',
               variant: 'purple',
             },
           ]}
@@ -118,8 +139,10 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
         <Box background="blue100" paddingTop={8} paddingBottom={8}>
           <GridContainer>
             <Box display={'flex'} justifyContent={'spaceBetween'}>
-              <Text variant="h3">Yfirflokkar</Text>
-              <ArrowLink href={categoriesUrl}>Málaflokkar A-Ö</ArrowLink>
+              <Text variant="h3">{n('mainCategories', 'Yfirflokkar')}</Text>
+              <ArrowLink href={categoriesUrl}>
+                {n('allCategories', 'Málaflokkar A-Ö')}
+              </ArrowLink>
             </Box>
 
             <GridRow>
