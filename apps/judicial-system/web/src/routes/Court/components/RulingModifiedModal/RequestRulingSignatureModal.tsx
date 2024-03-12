@@ -1,25 +1,44 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Modal } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  Modal,
+} from '@island.is/judicial-system-web/src/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './RequestRulingSignatureModal.strings'
 
 interface Props {
   onYes: () => void
   onNo: () => void
+  description: string
 }
 
 const RequestRulingSignatureModal: React.FC<React.PropsWithChildren<Props>> = ({
   onYes,
   onNo,
+  description,
 }) => {
   const { formatMessage } = useIntl()
+  const { workingCase } = useContext(FormContext)
+  const { updateCase } = useCase()
+
+  const handleContinue = async () => {
+    const caseUpdate = await updateCase(workingCase.id, {
+      rulingSignatureDate: null,
+    })
+
+    if (caseUpdate) {
+      onYes()
+    }
+  }
 
   return (
     <Modal
       title={formatMessage(strings.title)}
-      text={formatMessage(strings.description)}
-      onPrimaryButtonClick={onYes}
+      text={description}
+      onPrimaryButtonClick={handleContinue}
       primaryButtonText={formatMessage(strings.yes)}
       onSecondaryButtonClick={onNo}
       secondaryButtonText={formatMessage(strings.no)}

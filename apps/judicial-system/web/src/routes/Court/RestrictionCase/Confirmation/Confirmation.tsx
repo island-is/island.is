@@ -33,17 +33,17 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import {
-  JudgeRulingModifiedModal,
-  RegistrarRulingModifiedModal,
-  RequestRulingSignatureModal,
+  JudgeRequestRulingSignatureModal,
+  RegistrarRequestRulingSignatureModal,
+  RulingModifiedModal,
 } from '../../components'
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal =
   | 'none'
-  | 'judgeRulingModifiedModal'
-  | 'registrarRulingModifiedModal'
-  | 'requestRulingSignatureModal'
+  | 'rulingModifiedModal'
+  | 'judgeRequestRulingSignatureModal'
+  | 'registrarRequestRulingSignatureModal'
   | 'signingModal'
 
 const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -91,19 +91,15 @@ const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
   }
 
-  const handleCompleteRegistrarModification = async () => {
+  const handleCompleteModification = async () => {
     const caseCompleted = await completeCase()
 
     if (caseCompleted) {
-      continueToSignedVerdictOverview()
-    }
-  }
-
-  const handleCompleteJudgeModification = async () => {
-    const caseCompleted = await completeCase()
-
-    if (caseCompleted) {
-      setModalVisible('requestRulingSignatureModal')
+      setModalVisible(
+        isAssignedJudge
+          ? 'judgeRequestRulingSignatureModal'
+          : 'registrarRequestRulingSignatureModal',
+      )
     }
   }
 
@@ -117,11 +113,7 @@ const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleNextButtonClick = async () => {
     if (isCorrectingRuling) {
-      setModalVisible(
-        isAssignedJudge
-          ? 'judgeRulingModifiedModal'
-          : 'registrarRulingModifiedModal',
-      )
+      setModalVisible('rulingModifiedModal')
     } else {
       completeCaseWithSignature()
     }
@@ -221,22 +213,21 @@ const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible === 'judgeRulingModifiedModal' && (
-        <JudgeRulingModifiedModal
+      {modalVisible === 'rulingModifiedModal' && (
+        <RulingModifiedModal
           onCancel={() => setModalVisible('none')}
-          onContinue={handleCompleteJudgeModification}
+          onContinue={handleCompleteModification}
         />
       )}
-      {modalVisible === 'registrarRulingModifiedModal' && (
-        <RegistrarRulingModifiedModal
-          onCancel={() => setModalVisible('none')}
-          onContinue={handleCompleteRegistrarModification}
-        />
-      )}
-      {modalVisible === 'requestRulingSignatureModal' && (
-        <RequestRulingSignatureModal
+      {modalVisible === 'judgeRequestRulingSignatureModal' && (
+        <JudgeRequestRulingSignatureModal
           onYes={requestRulingSignature}
           onNo={continueToSignedVerdictOverview}
+        />
+      )}
+      {modalVisible === 'registrarRequestRulingSignatureModal' && (
+        <RegistrarRequestRulingSignatureModal
+          onContinue={continueToSignedVerdictOverview}
         />
       )}
       {modalVisible === 'signingModal' && (

@@ -23,7 +23,7 @@ export const strings = defineMessages({
   reopenCaseText: {
     id: 'judicial.system.core:reopen_modal.reopen_case_text_v2',
     defaultMessage:
-      'Að lokinni lagfæringu getur dómari valið að undirrita nýjan úrskurð.',
+      'Að lokinni lagfæringu er hægt að velja að undirrita leiðréttan úrskurð.',
     description:
       'Notaður sem texti í modal til að opna mál aftur eftir úrskurð.',
   },

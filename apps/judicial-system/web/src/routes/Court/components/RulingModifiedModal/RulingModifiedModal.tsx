@@ -8,23 +8,20 @@ interface Props {
   onCancel: () => void
   onContinue: () => void
   continueDisabled?: boolean
-  description: string
 }
 
 const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   onCancel,
   onContinue,
   continueDisabled,
-  description,
 }) => {
   const { formatMessage } = useIntl()
-
   return (
     <BaseModal
       onCancel={onCancel}
       onContinue={onContinue}
       continueDisabled={continueDisabled}
-      description={description}
+      description={formatMessage(strings.description)}
       defaultExplanation={formatMessage(strings.autofill)}
       fieldToModify="rulingModifiedHistory"
     />

@@ -80,6 +80,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'accusedAppealAnnouncement',
   'prosecutorAppealDecision',
   'prosecutorAppealAnnouncement',
+  'rulingSignatureDate',
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',
