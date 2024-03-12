@@ -54,7 +54,7 @@ export class DistrictCommissionersLicensesService {
     id: string,
   ): Promise<DistrictCommissionersLicenseDto | null> {
     const license = await this.apiWithAuth(user)
-      .rettindiFyrirIslandIsGet2({
+      .rettindiFyrirIslandIsGetStakt({
         audkenni: id,
       })
       .catch(handle404)

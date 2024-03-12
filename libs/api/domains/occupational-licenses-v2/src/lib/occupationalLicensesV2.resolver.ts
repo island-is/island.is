@@ -31,9 +31,7 @@ export class OccupationalLicensesV2Resolver {
     nullable: true,
   })
   @Audit()
-  async occupationalLicensesV2(
-    @CurrentUser() user: User,
-  ): Promise<LicensesCollection | null> {
+  async occupationalLicensesV2(): Promise<LicensesCollection | null> {
     return {}
   }
 
