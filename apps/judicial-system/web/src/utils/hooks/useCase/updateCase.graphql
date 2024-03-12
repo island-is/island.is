@@ -228,5 +228,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
     }
+    indictmentDeniedExplanation
   }
 }
