@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   DataUploadResponse,
-  EstateInfo,
   Person,
   PersonType,
   SyslumennService,
@@ -57,6 +56,19 @@ export class InheritanceReportService extends BaseTemplateApiService {
             application.applicant,
           ),
     ])
+
+    // Loop through all inheritanceReportInfos and attach inheritanceTax to each
+    await Promise.all(
+      inheritanceReportInfos.map(async (inheritanceReportInfo) => {
+        return new Promise<void>(async (resolve) => {
+          inheritanceReportInfo.inheritanceTax =
+            await this.syslumennService.getInheritanceTax(
+              inheritanceReportInfo.dateOfDeath ?? new Date(),
+            )
+          resolve()
+        })
+      }),
+    )
 
     return {
       success: true,

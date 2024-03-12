@@ -324,6 +324,7 @@ export interface InheritanceReportInfo {
   nationalId?: string
   addressOfDeceased?: string
   nameOfDeceased?: string
+  inheritanceTax?: InheritanceTax
 }
 
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
