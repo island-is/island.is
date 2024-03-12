@@ -1,4 +1,4 @@
-import { Locale } from '@island.is/shared/types'
+import { type Locale } from '@island.is/shared/types'
 import { CurrentUser } from '@island.is/auth-nest-tools'
 import capitalize from 'lodash/capitalize'
 import type { User } from '@island.is/auth-nest-tools'
