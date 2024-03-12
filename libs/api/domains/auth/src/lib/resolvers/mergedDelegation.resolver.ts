@@ -7,7 +7,7 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 import { MergedDelegation } from '../models'
 import { AuthDelegationType } from '@island.is/clients/auth/delegation-api'
-import { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
+import type { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MergedDelegation)

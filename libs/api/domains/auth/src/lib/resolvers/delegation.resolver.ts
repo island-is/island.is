@@ -26,8 +26,8 @@ import { Delegation, MergedDelegation } from '../models'
 import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
 import { MeDelegationsService } from '../services/meDelegations.service'
-import { DelegationDTO } from '@island.is/clients/auth/delegation-api'
-import { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
+import type { DelegationDTO } from '@island.is/clients/auth/delegation-api'
+import type { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)

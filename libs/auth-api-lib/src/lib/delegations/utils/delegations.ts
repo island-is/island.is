@@ -32,7 +32,7 @@ export const getDelegationNoActorWhereClause = (user: User): WhereOptions => {
 }
 
 export const validateDelegationTypeAndProvider = (
-  type: AuthDelegationType,
+  type: DelegationRecordType,
   provider: AuthDelegationProvider,
 ) => {
   const validTypes = delegationProviderTypeMap[provider]
