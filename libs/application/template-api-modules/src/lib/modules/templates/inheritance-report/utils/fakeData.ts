@@ -30,6 +30,8 @@ const generateRandomAsset = (n: number, i = 1): InheritanceReportAsset => {
     propertyValuation: String(
       1_000_000 + Math.round(Math.random() * 9_000_000),
     ),
+    amount: String(1_000_000 + Math.round(Math.random() * 9_000_000)),
+    exchangeRateOrInterest: String(1 + Math.round(Math.random() * 99)),
   }
 }
 
@@ -100,9 +102,8 @@ export const getFakeData = (
       assetStructure[k][1].assetNumber = 'YZ927'
     } else if (k === 'bankAccounts') {
       assetStructure[k].forEach((asset) => {
-        asset.accountNumber =
+        asset.assetNumber =
           String(8999 + Math.round(Math.random() * 1000)) + '-12-345678'
-        asset.assetNumber = undefined
       })
     }
   })
