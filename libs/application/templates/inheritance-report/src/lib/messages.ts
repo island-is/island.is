@@ -417,7 +417,7 @@ export const m = defineMessages({
   },
   vehicleNumberLabel: {
     id: 'ir.application:vehicleNumberLabel',
-    defaultMessage: 'Skráningarnúmer ökutækis',
+    defaultMessage: 'Fastanúmer ökutækis',
     description: 'Vehicle number label',
   },
   vehicleTypeLabel: {
@@ -488,6 +488,16 @@ export const m = defineMessages({
   bankAccountBalance: {
     id: 'ir.application:bankAccountBalance',
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
+    description: '',
+  },
+  bankAccountCapital: {
+    id: 'ir.application:bankAccountCapital',
+    defaultMessage: 'Höfuðstóll á dánardegi',
+    description: '',
+  },
+  bankAccountPenaltyInterestRates: {
+    id: 'ir.application:bankAccountPenaltyInterestRates',
+    defaultMessage: 'Áfallnir vextir á dánardegi',
     description: '',
   },
   bankAccountPlaceholder: {
@@ -969,6 +979,11 @@ export const m = defineMessages({
     defaultMessage: 'Búshluti eftirlifandi maka',
     description: '',
   },
+  deceasedSeparateProperty: {
+    id: 'ir.application:deceasedSeparateProperty',
+    defaultMessage: 'Séreign hins látna',
+    description: '',
+  },
   spousesShareDescription: {
     id: 'ir.application:spousesShareDescription',
     defaultMessage:
@@ -1252,6 +1267,11 @@ export const m = defineMessages({
   infoPlaceholder: {
     id: 'ir.application:infoPlaceholder',
     defaultMessage: 'Skráðu inn athugasemdir hér',
+    description: '',
+  },
+  invalidShareValue: {
+    id: 'ir.application:invalidShareValue',
+    defaultMessage: 'Ógilt eignarhlutfall',
     description: '',
   },
   totalPercentage: {

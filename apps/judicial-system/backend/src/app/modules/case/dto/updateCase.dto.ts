@@ -430,4 +430,9 @@ export class UpdateCaseDto {
   @IsEnum(UserRole, { each: true })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentDeniedExplanation?: string
 }

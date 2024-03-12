@@ -12,6 +12,7 @@ import {
   DelegationScopeDTO,
   UpdateDelegationScopeDTO,
 } from './delegation-scope.dto'
+import { PersonalRepresentativeRightTypeDTO } from '../../personal-representative/dto/personal-representative-right-type.dto'
 
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',
@@ -60,6 +61,9 @@ export class DelegationDTO {
   @IsString()
   @ApiPropertyOptional({ type: String, nullable: true })
   domainName?: string | null
+
+  // This property is only used in delegation index
+  rights?: PersonalRepresentativeRightTypeDTO[]
 }
 
 export class UpdateDelegationDTO {

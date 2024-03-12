@@ -345,4 +345,8 @@ export class UpdateCaseInput {
   @Allow()
   @Field(() => [UserRole], { nullable: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentDeniedExplanation?: string
 }
