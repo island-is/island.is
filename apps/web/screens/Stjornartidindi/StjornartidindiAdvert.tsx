@@ -1,4 +1,6 @@
 import { useMemo } from 'react'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import { Locale } from 'locale'
 
 import { MinistryOfJusticeAdvertResponse } from '@island.is/api/schema'
@@ -65,7 +67,8 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
 
   return (
     <StjornartidindiWrapper
-      pageTitle={'Auglýsing'}
+      pageTitle={advert.title}
+      hideTitle
       pageDescription={
         'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.'
       }
@@ -82,27 +85,37 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
 
               <Box>
                 <Text variant="h5">Deild</Text>
-                <Text variant="small">B-Deild</Text>
+                <Text variant="small">{advert.department.title}</Text>
               </Box>
 
               <Box>
                 <Text variant="h5">Stofnun</Text>
-                <Text variant="small">Matvælaráðuneytið</Text>
+                <Text variant="small">{advert.involvedParty.title}</Text>
               </Box>
 
               <Box>
                 <Text variant="h5">Málaflokkur</Text>
-                <Text variant="small">Dýrahald</Text>
+                <Text variant="small">
+                  {advert.categories.map((c) => c.title).join(', ')}
+                </Text>
               </Box>
 
               <Box>
                 <Text variant="h5">Skráningardagur</Text>
-                <Text variant="small">12. október 2023</Text>
+                <Text variant="small">
+                  {format(new Date(advert.createdDate), 'dd. MMMM yyyy', {
+                    locale: is,
+                  })}
+                </Text>
               </Box>
 
               <Box>
                 <Text variant="h5">Útgáfudagur</Text>
-                <Text variant="small">26. október 2023</Text>
+                <Text variant="small">
+                  {format(new Date(advert.publicationDate), 'dd. MMMM yyyy', {
+                    locale: is,
+                  })}
+                </Text>
               </Box>
             </Stack>
           </Box>
@@ -114,7 +127,13 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
           >
             <Stack space={[1, 1, 2]}>
               <Box href="/" component={Link}>
-                <Button variant="text" as="span" icon="download">
+                <Button
+                  variant="text"
+                  as="span"
+                  icon="download"
+                  iconType="outline"
+                  size="small"
+                >
                   Sækja PDF
                 </Button>
               </Box>
@@ -123,7 +142,7 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
         </Stack>
       }
     >
-      <Box>Auglýsing</Box>
+      <Box dangerouslySetInnerHTML={{ __html: advert.document.html }}></Box>
     </StjornartidindiWrapper>
   )
 }
@@ -143,6 +162,8 @@ const StjornartidindiAdvert: Screen<StjornartidindiAdvertProps> = ({
   namespace,
   locale,
 }) => {
+  console.log({ advert })
+
   return (
     <StjornartidindiAdvertPage
       advert={advert}
@@ -159,7 +180,7 @@ StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { advert },
+      data: { ministryOfJusticeAdvert },
     },
     {
       data: { getOrganizationPage },
@@ -169,10 +190,7 @@ StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<
-      MinistryOfJusticeAdvertResponse,
-      QueryMinistryOfJusticeAdvertArgs
-    >({
+    apolloClient.query<Query, QueryMinistryOfJusticeAdvertArgs>({
       query: ADVERT_QUERY,
       variables: {
         params: {
@@ -219,12 +237,12 @@ StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  if (!advert) {
+  if (!ministryOfJusticeAdvert) {
     throw new CustomNextError(404, 'OJOI advert not found')
   }
 
   return {
-    advert,
+    advert: ministryOfJusticeAdvert.advert,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

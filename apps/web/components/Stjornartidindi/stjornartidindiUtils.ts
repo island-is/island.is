@@ -135,7 +135,7 @@ export const yfirflokkurOptions: Array<YfirflokkurOption> = [
 
 export const mockAdverts: Array<AdvertType> = [
   {
-    id: '1383-2023',
+    id: 'bcbefaf4-c021-4b63-877b-001dde880052',
     stofnun: 'Skipulagsstofnun',
     numer: '1383/2023',
     deild: 'A-deild',
@@ -145,7 +145,7 @@ export const mockAdverts: Array<AdvertType> = [
     flokkar: ['Skipulagsmál', 'Sveitarfélag Hornafjarðar'],
   },
   {
-    id: '1383-2022',
+    id: 'bcbefaf4-c021-4b63-877b-001dde880052',
     stofnun: 'Skipulagsstofnun',
     numer: '1383/2023',
     deild: 'A-deild',

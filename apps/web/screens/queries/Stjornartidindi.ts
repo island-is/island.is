@@ -67,19 +67,12 @@ export const ADVERT_QUERY = gql`
       advert {
         id
         department {
-          id
           title
           slug
         }
         type {
-          id
           title
           slug
-          department {
-            id
-            title
-            slug
-          }
         }
         status
         title
@@ -94,12 +87,10 @@ export const ADVERT_QUERY = gql`
         signatureDate
         publicationDate
         categories {
-          id
           title
           slug
         }
         involvedParty {
-          id
           title
           slug
         }

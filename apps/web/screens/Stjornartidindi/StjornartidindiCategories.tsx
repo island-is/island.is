@@ -21,9 +21,11 @@ import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  MinistryOfJusticeAdvertEntity,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryMinistryOfJusticeCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -49,6 +51,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
+import { CATEGORIES_QUERY, TYPES_QUERY } from '../queries/Stjornartidindi'
 
 type MalaflokkarType = Array<{
   letter: string
@@ -356,6 +359,7 @@ const StjornartidindiCategoriesPage: Screen<StjornartidindiCategoriesProps> = ({
 }
 
 interface StjornartidindiCategoriesProps {
+  categories: Array<MinistryOfJusticeAdvertEntity>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -363,6 +367,7 @@ interface StjornartidindiCategoriesProps {
 }
 
 const StjornartidindiCategories: Screen<StjornartidindiCategoriesProps> = ({
+  categories,
   organizationPage,
   organization,
   namespace,
@@ -370,6 +375,7 @@ const StjornartidindiCategories: Screen<StjornartidindiCategoriesProps> = ({
 }) => {
   return (
     <StjornartidindiCategoriesPage
+      categories={categories}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -383,6 +389,9 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
+      data: { ministryOfJusticeCategories },
+    },
+    {
       data: { getOrganizationPage },
     },
     {
@@ -390,6 +399,15 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
+      query: CATEGORIES_QUERY,
+      variables: {
+        params: {
+          page: '1',
+          search: '',
+        },
+      },
+    }),
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -429,7 +447,10 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
+  console.log({ gggg: ministryOfJusticeCategories })
+
   return {
+    categories: ministryOfJusticeCategories?.categories,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

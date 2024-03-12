@@ -28,6 +28,7 @@ type WrapperProps = {
   children?: ReactNode
   sidebarContent?: ReactNode
   goBackUrl?: string
+  hideTitle?: boolean
 }
 
 export const StjornartidindiWrapper = ({
@@ -39,6 +40,7 @@ export const StjornartidindiWrapper = ({
   children,
   sidebarContent,
   goBackUrl,
+  hideTitle,
 }: WrapperProps) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
@@ -115,18 +117,22 @@ export const StjornartidindiWrapper = ({
               />
             )}
 
-            <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-              {pageTitle}
-            </Text>
+            {!hideTitle && (
+              <Text as="h1" variant="h1" marginTop={2} marginBottom={3}>
+                {pageTitle}
+              </Text>
+            )}
 
             {pageDescription && (
-              <Box className="rs_read" paddingBottom={SLICE_SPACING}>
+              <Box className="rs_read" marginTop={3} paddingBottom={4}>
                 <Text variant="default">{pageDescription}</Text>
               </Box>
             )}
 
             {isMobile && (
-              <Box marginBottom={SLICE_SPACING}>{sidebarContent}</Box>
+              <Box marginBottom={4} marginTop={3}>
+                {sidebarContent}
+              </Box>
             )}
 
             <Box className="rs_read">{children}</Box>

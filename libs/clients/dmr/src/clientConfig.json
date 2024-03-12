@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/v1/advert": {
+    "/api/v1/journal/advert": {
       "get": {
         "operationId": "JournalController_advert",
         "parameters": [
@@ -32,7 +32,7 @@
         }
       }
     },
-    "/api/v1/adverts": {
+    "/api/v1/journal/adverts": {
       "get": {
         "operationId": "JournalController_adverts",
         "parameters": [
@@ -117,7 +117,7 @@
         }
       }
     },
-    "/api/v1/departments": {
+    "/api/v1/journal/departments": {
       "get": {
         "operationId": "JournalController_departments",
         "parameters": [
@@ -160,7 +160,7 @@
         }
       }
     },
-    "/api/v1/types": {
+    "/api/v1/journal/types": {
       "get": {
         "operationId": "JournalController_types",
         "parameters": [
@@ -210,7 +210,7 @@
         }
       }
     },
-    "/api/v1/categories": {
+    "/api/v1/journal/categories": {
       "get": {
         "operationId": "JournalController_categories",
         "parameters": [
@@ -253,7 +253,7 @@
         }
       }
     },
-    "/api/v1/application": {
+    "/api/v1/journal/application": {
       "post": {
         "operationId": "JournalController_application",
         "parameters": [],
@@ -282,7 +282,56 @@
         }
       }
     },
-    "/api/v1/error": {
+    "/api/v1/journal/signatures": {
+      "get": {
+        "operationId": "JournalController_signatures",
+        "parameters": [
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "Search for a specific signature by id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Search for a specific signature by type",
+            "example": "Regular",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search for a specific signature",
+            "example": "Dagur B. Eggertsson",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of signatures",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalSignatureGetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/journal/error": {
       "get": {
         "operationId": "JournalController_error",
         "parameters": [],
@@ -293,11 +342,61 @@
         }
       }
     },
-    "/api/v1/health": {
+    "/api/v1/journal/health": {
       "get": {
         "operationId": "JournalController_health",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    },
+    "/api/v1/statistics/department": {
+      "get": {
+        "operationId": "StatisticsController_department",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gets statistics for individual department (a, b or c)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsDepartmentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/overview": {
+      "get": {
+        "operationId": "StatisticsController_overview",
+        "parameters": [
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gets overview of statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsOverviewResponse"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -451,6 +550,100 @@
         },
         "required": ["isLegacy", "html"]
       },
+      "JournalSignatureMember": {
+        "type": "object",
+        "properties": {
+          "isChairman": {
+            "type": "boolean",
+            "description": "Marks the members as chairman or not",
+            "example": true,
+            "nullable": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the committee chairman",
+            "example": "Dagur B. Eggertsson"
+          },
+          "textAbove": {
+            "type": "string",
+            "description": "Text above the name of the signature",
+            "example": "F.h.r",
+            "nullable": true
+          },
+          "textAfter": {
+            "type": "string",
+            "description": "Text after the name of the signature",
+            "example": "formaður",
+            "nullable": true
+          },
+          "textBelow": {
+            "type": "string",
+            "description": "Text above the name of the signature",
+            "example": "borgarstjóri",
+            "nullable": true
+          }
+        },
+        "required": ["isChairman", "name"]
+      },
+      "JournalSignatureData": {
+        "type": "object",
+        "properties": {
+          "institution": {
+            "type": "string",
+            "description": "Institution of the signature",
+            "example": "Reykjavíkurborg"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date of the signature",
+            "example": "2006-10-17 00:00:00.0000",
+            "nullable": false
+          },
+          "members": {
+            "description": "Members of the signature",
+            "example": true,
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignatureMember" }
+          }
+        },
+        "required": ["institution", "date", "members"]
+      },
+      "JournalSignature": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the signature, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "advertId": {
+            "type": "string",
+            "description": "Advert ID",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the signature",
+            "enum": ["Hefðbundin", "Nefnd"],
+            "example": "Hefðbundin"
+          },
+          "additional": {
+            "type": "string",
+            "description": "Optional addiational signature",
+            "example": "Guðrún Jónsdóttir"
+          },
+          "data": {
+            "description": "Signature data",
+            "example": true,
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignatureData" }
+          }
+        },
+        "required": ["id", "advertId", "type", "data"]
+      },
       "JournalAdvert": {
         "type": "object",
         "properties": {
@@ -547,6 +740,10 @@
             "description": "Advert document in different formats.",
             "nullable": false,
             "allOf": [{ "$ref": "#/components/schemas/JournalDocument" }]
+          },
+          "signature": {
+            "description": "Signatures for the advert.",
+            "allOf": [{ "$ref": "#/components/schemas/JournalSignature" }]
           }
         },
         "required": [
@@ -562,7 +759,8 @@
           "publicationDate",
           "categories",
           "involvedParty",
-          "document"
+          "document",
+          "signature"
         ]
       },
       "AdvertNotFound": {
@@ -688,6 +886,30 @@
         },
         "required": ["categories", "paging"]
       },
+      "JournalSignatureBody": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of the signature",
+            "enum": ["Hefðbundin", "Nefnd"],
+            "example": "Hefðbundin"
+          },
+          "additional": {
+            "type": "string",
+            "description": "Optional addiational signature",
+            "example": "Guðrún Jónsdóttir"
+          },
+          "data": {
+            "description": "Signature data",
+            "example": true,
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignatureData" }
+          }
+        },
+        "required": ["type", "data"]
+      },
       "JournalPostApplicationBody": {
         "type": "object",
         "properties": {
@@ -736,6 +958,10 @@
             "description": "Contents of the advert's document in the submitted application (HTML string)",
             "example": "<p>GJALDSKRÁ um hundahald í Reykjavík</p><div><p>Dagur B. Eggertsson</p></div>",
             "nullable": false
+          },
+          "signature": {
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/JournalSignatureBody" }]
           }
         },
         "required": [
@@ -745,7 +971,8 @@
           "categories",
           "subject",
           "requestedPublicationDate",
-          "document"
+          "document",
+          "signature"
         ]
       },
       "JournalPostApplicationResponse": {
@@ -757,6 +984,98 @@
           }
         },
         "required": ["advert"]
+      },
+      "JournalSignatureGetResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "List of signatures",
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignature" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/JournalPaging" }]
+          }
+        },
+        "required": ["items", "paging"]
+      },
+      "StatisticsDepartmentItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Department name",
+            "example": "Department of Justice"
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of adverts",
+            "example": 10
+          },
+          "percentage": {
+            "type": "number",
+            "description": "Percentage of total",
+            "example": 10
+          }
+        },
+        "required": ["name", "count", "percentage"]
+      },
+      "StatisticsDepartmentResponse": {
+        "type": "object",
+        "properties": {
+          "submitted": {
+            "$ref": "#/components/schemas/StatisticsDepartmentItem"
+          },
+          "inProgress": {
+            "$ref": "#/components/schemas/StatisticsDepartmentItem"
+          },
+          "inReview": {
+            "$ref": "#/components/schemas/StatisticsDepartmentItem"
+          },
+          "ready": { "$ref": "#/components/schemas/StatisticsDepartmentItem" },
+          "totalAdverts": {
+            "type": "number",
+            "description": "Total number of adverts",
+            "example": 100
+          },
+          "totalPercentage": {
+            "type": "number",
+            "description": "Total number of departments",
+            "example": 10
+          }
+        },
+        "required": [
+          "submitted",
+          "inProgress",
+          "inReview",
+          "ready",
+          "totalAdverts",
+          "totalPercentage"
+        ]
+      },
+      "StatisticsOverviewCategory": {
+        "type": "object",
+        "properties": {
+          "totalAdverts": { "type": "number" },
+          "text": { "type": "string" }
+        },
+        "required": ["totalAdverts", "text"]
+      },
+      "StatisticsOverviewResponse": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatisticsOverviewCategory"
+            }
+          },
+          "totalAdverts": { "type": "number" }
+        },
+        "required": ["categories", "totalAdverts"]
       }
     }
   }

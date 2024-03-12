@@ -55,4 +55,7 @@ export class SubmitApplicationInput {
 
   @Field(() => String)
   document!: string
+
+  @Field(() => String, { nullable: true })
+  signature!: null
 }
