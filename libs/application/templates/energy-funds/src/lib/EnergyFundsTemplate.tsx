@@ -36,8 +36,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     'selectVehicle.plate',
     undefined,
   ) as string | undefined
-  console.log('application', application.answers)
-  console.log('plate', plate)
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
