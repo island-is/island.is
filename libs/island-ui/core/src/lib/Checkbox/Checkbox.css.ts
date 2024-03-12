@@ -35,7 +35,7 @@ export const inputLarge = style({
   transform: 'translateY(-50%) translateX(100%)',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
-      transform: 'translateY(-50%) translateX(50%)',
+      transform: 'translateY(-50%) translateX(65%)',
     },
   },
 })
