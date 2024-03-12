@@ -62,7 +62,6 @@ interface NoDataProps extends ProblemBaseProps {
 }
 
 type ProblemProps = InternalServiceErrorProps | NotFoundProps | NoDataProps
-
 export const Problem = ({
   type = ProblemTypes.internalServiceError,
   size,

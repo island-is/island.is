@@ -47,6 +47,7 @@ import {
   CreateCustomDelegationScope,
   CreateIdentityResource,
   CreatePersonalRepresentativeDelegation,
+  CreatePersonalRepresentativeRightType,
 } from './types'
 
 export class FixtureFactory {
@@ -349,6 +350,41 @@ export class FixtureFactory {
     return scope
   }
 
+  async createPersonalRepresentativeRightType(
+    rightType?: CreatePersonalRepresentativeRightType,
+  ) {
+    const [personalRepresentativeRightType] = await this.get(
+      PersonalRepresentativeRightType,
+    ).findCreateFind({
+      where: {
+        code: rightType?.code ?? faker.random.word(),
+      },
+      defaults: {
+        validFrom: rightType?.validFrom ?? startOfDay(new Date()),
+        validTo: rightType?.validTo ?? addYears(new Date(), 1),
+        description: rightType?.description ?? faker.random.words(3),
+      },
+    })
+
+    return personalRepresentativeRightType
+  }
+
+  async createPersonalRepresentativeRight({
+    rightTypeCode,
+    personalRepresentativeId,
+    id,
+  }: {
+    rightTypeCode: string
+    personalRepresentativeId: string
+    id?: string | null
+  }) {
+    return this.get(PersonalRepresentativeRight).create({
+      id: id ?? faker.datatype.uuid(),
+      personalRepresentativeId,
+      rightTypeCode,
+    })
+  }
+
   async createPersonalRepresentativeDelegation({
     toNationalId,
     fromNationalId,
@@ -380,24 +416,16 @@ export class FixtureFactory {
       externalUserId: 'data_for_tests',
     })
 
-    const [personalRepresentativeRightType] = await this.get(
-      PersonalRepresentativeRightType,
-    ).findCreateFind({
-      where: {
-        code: rightType?.code ?? faker.random.word(),
-      },
-      defaults: {
-        validFrom: rightType?.validFrom ?? startOfDay(new Date()),
-        validTo: rightType?.validTo ?? addYears(new Date(), 1),
-        description: rightType?.description ?? faker.random.words(3),
-      },
-    })
+    const personalRepresentativeRightType =
+      await this.createPersonalRepresentativeRightType(rightType)
 
-    await this.get(PersonalRepresentativeRight).create({
-      id: faker.datatype.uuid(),
+    await this.createPersonalRepresentativeRight({
+      id: personalRepresentative.id,
       personalRepresentativeId: personalRepresentative.id,
       rightTypeCode: personalRepresentativeRightType.code,
     })
+
+    return personalRepresentative
   }
 
   async createTranslations(
