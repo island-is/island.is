@@ -3,8 +3,10 @@ import { CurrentUser, type User } from '@island.is/auth-nest-tools'
 import { GetInputInput, CreateInputInput, DeleteInputInput, UpdateInputInput } from "../../dto/inputs.input";
 import { Input } from "../../models/input.model";
 import { InputsService } from "./inputs.service";
+import { Audit } from '@island.is/nest/audit'
 
 @Resolver()
+@Audit({ namespace: '@island.is/api/form-system' })
 export class InputsResolver {
   constructor(private readonly inputsService: InputsService) { }
 

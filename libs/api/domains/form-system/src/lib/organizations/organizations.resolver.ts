@@ -3,10 +3,12 @@ import { OrganizationsService } from "./organizations.services";
 import { CreateOrganizationInput } from "../../dto/organization.input";
 import { CurrentUser, type User } from '@island.is/auth-nest-tools'
 import { Organization } from "../../models/organization.model";
+import { Audit } from '@island.is/nest/audit'
 
 
 
 @Resolver()
+@Audit({ namespace: '@island.is/api/form-system' })
 export class OrganizationsResolver {
   constructor(private readonly organizationsService: OrganizationsService) { }
 

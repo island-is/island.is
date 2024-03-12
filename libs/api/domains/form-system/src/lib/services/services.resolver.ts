@@ -3,9 +3,11 @@ import { CurrentUser, type User } from '@island.is/auth-nest-tools'
 import { FormSystemService } from "./services.service";
 import { List } from "../../models/services.model";
 import { GetPropertyInput } from "../../dto/services.input";
+import { Audit } from '@island.is/nest/audit'
 
 
 @Resolver()
+@Audit({ namespace: '@island.is/api/form-system' })
 export class FormSystemServicesResolver {
   constructor(private readonly formSystemServices: FormSystemService) { }
 

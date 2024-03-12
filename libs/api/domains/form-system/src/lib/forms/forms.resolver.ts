@@ -4,9 +4,11 @@ import { FormResponse } from "../../models/formResponse.model"
 import { CreateFormInput, GetFormInput, GetFormsInput, UpdateFormInput, DeleteFormInput } from "../../dto/forms.input"
 import { CurrentUser, type User } from '@island.is/auth-nest-tools'
 import { FormListResponse } from "../../models/formListResponse.model"
+import { Audit } from '@island.is/nest/audit'
 
 
 @Resolver()
+@Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
   constructor(private readonly formsService: FormsService) { }
 
