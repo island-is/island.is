@@ -3,7 +3,13 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text, toast } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  RadioButton,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -28,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
@@ -36,7 +43,10 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const { user } = useContext(UserContext)
   const [modal, setModal] = useState<
-    'noModal' | 'caseSubmitModal' | 'caseSentForConfirmationModal'
+    | 'noModal'
+    | 'caseSubmitModal'
+    | 'caseSentForConfirmationModal'
+    | 'caseDeniedModal'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
@@ -73,7 +83,11 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     let modalType: typeof modal = 'noModal'
 
     if (userCanSendCaseToCourt) {
-      modalType = 'caseSubmitModal'
+      if (indictmentConfirmationDecision === 'confirm') {
+        modalType = 'caseSubmitModal'
+      } else if (indictmentConfirmationDecision === 'deny') {
+        modalType = 'caseDeniedModal'
+      }
     } else if (isNewIndictment) {
       transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       modalType = 'caseSentForConfirmationModal'
@@ -114,6 +128,15 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         title={formatMessage(titles.prosecutor.indictments.overview)}
       />
       <FormContentContainer>
+        {workingCase.indictmentDeniedExplanation && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(strings.indictmentDeniedExplanationTitle)}
+              message={workingCase.indictmentDeniedExplanation}
+              type="info"
+            ></AlertMessage>
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(strings.heading)}
@@ -141,8 +164,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               <div className={styles.gridRowEqual}>
                 <RadioButton
                   large
-                  name="appealConfirmationDecision"
-                  id="confirmAppeal"
+                  name="indictmentConfirmationRequest"
+                  id="confirmIndictment"
                   backgroundColor="white"
                   label={formatMessage(strings.confirmIndictment)}
                   checked={indictmentConfirmationDecision === 'confirm'}
@@ -150,8 +173,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 />
                 <RadioButton
                   large
-                  name="appealConfirmationDecision"
-                  id="denyAppeal"
+                  name="indictmentConfirmationRequest"
+                  id="denyIndictment"
                   backgroundColor="white"
                   label={formatMessage(strings.denyIndictment)}
                   checked={indictmentConfirmationDecision === 'deny'}
@@ -181,7 +204,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
             caseHasBeenReceivedByCourt
-              ? formatMessage(strings.caseSendToCourt)
+              ? formatMessage(strings.indictmentSentToCourt)
               : undefined
           }
           onNextButtonClick={handleNextButtonClick}
@@ -210,13 +233,20 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
-            title={formatMessage(strings.caseSentForConfirmation)}
-            text={formatMessage(strings.caseSentForConfirmationText)}
+            title={formatMessage(strings.indictmentSentForConfirmationTitle)}
+            text={formatMessage(strings.indictmentSentForConfirmationText)}
             onClose={() => router.push(constants.CASES_ROUTE)}
             onPrimaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
             primaryButtonText={formatMessage(core.closeModal)}
+          />
+        ) : modal === 'caseDeniedModal' ? (
+          <DenyIndictmentCaseModal
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            onClose={() => setModal('noModal')}
+            onComplete={() => router.push(constants.CASES_ROUTE)}
           />
         ) : null}
       </AnimatePresence>
