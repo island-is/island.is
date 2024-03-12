@@ -10,53 +10,53 @@ export const largeFontSize = 18
 export const hugeFontSize = 26
 export const giganticFontSize = 33
 
-function setFont(doc: PDFKit.PDFDocument, font?: string) {
+const setFont = (doc: PDFKit.PDFDocument, font?: string) => {
   if (font) {
     doc.font(font)
   }
 }
 
-function addCenteredText(
+const addCenteredText = (
   doc: PDFKit.PDFDocument,
   fontSise: number,
   heading: string,
   font?: string,
-) {
+) => {
   setFont(doc, font)
 
   doc.fontSize(fontSise).text(heading, { align: 'center', paragraphGap: 1 })
 }
 
-function addText(
+const addText = (
   doc: PDFKit.PDFDocument,
   fontSise: number,
   text: string,
   font?: string,
   continued = false,
-) {
+) => {
   setFont(doc, font)
 
   doc.fontSize(fontSise).text(text, { continued, paragraphGap: 1 })
 }
 
-function addJustifiedText(
+const addJustifiedText = (
   doc: PDFKit.PDFDocument,
   fontSise: number,
   text: string,
   font?: string,
-) {
+) => {
   setFont(doc, font)
 
   doc.fontSize(fontSise).text(text, { align: 'justify', paragraphGap: 1 })
 }
 
-export function setTitle(doc: PDFKit.PDFDocument, title: string) {
+export const setTitle = (doc: PDFKit.PDFDocument, title: string) => {
   if (doc.info) {
     doc.info['Title'] = title
   }
 }
 
-export function addFooter(doc: PDFKit.PDFDocument, smallPrint?: string) {
+export const addFooter = (doc: PDFKit.PDFDocument, smallPrint?: string) => {
   const pages = doc.bufferedPageRange()
   for (let i = 0; i < pages.count; i++) {
     doc.switchToPage(i)
@@ -81,7 +81,11 @@ export function addFooter(doc: PDFKit.PDFDocument, smallPrint?: string) {
   }
 }
 
-export function addCoatOfArms(doc: PDFKit.PDFDocument, x?: number, y?: number) {
+export const addCoatOfArms = (
+  doc: PDFKit.PDFDocument,
+  x?: number,
+  y?: number,
+) => {
   doc.translate(x ?? 270, y ?? 70).scale(0.5)
 
   coatOfArms(doc)
@@ -92,7 +96,7 @@ export function addCoatOfArms(doc: PDFKit.PDFDocument, x?: number, y?: number) {
     .translate(x ? -x : -270, y ? -y : -70)
 }
 
-export function addPoliceStar(doc: PDFKit.PDFDocument) {
+export const addPoliceStar = (doc: PDFKit.PDFDocument) => {
   doc.translate(270, 70).scale(0.04)
 
   doc.image(policeStar, 0, 0, { fit: [1350, 1350] })
@@ -100,127 +104,151 @@ export function addPoliceStar(doc: PDFKit.PDFDocument) {
   doc.scale(25).translate(-270, -70)
 }
 
-export function setLineGap(doc: PDFKit.PDFDocument, lineGap: number) {
+export const setLineGap = (doc: PDFKit.PDFDocument, lineGap: number) => {
   doc.lineGap(lineGap)
 }
 
-export function addEmptyLines(doc: PDFKit.PDFDocument, lines = 1) {
-  for (let i = 0; i < lines; i++) {
-    doc.text(' ')
+export const drawTextWithEllipsis = (
+  doc: PDFKit.PDFDocument,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+) => {
+  const ellipsis = '...'
+  let width = doc.widthOfString(text)
+  if (width <= maxWidth) {
+    doc.text(text, x, y)
+  } else {
+    while (width > maxWidth - doc.widthOfString(ellipsis)) {
+      text = text.slice(0, -1)
+      width = doc.widthOfString(text)
+    }
+    doc.text(text + ellipsis, x, y)
   }
 }
 
-export function addGiganticHeading(
+export const addEmptyLines = (
+  doc: PDFKit.PDFDocument,
+  lines = 1,
+  x?: number,
+) => {
+  for (let i = 0; i < lines; i++) {
+    doc.text(' ', x)
+  }
+}
+
+export const addGiganticHeading = (
   doc: PDFKit.PDFDocument,
   heading: string,
   font?: string,
-) {
+) => {
   addCenteredText(doc, giganticFontSize, heading, font)
 }
 
-export function addHugeHeading(
+export const addHugeHeading = (
   doc: PDFKit.PDFDocument,
   heading: string,
   font?: string,
-) {
+) => {
   addCenteredText(doc, hugeFontSize, heading, font)
 }
 
-export function addLargeHeading(
+export const addLargeHeading = (
   doc: PDFKit.PDFDocument,
   heading: string,
   font?: string,
-) {
+) => {
   addCenteredText(doc, largeFontSize, heading, font)
 }
 
-export function addMediumPlusHeading(
+export const addMediumPlusHeading = (
   doc: PDFKit.PDFDocument,
   heading: string,
   font?: string,
-) {
+) => {
   addCenteredText(doc, mediumPlusFontSize, heading, font)
 }
 
-export function addMediumHeading(
+export const addMediumHeading = (
   doc: PDFKit.PDFDocument,
   heading: string,
   font?: string,
-) {
+) => {
   addCenteredText(doc, mediumFontSize, heading, font)
 }
 
-export function addLargeText(
+export const addLargeText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
-) {
+) => {
   addText(doc, largeFontSize, text, font)
 }
 
-export function addMediumText(
+export const addMediumText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
-) {
+) => {
   addText(doc, mediumFontSize, text, font)
 }
 
-export function addNormalPlusText(
+export const addNormalPlusText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
   continued?: boolean,
-) {
+) => {
   addText(doc, basePlusFontSize, text, font, continued)
 }
 
-export function addNormalPlusCenteredText(
+export const addNormalPlusCenteredText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
-) {
+) => {
   addCenteredText(doc, basePlusFontSize, text, font)
 }
 
-export function addNormalText(
+export const addNormalText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
   continued?: boolean,
-) {
+) => {
   addText(doc, baseFontSize, text, font, continued)
 }
 
-export function addNormalJustifiedText(
+export const addNormalJustifiedText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
-) {
+) => {
   addJustifiedText(doc, baseFontSize, text, font)
 }
 
-export function addNormalPlusJustifiedText(
+export const addNormalPlusJustifiedText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
-) {
+) => {
   addJustifiedText(doc, basePlusFontSize, text, font)
 }
 
-export function addNormalCenteredText(
+export const addNormalCenteredText = (
   doc: PDFKit.PDFDocument,
   text: string,
   font?: string,
-) {
+) => {
   addCenteredText(doc, baseFontSize, text, font)
 }
 
-export function addNumberedList(
+export const addNumberedList = (
   doc: PDFKit.PDFDocument,
   list: string[],
   font?: string,
-) {
+) => {
   setFont(doc, font)
 
   doc.fontSize(baseFontSize).list(list, {
