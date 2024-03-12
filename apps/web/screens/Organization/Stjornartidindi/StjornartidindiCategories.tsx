@@ -378,10 +378,7 @@ const StjornartidindiCategories: Screen<StjornartidindiCategoriesProps> = ({
   )
 }
 
-StjornartidindiCategories.getProps = async ({
-  apolloClient,
-  locale /*, req*/,
-}) => {
+StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [

@@ -249,7 +249,7 @@ const StjornartidindiSearch: Screen<StjornartidindiSearchProps> = ({
   )
 }
 
-StjornartidindiSearch.getProps = async ({ apolloClient, locale /*, req*/ }) => {
+StjornartidindiSearch.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [

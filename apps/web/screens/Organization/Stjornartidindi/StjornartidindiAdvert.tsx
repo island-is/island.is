@@ -1,25 +1,15 @@
 import { useMemo } from 'react'
 import { Locale } from 'locale'
-import NextLink from 'next/link'
 
-import {
-  ArrowLink,
-  Box,
-  Breadcrumbs,
-  CategoryCard,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { getThemeConfig, SliceMachine } from '@island.is/web/components'
-import { SLICE_SPACING } from '@island.is/web/constants'
+import { Box, Stack, Table as T, Text } from '@island.is/island-ui/core'
+import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  GetSingleNewsItemQuery,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryGetSingleNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -27,20 +17,19 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
-  categoriesUrl,
-  searchUrl,
-  StjornartidindiHomeIntro,
+  baseUrl,
   StjornartidindiWrapper,
-  yfirflokkurOptions,
 } from '../../../components/Stjornartidindi'
 import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
+  GET_SINGLE_NEWS_ITEM_QUERY,
 } from '../../queries'
 
-const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
+const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
+  advert,
   organizationPage,
   organization,
   namespace,
@@ -69,107 +58,63 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
         locale,
       ).href,
     },
+    {
+      title: 'Auglýsing',
+    },
   ]
 
   return (
     <StjornartidindiWrapper
-      pageTitle={organizationPage?.title ?? ''}
-      pageDescription={organizationPage?.description}
+      pageTitle={'Auglýsing'}
+      pageDescription={
+        'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.'
+      }
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       organizationPage={organizationPage!}
       pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
-    >
-      <Stack space={SLICE_SPACING}>
-        <StjornartidindiHomeIntro
-          organizationPage={organizationPage}
-          organization={organization}
-          namespace={namespace}
-          searchPlaceholder="Leitaðu í stjórnartíðindum"
-          searchUrl={searchUrl}
-          quickLinks={[
-            {
-              title: 'A deild',
-              href: searchUrl + '?deild=a-deild',
-            },
-            {
-              title: 'B deild',
-              href: searchUrl + '?deild=b-deild',
-              variant: 'purple',
-            },
-          ]}
-          breadCrumbs={
-            breadcrumbItems && (
-              <Breadcrumbs
-                items={breadcrumbItems ?? []}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href} legacyBehavior>
-                      {link}
-                    </NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
-            )
-          }
-        />
+      breadcrumbItems={breadcrumbItems}
+      goBackUrl={baseUrl}
+      sidebarContent={
+        <Box background="blue100" padding={[2, 2, 3]} borderRadius="large">
+          <Stack space={[1, 1, 2]}>
+            <Text variant="h4">Upplýsingar um auglýsingu</Text>
 
-        <Box background="blue100" paddingTop={8} paddingBottom={8}>
-          <GridContainer>
-            <Box display={'flex'} justifyContent={'spaceBetween'}>
-              <Text variant="h3">Yfirflokkar</Text>
-              <ArrowLink href={categoriesUrl}>Málaflokkar A-Ö</ArrowLink>
+            <Box>
+              <Text variant="h5">Deild</Text>
+              <Text variant="small">B-Deild</Text>
             </Box>
 
-            <GridRow>
-              {yfirflokkurOptions.map((y, i) => (
-                <GridColumn
-                  key={i}
-                  span={['1/1', '1/2', '1/2', '1/3', '1/4']}
-                  paddingTop={3}
-                  paddingBottom={4}
-                >
-                  <CategoryCard
-                    href={`${searchUrl}?malaflokkur=${y.value}`}
-                    heading={y.label}
-                    text={y.cardDescription ?? ''}
-                  />
-                </GridColumn>
-              ))}
-            </GridRow>
-          </GridContainer>
+            <Box>
+              <Text variant="h5">Stofnun</Text>
+              <Text variant="small">Matvælaráðuneytið</Text>
+            </Box>
+          </Stack>
         </Box>
-
-        {organizationPage?.bottomSlices.map((slice, index) => (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={organizationPage.slug}
-            marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
-          />
-        ))}
-      </Stack>
+      }
+    >
+      <Box>Auglýsing</Box>
     </StjornartidindiWrapper>
   )
 }
 
-interface StjornartidindiHomeProps {
+interface StjornartidindiAdvertProps {
+  advert: GetSingleNewsItemQuery['getSingleNews']
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
   locale: Locale
 }
 
-const StjornartidindiHome: Screen<StjornartidindiHomeProps> = ({
+const StjornartidindiAdvert: Screen<StjornartidindiAdvertProps> = ({
+  advert,
   organizationPage,
   organization,
   namespace,
   locale,
 }) => {
   return (
-    <StjornartidindiHomePage
+    <StjornartidindiAdvertPage
+      advert={advert}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -178,10 +123,13 @@ const StjornartidindiHome: Screen<StjornartidindiHomeProps> = ({
   )
 }
 
-StjornartidindiHome.getProps = async ({ apolloClient, locale }) => {
+StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
+    {
+      data: { getSingleNews: advert },
+    },
     {
       data: { getOrganizationPage },
     },
@@ -190,6 +138,15 @@ StjornartidindiHome.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
+      query: GET_SINGLE_NEWS_ITEM_QUERY,
+      variables: {
+        input: {
+          slug: query.nr as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -229,7 +186,12 @@ StjornartidindiHome.getProps = async ({ apolloClient, locale }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
+  if (!advert) {
+    throw new CustomNextError(404, 'News not found')
+  }
+
   return {
+    advert,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
@@ -242,4 +204,4 @@ StjornartidindiHome.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(StjornartidindiHome)
+export default withMainLayout(StjornartidindiAdvert)

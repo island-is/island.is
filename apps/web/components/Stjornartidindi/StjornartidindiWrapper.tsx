@@ -76,7 +76,7 @@ export const StjornartidindiWrapper = ({
           isSticky={false}
           fullWidthContent={true}
           sidebarContent={
-            <Box marginRight={[0, 0, 0, 0, 3]}>
+            <>
               {goBackUrl ? (
                 <Box marginBottom={2}>
                   <Link href={goBackUrl}>
@@ -94,38 +94,43 @@ export const StjornartidindiWrapper = ({
                   </Link>
                 </Box>
               ) : null}
+
               {sidebarContent}
-            </Box>
+            </>
           }
         >
-          {breadcrumbItems && (
-            <Breadcrumbs
-              items={breadcrumbItems ?? []}
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href} legacyBehavior>
-                    {link}
-                  </NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          )}
+          <Box marginLeft={[0, 0, 0, 0, 3]}>
+            {breadcrumbItems && (
+              <Breadcrumbs
+                items={breadcrumbItems ?? []}
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href} legacyBehavior>
+                      {link}
+                    </NextLink>
+                  ) : (
+                    link
+                  )
+                }}
+              />
+            )}
 
-          <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-            {pageTitle}
-          </Text>
+            <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
+              {pageTitle}
+            </Text>
 
-          {pageDescription && (
-            <Box className="rs_read" paddingBottom={SLICE_SPACING}>
-              <Text variant="default">{pageDescription}</Text>
-            </Box>
-          )}
+            {pageDescription && (
+              <Box className="rs_read" paddingBottom={SLICE_SPACING}>
+                <Text variant="default">{pageDescription}</Text>
+              </Box>
+            )}
 
-          {isMobile && <Box marginBottom={SLICE_SPACING}>{sidebarContent}</Box>}
+            {isMobile && (
+              <Box marginBottom={SLICE_SPACING}>{sidebarContent}</Box>
+            )}
 
-          <Box className="rs_read">{children}</Box>
+            <Box className="rs_read">{children}</Box>
+          </Box>
         </SidebarLayout>
       )}
 
