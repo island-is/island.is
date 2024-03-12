@@ -12,10 +12,6 @@ import {
   InferCreationAttributes,
 } from 'sequelize'
 import { DelegationRecordDTO } from '../dto/delegation-index.dto'
-import {
-  AuthDelegationProvider,
-  AuthDelegationType,
-} from '@island.is/shared/types'
 
 @Table({
   tableName: 'delegation_index',
