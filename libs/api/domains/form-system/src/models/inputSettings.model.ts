@@ -1,7 +1,7 @@
-import { ObjectType, Field } from "@nestjs/graphql"
-import { LanguageType } from "./global.model"
+import { ObjectType, Field } from '@nestjs/graphql'
+import { LanguageType } from './global.model'
 
-ObjectType('FormSystemListItem')
+@ObjectType('FormSystemListItem')
 export class ListItem {
   @Field(() => String, { nullable: true })
   guid?: string
@@ -24,8 +24,8 @@ export class ListItem {
 
 @ObjectType('FormSystemInputSettings')
 export class InputSettings {
-  @Field(() => String, { nullable: true })
-  $type?: string
+  // @Field(() => String, { nullable: true })
+  // $type?: string
 
   @Field(() => Boolean, { nullable: true })
   isLarge?: boolean

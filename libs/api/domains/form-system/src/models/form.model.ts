@@ -1,12 +1,11 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { LanguageType } from "./global.model";
-import { ApplicantType } from "./applicantType.model";
-import { Group } from "./group.model";
-import { Input } from "./input.model";
-import { Step } from "./step.model";
-import { Organization } from "./organization.model";
-import { DocumentType } from "./documentType.model";
-
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { LanguageType } from './global.model'
+import { ApplicantType } from './applicantType.model'
+import { Group } from './group.model'
+import { Input } from './input.model'
+import { Step } from './step.model'
+import { Organization } from './organization.model'
+import { DocumentType } from './documentType.model'
 
 export type Dependencies = {
   [key: string]: string[]
@@ -38,7 +37,7 @@ export class Form {
   @Field(() => DocumentType, { nullable: true })
   documentTypes?: DocumentType[] | null
 
-  @Field(() => [ApplicantType], { nullable: true })
+  @Field(() => [ApplicantType])
   formApplicantTypes?: ApplicantType[] | null
 
   @Field(() => LanguageType, { nullable: true })

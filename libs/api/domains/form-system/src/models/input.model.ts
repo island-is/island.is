@@ -1,4 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import graphqlTypeJson from 'graphql-type-json'
+
 import { InputSettings } from './inputSettings.model'
 import { LanguageType } from './global.model'
 
@@ -40,7 +42,7 @@ export class Input {
   @Field(() => InputSettings, { nullable: true })
   inputSettings?: InputSettings
 
-  @Field(() => Object, { nullable: true })
+  @Field(() => graphqlTypeJson, { nullable: true })
   inputFields?: object
 }
 
@@ -82,4 +84,3 @@ export class UpdateInput {
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiSet?: boolean
 }
-

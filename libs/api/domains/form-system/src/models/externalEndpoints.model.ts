@@ -1,15 +1,22 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 enum Type {
-  SUBMIT = 'submit',
-  VALIDATION = 'validation',
+  submit = 'submit',
+  validation = 'validation',
 }
+
+registerEnumType(Type, {
+  name: 'FormSystemType',
+})
 
 enum Environment {
-  PRODUCTION = 'production',
-  DEVELOPMENT = 'development',
+  production = 'production',
+  development = 'development',
 }
 
+registerEnumType(Environment, {
+  name: 'FormSystemEnvironment',
+})
 
 @ObjectType('FormSystemExternalEndpoints')
 export class ExternalEndpoints {
