@@ -264,6 +264,7 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
+
     const response = await api.syslMottakaGognPost(payload).catch((e) => {
       throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
     })
@@ -274,6 +275,61 @@ export class SyslumennService {
     }
 
     return mapDataUploadResponse(response)
+  }
+
+  async uploadDataPreemptiveErrorCheck(
+    persons: Person[],
+    attachments: Attachment[] | undefined,
+    extraData: { [key: string]: string },
+    uploadDataName: string,
+    uploadDataId?: string,
+  ): Promise<any> {
+    const { id, api } = await this.createApi()
+
+    const payload = constructUploadDataObject(
+      id,
+      persons,
+      attachments,
+      extraData,
+      uploadDataName,
+      uploadDataId,
+    )
+
+    const check = await api
+      .syslMottakaVilluprofaGognPost(payload)
+      .catch((e) => {
+        console.log('errorcheck caught error', e)
+        /**
+       * {
+   "name":"FetchError",
+   "url":"https://api.syslumenn.is/staging/api/v1/SyslMottakaVilluprofaGogn",
+   "status":406,
+   "headers":{
+      
+   },
+   "statusText":"Not Acceptable",
+   "response":{
+      "size":0,
+      "timeout":40000
+   },
+   "body":{
+      "type":"Villa",
+      "title":"Aðgerð stenst ekki villuprófun",
+      "status":406,
+      "detail":"það er þegar til umsókn fyrir þessa fasteign!"
+   },
+   "problem":{
+      "type":"Villa",
+      "title":"Aðgerð stenst ekki villuprófun",
+      "status":406,
+      "detail":"það er þegar til umsókn fyrir þessa fasteign!"
+   },
+   "stack":"FetchError: Request failed with status code 406\n    at Function.<anonymous> (/Users/thorarinngunnararnasson/Documents/GitHub/island.is/dist/apps/application-system/api/webpack:/libs/clients/middlewares/src/lib/FetchError.ts:30:19)\n    at Generator.next (<anonymous>)\n    at /Users/thorarinngunnararnasson/Documents/GitHub/island.is/node_modules/tslib/tslib.js:169:75\n    at new Promise (<anonymous>)\n    at Object.__awaiter (/Users/thorarinngunnararnasson/Documents/GitHub/island.is/node_modules/tslib/tslib.js:165:16)\n    at Function.build (/Users/thorarinngunnararnasson/Documents/GitHub/island.is/dist/apps/application-system/api/main.js:256999:24)\n    at /Users/thorarinngunnararnasson/Documents/GitHub/island.is/dist/apps/application-system/api/webpack:/libs/clients/middlewares/src/lib/withResponseErrors.ts:19:30\n    at Generator.next (<anonymous>)\n    at fulfilled (/Users/thorarinngunnararnasson/Documents/GitHub/island.is/node_modules/tslib/tslib.js:166:62)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)"
+}
+       * 
+       */
+        throw new Error(`Syslumenn-client: error check caught error ${e.type}`)
+      })
   }
 
   async getCertificateInfo(

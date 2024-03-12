@@ -116,6 +116,18 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
     const uploadDataId = 'grindavik-umsokn-1'
 
+    const check = await this.syslumennService.uploadDataPreemptiveErrorCheck(
+      [applicant, ...counterParties],
+      [],
+      extraData,
+      uploadDataName,
+      uploadDataId,
+    )
+
+    if (check) {
+      // TODO check for error
+    }
+
     const response = await this.syslumennService.uploadData(
       [applicant, ...counterParties],
       [],
