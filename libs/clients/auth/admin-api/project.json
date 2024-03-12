@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/admin-api/src",
   "projectType": "library",
-  "tags": ["lib:client"],
+  "tags": ["scope:client", "lib:client"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
