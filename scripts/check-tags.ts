@@ -33,35 +33,36 @@ const hasValidTags = async (filePath: string) => {
   // Is any tag repeaed?
   const repeatFreeTags = new Set(tagsRaw).size !== tagsRaw.length
 
-  // Exit early for good projects
-  if (
-    !isEmpty &&
-    validPrefix &&
-    hasScopePrefix &&
-    singularTag &&
-    !repeatFreeTags
-  ) {
-    return true
-  }
-  console.log(chalk.red.underline(filePath))
+  let isValid = true
+  const messages = []
+  messages.push(chalk.underline(filePath))
   if (isEmpty) {
-    console.log('- Missing NX tags for project boundaries')
+    messages.push(chalk.red('- Missing NX tags for project boundaries'))
+    isValid = false
   }
   if (!hasScopePrefix) {
-    console.log('- Missing scope tag')
+    messages.push(chalk.red('- Missing scope tag'))
+    isValid = false
   }
   if (!validPrefix) {
-    console.log('- Unexpected NX tags')
+    messages.push(chalk.red('- Unexpected NX tags'))
+    isValid = false
   }
   if (!singularTag) {
-    console.log('- All tags must be the same')
+    messages.push(chalk.yellow('- All tags should be the same'))
+    // Allow different tags for now (permitted according to docs)
+    // isValid = false
   }
   if (repeatFreeTags) {
-    console.log("- Tags can't be repeated")
+    messages.push(chalk.red("- Tags can't be repeated"))
+    isValid = false
   }
-  console.log('NX tags:', tagsRaw, '\n')
+  if (!isValid || messages.length > 1) {
+    console.log(messages.join('\n'))
+    console.log('NX tags:', tagsRaw, '\n')
+  }
 
-  return false
+  return isValid
 }
 
 const checkProjects = async () => {
