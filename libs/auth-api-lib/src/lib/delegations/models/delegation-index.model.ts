@@ -11,6 +11,11 @@ import {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
+import { DelegationRecordDTO } from '../dto/delegation-index.dto'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 @Table({
   tableName: 'delegation_index',
@@ -65,4 +70,11 @@ export class DelegationIndex extends Model<
 
   @UpdatedAt
   readonly modified?: Date
+
+  toDTO(): DelegationRecordDTO {
+    return {
+      fromNationalId: this.fromNationalId,
+      toNationalId: this.toNationalId,
+    }
+  }
 }

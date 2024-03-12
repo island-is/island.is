@@ -134,7 +134,7 @@ export class DelegationIndexController {
             ...parsedDelegationInfo,
           },
         },
-        this.delegationIndexService.deletedDelegationRecord({
+        this.delegationIndexService.removeDelegationRecord({
           ...parsedDelegationInfo,
           provider: auth.delegationProvider,
         }),

@@ -7,7 +7,6 @@ import {
   IsDateString,
   ValidateNested,
 } from 'class-validator'
-import { DelegationType } from '../types/delegationType'
 import {
   DelegationScopeDTO,
   UpdateDelegationScopeDTO,
@@ -72,15 +71,6 @@ export class DelegationDTO {
 
   // This property is only used in delegation index
   rights?: PersonalRepresentativeRightTypeDTO[]
-}
-
-export class UpdateDelegationDTO {
-  @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
-  @Type(() => UpdateDelegationScopeDTO)
-  @ValidateNested({ each: true })
-  @IsOptional()
-  @IsArray()
-  scopes?: UpdateDelegationScopeDTO[]
 }
 
 export class PatchDelegationDTO {

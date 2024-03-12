@@ -14,6 +14,7 @@ import {
   DelegationRecordType,
   PersonalRepresentativeDelegationType,
 } from './types/delegationRecord'
+import { DelegationRecordInputDTO } from './dto/delegation-index.dto'
 import { validateDelegationTypeAndProvider } from './utils/delegations'
 import {
   AuthDelegationProvider,
@@ -175,7 +176,7 @@ export class DelegationsIndexService {
   }
 
   /* Add item to index */
-  async createOrUpdateDelegationIndexItem(delegation: DelegationIndexItemDTO) {
+  async createOrUpdateDelegationRecord(delegation: DelegationRecordInputDTO) {
     const valid = validateDelegationTypeAndProvider(
       delegation.type,
       delegation.provider,
@@ -185,11 +186,15 @@ export class DelegationsIndexService {
       throw new Error('Invalid delegation type and provider combination')
     }
 
-    await this.delegationIndexModel.upsert(delegation)
+    const [updatedDelegation] = await this.delegationIndexModel.upsert(
+      delegation,
+    )
+
+    return updatedDelegation.toDTO()
   }
 
   /* Delete item from index */
-  async deletedDelegationIndexItem(delegation: DelegationIndexItemDTO) {
+  async removeDelegationRecord(delegation: DelegationRecordInputDTO) {
     const valid = validateDelegationTypeAndProvider(
       delegation.type,
       delegation.provider,

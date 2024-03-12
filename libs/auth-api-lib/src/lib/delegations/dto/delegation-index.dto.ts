@@ -1,11 +1,18 @@
 import { IsDateString, IsOptional, IsString } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import {
-  AuthDelegationProvider,
-  AuthDelegationType,
-} from '@island.is/shared/types'
+import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
 
-export class DelegationIndexItemDTO {
+export class DelegationRecordDTO {
+  @IsString()
+  @ApiProperty()
+  fromNationalId!: string
+
+  @IsString()
+  @ApiProperty()
+  toNationalId!: string
+}
+
+export class DelegationRecordInputDTO {
   @IsString()
   @ApiProperty()
   fromNationalId!: string
@@ -29,7 +36,7 @@ export class DelegationIndexItemDTO {
   validTo?: Date | null
 }
 
-export class CreateDelegationIndexItemDTO {
+export class CreateDelegationRecordInputDTO {
   @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ nullable: true, type: Date })
