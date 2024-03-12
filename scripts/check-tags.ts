@@ -79,9 +79,8 @@ const checkProjects = async () => {
 
   if (invalidProjects.length > 0) {
     console.log(chalk.red('Found errors in project files'))
-    console.log(
-      'All projects should have a configured NX tags which controls which project can import what. For more information see: https://docs.devland.is/repository/nx-tags',
-    )
+    console.log('All projects should have a configured NX tags which controls which project can import what.')
+    console.log('For more information see: https://docs.devland.is/repository/nx-tags')
     console.log('Invalid projects:', invalidProjects)
     process.exit(1)
   }
