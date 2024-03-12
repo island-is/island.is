@@ -87,6 +87,7 @@ export class OccupationalLicensesV2Service {
           license.licenseInfo.id,
           'DistrictCommissioners',
         ),
+        licenseHolderName: license.holderName,
         licenseNumber: license.licenseInfo.id,
         issuer: license.licenseInfo.issuerId,
         profession: license.licenseInfo.title,
