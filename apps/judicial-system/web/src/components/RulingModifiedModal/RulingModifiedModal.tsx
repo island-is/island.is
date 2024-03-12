@@ -2,11 +2,9 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { isCourtOfAppealsUser } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -17,36 +15,34 @@ interface Props {
   onCancel: () => void
   onContinue: () => void
   continueDisabled?: boolean
+  description: string
+  defaultExplanation: string
+  fieldToModify: string
 }
 
 const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   onCancel,
   onContinue,
   continueDisabled = false,
+  description,
+  defaultExplanation,
+  fieldToModify,
 }) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
 
-  const [explanation, setExplanation] = useState(
-    formatMessage(
-      isCourtOfAppealsUser(user)
-        ? strings.appealRulingAutofill
-        : strings.rulingAutofill,
-    ),
-  )
+  const [explanation, setExplanation] = useState(defaultExplanation)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
-  const handleContinue = () => {
-    updateCase(
-      workingCase.id,
-      isCourtOfAppealsUser(user)
-        ? { appealRulingModifiedHistory: explanation }
-        : { rulingModifiedHistory: explanation },
-    )
+  const handleContinue = async () => {
+    const caseUpdate = await updateCase(workingCase.id, {
+      [fieldToModify]: explanation,
+    })
 
-    onContinue()
+    if (caseUpdate) {
+      onContinue()
+    }
   }
 
   const handleExplanationChange = (explanation: string) => {
@@ -72,16 +68,8 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   return (
     <Modal
       title={formatMessage(strings.title)}
-      text={formatMessage(
-        isCourtOfAppealsUser(user)
-          ? strings.appealRulingText
-          : strings.rulingText,
-      )}
-      primaryButtonText={formatMessage(
-        isCourtOfAppealsUser(user)
-          ? strings.appealRulingContinue
-          : strings.rulingContinue,
-      )}
+      text={description}
+      primaryButtonText={formatMessage(strings.continue)}
       onPrimaryButtonClick={handleContinue}
       isPrimaryButtonDisabled={errorMessage !== ''}
       isPrimaryButtonLoading={continueDisabled}

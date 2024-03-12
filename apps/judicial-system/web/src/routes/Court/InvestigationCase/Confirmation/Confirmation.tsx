@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -20,7 +21,6 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-  RulingModifiedModal,
   SigningModal,
   UserContext,
   useRequestRulingSignature,
@@ -32,17 +32,27 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import {
+  JudgeRulingModifiedModal,
+  RegistrarRulingModifiedModal,
+  RequestRulingSignatureModal,
+} from '../../components'
 import { confirmation as strings } from './Confirmation.strings'
 
-type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
+type VisibleModal =
+  | 'none'
+  | 'judgeRulingModifiedModal'
+  | 'registrarRulingModifiedModal'
+  | 'requestRulingSignatureModal'
+  | 'signingModal'
 
-const Confirmation = () => {
+const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const router = useRouter()
+  const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
-  const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
-
-  const { transitionCase } = useCase()
+  const { transitionCase, isTransitioningCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
@@ -50,38 +60,71 @@ const Confirmation = () => {
   } = useRequestRulingSignature(workingCase.id, () =>
     setModalVisible('signingModal'),
   )
+  const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
-  const { user } = useContext(UserContext)
+  const isCorrectingRuling = workingCase.notifications?.some(
+    (notification) => notification.type === NotificationType.RULING,
+  )
+  const isAssignedJudge = user && workingCase.judge?.id === user?.id
+  const isAssignedRegistrar = user && workingCase.registrar?.id === user?.id
+  const hideNextButton =
+    (!isCorrectingRuling && !isAssignedJudge) ||
+    (isCorrectingRuling && !isAssignedJudge && !isAssignedRegistrar)
 
-  const signRuling = async () => {
-    const shouldSign =
-      isCompletedCase(workingCase.state) ||
-      (await transitionCase(
-        workingCase.id,
-        workingCase.decision === CaseDecision.REJECTING
-          ? CaseTransition.REJECT
-          : workingCase.decision === CaseDecision.DISMISSING
-          ? CaseTransition.DISMISS
-          : CaseTransition.ACCEPT,
-        setWorkingCase,
-      ))
+  const completeCase = async () => {
+    if (isCompletedCase(workingCase.state)) {
+      return true
+    }
 
-    if (shouldSign) {
+    return transitionCase(
+      workingCase.id,
+      workingCase.decision === CaseDecision.REJECTING
+        ? CaseTransition.REJECT
+        : workingCase.decision === CaseDecision.DISMISSING
+        ? CaseTransition.DISMISS
+        : CaseTransition.ACCEPT,
+      setWorkingCase,
+    )
+  }
+
+  const continueToSignedVerdictOverview = () => {
+    router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
+  }
+
+  const handleCompleteRegistrarModification = async () => {
+    const caseCompleted = await completeCase()
+
+    if (caseCompleted) {
+      continueToSignedVerdictOverview()
+    }
+  }
+
+  const handleCompleteJudgeModification = async () => {
+    const caseCompleted = await completeCase()
+
+    if (caseCompleted) {
+      setModalVisible('requestRulingSignatureModal')
+    }
+  }
+
+  const completeCaseWithSignature = async () => {
+    const caseCompleted = await completeCase()
+
+    if (caseCompleted) {
       requestRulingSignature()
     }
   }
 
   const handleNextButtonClick = async () => {
-    const isCorrectingRuling = workingCase.notifications?.some(
-      (notification) => notification.type === NotificationType.RULING,
-    )
-
     if (isCorrectingRuling) {
-      setModalVisible('rulingModifiedModal')
-      return
+      setModalVisible(
+        isAssignedJudge
+          ? 'judgeRulingModifiedModal'
+          : 'registrarRulingModifiedModal',
+      )
+    } else {
+      completeCaseWithSignature()
     }
-
-    await signRuling()
   }
 
   return (
@@ -93,102 +136,110 @@ const Confirmation = () => {
       <PageHeader
         title={formatMessage(titles.court.investigationCases.conclusion)}
       />
-      {user && (
-        <>
-          <FormContentContainer>
-            <Box marginBottom={7}>
-              <Text as="h1" variant="h1">
-                {formatMessage(strings.title)}
+      <FormContentContainer>
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            {formatMessage(strings.title)}
+          </Text>
+        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
+        <Box marginBottom={9}>
+          <Accordion>
+            <PoliceRequestAccordionItem workingCase={workingCase} />
+            <CourtRecordAccordionItem workingCase={workingCase} />
+            <RulingAccordionItem workingCase={workingCase} />
+          </Accordion>
+        </Box>
+        <Box marginBottom={7}>
+          <BlueBox>
+            <Box marginBottom={2} textAlign="center">
+              <Text as="h3" variant="h3">
+                {formatMessage(strings.conclusionTitle)}
               </Text>
             </Box>
-            <CourtCaseInfo workingCase={workingCase} />
-            <Box marginBottom={9}>
-              <Accordion>
-                <PoliceRequestAccordionItem workingCase={workingCase} />
-                <CourtRecordAccordionItem workingCase={workingCase} />
-                <RulingAccordionItem workingCase={workingCase} />
-              </Accordion>
-            </Box>
-            <Box marginBottom={7}>
-              <BlueBox>
-                <Box marginBottom={2} textAlign="center">
-                  <Text as="h3" variant="h3">
-                    {formatMessage(strings.conclusionTitle)}
-                  </Text>
-                </Box>
-                <Box marginBottom={3}>
-                  <Box marginTop={1}>
-                    <Text variant="intro">{workingCase.conclusion}</Text>
-                  </Box>
-                </Box>
-                <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase.judge?.name}</Text>
-                </Box>
-              </BlueBox>
-            </Box>
             <Box marginBottom={3}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRuling)}
-                pdfType="ruling"
-              />
+              <Box marginTop={1}>
+                <Text variant="intro">{workingCase.conclusion}</Text>
+              </Box>
             </Box>
-            <Box marginBottom={15}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRulingShortVersion)}
-                pdfType="courtRecord"
-              />
+            <Box marginBottom={1} textAlign="center">
+              <Text variant="h4">{workingCase.judge?.name}</Text>
             </Box>
-          </FormContentContainer>
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-              nextUrl={constants.CASES_ROUTE}
-              nextIsLoading={isRequestingRulingSignature}
-              nextButtonText={formatMessage(
-                workingCase.decision === CaseDecision.ACCEPTING
-                  ? strings.continueButtonTextAccepting
-                  : workingCase.decision === CaseDecision.REJECTING
-                  ? strings.continueButtonTextRejecting
-                  : workingCase.decision === CaseDecision.DISMISSING
-                  ? strings.continueButtonTextDismissing
-                  : strings.continueButtonTextAcceptingPartially,
-              )}
-              nextButtonIcon={
-                isAcceptingCaseDecision(workingCase.decision)
-                  ? 'checkmark'
-                  : 'close'
-              }
-              nextButtonColorScheme={
-                isAcceptingCaseDecision(workingCase.decision)
-                  ? 'default'
-                  : 'destructive'
-              }
-              onNextButtonClick={handleNextButtonClick}
-              hideNextButton={workingCase.judge?.id !== user?.id}
-              infoBoxText={
-                workingCase.judge?.id !== user?.id
-                  ? 'Einungis skráður dómari getur undirritað úrskurð'
-                  : undefined
-              }
-            />
-          </FormContentContainer>
-          {modalVisible === 'rulingModifiedModal' && (
-            <RulingModifiedModal
-              onCancel={() => setModalVisible('none')}
-              onContinue={signRuling}
-            />
+          </BlueBox>
+        </Box>
+        <Box marginBottom={3}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRuling)}
+            pdfType="ruling"
+          />
+        </Box>
+        <Box marginBottom={15}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="courtRecord"
+          />
+        </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={constants.CASES_ROUTE}
+          nextIsLoading={isTransitioningCase || isRequestingRulingSignature}
+          nextButtonText={formatMessage(
+            workingCase.decision === CaseDecision.ACCEPTING
+              ? strings.continueButtonTextAccepting
+              : workingCase.decision === CaseDecision.REJECTING
+              ? strings.continueButtonTextRejecting
+              : workingCase.decision === CaseDecision.DISMISSING
+              ? strings.continueButtonTextDismissing
+              : strings.continueButtonTextAcceptingPartially,
           )}
-          {modalVisible === 'signingModal' && (
-            <SigningModal
-              workingCase={workingCase}
-              requestRulingSignature={requestRulingSignature}
-              requestRulingSignatureResponse={requestRulingSignatureResponse}
-              onClose={() => setModalVisible('none')}
-            />
-          )}
-        </>
+          nextButtonIcon={
+            isAcceptingCaseDecision(workingCase.decision)
+              ? 'checkmark'
+              : 'close'
+          }
+          nextButtonColorScheme={
+            isAcceptingCaseDecision(workingCase.decision)
+              ? 'default'
+              : 'destructive'
+          }
+          onNextButtonClick={handleNextButtonClick}
+          hideNextButton={hideNextButton}
+          infoBoxText={
+            hideNextButton
+              ? formatMessage(strings.onlyAssigendJudgeCanSign)
+              : undefined
+          }
+        />
+      </FormContentContainer>
+      {modalVisible === 'judgeRulingModifiedModal' && (
+        <JudgeRulingModifiedModal
+          onCancel={() => setModalVisible('none')}
+          onContinue={handleCompleteJudgeModification}
+        />
+      )}
+      {modalVisible === 'registrarRulingModifiedModal' && (
+        <RegistrarRulingModifiedModal
+          onCancel={() => setModalVisible('none')}
+          onContinue={handleCompleteRegistrarModification}
+        />
+      )}
+      {modalVisible === 'requestRulingSignatureModal' && (
+        <RequestRulingSignatureModal
+          onYes={requestRulingSignature}
+          onNo={continueToSignedVerdictOverview}
+        />
+      )}
+      {modalVisible === 'signingModal' && (
+        <SigningModal
+          workingCase={workingCase}
+          requestRulingSignature={requestRulingSignature}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
+          onClose={() => setModalVisible('none')}
+        />
       )}
     </PageLayout>
   )
