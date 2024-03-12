@@ -19,5 +19,5 @@
       }
     }
   },
-  "tags": ["scope:api", "lib:api"]
+  "tags": ["scope:*", "lib:api"]
 }
