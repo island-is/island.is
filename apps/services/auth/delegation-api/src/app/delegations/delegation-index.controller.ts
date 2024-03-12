@@ -9,14 +9,24 @@ import {
 } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import {
-  CreateDelegationIndexItemDTO,
+  DelegationRecordDTO,
   DelegationsIndexService,
+  CreateDelegationRecordInputDTO,
 } from '@island.is/auth-api-lib'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Documentation } from '@island.is/nest/swagger'
-import { Auth, CurrentAuth, IdsAuthGuard } from '@island.is/auth-nest-tools'
+import {
+  Auth,
+  CurrentAuth,
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { AuthScope } from '@island.is/auth/scopes'
+import { ApiSecurity } from '@nestjs/swagger'
+import { Audit, AuditService } from '@island.is/nest/audit'
 
-const namespace = '@island.is/auth/delegation-api/me/delegation-index'
+const namespace = '@island.is/auth/delegation-api/delegation-index'
 
 const parseDelegationInfo = (delegationInfo: string) => {
   const [type, toNationalId, fromNationalId] = delegationInfo.split('_')
@@ -36,33 +46,39 @@ const parseDelegationInfo = (delegationInfo: string) => {
   }
 }
 
-@UseGuards(IdsAuthGuard)
+const requestDocumentation = {
+  header: {
+    'X-Param-Id': {
+      required: true,
+      description:
+        'Delegation information delimited by an underscore e.g. delegationType_nationalIdTo_nationalIdFrom',
+    },
+  },
+}
+
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@Scopes(AuthScope.delegationIndexWrite)
+@ApiSecurity('ias', [AuthScope.delegationIndexWrite])
 @Controller({
   path: 'delegation-index',
 })
+@Audit({ namespace })
 export class DelegationIndexController {
   constructor(
     private readonly delegationIndexService: DelegationsIndexService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Put('.id')
   @Documentation({
     description: 'Create or update a delegation index item.',
-    response: { status: 204 },
-    request: {
-      header: {
-        'X-Param-Id': {
-          required: true,
-          description:
-            'Delegation information delimited by an underscore e.g. delegationType_nationalIdTo_nationalIdFrom',
-        },
-      },
-    },
+    response: { status: 200, type: DelegationRecordDTO },
+    request: requestDocumentation,
   })
-  async createOrUpdateDelegationIndexItem(
+  async createOrUpdateDelegationRecord(
     @CurrentAuth() auth: Auth,
     @Headers('X-Param-Id') delegationInfo: string,
-    @Body() body: CreateDelegationIndexItemDTO,
+    @Body() body: CreateDelegationRecordInputDTO,
   ) {
     if (!auth.delegationProvider) {
       throw new BadRequestException('Delegation provider missing')
@@ -71,11 +87,21 @@ export class DelegationIndexController {
     const parsedDelegationInfo = parseDelegationInfo(delegationInfo)
 
     try {
-      await this.delegationIndexService.createOrUpdateDelegationIndexItem({
-        ...parsedDelegationInfo,
-        provider: auth.delegationProvider,
-        validTo: body.validTo,
-      })
+      return await this.auditService.auditPromise<DelegationRecordDTO>(
+        {
+          auth: auth,
+          action: 'createOrUpdateDelegationIndexItem',
+          resources: [],
+          meta: {
+            ...parsedDelegationInfo,
+          },
+        },
+        this.delegationIndexService.createOrUpdateDelegationRecord({
+          ...parsedDelegationInfo,
+          provider: auth.delegationProvider,
+          validTo: body.validTo,
+        }),
+      )
     } catch {
       throw new BadRequestException(
         'Invalid delegation type and provider combination',
@@ -87,17 +113,9 @@ export class DelegationIndexController {
   @Documentation({
     description: 'Delete a delegation index item.',
     response: { status: 204 },
-    request: {
-      header: {
-        'X-Param-Id': {
-          required: true,
-          description:
-            'Delegation information delimited by an underscore e.g. delegationType_nationalIdTo_nationalIdFrom',
-        },
-      },
-    },
+    request: requestDocumentation,
   })
-  async removeDelegationIndexItem(
+  async removeDelegationRecord(
     @CurrentAuth() auth: Auth,
     @Headers('X-Param-Id') delegationInfo: string,
   ) {
@@ -108,10 +126,19 @@ export class DelegationIndexController {
     const parsedDelegationInfo = parseDelegationInfo(delegationInfo)
 
     try {
-      await this.delegationIndexService.deletedDelegationIndexItem({
-        ...parsedDelegationInfo,
-        provider: auth.delegationProvider,
-      })
+      await this.auditService.auditPromise(
+        {
+          auth: auth,
+          action: 'removeDelegationIndexItem',
+          meta: {
+            ...parsedDelegationInfo,
+          },
+        },
+        this.delegationIndexService.deletedDelegationRecord({
+          ...parsedDelegationInfo,
+          provider: auth.delegationProvider,
+        }),
+      )
     } catch {
       throw new BadRequestException(
         'Invalid delegation type and provider combination',

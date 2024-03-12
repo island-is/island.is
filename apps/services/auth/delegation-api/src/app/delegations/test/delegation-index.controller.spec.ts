@@ -1,6 +1,5 @@
 import { TestApp } from '@island.is/testing/nest'
 import request from 'supertest'
-import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
   createNationalId,
@@ -64,6 +63,55 @@ const delegationTypeAndProviderMapTestcases: Record<
 }
 
 describe('DelegationIndexController', () => {
+  describe('Without valid scope', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    const user = createCurrentUser({
+      nationalIdType: 'person',
+      scope: [],
+    })
+
+    beforeAll(async () => {
+      app = await setupWithAuth({
+        user,
+      })
+
+      server = request(app.getHttpServer())
+    })
+
+    it('PUT: should return status 403', async () => {
+      // Act
+      const response = await server
+        .put('/delegation-index/.id')
+        .set(
+          'X-Param-Id',
+          `${AuthDelegationType.ProcurationHolder}_${createNationalId(
+            'person',
+          )}_${user.nationalId}`,
+        )
+        .send({})
+
+      // Assert
+      expect(response.status).toBe(403)
+    })
+
+    it('DELETE: should return status 403', async () => {
+      // Act
+      const response = await server
+        .delete('/delegation-index/.id')
+        .set(
+          'X-Param-Id',
+          `${AuthDelegationType.ProcurationHolder}_${createNationalId(
+            'person',
+          )}_${user.nationalId}`,
+        )
+        .send({})
+
+      // Assert
+      expect(response.status).toBe(403)
+    })
+  })
+
   describe('With invalid delegation type and provider combination', () => {
     describe.each(Object.keys(delegationTypeAndProviderMapTestcases))(
       'Delegation provider: %s',
@@ -73,7 +121,7 @@ describe('DelegationIndexController', () => {
         let server: request.SuperTest<request.Test>
         const user = createCurrentUser({
           nationalIdType: 'person',
-          scope: [AuthScope.delegations],
+          scope: [AuthScope.delegationIndexWrite],
           delegationProvider: name as AuthDelegationProvider,
         })
 
@@ -133,7 +181,7 @@ describe('DelegationIndexController', () => {
     let server: request.SuperTest<request.Test>
     const user = createCurrentUser({
       nationalIdType: 'person',
-      scope: [AuthScope.delegations],
+      scope: [AuthScope.delegationIndexWrite],
       delegationProvider: 'invalidProvider' as AuthDelegationProvider,
     })
 
@@ -181,13 +229,12 @@ describe('DelegationIndexController', () => {
   describe('With valid delegation provider', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
-    let factory: FixtureFactory
 
     let delegationIndexModel: typeof DelegationIndex
     const delegationProvider = AuthDelegationProvider.CompanyRegistry
     const user = createCurrentUser({
       nationalIdType: 'person',
-      scope: [AuthScope.delegations],
+      scope: [AuthScope.delegationIndexWrite],
       delegationProvider: delegationProvider as AuthDelegationProvider,
     })
 
@@ -218,51 +265,54 @@ describe('DelegationIndexController', () => {
 
     it('PUT - should add new delegation to index', async () => {
       // Arrange
-      const toNationalId = createNationalId('person')
-      const fromNationalId = user.nationalId
-      const type = AuthDelegationType.ProcurationHolder
-      const validTo = new Date().toISOString()
+      const { toNationalId, fromNationalId, type, validTo } = {
+        toNationalId: createNationalId('person'),
+        fromNationalId: user.nationalId,
+        type: AuthDelegationType.ProcurationHolder,
+        validTo: new Date(),
+      }
 
       // Act
       const response = await server
         .put('/delegation-index/.id')
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send({
-          validTo,
+          validTo: validTo,
         })
 
       // Assert
       const delegation = await delegationIndexModel.findOne({
         where: {
-          fromNationalId,
-          toNationalId,
-          type,
+          fromNationalId: fromNationalId,
+          toNationalId: toNationalId,
+          type: type,
           provider: delegationProvider,
         },
       })
 
-      expect(response.status).toBe(204)
+      expect(response.status).toBe(200)
+      expect(response.body.fromNationalId).toBe(fromNationalId)
+      expect(response.body.toNationalId).toBe(toNationalId)
       expect(delegation).toBeDefined()
-      expect(delegation?.validTo?.toISOString()).toBe(validTo)
-      expect(delegation?.provider).toBe(delegationProvider)
-      expect(delegation?.fromNationalId).toBe(fromNationalId)
-      expect(delegation?.toNationalId).toBe(toNationalId)
+      expect(delegation?.validTo).toStrictEqual(validTo)
     })
 
     it('PUT - should update delegation in index', async () => {
       // Arrange
-      const toNationalId = createNationalId('person')
-      const fromNationalId = user.nationalId
-      const type = AuthDelegationType.ProcurationHolder
-      const validTo = new Date().toISOString()
-      const validToUpdated = new Date(new Date().getTime() + 1000).toISOString()
+      const { fromNationalId, toNationalId, type, validTo } = {
+        toNationalId: createNationalId('person'),
+        fromNationalId: user.nationalId,
+        type: AuthDelegationType.ProcurationHolder,
+        validTo: new Date(),
+      }
+      const validToUpdated = new Date(new Date().getTime() + 1000)
 
       // Act
       await server
         .put('/delegation-index/.id')
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send({
-          validTo,
+          validTo: validTo,
         })
       const response = await server
         .put('/delegation-index/.id')
@@ -274,19 +324,20 @@ describe('DelegationIndexController', () => {
       // Assert
       const delegation = await delegationIndexModel.findOne({
         where: {
-          fromNationalId,
-          toNationalId,
-          type,
+          fromNationalId: fromNationalId,
+          toNationalId: toNationalId,
+          type: type,
           provider: delegationProvider,
+          validTo: validToUpdated,
         },
       })
 
-      expect(response.status).toBe(204)
+      expect(response.status).toBe(200)
       expect(delegation).toBeDefined()
-      expect(delegation?.validTo?.toISOString()).toBe(validToUpdated)
+      expect(delegation?.validTo).toStrictEqual(validToUpdated)
       expect(delegation?.provider).toBe(delegationProvider)
-      expect(delegation?.fromNationalId).toBe(fromNationalId)
-      expect(delegation?.toNationalId).toBe(toNationalId)
+      expect(response.body.fromNationalId).toBe(fromNationalId)
+      expect(response.body.toNationalId).toBe(toNationalId)
     })
 
     describe('DELETE - validation', () => {
@@ -310,7 +361,7 @@ describe('DelegationIndexController', () => {
       const toNationalId = createNationalId('person')
       const fromNationalId = user.nationalId
       const type = AuthDelegationType.ProcurationHolder
-      const validTo = new Date().toISOString()
+      const validTo = new Date()
 
       // Act
       await server
