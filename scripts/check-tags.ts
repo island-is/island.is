@@ -25,7 +25,9 @@ const hasValidTags = async (filePath: string) => {
 
   const isEmpty = tags.length === 0
   // Only allow 'scope:*' or 'lib:*' tags
-  const validPrefix = tags.every(([key]) => key === 'scope' || key === 'lib' || key === 'TODO')
+  const validPrefix = tags.every(
+    ([key]) => key === 'scope' || key === 'lib' || key === 'TODO',
+  )
   // Must have at least one scope tag or be empty
   const hasScopePrefix = tags.some(([key]) => key === 'scope') || isEmpty
   // Are all tags the same?
@@ -78,8 +80,12 @@ const checkProjects = async () => {
 
   if (invalidProjects.length > 0) {
     console.log(chalk.red('Found errors in project files'))
-    console.log('All projects should have a configured NX tags which controls which project can import what.')
-    console.log('For more information see: https://docs.devland.is/repository/nx-tags')
+    console.log(
+      'All projects should have a configured NX tags which controls which project can import what.',
+    )
+    console.log(
+      'For more information see: https://docs.devland.is/repository/nx-tags',
+    )
     console.log('Invalid projects:', invalidProjects)
     process.exit(1)
   }
