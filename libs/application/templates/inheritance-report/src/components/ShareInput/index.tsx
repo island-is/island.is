@@ -43,7 +43,9 @@ const onKeydownInput: EventListener = (evt: Event) => {
   }
 }
 
-const percentageRegex = new RegExp(/^([0-9]{1,2}(,\d{3})*|\d{1,2})(\.\d{1,2})?|100$/)
+const percentageRegex = new RegExp(
+  /^([0-9]{1,2}(,\d{3})*|\d{1,2})(\.\d{1,2})?|100$/,
+)
 
 export const ShareInput = ({
   name,
