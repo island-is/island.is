@@ -29,7 +29,7 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
-describe('InternalCaseController - Deliver indictment case indictment to police', () => {
+describe('InternalCaseController - Deliver indictment to police', () => {
   const date = randomDate()
   const userId = uuid()
   const user = { id: userId } as User
@@ -58,7 +58,7 @@ describe('InternalCaseController - Deliver indictment case indictment to police'
       const then = {} as Then
 
       await internalCaseController
-        .deliverIndictmentCaseIndictmentToPolice(caseId, theCase, {
+        .deliverIndictmentToPolice(caseId, theCase, {
           user,
         })
         .then((result) => (then.result = result))

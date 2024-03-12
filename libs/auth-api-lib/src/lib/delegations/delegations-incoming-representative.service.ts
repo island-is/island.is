@@ -59,6 +59,7 @@ export class DelegationsIncomingRepresentativeService {
         fromName: name,
         type: DelegationType.PersonalRepresentative,
         provider: DelegationProvider.PersonalRepresentativeRegistry,
+        rights: representative.rights,
       })
 
       const personalRepresentatives =
@@ -84,7 +85,7 @@ export class DelegationsIncomingRepresentativeService {
       const [alive, deceased] = partitionWithIndex(
         personalRepresentatives,
         ({ nationalIdRepresentedPerson }, index) =>
-          // Pass through altough Þjóðskrá API throws an error since it is not required to view the personal representative.
+          // Pass through although Þjóðskrá API throws an error since it is not required to view the personal representative.
           persons[index] instanceof Error ||
           // Make sure we can match the person to the personal representatives, i.e. not deceased
           (persons[index] as IndividualDto)?.nationalId ===
