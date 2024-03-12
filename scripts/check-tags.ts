@@ -71,7 +71,6 @@ const checkProjects = async () => {
   })
   let invalidProjects = []
   for (const project of projects) {
-    // console.log("Checking project", project)
     if (!(await hasValidTags(project))) {
       invalidProjects.push(project)
     }
