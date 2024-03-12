@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
@@ -23,6 +24,7 @@ import { EstateMember } from '../../types'
 import { ErrorValue } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
+import ShareInput from '../../components/ShareInput'
 
 export const AdditionalHeir = ({
   field,
@@ -261,24 +263,14 @@ export const AdditionalHeir = ({
                 </GridColumn>
               ) : customField.id === 'heirsPercentage' ? (
                 <GridColumn span="1/2" paddingBottom={2}>
-                  <InputController
-                    id={`${fieldIndex}.${customField.id}`}
+                  <ShareInput
                     name={`${fieldIndex}.${customField.id}`}
                     disabled={!currentHeir.enabled}
                     label={customField.title}
-                    defaultValue={defaultValue ? defaultValue : '0'}
-                    type="number"
-                    suffix="%"
-                    backgroundColor="blue"
-                    onChange={(
-                      event: React.ChangeEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                      >,
-                    ) => {
-                      const val = parseInt(event.target.value, 10)
+                    onAfterChange={(val) => {
                       updateValues(fieldIndex, val)
                     }}
-                    error={
+                    errorMessage={
                       error && error[index]
                         ? error[index][customField.id]
                         : undefined
