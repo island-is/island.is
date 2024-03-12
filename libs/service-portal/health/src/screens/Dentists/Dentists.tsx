@@ -69,14 +69,7 @@ const Dentists = () => {
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-      {error && !loading && (
-        <Problem
-          size="small"
-          noBorder={false}
-          type="internal_service_error"
-          error={error}
-        />
-      )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
 
       {!error && !loading && !dentist && (
         <Problem

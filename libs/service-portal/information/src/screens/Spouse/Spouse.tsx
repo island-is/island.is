@@ -1,37 +1,19 @@
 import { defineMessage } from 'react-intl'
-import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
-import {
-  Box,
-  Divider,
-  GridColumn,
-  GridRow,
-  LoadingDots,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FootNote,
   formatNationalId,
   IntroHeader,
   m,
-  NotFound,
   THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { spmm } from '../../lib/messages'
 import { useNationalRegistrySpouseQuery } from './Spouse.generated'
-
-const dataNotFoundMessage = defineMessage({
-  id: 'sp.family:data-not-found',
-  defaultMessage: 'Gögn fundust ekki',
-})
-
-const dataInfoSpouse = defineMessage({
-  id: 'sp.family:data-info-spouse',
-  defaultMessage: 'Hér fyrir neðan eru gögn um fjölskyldumeðlim.',
-})
+import { Problem } from '@island.is/react-spa/shared'
 
 const FamilyMember = () => {
   useNamespaces('sp.family')
@@ -57,65 +39,62 @@ const FamilyMember = () => {
     }
   }, [data?.nationalRegistryPerson, formatMessage])
 
-  if (error || (!loading && !data?.nationalRegistryPerson))
-    return (
-      <NotFound
-        title={defineMessage({
-          id: 'sp.family:family-member-not-found',
-          defaultMessage: 'Fjölskyldumeðlimur fannst ekki',
-        })}
-      />
-    )
-
   return (
     <>
-      {loading ? (
-        <Box marginBottom={6}>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-              <LoadingDots />
-            </GridColumn>
-          </GridRow>
-        </Box>
-      ) : (
-        <IntroHeader
-          title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
-          intro={dataInfoSpouse}
-          marginBottom={2}
-          serviceProviderSlug={THJODSKRA_SLUG}
-          serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+      <IntroHeader
+        title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
+        intro={formatMessage(spmm.spouseIntro)}
+        serviceProviderSlug={THJODSKRA_SLUG}
+        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+      />
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && !data?.nationalRegistryPerson?.spouse && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noDataFoundVariableSingularMasculine, {
+            arg: formatMessage(spmm.spouse).toLowerCase(),
+          })}
+          message={formatMessage(
+            m.noDataFoundVariableDetailVariationMasculine,
+            { arg: formatMessage(spmm.spouseAccusative).toLowerCase() },
+          )}
+          imgSrc="./assets/images/sofa.svg"
         />
       )}
-
-      <Stack space={1}>
-        <UserInfoLine
-          title={formatMessage(m.myRegistration)}
-          label={defineMessage(m.fullName)}
-          content={data?.nationalRegistryPerson?.spouse?.fullName || '...'}
-          loading={loading}
-          translate="no"
-        />
-        <Divider />
-        <UserInfoLine
-          label={defineMessage(m.natreg)}
-          content={
-            data?.nationalRegistryPerson?.spouse?.nationalId
-              ? formatNationalId(data.nationalRegistryPerson.spouse.nationalId)
-              : ''
-          }
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage({
-            id: 'sp.family:spouseCohab',
-            defaultMessage: 'Tengsl',
-          })}
-          content={error ? formatMessage(dataNotFoundMessage) : spouseValue}
-          loading={loading}
-        />
-        <Divider />
-      </Stack>
+      {!error && (loading || data?.nationalRegistryPerson?.spouse) && (
+        <Stack space={2}>
+          <UserInfoLine
+            title={formatMessage(m.myRegistration)}
+            label={defineMessage(m.fullName)}
+            content={data?.nationalRegistryPerson?.spouse?.fullName || '...'}
+            loading={loading}
+            translate="no"
+          />
+          <Divider />
+          <UserInfoLine
+            label={defineMessage(m.natreg)}
+            content={
+              data?.nationalRegistryPerson?.spouse?.nationalId
+                ? formatNationalId(
+                    data.nationalRegistryPerson.spouse.nationalId,
+                  )
+                : ''
+            }
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage({
+              id: 'sp.family:spouseCohab',
+              defaultMessage: 'Tengsl',
+            })}
+            content={spouseValue}
+            loading={loading}
+          />
+          <Divider />
+        </Stack>
+      )}
       <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )
