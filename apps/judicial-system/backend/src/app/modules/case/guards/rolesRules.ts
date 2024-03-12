@@ -47,6 +47,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'requestDriversLicenseSuspension',
   'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
+  'indictmentDeniedExplanation',
 ]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
@@ -179,6 +180,7 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
     CaseTransition.WITHDRAW_APPEAL,
+    CaseTransition.DENY_INDICTMENT,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -198,7 +200,8 @@ export const prosecutorTransitionRule: RolesRule = {
 
     if (
       !isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.ASK_FOR_CONFIRMATION
+      (request.body.transition === CaseTransition.DENY_INDICTMENT ||
+        request.body.transition === CaseTransition.ASK_FOR_CONFIRMATION)
     ) {
       return false
     }

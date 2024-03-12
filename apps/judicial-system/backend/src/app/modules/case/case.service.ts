@@ -145,6 +145,7 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
+    | 'indictmentDeniedExplanation'
   > {
   type?: CaseType
   state?: CaseState
@@ -831,6 +832,19 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForDeniedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -864,6 +878,14 @@ export class CaseService {
           )
         }
       }
+    }
+
+    if (
+      isIndictmentCase(updatedCase.type) &&
+      updatedCase.state === CaseState.DRAFT &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
     }
 
     if (updatedCase.appealState !== theCase.appealState) {
