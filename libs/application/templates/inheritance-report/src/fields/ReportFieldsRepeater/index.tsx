@@ -24,6 +24,7 @@ import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { valueToNumber } from '../../lib/utils/helpers'
+import NumberInput from '../../components/NumberInput'
 
 type RepeaterProps = {
   field: {
@@ -334,6 +335,17 @@ export const ReportFieldsRepeater: FC<
                         placeholder={field.placeholder}
                         options={relations}
                       />
+                    ) : valueKeys.includes(field.id) ? (
+                      <NumberInput
+                        name={`${fieldIndex}.${field.id}`}
+                        placeholder={field.placeholder}
+                        onAfterChange={() => {
+                          updateValue(fieldIndex)
+                          calculateTotal()
+                          setIndex(fieldIndex)
+                        }}
+                        label={field.title}
+                      />
                     ) : (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
@@ -353,14 +365,6 @@ export const ReportFieldsRepeater: FC<
                         required={field.required}
                         error={err}
                         onChange={() => {
-                          if (valueKeys.includes(field.id)) {
-                            updateValue(fieldIndex)
-                          }
-
-                          if (shouldRecalculateTotal) {
-                            calculateTotal()
-                          }
-
                           setIndex(fieldIndex)
                         }}
                       />
