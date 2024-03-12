@@ -1,5 +1,4 @@
 import { User } from '@island.is/auth-nest-tools'
-import { ClientAllowedScope } from '@island.is/auth-api-lib'
 import {
   CreateApiScope,
   CreateApiScopeUserAccess,
@@ -15,7 +14,6 @@ export const clientId = '@island.is/webapp'
 export const domainName = '@island.is'
 export const user = createCurrentUser({
   nationalIdType: 'person',
-  scope: ['@identityserver.api/authentication'],
   client: clientId,
 })
 
@@ -28,11 +26,11 @@ export interface ITestCaseOptions {
   fromChildren?: string[]
   fromCompanies?: string[]
   fromCustom?: string[]
-  fromRepresentative?: string[]
+  fromRepresentative?: CreatePersonalRepresentativeDelegation[]
   scopes?: string[]
-  protectedScopes?: string[]
   scopeAccess?: [string, string][]
   expectedFrom: string[]
+  representativeRights?: string[]
 }
 
 export class TestCase {
@@ -42,14 +40,14 @@ export class TestCase {
   fromChildren: string[]
   fromCompanies: string[]
   fromCustom: string[]
-  fromRepresentative: string[]
+  fromRepresentative: CreatePersonalRepresentativeDelegation[]
   scopes: string[]
-  protectedScopes: string[]
   scopeAccess: [string, string][]
   expectedFrom: string[]
 
   constructor(client: CreateClient, options: ITestCaseOptions) {
     this.client = client
+    this.user = user
     this.fromChildren = options.fromChildren ?? []
     this.fromCompanies = options.fromCompanies ?? []
     this.fromCustom = options.fromCustom ?? []
@@ -60,7 +58,6 @@ export class TestCase {
       ...customScopes,
       ...representativeScopes,
     ]
-    this.protectedScopes = options.protectedScopes ?? []
     this.scopeAccess = options.scopeAccess ?? []
     this.expectedFrom = options.expectedFrom
   }
@@ -79,14 +76,6 @@ export class TestCase {
       grantToProcuringHolders: procurationHolderScopes.includes(s),
       allowExplicitDelegationGrant: customScopes.includes(s),
       grantToPersonalRepresentatives: representativeScopes.includes(s),
-      isAccessControlled: this.protectedScopes.includes(s),
-    }))
-  }
-
-  get clientAllowedScopes(): Partial<ClientAllowedScope>[] {
-    return this.scopes.map((s: string) => ({
-      scopeName: s,
-      clientId: this.client.clientId,
     }))
   }
 
@@ -112,6 +101,16 @@ export class TestCase {
         name: '',
       })),
     }
+  }
+
+  get personalRepresentativeDelegation(): CreatePersonalRepresentativeDelegation[] {
+    return this.fromRepresentative.map(
+      (d: CreatePersonalRepresentativeDelegation) => ({
+        toNationalId: this.user.nationalId,
+        fromNationalId: d.fromNationalId,
+        rightType: d.rightType,
+      }),
+    )
   }
 
   get apiScopeUserAccess(): CreateApiScopeUserAccess[] {
