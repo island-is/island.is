@@ -291,9 +291,9 @@ export const overviewAssets = [
               `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
                 stock.faceValue ?? '0',
               )}`,
-              `${m.stocksRateOfChange.defaultMessage}: ${formatCurrency(
-                stock.rateOfExchange ?? '0',
-              )}`,
+              `${m.stocksRateOfChange.defaultMessage}: ${
+                stock.rateOfExchange?.replace('.', ',') ?? '0'
+              }`,
               `${m.stocksValue.defaultMessage}: ${formatCurrency(
                 stock.value ?? '0',
               )}`,

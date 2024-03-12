@@ -1,8 +1,6 @@
 import { Input } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { valueToNumber } from '../../lib/utils/helpers'
-import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
 
 interface NumberInputProps {
   name: string
@@ -25,10 +23,7 @@ export const NumberInput = ({
   disabled,
   required,
 }: NumberInputProps) => {
-  const { control, watch } = useFormContext()
-  const { formatMessage } = useLocale()
-
-  const watchedField = watch(name)
+  const { control } = useFormContext()
 
   return (
     <Controller
@@ -61,12 +56,8 @@ export const NumberInput = ({
               val = val.substring(1)
             }
 
-            console.log('val', val)
             const validInput = numberInputRegex.test(val)
             const numberValue = valueToNumber(val, ',')
-
-            console.log('validInput', validInput)
-            console.log('numberValue', numberValue)
 
             if (val === '') {
               onChange('0')

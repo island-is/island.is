@@ -410,7 +410,7 @@ export const assets = buildSection({
                   {
                     title: m.stocksFaceValue.defaultMessage,
                     id: 'faceValue',
-                    type: 'number',
+                    currency: true,
                   },
                   {
                     title: m.stocksRateOfChange.defaultMessage,

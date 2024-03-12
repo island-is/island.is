@@ -335,7 +335,7 @@ export const ReportFieldsRepeater: FC<
                         placeholder={field.placeholder}
                         options={relations}
                       />
-                    ) : valueKeys.includes(field.id) ? (
+                    ) : field.id === 'rateOfExchange' ? (
                       <NumberInput
                         name={`${fieldIndex}.${field.id}`}
                         placeholder={field.placeholder}
@@ -365,6 +365,14 @@ export const ReportFieldsRepeater: FC<
                         required={field.required}
                         error={err}
                         onChange={() => {
+                          if (valueKeys.includes(field.id)) {
+                            updateValue(fieldIndex)
+                          }
+
+                          if (shouldRecalculateTotal) {
+                            calculateTotal()
+                          }
+
                           setIndex(fieldIndex)
                         }}
                       />
