@@ -127,6 +127,8 @@ libs/clients/rsk/relationships/                                                 
 /apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
+/apps/web/screens/Stjornartidindi/                                                                       @island-is/hugsmidjan
+/apps/web/components/Stjornartidindi/                                                                    @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan

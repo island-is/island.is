@@ -2,10 +2,7 @@ import { useRouter } from 'next/router'
 
 import { ActionCard, Box, Inline, Stack, Tag } from '@island.is/island-ui/core'
 
-import {
-  AdvertType,
-  stjornartidindiAdvertUrl,
-} from '../../../components/Stjornartidindi'
+import { AdvertType, stjornartidindiAdvertUrl } from './stjornartidindiUtils'
 
 export const StjornartidindiSearchGridView = ({
   adverts,

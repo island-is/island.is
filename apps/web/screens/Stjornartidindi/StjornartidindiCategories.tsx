@@ -42,13 +42,13 @@ import {
   splitArrayIntoGroups,
   StjornartidindiWrapper,
   yfirflokkurOptions,
-} from '../../../components/Stjornartidindi'
-import { Screen } from '../../../types'
+} from '../../components/Stjornartidindi'
+import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
-} from '../../queries'
+} from '../queries'
 
 type MalaflokkarType = Array<{
   letter: string

@@ -35,15 +35,15 @@ import {
   removeEmptyFromObject,
   searchUrl,
   StjornartidindiWrapper,
-} from '../../../components/Stjornartidindi'
-import { Screen } from '../../../types'
+} from '../../components/Stjornartidindi'
+import { StjornartidindiSearchGridView } from '../../components/Stjornartidindi/StjornartidindiSearchGridView'
+import { StjornartidindiSearchListView } from '../../components/Stjornartidindi/StjornartidindiSearchListView'
+import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
-} from '../../queries'
-import { StjornartidindiSearchGridView } from './StjornartidindiSearchGridView'
-import { StjornartidindiSearchListView } from './StjornartidindiSearchListView'
+} from '../queries'
 
 const initialState = {
   q: '',

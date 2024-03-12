@@ -2,10 +2,7 @@ import { useRouter } from 'next/router'
 
 import { Table as T, Text } from '@island.is/island-ui/core'
 
-import {
-  AdvertType,
-  stjornartidindiAdvertUrl,
-} from '../../../components/Stjornartidindi'
+import { AdvertType, stjornartidindiAdvertUrl } from './stjornartidindiUtils'
 
 export const StjornartidindiSearchListView = ({
   adverts,

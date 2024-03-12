@@ -1,15 +1,15 @@
 import { useMemo } from 'react'
 import { Locale } from 'locale'
 
+import { MinistryOfJusticeAdvertResponse } from '@island.is/api/schema'
 import { Box, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
-  GetSingleNewsItemQuery,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetSingleNewsArgs,
+  QueryMinistryOfJusticeAdvertArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -19,14 +19,14 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import {
   baseUrl,
   StjornartidindiWrapper,
-} from '../../../components/Stjornartidindi'
-import { Screen } from '../../../types'
+} from '../../components/Stjornartidindi'
+import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
-  GET_SINGLE_NEWS_ITEM_QUERY,
-} from '../../queries'
+} from '../queries'
+import { ADVERT_QUERY } from '../queries/Stjornartidindi'
 
 const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
   advert,
@@ -98,7 +98,7 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
 }
 
 interface StjornartidindiAdvertProps {
-  advert: GetSingleNewsItemQuery['getSingleNews']
+  advert: MinistryOfJusticeAdvertResponse['advert']
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -128,7 +128,7 @@ StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { getSingleNews: advert },
+      data: { advert },
     },
     {
       data: { getOrganizationPage },
@@ -138,12 +138,14 @@ StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
-      query: GET_SINGLE_NEWS_ITEM_QUERY,
+    apolloClient.query<
+      MinistryOfJusticeAdvertResponse,
+      QueryMinistryOfJusticeAdvertArgs
+    >({
+      query: ADVERT_QUERY,
       variables: {
-        input: {
-          slug: query.nr as string,
-          lang: locale as ContentLanguage,
+        params: {
+          id: query.nr as string,
         },
       },
     }),
