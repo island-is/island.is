@@ -1409,38 +1409,6 @@
         ]
       }
     },
-    "/api/v1/SyslMottakaVilluprofaGogn": {
-      "post": {
-        "tags": ["SyslMottakaVilluprofaGogn"],
-        "operationId": "SyslMottakaVilluprofaGogn_Post",
-        "consumes": ["application/json", "text/json", "application/*+json"],
-        "parameters": [
-          {
-            "name": "payload",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/SyslSkeyti"
-            },
-            "x-nullable": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/Skilabod"
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT Token": []
-          }
-        ]
-      }
-    },
     "/api/UpplysingarRadstofunDanarbus": {
       "post": {
         "tags": ["UpplysingarRadstofunDanarbus"],
@@ -2349,20 +2317,6 @@
             "name": "Locale",
             "in": "query",
             "x-nullable": true
-          },
-          {
-            "type": "integer",
-            "name": "PageNumber",
-            "in": "query",
-            "format": "int32",
-            "x-nullable": false
-          },
-          {
-            "type": "integer",
-            "name": "PageSize",
-            "in": "query",
-            "format": "int32",
-            "x-nullable": false
           }
         ],
         "responses": {
@@ -2405,7 +2359,7 @@
     "/api/RettindiFyrirIslandIs/{audkenni}": {
       "get": {
         "tags": ["RettindiFyrirIslandIs"],
-        "operationId": "RettindiFyrirIslandIs_Get2",
+        "operationId": "RettindiFyrirIslandIs_GetStakt",
         "parameters": [
           {
             "type": "string",
@@ -2664,6 +2618,38 @@
       "post": {
         "tags": ["SyslMottakaGogn"],
         "operationId": "SyslMottakaGogn_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SyslSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Skilabod"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/v1/SyslMottakaVilluprofaGogn": {
+      "post": {
+        "tags": ["SyslMottakaVilluprofaGogn"],
+        "operationId": "SyslMottakaVilluprofaGogn_Post",
         "consumes": ["application/json", "text/json", "application/*+json"],
         "parameters": [
           {
@@ -4287,113 +4273,6 @@
       ],
       "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     },
-    "Skilabod": {
-      "type": "object",
-      "properties": {
-        "skilabod": {
-          "type": "string"
-        },
-        "audkenni": {
-          "type": "string"
-        },
-        "malsnumer": {
-          "type": "string"
-        }
-      }
-    },
-    "SyslSkeyti": {
-      "type": "object",
-      "properties": {
-        "audkenni": {
-          "type": "string"
-        },
-        "gognSkeytis": {
-          "$ref": "#/definitions/SyslGagnaSkeyti"
-        }
-      }
-    },
-    "SyslGagnaSkeyti": {
-      "type": "object",
-      "properties": {
-        "audkenni": {
-          "type": "string"
-        },
-        "skeytaHeiti": {
-          "type": "string"
-        },
-        "adilar": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Adili"
-          }
-        },
-        "attachments": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/VidhengiSkra"
-          }
-        },
-        "gagnaMengi": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "Adili": {
-      "type": "object",
-      "required": ["undirritad", "tegund"],
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "nafn": {
-          "type": "string"
-        },
-        "kennitala": {
-          "type": "string"
-        },
-        "simi": {
-          "type": "string"
-        },
-        "tolvupostur": {
-          "type": "string"
-        },
-        "heimilisfang": {
-          "type": "string"
-        },
-        "postaritun": {
-          "type": "string"
-        },
-        "sveitafelag": {
-          "type": "string"
-        },
-        "undirritad": {
-          "type": "boolean"
-        },
-        "tegund": {
-          "$ref": "#/definitions/AdiliTegund"
-        }
-      }
-    },
-    "AdiliTegund": {
-      "type": "integer",
-      "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
-      "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
-      "enum": [0, 1, 2]
-    },
-    "VidhengiSkra": {
-      "type": "object",
-      "properties": {
-        "nafnSkraar": {
-          "type": "string"
-        },
-        "innihaldSkraar": {
-          "type": "string"
-        }
-      }
-    },
     "UpplysingarUrDanarbuiRadstofunSkeyti": {
       "type": "object",
       "properties": {
@@ -4689,6 +4568,12 @@
           "format": "float"
         },
         "fasteignamat": {
+          "type": "string"
+        },
+        "upphaed": {
+          "type": "string"
+        },
+        "gengiVextir": {
           "type": "string"
         }
       }
@@ -5123,6 +5008,20 @@
         }
       }
     },
+    "Skilabod": {
+      "type": "object",
+      "properties": {
+        "skilabod": {
+          "type": "string"
+        },
+        "audkenni": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        }
+      }
+    },
     "LeyfiListi": {
       "type": "object",
       "properties": {
@@ -5131,9 +5030,6 @@
           "items": {
             "$ref": "#/definitions/Leyfi"
           }
-        },
-        "paging": {
-          "$ref": "#/definitions/Paging"
         },
         "villur": {
           "$ref": "#/definitions/Villur"
@@ -5180,41 +5076,6 @@
         },
         "kodi": {
           "type": "string"
-        }
-      }
-    },
-    "Paging": {
-      "type": "object",
-      "required": [
-        "staerdSidu",
-        "numerSidu",
-        "fjoldiSida",
-        "fjoldiLeyfa",
-        "erFyrriSida",
-        "erNaestaSida"
-      ],
-      "properties": {
-        "staerdSidu": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "numerSidu": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "fjoldiSida": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "fjoldiLeyfa": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "erFyrriSida": {
-          "type": "boolean"
-        },
-        "erNaestaSida": {
-          "type": "boolean"
         }
       }
     },
@@ -5313,6 +5174,99 @@
           "type": "string"
         },
         "skraarnafn": {
+          "type": "string"
+        }
+      }
+    },
+    "SyslSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "gognSkeytis": {
+          "$ref": "#/definitions/SyslGagnaSkeyti"
+        }
+      }
+    },
+    "SyslGagnaSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skeytaHeiti": {
+          "type": "string"
+        },
+        "adilar": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Adili"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VidhengiSkra"
+          }
+        },
+        "gagnaMengi": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Adili": {
+      "type": "object",
+      "required": ["undirritad", "tegund"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "tolvupostur": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "postaritun": {
+          "type": "string"
+        },
+        "sveitafelag": {
+          "type": "string"
+        },
+        "undirritad": {
+          "type": "boolean"
+        },
+        "tegund": {
+          "$ref": "#/definitions/AdiliTegund"
+        }
+      }
+    },
+    "AdiliTegund": {
+      "type": "integer",
+      "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
+      "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
+      "enum": [0, 1, 2]
+    },
+    "VidhengiSkra": {
+      "type": "object",
+      "properties": {
+        "nafnSkraar": {
+          "type": "string"
+        },
+        "innihaldSkraar": {
           "type": "string"
         }
       }
