@@ -294,7 +294,8 @@ export interface InheritanceReportAsset {
   assetNumber?: string
   share: number
   propertyValuation?: string
-  accountNumber?: string
+  amount: string
+  exchangeRateOrInterest: string
 }
 
 export interface InheritanceReportInfo {

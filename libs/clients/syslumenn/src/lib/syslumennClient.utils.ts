@@ -510,11 +510,21 @@ export const mapInheritanceTax = (
 const mapInheritanceReportAsset = (
   iAsset: EignirDanarbusErfdafjarskatt,
 ): InheritanceReportAsset => {
+  const {
+    eignarhlutfall,
+    fastanumer,
+    fasteignamat,
+    gengiVextir,
+    lysing,
+    upphaed,
+  } = iAsset
   return {
-    description: iAsset.lysing,
-    assetNumber: iAsset.fastanumer,
-    share: iAsset.eignarhlutfall,
-    propertyValuation: iAsset.fasteignamat,
+    description: lysing ?? '',
+    assetNumber: fastanumer ?? '',
+    share: parseShare(eignarhlutfall) ?? 100,
+    propertyValuation: fasteignamat ?? '',
+    amount: upphaed ?? '',
+    exchangeRateOrInterest: gengiVextir ?? '',
   }
 }
 
@@ -579,11 +589,7 @@ const mapInheritanceReportAssets = (
         stocks.push(asset)
         break
       case TegundAndlags.NUMBER_8:
-        bankAccounts.push({
-          ...asset,
-          accountNumber: asset.assetNumber,
-          assetNumber: undefined,
-        })
+        bankAccounts.push(asset)
         break
       case TegundAndlags.NUMBER_9:
         depositsAndMoney.push(asset)
