@@ -73,16 +73,21 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
                 value: `${formatDate(t.validFrom)} - ${formatDate(t.validTo)}`,
               }
             : undefined,
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('huntingPermitValidFor', locale, label),
-            value: t.permitFor?.map((p) => capitalize(p))?.join(', ') ?? '',
-          },
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('huntingPermitBenefits', locale, label),
-            value: t.benefits?.map((b) => capitalize(b.land))?.join(', ') ?? '',
-          },
+          t.permitFor?.length
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('huntingPermitValidFor', locale, label),
+                value: t.permitFor?.map((p) => capitalize(p))?.join(', ') ?? '',
+              }
+            : undefined,
+          t.benefits?.length
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('huntingPermitBenefits', locale, label),
+                value:
+                  t.benefits?.map((b) => capitalize(b.land))?.join(', ') ?? '',
+              }
+            : undefined,
         ].filter(isDefined)
 
         return {
