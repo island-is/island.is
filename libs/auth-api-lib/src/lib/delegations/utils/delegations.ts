@@ -4,10 +4,14 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import {
+  DelegationRecordType,
+  PersonalRepresentativeDelegationType,
+} from '../types/delegationRecord'
 
 const delegationProviderTypeMap: Record<
   AuthDelegationProvider,
-  AuthDelegationType[]
+  DelegationRecordType[]
 > = {
   [AuthDelegationProvider.NationalRegistry]: [AuthDelegationType.LegalGuardian],
   [AuthDelegationProvider.CompanyRegistry]: [
@@ -15,6 +19,7 @@ const delegationProviderTypeMap: Record<
   ],
   [AuthDelegationProvider.PersonalRepresentativeRegistry]: [
     AuthDelegationType.PersonalRepresentative,
+    PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
   ],
   [AuthDelegationProvider.Custom]: [AuthDelegationType.Custom],
 }

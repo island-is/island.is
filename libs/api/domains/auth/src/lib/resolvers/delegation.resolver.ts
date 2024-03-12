@@ -22,12 +22,12 @@ import {
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
-import { Delegation } from '../models'
+import { Delegation, MergedDelegation } from '../models'
 import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
 import { MeDelegationsService } from '../services/meDelegations.service'
-import type { DelegationDTO, MergedDelegationDTO } from '../services/types'
-import { MergedDelegation } from '../models/delegation.model'
+import { DelegationDTO } from '@island.is/clients/auth/delegation-api'
+import { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)

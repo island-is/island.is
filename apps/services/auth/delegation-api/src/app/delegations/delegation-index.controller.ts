@@ -71,7 +71,7 @@ export class DelegationIndexController {
 
   @Put('.id')
   @Documentation({
-    description: 'Create or update a delegation index item.',
+    description: 'Create or update a delegation index record.',
     response: { status: 200, type: DelegationRecordDTO },
     request: requestDocumentation,
   })
@@ -111,7 +111,7 @@ export class DelegationIndexController {
 
   @Delete('.id')
   @Documentation({
-    description: 'Delete a delegation index item.',
+    description: 'Delete a delegation index record.',
     response: { status: 204 },
     request: requestDocumentation,
   })
