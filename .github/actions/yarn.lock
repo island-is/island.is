@@ -1610,12 +1610,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.11.4":
-  version: 20.11.4
-  resolution: "@types/node@npm:20.11.4"
+"@types/node@npm:20.11.26":
+  version: 20.11.26
+  resolution: "@types/node@npm:20.11.26"
   dependencies:
     undici-types: ~5.26.4
-  checksum: b9cf2c5397ea31f3355656edd204aee777a36db75b79b8b7aba2bed7ea5b29914fa808489da5c632c5eddbb33c3106188bef0bff3b7648bd39aa50dee466a73b
+  checksum: 2cd5a373d2880b7f07ae65d4d23660cdcabddb12772ce631b6caad2f9283350b8a17c802590f67f0ccec5a9c7d43ae0ecd9637c5ad870b8f793328af8c61eae5
   languageName: node
   linkType: hard
 
@@ -1715,7 +1715,7 @@ __metadata:
     "@octokit/rest": 19.0.4
     "@types/debug": 4.1.7
     "@types/jest": ^27.4.1
-    "@types/node": 20.11.4
+    "@types/node": 20.11.26
     debug: 4.3.4
     esbuild: 0.15.10
     esbuild-runner: 2.2.1
