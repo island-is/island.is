@@ -217,13 +217,15 @@ export const TableRepeaterFormField: FC<Props> = ({
                   const span = isHalfColumn ? '1/2' : '1/1'
                   const Component = componentMapper[component]
                   const id = `${data.id}[${activeIndex}].${itemId}`
+                  const activeValues =
+                    activeIndex >= 0 && values ? values[activeIndex] : undefined
 
                   const translatedOptions = options?.map((option) => ({
                     ...option,
                     label: formatText(option.label, application, formatMessage),
                   }))
 
-                  if (condition && !condition(application)) {
+                  if (condition && !condition(application, activeValues)) {
                     return null
                   }
 

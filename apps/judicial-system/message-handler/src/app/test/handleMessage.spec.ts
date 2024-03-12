@@ -340,20 +340,49 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
-  describe('deliver indictment case indictment to police', () => {
+  describe('deliver indictment to police', () => {
     let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_INDICTMENT_CASE_INDICTMENT_TO_POLICE,
+        type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
         user,
         caseId,
       })
     })
 
-    it('should deliver indictment case indictment to police', async () => {
+    it('should deliver indictment to police', async () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backendUrl}/api/internal/case/${caseId}/deliverIndictmentCaseIndictmentToPolice`,
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverIndictmentToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver case files record to police', () => {
+    const policeCaseNumber = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
+        user,
+        caseId,
+        policeCaseNumber,
+      } as PoliceCaseMessage)
+    })
+
+    it('should deliver case files record to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseFilesRecordToPolice/${policeCaseNumber}`,
         {
           method: 'POST',
           headers: {
@@ -915,6 +944,36 @@ describe('MessageHandlerService - Handle message', () => {
           },
           body: JSON.stringify({
             type: NotificationType.APPEAL_WITHDRAWN,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send indictment denied notifications', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send indictment denied notifications', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.INDICTMENT_DENIED,
             user,
           }),
         },
