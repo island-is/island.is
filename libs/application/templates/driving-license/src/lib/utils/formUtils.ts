@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/types'
 import { m } from '../messages'
 import { ConditionFn, DrivingLicense } from '../types'
-import { YES } from '../constants'
+import { NO, YES } from '../constants'
 import {
   DrivingLicenseApplicationFor,
   B_FULL,
@@ -46,7 +46,7 @@ export const isApplicationForCondition =
   }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
-  !hasYes(answers?.drivingLicenseInOtherCountry)
+  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') === NO
 
 export const chooseDistrictCommissionerDescription = ({
   answers,
@@ -74,9 +74,6 @@ export const hasCompletedPrerequisitesStep =
         'requirementsMet',
         false,
       ) === true
-
-    // TODO: check for gdpr approval as well?
-
     return requirementsMet === value
   }
 
