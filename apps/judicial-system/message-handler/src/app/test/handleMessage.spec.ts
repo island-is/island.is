@@ -951,4 +951,34 @@ describe('MessageHandlerService - Handle message', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe('send indictment denied notifications', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send indictment denied notifications', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.INDICTMENT_DENIED,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
 })

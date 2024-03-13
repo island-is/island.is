@@ -295,10 +295,15 @@ export class CaseController {
         break
 
       case CaseTransition.SUBMIT:
-        if (isIndictmentCase(theCase.type) && !user.canConfirmAppeal) {
-          throw new ForbiddenException(
-            `User ${user.id} does not have permission to confirm indictments`,
-          )
+        if (isIndictmentCase(theCase.type)) {
+          if (!user.canConfirmAppeal) {
+            throw new ForbiddenException(
+              `User ${user.id} does not have permission to confirm indictments`,
+            )
+          }
+          if (theCase.indictmentDeniedExplanation) {
+            update.indictmentDeniedExplanation = ''
+          }
         }
         break
       case CaseTransition.ACCEPT:
@@ -382,6 +387,12 @@ export class CaseController {
           update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
         }
         break
+      case CaseTransition.DENY_INDICTMENT:
+        if (!user.canConfirmAppeal) {
+          throw new ForbiddenException(
+            `User ${user.id} does not have permission to reject indictments`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(

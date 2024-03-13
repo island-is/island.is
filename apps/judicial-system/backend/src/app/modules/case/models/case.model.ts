@@ -1198,4 +1198,14 @@ export class Case extends Model {
   @BelongsTo(() => Institution, 'prosecutorsOfficeId')
   @ApiPropertyOptional({ type: () => Institution })
   prosecutorsOffice?: Institution
+
+  /**********
+   * The explanation given for a denial of an indictment
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentDeniedExplanation?: string
 }
