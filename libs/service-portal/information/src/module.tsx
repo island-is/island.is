@@ -1,5 +1,9 @@
 import { lazy } from 'react'
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
+import {
+  ApiScope,
+  DocumentsScope,
+  UserProfileScope,
+} from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
@@ -36,7 +40,7 @@ const sharedRoutes = (userInfo: User) => [
   {
     name: 'Notifications',
     path: InformationPaths.Notifications,
-    enabled: userInfo.scopes.includes(UserProfileScope.write),
+    enabled: userInfo.scopes.includes(DocumentsScope.main),
     key: 'Notifications',
     element: <Notifications />,
   },

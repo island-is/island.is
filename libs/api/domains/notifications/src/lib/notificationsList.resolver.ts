@@ -7,7 +7,7 @@ import {
   Resolver,
   Parent,
 } from '@nestjs/graphql'
-import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
@@ -23,12 +23,16 @@ import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Loader } from '@island.is/nest/dataloader'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
+import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
+import { DocumentsScope } from '@island.is/auth/scopes'
 
 const LOG_CATEGORY = 'notification-list-resolver'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => NotificationsResponse)
 @Audit({ namespace: AUDIT_NAMESPACE })
+@Scopes(DocumentsScope.main)
+@FeatureFlag(Features.ServicePortalNotificationsEnabled)
 export class NotificationsListResolver {
   constructor(
     private readonly service: NotificationsService,
