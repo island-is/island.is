@@ -60,8 +60,10 @@ jobs:
 
       - name: Check node version
         run: |
-          node -v
-          ls -l `which node`
+          echo "node version: $(node -v)"
+          echo "node binary location:"
+          ls -l "$(which node)"
+          echo "yarn version: $(yarn --version)"
 
       - name: Checking out relevant branches
         run: |
