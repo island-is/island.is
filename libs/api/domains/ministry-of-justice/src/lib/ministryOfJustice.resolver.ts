@@ -1,8 +1,6 @@
-import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scopes } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
-import { UseGuards } from '@nestjs/common'
+
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { MinistryOfJusticeService } from './ministryOfJustice.service'
 import {
@@ -31,17 +29,15 @@ export class MinistryOfJusticeResolver {
   @Query(() => AdvertResponse, {
     name: 'ministryOfJusticeAdvert',
   })
-  @Audit()
-  advert(@CurrentUser() user: User, @Args('params') params: AdvertQueryParams) {
-    return this.mojService.advert(user, params)
+  advert(@Args('params') params: AdvertQueryParams) {
+    return this.mojService.advert(params)
   }
 
   @Query(() => AdvertsResponse, {
     name: 'ministryOfJusticeAdverts',
   })
-  @Audit()
-  adverts(@CurrentUser() user: User, @Args('input') input: AdvertsInput) {
-    return this.mojService.adverts(user, {
+  adverts(@Args('input') input: AdvertsInput) {
+    return this.mojService.adverts({
       search: input.search,
     })
   }
@@ -49,24 +45,21 @@ export class MinistryOfJusticeResolver {
   @Query(() => AdvertDepartmentResponse, {
     name: 'ministryOfJusticeDepartments',
   })
-  @Audit()
-  departments(@CurrentUser() user: User, @Args('params') params: QueryParams) {
-    return this.mojService.departments(user, params)
+  departments(@Args('params') params: QueryParams) {
+    return this.mojService.departments(params)
   }
 
   @Query(() => AdvertTypeResponse, {
     name: 'ministryOfJusticeTypes',
   })
-  @Audit()
-  types(@CurrentUser() user: User, @Args('params') params: TypeQueryParams) {
-    return this.mojService.types(user, params)
+  types(@Args('params') params: TypeQueryParams) {
+    return this.mojService.types(params)
   }
 
   @Query(() => AdvertCategoryResponse, {
     name: 'ministryOfJusticeCategories',
   })
-  @Audit()
-  categories(@CurrentUser() user: User, @Args('params') params: QueryParams) {
-    return this.mojService.categories(user, params)
+  categories(@Args('params') params: QueryParams) {
+    return this.mojService.categories(params)
   }
 }
