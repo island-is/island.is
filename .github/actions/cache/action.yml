@@ -5,6 +5,7 @@
 #
 # ** Example **
 #
+# ```
 # jobs:
 #   my-job:
 #     steps:
@@ -15,6 +16,7 @@
 #       with:
 #         path: node_modules
 #         key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+# ```
 
 name: 'Cache'
 description: 'Cache with retry'
