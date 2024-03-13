@@ -6,7 +6,7 @@ import { Audit } from '@island.is/nest/audit'
 import { Inject, NotFoundException, UseGuards } from '@nestjs/common'
 import { NotificationsService } from './notifications.service'
 import {
-  MarkAllAsSeenResponse,
+  NotificationsMarkAllAsSeenResponse,
   MarkNotificationReadResponse,
   NotificationResponse,
 } from './notifications.model'
@@ -65,7 +65,7 @@ export class NotificationsResolver {
     return notification
   }
 
-  @Mutation(() => MarkAllAsSeenResponse, {
+  @Mutation(() => NotificationsMarkAllAsSeenResponse, {
     name: 'markAllNotificationsSeen',
     nullable: true,
   })

@@ -5,7 +5,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { UserNotificationApi } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
 import {
-  MarkAllAsSeenResponse,
+  NotificationsMarkAllAsSeenResponse,
   MarkNotificationReadResponse,
   NotificationResponse,
   NotificationsInput,
@@ -74,7 +74,7 @@ export class NotificationsService {
 
   async markAllNotificationsAsSeen(
     user: User,
-  ): Promise<MarkAllAsSeenResponse | null> {
+  ): Promise<NotificationsMarkAllAsSeenResponse | null> {
     this.logger.debug('marking all notifications as seen')
 
     await this.userNotificationsWAuth(

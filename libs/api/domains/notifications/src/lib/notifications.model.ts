@@ -19,10 +19,10 @@ export class NotificationMetadata {
   @Field(() => GraphQLISODateTime, { nullable: true })
   created?: Date
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   read?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   seen?: boolean
 }
 
@@ -111,8 +111,8 @@ export class MarkNotificationReadResponse {
 }
 
 @ObjectType()
-export class MarkAllAsSeenResponse {
-  @Field(() => Boolean)
+export class NotificationsMarkAllAsSeenResponse {
+  @Field()
   success!: boolean
 }
 
