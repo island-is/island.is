@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 import { Inject, NotFoundException, UseGuards } from '@nestjs/common'
 import { NotificationsService } from './notifications.service'
 import {
@@ -12,9 +13,11 @@ import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const LOG_CATEGORY = 'notifications-resolver'
+export const AUDIT_NAMESPACE = 'notifications-resolver'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
+@Audit({ namespace: AUDIT_NAMESPACE })
 export class NotificationsResolver {
   constructor(
     private readonly service: NotificationsService,
@@ -25,6 +28,7 @@ export class NotificationsResolver {
     name: 'userNotification',
     nullable: true,
   })
+  @Audit()
   async getNotification(
     @CurrentUser() user: User,
     @Args('id', { type: () => Number, nullable: false })
@@ -61,6 +65,7 @@ export class NotificationsResolver {
     name: 'markAllNotificationsSeen',
     nullable: true,
   })
+  @Audit()
   async markAllNotificationsAsSeen(@CurrentUser() user: User) {
     let result
 
@@ -81,6 +86,7 @@ export class NotificationsResolver {
     name: 'markNotificationAsRead',
     nullable: true,
   })
+  @Audit()
   async markNotificationAsRead(
     @CurrentUser() user: User,
     @Args('id', { type: () => Number, nullable: false })

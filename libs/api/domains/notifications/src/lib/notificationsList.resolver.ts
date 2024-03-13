@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql'
 import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
 import { OrganizationLogoLoader } from '@island.is/cms'
 import type { LogoUrl, OrganizationLogoDataLoader } from '@island.is/cms'
@@ -21,11 +22,13 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Loader } from '@island.is/nest/dataloader'
+import { AUDIT_NAMESPACE } from './notifications.resolver'
 
 const LOG_CATEGORY = 'notification-list-resolver'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => NotificationsResponse)
+@Audit({ namespace: AUDIT_NAMESPACE })
 export class NotificationsListResolver {
   constructor(
     private readonly service: NotificationsService,
@@ -36,6 +39,7 @@ export class NotificationsListResolver {
     name: 'userNotifications',
     nullable: true,
   })
+  @Audit()
   async getNotifications(
     @CurrentUser() user: User,
     @Args('input', { type: () => NotificationsInput, nullable: true })
