@@ -177,7 +177,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/portals/admin/regulations-admin/                                                                   @island-is/hugsmidjan
 /libs/clients/icelandic-health-insurance/rights-portal/                                                  @island-is/hugsmidjan
 /libs/clients/health-directorate                                                                         @island-is/hugsmidjan @island-is/origo
-/libs/portals/admin/air-discount-scheme    
+/libs/portals/admin/air-discount-scheme
 /libs/application/templates/official-journal-of-iceland/                                                 @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/            @island-is/hugsmidjan
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
@@ -201,7 +201,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
 /libs/clients/althingi-ombudsman/                                                                        @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
-/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
+/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
 /libs/clients/fishing-license/                                                                           @island-is/norda
 /libs/api/domains/fishing-license/                                                                       @island-is/norda
