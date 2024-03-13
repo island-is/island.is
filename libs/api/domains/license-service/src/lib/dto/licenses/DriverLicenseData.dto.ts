@@ -4,7 +4,6 @@ import { GenericLicenseType } from '../../licenceService.type'
 
 @ObjectType('LicenseDriverLicenseData')
 export class DriverLicenseData implements DrivingLicenseVerifyExtraData {
-  @Field(() => GenericLicenseType)
   type!: GenericLicenseType
 
   @Field()

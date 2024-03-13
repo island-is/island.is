@@ -499,29 +499,29 @@ export class LicenseServiceService {
       )
     }
 
-    if (licenseService?.verifyPkPass) {
-      const verifyPkPassRes = await licenseService.verifyPkPass(data)
+    if (licenseService?.verifyPkPassDeprecated) {
+      const verification = await licenseService.verifyPkPassDeprecated(data)
 
-      if (!verifyPkPassRes.ok) {
+      if (!verification.ok) {
         throw new InternalServerErrorException(
-          `Unable to verify pkpass for user`,
+          'Unable to verify pkpass for user',
         )
       }
 
-      return {
-        valid: verifyPkPassRes.data.valid,
-        // Make sure to return the data as a string to be backwards compatible
-        data: JSON.stringify(verifyPkPassRes.data.data),
-      }
+      return verification.data
     }
 
-    const verification = await licenseService.verifyPkPassDeprecated(data)
+    const verifyPkPassRes = await licenseService.verifyPkPass(data)
 
-    if (!verification.ok) {
-      throw new InternalServerErrorException('Unable to verify pkpass for user')
+    if (!verifyPkPassRes.ok) {
+      throw new InternalServerErrorException(`Unable to verify pkpass for user`)
     }
 
-    return verification.data
+    return {
+      valid: verifyPkPassRes.data.valid,
+      // Make sure to return the data as a string to be backwards compatible
+      data: JSON.stringify(verifyPkPassRes.data.data),
+    }
   }
 
   async createBarcode(user: User, genericUserLicense: GenericUserLicense) {
