@@ -51,9 +51,8 @@ type RepeaterProps = {
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { externalData } = application
   const { id, props } = field
-  const { calcWithShareValue, assetKey, fromExternalData } = props
+  const { calcWithShareValue, assetKey } = props
 
   if (typeof calcWithShareValue !== 'boolean' || !assetKey) {
     throw new Error('calcWithShareValue and assetKey are required')
@@ -136,7 +135,7 @@ export const AssetsRepeater: FC<
       replace(
         extData.map((x) => ({
           ...x,
-          share: '0',
+          share: String(x.share),
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
