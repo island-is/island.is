@@ -347,10 +347,7 @@ export class DrivingLicenseClient
 
     const nationalId = license?.socialSecurityNumber
     const name = license?.name
-    const picture = license?.photo?.image ?? ''
-
-    // TODO verify that this rawData is not being used anywhere
-    const rawData = license ? JSON.stringify(license) : undefined
+    const picture = license?.photo?.image ?? undefined
 
     if (!nationalId || !name) {
       const missingDataErrorMsg = 'Missing data. nationalId or name missing'
