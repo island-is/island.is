@@ -187,6 +187,7 @@ jobs:
         run: ./scripts/ci/20_license-audit.sh
 
       - name: Check user permissions
+        continue-on-error: true
         uses: actions-cool/check-user-permission@v2
         id: check-permission
 
