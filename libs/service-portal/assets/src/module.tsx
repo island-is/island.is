@@ -6,56 +6,52 @@ import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
 
-const IPOverview = lazy(
-  () =>
-    import(
-      './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
-    ),
+const IPOverview = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
+  ),
 )
-const IPDesignDetail = lazy(
-  () =>
-    import(
-      './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
-    ),
+const IPDesignDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
+  ),
 )
-const IPTrademarkDetail = lazy(
-  () =>
-    import(
-      './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
-    ),
+const IPTrademarkDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
+  ),
 )
-const IPPatentDetail = lazy(
-  () =>
-    import(
-      './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
-    ),
+const IPPatentDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
+  ),
 )
 
-const AssetsOverview = lazy(
-  () => import('./screens/AssetsOverview/AssetsOverview'),
+const AssetsOverview = lazy(() =>
+  import('./screens/AssetsOverview/AssetsOverview'),
 )
-const RealEstateAssetDetail = lazy(
-  () => import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
+const RealEstateAssetDetail = lazy(() =>
+  import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
 )
 
 const Overview = lazy(() => import('./screens/Overview/Overview'))
 
-const VehicleDetail = lazy(
-  () => import('./screens/VehicleDetail/VehicleDetail'),
+const VehicleDetail = lazy(() =>
+  import('./screens/VehicleDetail/VehicleDetail'),
 )
-const VehicleHistory = lazy(
-  () => import('./screens/VehicleHistory/VehicleHistory'),
+const VehicleHistory = lazy(() =>
+  import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
-const WorkMachinesOverview = lazy(
-  () => import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
+const WorkMachinesOverview = lazy(() =>
+  import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
-const WorkMachinesDetail = lazy(
-  () => import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
+const WorkMachinesDetail = lazy(() =>
+  import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
 )
 
-const VehicleMileage = lazy(
-  () => import('./screens/VehicleMileage/VehicleMileage'),
+const VehicleMileage = lazy(() =>
+  import('./screens/VehicleMileage/VehicleMileage'),
 )
 
 export const assetsModule: PortalModule = {
