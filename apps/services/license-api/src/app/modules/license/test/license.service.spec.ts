@@ -19,6 +19,7 @@ import {
   BarcodeService,
   LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
   LicenseConfig,
+  TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
 import {
   BadRequestException,
@@ -30,6 +31,7 @@ import { ConfigType } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
 import { Cache } from 'cache-manager'
 import * as faker from 'faker'
+
 import ShortUniqueId from 'short-unique-id'
 import { VerifyInputData } from '../dto/verifyLicense.input'
 import { LicenseService } from '../license.service'
@@ -48,6 +50,7 @@ const createCahceData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
   licenseType: getLicenseType(licenseId),
   extraData: {
     name: faker.name.firstName(),
+    nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
   },
 })
 
@@ -308,19 +311,25 @@ describe('LicenseService', () => {
         })
       })
 
-      it.skip(`should verify barcodeData as token for the ${licenseId} license`, async () => {
+      it(`should verify barcodeData as token for the ${licenseId} license`, async () => {
         // Act
         const code = randomUUID()
-        const data = createCahceData(licenseId)
+        const data =
+          licenseId === LicenseId.DRIVING_LICENSE
+            ? createCahceData(licenseId)
+            : undefined
 
         // Create token
         const token = await barcodeService.createToken({
           v: '1',
+          t: '1',
           c: code,
         })
 
-        // Put data in cache
-        await barcodeService.setCache(code, data)
+        if (data) {
+          // Put data in cache
+          await barcodeService.setCache(code, data)
+        }
 
         const result = await licenseService.verifyLicense({
           barcodeData: token,
@@ -339,14 +348,18 @@ describe('LicenseService', () => {
           expect(result).toMatchObject({
             valid: true,
             passIdentity: {
-              nationalId: data.nationalId,
-              name: data.extraData?.name,
+              nationalId: data?.nationalId,
+              name: data?.extraData?.name,
             },
           })
         }
       })
 
       it(`should fail to verify barcodeData token because of token expire time for the ${licenseId} license`, async () => {
+        jest.useFakeTimers({
+          advanceTimers: true,
+        })
+
         // Act
         const code = randomUUID()
         const data = createCahceData(licenseId)
@@ -355,6 +368,7 @@ describe('LicenseService', () => {
         const token = await barcodeService.createToken(
           {
             v: '1',
+            t: '1',
             c: code,
           },
           { expiresIn: 1 },
@@ -363,17 +377,17 @@ describe('LicenseService', () => {
         // Put data in cache
         await barcodeService.setCache(code, data)
 
-        // Wait for token to expire, before verifying
-        setTimeout(async () => {
-          const result = await licenseService.verifyLicense({
-            barcodeData: token,
-          })
+        // Let the token expire
+        jest.advanceTimersByTime(1000)
 
-          // Assert
-          await expect(result).rejects.toThrow(
-            new BadRequestException('Token expired'),
-          )
-        }, 1000)
+        // Assert
+        const result = licenseService.verifyLicense({
+          barcodeData: token,
+        })
+
+        await expect(result).rejects.toThrow(
+          new BadRequestException(TOKEN_EXPIRED_ERROR),
+        )
       })
 
       it(`should fail to verify the ${licenseId}  license`, async () => {

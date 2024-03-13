@@ -6,7 +6,6 @@ import {
 } from '@nestjs/graphql'
 import { GenericLicenseType } from '../licenceService.type'
 import { DriverLicenseData } from './licenses/DriverLicenseData.dto'
-import { LicenseFallbackData } from './licenses/LicenseFallbackData.dto'
 
 export enum VerifyLicenseError {
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
@@ -20,14 +19,14 @@ registerEnumType(VerifyLicenseError, {
 
 export const VerifyLicenseResultUnion = createUnionType({
   name: 'VerifyLicenseResultUnion',
-  types: () => [DriverLicenseData, LicenseFallbackData] as const,
+  types: () => [DriverLicenseData] as const,
   resolveType: (value) => {
     switch (value.type) {
       case GenericLicenseType.DriversLicense:
         return DriverLicenseData
 
       default:
-        return LicenseFallbackData
+        return null
     }
   },
 })
@@ -38,7 +37,7 @@ export class VerifyLicenseResult {
     nullable: true,
     description: 'Optional data related to the verify verification',
   })
-  data?: typeof VerifyLicenseResultUnion
+  data?: typeof VerifyLicenseResultUnion | null
 
   @Field(() => String, { nullable: true })
   licenseType?: GenericLicenseType

@@ -13,6 +13,7 @@ export class PCardClient implements LicenseClient<LicenseType.PCard> {
     private pCardService: PCardService,
   ) {}
   clientSupportsPkPass = false
+  type = LicenseType.PCard
 
   async getLicenses(user: User): Promise<Result<Array<Staediskortamal>>> {
     try {

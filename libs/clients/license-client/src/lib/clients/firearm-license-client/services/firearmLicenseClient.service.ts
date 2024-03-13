@@ -14,13 +14,15 @@ import {
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
-  PkPassVerification,
   PkPassVerificationInputData,
+  VerifyPkPassResult,
 } from '../../../licenseClient.type'
 import { FirearmLicenseDto } from '../firearmLicenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
+
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
+
 @Injectable()
 export class FirearmLicenseClient
   implements LicenseClient<LicenseType.FirearmLicense>
@@ -32,6 +34,7 @@ export class FirearmLicenseClient
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.FirearmLicense
 
   private checkLicenseValidityForPkPass(
     data: FirearmLicenseDto,
@@ -282,9 +285,10 @@ export class FirearmLicenseClient
       data: res.data.distributionUrl,
     }
   }
-  async verifyPkPassDeprecated(
+
+  async verifyPkPass(
     data: string,
-  ): Promise<Result<PkPassVerification>> {
+  ): Promise<Result<VerifyPkPassResult<LicenseType.FirearmLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -300,7 +304,9 @@ export class FirearmLicenseClient
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

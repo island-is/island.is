@@ -158,6 +158,6 @@ export class LicenseServiceResolver {
   async verifyLicenseBarcode(
     @Args('input') input: VerifyLicenseInput,
   ): Promise<VerifyLicenseResult> {
-    return this.licenseServiceService.verifyLicense(input.data)
+    return this.licenseServiceService.verifyLicenseBarcode(input.data)
   }
 }

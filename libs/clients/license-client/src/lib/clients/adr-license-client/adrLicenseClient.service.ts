@@ -17,9 +17,9 @@ import {
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
-  PkPassVerification,
   PkPassVerificationInputData,
   Result,
+  VerifyPkPassResult,
 } from '../../licenseClient.type'
 import { FlattenedAdrDto } from './adrLicenseClient.type'
 
@@ -35,6 +35,7 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.AdrLicense
 
   private checkLicenseValidityForPkPass(
     licenseInfo: AdrDto,
@@ -253,9 +254,9 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
     }
   }
 
-  async verifyPkPassDeprecated(
+  async verifyPkPass(
     data: string,
-  ): Promise<Result<PkPassVerification>> {
+  ): Promise<Result<VerifyPkPassResult<LicenseType.AdrLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -271,7 +272,9 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

@@ -8,7 +8,10 @@ import {
 import { CmsContentfulService } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BarcodeService } from '@island.is/services/license'
+import {
+  BarcodeService,
+  TOKEN_EXPIRED_ERROR,
+} from '@island.is/services/license'
 
 import { Locale } from '@island.is/shared/types'
 import {
@@ -17,7 +20,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { isJWT } from 'class-validator'
+import { isJSON, isJWT } from 'class-validator'
 import isString from 'lodash/isString'
 
 import ShortUniqueId from 'short-unique-id'
@@ -467,6 +470,7 @@ export class LicenseServiceService {
     const licenseService = await this.licenseClient.getClientByPassTemplateId(
       passTemplateId,
     )
+
     if (!licenseService) {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
     }
@@ -481,24 +485,41 @@ export class LicenseServiceService {
       )
     }
 
-    if (!licenseService.verifyPkPassDeprecated) {
-      this.logger.error(
-        'License client has no verifyPkPassDeprecated implementation',
-        {
-          category: LOG_CATEGORY,
-          passTemplateId,
-        },
-      )
+    if (
+      !licenseService.verifyPkPassDeprecated ||
+      !licenseService.verifyPkPass
+    ) {
+      const missingMethodMsg =
+        'License client has no verifyPkPass nor verifyPkPassDeprecated implementation'
+      this.logError(missingMethodMsg, {
+        passTemplateId,
+      })
+
       throw new BadRequestException(
-        `License client has no verifyPkPassDeprecated implementation, passTemplateId: ${passTemplateId}`,
+        `${missingMethodMsg}, passTemplateId: ${passTemplateId}`,
       )
+    }
+
+    if (licenseService?.verifyPkPass) {
+      const verifyPkPassRes = await licenseService.verifyPkPass(data)
+
+      if (!verifyPkPassRes.ok) {
+        throw new InternalServerErrorException(
+          `Unable to verify pkpass for user`,
+        )
+      }
+
+      return {
+        valid: verifyPkPassRes.data.valid,
+        // Make sure to return the data as a string to be backwards compatible
+        data: JSON.stringify(verifyPkPassRes.data.data),
+      }
     }
 
     const verification = await licenseService.verifyPkPassDeprecated(data)
 
-    // TODO BETTER ERROR HANDLING
     if (!verification.ok) {
-      throw new Error(`Unable to verify pkpass for user`)
+      throw new InternalServerErrorException('Unable to verify pkpass for user')
     }
 
     return verification.data
@@ -540,10 +561,11 @@ export class LicenseServiceService {
     return token
   }
 
-  logError(error: Error | string) {
+  logError(error: Error | string, meta?: Record<string, unknown>) {
     this.logger.error(isString(error) ? error : error.message, {
       category: LOG_CATEGORY,
       ...(isString(error) ? {} : { error }),
+      ...meta,
     })
   }
 
@@ -556,7 +578,7 @@ export class LicenseServiceService {
     } catch (error) {
       this.logError(error)
 
-      if (error.message.includes(this.barcodeService.tokenExpiredError)) {
+      if (error.message.includes(TOKEN_EXPIRED_ERROR)) {
         return {
           valid: false,
           error: VerifyLicenseError.TOKEN_EXPIRED,
@@ -585,36 +607,67 @@ export class LicenseServiceService {
             // type here is used to resolve the union type in the graphql schema
             type: licenseType,
           }
-        : undefined,
+        : null,
     }
   }
 
-  async verifyLicense(data: string): Promise<VerifyLicenseResult> {
+  async verifyLicenseBarcode(data: string): Promise<VerifyLicenseResult> {
     if (isJWT(data)) {
       return this.getDataFromToken(data)
     }
 
-    /**
-     * If the input is not a token, then we fall back to the verifyPkPassDeprecated method
-     * until all clients have been updated to use the new verifyPkPassV2 method
-     */
-    try {
-      const res = await this.verifyPkPassDeprecated(data)
+    if (!isJSON(data)) {
+      this.logError('Invalid JSON data')
 
-      if (res.error) {
-        this.logError(res.error.message)
-
-        return COMMON_VERIFY_ERROR
-      }
-
-      return {
-        valid: true,
-        data: {
-          value: res.data,
-        },
-      }
-    } catch (e) {
       return COMMON_VERIFY_ERROR
+    }
+
+    const { passTemplateId }: { passTemplateId?: string } = JSON.parse(data)
+
+    if (!passTemplateId) {
+      this.logError('No passTemplateId found in data')
+
+      return COMMON_VERIFY_ERROR
+    }
+
+    const client = await this.licenseClient.getClientByPassTemplateId(
+      passTemplateId,
+    )
+
+    if (!client) {
+      this.logError(
+        'Invalid passTemplateId supplied to getClientByPassTemplateId',
+      )
+
+      return COMMON_VERIFY_ERROR
+    }
+
+    if (!client.verifyPkPass) {
+      this.logError('License client has no verifyPkPass implementation')
+
+      return COMMON_VERIFY_ERROR
+    }
+
+    const res = await client.verifyPkPass(data)
+
+    if (!res.ok) {
+      this.logError('Unable to verify pkpass for user')
+
+      return COMMON_VERIFY_ERROR
+    }
+
+    const licenseData = res.data.data
+    const licenseType = this.mapGenericLicenseType(client.type)
+
+    return {
+      valid: true,
+      licenseType,
+      data: licenseData
+        ? {
+            type: licenseType,
+            ...licenseData,
+          }
+        : null,
     }
   }
 }

@@ -21,9 +21,9 @@ import {
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
-  PkPassVerification,
   PkPassVerificationInputData,
   Result,
+  VerifyPkPassResult,
 } from '../../licenseClient.type'
 
 /** Category to attach each log message to */
@@ -40,6 +40,7 @@ export class MachineLicenseClient
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.MachineLicense
 
   private checkLicenseValidityForPkPass(
     licenseInfo: VinnuvelaDto,
@@ -250,9 +251,9 @@ export class MachineLicenseClient
     }
   }
 
-  async verifyPkPassDeprecated(
+  async verifyPkPass(
     data: string,
-  ): Promise<Result<PkPassVerification>> {
+  ): Promise<Result<VerifyPkPassResult<LicenseType.MachineLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -268,7 +269,9 @@ export class MachineLicenseClient
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

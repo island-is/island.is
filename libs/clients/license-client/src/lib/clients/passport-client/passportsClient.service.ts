@@ -14,6 +14,7 @@ export class PassportsClient implements LicenseClient<LicenseType.Passport> {
   ) {}
 
   clientSupportsPkPass = false
+  type = LicenseType.Passport
 
   async getLicenses(user: User): Promise<Result<Array<Passport>>> {
     try {

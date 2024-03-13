@@ -10,7 +10,7 @@ import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
 import { LicenseConfig } from './license.config'
 
 const BARCODE_EXPIRE_TIME_IN_SEC = 60
-
+export const TOKEN_EXPIRED_ERROR = 'TokenExpiredError'
 /**
  * License token data used to generate a license token
  * The reason for the one letter fields is to keep the token as small as possible, since it will be used to generate barcodes
@@ -45,14 +45,12 @@ export class BarcodeService {
     private readonly cacheManager: CacheManager,
   ) {}
 
-  public tokenExpiredError = 'TokenExpiredError'
-
   async verifyToken(token: string): Promise<LicenseTokenData> {
     return new Promise((resolve, reject) =>
       verify(token, this.config.barcodeSecretKey, (err, decoded) => {
         if (err) {
-          if (err.name === this.tokenExpiredError) {
-            throw new Error(this.tokenExpiredError)
+          if (err.name === TOKEN_EXPIRED_ERROR) {
+            throw new Error(err.name)
           }
 
           return reject(err)

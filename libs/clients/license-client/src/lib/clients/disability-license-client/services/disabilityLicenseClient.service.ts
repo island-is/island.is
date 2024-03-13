@@ -18,9 +18,9 @@ import {
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
-  PkPassVerification,
   PkPassVerificationInputData,
   Result,
+  VerifyPkPassResult,
 } from '../../../licenseClient.type'
 
 /** Category to attach each log message to */
@@ -37,6 +37,7 @@ export class DisabilityLicenseClient
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.DisabilityLicense
 
   private checkLicenseValidityForPkPass(
     licenseInfo: OrorkuSkirteini,
@@ -239,9 +240,9 @@ export class DisabilityLicenseClient
     }
   }
 
-  async verifyPkPassDeprecated(
+  async verifyPkPass(
     data: string,
-  ): Promise<Result<PkPassVerification>> {
+  ): Promise<Result<VerifyPkPassResult<LicenseType.DisabilityLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -257,7 +258,9 @@ export class DisabilityLicenseClient
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

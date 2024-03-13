@@ -19,7 +19,7 @@ import {
   LicensePkPassAvailability,
   LicenseType,
   PkPassVerificationInputData,
-  VerifyPkPassV2Result,
+  VerifyPkPassResult,
   Result,
 } from '../../../licenseClient.type'
 import { DrivingLicenseVerifyExtraData } from '../drivingLicenseClient.type'
@@ -39,6 +39,7 @@ export class DrivingLicenseClient
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.DrivingLicense
 
   private checkLicenseValidity(
     license: DriversLicense,
@@ -280,7 +281,7 @@ export class DrivingLicenseClient
   }
 
   async verifyPkPassDeprecated(data: string) {
-    const res = await this.verifyPkPassV2(data)
+    const res = await this.verifyPkPass(data)
 
     if (!res.ok) {
       return res
@@ -300,9 +301,9 @@ export class DrivingLicenseClient
     }
   }
 
-  async verifyPkPassV2(
+  async verifyPkPass(
     data: string,
-  ): Promise<Result<VerifyPkPassV2Result<LicenseType.DrivingLicense>>> {
+  ): Promise<Result<VerifyPkPassResult<LicenseType.DrivingLicense>>> {
     const parsedInput = JSON.parse(data)
     const { code, date } = parsedInput as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
@@ -398,7 +399,7 @@ export class DrivingLicenseClient
     return {
       nationalId: user.nationalId,
       name: res.data.name,
-      picture: res.data.photo?.image ?? undefined,
+      picture: res.data.photo?.image || undefined,
     }
   }
 }

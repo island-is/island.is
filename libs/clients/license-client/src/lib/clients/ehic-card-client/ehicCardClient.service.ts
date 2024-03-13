@@ -14,6 +14,7 @@ export class EhicClient implements LicenseClient<LicenseType.Ehic> {
     private ehicApi: EhicApi,
   ) {}
   clientSupportsPkPass = false
+  type = LicenseType.Ehic
 
   async getLicenses(user: User): Promise<Result<Array<EhicCardResponse>>> {
     try {
