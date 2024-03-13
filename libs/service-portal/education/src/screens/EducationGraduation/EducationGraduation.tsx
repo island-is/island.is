@@ -6,7 +6,6 @@ import {
   ActionCard,
   CardLoader,
   IntroHeader,
-  UNI_HI_SLUG,
   m,
 } from '@island.is/service-portal/core'
 import { useOrganizations } from '@island.is/service-portal/graphql'
@@ -94,10 +93,22 @@ export const EducationGraduation = () => {
             'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
           description: 'education graduation intro',
         })}
-        serviceProviderSlug={UNI_HI_SLUG}
+        serviceProviderSlug={'haskoli-islands'}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !error && <CardLoader />}
+      {!loading && !error && studentInfo.length === 0 && (
+        <Box marginTop={8}>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        </Box>
+      )}
       <Stack space={2}>
         {!!tracks.length &&
           tracks.map((item, index) => {

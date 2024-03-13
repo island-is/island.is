@@ -112,56 +112,6 @@ export const translationStrings = defineMessages({
     defaultMessage: '9 börn',
     description: 'Börn yngri en 18 ára, 9 börn',
   },
-  childSupportCountOptionsNoneLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsNoneLabel',
-    defaultMessage: 'Engu barni',
-    description: 'Fær meðlag greitt með, Engu barni',
-  },
-  childSupportCountOptionsOneLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsOneLabel',
-    defaultMessage: '1 barni',
-    description: 'Fær meðlag greitt með, 1 barni',
-  },
-  childSupportCountOptionsTwoLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsTwoLabel',
-    defaultMessage: '2 börnum',
-    description: 'Fær meðlag greitt með, 2 börnum',
-  },
-  childSupportCountOptionsThreeLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsThreeLabel',
-    defaultMessage: '3 börnum',
-    description: 'Fær meðlag greitt með, 3 börnum',
-  },
-  childSupportCountOptionsFourLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsFourLabel',
-    defaultMessage: '4 börnum',
-    description: 'Fær meðlag greitt með, 4 börnum',
-  },
-  childSupportCountOptionsFiveLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsFiveLabel',
-    defaultMessage: '5 börnum',
-    description: 'Fær meðlag greitt með, 5 börnum',
-  },
-  childSupportCountOptionsSixLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsSixLabel',
-    defaultMessage: '6 börnum',
-    description: 'Fær meðlag greitt með, 6 börnum',
-  },
-  childSupportCountOptionsSevenLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsSevenLabel',
-    defaultMessage: '7 börnum',
-    description: 'Fær meðlag greitt með, 7 börnum',
-  },
-  childSupportCountOptionsEightLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsEightLabel',
-    defaultMessage: '8 börnum',
-    description: 'Fær meðlag greitt með, 8 börnum',
-  },
-  childSupportCountOptionsNineLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsNineLabel',
-    defaultMessage: '9 börnum',
-    description: 'Fær meðlag greitt með, 9 börnum',
-  },
   typeOfPeriodIncomeMonthLabel: {
     id: 'web.pensionCalculator:typeOfPeriodIncomeMonthLabel',
     defaultMessage: 'Mánaðartekjur',
@@ -390,20 +340,15 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Fyrsta endurhæfingarmat',
     description: 'Fyrsta 75% endurhæfingarmat',
   },
+  ageOfFirst75DisabilityAssessmentPlaceholder: {
+    id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessmentPlaceholder',
+    defaultMessage: ' ',
+    description: 'Placeholder fyrir Endurhæfingarlífeyrir og Örorkulífeyrir',
+  },
   livingConditionRatioLabel: {
     id: 'web.pensionCalculator:livingConditionRatioLabel',
     defaultMessage: 'Búsetuhlutfall',
     description: 'Búsetuhlutfall',
-  },
-  childSupportCountLabel: {
-    id: 'web.pensionCalculator:childSupportCountLabel',
-    defaultMessage: 'Fær meðlag greitt með',
-    description: 'Fær meðlag greitt með',
-  },
-  childSupportCountPlaceholder: {
-    id: 'web.pensionCalculator:childSupportCountPlaceholder',
-    defaultMessage: 'Veldu fjölda barna',
-    description: 'Fær meðlag greitt með, placeholder',
   },
   childCountLabel: {
     id: 'web.pensionCalculator:childCount',
