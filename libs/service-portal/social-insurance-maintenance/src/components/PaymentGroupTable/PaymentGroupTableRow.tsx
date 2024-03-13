@@ -16,7 +16,7 @@ type Props = {
 export const PaymentGroupTableRow = ({ data, formatMessage }: Props) => (
   <ExpandRow
     data={[
-      { value: formatMessage(data.type) },
+      { value: formatMessage(data.name) },
       { value: amountFormat(data.totalYearCumulativeAmount) },
     ]}
   >
@@ -53,7 +53,7 @@ export const PaymentGroupTableRow = ({ data, formatMessage }: Props) => (
           : '-',
       }}
       rows={data.payments.map((p) => ({
-        first: p.type,
+        first: p.name,
         scrollableMiddle: MONTHS.map((month) => {
           const monthlyAmount = p.monthlyPaymentHistory.find(
             (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
