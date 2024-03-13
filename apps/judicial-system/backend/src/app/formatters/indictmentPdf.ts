@@ -8,6 +8,7 @@ import {
   formatDate,
   lowercase,
 } from '@island.is/judicial-system/formatters'
+import { CaseState } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
@@ -55,7 +56,7 @@ const roman = (num: number) => {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
-  confirmation?: { actor: string; date: string },
+  confirmation?: { actor: string; institution: string; date: Date },
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -77,11 +78,14 @@ export const createIndictment = async (
 
   setTitle(doc, title)
 
-  addIndictmentConfirmation(
-    doc,
-    theCase.prosecutorsOffice?.name || '',
-    theCase.created,
-  )
+  if (theCase.state === CaseState.SUBMITTED && confirmation) {
+    addIndictmentConfirmation(
+      doc,
+      confirmation.actor,
+      confirmation.institution,
+      confirmation.date,
+    )
+  }
 
   addEmptyLines(doc, 4, doc.page.margins.left)
 

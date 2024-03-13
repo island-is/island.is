@@ -110,6 +110,7 @@ export const addPoliceStar = (doc: PDFKit.PDFDocument) => {
 
 export const addIndictmentConfirmation = (
   doc: PDFKit.PDFDocument,
+  confirmedBy: string,
   institutionName: string,
   createdDate: Date,
 ) => {
@@ -179,7 +180,7 @@ export const addIndictmentConfirmation = (
   doc.font('Times-Roman')
   drawTextWithEllipsis(
     doc,
-    applyCase('þgf', 'Sóley Ólöf Rún Guðmarsdóttir'), // theCase.prosecutor?.name || ''),
+    applyCase('þgf', confirmedBy),
     titleX,
     pageMargin + titleHeight + 32,
     confirmedByWidth - 16,

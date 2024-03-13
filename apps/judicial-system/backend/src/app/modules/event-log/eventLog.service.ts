@@ -56,11 +56,11 @@ export class EventLogService {
     }
   }
 
-  async findEventTypeByNationalId(eventType: EventType, nationalId: string) {
+  async findEventTypeByCaseId(eventType: EventType, caseId: string) {
     return this.eventLogModel.findOne({
       where: {
         eventType,
-        nationalId,
+        caseId,
       },
       order: [['created', 'DESC']],
     })
