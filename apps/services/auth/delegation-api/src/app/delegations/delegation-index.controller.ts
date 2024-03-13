@@ -7,13 +7,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common'
-import * as kennitala from 'kennitala'
+
 import {
   DelegationRecordDTO,
   DelegationsIndexService,
   CreateDelegationRecordInputDTO,
 } from '@island.is/auth-api-lib'
-import { AuthDelegationType } from '@island.is/shared/types'
+
 import { Documentation } from '@island.is/nest/swagger'
 import {
   Auth,
@@ -25,6 +25,7 @@ import {
 import { AuthScope } from '@island.is/auth/scopes'
 import { ApiSecurity } from '@nestjs/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import { DelegationRecordType } from '@island.is/auth-api-lib'
 
 const namespace = '@island.is/auth/delegation-api/delegation-index'
 
@@ -36,7 +37,7 @@ const parseDelegationInfo = (id: string) => {
   }
 
   return {
-    type: type as AuthDelegationType,
+    type: type as DelegationRecordType,
     toNationalId,
     fromNationalId,
   }
