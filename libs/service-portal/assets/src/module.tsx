@@ -144,40 +144,28 @@ export const assetsModule: PortalModule = {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualProperties,
         key: 'IntellectualProperties',
-        enabled:
-          userInfo.scopes.includes(ApiScope.intellectualProperties) ||
-          userInfo.scopes.includes(ApiScope.internal) ||
-          userInfo.scopes.includes(ApiScope.internalProcuring),
+        enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPOverview />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesDesign,
         key: 'IntellectualProperties',
-        enabled:
-          userInfo.scopes.includes(ApiScope.intellectualProperties) ||
-          userInfo.scopes.includes(ApiScope.internal) ||
-          userInfo.scopes.includes(ApiScope.internalProcuring),
+        enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPDesignDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
         key: 'IntellectualProperties',
-        enabled:
-          userInfo.scopes.includes(ApiScope.intellectualProperties) ||
-          userInfo.scopes.includes(ApiScope.internal) ||
-          userInfo.scopes.includes(ApiScope.internalProcuring),
+        enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPTrademarkDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesPatent,
         key: 'IntellectualProperties',
-        enabled:
-          userInfo.scopes.includes(ApiScope.intellectualProperties) ||
-          userInfo.scopes.includes(ApiScope.internal) ||
-          userInfo.scopes.includes(ApiScope.internalProcuring),
+        enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPPatentDetail />,
       },
     ]
