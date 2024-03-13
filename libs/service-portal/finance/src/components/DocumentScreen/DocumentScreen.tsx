@@ -37,6 +37,8 @@ import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 import * as styles from '../../screens/Finance.css'
 import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
+import { Problem } from '@island.is/react-spa/shared'
+import FinanceIntro from '../FinanceIntro'
 
 const ITEMS_ON_PAGE = 20
 
@@ -103,243 +105,242 @@ const DocumentScreen = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: title.toLowerCase(),
-        })}
-      />
-    )
-  }
-
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-      <Stack space={2}>
-        <Hidden print={true}>
-          <Box
-            display="flex"
-            justifyContent="flexStart"
-            flexWrap="wrap"
-            rowGap={2}
-            columnGap={2}
-          >
-            <Filter
-              resultCount={0}
-              variant="popover"
-              align="left"
-              reverse
-              labelClear={formatMessage(m.clearFilter)}
-              labelClearAll={formatMessage(m.clearAllFilters)}
-              labelOpen={formatMessage(m.openFilter)}
-              labelClose={formatMessage(m.closeFilter)}
-              popoverFlip={false}
-              filterInput={
-                <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                  name="finance-document-input"
-                  value={q}
-                  onChange={(e) => setQ(e)}
-                  backgroundColor="blue"
-                />
-              }
-              additionalFilters={
-                <>
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
-                  <DropdownExport
-                    onGetCSV={() =>
-                      exportGeneralDocuments(billsDataArray, title, 'csv')
-                    }
-                    onGetExcel={() =>
-                      exportGeneralDocuments(billsDataArray, title, 'xlsx')
-                    }
-                  />
-                </>
-              }
-              onFilterClear={clearAllFilters}
+      <FinanceIntro text={intro} />
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && (
+        <Stack space={2}>
+          <Hidden print={true}>
+            <Box
+              display="flex"
+              justifyContent="flexStart"
+              flexWrap="wrap"
+              rowGap={2}
+              columnGap={2}
             >
-              <Box className={styles.dateFilterSingle} paddingX={3}>
-                <Box width="full" />
-                <Box marginTop={1}>
-                  <Accordion
-                    dividerOnBottom={false}
-                    dividerOnTop={false}
-                    singleExpand={false}
-                  >
-                    <AccordionItem
-                      key="date-accordion-item"
-                      id="date-accordion-item"
-                      label={formatMessage(m.datesLabel)}
-                      labelColor="dark400"
-                      labelUse="h5"
-                      labelVariant="h5"
-                      iconVariant="small"
-                      startExpanded
+              <Filter
+                resultCount={0}
+                variant="popover"
+                align="left"
+                reverse
+                labelClear={formatMessage(m.clearFilter)}
+                labelClearAll={formatMessage(m.clearAllFilters)}
+                labelOpen={formatMessage(m.openFilter)}
+                labelClose={formatMessage(m.closeFilter)}
+                popoverFlip={false}
+                filterInput={
+                  <FilterInput
+                    placeholder={formatMessage(m.searchPlaceholder)}
+                    name="finance-document-input"
+                    value={q}
+                    onChange={(e) => setQ(e)}
+                    backgroundColor="blue"
+                  />
+                }
+                additionalFilters={
+                  <>
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
                     >
-                      <Box
-                        className={styles.accordionBoxSingle}
-                        display="flex"
-                        flexDirection="column"
+                      {formatMessage(m.print)}
+                    </Button>
+                    <DropdownExport
+                      onGetCSV={() =>
+                        exportGeneralDocuments(billsDataArray, title, 'csv')
+                      }
+                      onGetExcel={() =>
+                        exportGeneralDocuments(billsDataArray, title, 'xlsx')
+                      }
+                    />
+                  </>
+                }
+                onFilterClear={clearAllFilters}
+              >
+                <Box className={styles.dateFilterSingle} paddingX={3}>
+                  <Box width="full" />
+                  <Box marginTop={1}>
+                    <Accordion
+                      dividerOnBottom={false}
+                      dividerOnTop={false}
+                      singleExpand={false}
+                    >
+                      <AccordionItem
+                        key="date-accordion-item"
+                        id="date-accordion-item"
+                        label={formatMessage(m.datesLabel)}
+                        labelColor="dark400"
+                        labelUse="h5"
+                        labelVariant="h5"
+                        iconVariant="small"
+                        startExpanded
                       >
-                        <DatePicker
-                          label={formatMessage(m.datepickerFromLabel)}
-                          placeholderText={formatMessage(m.datepickLabel)}
-                          locale="is"
-                          backgroundColor="blue"
-                          size="xs"
-                          handleChange={(d) => setFromDate(d)}
-                          selected={fromDate}
-                          appearInline
-                        />
-                        <Box marginTop={3}>
+                        <Box
+                          className={styles.accordionBoxSingle}
+                          display="flex"
+                          flexDirection="column"
+                        >
                           <DatePicker
-                            label={formatMessage(m.datepickerToLabel)}
+                            label={formatMessage(m.datepickerFromLabel)}
                             placeholderText={formatMessage(m.datepickLabel)}
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
-                            handleChange={(d) => setToDate(d)}
-                            selected={toDate}
+                            handleChange={(d) => setFromDate(d)}
+                            selected={fromDate}
                             appearInline
                           />
+                          <Box marginTop={3}>
+                            <DatePicker
+                              label={formatMessage(m.datepickerToLabel)}
+                              placeholderText={formatMessage(m.datepickLabel)}
+                              locale="is"
+                              backgroundColor="blue"
+                              size="xs"
+                              handleChange={(d) => setToDate(d)}
+                              selected={toDate}
+                              appearInline
+                            />
+                          </Box>
                         </Box>
-                      </Box>
-                    </AccordionItem>
-                  </Accordion>
-                </Box>
-              </Box>
-            </Filter>
-          </Box>
-        </Hidden>
-        <Box marginTop={2}>
-          {!called && !loading && (
-            <AlertBanner
-              description={formatMessage(m.datesForResults)}
-              variant="info"
-            />
-          )}
-          {loading && (
-            <Box padding={3}>
-              <SkeletonLoader space={1} height={40} repeat={5} />
-            </Box>
-          )}
-          {billsDataArray.length === 0 && called && !loading && !error && (
-            <AlertBanner
-              description={formatMessage(m.noResultsTryAgain)}
-              variant="warning"
-            />
-          )}
-          {billsDataArray.length > 0 ? (
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData style={tableStyles}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(m.date)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData style={tableStyles}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(m.transactionType)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData style={tableStyles}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(m.performingOrganization)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData box={{ textAlign: 'right' }} style={tableStyles}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(m.amount)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData style={tableStyles}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(m.explanationNote)}
-                    </Text>
-                  </T.HeadData>
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {sortBy(billsDataArray, (item) => {
-                  return item.date
-                })
-                  .reverse()
-                  .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
-                  .map((listItem) => (
-                    <T.Row key={listItem.id}>
-                      <T.Data style={tableStyles}>
-                        <Text variant="medium">
-                          {format(new Date(listItem.date), dateFormat.is)}
-                        </Text>
-                      </T.Data>
-                      <T.Data
-                        box={{ position: 'relative' }}
-                        style={tableStyles}
-                      >
-                        <Button
-                          variant="text"
-                          size="medium"
-                          onClick={() =>
-                            formSubmit(
-                              `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
-                            )
-                          }
-                        >
-                          {listItem.type}
-                        </Button>
-                      </T.Data>
-                      <T.Data style={tableStyles}>
-                        <Text variant="medium">{listItem.sender}</Text>
-                      </T.Data>
-                      <T.Data box={{ textAlign: 'right' }} style={tableStyles}>
-                        <Text variant="medium">
-                          {amountFormat(listItem.amount)}
-                        </Text>
-                      </T.Data>
-                      <T.Data style={tableStyles}>
-                        <Text variant="medium">{listItem.note}</Text>
-                      </T.Data>
-                    </T.Row>
-                  ))}
-              </T.Body>
-            </T.Table>
-          ) : null}
-          {totalPages > 0 ? (
-            <Box paddingTop={8}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <Box
-                    cursor="pointer"
-                    className={className}
-                    onClick={() => setPage(page)}
-                    component="button"
-                  >
-                    {children}
+                      </AccordionItem>
+                    </Accordion>
                   </Box>
-                )}
-              />
+                </Box>
+              </Filter>
             </Box>
-          ) : null}
-        </Box>
-      </Stack>
+          </Hidden>
+          <Box marginTop={2}>
+            {!called && !loading && (
+              <AlertBanner
+                description={formatMessage(m.datesForResults)}
+                variant="info"
+              />
+            )}
+            {loading && (
+              <Box padding={3}>
+                <SkeletonLoader space={1} height={40} repeat={5} />
+              </Box>
+            )}
+            {billsDataArray.length === 0 && called && !loading && !error && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(m.noData)}
+                message={formatMessage(m.noTransactionFound)}
+                imgSrc="./assets/images/sofa.svg"
+              />
+            )}
+            {billsDataArray.length > 0 ? (
+              <T.Table>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData style={tableStyles}>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(m.date)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData style={tableStyles}>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(m.transactionType)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData style={tableStyles}>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(m.performingOrganization)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData
+                      box={{ textAlign: 'right' }}
+                      style={tableStyles}
+                    >
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(m.amount)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData style={tableStyles}>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(m.explanationNote)}
+                      </Text>
+                    </T.HeadData>
+                  </T.Row>
+                </T.Head>
+                <T.Body>
+                  {sortBy(billsDataArray, (item) => {
+                    return item.date
+                  })
+                    .reverse()
+                    .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
+                    .map((listItem) => (
+                      <T.Row key={listItem.id}>
+                        <T.Data style={tableStyles}>
+                          <Text variant="medium">
+                            {format(new Date(listItem.date), dateFormat.is)}
+                          </Text>
+                        </T.Data>
+                        <T.Data
+                          box={{ position: 'relative' }}
+                          style={tableStyles}
+                        >
+                          <Button
+                            variant="text"
+                            size="medium"
+                            onClick={() =>
+                              formSubmit(
+                                `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
+                              )
+                            }
+                          >
+                            {listItem.type}
+                          </Button>
+                        </T.Data>
+                        <T.Data style={tableStyles}>
+                          <Text variant="medium">{listItem.sender}</Text>
+                        </T.Data>
+                        <T.Data
+                          box={{ textAlign: 'right' }}
+                          style={tableStyles}
+                        >
+                          <Text variant="medium">
+                            {amountFormat(listItem.amount)}
+                          </Text>
+                        </T.Data>
+                        <T.Data style={tableStyles}>
+                          <Text variant="medium">{listItem.note}</Text>
+                        </T.Data>
+                      </T.Row>
+                    ))}
+                </T.Body>
+              </T.Table>
+            ) : null}
+            {totalPages > 0 ? (
+              <Box paddingTop={8}>
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  renderLink={(page, className, children) => (
+                    <Box
+                      cursor="pointer"
+                      className={className}
+                      onClick={() => setPage(page)}
+                      component="button"
+                    >
+                      {children}
+                    </Box>
+                  )}
+                />
+              </Box>
+            ) : null}
+          </Box>
+        </Stack>
+      )}
       <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
