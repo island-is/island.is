@@ -118,7 +118,7 @@ export const PaymentGroupTable = ({ selectedYear }: Props) => {
         !loading &&
         !error &&
         !data?.socialInsurancePaymentPlan && (
-          <EmptyTable message="no payment plan" />
+          <EmptyTable message={formatMessage(m.noPaymentsFound)} />
         )}
     </>
   )
