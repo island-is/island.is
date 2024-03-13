@@ -123,7 +123,6 @@ const WorkMachinesOverview = () => {
       },
     })
   }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -131,6 +130,7 @@ const WorkMachinesOverview = () => {
         intro={formatMessage(messages.workMachinesDescription)}
         serviceProviderSlug={VINNUEFTIRLITID_SLUG}
         serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+        fixedImgWidth
       />
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">
@@ -229,76 +229,73 @@ const WorkMachinesOverview = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      {error ? (
-        <Problem error={error} noBorder={false} />
-      ) : !error && loading ? (
-        <Box marginBottom={2}>
-          <CardLoader />
-        </Box>
-      ) : !error &&
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && loading && <CardLoader />}
+      {!error &&
         !loading &&
-        !data?.workMachinesPaginatedCollection?.data?.length ? (
-        <Problem
-          type="no_data"
-          title={formatMessage(m.noDataFoundVariable, {
-            arg: formatMessage(messages.workMachineSingular).toLowerCase(),
-          })}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/coffee.svg"
-          titleSize="h3"
-          noBorder={false}
-        />
-      ) : (
-        <>
-          {!loading &&
-            !error &&
-            !!data?.workMachinesPaginatedCollection?.data &&
-            data.workMachinesPaginatedCollection.data.map((wm, index) => {
-              return (
-                <Box marginBottom={3} key={index}>
-                  <ActionCard
-                    text={wm.registrationNumber ?? ''}
-                    heading={wm.type ?? ''}
-                    cta={{
-                      label: formatMessage(m.seeDetails),
-                      variant: 'text',
-                      url:
-                        wm.id && wm.registrationNumber
-                          ? AssetsPaths.AssetsWorkMachinesDetail.replace(
-                              ':regNumber',
-                              wm.registrationNumber,
-                            ).replace(':id', wm.id)
-                          : undefined,
-                    }}
-                    tag={{
-                      variant: 'blue',
-                      outlined: false,
-                      label: wm.status ?? '',
-                    }}
-                  />
-                </Box>
-              )
+        !data?.workMachinesPaginatedCollection?.data?.length && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noDataFoundVariableFeminine, {
+              arg: formatMessage(m.workMachines).toLowerCase(),
             })}
-          {!loading &&
-            !error &&
-            !!data?.workMachinesPaginatedCollection?.totalCount && (
-              <Box>
-                <Pagination
-                  page={page}
-                  totalPages={Math.ceil(
-                    data.workMachinesPaginatedCollection.totalCount /
-                      DEFAULT_PAGE_SIZE,
-                  )}
-                  renderLink={(page, className, children) => (
-                    <button className={className} onClick={() => setPage(page)}>
-                      {children}
-                    </button>
-                  )}
-                />
-              </Box>
+            message={formatMessage(
+              m.noDataFoundVariableDetailVariationFeminine,
+              {
+                arg: formatMessage(m.workMachines).toLowerCase(),
+              },
             )}
-        </>
-      )}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
+      {!loading &&
+        !error &&
+        !!data?.workMachinesPaginatedCollection?.data &&
+        data.workMachinesPaginatedCollection.data.map((wm, index) => {
+          return (
+            <Box marginBottom={3} key={index}>
+              <ActionCard
+                text={wm.registrationNumber ?? ''}
+                heading={wm.type ?? ''}
+                cta={{
+                  label: formatMessage(m.seeDetails),
+                  variant: 'text',
+                  url:
+                    wm.id && wm.registrationNumber
+                      ? AssetsPaths.AssetsWorkMachinesDetail.replace(
+                          ':regNumber',
+                          wm.registrationNumber,
+                        ).replace(':id', wm.id)
+                      : undefined,
+                }}
+                tag={{
+                  variant: 'blue',
+                  outlined: false,
+                  label: wm.status ?? '',
+                }}
+              />
+            </Box>
+          )
+        })}
+      {!loading &&
+        !error &&
+        !!data?.workMachinesPaginatedCollection?.totalCount && (
+          <Box>
+            <Pagination
+              page={page}
+              totalPages={Math.ceil(
+                data.workMachinesPaginatedCollection.totalCount /
+                  DEFAULT_PAGE_SIZE,
+              )}
+              renderLink={(page, className, children) => (
+                <button className={className} onClick={() => setPage(page)}>
+                  {children}
+                </button>
+              )}
+            />
+          </Box>
+        )}
       <Box marginTop={2}>
         <FootNote serviceProviderSlug={VINNUEFTIRLITID_SLUG} />
       </Box>

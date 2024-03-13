@@ -318,6 +318,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
         buildMultiField({
           id: 'preemptiveRightsMultiField',
           title: m.application.preemptiveRight.sectionTitle,
+          description: m.application.preemptiveRight.description,
           children: [
             buildRadioField({
               id: 'preemptiveRight.preemptiveRightWish',
