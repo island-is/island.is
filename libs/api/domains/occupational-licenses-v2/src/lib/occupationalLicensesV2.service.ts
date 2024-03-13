@@ -29,7 +29,6 @@ import { LinkType } from './models/link'
 export class OccupationalLicensesV2Service {
   constructor(
     private readonly dcService: DistrictCommissionersLicensesService,
-    private readonly dcApi: RettindiFyrirIslandIsApi,
     private readonly healthService: HealthDirectorateClientService,
     private readonly mmsApi: MMSApi,
     @Inject(DownloadServiceConfig.KEY)
