@@ -16,6 +16,12 @@ import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
+type FindAllIncomingOptions = {
+  nationalId: string
+  clientAllowedApiScopes?: ApiScopeInfo[]
+  requireApiScopes?: boolean
+}
+
 export class DelegationsIncomingRepresentativeService {
   constructor(
     private prService: PersonalRepresentativeService,
@@ -26,9 +32,12 @@ export class DelegationsIncomingRepresentativeService {
   ) {}
 
   async findAllIncoming(
-    nationalId: string,
-    clientAllowedApiScopes?: ApiScopeInfo[],
-    requireApiScopes?: boolean,
+    {
+      nationalId,
+      clientAllowedApiScopes,
+      requireApiScopes,
+    }: FindAllIncomingOptions,
+    useMaster = false,
   ): Promise<DelegationDTO[]> {
     if (
       requireApiScopes &&
@@ -50,12 +59,16 @@ export class DelegationsIncomingRepresentativeService {
         fromName: name,
         type: DelegationType.PersonalRepresentative,
         provider: DelegationProvider.PersonalRepresentativeRegistry,
+        rights: representative.rights,
       })
 
       const personalRepresentatives =
-        await this.prService.getByPersonalRepresentative({
-          nationalIdPersonalRepresentative: nationalId,
-        })
+        await this.prService.getByPersonalRepresentative(
+          {
+            nationalIdPersonalRepresentative: nationalId,
+          },
+          useMaster,
+        )
 
       const personPromises = personalRepresentatives.map(
         ({ nationalIdRepresentedPerson }) =>
@@ -72,7 +85,7 @@ export class DelegationsIncomingRepresentativeService {
       const [alive, deceased] = partitionWithIndex(
         personalRepresentatives,
         ({ nationalIdRepresentedPerson }, index) =>
-          // Pass through altough Þjóðskrá API throws an error since it is not required to view the personal representative.
+          // Pass through although Þjóðskrá API throws an error since it is not required to view the personal representative.
           persons[index] instanceof Error ||
           // Make sure we can match the person to the personal representatives, i.e. not deceased
           (persons[index] as IndividualDto)?.nationalId ===

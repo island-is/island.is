@@ -26,6 +26,11 @@ import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
+type FindAllValidIncomingOptions = {
+  nationalId: string
+  domainName?: string
+}
+
 /**
  * Service class for incoming delegations.
  * This class supports domain based delegations.
@@ -44,13 +49,16 @@ export class DelegationsIncomingCustomService {
   ) {}
 
   async findAllValidIncoming(
-    nationalId: string,
-    domainName?: string,
+    { nationalId, domainName }: FindAllValidIncomingOptions,
+    useMaster = false,
   ): Promise<DelegationDTO[]> {
     const { delegations, fromNameInfo } = await this.findAllIncoming(
-      nationalId,
-      DelegationValidity.NOW,
-      domainName,
+      {
+        nationalId,
+        validity: DelegationValidity.NOW,
+        domainName,
+      },
+      useMaster,
     )
 
     const delegationDTOs = delegations.map((d) => d.toDTO())
@@ -77,10 +85,10 @@ export class DelegationsIncomingCustomService {
       return []
     }
 
-    const { delegations, fromNameInfo } = await this.findAllIncoming(
-      user.nationalId,
-      DelegationValidity.NOW,
-    )
+    const { delegations, fromNameInfo } = await this.findAllIncoming({
+      nationalId: user.nationalId,
+      validity: DelegationValidity.NOW,
+    })
 
     const validDelegations = delegations
       .map((d) => {
@@ -131,14 +139,20 @@ export class DelegationsIncomingCustomService {
   }
 
   private async findAllIncoming(
-    nationalId: string,
-    validity: DelegationValidity,
-    domainName?: string,
+    {
+      nationalId,
+      domainName,
+      validity,
+    }: FindAllValidIncomingOptions & {
+      validity: DelegationValidity
+    },
+    useMaster = false,
   ): Promise<{ delegations: Delegation[]; fromNameInfo: IndividualDto[] }> {
     let whereOptions = getScopeValidityWhereClause(validity)
     if (domainName) whereOptions = { ...whereOptions, domainName: domainName }
 
     const delegations = await this.delegationModel.findAll({
+      useMaster,
       where: {
         toNationalId: nationalId,
       },

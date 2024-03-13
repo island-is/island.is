@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { RegulationOptionList, RegulationType } from '@island.is/regulations'
 import { DraftImpactName } from '@island.is/regulations/admin'
 
-import { AsyncSearch, Option } from '@island.is/island-ui/core'
+import { AsyncSearch, Option, Text } from '@island.is/island-ui/core'
 import { RegulationSearchListQuery } from '../../utils/dataHooks'
 import { formatSelRegOptions } from '../../utils/formatSelRegOptions'
 import { useLazyQuery } from '@apollo/client'
@@ -110,6 +110,9 @@ export const ImpactAmendingSelection = ({
 
   return (
     <div className={s.amendingSelectionOption}>
+      <Text variant="eyebrow" color="blue400" marginBottom={1}>
+        {t(impactMsgs.regSelect)}
+      </Text>
       <AsyncSearch
         placeholder={t(impactMsgs.regSelectAmmending_placeholder)}
         onInputValueChange={(newValue) => updateValue(newValue)}
@@ -120,7 +123,6 @@ export const ImpactAmendingSelection = ({
         options={selRegOptions || []}
         inputValue={value}
         initialInputValue={undefined}
-        label={t(impactMsgs.regSelect)}
         onChange={(option) => {
           return option?.disabled
             ? false

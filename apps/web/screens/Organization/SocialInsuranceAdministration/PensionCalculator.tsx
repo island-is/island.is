@@ -66,6 +66,24 @@ const lowercaseFirstLetter = (value: string | undefined) => {
   return value[0].toLowerCase() + value.slice(1)
 }
 
+const hasDisabilityAssessment = (
+  typeOfBasePension: BasePensionType | null | undefined,
+) => {
+  return (
+    typeOfBasePension === BasePensionType.Disability ||
+    typeOfBasePension === BasePensionType.Rehabilitation
+  )
+}
+
+const hasStartDate = (
+  typeOfBasePension: BasePensionType | null | undefined,
+) => {
+  return (
+    typeOfBasePension === BasePensionType.Retirement ||
+    typeOfBasePension === BasePensionType.HalfRetirement
+  )
+}
+
 interface NumericInputFieldWrapperProps {
   heading: string
   description: string
@@ -125,7 +143,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   )
 
   const typeOfBasePension = methods.watch('typeOfBasePension')
-  const childCount = methods.watch('childCount')
   const birthMonth = methods.watch('birthMonth')
   const birthYear = methods.watch('birthYear')
   const startMonth = methods.watch('startMonth')
@@ -238,76 +255,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     ]
   }, [formatMessage])
 
-  const childSupportCountOptions = useMemo<Option<number>[]>(() => {
-    const options = [
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsNoneLabel,
-        ),
-        value: 0,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsOneLabel,
-        ),
-        value: 1,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsTwoLabel,
-        ),
-        value: 2,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsThreeLabel,
-        ),
-        value: 3,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsFourLabel,
-        ),
-        value: 4,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsFiveLabel,
-        ),
-        value: 5,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsSixLabel,
-        ),
-        value: 6,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsSevenLabel,
-        ),
-        value: 7,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsEightLabel,
-        ),
-        value: 8,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsNineLabel,
-        ),
-        value: 9,
-      },
-    ]
-
-    if (typeof childCount === 'number') {
-      return options.slice(0, childCount + 1)
-    }
-    return []
-  }, [formatMessage, childCount])
-
   const [dateOfCalculations, setDateOfCalculations] = useQueryState(
     'dateOfCalculations',
     {
@@ -325,6 +272,15 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     const baseUrl = linkResolver('pensioncalculatorresults').href
     const queryParams = convertToQueryParams({
       ...data,
+      ...(!hasDisabilityAssessment(data.typeOfBasePension) && {
+        ageOfFirst75DisabilityAssessment: undefined,
+      }),
+      ...(!hasStartDate(data.typeOfBasePension) && {
+        birthMonth: undefined,
+        birthYear: undefined,
+        startMonth: undefined,
+        startYear: undefined,
+      }),
       dateOfCalculations: data.dateOfCalculations
         ? data.dateOfCalculations
         : dateOfCalculationsOptions[0].value,
@@ -471,6 +427,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     (option) => option.value === birthMonth,
   )?.label
 
+  const maxLivingConditionAbroadInYears: number =
+    customPageData?.configJson?.maxLivingConditionAbroadInYears ?? 52
+
+  const maxTaxCardRatio: number =
+    customPageData?.configJson?.maxTaxCardRatio ?? 100
+
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
@@ -556,9 +518,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                     className={styles.fullWidth}
                   >
                     <Stack space={5}>
-                      {(typeOfBasePension === BasePensionType.Retirement ||
-                        typeOfBasePension ===
-                          BasePensionType.HalfRetirement) && (
+                      {hasStartDate(typeOfBasePension) && (
                         <Stack space={3}>
                           <Box className={styles.textMaxWidth}>
                             <Text variant="h2" as="h2">
@@ -749,33 +709,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 translationStrings.childCountPlaceholder,
                               )}
                               options={childCountOptions}
-                              onSelect={(option) => {
-                                if (option) {
-                                  methods.setValue('childSupportCount', 0)
-                                }
-                              }}
                             />
                           </Box>
-
-                          {typeof childCount === 'number' && childCount > 0 && (
-                            <Box className={styles.inputContainer}>
-                              <SelectController
-                                id={
-                                  'childSupportCount' as keyof CalculationInput
-                                }
-                                name={
-                                  'childSupportCount' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.childSupportCountLabel,
-                                )}
-                                placeholder={formatMessage(
-                                  translationStrings.childSupportCountPlaceholder,
-                                )}
-                                options={childSupportCountOptions}
-                              />
-                            </Box>
-                          )}
 
                           {(typeOfBasePension === BasePensionType.Disability ||
                             typeOfBasePension ===
@@ -801,7 +736,14 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   )
                                 }
                                 type="number"
-                                maxLength={7}
+                                maxLength={
+                                  formatMessage(
+                                    translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                                  ).length + 3
+                                }
+                                placeholder={formatMessage(
+                                  translationStrings.ageOfFirst75DisabilityAssessmentPlaceholder,
+                                )}
                               />
                             </Box>
                           )}
@@ -858,11 +800,22 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   translationStrings.livingConditionAbroadInYearsPlaceholder,
                                 )}
                                 type="number"
-                                suffix={
-                                  ' ' +
-                                  formatMessage(translationStrings.yearsSuffix)
-                                }
-                                maxLength={5}
+                                suffix={` ${formatMessage(
+                                  translationStrings.yearsSuffix,
+                                )}`}
+                                format={(value) => {
+                                  if (
+                                    Number(value) >
+                                    maxLivingConditionAbroadInYears
+                                  ) {
+                                    value = String(
+                                      maxLivingConditionAbroadInYears,
+                                    )
+                                  }
+                                  return `${value} ${formatMessage(
+                                    translationStrings.yearsSuffix,
+                                  )}`
+                                }}
                               />
                             </Box>
                           )}
@@ -886,7 +839,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               placeholder="%"
                               type="number"
                               suffix="%"
-                              maxLength={4}
+                              format={(value) => {
+                                if (Number(value) > maxTaxCardRatio) {
+                                  value = String(maxTaxCardRatio)
+                                }
+                                return `${value}%`
+                              }}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1064,6 +1022,32 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
                         <NumericInputFieldWrapper
                           heading={formatMessage(
+                            translationStrings.foreignBasicPensionHeading,
+                          )}
+                          description={formatMessage(
+                            translationStrings.foreignBasicPensionDescription,
+                          )}
+                        >
+                          <Box className={styles.inputContainer}>
+                            <InputController
+                              id={
+                                'foreignBasicPension' as keyof CalculationInput
+                              }
+                              name={
+                                'foreignBasicPension' as keyof CalculationInput
+                              }
+                              label={formatMessage(
+                                translationStrings.foreignBasicPensionLabel,
+                              )}
+                              placeholder="kr."
+                              currency={true}
+                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                            />
+                          </Box>
+                        </NumericInputFieldWrapper>
+
+                        <NumericInputFieldWrapper
+                          heading={formatMessage(
                             translationStrings.benefitsFromMunicipalityHeading,
                           )}
                           description={formatMessage(
@@ -1102,32 +1086,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               name={'premium' as keyof CalculationInput}
                               label={formatMessage(
                                 translationStrings.premiumLabel,
-                              )}
-                              placeholder="kr."
-                              currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
-                            />
-                          </Box>
-                        </NumericInputFieldWrapper>
-
-                        <NumericInputFieldWrapper
-                          heading={formatMessage(
-                            translationStrings.foreignBasicPensionHeading,
-                          )}
-                          description={formatMessage(
-                            translationStrings.foreignBasicPensionDescription,
-                          )}
-                        >
-                          <Box className={styles.inputContainer}>
-                            <InputController
-                              id={
-                                'foreignBasicPension' as keyof CalculationInput
-                              }
-                              name={
-                                'foreignBasicPension' as keyof CalculationInput
-                              }
-                              label={formatMessage(
-                                translationStrings.foreignBasicPensionLabel,
                               )}
                               placeholder="kr."
                               currency={true}
@@ -1218,8 +1176,6 @@ PensionCalculator.getProps = async ({
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
-    livingConditionRatio: 100,
-    taxCard: 0,
   }
 
   return {

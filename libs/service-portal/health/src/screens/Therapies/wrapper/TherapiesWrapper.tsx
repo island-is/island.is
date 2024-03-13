@@ -46,12 +46,7 @@ export const TherapiesWrapper = ({
       />
       {error && !loading && (
         <Box paddingY={4}>
-          <Problem
-            size="small"
-            noBorder={false}
-            type="internal_service_error"
-            error={error}
-          />
+          <Problem noBorder={false} error={error} />
         </Box>
       )}
       <Box paddingY={4}>

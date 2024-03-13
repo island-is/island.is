@@ -7,7 +7,7 @@ export interface GetStatisticsQuery {
 }
 
 export interface SourceValue {
-  date: Date
+  header: string
   value: number | null
 }
 
