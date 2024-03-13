@@ -58,9 +58,6 @@ jobs:
         with:
           node-version: '18.8.0'
 
-      - name: Setup yarn
-        run: npm install -g yarn
-
       - name: Check node version
         run: |
           node -v
@@ -271,9 +268,6 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup yarn
-        run: npm install -g yarn
-
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -333,9 +327,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -398,9 +389,6 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup yarn
-        run: npm install -g yarn
-
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
@@ -443,8 +431,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -490,9 +476,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -544,9 +527,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
