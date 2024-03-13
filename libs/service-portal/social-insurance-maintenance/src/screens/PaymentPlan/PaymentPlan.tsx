@@ -14,6 +14,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import {
   FootNote,
   IntroHeader,
+  EmptyTable,
   UserInfoLine,
   amountFormat,
   m as coreMessages,
@@ -95,35 +96,34 @@ const PaymentPlan = () => {
               {formatMessage(coreMessages.period)}
             </Text>
 
-            {!selectedYear && <SkeletonLoader height={48} width={226} />}
-            {selectedYear && (
-              <>
-                <Box printHidden marginBottom={3}>
-                  <GridContainer>
-                    <GridRow alignItems="flexEnd">
-                      <GridColumn span={'3/8'}>
-                        <Select
-                          backgroundColor="blue"
-                          size="xs"
-                          options={yearOptions}
-                          label={formatMessage(coreMessages.year)}
-                          onChange={(ev) => {
-                            if (ev?.value) {
-                              setSelectedYear(ev)
-                            }
-                          }}
-                          value={selectedYear}
-                        />
-                      </GridColumn>
-                    </GridRow>
-                  </GridContainer>
-                </Box>
-                <PaymentGroupTable
-                  selectedYear={selectedYear.value}
-                  parentLoading={!selectedYear.value}
-                />
-              </>
+            {!selectedYear && (
+              <Box printHidden marginBottom={3}>
+                <SkeletonLoader height={48} width={226} />
+              </Box>
             )}
+            {selectedYear && (
+              <Box printHidden marginBottom={3}>
+                <GridContainer>
+                  <GridRow alignItems="flexEnd">
+                    <GridColumn span={'3/8'}>
+                      <Select
+                        backgroundColor="blue"
+                        size="xs"
+                        options={yearOptions}
+                        label={formatMessage(coreMessages.year)}
+                        onChange={(ev) => {
+                          if (ev?.value) {
+                            setSelectedYear(ev)
+                          }
+                        }}
+                        value={selectedYear}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </GridContainer>
+              </Box>
+            )}
+            <PaymentGroupTable selectedYear={selectedYear?.value} />
           </Box>
           <Box>
             <Text variant="small" marginTop={5} marginBottom={2}>
