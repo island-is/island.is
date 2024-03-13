@@ -183,7 +183,8 @@ export interface OtherAssets {
 }
 
 export interface BankAccountsData {
-  balance: string
+  capital: string
+  penalityInterestRates: string
   accountNumber: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
