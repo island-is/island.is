@@ -8,7 +8,10 @@ import {
   formatDate,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  type IndictmentConfirmation,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
@@ -56,7 +59,7 @@ const roman = (num: number) => {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
-  confirmation?: { actor: string; institution: string; date: Date },
+  confirmation?: IndictmentConfirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
