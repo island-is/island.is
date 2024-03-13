@@ -7,16 +7,16 @@ import {
 import { GenericLicenseType } from '../licenceService.type'
 import { DriverLicenseData } from './licenses/DriverLicenseData.dto'
 
-export enum VerifyLicenseError {
+export enum VerifyLicenseBarcodeError {
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
   // ERROR is for all errors except token expired, we do not want to expose the actual error message
   // to the clients. Instead, we will log the actual error.
   ERROR = 'ERROR',
 }
 
-registerEnumType(VerifyLicenseError, {
-  name: 'VerifyLicenseError',
-  description: 'Exhaustive list of verify license errors',
+registerEnumType(VerifyLicenseBarcodeError, {
+  name: 'VerifyLicenseBarcodeError',
+  description: 'Exhaustive list of verify license barcode errors',
 })
 
 export const VerifyLicenseBarcodeDataUnion = createUnionType({
@@ -44,11 +44,11 @@ export class VerifyLicenseBarcodeResult {
   @Field(() => String, { nullable: true })
   licenseType?: GenericLicenseType
 
-  @Field(() => VerifyLicenseError, {
+  @Field(() => VerifyLicenseBarcodeError, {
     nullable: true,
     description: 'Verify result error',
   })
-  error?: VerifyLicenseError
+  error?: VerifyLicenseBarcodeError
 
   @Field({ description: 'Is the verify valid?' })
   valid!: boolean

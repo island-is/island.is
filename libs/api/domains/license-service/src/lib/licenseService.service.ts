@@ -28,7 +28,7 @@ import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
 import {
   VerifyLicenseBarcodeResult,
-  VerifyLicenseError,
+  VerifyLicenseBarcodeError,
 } from './dto/VerifyLicenseBarcodeResult.dto'
 import {
   GenericLicenseFetchResult,
@@ -60,7 +60,7 @@ export type GetGenericLicenseOptions = {
 const { randomUUID } = new ShortUniqueId({ length: 16 })
 const COMMON_VERIFY_ERROR = {
   valid: false,
-  error: VerifyLicenseError.ERROR,
+  error: VerifyLicenseBarcodeError.ERROR,
 }
 
 @Injectable()
@@ -580,7 +580,7 @@ export class LicenseServiceService {
       if (error.message.includes(TOKEN_EXPIRED_ERROR)) {
         return {
           valid: false,
-          error: VerifyLicenseError.TOKEN_EXPIRED,
+          error: VerifyLicenseBarcodeError.TOKEN_EXPIRED,
         }
       }
 
