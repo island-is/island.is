@@ -1,4 +1,4 @@
-import { IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
+import { Scopes } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 
 import { Args, Query, Resolver } from '@nestjs/graphql'
@@ -18,9 +18,7 @@ import {
 } from './models/advert.response'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlag } from '@island.is/nest/feature-flags'
-import { UseGuards } from '@nestjs/common'
 
-@UseGuards(IdsUserGuard)
 @Scopes(ApiScope.internal)
 @FeatureFlag(Features.officialJournalOfIceland)
 @Resolver()
