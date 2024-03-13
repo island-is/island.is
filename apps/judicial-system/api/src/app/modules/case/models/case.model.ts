@@ -385,4 +385,7 @@ export class Case {
 
   @Field(() => Institution, { nullable: true })
   readonly prosecutorsOffice?: Institution
+
+  @Field({ nullable: true })
+  readonly indictmentDeniedExplanation?: string
 }

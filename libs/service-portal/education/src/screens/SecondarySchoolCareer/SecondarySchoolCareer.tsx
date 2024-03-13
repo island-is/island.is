@@ -21,7 +21,6 @@ export const EducationGraduationDetail = () => {
   const { formatMessage } = useLocale()
 
   const periodItems = innaData?.innaPeriods?.items || []
-  const noData = !periodItems.length && !loading && !error
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -59,6 +58,17 @@ export const EducationGraduationDetail = () => {
           </Column>
         )}
       </Box>
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && !loading && !periodItems.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
       {periodItems.length > 0 &&
         !loading &&
         periodItems.map((item, i) => (
@@ -95,17 +105,6 @@ export const EducationGraduationDetail = () => {
             />
           </Box>
         ))}
-
-      {error && <Problem noBorder={false} error={error} />}
-      {noData && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
     </Box>
   )
 }
