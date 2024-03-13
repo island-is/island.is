@@ -28,23 +28,6 @@ export const EducationGraduationDetail = () => {
   const singleGraduation = diplomaItems.filter(
     (item) => String(item.diplomaId) === id,
   )
-  const noData = !singleGraduation.length && !loading && !error
-
-  if (noData) {
-    return (
-      <Problem
-        type="no_data"
-        noBorder={false}
-        title={formatMessage(m.noData)}
-        message={formatMessage(m.noDataFoundDetail)}
-        imgSrc="./assets/images/sofa.svg"
-      />
-    )
-  }
-
-  if (error) {
-    return <Problem noBorder={false} error={error} />
-  }
 
   const graduationItem = singleGraduation[0]
   return (
@@ -75,40 +58,51 @@ export const EducationGraduationDetail = () => {
             </Button>
           </Box>
         </GridColumn>
-      </GridRow> */}
-      <Stack space={2}>
-        <UserInfoLine
-          title={formatMessage(edMessage.overview)}
-          label={formatMessage(edMessage.graduationDate)}
-          content={formatDate(graduationItem?.diplomaDate ?? '')}
-          loading={loading}
-          editLink={{
-            external: false,
-            title: {
-              id: 'sp.education:view-education-career',
-              defaultMessage: formatMessage(edMessage.viewCareer),
-            },
-            url: EducationPaths.EducationFramhskoliGraduationDetail.replace(
-              ':detail',
-              'nanar',
-            ).replace(':id', id),
-          }}
+      </GridRow> */}{' '}
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && !singleGraduation.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
         />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(edMessage.graduationPath)}
-          content={graduationItem?.diplomaName ?? ''}
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(edMessage.school)}
-          content={graduationItem?.organisation ?? ''}
-          loading={loading}
-        />
-        <Divider />
-      </Stack>
-
+      )}
+      {!error && !loading && singleGraduation.length > 0 && (
+        <Stack space={2}>
+          <UserInfoLine
+            title={formatMessage(edMessage.overview)}
+            label={formatMessage(edMessage.graduationDate)}
+            content={formatDate(graduationItem?.diplomaDate ?? '')}
+            loading={loading}
+            editLink={{
+              external: false,
+              title: {
+                id: 'sp.education:view-education-career',
+                defaultMessage: formatMessage(edMessage.viewCareer),
+              },
+              url: EducationPaths.EducationFramhskoliGraduationDetail.replace(
+                ':detail',
+                'nanar',
+              ).replace(':id', id),
+            }}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(edMessage.graduationPath)}
+            content={graduationItem?.diplomaName ?? ''}
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(edMessage.school)}
+            content={graduationItem?.organisation ?? ''}
+            loading={loading}
+          />
+          <Divider />
+        </Stack>
+      )}
       <Box paddingTop={4}>
         <Text variant="small">{formatMessage(edMessage.gradFooter)}</Text>
       </Box>

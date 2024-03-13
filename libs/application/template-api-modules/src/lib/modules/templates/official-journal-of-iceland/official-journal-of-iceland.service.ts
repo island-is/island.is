@@ -22,11 +22,11 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
   }
 
   async departments(user: User) {
-    return this.ministryOfJusticeService.departments(user, {})
+    return this.ministryOfJusticeService.departments({})
   }
 
   async types(user: User) {
-    return this.ministryOfJusticeService.types(user, {})
+    return this.ministryOfJusticeService.types({})
   }
 
   async submitApplication({ application, auth }: Props) {

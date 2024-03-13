@@ -35,6 +35,14 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     },
   ],
   [
+    CaseTransition.DENY_INDICTMENT,
+    {
+      fromStates: [CaseState.WAITING_FOR_CONFIRMATION],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.DRAFT },
+    },
+  ],
+  [
     CaseTransition.SUBMIT,
     {
       fromStates: [CaseState.DRAFT, CaseState.WAITING_FOR_CONFIRMATION],

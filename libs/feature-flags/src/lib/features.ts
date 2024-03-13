@@ -32,6 +32,7 @@ export enum Features {
   ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
   DeregisterMachine = 'isDeregisterMachineEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
+  RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
 
   // Application System Delegations active

@@ -24,47 +24,32 @@ export class DmrClientService {
   constructor(private readonly dmrApi: DmrApi) {}
 
   public async advert(
-    auth: User,
     params: JournalControllerAdvertRequest,
   ): Promise<JournalAdvert> {
-    return await this.dmrApi
-      .withMiddleware(new AuthMiddleware(auth as User))
-      .journalControllerAdvert(params)
+    return await this.dmrApi.journalControllerAdvert(params)
   }
   public async adverts(
-    auth: User,
     input: JournalControllerAdvertsRequest,
   ): Promise<JournalAdvertsResponse> {
-    return await this.dmrApi
-      .withMiddleware(new AuthMiddleware(auth as User))
-      .journalControllerAdverts(input)
+    return await this.dmrApi.journalControllerAdverts(input)
   }
 
   public async departments(
-    auth: User,
     params: JournalControllerDepartmentsRequest,
   ): Promise<JournalAdvertDepartmentsResponse> {
-    return await this.dmrApi
-      .withMiddleware(new AuthMiddleware(auth as User))
-      .journalControllerDepartments(params ?? {})
+    return await this.dmrApi.journalControllerDepartments(params ?? {})
   }
 
   public types(
-    auth: User,
     params: JournalControllerTypesRequest,
   ): Promise<JournalAdvertTypesResponse> {
-    return this.dmrApi
-      .withMiddleware(new AuthMiddleware(auth as User))
-      .journalControllerTypes(params)
+    return this.dmrApi.journalControllerTypes(params)
   }
 
   public async categories(
-    auth: User,
     params: JournalControllerCategoriesRequest,
   ): Promise<JournalAdvertCategoriesResponse> {
-    return await this.dmrApi
-      .withMiddleware(new AuthMiddleware(auth as User))
-      .journalControllerCategories(params)
+    return await this.dmrApi.journalControllerCategories(params)
   }
 
   public async submitApplication(
