@@ -24,7 +24,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       HUNTING_LICENSE_PASS_TEMPLATE_ID: {
         dev: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
         staging: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
-        prod: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        prod: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba',
       },
     })
     .secrets({
