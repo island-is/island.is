@@ -21,6 +21,7 @@ import { m } from '@island.is/service-portal/core'
 import NotificationLine from './NotificationLine'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
+import * as mStyles from '../Sidemenu/Sidemenu.css'
 
 interface Props {
   closeNotificationMenu: () => void
@@ -46,7 +47,7 @@ const NotificationMenu = ({
 
   const closeButton = (
     <button
-      className={styles.closeButton}
+      className={mStyles.closeButton}
       onClick={onClose}
       aria-label={formatMessage(sharedMessages.close)}
     >
@@ -65,8 +66,8 @@ const NotificationMenu = ({
         flexDirection="column"
         height={isMobile ? 'full' : undefined}
         className={cn(
-          isMobile ? styles.fullScreen : styles.dropdown,
-          styles.container,
+          isMobile ? mStyles.fullScreen : mStyles.dropdown,
+          mStyles.container,
         )}
         style={
           !isMobile
@@ -77,7 +78,7 @@ const NotificationMenu = ({
             : undefined
         }
       >
-        <Box display="flex" flexDirection="column" className={styles.wrapper}>
+        <Box display="flex" flexDirection="column" className={mStyles.wrapper}>
           <Box
             display="flex"
             flexDirection="row"
@@ -91,7 +92,7 @@ const NotificationMenu = ({
               display="flex"
               justifyContent="center"
               alignItems="center"
-              className={styles.overviewIcon}
+              className={mStyles.overviewIcon}
               marginRight={1}
             >
               <Icon

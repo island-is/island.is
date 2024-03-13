@@ -13,7 +13,7 @@ interface Props {
   onClickCallback: () => void
 }
 
-export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
+export const NotificationLine = ({ data, onClickCallback }: Props) => {
   const date = data.metadata?.created
     ? format(new Date(data.metadata.created), dateFormat.is)
     : ''
@@ -22,35 +22,39 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
 
   return (
     <Box className={styles.lineWrapper}>
-      <Box
-        display="flex"
-        position="relative"
-        borderColor="blue200"
-        borderBottomWidth="standard"
-        paddingX={2}
-        width="full"
-        className={cn(styles.line, {
-          [styles.unread]: !isRead,
-        })}
+      <LinkResolver
+        className={styles.link}
+        href={data.message?.link?.uri ?? ''}
+        callback={onClickCallback}
       >
-        {data.sender?.logoUrl ? (
-          <AvatarImage
-            img={data.sender.logoUrl}
-            background={!isRead ? 'white' : 'blue100'}
-          />
-        ) : undefined}
         <Box
-          width="full"
           display="flex"
-          flexDirection="column"
-          paddingLeft={2}
-          minWidth={0}
+          position="relative"
+          borderColor="blue200"
+          borderBottomWidth="standard"
+          paddingX={2}
+          width="full"
+          className={cn(styles.line, {
+            [styles.unread]: !isRead,
+          })}
         >
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <LinkResolver
-              className={styles.link}
-              href={data.message?.link?.uri ?? ''}
-              callback={onClickCallback}
+          {data.sender?.logoUrl ? (
+            <AvatarImage
+              img={data.sender.logoUrl}
+              background={!isRead ? 'white' : 'blue100'}
+            />
+          ) : undefined}
+          <Box
+            width="full"
+            display="flex"
+            flexDirection="column"
+            paddingLeft={2}
+            minWidth={0}
+          >
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
             >
               <Text
                 fontWeight={isRead ? 'regular' : 'medium'}
@@ -60,19 +64,19 @@ export const NotificationLine: FC<Props> = ({ data, onClickCallback }) => {
               >
                 {data.message.title}
               </Text>
-            </LinkResolver>
-            <Text variant="small">{date}</Text>
-          </Box>
-          <Box
-            marginTop={1}
-            display="flex"
-            flexDirection="row"
-            justifyContent="spaceBetween"
-          >
-            <Text variant="small">{data.message.body}</Text>
+              <Text variant="small">{date}</Text>
+            </Box>
+            <Box
+              marginTop={1}
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+            >
+              <Text variant="small">{data.message.body}</Text>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </LinkResolver>
     </Box>
   )
 }

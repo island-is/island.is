@@ -121,8 +121,9 @@ const UserNotifications = () => {
               image={
                 item.sender?.logoUrl
                   ? {
-                      type: 'image',
+                      type: 'circle',
                       url: item.sender.logoUrl,
+                      active: !item.metadata.read,
                     }
                   : undefined
               }

@@ -55,8 +55,9 @@ type ActionCardProps = {
     centered?: boolean
   }
   image?: {
-    type: 'avatar' | 'image' | 'logo'
+    type: 'avatar' | 'image' | 'logo' | 'circle'
     url?: string
+    active?: boolean
   }
   translateLabel?: 'yes' | 'no'
 }
@@ -141,6 +142,22 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           borderRadius="circle"
         >
           <img className={styles.avatar} src={image.url} alt="action-card" />
+        </Box>
+      )
+    }
+    if (image.type === 'circle') {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+          background={image.active ? 'white' : 'blue100'}
+          className={styles.avatar}
+        >
+          <img className={styles.circleImg} src={image.url} alt="action-card" />
         </Box>
       )
     }
