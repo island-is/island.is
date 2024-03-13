@@ -10,7 +10,7 @@ import {
   DelegationType,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { indexingTestcases, prRight1 } from './delegation-index-test-cases'
+import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
 
 import { Sequelize } from 'sequelize-typescript'
 import { Type } from '@nestjs/common'
@@ -34,25 +34,25 @@ describe('DelegationsIndexService', () => {
   let delegationModel: typeof Delegation
   let delegationScopeModel: typeof DelegationScope
 
-  const setup = async (testcase: TestCase) => {
+  const setup = async (testCase: TestCase) => {
     await truncate(sequelize)
-    await factory.createDomain(testcase.domain)
-    await factory.createClient(testcase.client)
+    await factory.createDomain(testCase.domain)
+    await factory.createClient(testCase.client)
 
     await Promise.all(
-      testcase.apiScopes.map((scope) => factory.createApiScope(scope)),
+      testCase.apiScopes.map((scope) => factory.createApiScope(scope)),
     )
 
     // create custom delegations
     await Promise.all(
-      testcase.customDelegations.map((delegation) =>
+      testCase.customDelegations.map((delegation) =>
         factory.createCustomDelegation(delegation),
       ),
     )
 
     // create personal representation delegations
     await Promise.all(
-      testcase.personalRepresentativeDelegation.map((d) =>
+      testCase.personalRepresentativeDelegation.map((d) =>
         factory.createPersonalRepresentativeDelegation(d),
       ),
     )
@@ -60,12 +60,12 @@ describe('DelegationsIndexService', () => {
     // mock national registry for ward delegations
     jest
       .spyOn(nationalRegistryApi, 'getCustodyChildren')
-      .mockImplementation(async () => testcase.fromChildren)
+      .mockImplementation(async () => testCase.fromChildren)
 
     // mock rsk for procuration delegations
     jest
       .spyOn(rskApi, 'getIndividualRelationships')
-      .mockImplementation(async () => testcase.procuration)
+      .mockImplementation(async () => testCase.procuration)
   }
 
   beforeAll(async () => {
@@ -102,7 +102,7 @@ describe('DelegationsIndexService', () => {
 
   describe('indexDelegations', () => {
     describe('delegation index meta logic', () => {
-      beforeAll(async () => setup(indexingTestcases.custom))
+      beforeAll(async () => setup(indexingTestCases.custom))
 
       beforeEach(async () => {
         jest.useFakeTimers()
@@ -167,13 +167,13 @@ describe('DelegationsIndexService', () => {
       })
     })
 
-    describe.each(Object.keys(indexingTestcases))(
+    describe.each(Object.keys(indexingTestCases))(
       'Index delegations of type: %s',
       (type) => {
-        const testcase = indexingTestcases[type]
-        testcase.user = user
+        const testCase = indexingTestCases[type]
+        testCase.user = user
 
-        beforeAll(async () => setup(testcase))
+        beforeAll(async () => setup(testCase))
 
         it('should index delegations', async () => {
           // Act
@@ -182,9 +182,9 @@ describe('DelegationsIndexService', () => {
           // Assert
           const delegations = await delegationIndexModel.findAll()
 
-          expect(delegations.length).toBe(testcase.expectedFrom.length)
+          expect(delegations.length).toBe(testCase.expectedFrom.length)
           delegations.forEach((delegation) => {
-            expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+            expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
             expect(delegation.toNationalId).toBe(user.nationalId)
           })
         })
@@ -192,9 +192,9 @@ describe('DelegationsIndexService', () => {
     )
 
     describe('Reindex (multiple indexing)', () => {
-      const testcase = indexingTestcases.custom
+      const testCase = indexingTestCases.custom
 
-      beforeEach(async () => setup(testcase))
+      beforeEach(async () => setup(testCase))
 
       it('should not duplicate delegations on reindex', async () => {
         // Act
@@ -213,14 +213,14 @@ describe('DelegationsIndexService', () => {
           },
         })
 
-        expect(delegations.length).toBe(testcase.expectedFrom.length)
+        expect(delegations.length).toBe(testCase.expectedFrom.length)
       })
 
       it('should remove delegations from index that are no longer valid', async () => {
         // Act
         await delegationIndexService.indexDelegations(user)
 
-        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const fromNationalId = testCase.customDelegations[0].fromNationalId
         // remove custom delegations
         await delegationModel.destroy({
           where: {
@@ -247,7 +247,7 @@ describe('DelegationsIndexService', () => {
           },
         })
 
-        expect(delegations.length).toBe(testcase.expectedFrom.length - 1)
+        expect(delegations.length).toBe(testCase.expectedFrom.length - 1)
         expect(deletedDelegation).toBeNull()
       })
 
@@ -255,7 +255,7 @@ describe('DelegationsIndexService', () => {
         // Act
         await delegationIndexService.indexDelegations(user)
 
-        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const fromNationalId = testCase.customDelegations[0].fromNationalId
         const updatedValidTo = new Date(
           new Date().getTime() + 1000 * 60 * 60 * 24,
         ) // 1 day in the future
@@ -304,7 +304,7 @@ describe('DelegationsIndexService', () => {
         // Act
         await delegationIndexService.indexDelegations(user)
 
-        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const fromNationalId = testCase.customDelegations[0].fromNationalId
         const testDelegation = await delegationModel.findOne({
           where: {
             fromNationalId,
@@ -349,7 +349,7 @@ describe('DelegationsIndexService', () => {
         await delegationIndexService.indexDelegations(user)
 
         const testDelegationScope = 'test-scope'
-        const fromNationalId = testcase.customDelegations[0].fromNationalId
+        const fromNationalId = testCase.customDelegations[0].fromNationalId
         const testDelegation = await delegationModel.findOne({
           where: {
             fromNationalId,
@@ -399,9 +399,9 @@ describe('DelegationsIndexService', () => {
   })
 
   describe('indexCustomDelegations', () => {
-    const testcase = indexingTestcases.custom
+    const testCase = indexingTestCases.custom
 
-    beforeAll(async () => setup(testcase))
+    beforeAll(async () => setup(testCase))
 
     it('should index custom delegations', async () => {
       // Arrange
@@ -417,18 +417,18 @@ describe('DelegationsIndexService', () => {
         },
       })
 
-      expect(delegations.length).toEqual(testcase.expectedFrom.length)
+      expect(delegations.length).toEqual(testCase.expectedFrom.length)
       delegations.forEach((delegation) => {
-        expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+        expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
         expect(delegation.toNationalId).toBe(user.nationalId)
       })
     })
   })
 
   describe('indexRepresentativeDelegations', () => {
-    const testcase = indexingTestcases.personalRepresentative
+    const testCase = indexingTestCases.personalRepresentative
 
-    beforeAll(async () => setup(testcase))
+    beforeAll(async () => setup(testCase))
 
     afterEach(async () => {
       // remove all data
@@ -450,9 +450,9 @@ describe('DelegationsIndexService', () => {
         },
       })
 
-      expect(delegations.length).toEqual(testcase.expectedFrom.length)
+      expect(delegations.length).toEqual(testCase.expectedFrom.length)
       delegations.forEach((delegation) => {
-        expect(testcase.expectedFrom).toContain(delegation.fromNationalId)
+        expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
         expect(delegation.toNationalId).toBe(user.nationalId)
         expect(delegation.type).toBe(
           `${DelegationType.PersonalRepresentative}:${prRight1}`,

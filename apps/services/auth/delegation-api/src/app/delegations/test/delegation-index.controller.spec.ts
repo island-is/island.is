@@ -13,6 +13,8 @@ import {
   AuthDelegationType,
 } from '@island.is/shared/types'
 
+const testNationalId = createNationalId('person')
+
 const validationTestcases = [
   {
     message: 'should return status 400 if delegation information is missing',
@@ -28,24 +30,24 @@ const validationTestcases = [
   {
     message:
       'should return status 400 if some delegation information is missing (2)',
-    param: `${AuthDelegationType.ProcurationHolder}_${createNationalId(
-      'person',
-    )}`,
+    param: `${AuthDelegationType.ProcurationHolder}_${testNationalId}`,
     responseDetail: 'Invalid delegation information',
   },
   {
     message: 'should return status 400 if toNationalId is invalid',
-    param: `${
-      AuthDelegationType.ProcurationHolder
-    }_invalidToNationalId_${createNationalId('person')}`,
-    responseDetail: 'Invalid national id',
+    param: `${AuthDelegationType.ProcurationHolder}_invalidToNationalId_${testNationalId}`,
+    responseDetail: 'Invalid national ids',
   },
   {
     message: 'should return status 400 if fromNationalId is invalid',
-    param: `${AuthDelegationType.ProcurationHolder}_${createNationalId(
-      'person',
-    )}_invalidToNationalId`,
-    responseDetail: 'Invalid national id',
+    param: `${AuthDelegationType.ProcurationHolder}_${testNationalId}_invalidToNationalId`,
+    responseDetail: 'Invalid national ids',
+  },
+  {
+    message:
+      'should return status 400 if fromNationalId is the same as toNationalId',
+    param: `${AuthDelegationType.ProcurationHolder}_${testNationalId}_${testNationalId}`,
+    responseDetail: 'Invalid national ids',
   },
 ]
 
@@ -80,6 +82,10 @@ describe('DelegationIndexController', () => {
       })
 
       server = request(app.getHttpServer())
+    })
+
+    afterAll(() => {
+      app.cleanUp
     })
 
     it('PUT: should return status 403', async () => {
@@ -118,14 +124,14 @@ describe('DelegationIndexController', () => {
   describe('With invalid delegation type and provider combination', () => {
     describe.each(Object.keys(delegationTypeAndProviderMapTestcases))(
       'Delegation provider: %s',
-      (name) => {
-        const testcase = delegationTypeAndProviderMapTestcases[name]
+      (provider) => {
+        const testCase = delegationTypeAndProviderMapTestcases[provider]
         let app: TestApp
         let server: request.SuperTest<request.Test>
         const user = createCurrentUser({
           nationalIdType: 'person',
           scope: [AuthScope.delegationIndexWrite],
-          delegationProvider: name as AuthDelegationProvider,
+          delegationProvider: provider as AuthDelegationProvider,
         })
 
         beforeAll(async () => {
@@ -136,7 +142,11 @@ describe('DelegationIndexController', () => {
           server = request(app.getHttpServer())
         })
 
-        testcase.forEach((delegationType) => {
+        afterAll(() => {
+          app.cleanUp
+        })
+
+        testCase.forEach((delegationType) => {
           it(`PUT: should return status 400 for ${delegationType}`, async () => {
             // Act
             const response = await server
@@ -196,6 +206,10 @@ describe('DelegationIndexController', () => {
       server = request(app.getHttpServer())
     })
 
+    afterAll(() => {
+      app.cleanUp
+    })
+
     it('PUT: should return status 400', async () => {
       // Act
       const response = await server
@@ -250,18 +264,22 @@ describe('DelegationIndexController', () => {
       delegationIndexModel = app.get(getModelToken(DelegationIndex))
     })
 
+    afterAll(() => {
+      app.cleanUp
+    })
+
     describe('PUT - validation', () => {
-      validationTestcases.forEach((testcase) => {
-        it(testcase.message, async () => {
+      validationTestcases.forEach((testCase) => {
+        it(testCase.message, async () => {
           // Act
           const response = await server
             .put('/delegation-index/.id')
-            .set('X-Param-Id', testcase.param)
+            .set('X-Param-Id', testCase.param)
             .send({})
 
           // Assert
           expect(response.status).toBe(400)
-          expect(response.body.detail).toBe(testcase.responseDetail)
+          expect(response.body.detail).toBe(testCase.responseDetail)
         })
       })
     })
@@ -272,7 +290,7 @@ describe('DelegationIndexController', () => {
         toNationalId: createNationalId('person'),
         fromNationalId: user.nationalId,
         type: AuthDelegationType.ProcurationHolder,
-        validTo: new Date(),
+        validTo: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
       }
 
       // Act
@@ -344,17 +362,17 @@ describe('DelegationIndexController', () => {
     })
 
     describe('DELETE - validation', () => {
-      validationTestcases.forEach((testcase) => {
-        it(testcase.message, async () => {
+      validationTestcases.forEach((testCase) => {
+        it(testCase.message, async () => {
           // Act
           const response = await server
             .delete('/delegation-index/.id')
-            .set('X-Param-Id', testcase.param)
+            .set('X-Param-Id', testCase.param)
             .send({})
 
           // Assert
           expect(response.status).toBe(400)
-          expect(response.body.detail).toBe(testcase.responseDetail)
+          expect(response.body.detail).toBe(testCase.responseDetail)
         })
       })
     })

@@ -28,15 +28,11 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 
 const namespace = '@island.is/auth/delegation-api/delegation-index'
 
-const parseDelegationInfo = (delegationInfo: string) => {
-  const [type, toNationalId, fromNationalId] = delegationInfo.split('_')
+const parseDelegationInfo = (id: string) => {
+  const [type, toNationalId, fromNationalId] = id.split('_')
 
   if (!type || !toNationalId || !fromNationalId) {
     throw new BadRequestException('Invalid delegation information')
-  }
-
-  if (!kennitala.isValid(toNationalId) || !kennitala.isValid(fromNationalId)) {
-    throw new BadRequestException('Invalid national id')
   }
 
   return {
@@ -77,36 +73,30 @@ export class DelegationIndexController {
   })
   async createOrUpdateDelegationRecord(
     @CurrentAuth() auth: Auth,
-    @Headers('X-Param-Id') delegationInfo: string,
+    @Headers('X-Param-Id') delegationIndexId: string,
     @Body() body: CreateDelegationRecordInputDTO,
-  ) {
+  ): Promise<DelegationRecordDTO> {
     if (!auth.delegationProvider) {
       throw new BadRequestException('Delegation provider missing')
     }
 
-    const parsedDelegationInfo = parseDelegationInfo(delegationInfo)
+    const parsedDelegationInfo = parseDelegationInfo(delegationIndexId)
 
-    try {
-      return await this.auditService.auditPromise<DelegationRecordDTO>(
-        {
-          auth: auth,
-          action: 'createOrUpdateDelegationIndexItem',
-          resources: [],
-          meta: {
-            ...parsedDelegationInfo,
-          },
-        },
-        this.delegationIndexService.createOrUpdateDelegationRecord({
+    return await this.auditService.auditPromise<DelegationRecordDTO>(
+      {
+        auth: auth,
+        action: 'createOrUpdateDelegationIndexItem',
+        resources: delegationIndexId,
+        meta: {
           ...parsedDelegationInfo,
-          provider: auth.delegationProvider,
-          validTo: body.validTo,
-        }),
-      )
-    } catch {
-      throw new BadRequestException(
-        'Invalid delegation type and provider combination',
-      )
-    }
+        },
+      },
+      this.delegationIndexService.createOrUpdateDelegationRecord({
+        ...parsedDelegationInfo,
+        provider: auth.delegationProvider,
+        validTo: body.validTo,
+      }),
+    )
   }
 
   @Delete('.id')
@@ -117,32 +107,27 @@ export class DelegationIndexController {
   })
   async removeDelegationRecord(
     @CurrentAuth() auth: Auth,
-    @Headers('X-Param-Id') delegationInfo: string,
+    @Headers('X-Param-Id') delegationIndexId: string,
   ) {
     if (!auth.delegationProvider) {
       throw new BadRequestException('Delegation provider missing')
     }
 
-    const parsedDelegationInfo = parseDelegationInfo(delegationInfo)
+    const parsedDelegationInfo = parseDelegationInfo(delegationIndexId)
 
-    try {
-      await this.auditService.auditPromise(
-        {
-          auth: auth,
-          action: 'removeDelegationIndexItem',
-          meta: {
-            ...parsedDelegationInfo,
-          },
-        },
-        this.delegationIndexService.removeDelegationRecord({
+    await this.auditService.auditPromise(
+      {
+        auth: auth,
+        action: 'removeDelegationIndexItem',
+        resources: delegationIndexId,
+        meta: {
           ...parsedDelegationInfo,
-          provider: auth.delegationProvider,
-        }),
-      )
-    } catch {
-      throw new BadRequestException(
-        'Invalid delegation type and provider combination',
-      )
-    }
+        },
+      },
+      this.delegationIndexService.removeDelegationRecord({
+        ...parsedDelegationInfo,
+        provider: auth.delegationProvider,
+      }),
+    )
   }
 }

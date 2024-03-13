@@ -8,6 +8,7 @@ import {
   DelegationRecordType,
   PersonalRepresentativeDelegationType,
 } from '../types/delegationRecord'
+import kennitala from 'kennitala'
 
 const delegationProviderTypeMap: Record<
   AuthDelegationProvider,
@@ -31,10 +32,13 @@ export const getDelegationNoActorWhereClause = (user: User): WhereOptions => {
   return {}
 }
 
-export const validateDelegationTypeAndProvider = (
-  type: DelegationRecordType,
-  provider: AuthDelegationProvider,
-) => {
+export const validateDelegationTypeAndProvider = ({
+  type,
+  provider,
+}: {
+  type: DelegationRecordType
+  provider: AuthDelegationProvider
+}) => {
   const validTypes = delegationProviderTypeMap[provider]
 
   if (!validTypes) {
@@ -43,3 +47,14 @@ export const validateDelegationTypeAndProvider = (
 
   return validTypes.includes(type)
 }
+
+export const validateToAndFromNationalId = ({
+  fromNationalId,
+  toNationalId,
+}: {
+  fromNationalId: string
+  toNationalId: string
+}) =>
+  kennitala.isValid(toNationalId) &&
+  kennitala.isValid(fromNationalId) &&
+  fromNationalId !== toNationalId

@@ -8,7 +8,7 @@ const company1 = createNationalId('company')
 const company2 = createNationalId('company')
 export const prRight1 = 'pr1'
 
-export const indexingTestcases: Record<string, TestCase> = {
+export const indexingTestCases: Record<string, TestCase> = {
   // Should index custom delegations
   custom: new TestCase(
     createClient({

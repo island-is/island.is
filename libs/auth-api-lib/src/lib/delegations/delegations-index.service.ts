@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 
@@ -15,7 +15,10 @@ import {
   PersonalRepresentativeDelegationType,
 } from './types/delegationRecord'
 import { DelegationRecordInputDTO } from './dto/delegation-index.dto'
-import { validateDelegationTypeAndProvider } from './utils/delegations'
+import {
+  validateDelegationTypeAndProvider,
+  validateToAndFromNationalId,
+} from './utils/delegations'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -26,6 +29,25 @@ const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
 
 const getPersonalRepresentativeDelegationType = (right: string) =>
   `${AuthDelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
+
+const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
+  if (!validateDelegationTypeAndProvider(delegation)) {
+    throw new BadRequestException(
+      'Invalid delegation type and provider combination',
+    )
+  }
+
+  if (!validateToAndFromNationalId(delegation)) {
+    throw new BadRequestException('Invalid national ids')
+  }
+
+  if (
+    delegation.validTo &&
+    new Date(delegation.validTo).getTime() <= new Date().getTime()
+  ) {
+    throw new BadRequestException('Invalid validTo')
+  }
+}
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
@@ -177,14 +199,7 @@ export class DelegationsIndexService {
 
   /* Add item to index */
   async createOrUpdateDelegationRecord(delegation: DelegationRecordInputDTO) {
-    const valid = validateDelegationTypeAndProvider(
-      delegation.type,
-      delegation.provider,
-    )
-
-    if (!valid) {
-      throw new Error('Invalid delegation type and provider combination')
-    }
+    validateCrudParams(delegation)
 
     const [updatedDelegation] = await this.delegationIndexModel.upsert(
       delegation,
@@ -195,14 +210,7 @@ export class DelegationsIndexService {
 
   /* Delete item from index */
   async removeDelegationRecord(delegation: DelegationRecordInputDTO) {
-    const valid = validateDelegationTypeAndProvider(
-      delegation.type,
-      delegation.provider,
-    )
-
-    if (!valid) {
-      throw new Error('Invalid delegation type and provider combination')
-    }
+    validateCrudParams(delegation)
 
     await this.delegationIndexModel.destroy({
       where: {
