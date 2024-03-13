@@ -1,6 +1,7 @@
-import { clientId, TestCase } from './delegations-index-types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { createClient } from '@island.is/services/auth/testing'
+
+import { clientId, TestCase } from './delegations-index-types'
 
 const person1 = createNationalId('person')
 const person2 = createNationalId('person')

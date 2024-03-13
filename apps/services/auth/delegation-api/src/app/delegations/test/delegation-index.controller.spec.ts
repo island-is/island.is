@@ -1,17 +1,19 @@
-import { TestApp } from '@island.is/testing/nest'
 import request from 'supertest'
+import { getModelToken } from '@nestjs/sequelize'
+
+import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createNationalId,
 } from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
-import { setupWithAuth } from '../../../../test/setup'
 import { DelegationIndex } from '@island.is/auth-api-lib'
-import { getModelToken } from '@nestjs/sequelize'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import { AuthScope } from '@island.is/auth/scopes'
+
+import { setupWithAuth } from '../../../../test/setup'
 
 const testNationalId = createNationalId('person')
 

@@ -1,5 +1,9 @@
-import { TestApp, truncate } from '@island.is/testing/nest'
 import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { Type } from '@nestjs/common'
+import faker from 'faker'
+
+import { TestApp, truncate } from '@island.is/testing/nest'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import {
   DelegationsIndexService,
@@ -9,15 +13,12 @@ import {
   DelegationScope,
   DelegationType,
 } from '@island.is/auth-api-lib'
-import { FixtureFactory } from '@island.is/services/auth/testing'
-import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
-
-import { Sequelize } from 'sequelize-typescript'
-import { Type } from '@nestjs/common'
-import { domainName, TestCase, user } from './delegations-index-types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import faker from 'faker'
+import { FixtureFactory } from '@island.is/services/auth/testing'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+
+import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
+import { domainName, TestCase, user } from './delegations-index-types'
 import { setupWithAuth } from '../../../../../test/setup'
 
 const testDate = new Date(2024, 2, 1)

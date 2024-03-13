@@ -14,6 +14,9 @@ import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Identity } from '@island.is/api/domains/identity'
 import { IdentityClientService } from '@island.is/clients/identity'
 
+import type { DelegationDTO } from '@island.is/clients/auth/delegation-api'
+import type { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
+
 import {
   CreateDelegationInput,
   DelegationInput,
@@ -22,12 +25,10 @@ import {
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
-import { Delegation, MergedDelegation } from '../models'
+import { Delegation, MergedDelegation } from '../models/delegation.model'
 import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
 import { MeDelegationsService } from '../services/meDelegations.service'
-import type { DelegationDTO } from '@island.is/clients/auth/delegation-api'
-import type { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)

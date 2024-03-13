@@ -2,11 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 
-import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { User } from '@island.is/auth-nest-tools'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
+
 import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationDTO } from './dto/delegation.dto'
+import { DelegationRecordInputDTO } from './dto/delegation-index.dto'
+import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
@@ -14,15 +20,10 @@ import {
   DelegationRecordType,
   PersonalRepresentativeDelegationType,
 } from './types/delegationRecord'
-import { DelegationRecordInputDTO } from './dto/delegation-index.dto'
 import {
   validateDelegationTypeAndProvider,
   validateToAndFromNationalId,
 } from './utils/delegations'
-import {
-  AuthDelegationProvider,
-  AuthDelegationType,
-} from '@island.is/shared/types'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7

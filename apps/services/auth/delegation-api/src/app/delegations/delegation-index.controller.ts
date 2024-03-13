@@ -7,13 +7,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common'
+import { ApiSecurity } from '@nestjs/swagger'
 
 import {
   DelegationRecordDTO,
   DelegationsIndexService,
   CreateDelegationRecordInputDTO,
 } from '@island.is/auth-api-lib'
-
 import { Documentation } from '@island.is/nest/swagger'
 import {
   Auth,
@@ -23,7 +23,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
-import { ApiSecurity } from '@nestjs/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { DelegationRecordType } from '@island.is/auth-api-lib'
 
