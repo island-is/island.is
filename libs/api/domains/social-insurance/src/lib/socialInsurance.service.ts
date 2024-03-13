@@ -44,8 +44,6 @@ export class SocialInsuranceService {
       return undefined
     }
 
-    this.logger.debug('payments', payments)
-
     return {
       nextPayment: payments.nextPayment ?? undefined,
       previousPayment: payments.previousPayment ?? undefined,
