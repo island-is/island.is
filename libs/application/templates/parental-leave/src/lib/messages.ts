@@ -217,11 +217,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
     },
-    otherParentSubTitle: {
-      id: 'pl.application:otherParent.sub.title',
-      defaultMessage: 'Hitt foreldrið',
-      description: 'Other parent',
-    },
+    // otherParentSubTitle: {
+    //   id: 'pl.application:otherParent.sub.title',
+    //   defaultMessage: 'Hitt foreldrið',
+    //   description: 'Other parent',
+    // },
     otherParentName: {
       id: 'pl.application:otherParent.name',
       defaultMessage: 'Nafn hins foreldrisins',
@@ -1591,6 +1591,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:selfEmployed.attachment.button',
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
+    },
+    uploadHeader: {
+      id: 'pl.application:fileUpload.upload.title',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Drag files here to upload',
     },
     uploadDescription: {
       id: 'pl.application:fileUpload.upload.description',
