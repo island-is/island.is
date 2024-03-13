@@ -13,13 +13,18 @@ import { Problem } from '@island.is/react-spa/shared'
 
 type Props = {
   selectedYear: number
+  parentLoading?: boolean
 }
 
-export const PaymentGroupTable = ({ selectedYear }: Props) => {
+export const PaymentGroupTable = ({ selectedYear, parentLoading }: Props) => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useGetPaymentPlanQuery({
+  const {
+    data,
+    loading: dataLoading,
+    error,
+  } = useGetPaymentPlanQuery({
     variables: {
       input: {
         year: selectedYear,
@@ -27,8 +32,10 @@ export const PaymentGroupTable = ({ selectedYear }: Props) => {
     },
   })
 
+  const loading = dataLoading ?? parentLoading
+
   if (!error && loading) {
-    return <LoadingDots />
+    return <EmptyTable loading={loading} />
   }
 
   if (error && !loading) {

@@ -5,6 +5,7 @@ import {
   GridContainer,
   GridRow,
   Select,
+  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -93,6 +94,8 @@ const PaymentPlan = () => {
             <Text marginTop={[2, 2, 6]} marginBottom={2} variant="h5">
               {formatMessage(coreMessages.period)}
             </Text>
+
+            {!selectedYear && <SkeletonLoader height={48} width={226} />}
             {selectedYear && (
               <>
                 <Box printHidden marginBottom={3}>
@@ -115,7 +118,10 @@ const PaymentPlan = () => {
                     </GridRow>
                   </GridContainer>
                 </Box>
-                <PaymentGroupTable selectedYear={selectedYear.value} />
+                <PaymentGroupTable
+                  selectedYear={selectedYear.value}
+                  parentLoading={!selectedYear.value}
+                />
               </>
             )}
           </Box>
