@@ -2,6 +2,7 @@ import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import {
   DataValue,
   Label,
+  RadioValue,
   ReviewGroup,
   formatPhoneNumber,
   removeCountryCode,
@@ -59,19 +60,31 @@ export const Employment = ({
       }
     >
       {applicationType === PARENTAL_LEAVE &&
-        isSelfEmployed === NO &&
-        isReceivingUnemploymentBenefits === YES && (
+        (isSelfEmployed === YES ? (
           <GridRow>
-            <GridColumn span={['7/12', '7/12', '7/12', '12/12']}>
-              <DataValue
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
                 label={formatMessage(
-                  parentalLeaveFormMessages.reviewScreen.benefits,
+                  parentalLeaveFormMessages.selfEmployed.title,
                 )}
-                value={unemploymentBenefits}
+                value={isSelfEmployed}
               />
             </GridColumn>
           </GridRow>
-        )}
+        ) : (
+          isReceivingUnemploymentBenefits === YES && (
+            <GridRow>
+              <GridColumn span={['7/12', '7/12', '7/12', '12/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.reviewScreen.benefits,
+                  )}
+                  value={unemploymentBenefits}
+                />
+              </GridColumn>
+            </GridRow>
+          )
+        ))}
       {((isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO) ||
         employerLastSixMonths === YES) && (
         <GridRow>
