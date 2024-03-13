@@ -27,10 +27,9 @@ import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
 import {
+  VerifyLicenseBarcodeResult,
   VerifyLicenseError,
-  VerifyLicenseResult,
-} from './dto/VerifyLicenseResult.dto'
-
+} from './dto/VerifyLicenseBarcodeResult.dto'
 import {
   GenericLicenseFetchResult,
   GenericLicenseMapper,
@@ -569,7 +568,7 @@ export class LicenseServiceService {
     })
   }
 
-  async getDataFromToken(token: string): Promise<VerifyLicenseResult> {
+  async getDataFromToken(token: string): Promise<VerifyLicenseBarcodeResult> {
     let code: string | undefined
 
     try {
@@ -611,7 +610,9 @@ export class LicenseServiceService {
     }
   }
 
-  async verifyLicenseBarcode(data: string): Promise<VerifyLicenseResult> {
+  async verifyLicenseBarcode(
+    data: string,
+  ): Promise<VerifyLicenseBarcodeResult> {
     if (isJWT(data)) {
       return this.getDataFromToken(data)
     }

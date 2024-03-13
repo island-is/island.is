@@ -26,8 +26,8 @@ import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { GetGenericLicenseInput } from './dto/GetGenericLicense.input'
 import { GetGenericLicensesInput } from './dto/GetGenericLicenses.input'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
-import { VerifyLicenseInput } from './dto/VerifyLicense.input'
-import { VerifyLicenseResult } from './dto/VerifyLicenseResult.dto'
+import { VerifyLicenseBarcodeInput } from './dto/VerifyLicenseBarcodeInput'
+import { VerifyLicenseBarcodeResult } from './dto/VerifyLicenseBarcodeResult.dto'
 import { VerifyPkPassInput } from './dto/VerifyPkPass.input'
 import { LicenseServiceService } from './licenseService.service'
 
@@ -140,7 +140,8 @@ export class LicenseServiceResolver {
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => GenericPkPassVerification, {
-    deprecationReason: 'Should use licenseVerify instead of verifyPkPass',
+    deprecationReason:
+      'Should use verifyLicenseBarcode instead of verifyPkPass',
   })
   @Audit()
   async verifyPkPass(
@@ -151,13 +152,13 @@ export class LicenseServiceResolver {
   }
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
-  @Mutation(() => VerifyLicenseResult, {
+  @Mutation(() => VerifyLicenseBarcodeResult, {
     name: 'verifyLicenseBarcode',
   })
   @Audit()
   async verifyLicenseBarcode(
-    @Args('input') input: VerifyLicenseInput,
-  ): Promise<VerifyLicenseResult> {
+    @Args('input') input: VerifyLicenseBarcodeInput,
+  ): Promise<VerifyLicenseBarcodeResult> {
     return this.licenseServiceService.verifyLicenseBarcode(input.data)
   }
 }

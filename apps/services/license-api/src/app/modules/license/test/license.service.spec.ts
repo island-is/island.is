@@ -337,10 +337,7 @@ describe('LicenseService', () => {
 
         // Assert
         // Only driver's license is able to get extra data from the token for now
-        if (
-          licenseId === LicenseId.FIREARM_LICENSE ||
-          licenseId === LicenseId.DISABILITY_LICENSE
-        ) {
+        if (licenseId !== LicenseId.DRIVING_LICENSE) {
           expect(result).toMatchObject({
             valid: false,
           })
