@@ -12,7 +12,11 @@ import {
   NationalRegistryClientService,
   ResidenceHistoryEntryDto,
 } from '@island.is/clients/national-registry-v2'
-import { getDomicileOnDate } from './grindavik-housing-buyout.utils'
+import {
+  getDomicileOnDate,
+  formatBankInfo,
+  getPreemptiveErrorDetails,
+} from './grindavik-housing-buyout.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   GrindavikHousingBuyoutAnswers,
@@ -21,6 +25,7 @@ import {
 
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 type CheckResidence = {
   residenceHistory: ResidenceHistoryEntryDto[]
@@ -36,6 +41,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     private propertiesApi: FasteignirApi,
   ) {
     super(ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT)
+  }
+
+  private getRealEstatesWithAuth(auth: User) {
+    return this.propertiesApi.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
+    )
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -68,24 +79,60 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
 
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
+    const hasLoanFromOtherProvider =
+      answers.loanProviders.loans?.findIndex((x) => !!x.otherProvider) !== -1 ??
+      false
+    const noLoanCheckbox =
+      answers.loanProviders.hasNoLoans?.includes(YES) ?? false
+    const hasNoLoans =
+      noLoanCheckbox && answers.loanProviders.loans?.length === 0
     const wishesForPreemptiveRights =
-      answers.preemptiveRightWish?.includes(YES) ?? false
+      answers.preemptiveRight.preemptiveRightWish === YES
+    const preemptiveRightType =
+      answers.preemptiveRight.preemptiveRightType ?? []
+    const otherOwnersBankInfo = answers.additionalOwners?.map((x) => ({
+      nationalId: x.nationalId,
+      bankInfo: formatBankInfo(x.bankInfo),
+    }))
 
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
+      applicantBankInfo: formatBankInfo(answers.applicantBankInfo),
       residenceData: JSON.stringify(
         application.externalData.checkResidence.data,
       ),
       propertyData: JSON.stringify(
         application.externalData.getGrindavikHousing.data,
       ),
-      loans: JSON.stringify(answers.loans),
+      preferredDeliveryDate: answers.deliveryDate ?? '',
+      otherOwnersBankInfo: JSON.stringify(otherOwnersBankInfo),
+      loans: JSON.stringify(answers.loanProviders.loans),
+      hasLoanFromOtherProvider: hasLoanFromOtherProvider.toString(),
+      hasNoLoans: hasNoLoans.toString(),
       confirmsLoanTakeover: confirmsLoanTakeover.toString(),
       wishesForPreemptiveRights: wishesForPreemptiveRights.toString(),
+      preemptiveRightType: JSON.stringify(preemptiveRightType),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
     const uploadDataId = 'grindavik-umsokn-1'
+
+    // Preemptive error check
+    try {
+      await this.syslumennService.uploadDataPreemptiveErrorCheck(
+        [applicant, ...counterParties],
+        [],
+        extraData,
+        uploadDataName,
+        uploadDataId,
+      )
+    } catch (error) {
+      const details = getPreemptiveErrorDetails(error)
+      // Only throw template api error if we get details back
+      if (details) {
+        throw new TemplateApiError(details, 400)
+      }
+    }
 
     const response = await this.syslumennService.uploadData(
       [applicant, ...counterParties],
@@ -194,7 +241,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       property = this.mockGetFasteign(realEstateId)
     } else {
-      property = await this.propertiesApi.fasteignirGetFasteign({
+      property = await this.getRealEstatesWithAuth(auth).fasteignirGetFasteign({
         fasteignanumer: realEstateId,
       })
     }
