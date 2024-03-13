@@ -40,7 +40,7 @@ export const MedicineCertificate = () => {
     <Box paddingTop={4}>
       <Stack dividers="blueberry200" space={1}>
         {isLoading && <SkeletonLoader height={35} space={2} repeat={4} />}
-        {hasError && <Problem error={error} />}
+        {hasError && <Problem error={error} noBorder={false} />}
         {certificate && !isLoading && (
           <>
             <GoBack

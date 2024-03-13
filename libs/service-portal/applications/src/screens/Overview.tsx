@@ -33,7 +33,7 @@ import {
 } from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
 import { Application } from '@island.is/application/types'
-import { ErrorScreen } from '@island.is/service-portal/core'
+import { Problem } from '@island.is/react-spa/shared'
 
 const defaultInstitution: InstitutionOption = {
   label: 'Allar stofnanir',
@@ -71,20 +71,6 @@ const Overview = () => {
       ...oldFilter,
       activeInstitution: newInstitution,
     }))
-  }
-
-  if (error || (!loading && !applications)) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(coreMessage.errorTitle)}
-        title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(coreMessage.errorFetchModule, {
-          module: formatMessage(coreMessage.applications).toLowerCase(),
-        })}
-      />
-    )
   }
 
   const organizations = orgData?.getOrganizations?.items || []
@@ -152,9 +138,10 @@ const Overview = () => {
         intro={GetIntroductionHeadingOrIntro(statusToShow)}
         serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
-
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-
+      {(error || (!loading && !applications)) && (
+        <Problem error={error} noBorder={false} />
+      )}
       {applications &&
         applications.length > 0 &&
         orgData &&
@@ -240,7 +227,15 @@ const Overview = () => {
           </>
         )}
       {!error && !loading && noApplications && (
-        <EmptyState description={getNoApplicationsError(statusToShow)} />
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(coreMessage.noDataFoundVariableFeminine, {
+            arg: formatMessage(coreMessage.applications).toLowerCase(),
+          })}
+          message={formatMessage(getNoApplicationsError(statusToShow))}
+          imgSrc="./assets/images/empty.svg"
+        />
       )}
       <FootNote serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG} />
     </>

@@ -1,4 +1,4 @@
-import { clientId, TestCase } from './delegations-filters-types'
+import { clientId, TestCase } from './delegations-index-types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { createClient } from '@island.is/services/auth/testing'
 
@@ -6,6 +6,7 @@ const person1 = createNationalId('person')
 const person2 = createNationalId('person')
 const company1 = createNationalId('company')
 const company2 = createNationalId('company')
+export const prRight1 = 'pr1'
 
 export const indexingTestcases: Record<string, TestCase> = {
   // Should index custom delegations
@@ -48,8 +49,10 @@ export const indexingTestcases: Record<string, TestCase> = {
       supportsPersonalRepresentatives: true,
     }),
     {
-      fromRepresentative: [person1, person2],
-      expectedFrom: [person1, person2],
+      fromRepresentative: [
+        { fromNationalId: person1, rightType: { code: prRight1 } },
+      ],
+      expectedFrom: [person1],
     },
   ),
 }
