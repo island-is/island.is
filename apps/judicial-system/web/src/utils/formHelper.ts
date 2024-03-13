@@ -21,7 +21,7 @@ export const removeTabsValidateAndSet = (
 
   validateAndSet(
     field,
-    value.trim(),
+    value,
     validations,
     setWorkingCase,
     errorMessage,
