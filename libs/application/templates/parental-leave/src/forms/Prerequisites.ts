@@ -15,9 +15,14 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  UserProfileApi,
+} from '@island.is/application/types'
+import { conclusionMessages } from '@island.is/application/ui-forms'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-
 import Logo from '../assets/Logo'
 import { defaultMultipleBirthsMonths } from '../config'
 import {
@@ -449,11 +454,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: parentalLeaveFormMessages.confirmation.title,
+                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
-                      event: 'SUBMIT',
+                      event: DefaultEvents.SUBMIT,
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
                     },
@@ -538,11 +543,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: parentalLeaveFormMessages.confirmation.title,
+                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
-                      event: 'SUBMIT',
+                      event: DefaultEvents.SUBMIT,
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
                       condition: (answers) =>
@@ -635,11 +640,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: parentalLeaveFormMessages.confirmation.title,
+                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
-                      event: 'SUBMIT',
+                      event: DefaultEvents.SUBMIT,
                       dataTestId: 'select-child',
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
@@ -676,7 +681,12 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      title: parentalLeaveFormMessages.confirmation.title,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: conclusionMessages.information.sectionTitle,
       children: [],
     }),
   ],
