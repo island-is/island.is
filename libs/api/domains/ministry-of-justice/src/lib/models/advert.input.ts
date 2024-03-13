@@ -1,4 +1,13 @@
-import { InputType, Field } from '@nestjs/graphql'
+import { InputType, Field, registerEnumType } from '@nestjs/graphql'
+
+export enum JournalSignatureBodyTypeEnum {
+  Hefbundin = 'Hefðbundin',
+  Nefnd = 'Nefnd',
+}
+
+registerEnumType(JournalSignatureBodyTypeEnum, {
+  name: 'MinistryOfJusticeAdvertSignatureType',
+})
 
 @InputType('MinistryOfJusticeAdvertsInput')
 export class AdvertsInput {
@@ -33,6 +42,46 @@ export class QueryParams {
   page?: number
 }
 
+@InputType('MinistryOfJusticeAdvertSignatureMember')
+export class AdvertSignatureMember {
+  @Field(() => Boolean)
+  isChairman!: boolean
+
+  @Field(() => String)
+  name!: string
+
+  @Field(() => String, { nullable: true })
+  textAbove?: string
+
+  @Field(() => String, { nullable: true })
+  textAfter?: string
+
+  @Field(() => String, { nullable: true })
+  textBelow?: string
+}
+@InputType('MinistryOfJusticeAdvertSignatureData')
+export class AdvertSignatureData {
+  @Field(() => String)
+  institution!: string
+
+  @Field(() => String)
+  date!: string
+
+  @Field(() => [AdvertSignatureMember])
+  members!: AdvertSignatureMember[]
+}
+@InputType('MinistryOfJusticeAdvertSignature')
+export class AdvertSignature {
+  @Field(() => JournalSignatureBodyTypeEnum)
+  type!: JournalSignatureBodyTypeEnum
+
+  @Field(() => String, { nullable: true })
+  additional?: string
+
+  @Field(() => [AdvertSignatureData])
+  data!: AdvertSignatureData[]
+}
+
 @InputType('MinistryOfJusticeSubmitApplicationInput')
 export class SubmitApplicationInput {
   @Field(() => String)
@@ -56,6 +105,6 @@ export class SubmitApplicationInput {
   @Field(() => String)
   document!: string
 
-  @Field(() => String, { nullable: true })
-  signature!: null
+  @Field(() => AdvertSignature)
+  signature!: AdvertSignature
 }

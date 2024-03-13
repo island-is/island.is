@@ -398,6 +398,30 @@
           }
         }
       }
+    },
+    "/api/v1/cases/{id}": {
+      "get": {
+        "operationId": "CaseController_case",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Case by ID.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Case" }
+              }
+            }
+          },
+          "404": { "description": "Case not found." }
+        }
+      }
     }
   },
   "info": {
@@ -1076,6 +1100,192 @@
           "totalAdverts": { "type": "number" }
         },
         "required": ["categories", "totalAdverts"]
+      },
+      "CaseInstitution": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "description": "SSN of the institution" },
+          "name": { "type": "string", "description": "Name of the institution" }
+        },
+        "required": ["ssn", "name"]
+      },
+      "CaseCommentTask": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "From who or what initied the task, used by client to show who inited the task.",
+            "example": "Ármann"
+          },
+          "to": {
+            "type": "string",
+            "description": "To whom or what the task is assigned to.",
+            "example": "Pálina J"
+          },
+          "title": {
+            "type": "string",
+            "example": "gerir athugasemd",
+            "description": "The task title"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment itself",
+            "example": "Pálína, getur þú tekið við og staðfest að upplýsingarnar séu réttar?"
+          }
+        },
+        "required": ["from", "to", "title", "comment"]
+      },
+      "CaseComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+            "description": "Id of the case comment."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of the comment, ISO 8601 format, UTC time format.",
+            "example": "2024-01-01T09:00:00Z"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["submit", "assign", "update", "comment"],
+            "example": "comment",
+            "description": "Type of the case task."
+          },
+          "task": {
+            "example": {
+              "from": "Ármann",
+              "to": null,
+              "title": "gerir athugasemd",
+              "comment": "Pálína, getur\n      þú tekið við og staðfest að upplýsingarnar séu réttar?"
+            },
+            "description": "The task itself",
+            "allOf": [{ "$ref": "#/components/schemas/CaseCommentTask" }]
+          }
+        },
+        "required": ["id", "createdAt", "type", "task"]
+      },
+      "Case": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "applicationId": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+            "description": "Id of the submitted application, default to null on older cases."
+          },
+          "year": {
+            "type": "string",
+            "example": 2024,
+            "description": "Year the case was created."
+          },
+          "caseNumber": {
+            "type": "string",
+            "example": "01905",
+            "description": "Case number (numeric string) gets generated automatically when a case is created."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Innsent", "Grunnvinnsla", "Yfirlestur", "Tilbúið"],
+            "example": "Innsent",
+            "description": "Status of the case, default to \"Innsent\""
+          },
+          "tag": {
+            "type": "string",
+            "enum": ["Ekki hafið", "Í yfirlestri", "Samlesin", "Þarf skoðun"],
+            "example": "Ekki hafið",
+            "description": "Internal tag for the case, default to null"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Date the case was created. ISO 8601 date and time format in UTC."
+          },
+          "modifiedAt": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Date when the case was last updated. ISO 8601 date and time format in UTC."
+          },
+          "assignedTo": {
+            "type": "string",
+            "example": "0102030000",
+            "description": "Someway of identifying the employee who is assigned to the case, defaults to null."
+          },
+          "insititution": {
+            "description": "The institution that owns the case.",
+            "example": { "ssn": "0102030000", "name": "Forsætisráðuneytið" },
+            "allOf": [{ "$ref": "#/components/schemas/CaseInstitution" }]
+          },
+          "advert": {
+            "description": "The advert that is associated with the case.",
+            "allOf": [{ "$ref": "#/components/schemas/JournalAdvert" }]
+          },
+          "fastTrack": {
+            "type": "boolean",
+            "example": false,
+            "description": "Requested fast track"
+          },
+          "published": {
+            "type": "boolean",
+            "example": false,
+            "description": "Is the case published."
+          },
+          "publishedAt": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Date the case was published. ISO 8601 date and time format in UTC."
+          },
+          "price": {
+            "type": "number",
+            "example": 23000,
+            "description": "The cost of the case."
+          },
+          "paid": {
+            "type": "boolean",
+            "example": false,
+            "description": "Is the case paid for."
+          },
+          "comments": {
+            "description": "Comments on the case.",
+            "example": {
+              "id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+              "createdAt": "2024-01-01T09:00:00Z",
+              "type": "Comment",
+              "task": {
+                "from": "Ármann",
+                "to": null,
+                "title": "gerir athugasemd",
+                "comment": "Pálína, getur þú tekið við og staðfest að upplýsingarnar séu réttar?"
+              }
+            },
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseComment" }
+          }
+        },
+        "required": [
+          "id",
+          "applicationId",
+          "year",
+          "caseNumber",
+          "status",
+          "tag",
+          "createdAt",
+          "modifiedAt",
+          "assignedTo",
+          "insititution",
+          "advert",
+          "fastTrack",
+          "published",
+          "publishedAt",
+          "price",
+          "paid",
+          "comments"
+        ]
       }
     }
   }
