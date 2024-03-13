@@ -8,9 +8,7 @@ import {
   getApplicationAnswers,
   getSelectedChild,
 } from '../../lib/parentalLeaveUtils'
-// TODO: Bring back payment calculation info, once we have an api
-// import PaymentsTable from '../PaymentSchedule/PaymentsTable'
-// import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
 import {
   NO,
   ParentalRelations,
@@ -135,28 +133,6 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
           )}
         />
       </ReviewGroup>
-
-      {/**
-       * TODO: Bring back payment calculation info, once we have an api
-       * https://app.asana.com/0/1182378413629561/1200214178491335/f
-       */}
-      {/* <ReviewGroup
-      isEditable={editable}>
-        {!loading && !error && (
-          <>
-            <Label>
-              {formatMessage(
-                parentalLeaveFormMessages.paymentPlan.subSection,
-              )}
-            </Label>
-
-            <PaymentsTable
-              application={application}
-              payments={data.getEstimatedPayments}
-            />
-          </>
-        )}
-      </ReviewGroup> */}
 
       {/**
        * TODO: Bring back this feature post v1 launch
