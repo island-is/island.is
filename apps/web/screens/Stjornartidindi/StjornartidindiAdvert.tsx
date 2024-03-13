@@ -22,6 +22,7 @@ import {
   baseUrl,
   StjornartidindiWrapper,
 } from '../../components/Stjornartidindi'
+import { StjornartidindiAdvertDisplay } from '../../components/Stjornartidindi/StjornartidindiAdvertDisplay'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -142,7 +143,10 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
         </Stack>
       }
     >
-      <Box dangerouslySetInnerHTML={{ __html: advert.document.html }}></Box>
+      <StjornartidindiAdvertDisplay
+        advertText={advert.document.html}
+        isLegacy={advert.document.isLegacy ?? false}
+      />
     </StjornartidindiWrapper>
   )
 }
