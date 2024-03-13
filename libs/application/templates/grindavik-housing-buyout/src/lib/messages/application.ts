@@ -275,6 +275,12 @@ export const application = {
       defaultMessage: 'Forgangsréttur',
       description: 'Preemptive right section title',
     },
+    description: {
+      id: 'ghb.application:preemptiveRight.description#markdown',
+      defaultMessage:
+        'Nánari upplýsingar um forgangsrétt er að finna á [upplýsingasíðu Ísland.is](https://island.is/kaup-ibudarhusnaedis-i-grindavik/forgangsrettur).',
+      description: 'Preemptive right description',
+    },
   }),
   overview: defineMessages({
     sectionTitle: {
