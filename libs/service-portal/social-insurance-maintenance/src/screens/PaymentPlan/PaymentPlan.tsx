@@ -14,7 +14,6 @@ import { Problem } from '@island.is/react-spa/shared'
 import {
   FootNote,
   IntroHeader,
-  EmptyTable,
   UserInfoLine,
   amountFormat,
   m as coreMessages,
