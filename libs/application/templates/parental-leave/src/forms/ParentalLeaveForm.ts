@@ -1526,52 +1526,46 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      title: parentalLeaveFormMessages.confirmation.title,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirmation',
           title: '',
           children: [
-            buildMultiField({
-              id: 'confirmation',
+            buildCustomField(
+              {
+                id: 'confirmationScreen',
+                title: '',
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
               title: '',
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmationScreen',
-                    title: '',
-                    component: 'Review',
-                  },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: parentalLeaveFormMessages.confirmation.title,
-                      type: 'primary',
-                      condition: (answers, externalData) => {
-                        const { applicationFundId } =
-                          getApplicationExternalData(externalData)
-                        if (!applicationFundId || applicationFundId === '') {
-                          const { periods } = getApplicationAnswers(answers)
-                          return (
-                            periods.length > 0 &&
-                            new Date(periods[0].startDate) >=
-                              addDays(getBeginningOfMonth3MonthsAgo(), -1)
-                          )
-                        }
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                  condition: (answers, externalData) => {
+                    const { applicationFundId } =
+                      getApplicationExternalData(externalData)
+                    if (!applicationFundId || applicationFundId === '') {
+                      const { periods } = getApplicationAnswers(answers)
+                      return (
+                        periods.length > 0 &&
+                        new Date(periods[0].startDate) >=
+                          addDays(getBeginningOfMonth3MonthsAgo(), -1)
+                      )
+                    }
 
-                        return true
-                      },
-                    },
-                  ],
-                }),
+                    return true
+                  },
+                },
               ],
             }),
           ],
