@@ -29,16 +29,36 @@ export const SignatureLists: FC<
     !openListsLoading && (
       <Box marginTop={10}>
         {(collection?.candidates.length > 0 || openLists?.length > 0) && (
-          <Box marginBottom={4}>
-            <Text variant="h3">
-              {t('title', 'Frambjóðendur sem hægt er að mæla með')}
-            </Text>
+          <Box
+            marginBottom={3}
+            display={'flex'}
+            justifyContent={'spaceBetween'}
+            alignItems={'baseline'}
+          >
+            {collection.isActive ? (
+              <>
+                <Text variant="h3">{t('title1', 'Forsetakosningar 2024')}</Text>
+                <Text variant="eyebrow">
+                  {t('totalCandidates', 'Fjöldi frambjóðenda: ') +
+                    collection?.candidates.length}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text variant="h3">
+                  {t('title2', 'Forsetakosningar 2024 - Framlengt')}
+                </Text>
+                <Text variant="eyebrow">
+                  {t('totalLists', 'Fjöldi lista: ') + openLists?.length}
+                </Text>
+              </>
+            )}
           </Box>
         )}
         <Stack space={3}>
           {/* if collection time is over yet there are still open lists, show them */}
           {!collection?.isActive && openLists?.length > 0 ? (
-            openLists
+            [...openLists]
               ?.sort(sortAlpha('title'))
               .map((list: SignatureCollectionListBase) => {
                 return (
@@ -51,7 +71,6 @@ export const SignatureLists: FC<
                     key={list.id}
                     backgroundColor="white"
                     heading={list.title}
-                    text={t('collectionName', 'Forsetakosningar 2024')}
                     cta={{
                       label: t('sign', 'Mæla með framboði'),
                       variant: 'text',
@@ -67,9 +86,9 @@ export const SignatureLists: FC<
                   />
                 )
               })
-          ) : collection?.candidates.length > 0 ? (
-            collection.candidates
-              .sort(sortAlpha('name'))
+          ) : collection?.candidates?.length > 0 ? (
+            [...collection.candidates]
+              ?.sort(sortAlpha('name'))
               .map((candidate: SignatureCollectionCandidate) => {
                 return (
                   <ActionCard
@@ -81,7 +100,6 @@ export const SignatureLists: FC<
                     key={candidate.id}
                     backgroundColor="white"
                     heading={candidate.name}
-                    text={t('collectionName', 'Forsetakosningar 2024')}
                     cta={
                       collection.isActive
                         ? {
