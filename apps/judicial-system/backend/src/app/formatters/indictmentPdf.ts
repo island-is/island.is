@@ -55,6 +55,7 @@ const roman = (num: number) => {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
+  confirmation?: { actor: string; date: string },
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',

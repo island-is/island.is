@@ -6,6 +6,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { EventType } from '@island.is/judicial-system/types'
+
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 import { EventLog } from './models/eventLog.model'
 
@@ -52,6 +54,16 @@ export class EventLogService {
     } catch (error) {
       this.logger.error('Failed to create event log', error)
     }
+  }
+
+  async findEventTypeByNationalId(eventType: EventType, nationalId: string) {
+    return this.eventLogModel.findOne({
+      where: {
+        eventType,
+        nationalId,
+      },
+      order: [['created', 'DESC']],
+    })
   }
 
   async loginMap(

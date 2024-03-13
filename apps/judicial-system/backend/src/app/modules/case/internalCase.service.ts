@@ -48,6 +48,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
+import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CourtDocumentType, PoliceService } from '../police'
@@ -154,6 +155,8 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => EventLogService))
+    private readonly eventLogService: EventLogService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
