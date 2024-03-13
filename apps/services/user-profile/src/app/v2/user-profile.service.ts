@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import subMonths from 'date-fns/subMonths'
+import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
@@ -182,6 +183,7 @@ export class UserProfileService {
         {
           ...update,
           lastNudge: new Date(),
+          nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
         },
         { transaction },
       )
@@ -232,8 +234,16 @@ export class UserProfileService {
     )
   }
 
-  async confirmNudge(nationalId: string): Promise<void> {
-    await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
+  async confirmNudge(
+    nationalId: string,
+    extendNudgeByMonths = 6,
+  ): Promise<void> {
+    const date = new Date()
+    await this.userProfileModel.upsert({
+      nationalId,
+      lastNudge: date,
+      nextNudge: addMonths(date, extendNudgeByMonths),
+    })
   }
 
   private checkNeedsNudge(userProfile: UserProfile): boolean | null {

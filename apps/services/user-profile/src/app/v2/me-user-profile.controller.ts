@@ -4,8 +4,10 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 
@@ -123,7 +125,15 @@ export class MeUserProfileController {
     description: 'Confirms that the user has seen the nudge',
     response: { status: 200 },
   })
-  confirmNudge(@CurrentUser() user: User) {
+  confirmNudge(
+    @CurrentUser() user: User,
+    @Query('extendNudgeByMonths') extendNudgeByMonths?: number,
+  ) {
+    // throw bad request if extendNudgeByMonths is defined and it is not 1 or 6
+    if (extendNudgeByMonths && ![1, 6].includes(+extendNudgeByMonths)) {
+      throw new BadRequestException('extendNudgeByMonths must be either 1 or 6')
+    }
+
     return this.auditService.auditPromise(
       {
         auth: user,
@@ -131,7 +141,10 @@ export class MeUserProfileController {
         action: 'nudge',
         resources: user.nationalId,
       },
-      this.userProfileService.confirmNudge(user.nationalId),
+      this.userProfileService.confirmNudge(
+        user.nationalId,
+        extendNudgeByMonths,
+      ),
     )
   }
 }

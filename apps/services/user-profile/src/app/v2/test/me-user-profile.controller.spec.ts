@@ -23,6 +23,7 @@ import { formatPhoneNumber } from '../../utils/format-phone-number'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import addMonths from 'date-fns/addMonths'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -721,7 +722,7 @@ describe('MeUserProfileController', () => {
       app.cleanUp()
     })
 
-    it('POST /v2/me/nudge should return 200 and update the lastNudge field when user confirms nudge', async () => {
+    it('POST /v2/me/nudge should return 200 and update the lastNudge and nextNudge field when user confirms nudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -740,6 +741,7 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.lastNudge).not.toBeNull()
+      expect(userProfile.nextNudge).not.toBeNull()
     })
 
     it(`POST /v2/me/nudge should return 200 and update the lastNudge field when user confirms nudge`, async () => {
@@ -757,6 +759,63 @@ describe('MeUserProfileController', () => {
 
       expect(userProfile).not.toBeNull()
       expect(userProfile.lastNudge).not.toBeNull()
+    })
+
+    it('POST /v2/me/nudge?extendNudgeByMonths=1 should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
+
+      await fixtureFactory.createUserProfile(testUserProfile)
+
+      // Act
+      const res = await server.post('/v2/me/nudge?extendNudgeByMonths=1')
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert that lastNudge is updated
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.lastNudge).not.toBeNull()
+      expect(userProfile.nextNudge).toEqual(addMonths(userProfile.lastNudge, 1))
+    })
+
+    it('POST /v2/me/nudge?extendNudgeByMonths=6 should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
+
+      await fixtureFactory.createUserProfile(testUserProfile)
+
+      // Act
+      const res = await server.post('/v2/me/nudge?extendNudgeByMonths=6')
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert that lastNudge is updated
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.lastNudge).not.toBeNull()
+      expect(userProfile.nextNudge).toEqual(addMonths(userProfile.lastNudge, 6))
+    })
+
+    it('POST /v2/me/nudge?extendNudgeByMonths=3 should return bad request since extendNudgeByMonths can only be 1 or 6', async () => {
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
+
+      await fixtureFactory.createUserProfile(testUserProfile)
+
+      // Act
+      const res = await server.post('/v2/me/nudge?extendNudgeByMonths=3')
+
+      // Assert
+      expect(res.status).toEqual(400)
     })
   })
 })
