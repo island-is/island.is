@@ -24,7 +24,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { DelegationRecordType } from '@island.is/auth-api-lib'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const namespace = '@island.is/auth/delegation-api/delegation-index'
 
@@ -36,7 +36,7 @@ const parseDelegationInfo = (id: string) => {
   }
 
   return {
-    type: type as DelegationRecordType,
+    type: type as AuthDelegationType,
     toNationalId,
     fromNationalId,
   }

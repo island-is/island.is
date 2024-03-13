@@ -1,7 +1,9 @@
 import { IsDateString, IsOptional, IsString } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { AuthDelegationProvider } from '@island.is/shared/types'
-import { DelegationRecordType } from '../types/delegationRecord'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 export class DelegationRecordDTO {
   @IsString()
@@ -22,9 +24,8 @@ export class DelegationRecordInputDTO {
   @ApiProperty()
   toNationalId!: string
 
-  @IsString()
-  @ApiProperty({ type: String })
-  type!: DelegationRecordType
+  @ApiProperty({ enum: AuthDelegationType, enumName: 'AuthDelegationType' })
+  type!: AuthDelegationType
 
   @ApiProperty({
     enum: AuthDelegationProvider,
