@@ -13,6 +13,7 @@ import { useLazyUniversityQuery } from '../../hooks/useGetUniversityInformation'
 import { UniversityGatewayUniversity } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 import { useGetProgramQuery } from '../../hooks/useGetProgramQuery'
+import { ModeOfDelivery } from '@island.is/university-gateway'
 
 export const ProgramSelection: FC<FieldBaseProps> = ({
   application,
@@ -113,6 +114,12 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
         : chosenProgram && chosenProgram.nameEn
     }${extra}`
     setChosenProgram(value)
+    if (
+      chosenProgram?.modeOfDelivery &&
+      chosenProgram?.modeOfDelivery.length <= 1
+    ) {
+      setValue(`modeOfDeliveryInformation`, ModeOfDelivery.ON_SITE)
+    }
     setValue(`${Routes.PROGRAMINFORMATION}.programName`, programName)
   }
 

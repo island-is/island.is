@@ -18,7 +18,7 @@ import {
 import { Events, States, Roles } from './constants'
 import { application, application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
+import { ApiActions, CustomActions } from '../shared'
 import { UniversitySchema } from './dataSchema'
 import {
   UserProfileApi,
@@ -104,6 +104,10 @@ const template: ApplicationTemplate<
               {
                 logMessage: coreHistoryMessages.applicationAssigned,
                 onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: 'PRUFA',
+                onEvent: DefaultEvents.TEST,
               },
             ],
           },

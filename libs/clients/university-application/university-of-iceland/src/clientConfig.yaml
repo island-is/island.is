@@ -169,6 +169,23 @@ paths:
                                 type: 'string'
                               required:
                                 type: 'boolean'
+                        extraApplicationTexts:
+                          type: 'array'
+                          items:
+                            type: 'object'
+                            properties:
+                              toptextIs:
+                                type: 'string'
+                              sociallifeIs:
+                                type: 'string'
+                              forYouIs:
+                                type: 'string'
+                              exchangeStudyIs:
+                                type: 'string'
+                              workIs:
+                                type: 'string'
+                              aboutIs:
+                                type: 'string'
                         kjorsvid:
                           type: 'array'
                           items:

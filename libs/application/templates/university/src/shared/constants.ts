@@ -6,4 +6,8 @@ export enum ApiActions {
   addStudentAcceptance = 'addStudentAcceptance',
 }
 
+export enum CustomActions {
+  TEST = 'TEST',
+}
+
 export const FILE_SIZE_LIMIT = 10000000

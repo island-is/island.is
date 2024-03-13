@@ -39,6 +39,10 @@ export const EducationOptionsSubSection = buildSubSection({
           programs.filter((x) => x.id === chosenProgram)[0].allowException ??
           false
 
+        const showThirdLevel =
+          programs.filter((x) => x.id === chosenProgram)[0]
+            .allowThirdLevelQualification ?? false
+
         const options = [
           {
             label: formerEducation.labels.educationOptions.diplomaFinishedLabel,
@@ -59,15 +63,18 @@ export const EducationOptionsSubSection = buildSubSection({
 
             value: ApplicationTypes.NOTFINISHED,
           },
-          {
+        ]
+
+        if (showThirdLevel) {
+          options.push({
             label: formerEducation.labels.educationOptions.thirdLevelLabel,
 
             subLabel:
               formerEducation.labels.educationOptions.thirdLevelDescription,
 
             value: ApplicationTypes.THIRDLEVEL,
-          },
-        ]
+          })
+        }
 
         if (showException) {
           options.push({

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
-import { ApplicationTypes } from '@island.is/university-gateway'
+import { ApplicationTypes, ModeOfDelivery } from '@island.is/university-gateway'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -38,7 +38,6 @@ const ProgramSchema = z.object({
   universityName: z.string(),
   program: z.string(),
   programName: z.string(),
-  modeOfDelivery: z.string().optional(),
   examLocation: z.string().optional(), // TODO make conditional requirement if the mode of delivery Online is chosen
 })
 
@@ -129,7 +128,12 @@ export const UniversitySchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
   programInformation: ProgramSchema,
-  modeOfDeliveryInformation: z.string().optional(),
+  modeOfDeliveryInformation: z.enum([
+    ModeOfDelivery.ONLINE,
+    ModeOfDelivery.ON_SITE,
+    ModeOfDelivery.MIXED,
+    ModeOfDelivery.REMOTE,
+  ]),
   educationOptions: z
     .enum([
       ApplicationTypes.DIPLOMA,

@@ -4,6 +4,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
+  ApplicationWithAttachments,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 
@@ -133,8 +134,10 @@ export class UniversityService extends BaseTemplateApiService {
     const exemptionData =
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
-            // degreeAttachments:
-            //   answers.educationDetails.exemptionDetails?.degreeAttachments,
+            degreeAttachments: await this.getFilesFromAttachment(
+              application,
+              answers.educationDetails.exemptionDetails?.degreeAttachments,
+            ),
             moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
           }
         : undefined
@@ -153,9 +156,26 @@ export class UniversityService extends BaseTemplateApiService {
             degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
             moreDetails:
               answers.educationDetails.thirdLevelDetails?.moreDetails,
+            degreeAttachments: await this.getFilesFromAttachment(
+              application,
+              answers.educationDetails.thirdLevelDetails?.degreeAttachments,
+            ),
           }
         : undefined
-    const finishedData = answers.educationDetails.finishedDetails || []
+    const finishedDataPromises =
+      (answers.educationDetails.finishedDetails &&
+        answers.educationDetails.finishedDetails.map(async (item) => {
+          return {
+            ...item,
+            degreeAttachments: await this.getFilesFromAttachment(
+              application,
+              item.degreeAttachments,
+            ),
+          }
+        })) ||
+      []
+
+    const finishedData = await Promise.all(finishedDataPromises)
 
     const combinedEducationList: Array<CreateApplicationEducationDto> = [
       ...finishedData
@@ -170,6 +190,7 @@ export class UniversityService extends BaseTemplateApiService {
             degreeStartDate: education.beginningDate,
             degreeEndDate: education.endDate,
             moreDetails: education.moreDetails,
+            degreeAttachments: education.degreeAttachments,
           }
         }),
     ]
@@ -206,5 +227,24 @@ export class UniversityService extends BaseTemplateApiService {
     await this.universityApplicationApiWithAuth(
       auth,
     ).universityApplicationControllerCreateApplication(createApplicationDto)
+  }
+
+  private async getFilesFromAttachment(
+    application: ApplicationWithAttachments,
+    attachments?: { name: string; key: string }[],
+  ): Promise<{ fileName: string; base64: string }[]> {
+    return await Promise.all(
+      attachments?.map(async (file) => {
+        const base64 =
+          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+            application,
+            file.key,
+          )
+        return {
+          fileName: file.name,
+          base64,
+        }
+      }) || [],
+    )
   }
 }

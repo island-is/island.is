@@ -96,6 +96,22 @@ class CreateApplicationApplicantDto {
   phone!: string
 }
 
+class CreateApplicationFileDto {
+  @IsString()
+  @ApiProperty({
+    description: 'File name',
+    example: 'cv.txt',
+  })
+  fileName!: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Base 64 for file',
+    example: '',
+  })
+  base64!: string
+}
+
 class CreateApplicationEducationDto {
   @IsString()
   @ApiPropertyOptional()
@@ -160,6 +176,14 @@ class CreateApplicationEducationDto {
     example: 'Will be finishing in October',
   })
   moreDetails?: string
+
+  @IsArray()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'List of education degree attachments',
+    type: [CreateApplicationFileDto],
+  })
+  degreeAttachments?: CreateApplicationFileDto[]
 }
 
 class CreateApplicationWorkExperienceDto {

@@ -57,7 +57,10 @@ export const mapUglaPrograms = (
         allowException: program.extraApplicationSettings?.bannaUndanthagur
           ? program.extraApplicationSettings?.bannaUndanthagur !== 't'
           : true,
-        allowThirdLevelQualification: true, //TODO missing in api
+        allowThirdLevelQualification: program.extraApplicationSettings
+          ?.thridjaStigsnamLeyft
+          ? program.extraApplicationSettings?.thridjaStigsnamLeyft === 't'
+          : false,
         modeOfDelivery:
           program.modeOfDelivery?.map((m) => {
             return mapStringToEnum(m, ModeOfDelivery)
@@ -94,11 +97,13 @@ const mapOptions = (
   field: InlineResponse2002ExtraApplicationFields,
 ): string | undefined => {
   const type = field.fieldType as FieldType
+  // console.log('ahh', program?.simenntunarstodvar)
+  return JSON.stringify(program?.simenntunarstodvar) ?? undefined
   // More fields can be added here
-  switch (type) {
-    case FieldType.TESTING_SITE:
-      return JSON.stringify(program?.simenntunarstodvar) ?? undefined
-    default:
-      return undefined
-  }
+  // switch (type) {
+  //   case FieldType.TESTING_SITE:
+  //     return JSON.stringify(program?.simenntunarstodvar) ?? undefined
+  //   default:
+  //     return undefined
+  // }
 }
