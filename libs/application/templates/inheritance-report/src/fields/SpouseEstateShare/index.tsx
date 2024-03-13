@@ -98,8 +98,8 @@ export const SpouseEstateShare: FC<
     )
   }
 
-  const showSpouseTotalDeduction =
-    wasInCohabitation === YES && hadSeparateProperty === NO
+  // TODO: decide on if we want to show this in some cases
+  const showSpouseTotalDeduction = false // wasInCohabitation === YES && hadSeparateProperty === NO
   const showSeparateProperty =
     wasInCohabitation === YES && hadSeparateProperty === YES
 
@@ -161,8 +161,8 @@ export const SpouseEstateShare: FC<
         }
 
         return (
-          <Fragment>
-            <GridColumn span="1/1" key={fieldName} paddingBottom={2}>
+          <Fragment key={fieldName}>
+            <GridColumn span="1/1" paddingBottom={2}>
               <Text variant="h4">{formatMessage(title)}</Text>
             </GridColumn>
             {options.map(({ label, value }, index) => {
@@ -229,7 +229,7 @@ export const SpouseEstateShare: FC<
               id={spouseTotalDeductionField}
               name={spouseTotalDeductionField}
               value={formatCurrency(String(localSpouseTotalDeduction ?? '0'))}
-              label={formatMessage(m.spousesShare)}
+              label={formatMessage(m.deceasedSeparateProperty)}
               backgroundColor="white"
               readOnly
             />
@@ -261,8 +261,11 @@ export const SpouseEstateShare: FC<
                 clearErrors()
                 const value = e.target.value
 
-                setValue(spouseTotalSeparatePropertyField, valueToNumber(value))
-                setLocalSpouseTotalDeduction(valueToNumber(value))
+                setValue(
+                  spouseTotalSeparatePropertyField,
+                  valueToNumber(value, ','),
+                )
+                setLocalSpouseTotalDeduction(valueToNumber(value, ','))
               }}
               currency
             />
