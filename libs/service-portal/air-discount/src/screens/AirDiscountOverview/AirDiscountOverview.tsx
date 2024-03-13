@@ -115,7 +115,6 @@ export const AirDiscountOverview = () => {
           <GridColumn span={['8/8', '8/8']} order={1}>
             <IntroHeader
               title={formatMessage(m.introTitle)}
-              fixedImgWidth
               serviceProviderSlug={VEGAGERDIN_SLUG}
               serviceProviderTooltip={formatMessage(
                 coreMessage.airDiscountTooltip,
