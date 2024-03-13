@@ -7,6 +7,8 @@ import { CreateFormInput, DeleteFormInput, GetFormInput, GetFormsInput, UpdateFo
 import { FormResponse } from "../../models/formResponse.model"
 import { FormListResponse } from "../../models/formListResponse.model"
 import { GraphqlToRestInputSettings, RESTInputSettings, RestToGraphqlInputSettings } from "../utils/helperFunctions"
+import { Form } from "../../models/form.model"
+import { Input } from "../../models/input.model"
 
 
 
@@ -91,7 +93,8 @@ export class FormsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    return response as FormResponse
+
+    return response
   }
 
   async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {

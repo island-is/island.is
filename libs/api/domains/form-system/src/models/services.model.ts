@@ -7,6 +7,6 @@ export class List {
   @Field(() => String, { nullable: true })
   listType?: string
 
-  @Field(() => [ListItem], { nullable: true })
+  @Field(() => [ListItem], { nullable: 'itemsAndList' })
   listi?: ListItem[]
 }

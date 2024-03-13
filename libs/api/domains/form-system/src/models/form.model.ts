@@ -1,11 +1,12 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './global.model'
-import { ApplicantType } from './applicantType.model'
 import { Group } from './group.model'
 import { Input } from './input.model'
 import { Step } from './step.model'
 import { Organization } from './organization.model'
 import { DocumentType } from './documentType.model'
+import graphqlTypeJson from 'graphql-type-json'
+import { FormApplicantType } from './formApplicantType.model'
 
 export type Dependencies = {
   [key: string]: string[]
@@ -31,36 +32,36 @@ export class Form {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date | null
 
-  @Field(() => Object, { nullable: true })
-  dependencies?: Dependencies[] | null
+  @Field(() => graphqlTypeJson)
+  dependencies?: { [key: string]: string[] } | null
 
-  @Field(() => DocumentType, { nullable: true })
+  @Field(() => [DocumentType], { nullable: 'itemsAndList' })
   documentTypes?: DocumentType[] | null
 
-  @Field(() => [ApplicantType])
-  formApplicantTypes?: ApplicantType[] | null
+  @Field(() => [FormApplicantType], { nullable: 'itemsAndList' })
+  formApplicantTypes?: FormApplicantType[] | null
 
   @Field(() => LanguageType, { nullable: true })
   completedMessage?: LanguageType
 
-  @Field(() => LanguageType, { nullable: true })
-  isTranslated?: LanguageType
+  @Field()
+  isTranslated?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field()
   stopProgressOnValidatingStep?: boolean
 
   @Field(() => Number, { nullable: true })
   applicationsDaysToRemove?: number
 
-  @Field(() => Step, { nullable: true })
+  @Field(() => [Step], { nullable: 'itemsAndList' })
   steps?: Step[] | null
 
-  @Field(() => Step, { nullable: true })
+  @Field(() => [Step], { nullable: 'itemsAndList' })
   stepsList?: Step[] | null
 
-  @Field(() => Group, { nullable: true })
+  @Field(() => [Group], { nullable: 'itemsAndList' })
   groupsList?: Group[] | null
 
-  @Field(() => Input, { nullable: true })
+  @Field(() => [Input], { nullable: 'itemsAndList' })
   inputsList?: Input[] | null
 }

@@ -15,7 +15,7 @@ export class Input {
   @Field(() => LanguageType, { nullable: true })
   description?: LanguageType
 
-  @Field(() => Boolean, { nullable: true })
+  @Field()
   isRequired?: boolean
 
   @Field(() => Number, { nullable: true })
@@ -24,16 +24,16 @@ export class Input {
   @Field(() => Number, { nullable: true })
   groupId?: number
 
-  @Field(() => Boolean, { nullable: true })
+  @Field()
   isHidden?: boolean
 
   @Field(() => String, { nullable: true })
-  type?: string
+  type?: string | null
 
   @Field(() => String, { nullable: true })
   guid?: string
 
-  @Field(() => Boolean, { nullable: true })
+  @Field()
   isPartOfMultiSet?: boolean
 
   @Field(() => String, { nullable: true })
@@ -46,41 +46,4 @@ export class Input {
   inputFields?: object
 }
 
-@ObjectType('FormSystemInputCreation')
-export class CreateInput {
-  @Field(() => Number, { nullable: true })
-  groupId?: number
 
-  @Field(() => Number, { nullable: true })
-  displayOrder?: number
-}
-
-@ObjectType('FormSystemInputUpdate')
-export class UpdateInput {
-  @Field(() => ID, { nullable: true })
-  id?: number
-
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
-
-  @Field(() => LanguageType, { nullable: true })
-  description?: LanguageType
-
-  @Field(() => Boolean, { nullable: true })
-  isRequired?: boolean
-
-  @Field(() => Number, { nullable: true })
-  displayOrder?: number
-
-  @Field(() => Boolean, { nullable: true })
-  isHidden?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => InputSettings, { nullable: true })
-  inputSettings?: InputSettings
-
-  @Field(() => Boolean, { nullable: true })
-  isPartOfMultiSet?: boolean
-}

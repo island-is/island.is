@@ -1,5 +1,12 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { Form } from "../models/form.model";
+import { Field, ID, InputType, Int } from "@nestjs/graphql"
+import graphqlTypeJson from 'graphql-type-json'
+import { LanguageTypeInput } from "./global.input"
+import { InputInput } from "./inputs.input"
+import { GroupInput } from "./groups.input"
+import { StepInput } from "./steps.input"
+import { FormApplicantTypeInput } from "./applicantType.input"
+import { DocumentTypeInput } from "./documentType.input"
+import { OrganizationInput } from "./organization.input"
 
 
 @InputType('FormSystemGetFormInput')
@@ -26,11 +33,65 @@ export class DeleteFormInput {
   id!: number
 }
 
+@InputType('FormSystemFormInput')
+export class FormInput {
+  @Field(() => ID, { nullable: true })
+  id?: number
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
+
+  @Field(() => OrganizationInput, { nullable: true })
+  organization?: OrganizationInput
+
+  @Field(() => Date, { nullable: true })
+  created?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastChanged?: Date
+
+  @Field(() => Date, { nullable: true })
+  invalidationDate?: Date | null
+
+  @Field(() => graphqlTypeJson)
+  dependencies?: { [key: string]: string[] } | null
+
+  @Field(() => [DocumentTypeInput], { nullable: 'itemsAndList' })
+  documentTypes?: DocumentTypeInput[] | null
+
+  @Field(() => [FormApplicantTypeInput], { nullable: 'itemsAndList' })
+  formApplicantTypes?: FormApplicantTypeInput[] | null
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  completedMessage?: LanguageTypeInput
+
+  @Field()
+  isTranslated?: boolean
+
+  @Field()
+  stopProgressOnValidatingStep?: boolean
+
+  @Field(() => Number, { nullable: true })
+  applicationsDaysToRemove?: number
+
+  @Field(() => [StepInput], { nullable: 'itemsAndList' })
+  steps?: StepInput[] | null
+
+  @Field(() => [StepInput], { nullable: 'itemsAndList' })
+  stepsList?: StepInput[] | null
+
+  @Field(() => [GroupInput], { nullable: 'itemsAndList' })
+  groupsList?: GroupInput[] | null
+
+  @Field(() => [InputInput], { nullable: 'itemsAndList' })
+  inputsList?: InputInput[] | null
+}
+
 @InputType('FormSystemUpdateFormInput')
 export class UpdateFormInput {
   @Field(() => Int, { nullable: true })
   formId!: number
 
-  @Field(() => Form, { nullable: true })
-  form?: Form
+  @Field(() => FormInput, { nullable: true })
+  form?: FormInput
 }

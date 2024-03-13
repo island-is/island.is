@@ -2,7 +2,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { LanguageType } from "./global.model";
 
 
-ObjectType('FormSystemApplicantTypeNameSuggestion')
+@ObjectType('FormSystemApplicantTypeNameSuggestion')
 export class ApplicantTypeNameSuggestion {
   @Field(() => LanguageType, { nullable: true })
   nameSuggestion?: LanguageType

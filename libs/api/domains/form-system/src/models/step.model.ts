@@ -17,7 +17,7 @@ export class Step {
   name?: LanguageType
 
   @Field(() => String, { nullable: true })
-  type?: string
+  type?: string | null
 
   @Field(() => LanguageType, { nullable: true })
   waitingText?: LanguageType
@@ -31,36 +31,7 @@ export class Step {
   @Field(() => Boolean, { nullable: true })
   isCompleted?: boolean
 
-  @Field(() => [Group], { nullable: true })
-  groups?: Group[]
+  @Field(() => [Group], { nullable: 'itemsAndList' })
+  groups?: Group[] | null
 }
 
-@ObjectType('FormSystemStepCreation')
-export class CreateStep {
-  @Field(() => Int, { nullable: true })
-  formId?: number
-
-  @Field(() => Int, { nullable: true })
-  displayOrder?: number
-}
-
-@ObjectType('FormSystemStepUpdate')
-export class UpdateStep {
-  @Field(() => ID, { nullable: true })
-  id?: number;
-
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType;
-
-  @Field(() => String, { nullable: true })
-  type?: string | null;
-
-  @Field(() => Number, { nullable: true })
-  displayOrder?: number;
-
-  @Field(() => LanguageType, { nullable: true })
-  waitingText?: LanguageType;
-
-  @Field(() => Boolean, { nullable: true })
-  callRuleset?: boolean;
-}

@@ -2,10 +2,10 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { LanguageType } from "./global.model";
 import { ApplicantTypeNameSuggestion } from "./applicantTypeNameSuggestion";
 
-ObjectType('FormSystemApplicantType')
+@ObjectType('FormSystemApplicantType')
 export class ApplicantType {
   @Field(() => Number, { nullable: true })
-  formId?: number
+  id?: number
 
   @Field(() => Number, { nullable: true })
   applicantTypeId?: number

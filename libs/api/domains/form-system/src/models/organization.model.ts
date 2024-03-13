@@ -18,30 +18,23 @@ export class Organization {
   @Field(() => String, { nullable: true })
   nationalId?: string | null
 
-  @Field(() => [Input])
+  @Field(() => [Input], { nullable: 'itemsAndList' })
   inputTypes?: Input[] | null
 
-  @Field(() => [DocumentType])
+  @Field(() => [DocumentType], { nullable: 'itemsAndList' })
   documentTypes?: DocumentType[] | null
 
-  @Field(() => [ApplicantType])
+  @Field(() => [ApplicantType], { nullable: true })
   applicantTypes?: ApplicantType[] | null
 
-  @Field(() => [ListType])
+  @Field(() => [ListType], { nullable: 'itemsAndList' })
   listTypes?: ListType[] | null
 
-  @Field(() => [Form])
+  @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[] | null
 
-  @Field(() => [ExternalEndpoints])
+  @Field(() => [ExternalEndpoints], { nullable: 'itemsAndList' })
   externalEndpoints?: ExternalEndpoints[] | null
 }
 
-@ObjectType('FormSystemOrganizationCreation')
-export class CreateOrganization {
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
 
-  @Field(() => String, { nullable: true })
-  nationalId?: string
-}

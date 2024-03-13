@@ -19,8 +19,8 @@ export class Group {
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
-  @Field(() => [Input], { nullable: true })
-  inputs?: Input[]
+  @Field(() => [Input])
+  inputs?: Input[] | null
 
   @Field(() => Number, { nullable: true })
   stepId?: number
@@ -30,33 +30,5 @@ export class Group {
 
   @Field(() => String, { nullable: true })
   stepGuid?: string
-}
-
-@ObjectType('FormSystemGroupCreation')
-export class CreateGroup {
-  @Field(() => ID, { nullable: true })
-  stepId?: number
-
-  @Field(() => Number, { nullable: true })
-  displayOrder?: number
-}
-
-@ObjectType('FormSystemGroupUpdate')
-export class UpdateGroup {
-  @Field(() => ID, { nullable: true })
-  id?: number
-
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
-
-  @Field(() => String, { nullable: true })
-  guid?: string
-
-  @Field(() => Number, { nullable: true })
-  displayOrder?: number
-
-  @Field(() => Number, { nullable: true })
-  multiSet?: number
-
 }
 
