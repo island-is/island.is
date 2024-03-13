@@ -74,7 +74,7 @@ const PaymentPlan = () => {
         )}
       />
       {error && !loading ? (
-        <Problem error={error} type="internal_service_error" noBorder={false} />
+        <Problem error={error} noBorder={false} />
       ) : !error && !loading && !data?.socialInsurancePaymentPlan ? (
         <Problem type="no_data" noBorder={false} />
       ) : (

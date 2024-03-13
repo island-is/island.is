@@ -54,10 +54,6 @@ const PatentEP = ({ data, loading }: Props) => {
     ])
   }, [formatMessage, data.lifecycle, data.epLifecycle])
 
-  if (!data && !loading) {
-    return <Problem type="no_data" />
-  }
-
   const applicationLink = data?.epApplicationNumber
     ? parseInt(data.epApplicationNumber).toString()
     : ''

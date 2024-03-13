@@ -52,10 +52,6 @@ const PatentIS = ({ data, loading }: Props) => {
     ])
   }, [formatMessage, data.lifecycle])
 
-  if (!data && !loading) {
-    return <Problem type="no_data" />
-  }
-
   return (
     <>
       <StackWithBottomDivider space="p2">
