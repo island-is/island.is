@@ -298,13 +298,13 @@ export const assets = buildSection({
                 fields: [
                   {
                     title: m.bankAccount.defaultMessage,
-                    id: 'accountNumber',
+                    id: 'assetNumber',
                     required: true,
                     format: '####-##-######',
                     placeholder: '0000-00-000000',
                   },
                   {
-                    title: m.bankAccountBalance.defaultMessage,
+                    title: m.bankAccountCapital.defaultMessage,
                     id: 'propertyValuation',
                     required: true,
                     currency: true,
@@ -315,7 +315,7 @@ export const assets = buildSection({
                   },
                   {
                     title: m.bankAccountPenaltyInterestRates.defaultMessage,
-                    id: 'penaltyInterestRates',
+                    id: 'exchangeRateOrInterest',
                     required: false,
                     currency: true,
                   },
@@ -324,7 +324,7 @@ export const assets = buildSection({
                 calcWithShareValue: false,
                 skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
-                sumField: 'propertyValuation',
+                sumField: 'propertyValuation,exchangeRateOrInterest',
                 fromExternalData: 'bankAccounts',
               },
             ),

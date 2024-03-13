@@ -183,9 +183,9 @@ export interface OtherAssets {
 }
 
 export interface BankAccountsData {
-  capital: string
-  penalityInterestRates: string
-  accountNumber: string
+  exchangeRateOrInterest: string
+  propertyNumber: string
+  propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
 }

@@ -83,10 +83,12 @@ export const ReportFieldsRepeater: FC<
 
     const total = values.reduce((acc: number, current: any) => {
       const deductionValue = valueToNumber(current[props?.deductionField], ',')
-      let currentValue = valueToNumber(current[props?.sumField], ',')
+
+      let currentValue = props?.sumField
+        .split(',')
+        .reduce((acc, field) => acc + valueToNumber(current[field]), 0)
       currentValue = currentValue - deductionValue
       const shareValueNumber = valueToNumber(current?.share, '.')
-
       const shareValue = !shareValueNumber ? 0 : shareValueNumber / 100
 
       return (
@@ -255,7 +257,7 @@ export const ReportFieldsRepeater: FC<
                 const err = errors && getErrorViaPath(errors, fieldId)
 
                 const shouldRecalculateTotal =
-                  props.sumField === field.id ||
+                  props.sumField.split(',').includes(field.id) ||
                   props.deductionField === field.id
 
                 return field?.sectionTitle ? (

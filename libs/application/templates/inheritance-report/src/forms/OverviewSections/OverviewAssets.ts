@@ -199,15 +199,15 @@ export const overviewAssets = [
 
           return {
             title: isForeign
-              ? account.accountNumber
-              : formatBankInfo(account.accountNumber ?? ''),
+              ? account.propertyNumber
+              : formatBankInfo(account.propertyNumber ?? ''),
             description: [
               `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
-                account.capital ?? '0',
+                account.propertyValuation ?? '0',
               )}`,
               `${
                 m.bankAccountPenaltyInterestRates.defaultMessage
-              }: ${formatCurrency(account.penalityInterestRates ?? '0')}`,
+              }: ${formatCurrency(account.exchangeRateOrInterest ?? '0')}`,
               `${m.bankAccountForeign.defaultMessage}: ${
                 isForeign ? m.yes.defaultMessage : m.no.defaultMessage
               }`,
