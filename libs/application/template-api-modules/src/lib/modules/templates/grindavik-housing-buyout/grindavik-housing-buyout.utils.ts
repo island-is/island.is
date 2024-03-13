@@ -32,4 +32,22 @@ const getDomicileOnDate = (
 const formatBankInfo = (bankInfo: string) =>
   bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
 
-export { getDomicileOnDate, getDomicileAtPostalCodeOnDate, formatBankInfo }
+interface PreemptiveErrorData {
+  status: number
+  body: {
+    detail: string
+  }
+}
+
+const getPreemptiveErrorDetails = (error: PreemptiveErrorData) => {
+  if (error.status === 406) {
+    return error.body?.detail
+  }
+}
+
+export {
+  getDomicileOnDate,
+  getDomicileAtPostalCodeOnDate,
+  formatBankInfo,
+  getPreemptiveErrorDetails,
+}

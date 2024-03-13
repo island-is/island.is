@@ -15,6 +15,7 @@ import {
 import {
   getDomicileOnDate,
   formatBankInfo,
+  getPreemptiveErrorDetails,
 } from './grindavik-housing-buyout.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
@@ -116,16 +117,21 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
     const uploadDataId = 'grindavik-umsokn-1'
 
-    const check = await this.syslumennService.uploadDataPreemptiveErrorCheck(
-      [applicant, ...counterParties],
-      [],
-      extraData,
-      uploadDataName,
-      uploadDataId,
-    )
-
-    if (check) {
-      // TODO check for error
+    // Preemptive error check
+    try {
+      await this.syslumennService.uploadDataPreemptiveErrorCheck(
+        [applicant, ...counterParties],
+        [],
+        extraData,
+        uploadDataName,
+        uploadDataId,
+      )
+    } catch (error) {
+      const details = getPreemptiveErrorDetails(error)
+      // Only throw template api error if we get details back
+      if (details) {
+        throw new TemplateApiError(details, 400)
+      }
     }
 
     const response = await this.syslumennService.uploadData(
