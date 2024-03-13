@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, NotFoundException, UseGuards } from '@nestjs/common'
@@ -11,6 +11,7 @@ import {
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'notifications-resolver'
 export const AUDIT_NAMESPACE = 'notifications-resolver'
@@ -18,6 +19,7 @@ export const AUDIT_NAMESPACE = 'notifications-resolver'
 @UseGuards(IdsUserGuard)
 @Resolver()
 @Audit({ namespace: AUDIT_NAMESPACE })
+@FeatureFlag(Features.ServicePortalNotificationsEnabled)
 export class NotificationsResolver {
   constructor(
     private readonly service: NotificationsService,

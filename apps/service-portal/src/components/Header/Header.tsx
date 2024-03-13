@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Box,
   Hidden,
@@ -15,7 +15,6 @@ import { useLocale } from '@island.is/localization'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { useListDocuments } from '@island.is/service-portal/graphql'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
@@ -23,6 +22,7 @@ import { useAuth } from '@island.is/auth/react'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import NotificationButton from '../Notifications/NotificationButton'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
@@ -31,11 +31,28 @@ interface Props {
 export const Header = ({ position }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
-  const { unreadCounter } = useListDocuments()
   const { width } = useWindowSize()
   const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
   const { userInfo: user } = useAuth()
+
+  // Notification feature flag. Remove after feature is live.
+  const [enableNotificationFlag, setEnableNotificationFlag] =
+    useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalNotificationsPageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setEnableNotificationFlag(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className={styles.placeholder}>
@@ -97,12 +114,14 @@ export const Header = ({ position }: Props) => {
                         </Box>
                       </Hidden>
 
-                      <Hidden below="md">
-                        <NotificationButton
-                          setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                          showMenu={menuOpen === 'notifications'}
-                        />
-                      </Hidden>
+                      {enableNotificationFlag && (
+                        <Hidden below="md">
+                          <NotificationButton
+                            setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                            showMenu={menuOpen === 'notifications'}
+                          />
+                        </Hidden>
+                      )}
 
                       <Box marginRight={[1, 1, 2]}>
                         <Button

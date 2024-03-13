@@ -33,6 +33,13 @@ const sharedRoutes = (userInfo: User) => [
     enabled: userInfo.scopes.includes(UserProfileScope.write),
     element: <UserProfileSettings />,
   },
+  {
+    name: 'Notifications',
+    path: InformationPaths.Notifications,
+    enabled: userInfo.scopes.includes(UserProfileScope.write),
+    key: 'Notifications',
+    element: <Notifications />,
+  },
 ]
 
 export const informationModule: PortalModule = {
@@ -67,12 +74,6 @@ export const informationModule: PortalModule = {
       path: InformationPaths.Spouse,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Spouse />,
-    },
-    {
-      name: 'Notifications',
-      path: InformationPaths.Notifications,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      element: <Notifications />,
     },
     ...sharedRoutes(userInfo),
   ],
