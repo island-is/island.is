@@ -928,7 +928,7 @@ export class InternalCaseService {
         this.deliverCaseToPoliceWithFiles(theCase, user, [
           {
             type: CourtDocumentType.RVMG,
-            courtDocument: pdf.toString('binary'),
+            courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ]),
       )
