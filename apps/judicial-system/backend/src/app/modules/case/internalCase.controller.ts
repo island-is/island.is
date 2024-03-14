@@ -279,22 +279,49 @@ export class InternalCaseController {
   }
 
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Post('case/:caseId/deliverIndictmentCaseIndictmentToPolice')
+  @Post('case/:caseId/deliverIndictmentToPolice')
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers an indictment case indictment to police',
+    description: 'Delivers an indictment to police',
   })
-  deliverIndictmentCaseIndictmentToPolice(
+  deliverIndictmentToPolice(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering indictment for case ${caseId} to police`)
+
+    return this.internalCaseService.deliverIndictmentToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post('case/:caseId/deliverCaseFilesRecordToPolice/:policeCaseNumber')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a case files record to police',
+  })
+  async deliverCaseFilesRecordToPolice(
+    @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering indictment case indictment ${caseId} to police`,
+      `Delivering the case files record for case ${caseId} and police case ${policeCaseNumber} to police`,
     )
 
-    return this.internalCaseService.deliverIndictmentCaseIndictmentToPolice(
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    return this.internalCaseService.deliverCaseFilesRecordToPolice(
       theCase,
+      policeCaseNumber,
       deliverDto.user,
     )
   }
