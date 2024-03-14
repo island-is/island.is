@@ -104,6 +104,11 @@ export const cases = {
           description:
             'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
         },
+        prosecutor: {
+          id: 'judicial.system.core:cases.active_requests.table.headers.prosecutor',
+          defaultMessage: 'Sækjandi',
+          description: 'Notaður sem titill fyrir sækjanda í málalista.',
+        },
       }),
     },
     casesAwaitingConfirmationTitle: defineMessage({

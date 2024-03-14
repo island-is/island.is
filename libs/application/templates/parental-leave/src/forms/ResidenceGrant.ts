@@ -65,7 +65,7 @@ export const ResidenceGrant: Form = buildForm({
             buildSubmitField({
               id: 'residenceGrant.submit',
               placement: 'footer',
-              title: parentalLeaveFormMessages.confirmation.title,
+              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

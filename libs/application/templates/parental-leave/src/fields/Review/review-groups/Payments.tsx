@@ -1,40 +1,30 @@
-import { useMutation } from '@apollo/client'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
   DataValue,
-  RadioValue,
   ReviewGroup,
   formatBankInfo,
-  handleServerError,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  ProblemType,
-  findProblemInApolloError,
-} from '@island.is/shared/problem'
-import { ReviewGroupProps } from './props'
-import { useFormContext } from 'react-hook-form'
-import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   PARENTAL_LEAVE,
   YES,
 } from '../../../constants'
-import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { useUnion as useUnionOptions } from '../../../hooks/useUnion'
-import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../../hooks/usePrivatePensionFund'
 import { usePensionFund as usePensionFundOptions } from '../../../hooks/usePensionFund'
+import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../../hooks/usePrivatePensionFund'
+import { useUnion as useUnionOptions } from '../../../hooks/useUnion'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { getSelectOptionLabel } from '../../../lib/parentalLeaveClientUtils'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import { ReviewGroupProps } from './props'
 
 export const Payments = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { formatMessage, locale } = useLocale()
-  const { getValues } = useFormContext()
+  const { formatMessage } = useLocale()
 
   const {
     applicationType,
@@ -47,18 +37,6 @@ export const Payments = ({
     bank,
   } = getApplicationAnswers(application.answers)
 
-  const [updateApplication] = useMutation(UPDATE_APPLICATION, {
-    onError: (e) => {
-      // We handle validation problems separately.
-      const problem = findProblemInApolloError(e)
-      if (problem?.type === ProblemType.VALIDATION_FAILED) {
-        return
-      }
-
-      return handleServerError(e, formatMessage)
-    },
-  })
-
   const pensionFundOptions = usePensionFundOptions()
   const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
     ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
@@ -67,63 +45,34 @@ export const Payments = ({
     ({ value }) => value !== NO_UNION,
   )
 
-  const saveApplication = async () => {
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...application.answers,
-            ...getValues(),
-          },
-        },
-        locale,
-      },
-    })
-  }
-
   return (
     <ReviewGroup
-      saveAction={saveApplication}
       isEditable={editable}
       editAction={() => goToScreen?.('payments')}
     >
-      <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.paymentInformationBank,
-              )}
-              value={formatBankInfo(bank)}
-            />
-          </GridColumn>
-        </GridRow>
-        {applicationType === PARENTAL_LEAVE && (
-          <>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.salaryLabelPensionFund,
-                  )}
-                  value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
-                />
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <RadioValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.unionName,
-                  )}
-                  value={useUnion}
-                />
-              </GridColumn>
-            </GridRow>
-
-            {useUnion === YES && (
-              <GridRow>
+      {applicationType === PARENTAL_LEAVE ? (
+        <Stack space={2}>
+          <GridRow rowGap={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.paymentInformationBank,
+                )}
+                value={formatBankInfo(bank)}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.salaryLabelPensionFund,
+                )}
+                value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
+              />
+            </GridColumn>
+          </GridRow>
+          {(useUnion === YES || usePrivatePensionFund === YES) && (
+            <GridRow rowGap={2}>
+              {useUnion === YES && (
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                   <DataValue
                     label={formatMessage(
@@ -132,47 +81,31 @@ export const Payments = ({
                     value={getSelectOptionLabel(unionOptions, union)}
                   />
                 </GridColumn>
-              </GridRow>
-            )}
-
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <RadioValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.privatePensionFundName,
-                  )}
-                  value={usePrivatePensionFund}
-                />
-              </GridColumn>
-            </GridRow>
-
-            {usePrivatePensionFund === YES && (
-              <GridRow>
+              )}
+              {usePrivatePensionFund === YES && (
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                   <DataValue
                     label={formatMessage(
                       parentalLeaveFormMessages.shared.privatePensionFund,
                     )}
-                    value={getSelectOptionLabel(
+                    value={`${getSelectOptionLabel(
                       privatePensionFundOptions,
                       privatePensionFund,
-                    )}
+                    )} ${privatePensionFundPercentage}%`}
                   />
                 </GridColumn>
-
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      parentalLeaveFormMessages.shared.privatePensionFundRatio,
-                    )}
-                    value={privatePensionFundPercentage}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
-          </>
-        )}
-      </Stack>
+              )}
+            </GridRow>
+          )}
+        </Stack>
+      ) : (
+        <DataValue
+          label={formatMessage(
+            parentalLeaveFormMessages.shared.paymentInformationBank,
+          )}
+          value={formatBankInfo(bank)}
+        />
+      )}
     </ReviewGroup>
   )
 }
