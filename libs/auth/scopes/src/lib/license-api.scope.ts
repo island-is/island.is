@@ -1,4 +1,5 @@
 export enum LicenseApiScope {
+  licensesBarcode = '@island.is/licenses:barcode',
   licensesVerify = '@island.is/licenses:verify',
   licensesFirearm = '@island.is/licenses:firearm',
   licensesDisability = '@island.is/licenses:disability',

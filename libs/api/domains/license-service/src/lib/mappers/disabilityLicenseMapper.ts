@@ -1,8 +1,8 @@
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { OrorkuSkirteini } from '@island.is/clients/disability-license'
+import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
-  DEFAULT_LICENSE_ID,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
