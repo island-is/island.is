@@ -6,6 +6,7 @@ import {
   FormContext,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -17,7 +18,10 @@ interface Props {
   continueDisabled?: boolean
   description: string
   defaultExplanation: string
-  fieldToModify: string
+  fieldToModify: keyof Pick<
+    Case,
+    'rulingModifiedHistory' | 'appealRulingModifiedHistory'
+  >
 }
 
 const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({

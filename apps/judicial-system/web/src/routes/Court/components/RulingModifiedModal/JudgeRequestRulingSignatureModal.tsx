@@ -8,9 +8,7 @@ interface Props {
   onNo: () => void
 }
 
-const JudgeRequestRulingSignatureModal: React.FC<
-  React.PropsWithChildren<Props>
-> = ({ onYes, onNo }) => {
+const JudgeRequestRulingSignatureModal: React.FC<Props> = ({ onYes, onNo }) => {
   const { formatMessage } = useIntl()
 
   return (

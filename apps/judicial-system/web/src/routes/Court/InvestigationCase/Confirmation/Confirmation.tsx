@@ -46,7 +46,7 @@ type VisibleModal =
   | 'registrarRequestRulingSignatureModal'
   | 'signingModal'
 
-const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Confirmation: React.FC = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -65,8 +65,8 @@ const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
   const isCorrectingRuling = workingCase.notifications?.some(
     (notification) => notification.type === NotificationType.RULING,
   )
-  const isAssignedJudge = user && workingCase.judge?.id === user?.id
-  const isAssignedRegistrar = user && workingCase.registrar?.id === user?.id
+  const isAssignedJudge = user && workingCase.judge?.id === user.id
+  const isAssignedRegistrar = user && workingCase.registrar?.id === user.id
   const hideNextButton =
     (!isCorrectingRuling && !isAssignedJudge) ||
     (isCorrectingRuling && !isAssignedJudge && !isAssignedRegistrar)

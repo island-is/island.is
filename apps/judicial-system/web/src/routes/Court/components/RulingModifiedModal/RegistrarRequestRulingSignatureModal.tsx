@@ -7,9 +7,9 @@ interface Props {
   onContinue: () => void
 }
 
-const RegistrarRequestRulingSignatureModal: React.FC<
-  React.PropsWithChildren<Props>
-> = ({ onContinue }) => {
+const RegistrarRequestRulingSignatureModal: React.FC<Props> = ({
+  onContinue,
+}) => {
   const { formatMessage } = useIntl()
 
   return (
