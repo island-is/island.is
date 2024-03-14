@@ -99,6 +99,10 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
+import {
+  UltravioletRadiationClientConfig,
+  UltravioletRadiationClientModule,
+} from '@island.is/clients/ultraviolet-radiation'
 import { DmrClientConfig, DmrClientModule } from '@island.is/clients/dmr'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -308,6 +312,7 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
+    UltravioletRadiationClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -380,6 +385,7 @@ const environment = getConfig
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
+        UltravioletRadiationClientConfig,
       ],
     }),
   ],

@@ -553,6 +553,9 @@ export interface IChartFields {
   /** Components */
   components: IChartComponent[]
 
+  /** Interval */
+  interval?: number | undefined
+
   /** Date From */
   dateFrom?: string | undefined
 
@@ -607,6 +610,9 @@ export interface IChartComponentFields {
   /** Type */
   type: 'line' | 'bar' | 'area' | 'pie-cell'
 
+  /** Chart Data Source */
+  chartDataSource?: IChartDataSource | undefined
+
   /** Source Data Key */
   sourceDataKey: string
 
@@ -636,12 +642,40 @@ export interface IChartComponent extends Entry<IChartComponentFields> {
   }
 }
 
+export interface IChartDataSourceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Configuration */
+  configuration?: Record<string, any> | undefined
+}
+
+export interface IChartDataSource extends Entry<IChartDataSourceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'chartDataSource'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IChartNumberBoxFields {
   /** Title */
   title: string
 
   /** Description */
   numberBoxDescription: string
+
+  /** Chart Data Source */
+  chartDataSource?: IChartDataSource | undefined
 
   /** Source Data Key */
   sourceDataKey: string
@@ -4798,6 +4832,7 @@ export type CONTENT_TYPE =
   | 'cardSection'
   | 'chart'
   | 'chartComponent'
+  | 'chartDataSource'
   | 'chartNumberBox'
   | 'contactUs'
   | 'customPage'

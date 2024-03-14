@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import pick from 'lodash/pick'
 
 import { SystemMetadata } from '@island.is/shared/types'
 
@@ -19,9 +18,6 @@ export class ChartComponent {
   @Field()
   sourceDataKey!: string
 
-  @Field(() => Number, { nullable: true })
-  interval?: number
-
   @Field(() => String, { nullable: true })
   stackId?: string
 }
@@ -37,6 +33,5 @@ export const mapChartComponent = ({
     type: fields.type ?? 'line',
     sourceDataKey: fields.sourceDataKey ?? '',
     stackId: fields.stackId,
-    interval: fields.interval ? Number(fields.interval) : undefined,
   }
 }

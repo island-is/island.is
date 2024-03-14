@@ -79,7 +79,7 @@ import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
 import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
-import { Locale } from '@island.is/shared/types'
+import { ChartDataSourceType, Locale } from '@island.is/shared/types'
 import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { GetTabSectionInput } from './dto/getTabSection.input'
@@ -111,6 +111,10 @@ import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
+import {
+  ChartDataSource,
+  StatisticsQueryResponse,
+} from './models/chartDataSource.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -785,6 +789,31 @@ export class FeaturedEventsResolver {
     } catch {
       // Fallback to empty object in case something goes wrong when fetching or parsing namespace
       return {}
+    }
+  }
+}
+
+// TODO: create dataloader
+@Resolver(() => ChartDataSource)
+@CacheControl(defaultCache)
+export class ChartDataSourceResolver {
+  constructor() {}
+
+  @ResolveField(() => StatisticsQueryResponse)
+  async sourceData(@Parent() dataSource: ChartDataSource) {
+    const dataSourceType = dataSource.sourceData.dataSourceType
+
+    if (dataSourceType === ChartDataSourceType.InternalJson) {
+      return dataSource.sourceData.internalJson
+    }
+
+    if (dataSourceType === ChartDataSourceType.ExternalCsv) {
+      // TODO: implement
+    }
+
+    // TODO: perhaps skip having this if statement
+    if (dataSourceType === ChartDataSourceType.ExternalJson) {
+      // TODO: call data loader here?
     }
   }
 }
