@@ -293,6 +293,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   useEffect(() => {
     if (loading) return
+    if (query[query.length - 1] === '´') return
 
     let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
     if (originalSortedResults.length > 0) {
