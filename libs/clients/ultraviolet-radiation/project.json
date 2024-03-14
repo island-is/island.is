@@ -44,5 +44,5 @@
       "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": []
+  "tags": ["scope:client", "lib:client"]
 }
