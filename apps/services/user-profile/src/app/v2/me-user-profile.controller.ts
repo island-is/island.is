@@ -25,7 +25,11 @@ import type { User } from '@island.is/auth-nest-tools'
 import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
-import { UserProfileService } from './user-profile.service'
+import {
+  NUDGE_INTERVAL,
+  SKIP_INTERVAL,
+  UserProfileService,
+} from './user-profile.service'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -130,7 +134,10 @@ export class MeUserProfileController {
     @Query('extendNudgeByMonths') extendNudgeByMonths?: number,
   ) {
     // throw bad request if extendNudgeByMonths is defined and it is not 1 or 6
-    if (extendNudgeByMonths && ![1, 6].includes(+extendNudgeByMonths)) {
+    if (
+      extendNudgeByMonths &&
+      ![SKIP_INTERVAL, NUDGE_INTERVAL].includes(+extendNudgeByMonths)
+    ) {
       throw new BadRequestException('extendNudgeByMonths must be either 1 or 6')
     }
 

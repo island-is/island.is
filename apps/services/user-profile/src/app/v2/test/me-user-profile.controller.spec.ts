@@ -18,7 +18,7 @@ import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
-import { NUDGE_INTERVAL } from '../user-profile.service'
+import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { formatPhoneNumber } from '../../utils/format-phone-number'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
@@ -106,39 +106,45 @@ describe('MeUserProfileController', () => {
     const expiredDate = subMonths(new Date(), NUDGE_INTERVAL + 1)
 
     it.each`
-      verifiedField                     | isVerified | lastNudge      | needsNudgeExpected
-      ${['email']}                      | ${true}    | ${null}        | ${true}
-      ${['email']}                      | ${true}    | ${currentDate} | ${false}
-      ${['email']}                      | ${true}    | ${expiredDate} | ${true}
-      ${['email']}                      | ${false}   | ${null}        | ${null}
-      ${['email']}                      | ${false}   | ${currentDate} | ${null}
-      ${['email']}                      | ${false}   | ${expiredDate} | ${null}
-      ${['mobilePhoneNumber']}          | ${true}    | ${null}        | ${true}
-      ${['mobilePhoneNumber']}          | ${true}    | ${currentDate} | ${false}
-      ${['mobilePhoneNumber']}          | ${true}    | ${expiredDate} | ${true}
-      ${['mobilePhoneNumber']}          | ${false}   | ${null}        | ${null}
-      ${['mobilePhoneNumber']}          | ${false}   | ${currentDate} | ${null}
-      ${['mobilePhoneNumber']}          | ${false}   | ${expiredDate} | ${null}
-      ${['email', 'mobilePhoneNumber']} | ${true}    | ${null}        | ${true}
-      ${['email', 'mobilePhoneNumber']} | ${true}    | ${currentDate} | ${false}
-      ${['email', 'mobilePhoneNumber']} | ${true}    | ${expiredDate} | ${true}
-      ${['email', 'mobilePhoneNumber']} | ${false}   | ${null}        | ${null}
-      ${['email', 'mobilePhoneNumber']} | ${false}   | ${currentDate} | ${null}
-      ${['email', 'mobilePhoneNumber']} | ${false}   | ${expiredDate} | ${null}
-      ${null}                           | ${false}   | ${null}        | ${null}
-      ${null}                           | ${false}   | ${currentDate} | ${false}
-      ${null}                           | ${false}   | ${expiredDate} | ${true}
+      verifiedField                     | isVerified | lastNudge      | nextNudgeLength   | needsNudgeExpected
+      ${['email']}                      | ${true}    | ${null}        | ${NUDGE_INTERVAL} | ${true}
+      ${['email']}                      | ${true}    | ${currentDate} | ${NUDGE_INTERVAL} | ${false}
+      ${['email']}                      | ${true}    | ${expiredDate} | ${NUDGE_INTERVAL} | ${true}
+      ${['email']}                      | ${false}   | ${null}        | ${NUDGE_INTERVAL} | ${null}
+      ${['email']}                      | ${false}   | ${currentDate} | ${NUDGE_INTERVAL} | ${null}
+      ${['email']}                      | ${false}   | ${expiredDate} | ${NUDGE_INTERVAL} | ${null}
+      ${['email']}                      | ${false}   | ${expiredDate} | ${SKIP_INTERVAL}  | ${null}
+      ${['mobilePhoneNumber']}          | ${true}    | ${null}        | ${NUDGE_INTERVAL} | ${true}
+      ${['mobilePhoneNumber']}          | ${true}    | ${currentDate} | ${NUDGE_INTERVAL} | ${false}
+      ${['mobilePhoneNumber']}          | ${true}    | ${expiredDate} | ${NUDGE_INTERVAL} | ${true}
+      ${['mobilePhoneNumber']}          | ${false}   | ${null}        | ${NUDGE_INTERVAL} | ${null}
+      ${['mobilePhoneNumber']}          | ${false}   | ${currentDate} | ${NUDGE_INTERVAL} | ${null}
+      ${['mobilePhoneNumber']}          | ${false}   | ${expiredDate} | ${NUDGE_INTERVAL} | ${null}
+      ${['mobilePhoneNumber']}          | ${false}   | ${expiredDate} | ${SKIP_INTERVAL}  | ${null}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${null}        | ${NUDGE_INTERVAL} | ${true}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${null}        | ${SKIP_INTERVAL}  | ${true}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${currentDate} | ${NUDGE_INTERVAL} | ${false}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${expiredDate} | ${NUDGE_INTERVAL} | ${true}
+      ${['email', 'mobilePhoneNumber']} | ${false}   | ${null}        | ${NUDGE_INTERVAL} | ${null}
+      ${['email', 'mobilePhoneNumber']} | ${false}   | ${currentDate} | ${NUDGE_INTERVAL} | ${null}
+      ${['email', 'mobilePhoneNumber']} | ${false}   | ${expiredDate} | ${NUDGE_INTERVAL} | ${null}
+      ${['email', 'mobilePhoneNumber']} | ${false}   | ${expiredDate} | ${SKIP_INTERVAL}  | ${null}
+      ${null}                           | ${false}   | ${null}        | ${NUDGE_INTERVAL} | ${null}
+      ${null}                           | ${false}   | ${currentDate} | ${NUDGE_INTERVAL} | ${false}
+      ${null}                           | ${false}   | ${expiredDate} | ${NUDGE_INTERVAL} | ${true}
     `(
       'should return needsNudge=$needsNudgeExpected when $verifiedField is set and lastNudge=$lastNudge',
       async ({
         verifiedField,
         isVerified,
         lastNudge,
+        nextNudgeLength,
         needsNudgeExpected,
       }: {
         verifiedField: string[] | null
         isVerified: boolean
         lastNudge: Date | null
+        nextNudgeLength: 1 | 6
         needsNudgeExpected: boolean | null
       }) => {
         // Arrange
@@ -155,6 +161,7 @@ describe('MeUserProfileController', () => {
           nationalId: testUserProfile.nationalId,
           ...expectedTestValues,
           lastNudge,
+          nextNudge: lastNudge ? addMonths(lastNudge, nextNudgeLength) : null,
         })
 
         // Act

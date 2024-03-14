@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
-import subMonths from 'date-fns/subMonths'
 import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -18,6 +17,7 @@ import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 
 export const NUDGE_INTERVAL = 6
+export const SKIP_INTERVAL = 1
 
 @Injectable()
 export class UserProfileService {
@@ -236,7 +236,7 @@ export class UserProfileService {
 
   async confirmNudge(
     nationalId: string,
-    extendNudgeByMonths = 6,
+    extendNudgeByMonths = NUDGE_INTERVAL,
   ): Promise<void> {
     const date = new Date()
     await this.userProfileModel.upsert({
@@ -247,18 +247,16 @@ export class UserProfileService {
   }
 
   private checkNeedsNudge(userProfile: UserProfile): boolean | null {
-    if (userProfile.lastNudge) {
-      const cutOffDate = subMonths(new Date(), NUDGE_INTERVAL)
-
+    if (userProfile.nextNudge) {
       if (!userProfile.email && !userProfile.mobilePhoneNumber) {
-        return userProfile.lastNudge < cutOffDate
+        return userProfile.nextNudge < new Date()
       }
 
       if (
         (userProfile.email && userProfile.emailVerified) ||
         (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
       ) {
-        return userProfile.lastNudge < cutOffDate
+        return userProfile.nextNudge < new Date()
       }
     } else {
       if (

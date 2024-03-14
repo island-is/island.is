@@ -23,6 +23,7 @@ export class FixtureFactory {
     mobilePhoneNumberVerified = false,
     emailVerified = false,
     lastNudge = null,
+    nextNudge = null,
   }) {
     const userProfileModel = this.get(UserProfile)
 
@@ -34,6 +35,7 @@ export class FixtureFactory {
       mobilePhoneNumberVerified,
       emailVerified,
       lastNudge: lastNudge && lastNudge.toISOString(),
+      nextNudge: nextNudge && nextNudge.toISOString(),
     })
   }
 
