@@ -1015,11 +1015,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                         (x) => x.id === dataItem.universityId,
                                       )[0]?.contentfulLogoUrl || ''
                                     }
-                                    alt={`Logo fyrir ${
+                                    alt={`${
                                       locale === 'en'
                                         ? dataItem.nameEn
                                         : dataItem.nameIs
-                                    }`}
+                                    } logo`}
                                   />
                                 }
                                 sidePanelConfig={{
@@ -1169,11 +1169,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                           (x) => x.id === dataItem.universityId,
                                         )[0]?.contentfulLogoUrl || ''
                                       }
-                                      alt={`Logo fyrir ${
+                                      alt={`${
                                         locale === 'en'
                                           ? dataItem.nameEn
                                           : dataItem.nameIs
-                                      }`}
+                                      } logo`}
                                     />
                                   }
                                   buttonLabel={n('apply', 'Sækja um')}

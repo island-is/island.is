@@ -162,7 +162,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                   {...(cta.buttonType ?? { variant: cta.variant })}
                   size={cta.size}
                   fluid
-                  onClick={cta.onClick && cta.onClick}
+                  onClick={cta.onClick}
                   disabled={cta.disabled}
                   icon={cta.icon}
                   iconType={cta.iconType}
