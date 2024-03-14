@@ -11,13 +11,14 @@ import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
 export class LicenseClientService {
   constructor(
     @Inject(LICENSE_CLIENT_FACTORY)
-    private licenseClientFactory: (
+    private licenseClientFactory: <Type extends LicenseType>(
       type: LicenseType,
-    ) => Promise<LicenseClient<unknown | null>>,
+    ) => Promise<LicenseClient<Type>>,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}
 
-  private getClient = (type: LicenseType) => this.licenseClientFactory(type)
+  private getClient = <Type extends LicenseType>(type: LicenseType) =>
+    this.licenseClientFactory<Type>(type)
 
   private getTypeByPassTemplateId(id: string) {
     for (const [key, value] of Object.entries(this.config)) {
@@ -38,8 +39,8 @@ export class LicenseClientService {
     return null
   }
 
-  getClientByLicenseType(type: LicenseType) {
-    return this.getClient(type)
+  getClientByLicenseType<Type extends LicenseType>(type: LicenseType) {
+    return this.getClient<Type>(type)
   }
 
   getClientByPassTemplateId(passTemplateId: string) {

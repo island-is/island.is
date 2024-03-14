@@ -1634,6 +1634,117 @@
         }
       }
     },
+    "/api/protected/v1/PaymentPlan/validyears": {
+      "get": {
+        "tags": ["PaymentPlan"],
+        "summary": "Returns a list of years for which the client has valid payment plans",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "integer", "format": "int32" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "integer", "format": "int32" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "integer", "format": "int32" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/PensionCalculator": {
       "post": {
         "tags": ["PensionCalculator"],
@@ -2077,17 +2188,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
               }
             }
           }
@@ -2178,17 +2289,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
                 }
               }
             }
@@ -2203,17 +2314,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput"
               }
             }
           }
@@ -2299,7 +2410,26 @@
               }
             }
           },
-          "200": { "description": "Success" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -2335,65 +2465,11 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Api.Services.Domain.Finance.Models.PaymentPlanGroup": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "group": { "type": "string", "nullable": true },
-          "groupId": { "type": "number", "format": "double", "nullable": true },
-          "type": { "type": "string", "nullable": true },
-          "overviewType": { "type": "string", "nullable": true },
-          "order": { "type": "string", "nullable": true },
-          "monthTotals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto"
-            },
-            "nullable": true
-          },
-          "rows": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.RknPaymentPlanOverviewDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
           "month": { "type": "integer", "format": "int32" },
           "amount": { "type": "number", "format": "double", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.Finance.Models.RknPaymentPlanOverviewDto": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "group": { "type": "string", "nullable": true },
-          "groupId": { "type": "number", "format": "double", "nullable": true },
-          "type": { "type": "string", "nullable": true },
-          "overviewType": { "type": "string", "nullable": true },
-          "period": { "type": "string", "nullable": true },
-          "expenseItem": { "type": "string", "nullable": true },
-          "from": { "type": "string", "nullable": true },
-          "order": { "type": "string", "nullable": true },
-          "subType": { "type": "string", "nullable": true },
-          "settlementYear": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "months": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto"
-            },
-            "nullable": true
-          }
         },
         "additionalProperties": false
       },
@@ -2596,6 +2672,11 @@
         "type": "integer",
         "format": "int32"
       },
+      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.PortalLanguage": {
+        "enum": [1, 2],
+        "type": "integer",
+        "format": "int32"
+      },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.File": {
         "type": "object",
         "properties": {
@@ -2715,6 +2796,91 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ExternalResultStatus"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message to be displayed to the user if the application is not valid.",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset"
+            },
+            "description": "Data to be returned to Leyfisveitingagátt, has to match the ruleset that was sent.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
+        "type": "object",
+        "properties": {
+          "flokkur": {
+            "type": "string",
+            "description": "Groupname for the variable",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name of the variable",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "description": "Type of variable",
+            "nullable": true
+          },
+          "gildi": {
+            "description": "The value to be set for the variable",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ValidationInput": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.PortalLanguage"
+          },
+          "Adilar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser"
+            },
+            "description": "List of persons that have a role in the application",
+            "nullable": true
+          },
+          "Notandagogn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData"
+            },
+            "description": "Information extracted from the application that the ruleset can use.",
+            "nullable": true
+          },
+          "Reglusett": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset"
+            },
+            "description": "Variable that the ruleset can set to be used in the application.\r\nCurrently we support String, Int and Date.",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "Unique id for the application type this unique id is provided when\r\nthe application is made by the provider. This can be used to have\r\ndifferent behaviour depending on application type.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.ExternalIncomeTypeDto": {
         "type": "object",
         "properties": {
@@ -2822,24 +2988,98 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlan": {
+      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto": {
         "type": "object",
         "properties": {
+          "totalPayment": {
+            "type": "number",
+            "description": "The total payment amount, before subtraction",
+            "format": "double",
+            "nullable": true
+          },
+          "subtracted": {
+            "type": "number",
+            "description": "The total amount that will be subtracted from the payments",
+            "format": "double",
+            "nullable": true
+          },
+          "paidOut": {
+            "type": "number",
+            "description": "The total amount that will be paid out to the applicant",
+            "format": "double",
+            "nullable": true
+          },
           "groups": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.PaymentPlanGroup"
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanGroupDto"
             },
+            "description": "A list of payment groups, TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanGroupDto",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto": {
+      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanGroupDto": {
         "type": "object",
         "properties": {
-          "paymentPlan": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlan"
+          "group": {
+            "type": "string",
+            "description": "The payment group name, e.g. \"Skattskyldar greiðslutegundir\" (Taxable payments)",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "number",
+            "description": "The payment group id. This id is not globally unique, e.g. \"Skattskyldar greiðslutegundir\" always has an id of 10.",
+            "format": "double",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "description": "Total amount from this group, ie. the sum of all the months from TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto",
+            "format": "double",
+            "nullable": true
+          },
+          "monthTotals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto"
+            },
+            "description": "Total amounts for each month in this group",
+            "nullable": true
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanRowDto"
+            },
+            "description": "A list of the individual payment types that belong to this group and their monthly and total amounts",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanRowDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the payment row, e.g. \"Lífeyrir\" (Pension)",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "description": "The total amount for this row, ie. the sum of all the months from TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto",
+            "format": "double",
+            "nullable": true
+          },
+          "months": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto"
+            },
+            "description": "Total amounts for each month in this row",
+            "nullable": true
           }
         },
         "additionalProperties": false

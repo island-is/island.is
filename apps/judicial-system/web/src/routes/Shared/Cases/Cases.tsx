@@ -230,6 +230,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
                         isTransitioningCase || isSendingNotification
                       }
                       onDeleteCase={deleteCase}
+                      caseState={CaseState.WAITING_FOR_CONFIRMATION}
                     />
                   ) : (
                     <motion.div
