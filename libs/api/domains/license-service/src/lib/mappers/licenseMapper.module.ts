@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
-import { AdrLicensePayloadMapper } from './adrLicenseMapper'
-import { DisabilityLicensePayloadMapper } from './disabilityLicenseMapper'
-import { FirearmLicensePayloadMapper } from './firearmLicenseMapper'
-import { MachineLicensePayloadMapper } from './machineLicenseMapper'
-import { DrivingLicensePayloadMapper } from './drivingLicenseMapper'
-import { PCardPayloadMapper } from './pCardMapper'
-import { EHICCardPayloadMapper } from './ehicCardMapper'
+import { AdrLicensePayloadMapper } from '../mappers/adrLicenseMapper'
+import { DisabilityLicensePayloadMapper } from '../mappers/disabilityLicenseMapper'
+import { FirearmLicensePayloadMapper } from '../mappers/firearmLicenseMapper'
+import { MachineLicensePayloadMapper } from '../mappers/machineLicenseMapper'
+import { DrivingLicensePayloadMapper } from '../mappers/drivingLicenseMapper'
+import { PCardPayloadMapper } from '../mappers/pCardMapper'
+import { EHICCardPayloadMapper } from '../mappers/ehicCardMapper'
 
 @Module({
   providers: [

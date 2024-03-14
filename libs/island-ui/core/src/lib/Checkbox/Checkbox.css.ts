@@ -31,6 +31,14 @@ export const input = style({
   width: checkboxSize,
   cursor: 'pointer',
 })
+export const inputLarge = style({
+  transform: 'translateY(-50%) translateX(100%)',
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      transform: 'translateY(-50%) translateX(65%)',
+    },
+  },
+})
 export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
