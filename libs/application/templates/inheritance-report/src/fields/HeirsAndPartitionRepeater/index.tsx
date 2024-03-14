@@ -221,7 +221,7 @@ export const HeirsAndPartitionRepeater: FC<
       // ran into a problem with "append", as it appeared to be getting called multiple times
       // despite checking on the length of the fields
       // so now using "replace" instead, for the initial setup
-      replace(estateData.inheritanceReportInfo?.heirs)
+      replace(estateData?.inheritanceReportInfo?.heirs)
       setValue('heirs.hasModified', true)
     }
   }, [])

@@ -22,14 +22,14 @@ export const deceased = buildSection({
         buildKeyValueField({
           label: m.nameOfTheDeceased,
           value: (application) =>
-            getEstateDataFromApplication(application).inheritanceReportInfo
+            getEstateDataFromApplication(application)?.inheritanceReportInfo
               ?.nameOfDeceased ?? '',
           width: 'half',
         }),
         buildKeyValueField({
           label: m.nationalId,
           value: (application) =>
-            getEstateDataFromApplication(application).inheritanceReportInfo
+            getEstateDataFromApplication(application)?.inheritanceReportInfo
               ?.nationalId ?? '',
           width: 'half',
         }),
@@ -41,7 +41,7 @@ export const deceased = buildSection({
         buildKeyValueField({
           label: m.address,
           value: (application) =>
-            getEstateDataFromApplication(application).inheritanceReportInfo
+            getEstateDataFromApplication(application)?.inheritanceReportInfo
               ?.addressOfDeceased ?? '',
           width: 'half',
         }),
@@ -49,7 +49,7 @@ export const deceased = buildSection({
           label: m.deathDate,
           value: (application) => {
             const date =
-              getEstateDataFromApplication(application).inheritanceReportInfo
+              getEstateDataFromApplication(application)?.inheritanceReportInfo
                 ?.dateOfDeath
 
             return date

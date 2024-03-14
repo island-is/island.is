@@ -114,7 +114,7 @@ export const assets = buildSection({
               defaultValue: (application: Application) => {
                 return (
                   getEstateDataFromApplication(application)
-                    .inheritanceReportInfo?.cash[0].description ?? ''
+                    ?.inheritanceReportInfo?.cash?.[0]?.description ?? ''
                 )
               },
               rows: 7,
@@ -126,7 +126,7 @@ export const assets = buildSection({
               defaultValue: (application: Application) => {
                 return (
                   getEstateDataFromApplication(application)
-                    .inheritanceReportInfo?.cash[0].propertyValuation ?? '0'
+                    ?.inheritanceReportInfo?.cash?.[0]?.propertyValuation ?? '0'
                 )
               },
               variant: 'currency',
@@ -481,8 +481,8 @@ export const assets = buildSection({
               defaultValue: (application: Application) => {
                 return (
                   getEstateDataFromApplication(application)
-                    .inheritanceReportInfo?.depositsAndMoney[0].description ??
-                  ''
+                    ?.inheritanceReportInfo?.depositsAndMoney?.[0]
+                    ?.description ?? ''
                 )
               },
               rows: 7,
@@ -495,8 +495,8 @@ export const assets = buildSection({
               defaultValue: (application: Application) => {
                 return (
                   getEstateDataFromApplication(application)
-                    .inheritanceReportInfo?.depositsAndMoney[0]
-                    .propertyValuation ?? '0'
+                    ?.inheritanceReportInfo?.depositsAndMoney?.[0]
+                    ?.propertyValuation ?? '0'
                 )
               },
             }),
@@ -528,7 +528,7 @@ export const assets = buildSection({
               defaultValue: (application: Application) => {
                 return (
                   getEstateDataFromApplication(application)
-                    .inheritanceReportInfo?.otherAssets[0].description ?? ''
+                    ?.inheritanceReportInfo?.otherAssets?.[0]?.description ?? ''
                 )
               },
             }),
@@ -540,8 +540,8 @@ export const assets = buildSection({
               defaultValue: (application: Application) => {
                 return (
                   getEstateDataFromApplication(application)
-                    .inheritanceReportInfo?.otherAssets[0].propertyValuation ??
-                  '0'
+                    ?.inheritanceReportInfo?.otherAssets?.[0]
+                    ?.propertyValuation ?? '0'
                 )
               },
             }),

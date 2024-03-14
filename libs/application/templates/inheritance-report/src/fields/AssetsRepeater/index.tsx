@@ -122,7 +122,7 @@ export const AssetsRepeater: FC<
 
   useEffect(() => {
     const estData =
-      getEstateDataFromApplication(application).inheritanceReportInfo ?? {}
+      getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
 
     const extData =
       getValueViaPath<InheritanceReportAsset[]>(estData, assetKey) ?? []
