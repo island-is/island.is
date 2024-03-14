@@ -5,6 +5,7 @@ import {
   Text,
   ContentBlock,
   AlertMessage,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import { Application, FieldBaseProps } from '@island.is/application/types'
@@ -39,14 +40,16 @@ const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
 const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
-  const { qualityPhoto } = useQualityPhoto(application)
-  // TODO: skeleton load when image is loading
+  const { qualityPhoto, loading } = useQualityPhoto(application)
   const { formatMessage } = useLocale()
-  const img = Photo({ qualityPhoto, application })
+  const img =
+    qualityPhoto !== 'fake' ? Photo({ qualityPhoto, application }) : null
 
   return (
     <Box marginBottom={4}>
-      {qualityPhoto ? (
+      {loading || qualityPhoto === 'fake' ? (
+        <SkeletonLoader height={242} width={191} />
+      ) : qualityPhoto ? (
         <Box>
           <Text>
             {formatText(m.qualityPhotoSubTitle, application, formatMessage)}
@@ -56,23 +59,19 @@ const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </Box>
         </Box>
       ) : (
-        <Box marginTop={2}>
-          <ContentBlock>
-            <AlertMessage
-              type="warning"
-              title={formatText(
-                m.qualityPhotoWarningTitle,
-                application,
-                formatMessage,
-              )}
-              message={formatText(
-                m.qualityPhotoWarningDescription,
-                application,
-                formatMessage,
-              )}
-            />
-          </ContentBlock>
-        </Box>
+        <AlertMessage
+          type="warning"
+          title={formatText(
+            m.qualityPhotoWarningTitle,
+            application,
+            formatMessage,
+          )}
+          message={formatText(
+            m.qualityPhotoWarningDescription,
+            application,
+            formatMessage,
+          )}
+        />
       )}
     </Box>
   )

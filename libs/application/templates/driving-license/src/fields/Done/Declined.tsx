@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'

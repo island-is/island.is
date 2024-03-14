@@ -6,8 +6,7 @@ import {
   hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { NO, YES } from '../../lib/constants'
-import { B_TEMP } from '../../shared/constants'
+import { NO, YES, B_TEMP } from '../../lib/constants'
 import { isApplicationForCondition } from '../../lib/utils'
 
 export const subSectionOtherCountry = buildSubSection({
@@ -30,12 +29,10 @@ export const subSectionOtherCountry = buildSubSection({
           options: [
             {
               label: m.no,
-              subLabel: '',
               value: NO,
             },
             {
               label: m.yes,
-              subLabel: '',
               value: YES,
             },
           ],

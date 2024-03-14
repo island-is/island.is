@@ -1,12 +1,8 @@
 import {
-  buildDescriptionField,
   buildMultiField,
-  buildKeyValueField,
   buildSelectField,
-  buildDividerField,
   buildSubSection,
 } from '@island.is/application/core'
-import { NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
 import {
   chooseDistrictCommissionerDescription,
@@ -23,14 +19,8 @@ export const subSectionDelivery = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
-      space: 1,
+      description: chooseDistrictCommissionerDescription,
       children: [
-        buildDescriptionField({
-          id: 'afhending',
-          title: m.districtCommisionerTitle,
-          titleVariant: 'h4',
-          description: chooseDistrictCommissionerDescription,
-        }),
         buildSelectField({
           id: 'jurisdiction',
           title: m.districtCommisionerPickup,

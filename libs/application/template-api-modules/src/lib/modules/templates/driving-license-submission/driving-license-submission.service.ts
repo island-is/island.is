@@ -21,6 +21,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
 import { User } from '@island.is/auth-nest-tools'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
@@ -46,12 +47,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'B-renewal'>(
       answers,
       'applicationFor',
       'B-full',
     )
 
+    // TODO: switch on applicationFor for chargeItemCode?
+    // What is the chargeItemCode for renewal 65+?
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
@@ -230,5 +233,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         )
       }
     }
+  }
+
+  async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
+    const licences: DriverLicenseWithoutImages[] =
+      await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
+    const hasGlasses: boolean = licences.some((license) => {
+      return !!license.comments?.some((comment) => comment.nr?.includes('01'))
+    })
+    return hasGlasses
   }
 }

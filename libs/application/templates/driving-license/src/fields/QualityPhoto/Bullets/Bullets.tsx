@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { BulletList, Bullet } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
@@ -10,7 +8,7 @@ interface BulletsData {
   application: Application
 }
 
-const Bullets = ({ application }: BulletsData) => {
+export const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
   return (
     <BulletList>
@@ -59,5 +57,3 @@ const Bullets = ({ application }: BulletsData) => {
     </BulletList>
   )
 }
-
-export { Bullets }

@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   Box,
   ContentBlock,
@@ -12,7 +10,7 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import WarningSection, { Step } from './WarningSection'
 import { hasYes } from '@island.is/application/core'
-import { B_FULL, DrivingLicenseApplicationFor } from '../../shared'
+import { B_FULL, DrivingLicenseApplicationFor } from '../../lib/constants'
 
 interface ReasonsProps {
   key: string
