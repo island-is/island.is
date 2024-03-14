@@ -3,7 +3,6 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/admin-api/src",
   "projectType": "library",
-  "tags": ["lib:client"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -28,5 +27,6 @@
       "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "implicitDependencies": ["services-auth-admin-api"]
+  "implicitDependencies": ["services-auth-admin-api"],
+  "tags": ["scope:client", "lib:client"]
 }
