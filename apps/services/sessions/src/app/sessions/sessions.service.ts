@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import addDays from 'date-fns/addDays'
 import { lookup } from 'geoip-lite'
@@ -14,11 +14,16 @@ import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
 import { USER_AGENT_MAX_LENGTH } from './constants'
 
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 @Injectable()
 export class SessionsService {
   constructor(
     @InjectModel(Session)
     private readonly sessionModel: typeof Session,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async findAll(
@@ -87,7 +92,7 @@ export class SessionsService {
   }
 
   create(session: CreateSessionDto): Promise<Session> {
-    const { id, sessionId, userAgent, ...rest } = session
+    const { id, sessionId, userAgent, ipLocation, ...rest } = session
 
     // Todo: Remove this when we have migrated IDS to use sessionId
     const sid = sessionId || id
@@ -95,13 +100,16 @@ export class SessionsService {
     if (!sid) {
       throw new Error('Missing sessionId.')
     }
+    if (!ipLocation) {
+      this.logger.error('ipLocation missing, defaulting to Maxmind ip lookup')
+    }
 
     return this.sessionModel.create({
       ...rest,
       userAgent: userAgent.substring(0, USER_AGENT_MAX_LENGTH),
       sessionId: sid,
       device: this.formatUserAgent(userAgent),
-      ipLocation: this.formatIp(session.ip),
+      ipLocation: ipLocation || this.formatIp(session.ip),
     })
   }
 

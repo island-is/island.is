@@ -18,6 +18,8 @@ const mockSession = {
   ip: '127.0.0.1',
 } as Session
 
+const mockSessionWithIpLocation = { ...mockSession, ipLocation: 'IS' }
+
 const userAgentLong = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 ${'a'.repeat(
   USER_AGENT_MAX_LENGTH,
 )}`
@@ -100,4 +102,18 @@ describe('SessionsService', () => {
       ipLocation,
     })
   })
+  it.each`
+    session                      | expectedIpLocation
+    ${mockSession}               | ${null}
+    ${mockSessionWithIpLocation} | ${'IS'}
+  `(
+    'should correctly handle ipLocation property',
+    async ({ session, expectedIpLocation }) => {
+      await sessionsService.create(session)
+
+      const sessions = await factory.get(Session).findAll()
+      expect(sessions).toHaveLength(1)
+      expect(sessions[0].ipLocation).toBe(expectedIpLocation)
+    },
+  )
 })

@@ -41,4 +41,12 @@ export class CreateSessionDto {
   @IsString()
   @ApiProperty()
   ip!: string
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'ISO 3166-1 alpha-2 country code: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2',
+  })
+  ipLocation?: string
 }

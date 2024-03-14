@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsDateString, IsOptional } from 'class-validator'
+import { IsDateString, IsOptional, IsString, Length } from 'class-validator'
 
 import { Order, PaginationDto } from '@island.is/nest/pagination'
 
@@ -17,6 +17,15 @@ export class SessionsQueryDto extends PaginationDto {
     description: 'Only return sessions to this date.',
   })
   to?: Date
+
+  @IsOptional()
+  @IsString()
+  @Length(2, 2)
+  @ApiPropertyOptional({
+    description:
+      'Only return sessions originating from this country code (see: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).',
+  })
+  ipLocation?: string
 
   @IsOptional()
   @ApiPropertyOptional({
