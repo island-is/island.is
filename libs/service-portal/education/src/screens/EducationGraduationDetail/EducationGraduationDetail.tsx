@@ -12,18 +12,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
-  ErrorScreen,
   formatDate,
   formSubmit,
   IntroHeader,
   m,
-  UNI_HI_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
+import { Problem } from '@island.is/react-spa/shared'
 type UseParams = {
   id: string
 }
@@ -59,7 +57,7 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={m.educationGraduation}
         intro={text?.description || ''}
-        serviceProviderSlug={UNI_HI_SLUG}
+        serviceProviderSlug={'haskoli-islands'}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>
