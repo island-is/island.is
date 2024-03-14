@@ -18,7 +18,7 @@ import { UserContext } from '../../UserProvider/UserProvider'
 import { strings } from './WithdrawAppealMenuOption.strings'
 
 export const useWithdrawAppealMenuOption = () => {
-  const { transitionCase } = useCase()
+  const { transitionCase, isTransitioningCase } = useCase()
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
@@ -50,10 +50,12 @@ export const useWithdrawAppealMenuOption = () => {
     [user],
   )
 
-  const withdrawAppealMenuOption = (onClick: () => void) => {
+  const withdrawAppealMenuOption = (caseId: string, cases: CaseListEntry[]) => {
     return {
       title: formatMessage(strings.withdrawAppeal),
-      onClick,
+      onClick: () => {
+        handleWithdrawAppealMenuClick(caseId, cases)
+      },
       icon: 'trash' as IconMapIcon,
     }
   }
@@ -87,6 +89,7 @@ export const useWithdrawAppealMenuOption = () => {
       onSecondaryButtonClick: () => {
         setVisibleModal(false)
       },
+      isPrimaryButtonLoading: isTransitioningCase,
       primaryButtonColorScheme: 'destructive',
     }
   }
@@ -102,8 +105,7 @@ export const useWithdrawAppealMenuOption = () => {
   return {
     withdrawAppealMenuOption,
     shouldDisplayWithdrawAppealOption,
-    handleWithdrawAppealMenuClick,
-    modalVisible,
+    isWithdrawnAppealModalVisible: modalVisible,
     modalOptions,
   }
 }

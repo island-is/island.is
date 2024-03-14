@@ -54,8 +54,7 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
   const {
     withdrawAppealMenuOption,
     shouldDisplayWithdrawAppealOption,
-    handleWithdrawAppealMenuClick,
-    modalVisible,
+    isWithdrawnAppealModalVisible,
     modalOptions,
   } = useWithdrawAppealMenuOption()
 
@@ -216,14 +215,7 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                               icon: 'open',
                             },
                             ...(shouldDisplayWithdrawAppealOption(column)
-                              ? [
-                                  withdrawAppealMenuOption(() => {
-                                    handleWithdrawAppealMenuClick(
-                                      column.id,
-                                      cases,
-                                    )
-                                  }),
-                                ]
+                              ? [withdrawAppealMenuOption(column.id, cases)]
                               : []),
                           ]}
                           menuLabel="Opna valmöguleika á máli"
@@ -248,16 +240,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
         </table>
       )}
 
-      {modalVisible && modalOptions && (
-        <Modal
-          title={modalOptions.title}
-          text={modalOptions.text}
-          onPrimaryButtonClick={modalOptions.onPrimaryButtonClick}
-          onSecondaryButtonClick={modalOptions.onSecondaryButtonClick}
-          primaryButtonText={modalOptions.primaryButtonText}
-          secondaryButtonText={modalOptions.secondaryButtonText}
-          primaryButtonColorScheme={modalOptions.primaryButtonColorScheme}
-        ></Modal>
+      {isWithdrawnAppealModalVisibles && modalOptions && (
+        <Modal {...modalOptions}></Modal>
       )}
     </Box>
   )
