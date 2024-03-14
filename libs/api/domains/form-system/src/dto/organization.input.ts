@@ -5,7 +5,7 @@ import { FormInput } from "./forms.input"
 import { ApplicantTypeInput } from "./applicantType.input"
 import { ListTypeInput } from "./listType.input"
 import { ExternalEndpointsInput } from "./externalEndpoints.input"
-import { LanguageTypeInput } from "./global.input"
+import { LanguageTypeInput } from "./language.input"
 
 @InputType('FormSystemOrganizationCreation')
 export class CreateOrganization {

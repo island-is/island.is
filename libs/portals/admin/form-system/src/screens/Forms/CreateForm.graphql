@@ -1,0 +1,7 @@
+mutation formSystemCreateForm(
+  $input: FormSystemCreateFormInput!
+) {
+  formSystemCreateForm(input: $input) {
+    form
+}
+}

@@ -1,6 +1,6 @@
 import { Field, ID, InputType, Int } from "@nestjs/graphql"
 import graphqlTypeJson from 'graphql-type-json'
-import { LanguageTypeInput } from "./global.input"
+import { LanguageTypeInput } from "./language.input"
 import { InputInput } from "./inputs.input"
 import { GroupInput } from "./groups.input"
 import { StepInput } from "./steps.input"

@@ -1,5 +1,5 @@
 import { Field, ID, InputType, Int } from "@nestjs/graphql"
-import { LanguageTypeInput } from "./global.input"
+import { LanguageTypeInput } from "./language.input"
 import graphqlTypeJson from 'graphql-type-json'
 import { InputSettingsInput } from "./inputSettings.input"
 
