@@ -82,7 +82,7 @@ export class DelegationIndexController {
 
     const parsedDelegationInfo = parseDelegationInfo(delegationIndexId)
 
-    return await this.auditService.auditPromise<DelegationRecordDTO>(
+    return this.auditService.auditPromise<DelegationRecordDTO>(
       {
         auth: auth,
         action: 'createOrUpdateDelegationIndexItem',
