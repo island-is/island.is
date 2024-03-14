@@ -1,7 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   oldAgePensionAge,
-  fishermenMinAge,
   earlyRetirementMinAge,
   earlyRetirementMaxAge,
   ApplicationType,
@@ -18,7 +17,6 @@ import { oldAgePensionFormMessage } from './messages'
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
-import addDays from 'date-fns/addDays'
 import {
   CombinedResidenceHistory,
   Employer,
@@ -38,7 +36,7 @@ import {
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   const pensionFundQuestion = getValueViaPath(
     answers,
     'questions.pensionFund',
@@ -184,9 +182,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
   }
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const residenceHistory = getValueViaPath(
     externalData,
     'nationalRegistryResidenceHistory.data',
@@ -263,69 +261,56 @@ export const getStartDateAndEndDate = (
   nationalId: string,
   applicationType: ApplicationType,
 ) => {
-  // Applicant could apply from the 1st of the month after his/her 65 birthday
-  // Until 6 month ahead
-  const today = new Date()
+  // lowest startdate for old-age pensioner is month after their 65 birthday (60 birthday if sailor pensioner),
+  // or two years back from month after their birthday.
+  // and 6 month ahead
   const nationalIdInfo = kennitala.info(nationalId)
   const dateOfBirth = new Date(nationalIdInfo.birthday)
   const age = nationalIdInfo.age
+  const today = new Date()
   const thisYearBirthday = new Date(
     today.getFullYear(),
     dateOfBirth.getMonth(),
     dateOfBirth.getDate(),
   )
-
   const thisYearAge = thisYearBirthday > today ? age + 1 : age
-  const thisYearBirthdayPlusOneMonth = addMonths(thisYearBirthday, 1)
   const nextMonth = addMonths(today, 1)
-
-  // startDate is the next month after birhday this year
-  let startDate = thisYearBirthdayPlusOneMonth
-
+  const thisYearBirthdayPlusOneMonth = addMonths(thisYearBirthday, 1)
   const endDate = addMonths(today, 6)
 
-  if (thisYearAge >= oldAgePensionAge) {
-    // >= 67 year old
-    startDate = addYears(
-      thisYearBirthdayPlusOneMonth > nextMonth
-        ? thisYearBirthdayPlusOneMonth
-        : nextMonth,
-      -2,
-    )
-  } else if (thisYearAge < fishermenMinAge) {
-    // < 62 year old
-    return {}
-  } else if (applicationType === ApplicationType.SAILOR_PENSION) {
-    // Fishermen
-    if (thisYearAge === fishermenMinAge + 1) {
-      // = 63 year old
-      startDate = addYears(thisYearBirthdayPlusOneMonth, -1)
-    } else if (thisYearAge > fishermenMinAge + 1) {
-      // between 63 and 67
-      startDate = addYears(
-        thisYearBirthdayPlusOneMonth > nextMonth
-          ? thisYearBirthdayPlusOneMonth
-          : nextMonth,
-        -2,
-      )
-    }
-  } else {
-    // not fishermen
-    if (thisYearAge < earlyRetirementMinAge) {
-      // < 65 year old
-      return {}
-    } else if (thisYearAge === earlyRetirementMinAge + 1) {
-      // 66 year old
-      startDate = addYears(thisYearBirthdayPlusOneMonth, -1)
-    }
-  }
+  const yearsBack =
+    applicationType === ApplicationType.SAILOR_PENSION
+      ? thisYearAge >= 62
+        ? -2
+        : thisYearAge === 61
+        ? -1
+        : 0
+      : thisYearAge >= oldAgePensionAge
+      ? -2
+      : thisYearAge === earlyRetirementMaxAge
+      ? -1
+      : 0
+
+  // lowest start date from month after birthday, this date is used if applicant is < 67 (or < 62)
+  const lowestStartDate = addYears(thisYearBirthdayPlusOneMonth, yearsBack)
+  // lowest start date from next month, f.ex used if applicant is >= 67 (or >= 62 for sailor)
+  const lowestDate = addYears(nextMonth, yearsBack)
+
+  const startDate =
+    applicationType === ApplicationType.SAILOR_PENSION
+      ? thisYearAge >= 62
+        ? lowestDate
+        : lowestStartDate
+      : thisYearAge >= 67
+      ? lowestDate
+      : lowestStartDate
 
   if (startDate > endDate) return {}
 
   return { startDate, endDate }
 }
 
-export function getAvailableYears(application: Application) {
+export const getAvailableYears = (application: Application) => {
   const { applicantNationalId } = getApplicationExternalData(
     application.externalData,
   )
@@ -348,10 +333,10 @@ export function getAvailableYears(application: Application) {
   })
 }
 
-export function getAvailableMonths(
+export const getAvailableMonths = (
   application: Application,
   selectedYear: string,
-) {
+) => {
   const { applicantNationalId } = getApplicationExternalData(
     application.externalData,
   )
@@ -375,20 +360,20 @@ export function getAvailableMonths(
   return months
 }
 
-export function getAgeBetweenTwoDates(
+export const getAgeBetweenTwoDates = (
   selectedDate: Date,
   dateOfBirth: Date,
-): number {
+): number => {
   const diffTime = selectedDate.getTime() - dateOfBirth.getTime()
   const age = Math.abs(Math.floor(diffTime / (365.25 * 60 * 60 * 24 * 1000)))
 
   return age
 }
 
-export function isEarlyRetirement(
+export const isEarlyRetirement = (
   answers: Application['answers'],
   externalData: Application['externalData'],
-) {
+) => {
   const { applicantNationalId } = getApplicationExternalData(externalData)
   const { selectedMonth, selectedYear, applicationType } =
     getApplicationAnswers(answers)
@@ -414,7 +399,7 @@ export function isEarlyRetirement(
   )
 }
 
-export function getAttachments(application: Application) {
+export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
     attachmentType: AttachmentTypes,
@@ -481,9 +466,9 @@ export function getAttachments(application: Application) {
 }
 
 // return combine residence history if the applicant had domestic transport
-export function getCombinedResidenceHistory(
+export const getCombinedResidenceHistory = (
   residenceHistory: NationalRegistryResidenceHistory[],
-): CombinedResidenceHistory[] {
+): CombinedResidenceHistory[] => {
   const combinedResidenceHistory: CombinedResidenceHistory[] = []
 
   residenceHistory.forEach((history) => {
@@ -503,7 +488,7 @@ export function getCombinedResidenceHistory(
   return [...combinedResidenceHistory].reverse()
 }
 
-export function isMoreThan2Year(answers: Application['answers']) {
+export const isMoreThan2Year = (answers: Application['answers']) => {
   const { selectedMonth, selectedYear } = getApplicationAnswers(answers)
   const today = new Date()
   const startDate = addYears(today, -2)
@@ -512,9 +497,9 @@ export function isMoreThan2Year(answers: Application['answers']) {
   return startDate > selectedDate
 }
 
-function residenceMapper(
+const residenceMapper = (
   history: NationalRegistryResidenceHistory,
-): CombinedResidenceHistory {
+): CombinedResidenceHistory => {
   const residence = {} as CombinedResidenceHistory
 
   if (history.country && history.dateOfChange) {
