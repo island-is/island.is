@@ -12,7 +12,7 @@ const Host = styled.Text`
 `
 
 interface LinkTextProps {
-  children: string
+  children: string | React.ReactNode
 }
 
 export function LinkText({ children }: LinkTextProps) {

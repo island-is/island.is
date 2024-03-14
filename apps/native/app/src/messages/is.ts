@@ -191,6 +191,7 @@ export const is = {
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
+  'profile.airDiscount': 'Loftbrú',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -472,4 +473,14 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
+
+  // air discount
+  'airDiscount.screenTitle': 'Loftbrú',
+  'airDiscount.heading.title': 'Lægra fargjald með Loftbrú',
+  'airDiscount.heading.subtitle':
+    'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári. með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið notendaskilmála Loftbrúar.',
+  'airDiscount.tosLinkText': 'Notendaskilmálar',
+  'airDiscount.alert.title': 'Athugið',
+  'airDiscount.alert.description':
+    'Kóðinn endurnýjast eftir 1 notkun\n(gildir í 24 klst.)',
 }

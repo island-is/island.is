@@ -282,6 +282,7 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
+  'profile.airDiscount': 'Air discount',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -472,4 +473,14 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
+
+  // air discount
+  'airDiscount.screenTitle': 'Air discount scheme',
+  'airDiscount.heading.title': 'Lower airfares with Air Discount Scheme',
+  'airDiscount.heading.subtitle':
+    'Each individual is entitled to lower fares on up to three round trips to and from Reykjavík per year (six flights). By using the Loftbrú discount you are acknowledging that you have read the Air Discount scheme terms and conditions.',
+  'airDiscount.tosLinkText': 'Terms and conditions',
+  'airDiscount.alert.title': 'Attention',
+  'airDiscount.alert.description':
+    'The code will be renewed after 1 usage\n(valid for 24 hours)',
 }
