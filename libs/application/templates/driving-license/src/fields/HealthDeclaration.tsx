@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
