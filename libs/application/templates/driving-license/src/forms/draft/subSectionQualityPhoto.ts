@@ -5,7 +5,6 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
-  hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
@@ -53,7 +52,7 @@ export const subSectionQualityPhoto = buildSubSection({
           id: 'photdesc',
           title: '',
           component: 'Bullets',
-          condition: (answers) => hasYes(answers.willBringQualityPhoto),
+          condition: (answers) => getValueViaPath(answers, "willBringQualityPhoto") === YES,
         }),
       ],
     }),
