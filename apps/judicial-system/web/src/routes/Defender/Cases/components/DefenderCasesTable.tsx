@@ -56,6 +56,7 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
     shouldDisplayWithdrawAppealOption,
     isWithdrawnAppealModalVisible,
     modalOptions,
+    isTransitioningCase,
   } = useWithdrawAppealMenuOption()
 
   return (
@@ -239,9 +240,11 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
           </tbody>
         </table>
       )}
-
-      {isWithdrawnAppealModalVisibles && modalOptions && (
-        <Modal {...modalOptions}></Modal>
+      {isWithdrawnAppealModalVisible && modalOptions && (
+        <Modal
+          {...modalOptions}
+          isPrimaryButtonLoading={isTransitioningCase}
+        ></Modal>
       )}
     </Box>
   )

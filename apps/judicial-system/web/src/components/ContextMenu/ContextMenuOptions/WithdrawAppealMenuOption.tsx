@@ -60,6 +60,14 @@ export const useWithdrawAppealMenuOption = () => {
     }
   }
 
+  const handleWithdrawAppealMenuClick = (
+    id: string,
+    cases: CaseListEntry[],
+  ) => {
+    setVisibleModal(true)
+    setModalOptions(withdrawAppealOptionModal(id, cases, setVisibleModal))
+  }
+
   const withdrawAppealOptionModal = (
     caseId: string,
     cases: CaseListEntry[],
@@ -76,9 +84,12 @@ export const useWithdrawAppealMenuOption = () => {
       ),
 
       onPrimaryButtonClick: async () => {
-        const res = await transitionCase(caseId, CaseTransition.WITHDRAW_APPEAL)
+        const transitionResult = await transitionCase(
+          caseId,
+          CaseTransition.WITHDRAW_APPEAL,
+        )
 
-        if (res === true) {
+        if (transitionResult === true) {
           const transitionedCase = cases.find((tc) => caseId === tc.id)
           if (transitionedCase) {
             transitionedCase.appealState = CaseAppealState.WITHDRAWN
@@ -89,17 +100,8 @@ export const useWithdrawAppealMenuOption = () => {
       onSecondaryButtonClick: () => {
         setVisibleModal(false)
       },
-      isPrimaryButtonLoading: isTransitioningCase,
       primaryButtonColorScheme: 'destructive',
     }
-  }
-
-  const handleWithdrawAppealMenuClick = (
-    id: string,
-    cases: CaseListEntry[],
-  ) => {
-    setVisibleModal(true)
-    setModalOptions(withdrawAppealOptionModal(id, cases, setVisibleModal))
   }
 
   return {
@@ -107,6 +109,7 @@ export const useWithdrawAppealMenuOption = () => {
     shouldDisplayWithdrawAppealOption,
     isWithdrawnAppealModalVisible: modalVisible,
     modalOptions,
+    isTransitioningCase,
   }
 }
 

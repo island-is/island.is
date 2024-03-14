@@ -60,6 +60,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
     shouldDisplayWithdrawAppealOption,
     isWithdrawnAppealModalVisible,
     modalOptions,
+    isTransitioningCase,
   } = useWithdrawAppealMenuOption()
 
   const pastCasesData = useMemo(
@@ -229,7 +230,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         })}
       </TableContainer>
       {isWithdrawnAppealModalVisible && modalOptions && (
-        <Modal {...modalOptions}></Modal>
+        <Modal
+          {...modalOptions}
+          isPrimaryButtonLoading={isTransitioningCase}
+        ></Modal>
       )}
     </>
   )
