@@ -185,14 +185,20 @@ export const dataSchema = z.object({
     fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]),
   }),
   publishing: z.object({
-    date: z.string(),
-    fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]),
-    contentCategories: z.array(
-      z.object({
-        label: z.string(),
-        value: z.string(),
+    date: z.string().refine((v) => v && v.length, {
+      params: error.emptyFieldError,
+    }),
+    fastTrack: z.string(),
+    contentCategories: z
+      .array(
+        z.object({
+          label: z.string(),
+          value: z.string(),
+        }),
+      )
+      .refine((v) => v.length, {
+        params: error.emptyFieldError,
       }),
-    ),
     communicationChannels: z.array(
       z.object({
         email: z.string(),

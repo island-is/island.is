@@ -62,7 +62,9 @@ import {
           ehicCardClient: EhicClient,
           huntingClient: HuntingLicenseClient,
         ) =>
-        async (type: LicenseType): Promise<LicenseClient<unknown> | null> => {
+        async (
+          type: LicenseType,
+        ): Promise<LicenseClient<LicenseType> | null> => {
           switch (type) {
             case LicenseType.FirearmLicense:
               return firearmClient

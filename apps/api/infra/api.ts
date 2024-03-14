@@ -250,6 +250,17 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      LICENSE_SERVICE_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
       XROAD_RSK_PROCURING_SCOPE: json([
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
@@ -363,6 +374,8 @@ export const serviceSetup = (services: {
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
       WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY:
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
+      LICENSE_SERVICE_BARCODE_SECRET_KEY:
+        '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
     })
     .xroad(
       AdrAndMachine,

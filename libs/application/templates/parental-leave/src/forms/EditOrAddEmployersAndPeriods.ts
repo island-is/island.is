@@ -343,44 +343,38 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      title: parentalLeaveFormMessages.confirmation.title,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirmation',
           title: '',
           children: [
-            buildMultiField({
-              id: 'confirmation',
+            buildCustomField({
+              id: 'confirmationScreen',
               title: '',
-              description: '',
-              children: [
-                buildCustomField({
-                  id: 'confirmationScreen',
-                  title: '',
-                  component: 'EditOrAddEmployersAndPeriodsReview',
-                }),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [
-                    {
-                      event: DefaultEvents.ABORT,
-                      name: parentalLeaveFormMessages.confirmation.cancel,
-                      type: 'reject',
-                    },
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: parentalLeaveFormMessages.confirmation.title,
-                      type: 'primary',
-                      condition: (answers) => {
-                        // Only display Submit button if changes made
-                        const { addPeriods, addEmployer } =
-                          getApplicationAnswers(answers)
-                        return addPeriods === YES || addEmployer === YES
-                      },
-                    },
-                  ],
-                }),
+              component: 'EditOrAddEmployersAndPeriodsReview',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                  condition: (answers) => {
+                    // Only display Submit button if changes made
+                    const { addPeriods, addEmployer } =
+                      getApplicationAnswers(answers)
+                    return addPeriods === YES || addEmployer === YES
+                  },
+                },
               ],
             }),
           ],
