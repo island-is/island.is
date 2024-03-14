@@ -51,7 +51,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromRepresentative: [
-        { fromNationalId: person1, rightType: { code: prRight1 } },
+        { fromNationalId: person1, rightTypes: [{ code: prRight1 }] },
       ],
       expectedFrom: [person1],
     },

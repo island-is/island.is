@@ -6,14 +6,14 @@ import {
   createCurrentUser,
   createNationalId,
 } from '@island.is/testing/fixtures'
+import { AuthScope } from '@island.is/auth/scopes'
 import { DelegationIndex } from '@island.is/auth-api-lib'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
-import { AuthScope } from '@island.is/auth/scopes'
 
-import { setupWithAuth } from '../../../../test/setup'
+import { setupWithAuth } from '../../../../../test/setup'
 
 const testNationalId = createNationalId('person')
 
