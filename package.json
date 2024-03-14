@@ -481,7 +481,8 @@
     "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch"
   },
   "volta": {
-    "node": "18.16.0"
+    "node": "18.16.0",
+    "yarn": "3.2.3"
   },
   "packageManager": "yarn@3.2.3"
 }
