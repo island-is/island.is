@@ -11,6 +11,7 @@ import {
   Hyphen,
   IconMapIcon,
   Inline,
+  LinkV2,
   Tag,
   TagProps,
   Text,
@@ -143,7 +144,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
           >
             <Box>
               {cta.href ? (
-                <a href={cta.href} target="_blank" rel="noreferrer" style={{textDecoration: 'none'}}>
+                <LinkV2 href={cta.href} newTab={true}>
                   <Button
                     {...(cta.buttonType ?? { variant: cta.variant })}
                     size={cta.size}
@@ -155,7 +156,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                   >
                     {cta.label}
                   </Button>
-                </a>
+                </LinkV2>
               ) : (
                 <Button
                   {...(cta.buttonType ?? { variant: cta.variant })}

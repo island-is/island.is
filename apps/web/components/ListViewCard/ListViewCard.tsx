@@ -127,12 +127,7 @@ export const ListViewCard = ({
         <Box paddingTop={3} width="full" height="full">
           <Box display={'flex'} alignItems={'flexEnd'} height="full">
             {cta.href ? (
-              <a
-                href={cta.href}
-                target="_blank"
-                rel="noreferrer"
-                style={{ textDecoration: 'none' }}
-              >
+              <LinkV2 href={cta.href} newTab={true}>
                 <Button
                   {...(cta.buttonType ?? { variant: cta.variant })}
                   size={cta.size}
@@ -144,7 +139,7 @@ export const ListViewCard = ({
                 >
                   {cta.label}
                 </Button>
-              </a>
+              </LinkV2>
             ) : (
               <Button
                 {...(cta.buttonType ?? { variant: cta.variant })}
