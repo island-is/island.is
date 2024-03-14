@@ -149,7 +149,7 @@ runs:
         echo "SLACK_USERNAME=${SLACK_USERNAME}" >> "$GITHUB_ENV"
         echo "SLACK_WEBHOOK=${SLACK_WEBHOOK}" >> "$GITHUB_ENV"
 
-    - name: Notify on failure
+    - name: Notify on success
       if: ${{ !cancelled() && success() && inputs.slack-webhook && inputs.slack-notify-on-success == 'true' }}
       continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
@@ -195,5 +195,6 @@ runs:
 
         # Fail on conditions
         if [ "${{ inputs.fail-on-missing }}" = 'true' ] && [ "${{ steps.cache-attempt.outputs.cache-hit }}" = 'false' ]; then
+          echo "Key not found in cache, and configured to fail on cache miss. Aborting"
           exit 1
         fi
