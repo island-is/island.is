@@ -589,7 +589,12 @@ const mapInheritanceReportAssets = (
         stocks.push(asset)
         break
       case TegundAndlags.NUMBER_8:
-        bankAccounts.push(asset)
+        bankAccounts.push({
+          ...asset,
+          exchangeRateOrInterest: String(
+            Math.round(parseShare(iAsset.gengiVextir ?? 0)),
+          ),
+        })
         break
       case TegundAndlags.NUMBER_9:
         depositsAndMoney.push(asset)
