@@ -9,7 +9,7 @@ The license service returns a generic license that consists of the following par
 - License type: A license type comes from an exhaustive list of types.
   - e.g. DriversLicense, FirearmLicense, MachineLicense etc...
 - Provider: What issuer provides the license.
-  - e.g National police commisioner
+  - e.g National police commissioner
 - Fetch: A status object containing all relevant info about the fetch itself.
 - Payload: The actual payload, i.e. the license itself. Might be empty if the user doesn't have a license!
 
@@ -45,7 +45,7 @@ When a new license is added, don't forget to mock it!
      - A configuration definition for the service. - All secrets should be kept in the AWS parameter store. Do not use environment files!
      - (optional) Type definitions if required
      - Finally, the module definitions, that provides the everything for injection and exports the service.
-3. Add the new license to the relevant types, e.g. `GenericLicenseType``
+3. Add the new license to the relevant types, e.g. `GenericLicenseTypeType``
 4. Inject the new internal client into the LicenseService!
    - For digital licenses, you also need to provide the config to the CONFIG_PROVIDER factory function if pkpass is available (so it can retrieve the `passTemplateId` from it)
    - Don't forget to add the new license to the `AVAILABLE_LICENSES` object if it's supposed to be displayed.
