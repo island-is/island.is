@@ -10,6 +10,7 @@ import { Locale } from '@island.is/shared/types'
 import { FlattenedAdrDto } from './clients/adr-license-client'
 import { FirearmLicenseDto } from './clients/firearm-license-client'
 import { DrivingLicenseVerifyExtraData } from './clients/driving-license-client'
+import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 
 export type LicenseLabelsObject = {
   [x: string]: string
@@ -31,6 +32,7 @@ export interface LicenseResults {
   [LicenseType.AdrLicense]: FlattenedAdrDto
   [LicenseType.DisabilityLicense]: OrorkuSkirteini
   [LicenseType.DrivingLicense]: DriverLicenseDto
+  [LicenseType.HuntingLicense]: HuntingLicenseDto
   [LicenseType.Ehic]: BasicCardInfoDTO
   [LicenseType.FirearmLicense]: FirearmLicenseDto
   [LicenseType.MachineLicense]: VinnuvelaDto
@@ -42,6 +44,7 @@ export interface VerifyExtraDataResult {
   [LicenseType.AdrLicense]: void
   [LicenseType.DisabilityLicense]: void
   [LicenseType.DrivingLicense]: DrivingLicenseVerifyExtraData
+  [LicenseType.HuntingLicense]: void
   [LicenseType.Ehic]: void
   [LicenseType.FirearmLicense]: void
   [LicenseType.MachineLicense]: void
@@ -53,6 +56,7 @@ export type PkPassVerificationData = {
   [LicenseType.AdrLicense]: void
   [LicenseType.DisabilityLicense]: void
   [LicenseType.DrivingLicense]: DrivingLicenseVerifyExtraData
+  [LicenseType.HuntingLicense]: void
   [LicenseType.Ehic]: void
   [LicenseType.FirearmLicense]: void
   [LicenseType.MachineLicense]: void

@@ -1,19 +1,19 @@
 import { Locale } from '@island.is/shared/types'
 import {
-  DEFAULT_LICENSE_ID,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
   GenericLicenseMapper,
   GenericUserLicensePayload,
 } from '../licenceService.type'
+import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
-import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { format } from 'kennitala'
 import dateFormat from 'date-fns/format'
 import { isDefined } from '@island.is/shared/utils'
 import capitalize from 'lodash/capitalize'
+import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 
 const formatDate = (date: Date) => dateFormat(date, 'dd.MM.yyyy')
 

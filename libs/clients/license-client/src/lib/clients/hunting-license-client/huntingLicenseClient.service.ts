@@ -12,9 +12,11 @@ import { FetchError } from '@island.is/clients/middlewares'
 import {
   LicenseClient,
   LicensePkPassAvailability,
+  LicenseType,
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
+  VerifyPkPassResult,
 } from '../../licenseClient.type'
 import {
   HuntingLicenseClientService,
@@ -25,7 +27,9 @@ import {
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class HuntingLicenseClient implements LicenseClient<HuntingLicenseDto> {
+export class HuntingLicenseClient
+  implements LicenseClient<LicenseType.HuntingLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private huntingService: HuntingLicenseClientService,
@@ -33,6 +37,7 @@ export class HuntingLicenseClient implements LicenseClient<HuntingLicenseDto> {
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.HuntingLicense
 
   private checkLicenseValidityForPkPass(
     licenseInfo: HuntingLicenseDto,
@@ -243,7 +248,9 @@ export class HuntingLicenseClient implements LicenseClient<HuntingLicenseDto> {
     }
   }
 
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+  async verifyPkPass(
+    data: string,
+  ): Promise<Result<VerifyPkPassResult<LicenseType.HuntingLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
