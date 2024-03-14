@@ -147,6 +147,7 @@ import {
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
+import { LicenseConfig } from '@island.is/services/license'
 
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -386,6 +387,7 @@ const environment = getConfig
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
         UltravioletRadiationClientConfig,
+        LicenseConfig,
       ],
     }),
   ],

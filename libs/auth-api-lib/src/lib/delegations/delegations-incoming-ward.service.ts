@@ -6,9 +6,11 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ApiScopeInfo } from './delegations-incoming.service'
-import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
-import { DelegationType } from './types/delegationType'
-
+import { DelegationDTO } from './dto/delegation.dto'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 @Injectable()
 export class DelegationsIncomingWardService {
   constructor(
@@ -55,8 +57,8 @@ export class DelegationsIncomingWardService {
               toNationalId: user.nationalId,
               fromNationalId: p.nationalId,
               fromName: p.name,
-              type: DelegationType.LegalGuardian,
-              provider: DelegationProvider.NationalRegistry,
+              type: AuthDelegationType.LegalGuardian,
+              provider: AuthDelegationProvider.NationalRegistry,
             },
         )
     } catch (error) {
