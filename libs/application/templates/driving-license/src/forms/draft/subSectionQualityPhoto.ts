@@ -52,7 +52,8 @@ export const subSectionQualityPhoto = buildSubSection({
           id: 'photdesc',
           title: '',
           component: 'Bullets',
-          condition: (answers) => getValueViaPath(answers, "willBringQualityPhoto") === YES,
+          condition: (answers) =>
+            getValueViaPath(answers, 'willBringQualityPhoto') === YES,
         }),
       ],
     }),
