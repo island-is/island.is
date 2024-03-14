@@ -12128,15 +12128,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/devkit@npm:18.0.5":
-  version: 18.0.5
-  resolution: "@nrwl/devkit@npm:18.0.5"
-  dependencies:
-    "@nx/devkit": 18.0.5
-  checksum: 5e49a0833a65e2074004414db3f2bf3c22b49821cefca808ce2f059d9124656a0fa5d725f29b73fccf20da4f0f0fb849c708bce3279c567b078c716727df8f74
-  languageName: node
-  linkType: hard
-
 "@nrwl/esbuild@npm:16.9.1":
   version: 16.9.1
   resolution: "@nrwl/esbuild@npm:16.9.1"
@@ -12510,24 +12501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/devkit@npm:16.9.0":
-  version: 16.9.0
-  resolution: "@nx/devkit@npm:16.9.0"
-  dependencies:
-    "@nrwl/devkit": "*"
-    ejs: ^3.1.7
-    enquirer: ~2.3.6
-    ignore: ^5.0.4
-    semver: 7.5.3
-    tmp: ~0.2.1
-    tslib: ^2.3.0
-  peerDependencies:
-    nx: ">= 15 <= 17"
-  checksum: a725b7ce3c6c14c30c8210bc1a0686ac5beee089462d23897c2e73f0860d108c11b75a03673454186a27251a368250874bbf1575c8a39fc7f7a282d96c0a009b
-  languageName: node
-  linkType: hard
-
-"@nx/devkit@npm:16.9.1":
+"@nx/devkit@npm:16.9, @nx/devkit@npm:16.9.1":
   version: 16.9.1
   resolution: "@nx/devkit@npm:16.9.1"
   dependencies:
@@ -12544,21 +12518,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/devkit@npm:18.0.5":
-  version: 18.0.5
-  resolution: "@nx/devkit@npm:18.0.5"
+"@nx/devkit@npm:16.9.0":
+  version: 16.9.0
+  resolution: "@nx/devkit@npm:16.9.0"
   dependencies:
-    "@nrwl/devkit": 18.0.5
+    "@nrwl/devkit": "*"
     ejs: ^3.1.7
     enquirer: ~2.3.6
     ignore: ^5.0.4
-    semver: ^7.5.3
+    semver: 7.5.3
     tmp: ~0.2.1
     tslib: ^2.3.0
-    yargs-parser: 21.1.1
   peerDependencies:
-    nx: ">= 16 <= 18"
-  checksum: 42033bde8583327b5c60295e7fd1bb94d8c1534c5fecf901366cc147ec280b1cd0d2eb57b47d89e7b69add15a0fe9258766f9b6da2cc48d7d427f52b057773dc
+    nx: ">= 15 <= 17"
+  checksum: a725b7ce3c6c14c30c8210bc1a0686ac5beee089462d23897c2e73f0860d108c11b75a03673454186a27251a368250874bbf1575c8a39fc7f7a282d96c0a009b
   languageName: node
   linkType: hard
 
@@ -34399,7 +34372,7 @@ __metadata:
     "@nestjs/terminus": 10.2.0
     "@nestjs/testing": 10.0.5
     "@nx/cypress": 16.9.0
-    "@nx/devkit": 18.0.5
+    "@nx/devkit": 16.9
     "@nx/esbuild": 16.9
     "@nx/eslint-plugin": 16.9.0
     "@nx/express": 16.9.0

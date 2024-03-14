@@ -332,7 +332,7 @@
     "@nestjs/schematics": "10.0.1",
     "@nestjs/testing": "10.0.5",
     "@nx/cypress": "16.9.0",
-    "@nx/devkit": "18.0.5",
+    "@nx/devkit": "16.9",
     "@nx/esbuild": "16.9",
     "@nx/eslint-plugin": "16.9.0",
     "@nx/express": "16.9.0",
