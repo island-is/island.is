@@ -60,11 +60,15 @@ export class InheritanceReportService extends BaseTemplateApiService {
     // Loop through all inheritanceReportInfos and attach inheritanceTax to each
     await Promise.all(
       inheritanceReportInfos.map(async (inheritanceReportInfo) => {
+        // The dateOfDeath is marked as Date as per the openapi spec but is actually a string when received
+        const inheritanceDate =
+          typeof inheritanceReportInfo.dateOfDeath === 'string'
+            ? new Date(Date.parse(inheritanceReportInfo.dateOfDeath))
+            : inheritanceReportInfo.dateOfDeath ?? new Date()
+
         return new Promise<void>(async (resolve) => {
           inheritanceReportInfo.inheritanceTax =
-            await this.syslumennService.getInheritanceTax(
-              inheritanceReportInfo.dateOfDeath ?? new Date(),
-            )
+            await this.syslumennService.getInheritanceTax(new Date())
           resolve()
         })
       }),
