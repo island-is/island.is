@@ -1,11 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { IsObject } from 'class-validator'
 import { GenericLicenseDataFieldType } from '../licenceService.type'
-import graphqlTypeJson from 'graphql-type-json'
-import {
-  GenericUserLicenseMetaLinks,
-  GenericUserLicenseMetadata,
-} from './genericLicense.model'
+import { GenericUserLicenseMetaLinks } from './GenericUserLicenseMetaLinks.dto'
 
 registerEnumType(GenericLicenseDataFieldType, {
   name: 'GenericLicenseDataFieldType',
@@ -52,23 +47,4 @@ export class GenericLicenseDataField {
     description: 'Name of data field',
   })
   fields?: GenericLicenseDataField[]
-}
-
-@ObjectType()
-export class Payload {
-  @Field(() => [GenericLicenseDataField], {
-    description: 'Data parsed into a standard format',
-  })
-  data!: GenericLicenseDataField[]
-
-  @Field(() => graphqlTypeJson, {
-    nullable: true,
-    description: 'Raw JSON data',
-  })
-  @IsObject()
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  rawData?: object
-
-  @Field(() => GenericUserLicenseMetadata)
-  metadata?: GenericUserLicenseMetadata
 }
