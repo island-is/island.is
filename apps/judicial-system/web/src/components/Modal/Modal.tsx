@@ -7,7 +7,7 @@ import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Modal.css'
 
-interface ModalProps {
+export interface ModalProps {
   title: string
   text?: string | ReactNode
   primaryButtonText?: string
