@@ -57,7 +57,10 @@ import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
+import {
+  FuseQueryResult,
+  SearchProducts,
+} from '@island.is/web/utils/useUniversitySearch'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
@@ -164,8 +167,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   >([])
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
-  const [originalSortedResults, setOriginalSortedList] = useState<any>([])
-  const [filteredResults, setFilteredResults] = useState<Array<any>>([])
+  const [originalSortedResults, setOriginalSortedList] = useState<
+    Array<FuseQueryResult>
+  >([])
+  const [filteredResults, setFilteredResults] = useState<
+    Array<FuseQueryResult>
+  >([])
   const [gridView, setGridView] = useState<boolean>(true)
   const { linkResolver } = useLinkResolver()
   const [totalPages, setTotalPages] = useState<number>(0)
@@ -175,7 +182,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   useEffect(() => {
     if (!loading) {
-      const temp = [
+      const sortedResultsWithStatus = [
         ...(data?.universityGatewayPrograms.data as UniversityGatewayProgram[]),
       ]
         .sort(() => Math.random() - 0.5)
@@ -186,7 +193,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           }
           return { item: itemWithStatus, refIndex: index, score: 1 }
         })
-      setOriginalSortedList(temp)
+
+      setOriginalSortedList(sortedResultsWithStatus)
     }
   }, [data, loading])
 
@@ -289,7 +297,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
     if (originalSortedResults.length > 0) {
       fuseInstance = new Fuse(
-        data?.universityGatewayPrograms.data || [],
+        originalSortedResults.map((item: FuseQueryResult) => {
+          return item.item
+        }) || [],
         fuseOptions,
       )
     }
