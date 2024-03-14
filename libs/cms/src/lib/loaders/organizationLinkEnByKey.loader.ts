@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common'
 
 import { NestDataLoader } from '@island.is/nest/dataloader'
 import { CmsContentfulService } from '../cms.contentful.service'
-import { OrganizationLink, OrganizationLinkByReferenceIdDataLoader } from './organizationLinkByKey.loader'
-
+import {
+  OrganizationLink,
+  OrganizationLinkByReferenceIdDataLoader,
+} from './organizationLinkByKey.loader'
 
 @Injectable()
 export class OrganizationLinkEnByReferenceIdLoader
@@ -18,7 +20,7 @@ export class OrganizationLinkEnByReferenceIdLoader
     const OrganizationLinks =
       await this.cmsContentfulService.getOrganizationLink(
         organizationKeys as string[],
-        'en'
+        'en',
       )
 
     return OrganizationLinks
