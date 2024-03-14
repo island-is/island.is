@@ -19,15 +19,14 @@ export type SetBeforeSubmitCallback = (
 export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
 export type SetSubmitButtonDisabled = Dispatch<SetStateAction<boolean>>
 
-export type StaticTextObject = MessageDescriptor & {
-  values?: RecordObject<any>
-}
+export { StaticTextObject } from 'static-text'
 
 export type GenericFormField<T> = Partial<
   T & { id: string; initial: boolean; dummy?: boolean }
 >
 
-export type StaticText = StaticTextObject | string
+import { StaticText } from 'static-text'
+export { StaticText } from 'static-text'
 
 export type FormText =
   | StaticText
