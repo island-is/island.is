@@ -34,7 +34,7 @@ export const iconIdMapper = (iconType: string) => {
     case 'cellular':
       return 'eD0ZSxAV3eT1'
     // Eignir
-    case 'home':
+    case 'homeWithCar':
       return 'ebYEDB473Vf1'
     // Aðgangsstýringar
     case 'lockClosed':
@@ -92,7 +92,7 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     case 'cellular':
       return <Cellular />
     // Fasteignir
-    case 'home':
+    case 'homeWithCar':
       return <Home />
     // Aðgangsstýringar
     case 'lockClosed':
