@@ -40,6 +40,6 @@ export const confirmation = defineMessages({
     id: 'judicial.system.core:investigation_case_confirmation.only_assigend_judge_can_sign',
     defaultMessage: 'Einungis skráður dómari getur undirritað úrskurð',
     description:
-      'Notaður sem texti í stað "áfram" takkans á staðfesingar skrefi í rannsóknarheimildum þegar ´"áfram" takkinn er falinn',
+      'Notaður sem texti í stað "áfram" takkans á staðfesingar skrefi í rannsóknarheimildum þegar "áfram" takkinn er falinn',
   },
 })
