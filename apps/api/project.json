@@ -71,6 +71,13 @@
         "parallel": false
       }
     },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "apps/api"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
