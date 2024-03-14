@@ -17,7 +17,7 @@ import { setupWithAuth } from '../../../../test/setup'
 
 const testNationalId = createNationalId('person')
 
-const validationTestcases = [
+const validationTestCases = [
   {
     message: 'should return status 400 if delegation information is missing',
     param: '',
@@ -53,7 +53,7 @@ const validationTestcases = [
   },
 ]
 
-const delegationTypeAndProviderMapTestcases: Record<
+const invalidDelegationTypeAndProviderMapTestcases: Record<
   string,
   AuthDelegationType[]
 > = {
@@ -124,10 +124,10 @@ describe('DelegationIndexController', () => {
   })
 
   describe('With invalid delegation type and provider combination', () => {
-    describe.each(Object.keys(delegationTypeAndProviderMapTestcases))(
+    describe.each(Object.keys(invalidDelegationTypeAndProviderMapTestcases))(
       'Delegation provider: %s',
       (provider) => {
-        const testCase = delegationTypeAndProviderMapTestcases[provider]
+        const testCase = invalidDelegationTypeAndProviderMapTestcases[provider]
         let app: TestApp
         let server: request.SuperTest<request.Test>
         const user = createCurrentUser({
@@ -271,7 +271,7 @@ describe('DelegationIndexController', () => {
     })
 
     describe('PUT - validation', () => {
-      validationTestcases.forEach((testCase) => {
+      validationTestCases.forEach((testCase) => {
         it(testCase.message, async () => {
           // Act
           const response = await server
@@ -364,7 +364,7 @@ describe('DelegationIndexController', () => {
     })
 
     describe('DELETE - validation', () => {
-      validationTestcases.forEach((testCase) => {
+      validationTestCases.forEach((testCase) => {
         it(testCase.message, async () => {
           // Act
           const response = await server
