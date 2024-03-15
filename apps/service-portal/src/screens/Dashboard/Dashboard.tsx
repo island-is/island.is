@@ -128,7 +128,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                               color="blue400"
                             />
                           ) : (
-                            iconTypeToSVG(navRoot.icon?.icon ?? '', '') ??
+                            iconTypeToSVG(navRoot.icon?.icon ?? '') ??
                             (navRoot.icon ? (
                               <Icon
                                 icon={navRoot.icon.icon}
@@ -191,7 +191,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                       {isMobile ? (
                         <Icon icon="mail" type="outline" color="blue400" />
                       ) : (
-                        iconTypeToSVG('mail', '') ?? (
+                        iconTypeToSVG('mail') ?? (
                           <Icon icon="mail" type="outline" color="blue400" />
                         )
                       )}
