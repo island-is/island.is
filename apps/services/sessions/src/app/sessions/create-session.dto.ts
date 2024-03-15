@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsDateString, IsOptional, IsString } from 'class-validator'
+import { IsIsoCountryCode } from '@island.is/nest/core'
 
 export class CreateSessionDto {
   @IsString()
@@ -42,7 +43,7 @@ export class CreateSessionDto {
   @ApiProperty()
   ip!: string
 
-  @IsString()
+  @IsIsoCountryCode()
   @IsOptional()
   @ApiPropertyOptional({
     description:

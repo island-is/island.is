@@ -101,7 +101,7 @@ export class SessionsService {
       throw new Error('Missing sessionId.')
     }
     if (!ipLocation) {
-      this.logger.error('ipLocation missing, defaulting to Maxmind ip lookup')
+      this.logger.warn('ipLocation missing, defaulting to Maxmind ip lookup')
     }
 
     return this.sessionModel.create({

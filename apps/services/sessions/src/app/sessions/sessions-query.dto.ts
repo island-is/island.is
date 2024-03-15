@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsDateString, IsOptional, IsString, Length } from 'class-validator'
-
+import { IsDateString, IsOptional } from 'class-validator'
+import { IsIsoCountryCode } from '@island.is/nest/core'
 import { Order, PaginationDto } from '@island.is/nest/pagination'
 
 export class SessionsQueryDto extends PaginationDto {
@@ -19,8 +19,7 @@ export class SessionsQueryDto extends PaginationDto {
   to?: Date
 
   @IsOptional()
-  @IsString()
-  @Length(2, 2)
+  @IsIsoCountryCode()
   @ApiPropertyOptional({
     description:
       'Only return sessions originating from this country code (see: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).',
@@ -30,7 +29,6 @@ export class SessionsQueryDto extends PaginationDto {
   @IsOptional()
   @ApiPropertyOptional({
     description: 'Orders results by date. Defaults to descending order.',
-
     enum: Order,
     enumName: 'Order',
     default: Order.DESC,
