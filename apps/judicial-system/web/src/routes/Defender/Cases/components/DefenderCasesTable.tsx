@@ -13,11 +13,11 @@ import {
   ContextMenu,
   TagAppealState,
   TagCaseState,
+  useWithdrawAppealMenuOption,
+  WithdrawAppealContextMenuModal,
 } from '@island.is/judicial-system-web/src/components'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
-import useWithdrawAppealMenuOption from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
-import Modal from '@island.is/judicial-system-web/src/components/Modal/Modal'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -53,10 +53,9 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
 
   const {
     withdrawAppealMenuOption,
+    caseToWithdraw,
+    setCaseToWithdraw,
     shouldDisplayWithdrawAppealOption,
-    isWithdrawnAppealModalVisible,
-    modalOptions,
-    isTransitioningCase,
   } = useWithdrawAppealMenuOption()
 
   return (
@@ -216,7 +215,7 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                               icon: 'open',
                             },
                             ...(shouldDisplayWithdrawAppealOption(column)
-                              ? [withdrawAppealMenuOption(column.id, cases)]
+                              ? [withdrawAppealMenuOption(column.id)]
                               : []),
                           ]}
                           menuLabel="Opna valmöguleika á máli"
@@ -240,11 +239,12 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
           </tbody>
         </table>
       )}
-      {isWithdrawnAppealModalVisible && modalOptions && (
-        <Modal
-          {...modalOptions}
-          isPrimaryButtonLoading={isTransitioningCase}
-        ></Modal>
+      {caseToWithdraw && (
+        <WithdrawAppealContextMenuModal
+          caseId={caseToWithdraw}
+          cases={cases}
+          onClose={() => setCaseToWithdraw(undefined)}
+        />
       )}
     </Box>
   )

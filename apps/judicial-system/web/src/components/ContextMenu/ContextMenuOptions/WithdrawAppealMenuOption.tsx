@@ -13,17 +13,31 @@ import {
   CaseTransition,
 } from '../../../graphql/schema'
 import { useCase } from '../../../utils/hooks'
-import { ModalProps } from '../../Modal/Modal'
+import Modal from '../../Modal/Modal'
 import { UserContext } from '../../UserProvider/UserProvider'
 import { strings } from './WithdrawAppealMenuOption.strings'
 
+interface WithdrawAppealModalProps {
+  caseId: string
+  cases: CaseListEntry[]
+  onClose: () => void
+}
+
 export const useWithdrawAppealMenuOption = () => {
-  const { transitionCase, isTransitioningCase } = useCase()
-  const { formatMessage } = useIntl()
+  const [caseToWithdraw, setCaseToWithdraw] = useState<string | undefined>()
   const { user } = useContext(UserContext)
 
-  const [modalVisible, setVisibleModal] = useState<boolean>(false)
-  const [modalOptions, setModalOptions] = useState<ModalProps>()
+  const { formatMessage } = useIntl()
+
+  const withdrawAppealMenuOption = (caseId: string) => {
+    return {
+      title: formatMessage(strings.withdrawAppeal),
+      icon: 'trash' as IconMapIcon,
+      onClick: () => {
+        setCaseToWithdraw(caseId)
+      },
+    }
+  }
 
   const shouldDisplayWithdrawAppealOption = useCallback(
     (caseEntry: CaseListEntry) => {
@@ -50,67 +64,53 @@ export const useWithdrawAppealMenuOption = () => {
     [user],
   )
 
-  const withdrawAppealMenuOption = (caseId: string, cases: CaseListEntry[]) => {
-    return {
-      title: formatMessage(strings.withdrawAppeal),
-      onClick: () => {
-        handleWithdrawAppealMenuClick(caseId, cases)
-      },
-      icon: 'trash' as IconMapIcon,
-    }
-  }
-
-  const handleWithdrawAppealMenuClick = (
-    id: string,
-    cases: CaseListEntry[],
-  ) => {
-    setVisibleModal(true)
-    setModalOptions(withdrawAppealOptionModal(id, cases, setVisibleModal))
-  }
-
-  const withdrawAppealOptionModal = (
-    caseId: string,
-    cases: CaseListEntry[],
-    setVisibleModal: React.Dispatch<React.SetStateAction<boolean>>,
-  ): ModalProps => {
-    return {
-      title: formatMessage(strings.withdrawAppealModalTitle),
-      text: formatMessage(strings.withdrawAppealModalText),
-      primaryButtonText: formatMessage(
-        strings.withdrawAppealModalPrimaryButtonText,
-      ),
-      secondaryButtonText: formatMessage(
-        strings.withdrawAppealModalSecondaryButtonText,
-      ),
-
-      onPrimaryButtonClick: async () => {
-        const transitionResult = await transitionCase(
-          caseId,
-          CaseTransition.WITHDRAW_APPEAL,
-        )
-
-        if (transitionResult === true) {
-          const transitionedCase = cases.find((tc) => caseId === tc.id)
-          if (transitionedCase) {
-            transitionedCase.appealState = CaseAppealState.WITHDRAWN
-          }
-          setVisibleModal && setVisibleModal(false)
-        }
-      },
-      onSecondaryButtonClick: () => {
-        setVisibleModal(false)
-      },
-      primaryButtonColorScheme: 'destructive',
-    }
-  }
-
   return {
+    caseToWithdraw,
+    setCaseToWithdraw,
     withdrawAppealMenuOption,
     shouldDisplayWithdrawAppealOption,
-    isWithdrawnAppealModalVisible: modalVisible,
-    modalOptions,
-    isTransitioningCase,
   }
 }
 
-export default useWithdrawAppealMenuOption
+const WithdrawAppealContextMenuModal: React.FC<WithdrawAppealModalProps> = (
+  props,
+) => {
+  const { caseId, cases, onClose } = props
+  const { formatMessage } = useIntl()
+  const { transitionCase, isTransitioningCase } = useCase()
+
+  const handleWithdrawAppealClick = async () => {
+    const transitionResult = await transitionCase(
+      caseId,
+      CaseTransition.WITHDRAW_APPEAL,
+    )
+    if (transitionResult === true) {
+      const transitionedCase = cases.find((tc) => caseId === tc.id)
+      if (transitionedCase) {
+        transitionedCase.appealState = CaseAppealState.WITHDRAWN
+      }
+      onClose()
+    }
+  }
+
+  return (
+    <Modal
+      title={formatMessage(strings.withdrawAppealModalTitle)}
+      text={formatMessage(strings.withdrawAppealModalText)}
+      primaryButtonText={formatMessage(
+        strings.withdrawAppealModalPrimaryButtonText,
+      )}
+      secondaryButtonText={formatMessage(
+        strings.withdrawAppealModalSecondaryButtonText,
+      )}
+      isPrimaryButtonLoading={isTransitioningCase}
+      onPrimaryButtonClick={handleWithdrawAppealClick}
+      onSecondaryButtonClick={() => {
+        onClose()
+      }}
+      primaryButtonColorScheme="destructive"
+    ></Modal>
+  )
+}
+
+export default WithdrawAppealContextMenuModal

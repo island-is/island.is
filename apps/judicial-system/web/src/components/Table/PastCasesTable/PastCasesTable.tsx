@@ -32,9 +32,10 @@ import {
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import useWithdrawAppealMenuOption from '../../ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
+import WithdrawAppealContextMenuModal, {
+  useWithdrawAppealMenuOption,
+} from '../../ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
 import IconButton from '../../IconButton/IconButton'
-import Modal from '../../Modal/Modal'
 import MobilePastCase from './MobilePastCase'
 import { contextMenu } from '../../ContextMenu/ContextMenu.strings'
 import * as styles from '../Table.css'
@@ -51,16 +52,14 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { user } = useContext(UserContext)
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
-
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
 
   const {
     withdrawAppealMenuOption,
+    caseToWithdraw,
+    setCaseToWithdraw,
     shouldDisplayWithdrawAppealOption,
-    isWithdrawnAppealModalVisible,
-    modalOptions,
-    isTransitioningCase,
   } = useWithdrawAppealMenuOption()
 
   const pastCasesData = useMemo(
@@ -207,7 +206,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           icon: 'open',
                         },
                         ...(shouldDisplayWithdrawAppealOption(column)
-                          ? [withdrawAppealMenuOption(column.id, cases)]
+                          ? [withdrawAppealMenuOption(column.id)]
                           : []),
                       ]}
                       menuLabel="Opna valmöguleika á máli"
@@ -229,11 +228,12 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
           )
         })}
       </TableContainer>
-      {isWithdrawnAppealModalVisible && modalOptions && (
-        <Modal
-          {...modalOptions}
-          isPrimaryButtonLoading={isTransitioningCase}
-        ></Modal>
+      {caseToWithdraw && (
+        <WithdrawAppealContextMenuModal
+          caseId={caseToWithdraw}
+          cases={cases}
+          onClose={() => setCaseToWithdraw(undefined)}
+        />
       )}
     </>
   )
