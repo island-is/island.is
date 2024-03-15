@@ -1,38 +1,43 @@
-import { FC } from 'react'
+import { Application, Field, RecordObject } from '@island.is/application/types'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { Application, RecordObject, Field } from '@island.is/application/types'
-import { Box, Button, Text } from '@island.is/island-ui/core'
-import { ReviewGroup, DataValue } from '@island.is/application/ui-components'
+import { FC } from 'react'
 import {
   getApplicationAnswers,
   getSelectedChild,
 } from '../../lib/parentalLeaveUtils'
-// TODO: Bring back payment calculation info, once we have an api
-// import PaymentsTable from '../PaymentSchedule/PaymentsTable'
-// import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+
+import { useLocale } from '@island.is/localization'
 import {
-  NO,
-  ParentalRelations,
-  PARENTAL_LEAVE,
-  SINGLE,
-  MANUAL,
-  States,
-  PARENTAL_GRANT,
-  YES,
-  PARENTAL_GRANT_STUDENTS,
   Languages,
+  MANUAL,
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  ParentalRelations,
+  SINGLE,
+  States,
+  YES,
 } from '../../constants'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { SummaryRights } from '../Rights/SummaryRights'
+import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
+import { Employment } from './review-groups/Employment'
 import { OtherParent } from './review-groups/OtherParent'
 import { Payments } from './review-groups/Payments'
+import { Periods } from './review-groups/Periods'
 import { PersonalAllowance } from './review-groups/PersonalAllowance'
 import { SpousePersonalAllowance } from './review-groups/SpousePersonalAllowance'
-import { Employment } from './review-groups/Employment'
-import { Periods } from './review-groups/Periods'
-import { useLocale } from '@island.is/localization'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 
 interface ReviewScreenProps {
   application: Application
@@ -107,7 +112,7 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
-      <OtherParent {...childProps} />
+      {otherParent !== undefined && <OtherParent {...childProps} />}
       <Payments {...childProps} />
       <PersonalAllowance {...childProps} />
       {isPrimaryParent && hasSelectedOtherParent && (
@@ -126,37 +131,22 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
         isEditable={editable}
         editAction={() => goToScreen?.('infoSection')}
       >
-        <DataValue
-          label={formatMessage(parentalLeaveFormMessages.reviewScreen.language)}
-          value={formatMessage(
-            language === Languages.EN
-              ? parentalLeaveFormMessages.applicant.english
-              : parentalLeaveFormMessages.applicant.icelandic,
-          )}
-        />
-      </ReviewGroup>
-
-      {/**
-       * TODO: Bring back payment calculation info, once we have an api
-       * https://app.asana.com/0/1182378413629561/1200214178491335/f
-       */}
-      {/* <ReviewGroup
-      isEditable={editable}>
-        {!loading && !error && (
-          <>
-            <Label>
-              {formatMessage(
-                parentalLeaveFormMessages.paymentPlan.subSection,
+        <GridRow>
+          <GridColumn span={['7/12', '7/12', '7/12', '12/12']}>
+            <DataValue
+              label={formatMessage(
+                parentalLeaveFormMessages.reviewScreen.language,
               )}
-            </Label>
-
-            <PaymentsTable
-              application={application}
-              payments={data.getEstimatedPayments}
+              value={formatMessage(
+                language === Languages.EN
+                  ? parentalLeaveFormMessages.applicant.english
+                  : parentalLeaveFormMessages.applicant.icelandic,
+              )}
             />
-          </>
-        )}
-      </ReviewGroup> */}
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+      <Attachments {...childProps} />
 
       {/**
        * TODO: Bring back this feature post v1 launch
