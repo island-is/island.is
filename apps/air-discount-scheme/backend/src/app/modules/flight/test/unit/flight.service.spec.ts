@@ -122,6 +122,22 @@ describe('PublicFlightController', () => {
       const result = flightService.isADSPostalCode(postalCode)
       expect(result).toBe(true)
     })
+
+    it('Should not allow Hvammstangi', async () => {
+      const postalCode = ADS_POSTAL_CODES['Hvammstangi']
+      const result = flightService.isADSPostalCode(postalCode)
+      expect(result).toBe(false)
+    })
+    it('Should not allow Hvammstangi dreif', async () => {
+      const postalCode = ADS_POSTAL_CODES['HvammstangiDreif']
+      const result = flightService.isADSPostalCode(postalCode)
+      expect(result).toBe(false)
+    })
+    it('Should not allow Staður', async () => {
+      const postalCode = ADS_POSTAL_CODES['Stadur']
+      const result = flightService.isADSPostalCode(postalCode)
+      expect(result).toBe(false)
+    })
   })
 
   describe('countThisYearsFlightLegsByNationalId', () => {

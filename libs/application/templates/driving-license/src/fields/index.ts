@@ -1,4 +1,4 @@
-export { Declined, Congratulations } from './Done'
+export { Declined } from './Done'
 export { default as HealthDeclaration } from './HealthDeclaration'
 export { EligibilitySummary } from './EligibilitySummary'
 export { SubmitAndDecline } from './SubmitAndDecline'
