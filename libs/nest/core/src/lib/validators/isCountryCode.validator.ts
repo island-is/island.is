@@ -3,12 +3,12 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator'
-import { IsoCountryCode } from '../types/countryCode.enum'
+import { countries } from 'countries-list'
 
 @ValidatorConstraint({ async: false })
 export class IsoCountryCodeValidator implements ValidatorConstraintInterface {
   validate(value: string): boolean {
-    return Object.values(IsoCountryCode).includes(value as IsoCountryCode)
+    return Object.hasOwnProperty.call(countries, value.toUpperCase())
   }
 
   defaultMessage(args: ValidationArguments): string {

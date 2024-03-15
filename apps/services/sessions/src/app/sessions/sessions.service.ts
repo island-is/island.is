@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import addDays from 'date-fns/addDays'
-import { lookup } from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
 import uaParser from 'ua-parser-js'
 
+import ip3country from 'ip3country'
 import { User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 
@@ -101,7 +101,7 @@ export class SessionsService {
       throw new Error('Missing sessionId.')
     }
     if (!ipLocation) {
-      this.logger.warn('ipLocation missing, defaulting to Maxmind ip lookup')
+      this.logger.warn('ipLocation missing, defaulting to ip3country lookup')
     }
 
     return this.sessionModel.create({
@@ -123,8 +123,8 @@ export class SessionsService {
       : undefined
   }
 
-  private formatIp(ip: string): string | undefined {
-    const geoLocation = lookup(ip)
-    return geoLocation?.country ?? undefined
+  private formatIp = (ip: string): string | undefined => {
+    ip3country.init()
+    return ip3country.lookupStr(ip) ?? undefined
   }
 }
