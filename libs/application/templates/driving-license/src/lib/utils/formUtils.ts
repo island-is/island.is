@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, hasYes } from '@island.is/application/core'
 import {
   FormValue,
   ApplicationContext,
@@ -44,8 +44,7 @@ export const isApplicationForCondition =
     return applicationFor === result
   }
 
-export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
-  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') === NO
+export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) => !hasYes(answers?.drivingLicenseInOtherCountry)
 
 export const chooseDistrictCommissionerDescription = ({
   answers,
