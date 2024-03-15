@@ -295,7 +295,7 @@ export const Hunting = new XroadConf({
     XROAD_HUNTING_LICENSE_PATH: {
       dev: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
       staging: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
-      prod: 'IS/GOV/REPLACE/Umhverfisstofnun-Protected/api',
+      prod: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api',
     },
   },
 })

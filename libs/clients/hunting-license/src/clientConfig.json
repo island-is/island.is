@@ -79,7 +79,7 @@
           },
           "permit_validity": {
             "type": "string",
-            "enum": ["Í gildi", "Ekki í gildi"],
+            "enum": ["Í gildi", "Ekki í gildi", "Valid", "Expired"],
             "readOnly": true
           },
           "valid_from": {
@@ -106,9 +106,12 @@
           },
           "benefits": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Benefit"
-            }
+            "items": { "$ref": "#/components/schemas/Benefit" }
+          },
+          "permit_renew_link": {
+            "type": "string",
+            "example": "https://ust.is/veidimenn",
+            "readOnly": true
           },
           "personphoto": { "type": "string", "format": "byte" }
         },
