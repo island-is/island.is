@@ -1,4 +1,4 @@
-import { PDFDocument, rgb } from 'pdf-lib'
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 import { IndictmentConfirmation } from '@island.is/judicial-system/types'
 
@@ -825,6 +825,39 @@ export const createConfirmedIndictment = async (
   doc.drawSvgPath(
     'M68.7058 42.5884C68.3052 42.2488 68.0459 42.2605 68.0813 42.1668C68.2933 41.3352 68.9766 40.0352 69.8837 40.0352C71.0147 40.0352 73.1118 41.0893 73.4064 41.5109C73.5477 41.7217 73.3946 42.4947 73.3121 42.6587C73.3239 42.7993 73.3121 42.8344 73.3121 42.9866C73.3121 43.3146 73.312 43.3263 73.0293 43.6074C72.9586 43.6777 72.9233 44.0525 72.888 44.1344C72.8055 44.3101 72.6641 44.4155 72.5463 44.6029C72.4403 44.7669 72.3813 46.1841 72.0161 46.0787C71.8983 46.0435 71.9808 45.9498 71.9572 45.739C71.9572 45.0246 72.0514 44.4741 71.7923 44.3921C71.486 44.2867 69.5539 43.42 69.2829 43.2443C68.8941 42.9866 69.071 42.8929 68.7058 42.5884Z',
     { color: rgb(1, 0.9333, 0.8039), x: 48, y: height - 40, scale: 0.5 },
+  )
+
+  doc.drawRectangle({
+    x: coatOfArmsX + coatOfArmsDimensions,
+    y: height - pageMargin - titleHeight,
+    width: titleWidth,
+    height: titleHeight,
+    color: lightGray,
+    borderColor: darkGray,
+    borderWidth: 1,
+  })
+
+  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
+  const timesRomanBoldFont = await pdfDoc.embedFont(
+    StandardFonts.TimesRomanBold,
+  )
+  doc.drawText('Réttarvörslugátt', {
+    x: titleX,
+    y: height - 46,
+    size: 16,
+    font: timesRomanBoldFont,
+  })
+
+  doc.drawText('Skjal samþykkt rafrænt', {
+    x: 250,
+    y: height - 46,
+    size: 16,
+    font: timesRomanFont,
+  })
+
+  doc.drawSvgPath(
+    'M0.763563 11.8047H7.57201C7.85402 11.8047 8.08264 11.5761 8.08264 11.2941V5.50692C8.08264 5.22492 7.85402 4.99629 7.57201 4.99629H7.06138V3.46439C7.06138 1.86887 5.76331 0.570801 4.16779 0.570801C2.57226 0.570801 1.2742 1.86887 1.2742 3.46439V4.99629H0.763563C0.481557 4.99629 0.25293 5.22492 0.25293 5.50692V11.2941C0.25293 11.5761 0.481557 11.8047 0.763563 11.8047ZM5.61394 8.03817L4.16714 9.48496C4.06743 9.58467 3.93674 9.63455 3.80609 9.63455C3.67543 9.63455 3.54471 9.58467 3.44504 9.48496L2.72164 8.76157C2.52222 8.56215 2.52222 8.23888 2.72164 8.03943C2.92102 7.84001 3.24436 7.84001 3.44378 8.03943L3.80612 8.40174L4.89187 7.31603C5.09125 7.11661 5.41458 7.11661 5.614 7.31603C5.81339 7.51549 5.81339 7.83875 5.61394 8.03817ZM2.29546 3.46439C2.29546 2.43199 3.13539 1.59207 4.16779 1.59207C5.20019 1.59207 6.04011 2.43199 6.04011 3.46439V4.99629H2.29546V3.46439Z',
+    { color: gold, x: width - 38, y: height - 34 },
   )
 
   const pdfBytes = await pdfDoc.save()
