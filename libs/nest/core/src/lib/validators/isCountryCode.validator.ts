@@ -12,6 +12,6 @@ export class IsoCountryCodeValidator implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments): string {
-    return `${args.property} must be a valid ISO 3166-1 alpha-2 country code`
+    return `${args.property} must be a valid ISO 3166-1 alpha-2 country code (2 uppercase letters)`
   }
 }
