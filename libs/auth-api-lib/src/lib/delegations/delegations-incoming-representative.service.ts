@@ -1,4 +1,3 @@
-import { User } from '@island.is/auth-nest-tools'
 import {
   IndividualDto,
   NationalRegistryClientService,
@@ -9,10 +8,13 @@ import { Inject, Logger } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
-import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
+import { DelegationDTO } from './dto/delegation.dto'
 import { partitionWithIndex } from './utils/partitionWithIndex'
-import { DelegationType } from './types/delegationType'
 import { ApiScopeInfo } from './delegations-incoming.service'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -57,8 +59,8 @@ export class DelegationsIncomingRepresentativeService {
         toNationalId: representative.nationalIdPersonalRepresentative,
         fromNationalId: representative.nationalIdRepresentedPerson,
         fromName: name,
-        type: DelegationType.PersonalRepresentative,
-        provider: DelegationProvider.PersonalRepresentativeRegistry,
+        type: AuthDelegationType.PersonalRepresentative,
+        provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
         rights: representative.rights,
       })
 

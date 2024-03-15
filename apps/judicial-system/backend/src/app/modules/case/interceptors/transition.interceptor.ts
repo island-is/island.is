@@ -9,18 +9,17 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseAppealState,
+  CaseState,
   EventType,
-  InstitutionType,
+  isIndictmentCase,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { EventLogService } from '../../event-log'
 import { Case } from '../models/case.model'
 
 @Injectable()
-export class CaseInterceptor implements NestInterceptor {
+export class TransitionInterceptor implements NestInterceptor {
   constructor(private readonly eventLogService: EventLogService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<Case> {
@@ -29,14 +28,9 @@ export class CaseInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data: Case) => {
-        if (
-          data.appealState === CaseAppealState.COMPLETED &&
-          ([UserRole.PROSECUTOR, UserRole.DEFENDER].includes(user.role) ||
-            (user.role === UserRole.PRISON_SYSTEM_STAFF &&
-              user.institution?.type === InstitutionType.PRISON))
-        ) {
+        if (isIndictmentCase(data.type) && data.state === CaseState.SUBMITTED) {
           this.eventLogService.create({
-            eventType: EventType.APPEAL_RESULT_ACCESSED,
+            eventType: EventType.INDICTMENT_CONFIRMED,
             caseId: data.id,
             nationalId: user.nationalId,
             userRole: user.role,

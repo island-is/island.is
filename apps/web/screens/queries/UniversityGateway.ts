@@ -45,6 +45,7 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
       contentfulLogoUrl
       contentfulTitle
       contentfulLink
+      contentfulLinkEn
     }
   }
 `
