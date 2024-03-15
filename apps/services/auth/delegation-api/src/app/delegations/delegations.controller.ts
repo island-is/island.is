@@ -1,8 +1,14 @@
-import { Controller, Get, Headers, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Headers,
+  ParseArrayPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity } from '@nestjs/swagger'
 
 import {
-  DelegationRecordDTO,
   DelegationsIndexService,
   PaginatedDelegationRecordDTO,
 } from '@island.is/auth-api-lib'
@@ -16,6 +22,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+
 const namespace = '@island.is/auth/delegation-api/delegations'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
@@ -23,6 +30,7 @@ const namespace = '@island.is/auth/delegation-api/delegations'
 @ApiSecurity('ias', [AuthScope.delegationIndex])
 @Controller({
   path: 'delegations',
+  version: ['1'],
 })
 @Audit({ namespace })
 export class DelegationsController {
@@ -34,8 +42,8 @@ export class DelegationsController {
   @Get()
   @Documentation({
     description:
-      'Fetch delegations from specific national id and scope from delegation index',
-    response: { status: 200, type: [DelegationRecordDTO] },
+      'Fetch delegations from specific national id and scopes from delegation index',
+    response: { status: 200, type: [PaginatedDelegationRecordDTO] },
     request: {
       header: {
         'X-Query-From-National-Id': {
@@ -44,10 +52,11 @@ export class DelegationsController {
         },
       },
       query: {
-        scope: {
+        scopes: {
           required: true,
-          type: 'string',
-          description: 'fetch delegations that have access to this scope',
+          type: '[string]',
+          description:
+            'fetch delegations that have access to these scopes, scopes are comma separated',
         },
       },
     },
@@ -55,7 +64,8 @@ export class DelegationsController {
   async getDelegationRecords(
     @CurrentAuth() auth: Auth,
     @Headers('X-Query-From-National-Id') fromNationalId: string,
-    @Query('scope') scope: string,
+    @Query('scopes', new ParseArrayPipe({ items: String, separator: ',' }))
+    scopes: string[],
   ): Promise<PaginatedDelegationRecordDTO> {
     return this.auditService.auditPromise(
       {
@@ -63,12 +73,12 @@ export class DelegationsController {
         action: 'getDelegationRecords',
         resources: (delegations) => delegations.data.map((d) => d.toNationalId),
         meta: {
-          scope,
+          scopes,
           fromNationalId,
         },
       },
       this.delegationIndexService.getDelegationRecords({
-        scope,
+        scopes,
         fromNationalId,
       }),
     )

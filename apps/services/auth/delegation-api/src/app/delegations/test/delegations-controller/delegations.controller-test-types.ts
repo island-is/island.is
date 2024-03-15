@@ -20,6 +20,10 @@ export const user = createCurrentUser({
   client: clientId,
   scope: [AuthScope.delegationIndex],
 })
+export const userWithWrongScope = createCurrentUser({
+  client: clientId,
+  scope: ['wrong-scope'],
+})
 export const personalRepresentativeRightTypeCodePostholf = 'postholf'
 export const personalRepresentativeRightTypeCodeFinance = 'finance'
 
@@ -39,7 +43,7 @@ type PersonalRepresentativeDelegationInput = DelegationRecordInput & {
 }
 
 type GetDelegationIndexRecordsInput = {
-  scope: string
+  scopes: string[]
   fromNationalId: string
 }
 
@@ -50,7 +54,7 @@ export interface ITestCaseOptions {
   toCustom?: CustomDelegationRecordInput[]
   toRepresentative?: PersonalRepresentativeDelegationInput[]
   scopes?: Scope[]
-  expectedFrom: string[]
+  expectedTo: string[]
 }
 
 type Scope = {
@@ -64,26 +68,30 @@ type Scope = {
 
 export const scopes: Record<string, Scope> = {
   legalGuardian: {
-    name: 'lg1',
+    name: '@lg1',
     grantToLegalGuardians: true,
   },
   procurationHolder: {
-    name: 'ph1',
+    name: '@ph1',
     grantToProcuringHolders: true,
   },
   custom: {
-    name: 'cu1',
+    name: '@cu1',
+    allowExplicitDelegationGrant: true,
+  },
+  custom2: {
+    name: '@cu2',
     allowExplicitDelegationGrant: true,
   },
   representative: {
-    name: 'pr1',
+    name: '@pr1',
     grantToPersonalRepresentatives: true,
     personalRepresentativeRightTypePermissions: [
       personalRepresentativeRightTypeCodePostholf,
     ],
   },
   all: {
-    name: 'all',
+    name: '@all',
     grantToLegalGuardians: true,
     grantToProcuringHolders: true,
     grantToPersonalRepresentatives: true,
@@ -93,7 +101,7 @@ export const scopes: Record<string, Scope> = {
     ],
   },
   none: {
-    name: 'none',
+    name: '@none',
   },
 }
 
@@ -106,7 +114,7 @@ export class TestCase {
   toCustom: CustomDelegationRecordInput[]
   toRepresentative: PersonalRepresentativeDelegationInput[]
   scopes: Scope[]
-  expectedFrom: string[]
+  expectedTo: string[]
 
   constructor(options: ITestCaseOptions) {
     this.client = createClient({ clientId })
@@ -116,7 +124,7 @@ export class TestCase {
     this.toCustom = options.toCustom ?? []
     this.toRepresentative = options.toRepresentative ?? []
     this.scopes = options.scopes ?? Object.values(scopes)
-    this.expectedFrom = options.expectedFrom
+    this.expectedTo = options.expectedTo
   }
 
   get domain(): CreateDomain {

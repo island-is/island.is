@@ -7,12 +7,18 @@ import { TestApp, truncate } from '@island.is/testing/nest'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { DelegationRecordDTO } from '@island.is/auth-api-lib'
 
-import { user, TestCase } from './delegations.controller-test-types'
+import {
+  user,
+  TestCase,
+  userWithWrongScope,
+} from './delegations.controller-test-types'
 import { setupWithAuth } from '../../../../../test/setup'
 import {
   invalidTestCases,
   validTestCases,
 } from './delegations.controller.test-cases'
+
+const path = '/v1/delegations'
 
 describe('DelegationsController', () => {
   let app: TestApp
@@ -78,22 +84,22 @@ describe('DelegationsController', () => {
         await setup(testCase)
       })
 
-      afterAll(() => {
-        app.cleanUp()
+      afterAll(async () => {
+        await app.cleanUp()
       })
 
       it(message, async () => {
         // Act
         const response = await server
-          .get('/delegations')
+          .get(path)
           .set('X-Query-From-National-Id', testCase.requestUser.fromNationalId)
-          .query({ scope: testCase.requestUser.scope })
+          .query({ scopes: testCase.requestUser.scopes })
 
         // Assert
         expect(response.status).toBe(200)
-        expect(response.body.totalCount).toEqual(testCase.expectedFrom.length)
+        expect(response.body.totalCount).toEqual(testCase.expectedTo.length)
         response.body.data.forEach((record: DelegationRecordDTO) => {
-          expect(testCase.expectedFrom.includes(record.toNationalId)).toBe(true)
+          expect(testCase.expectedTo.includes(record.toNationalId)).toBe(true)
         })
       })
     },
@@ -112,16 +118,16 @@ describe('DelegationsController', () => {
         await setup(testCase)
       })
 
-      afterAll(() => {
-        app.cleanUp()
+      afterAll(async () => {
+        await app.cleanUp()
       })
 
       it(message, async () => {
         // Act
         const response = await server
-          .get('/delegations')
+          .get(path)
           .set('X-Query-From-National-Id', testCase.requestUser.fromNationalId)
-          .query({ scope: testCase.requestUser.scope })
+          .query({ scopes: testCase.requestUser.scopes })
 
         // Assert
         expect(response.status).toBe(400)
@@ -129,4 +135,30 @@ describe('DelegationsController', () => {
       })
     },
   )
+
+  describe('GET(getDelegationRecords): no scopes', () => {
+    const { testCase } = validTestCases.multipleScopes2
+    beforeAll(async () => {
+      app = await setupWithAuth({
+        user: userWithWrongScope,
+      })
+
+      await setup(testCase)
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('Should return 403 status if client has wrong scope', async () => {
+      // Act
+      const response = await server
+        .get(path)
+        .set('X-Query-From-National-Id', user.nationalId)
+        .query({ scopes: testCase.requestUser.scopes })
+
+      // Assert
+      expect(response.status).toBe(403)
+    })
+  })
 })

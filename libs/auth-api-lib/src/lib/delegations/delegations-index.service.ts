@@ -57,7 +57,7 @@ type SortedDelegations = {
 }
 
 type FetchDelegationRecordsArgs = {
-  scope: ApiScope
+  scopes: ApiScope[]
   fromNationalId: string
 }
 
@@ -136,19 +136,19 @@ export class DelegationsIndexService {
   ) {}
 
   async getDelegationRecords({
-    scope,
+    scopes,
     fromNationalId,
   }: {
-    scope: string
+    scopes: string[]
     fromNationalId: string
   }): Promise<PaginatedDelegationRecordDTO> {
-    const apiScope = await this.apiScopeModel.findOne({
+    const apiScopes = await this.apiScopeModel.findAll({
       where: {
-        name: scope,
+        name: { [Op.in]: scopes },
       },
     })
 
-    if (!apiScope) {
+    if (apiScopes.length === 0) {
       throw new BadRequestException('Invalid scope')
     }
 
@@ -157,13 +157,13 @@ export class DelegationsIndexService {
     }
 
     const delegations = await Promise.all([
-      this.getCustomDelegationRecords({ scope: apiScope, fromNationalId }),
+      this.getCustomDelegationRecords({ scopes: apiScopes, fromNationalId }),
       this.getRepresentativeDelegationRecords({
-        scope: apiScope,
+        scopes: apiScopes,
         fromNationalId,
       }),
-      this.getCompanyDelegationRecords({ scope: apiScope, fromNationalId }),
-      this.getWardDelegationRecords({ scope: apiScope, fromNationalId }),
+      this.getCompanyDelegationRecords({ scopes: apiScopes, fromNationalId }),
+      this.getWardDelegationRecords({ scopes: apiScopes, fromNationalId }),
     ]).then((d) => d.flat())
 
     // For now, we don't implement pagination but still return the paginated response
@@ -446,10 +446,14 @@ export class DelegationsIndexService {
   }
 
   private async getCustomDelegationRecords({
-    scope,
+    scopes,
     fromNationalId,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
-    if (!scope.allowExplicitDelegationGrant) {
+    const scopesWithCustomDelegationGrants = scopes
+      .filter((scope) => scope.allowExplicitDelegationGrant)
+      .map((scope) => scope.name)
+
+    if (scopesWithCustomDelegationGrants.length === 0) {
       return []
     }
 
@@ -459,7 +463,9 @@ export class DelegationsIndexService {
           fromNationalId,
           type: AuthDelegationType.Custom,
           provider: AuthDelegationProvider.Custom,
-          customDelegationScopes: { [Op.contains]: [scope.name] },
+          customDelegationScopes: {
+            [Op.contains]: scopesWithCustomDelegationGrants,
+          },
           validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
         },
       })
@@ -467,22 +473,29 @@ export class DelegationsIndexService {
   }
 
   private async getRepresentativeDelegationRecords({
-    scope,
+    scopes,
     fromNationalId,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
-    if (!scope.grantToPersonalRepresentatives) {
+    const scopesWithPersonalRepresentativeGrants = scopes
+      .filter((scope) => scope.grantToPersonalRepresentatives)
+      .map((scope) => scope.name)
+
+    if (scopesWithPersonalRepresentativeGrants.length === 0) {
       return []
     }
 
-    // Get all personal representative right types that are permitted for the scope and construct the delegation types
-    const permittedDelegationTypes =
-      await this.personalRepresentativeScopePermissionService
-        .getScopePermissionsAsync(scope.name)
-        .then((scopePermission) =>
-          scopePermission.map((rightType) =>
-            getPersonalRepresentativeDelegationType(rightType.rightTypeCode),
+    // Get all personal representative right types that are permitted for the scopes and construct the delegation types
+    const permittedDelegationTypes = await Promise.all(
+      scopesWithPersonalRepresentativeGrants.map((scope) =>
+        this.personalRepresentativeScopePermissionService
+          .getScopePermissionsAsync(scope)
+          .then((scopePermission) =>
+            scopePermission.map((rightType) =>
+              getPersonalRepresentativeDelegationType(rightType.rightTypeCode),
+            ),
           ),
-        )
+      ),
+    ).then((d) => d.flat())
 
     return this.delegationIndexModel
       .findAll({
@@ -499,10 +512,14 @@ export class DelegationsIndexService {
   }
 
   private async getCompanyDelegationRecords({
-    scope,
+    scopes,
     fromNationalId,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
-    if (!scope.grantToProcuringHolders) {
+    const scopesWithCompanyGrants = scopes.filter(
+      (scope) => scope.grantToProcuringHolders,
+    )
+
+    if (scopesWithCompanyGrants.length === 0) {
       return []
     }
 
@@ -522,10 +539,14 @@ export class DelegationsIndexService {
   }
 
   private async getWardDelegationRecords({
-    scope,
+    scopes,
     fromNationalId,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
-    if (!scope.grantToLegalGuardians) {
+    const scopesWithWardGrants = scopes.filter(
+      (scope) => scope.grantToLegalGuardians,
+    )
+
+    if (scopesWithWardGrants.length === 0) {
       return []
     }
 
