@@ -71,7 +71,7 @@ export const iconIdMapper = (iconType: string) => {
   }
 }
 
-export const iconTypeToSVG = (iconType: string, iconId: string) => {
+export const iconTypeToSVG = (iconType: string) => {
   switch (iconType) {
     // Starfsleyfi
     case 'receipt':
