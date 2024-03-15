@@ -44,7 +44,9 @@ export const isApplicationForCondition =
     return applicationFor === result
   }
 
-export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) => getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') === NO || true
+export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
+  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') ===
+    NO || true
 
 export const chooseDistrictCommissionerDescription = ({
   answers,
