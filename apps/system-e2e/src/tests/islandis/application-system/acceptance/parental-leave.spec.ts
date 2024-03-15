@@ -395,7 +395,7 @@ test.describe('Parental leave', () => {
     // Submit application
     await page
       .getByRole('button', {
-        name: label(parentalLeaveFormMessages.confirmation.submitButton),
+        name: 'Senda inn umsókn',
       })
       .click()
 
@@ -681,7 +681,7 @@ test.describe('Parental leave', () => {
     // Submit application
     await page
       .getByRole('button', {
-        name: label(parentalLeaveFormMessages.confirmation.submitButton),
+        name: 'Senda inn umsókn',
       })
       .click()
 
