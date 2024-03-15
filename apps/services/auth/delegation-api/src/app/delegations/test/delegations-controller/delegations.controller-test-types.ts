@@ -43,7 +43,7 @@ type PersonalRepresentativeDelegationInput = DelegationRecordInput & {
 }
 
 type GetDelegationIndexRecordsInput = {
-  scopes: string[]
+  scope: string
   fromNationalId: string
 }
 

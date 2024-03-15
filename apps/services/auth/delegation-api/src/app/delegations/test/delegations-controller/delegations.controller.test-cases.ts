@@ -24,7 +24,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: person1,
-        scopes: [scopes.legalGuardian.name],
+        scope: scopes.legalGuardian.name,
       },
       toParents: [
         {
@@ -45,7 +45,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: [scopes.procurationHolder.name],
+        scope: scopes.procurationHolder.name,
       },
       toParents: [
         {
@@ -69,7 +69,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: [scopes.custom.name],
+        scope: scopes.custom.name,
       },
       toCustom: [
         {
@@ -95,7 +95,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: [scopes.custom.name],
+        scope: scopes.custom.name,
       },
       toCustom: [
         {
@@ -121,7 +121,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: [scopes.none.name],
+        scope: scopes.none.name,
       },
       toCustom: [
         {
@@ -144,7 +144,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: [scopes.representative.name],
+        scope: scopes.representative.name,
       },
       toCustom: [
         {
@@ -168,7 +168,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: [scopes.representative.name],
+        scope: scopes.representative.name,
       },
       toRepresentative: [
         {
@@ -195,7 +195,7 @@ export const validTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: [scopes.all.name],
+        scope: scopes.all.name,
       },
       toRepresentative: [
         {
@@ -227,68 +227,6 @@ export const validTestCases: Record<
       expectedTo: [],
     }),
   },
-  multipleScopes: {
-    message:
-      'Should return delegations for multiple scopes if the request has grants for all of them',
-    testCase: new TestCase({
-      requestUser: {
-        fromNationalId: company1,
-        scopes: [scopes.custom.name, scopes.representative.name],
-      },
-      toRepresentative: [
-        {
-          toNationalId: person3,
-          type: PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
-        },
-      ],
-      toCustom: [
-        {
-          toNationalId: person1,
-          scopes: [scopes.custom.name],
-        },
-      ],
-      toProcurationHolders: [
-        {
-          toNationalId: person1,
-        },
-      ],
-      toParents: [
-        {
-          toNationalId: Parent1,
-        },
-      ],
-      scopes: [scopes.custom, scopes.representative],
-      expectedTo: [person3, person1],
-    }),
-  },
-  multipleScopes2: {
-    message:
-      'Should only return one instance of delegation even though it has multiple scopes',
-    testCase: new TestCase({
-      requestUser: {
-        fromNationalId: company1,
-        scopes: [
-          scopes.custom.name,
-          scopes.custom2.name,
-          scopes.representative.name,
-        ],
-      },
-      toRepresentative: [
-        {
-          toNationalId: person3,
-          type: PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
-        },
-      ],
-      toCustom: [
-        {
-          toNationalId: person1,
-          scopes: [scopes.custom.name, scopes.custom2.name], // should only return one instance of this delegation
-        },
-      ],
-      scopes: [scopes.custom, scopes.representative, scopes.custom2],
-      expectedTo: [person3, person1],
-    }),
-  },
 }
 
 export const invalidTestCases: Record<
@@ -301,7 +239,7 @@ export const invalidTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: company1,
-        scopes: ['non-existing-scope'],
+        scope: 'non-existing-scope',
       },
       scopes: [scopes.none],
       expectedTo: [],
@@ -313,7 +251,7 @@ export const invalidTestCases: Record<
     testCase: new TestCase({
       requestUser: {
         fromNationalId: 'invalid-national-id',
-        scopes: [scopes.representative.name],
+        scope: scopes.representative.name,
       },
       scopes: [scopes.representative],
       expectedTo: [],

@@ -93,7 +93,7 @@ describe('DelegationsController', () => {
         const response = await server
           .get(path)
           .set('X-Query-From-National-Id', testCase.requestUser.fromNationalId)
-          .query({ scopes: testCase.requestUser.scopes })
+          .query({ scope: testCase.requestUser.scope })
 
         // Assert
         expect(response.status).toBe(200)
@@ -127,7 +127,7 @@ describe('DelegationsController', () => {
         const response = await server
           .get(path)
           .set('X-Query-From-National-Id', testCase.requestUser.fromNationalId)
-          .query({ scopes: testCase.requestUser.scopes })
+          .query({ scope: testCase.requestUser.scope })
 
         // Assert
         expect(response.status).toBe(400)
@@ -136,8 +136,8 @@ describe('DelegationsController', () => {
     },
   )
 
-  describe('GET(getDelegationRecords): no scopes', () => {
-    const { testCase } = validTestCases.multipleScopes2
+  describe('GET(getDelegationRecords): wrong client scope', () => {
+    const { testCase } = validTestCases.scopeWithLegalGuardianGrant
     beforeAll(async () => {
       app = await setupWithAuth({
         user: userWithWrongScope,
@@ -155,7 +155,7 @@ describe('DelegationsController', () => {
       const response = await server
         .get(path)
         .set('X-Query-From-National-Id', user.nationalId)
-        .query({ scopes: testCase.requestUser.scopes })
+        .query({ scope: testCase.requestUser.scope })
 
       // Assert
       expect(response.status).toBe(403)
