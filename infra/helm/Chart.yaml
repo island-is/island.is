@@ -61,10 +61,6 @@ dependencies:
   - name: api-template
     repository: file://libs/api-template
     version: 0.0.1
-    alias: contentful-translation-extension
-  - name: api-template
-    repository: file://libs/api-template
-    version: 0.0.1
     alias: download-service
   - name: api-template
     repository: file://libs/api-template

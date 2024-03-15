@@ -11,6 +11,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseState,
+  EventType,
+  type IndictmentConfirmation,
   isCompletedCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -24,6 +26,8 @@ import {
   getRulingPdfAsBuffer,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
+import { EventLogService } from '../event-log'
+import { UserService } from '../user'
 import { Case } from './models/case.model'
 
 @Injectable()
@@ -33,6 +37,8 @@ export class PDFService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
+    private readonly eventLogService: EventLogService,
+    private readonly userService: UserService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -158,7 +164,25 @@ export class PDFService {
   async getIndictmentPdf(theCase: Case): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    return createIndictment(theCase, this.formatMessage)
+    let confirmation: IndictmentConfirmation = undefined
+    const confirmationEvent = await this.eventLogService.findEventTypeByCaseId(
+      EventType.INDICTMENT_CONFIRMED,
+      theCase.id,
+    )
+
+    if (confirmationEvent && confirmationEvent.nationalId) {
+      const actor = await this.userService.findByNationalId(
+        confirmationEvent.nationalId,
+      )
+
+      confirmation = {
+        actor: actor.name,
+        institution: actor.institution?.name ?? '',
+        date: confirmationEvent.created,
+      }
+    }
+
+    return createIndictment(theCase, this.formatMessage, confirmation)
   }
 
   async getCaseFilesRecordPdf(

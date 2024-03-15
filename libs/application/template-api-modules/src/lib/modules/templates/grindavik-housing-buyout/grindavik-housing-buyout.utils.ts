@@ -1,32 +1,18 @@
-import { ResidenceHistoryEntryDto } from '@island.is/clients/national-registry-v2'
-
-const getDomicileAtPostalCodeOnDate = (
-  data: ResidenceHistoryEntryDto[],
-  targetPostalCode: string,
-  date: string,
-): ResidenceHistoryEntryDto | undefined => {
-  const targetDate = new Date(date)
-
-  return data.find((entry) => {
-    const entryStartDate = entry.dateOfChange
-    return (
-      entry.postalCode === targetPostalCode &&
-      entryStartDate &&
-      entryStartDate <= targetDate
-    )
-  })
-}
+import { ResidenceEntryDto } from '@island.is/clients/national-registry-v2'
 
 const getDomicileOnDate = (
-  data: ResidenceHistoryEntryDto[],
+  data: ResidenceEntryDto[],
   date: string,
-): ResidenceHistoryEntryDto | undefined => {
+): ResidenceEntryDto | null => {
   const targetDate = new Date(date)
 
-  return data.find((entry) => {
+  const result = data.find((entry) => {
     const entryStartDate = entry.dateOfChange
-    return entryStartDate && entryStartDate <= targetDate
+      ? entry.dateOfChange
+      : new Date('1986-01-01T00:00:00.000Z') // If the value is null, that means that the registration is from before 1986.
+    return entryStartDate <= targetDate
   })
+  return result ? result : null
 }
 
 const formatBankInfo = (bankInfo: string) =>
@@ -45,9 +31,4 @@ const getPreemptiveErrorDetails = (error: PreemptiveErrorData) => {
   }
 }
 
-export {
-  getDomicileOnDate,
-  getDomicileAtPostalCodeOnDate,
-  formatBankInfo,
-  getPreemptiveErrorDetails,
-}
+export { getDomicileOnDate, formatBankInfo, getPreemptiveErrorDetails }
