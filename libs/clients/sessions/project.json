@@ -27,5 +27,5 @@
     }
   },
   "implicitDependencies": ["services-sessions"],
-  "tags": ["lib:client"]
+  "tags": ["scope:client", "lib:client"]
 }
