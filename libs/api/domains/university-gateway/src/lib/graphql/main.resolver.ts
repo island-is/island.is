@@ -14,7 +14,9 @@ import {
 } from './models'
 import { UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE } from '../cacheControl'
 
-const defaultCache: CacheControlOptions = { maxAge: UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE }
+const defaultCache: CacheControlOptions = {
+  maxAge: UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE,
+}
 
 @Resolver()
 export class MainResolver {
