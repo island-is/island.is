@@ -388,9 +388,9 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
-    {
+    /*{
       data: { ministryOfJusticeCategories },
-    },
+    },*/
     {
       data: { getOrganizationPage },
     },
@@ -399,7 +399,7 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
+    /*apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
         params: {
@@ -407,7 +407,7 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
           search: '',
         },
       },
-    }),
+    }),*/
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -447,10 +447,10 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  console.log({ gggg: ministryOfJusticeCategories })
+  // console.log({ gggg: ministryOfJusticeCategories })
 
   return {
-    categories: ministryOfJusticeCategories?.categories,
+    categories: [], //ministryOfJusticeCategories?.categories,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
