@@ -1,5 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
-import dirtyClean from '@island.is/regulations-tools/dirtyClean-browser'
+// import dirtyClean from '@island.is/regulations-tools/dirtyClean-browser'
 import { HTMLText } from '@island.is/regulations-tools/types'
 
 import * as s from './OJOIAdvertDisplay.css'
@@ -20,7 +20,7 @@ export const OJOIAdvertDisplay = ({
   return (
     <Box
       className={isLegacy ? s.bodyText : s.bodyText}
-      dangerouslySetInnerHTML={{ __html: dirtyClean(advertText as HTMLText) }}
+      dangerouslySetInnerHTML={{ __html: advertText as HTMLText }}
     ></Box>
   )
 }

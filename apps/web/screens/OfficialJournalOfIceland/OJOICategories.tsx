@@ -27,7 +27,6 @@ import {
   QueryGetOrganizationPageArgs,
   QueryMinistryOfJusticeCategoriesArgs,
   QueryMinistryOfJusticeDepartmentsArgs,
-  QueryMinistryOfJusticeTypesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -56,7 +55,6 @@ import {
 import {
   CATEGORIES_QUERY,
   DEPARTMENTS_QUERY,
-  TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
 
 type MalaflokkarType = Array<{
@@ -72,8 +70,6 @@ const initialState = {
 }
 
 const sortCategories = (cats: typeof malaflokkurOptions) => {
-  // Sort pages by importance (which defaults to 0).
-  // If both pages being compared have the same importance we sort by comparing their titles.
   return cats.sort((a, b) => {
     return sortAlpha('label')(a, b)
   })
