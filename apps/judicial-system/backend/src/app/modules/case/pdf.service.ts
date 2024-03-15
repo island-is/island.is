@@ -25,6 +25,7 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
+import { createConfirmedIndictment } from '../../formatters/confirmedIndictmentPdf'
 import { AwsS3Service } from '../aws-s3'
 import { EventLogService } from '../event-log'
 import { UserService } from '../user'
@@ -182,7 +183,8 @@ export class PDFService {
       }
     }
 
-    return createIndictment(theCase, this.formatMessage, confirmation)
+    // return createIndictment(theCase, this.formatMessage, confirmation)
+    return createConfirmedIndictment(confirmation)
   }
 
   async getCaseFilesRecordPdf(
