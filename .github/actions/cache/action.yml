@@ -82,6 +82,13 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Warn on unimplemented inputs
+      if: ${{ !cancelled() && (inputs.enableCrossOsArchive || inputs.lookup-only) }}
+      shell: bash
+      run: |
+        echo "## ⚠  Invalid inputs ⚠ " >> "$GITHUB_STEP_SUMMARY"
+        echo "The following input is not yet implemented: enableCrossOsArchive, lookup-only, fail-on-missing" >> "$GITHUB_STEP_SUMMARY"
+
     - name: Attempting to cache (${{ inputs.retries }} retries left)
       if: ${{ !cancelled() && fromJSON(inputs.retries) >= 0 }}
       id: cache-attempt
@@ -91,6 +98,7 @@ runs:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
         cache-url: ${{ inputs.cache-url }}
+        restore-keys: ${{ inputs.restore-keys }}
         # fail-on-missing: ${{ inputs.fail-on-missing }}
         # lookup-only: ${{ inputs.lookup-only }}
         # enable-cross-os-archive: ${{ inputs.enableCrossOsArchive }}
