@@ -1,14 +1,14 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  InternalServerErrorException,
   ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
+  isCompletedCase,
   RequestSharedWithDefender,
-  completedCaseStates,
 } from '@island.is/judicial-system/types'
 
 @Injectable()
@@ -23,12 +23,13 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     }
 
     // Defender can always see the request if it's in a completed state
-    if (completedCaseStates.includes(theCase.state)) {
+    if (isCompletedCase(theCase.state)) {
       return true
     }
 
     if (
-      Boolean(theCase.requestSharedWithDefender) &&
+      theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE &&
       Boolean(theCase.courtDate)
     ) {
       return true

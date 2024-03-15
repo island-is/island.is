@@ -4,14 +4,15 @@ import {
   Delete,
   Inject,
   Param,
-  Post,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -21,19 +22,19 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import {
-  judgeRule,
-  prosecutorRule,
-  registrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
-  assistantRule,
+  prosecutorRule,
 } from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { CurrentDefendant } from './guards/defendant.decorator'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { DeleteDefendantResponse } from './models/delete.response'
+import { CurrentDefendant } from './guards/defendant.decorator'
+import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
+import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -67,9 +68,9 @@ export class DefendantController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Patch(':defendantId')
   @ApiOkResponse({

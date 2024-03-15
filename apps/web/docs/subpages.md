@@ -100,15 +100,15 @@ follow these steps:
 
 3. Run `yarn nx run api:contentType --id=<contentTypeId>` where `<contentTypeId>` is the ID of your content type. _Note: Make sure you have the CONTENT_MANAGEMENT_ACCESS_TOKEN env variable set to your content management token. This token is generated per user at https://app.contentful.com/account/profile/cma_tokens_.
 
-4. Generate the GraphQL schemas using the following commands in the island.is project root:
+4. Generate the GraphQL schemas and clients using the following commands in the island.is project root:
 
    1. `yarn nx run api:contentful-types` Generates Contentful types in the API.
 
-   2. `yarn nx run api:schemas/codegen --skip-nx-cache` Generates types in API based on models.
+   2. `yarn nx run api-schema:codegen/frontend-client --skip-nx-cache` Generates types in API based on models.
 
-   3. `yarn nx run web:schemas/codegen --skip-nx-cache` Generates types in the web project based on queries
+   3. `yarn nx run web:codegen/frontend-client --skip-nx-cache` Generates types in the web project based on queries
 
-5. Sometimes the schemas don't update properly and your types will be missing. To fix this you should try running `yarn postinstall`.
+5. Sometimes the schemas don't update properly and your types will be missing. To fix this you should try running `yarn codegen`.
 
 ## Examples
 

@@ -158,6 +158,7 @@ export const isRequiredStar = style({
 export const aside = style({
   display: 'flex',
   alignSelf: 'stretch',
+  alignItems: 'center',
   justifyContent: 'flex-end',
 })
 
@@ -258,7 +259,7 @@ export const iconWrapper = recipe({
 export const spinner = style({
   width: 24,
   height: 24,
-  marginBottom: -3,
+  marginRight: 12,
   border: `3px solid ${theme.color.blue200}`,
   borderBottomColor: theme.color.blue400,
   animationName: keyframes({
@@ -307,8 +308,8 @@ export const icon = recipe({
         height: 21,
       },
       sm: {
-        width: 21,
-        height: 21,
+        width: 24,
+        height: 24,
       },
       md: {
         width: 28,

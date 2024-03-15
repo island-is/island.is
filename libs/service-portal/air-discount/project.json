@@ -4,7 +4,6 @@
   "sourceRoot": "libs/service-portal/air-discount/src",
   "projectType": "library",
   "generators": {},
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -29,5 +28,6 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/air-discount/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }
     }
-  }
+  },
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
 }

@@ -1,8 +1,11 @@
-import { SEOProps } from '../../types/interfaces'
 import React, { FC } from 'react'
-import { Footer, SEO, Menu } from './components'
+import dynamic from 'next/dynamic'
 import { Box, Divider, ToastContainer } from '@island.is/island-ui/core'
+import { SEO, Menu } from './components'
 import * as styles from './Layout.css'
+import { SEOProps } from '../../types/interfaces'
+
+const Footer = dynamic(() => import('./components/Footer/Footer'))
 
 type LayoutProps = {
   isFrontPage?: boolean

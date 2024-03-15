@@ -17,13 +17,16 @@ export const DescriptionFormField: FC<
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingTop={field.space} marginBottom={field.marginBottom}>
+    <Box
+      paddingTop={field.space}
+      marginBottom={field.marginBottom}
+      marginTop={field.marginTop}
+    >
       {showFieldName && (
         <Text variant={field.titleVariant}>
           {formatText(field.title, application, formatMessage)}
           {field.titleTooltip && (
             <>
-              {' '}
               <Tooltip
                 placement="top"
                 text={formatText(
@@ -45,7 +48,6 @@ export const DescriptionFormField: FC<
           )}
           {field.tooltip && (
             <>
-              {' '}
               <Tooltip
                 placement="top"
                 text={formatText(field.tooltip, application, formatMessage)}

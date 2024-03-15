@@ -12,8 +12,8 @@ import {
   formatCohabitionCodesDto,
 } from './types/cohabitation.dto'
 import {
-  formatResidenceHistoryEntryDto,
-  ResidenceHistoryEntryDto,
+  formatResidenceEntryDto,
+  ResidenceEntryDto,
 } from './types/residence-history-entry.dto'
 import { FamilyDto, formatFamilyDto } from './types/family.dto'
 import { BirthplaceDto, formatBirthplaceDto } from './types/birthplace.dto'
@@ -119,13 +119,29 @@ export class NationalRegistryClientService {
     return formatCohabitationDto(response)
   }
 
-  async getResidenceHistory(
+  async getCohabitants(nationalId: string): Promise<string[]> {
+    const cohabitants = await this.handleLegacyMissingData(
+      this.individualApi.einstaklingarGetSamibuarRaw({ id: nationalId }),
+    )
+    return cohabitants || []
+  }
+
+  async getCurrentResidence(
     nationalId: string,
-  ): Promise<ResidenceHistoryEntryDto[]> {
+  ): Promise<ResidenceEntryDto | null> {
+    const residence = await this.handleLegacyMissingData(
+      this.individualApi.einstaklingarGetLogheimiliRaw({ id: nationalId }),
+    )
+    return formatResidenceEntryDto(residence)
+  }
+
+  async getResidenceHistory(nationalId: string): Promise<ResidenceEntryDto[]> {
     const residenceHistory = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetBusetaRaw({ id: nationalId }),
     )
-    return (residenceHistory || []).map(formatResidenceHistoryEntryDto)
+    return (residenceHistory || [])
+      .map(formatResidenceEntryDto)
+      .filter((x): x is ResidenceEntryDto => x !== null)
   }
 
   async getFamily(nationalId: string): Promise<FamilyDto | null> {

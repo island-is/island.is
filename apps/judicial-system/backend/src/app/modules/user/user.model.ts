@@ -90,7 +90,7 @@ export class User extends Model {
   institutionId?: string
 
   @BelongsTo(() => Institution, 'institutionId')
-  @ApiPropertyOptional({ type: Institution })
+  @ApiPropertyOptional({ type: () => Institution })
   institution?: Institution
 
   @Column({
@@ -99,4 +99,11 @@ export class User extends Model {
   })
   @ApiProperty()
   active!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  canConfirmAppeal!: boolean
 }

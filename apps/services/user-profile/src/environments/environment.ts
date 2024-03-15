@@ -15,6 +15,11 @@ const devConfig = {
     password: process.env.NOVA_PASSWORD,
     acceptUnauthorized: true,
   },
+  islykillConfig: {
+    cert: process.env.ISLYKILL_CERT,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+  },
   emailOptions: {
     useTestAccount: true,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
@@ -23,8 +28,15 @@ const devConfig = {
     defaultNamespace: '@island.is/user-profile',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer:
+      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
     audience: '@island.is',
+  },
+  worker: {
+    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
+      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
+      : 3000,
   },
 }
 
@@ -42,6 +54,11 @@ const prodConfig = {
     password: process.env.NOVA_PASSWORD,
     acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
   },
+  islykillConfig: {
+    cert: process.env.ISLYKILL_CERT,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+  },
   emailOptions: {
     useTestAccount: false,
     options: {
@@ -56,6 +73,11 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
+  },
+  worker: {
+    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
+      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
+      : 3000,
   },
 }
 

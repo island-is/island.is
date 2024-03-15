@@ -162,6 +162,14 @@ export interface Person {
   type: number
 }
 
+export interface RegistryPerson {
+  name: string
+  nationalId: string
+  address: string
+  postalCode: string
+  city: string
+}
+
 export interface Attachment {
   name: string
   content: string
@@ -212,6 +220,7 @@ export type EstateMember = {
   name: string
   nationalId: string
   relation: string
+  relationWithApplicant?: string
   dateOfBirth?: string
   enabled?: boolean
   phone?: string
@@ -225,6 +234,13 @@ export type EstateAsset = {
   share: number
   enabled?: boolean
   marketValue?: string
+}
+
+export type AvailableSettlements = {
+  estateWithoutAssets: string
+  officialDivision: string
+  permitForUndividedEstate: string
+  divisionOfEstateByHeirs: string
 }
 
 export interface EstateRegistrant extends EstateCommon {
@@ -260,6 +276,7 @@ interface EstateCommon {
 
 export interface EstateInfo extends EstateCommon {
   addressOfDeceased: string
+  availableSettlements?: AvailableSettlements
 }
 
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
@@ -279,4 +296,18 @@ interface UnitsOfUseModel {
 
 interface UnitsOfUse {
   explanation?: string
+}
+
+export interface MasterLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+  office?: string
+}
+
+export interface VehicleRegistration {
+  modelName?: string
+  manufacturer?: string
+  licensePlate?: string
+  color?: string
 }

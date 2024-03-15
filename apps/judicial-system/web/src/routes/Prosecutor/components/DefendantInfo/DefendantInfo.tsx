@@ -29,7 +29,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as strings from './DefendantInfo.strings'
@@ -159,7 +159,7 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
               isIndictment: isIndictmentCase(workingCase.type),
             },
           )}
-          checked={defendant.noNationalId || undefined}
+          checked={Boolean(defendant.noNationalId)}
           onChange={() => {
             setNationalIdNotFound(false)
             setNationalIdErrorMessage('')

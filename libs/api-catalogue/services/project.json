@@ -19,14 +19,15 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api-catalogue/services"]
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "commands": [
           "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml",
           "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
-        ]
+        ],
+        "outputs": ["{projectRoot}/gen/fetch"]
       }
     }
   },

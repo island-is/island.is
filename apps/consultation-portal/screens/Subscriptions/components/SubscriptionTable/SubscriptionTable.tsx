@@ -42,6 +42,10 @@ const SubscriptionTable = ({
   const loc = localization.subscriptionTable
   const mappedCurrentTab = mapIsToEn[currentTab]
 
+  const generalSubscriptionCount = [dontShowChanges, dontShowNew].filter(
+    Boolean,
+  ).length
+
   const { subscribedToAllNewObj, subscribedToAllChangesObj } = subscriptionArray
   const thisData = subscriptionArray[mappedCurrentTab]
 
@@ -111,7 +115,7 @@ const SubscriptionTable = ({
               <SubscriptionTableItem
                 key={item.key}
                 item={item}
-                idx={idx}
+                idx={idx + generalSubscriptionCount}
                 mdBreakpoint={mdBreakpoint}
                 currentTab={currentTab}
                 subscriptionArray={subscriptionArray}

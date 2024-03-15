@@ -57,6 +57,7 @@ export function LoginButton(props: {
     <>
       <Hidden above={'md'}>
         <DropdownMenu
+          fixed
           disclosure={
             <Button
               colorScheme={props.colorScheme}
@@ -72,6 +73,7 @@ export function LoginButton(props: {
       </Hidden>
       <Hidden below={'lg'}>
         <DropdownMenu
+          fixed
           disclosure={
             <Button
               colorScheme={props.colorScheme}

@@ -6,7 +6,7 @@ import React, {
   ReactNode,
   useState,
 } from 'react'
-import type { User } from 'oidc-client-ts'
+import type { SigninRedirectArgs, User } from 'oidc-client-ts'
 
 import { useEffectOnce } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
@@ -64,10 +64,24 @@ export const AuthProvider = ({
   basePath,
 }: AuthProviderProps) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [hasError, setHasError] = useState(false)
+  const [error, setError] = useState<Error | undefined>()
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
+
+  const signinRedirect = useCallback(
+    async (args: SigninRedirectArgs) => {
+      try {
+        await userManager.signinRedirect(args)
+        // On success Nothing more happens here since browser will redirect to IDS.
+      } catch (error) {
+        // On error we set the error state to show the error screen which provides the users with a retry button.
+        console.error(error)
+        setError(error)
+      }
+    },
+    [userManager, setError],
+  )
 
   const signIn = useCallback(
     async function signIn() {
@@ -75,15 +89,14 @@ export const AuthProvider = ({
         type: ActionType.SIGNIN_START,
       })
 
-      return userManager.signinRedirect({
+      return signinRedirect({
         state: getReturnUrl({
           returnUrl: getCurrentUrl(basePath),
           redirectPath: authSettings.redirectPath,
         }),
       })
-      // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, basePath],
+    [dispatch, authSettings, basePath],
   )
 
   const signInSilent = useCallback(
@@ -127,7 +140,7 @@ export const AuthProvider = ({
         type: ActionType.SWITCH_USER,
       })
 
-      return userManager.signinRedirect({
+      return signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
           getReturnUrl({
@@ -233,20 +246,20 @@ export const AuthProvider = ({
           type: ActionType.SIGNIN_SUCCESS,
           payload: user,
         })
-      } catch (error) {
-        if (error.error === 'login_required') {
+      } catch (e) {
+        if (e.error === 'login_required') {
           // If trying to switch delegations and the IDS session is expired, we'll
           // see this error. So we'll try a proper signin.
-          return userManager.signinRedirect({ state: error.state })
+          return signinRedirect({ state: e.state })
         }
-        console.error('Error in oidc callback', error)
-        setHasError(true)
+        console.error('Error in oidc callback', e)
+        setError(e)
       }
     } else if (isCurrentRoute(currentUrl, authSettings.redirectPathSilent)) {
       const userManager = getUserManager()
-      userManager.signinSilentCallback().catch((error) => {
-        console.log(error)
-        setHasError(true)
+      userManager.signinSilentCallback().catch((e) => {
+        console.log(e)
+        setError(e)
       })
     } else if (isCurrentRoute(currentUrl, authSettings.initiateLoginPath)) {
       const userManager = getUserManager()
@@ -269,7 +282,7 @@ export const AuthProvider = ({
         prompt: prompt ?? undefined,
         login_hint: loginHint ?? undefined,
       }
-      userManager.signinRedirect(args)
+      return signinRedirect(args)
     } else {
       checkLogin()
     }
@@ -286,8 +299,9 @@ export const AuthProvider = ({
       signInSilent,
       switchUser,
       signOut,
+      authority: authSettings.authority,
     }),
-    [state, signIn, signInSilent, switchUser, signOut],
+    [state, signIn, signInSilent, switchUser, signOut, authSettings.authority],
   )
 
   const url = getCurrentUrl(basePath)
@@ -298,10 +312,14 @@ export const AuthProvider = ({
     isCurrentRoute(url, authSettings?.redirectPath) ||
     isCurrentRoute(url, authSettings?.redirectPathSilent)
 
+  const onRetry = () => {
+    window.location.href = basePath
+  }
+
   return (
     <AuthContext.Provider value={context}>
-      {hasError ? (
-        <AuthErrorScreen basePath={basePath} />
+      {error ? (
+        <AuthErrorScreen onRetry={onRetry} />
       ) : isLoading ? (
         <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
       ) : (

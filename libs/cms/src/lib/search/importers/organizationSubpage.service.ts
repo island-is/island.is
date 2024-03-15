@@ -6,7 +6,10 @@ import { logger } from '@island.is/logging'
 import { mapOrganizationSubpage } from '../../models/organizationSubpage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { IOrganizationSubpage } from '../../generated/contentfulTypes'
-import { extractStringsFromObject } from './utils'
+import {
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 
 @Injectable()
 export class OrganizationSubpageSyncService
@@ -21,7 +24,9 @@ export class OrganizationSubpageSyncService
   }
 
   doMapping(entries: IOrganizationSubpage[]) {
-    logger.info('Mapping organization subpage', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping organization subpage', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {
@@ -38,7 +43,9 @@ export class OrganizationSubpageSyncService
             return false
           }
 
-          const content = extractStringsFromObject(mapped.description ?? [])
+          const content = extractStringsFromObject(
+            (mapped.description ?? []).map(pruneNonSearchableSliceUnionFields),
+          )
           return {
             _id: mapped.id,
             title: mapped.title,

@@ -128,7 +128,7 @@ test.describe('Service portal, in access control', () => {
       ).toBeVisible()
 
       // Assert
-      await receiverPage.getByRole('link', { name: 'Pósthólf' }).click()
+      await receiverPage.getByRole('link', { name: 'Pósthólf' }).first().click()
       await expect(
         receiverPage.getByRole('heading', { name: 'Pósthólf' }),
       ).toBeVisible()

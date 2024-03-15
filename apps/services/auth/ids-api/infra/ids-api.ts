@@ -1,17 +1,12 @@
+// eslint-disable-next-line
+import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userProfile.scope'
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
-const postgresInfo = {
-  username: 'servicesauth',
-  name: 'servicesauth',
-  passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
-  extensions: ['uuid-ossp'],
-}
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
     .namespace('identity-server')
     .image('services-auth-ids-api')
-    .postgres(postgresInfo)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -30,6 +25,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
           'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
+      USER_PROFILE_CLIENT_SCOPE: json([UserProfileScope.read]),
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
@@ -93,23 +89,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
-    .readiness('/liveness')
+    .readiness('/health/check')
     .liveness('/liveness')
-    .initContainer({
-      postgres: postgresInfo,
-      containers: [
-        {
-          name: 'migrations',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:migrate'],
-        },
-        {
-          name: 'seed',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:seed:all'],
-        },
-      ],
-    })
+    .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
+    .migrations()
+    .seed()
     .resources({
       limits: {
         cpu: '800m',

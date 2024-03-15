@@ -13,6 +13,12 @@ generates:
         JSON: '{ [key: string]: any }'
       namingConvention:
         typeNames: change-case#pascalCase
+  apps/web/graphql/fragmentTypes.json:
+    plugins:
+      - fragment-matcher
+    config:
+      module: commonjs
+      apolloClientVersion: 3
 hooks:
   afterAllFileWrite:
     - prettier --write

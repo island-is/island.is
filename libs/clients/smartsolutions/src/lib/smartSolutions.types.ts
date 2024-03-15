@@ -18,6 +18,9 @@ export type ApiResponse = {
   errors?: {
     message: string
     path: string
+    extensions: {
+      type: string
+    }
   }[]
 }
 
@@ -43,6 +46,10 @@ export type ServiceErrorCode =
   | 4
   /** Invalid pass */
   | 5
+  /** Unauthorized */
+  | 6
+  /** Forbidden */
+  | 7
   /** Missing PassTemplateId */
   | 10
   /** Fetch failed */
@@ -99,6 +106,10 @@ export interface UpsertPassResponseData {
   upsertPass: Pass
 }
 
+export interface UpdatePassResponseData {
+  updatePass: Pass
+}
+
 export interface ListTemplatesResponseData {
   passes?: {
     data: Array<PassTemplate>
@@ -106,12 +117,12 @@ export interface ListTemplatesResponseData {
 }
 
 export interface VoidPassResponseData {
-  voidPass: boolean
+  voidUniquePass: boolean
 }
 export interface UnvoidPassResponseData {
   unvoidPass: boolean
 }
 
 export interface DeletePassResponseData {
-  deletePass: boolean
+  deleteUniquePass: boolean
 }

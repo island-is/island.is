@@ -8,6 +8,7 @@ import {
   ApplicationRole,
   defineTemplateApi,
   UserProfileApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -26,8 +27,9 @@ import {
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   coreHistoryMessages,
-  corePendingActionMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -38,6 +40,18 @@ const pruneAfter = (time: number) => {
     shouldBePruned: true,
     whenToPrune: time,
   }
+}
+
+const getCodes = (application: Application) => {
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+  if (!chargeItemCode) {
+    throw new Error('chargeItemCode missing in request')
+  }
+
+  return [chargeItemCode]
 }
 
 const OperatingLicenseTemplate: ApplicationTemplate<
@@ -106,47 +120,10 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          progress: 0.9,
-          lifecycle: { shouldBeListed: true, shouldBePruned: false },
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) =>
-                  Promise.resolve(val.payment),
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCodes,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',

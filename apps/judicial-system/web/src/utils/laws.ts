@@ -1,6 +1,6 @@
 import { laws } from '@island.is/judicial-system-web/messages'
+import type { CheckboxInfo } from '@island.is/judicial-system-web/src/components'
 
-import type { CheckboxInfo } from '../components/CheckboxList/CheckboxList'
 import { CaseLegalProvisions } from '../graphql/schema'
 
 const makeCheckboxInfo = (

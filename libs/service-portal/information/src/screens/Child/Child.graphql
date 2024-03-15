@@ -1,40 +1,48 @@
-query NationalRegistryChildCustody($api: String) {
-  nationalRegistryPerson(api: $api) {
+query NationalRegistryChildCustody(
+  $api: String
+  $childNationalId: String
+  $useFakeData: Boolean
+) {
+  nationalRegistryPerson(api: $api, useFakeData: $useFakeData) {
     nationalId
     fullName
-    childCustody {
-      nationalId
-      fullName
-      name {
-        firstName
-        middleName
-        lastName
-      }
-      gender
-      religion
-      fate
-      housing {
-        address {
-          streetAddress
-          postalCode
-          city
+    childCustody(childNationalId: $childNationalId) {
+      __typename
+      details {
+        nationalId
+        fullName
+        baseId
+        __typename
+        name {
+          firstName
+          middleName
+          lastName
         }
-      }
-      custodians {
-        fullName
-        nationalId
-        text
-      }
-      birthParents {
-        fullName
-        nationalId
-      }
-      birthplace {
-        location
-      }
-      citizenship {
-        code
-        name
+        gender
+        religion
+        housing {
+          address {
+            streetAddress
+            postalCode
+            city
+          }
+        }
+        custodians {
+          fullName
+          nationalId
+          text
+        }
+        birthParents {
+          fullName
+          nationalId
+        }
+        birthplace {
+          location
+        }
+        citizenship {
+          code
+          name
+        }
       }
     }
   }

@@ -45,7 +45,7 @@ describe('Basic serialization', () => {
         paths: ['/api'],
       },
     })
-    .postgres()
+    .db()
   let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
     result = (await generateOutputOne({
@@ -103,8 +103,9 @@ describe('Basic serialization', () => {
       DB_NAME: 'api',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=464',
+      NODE_OPTIONS: '--max-old-space-size=460',
       SERVERSIDE_FEATURES_ON: '',
+      LOG_LEVEL: 'info',
     })
   })
 
@@ -134,6 +135,7 @@ describe('Basic serialization', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [
           {

@@ -1,0 +1,30 @@
+query companyRegistryCompany($input: RskCompanyInfoInput!) {
+  companyRegistryCompany(input: $input) {
+    name
+    nationalId
+    dateOfRegistration
+    companyInfo {
+      formOfOperation {
+        type
+        name
+      }
+      vat {
+        vatNumber
+        dateOfDeregistration
+        classification {
+          type
+          classificationSystem
+          number
+          name
+        }
+      }
+      address {
+        streetAddress
+        postalCode
+        locality
+        municipalityNumber
+        country
+      }
+    }
+  }
+}

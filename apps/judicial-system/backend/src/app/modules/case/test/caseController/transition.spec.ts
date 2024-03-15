@@ -1,11 +1,14 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
+import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   CaseTransition,
   completedCaseStates,
@@ -15,14 +18,14 @@ import {
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { include, order } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
-import { order, include } from '../../case.service'
 
 jest.mock('../../../factories')
 
@@ -40,7 +43,7 @@ type GivenWhenThen = (
 describe('CaseController - Transition', () => {
   const date = randomDate()
   const userId = uuid()
-  const defaultUser = { id: userId } as User
+  const defaultUser = { id: userId, canConfirmAppeal: false } as User
 
   let mockMessageService: MessageService
   let transaction: Transaction
@@ -75,7 +78,7 @@ describe('CaseController - Transition', () => {
       try {
         then.result = await caseController.transition(
           caseId,
-          defaultUser,
+          { ...defaultUser, canConfirmAppeal: isIndictmentCase(theCase.type) },
           theCase,
           transition,
         )
@@ -88,18 +91,19 @@ describe('CaseController - Transition', () => {
   })
 
   each`
-      transition                | oldState               | newState
-      ${CaseTransition.OPEN}    | ${CaseState.NEW}       | ${CaseState.DRAFT}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DRAFT}     | ${CaseState.SUBMITTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.SUBMITTED} | ${CaseState.RECEIVED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.RECEIVED}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.RECEIVED}  | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.RECEIVED}  | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.NEW}       | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
-      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}  | ${CaseState.RECEIVED}
+      transition                | oldState                                  | newState
+      ${CaseTransition.OPEN}    | ${CaseState.NEW}                          | ${CaseState.DRAFT}
+      ${CaseTransition.SUBMIT}  | ${CaseState.DRAFT}                        | ${CaseState.SUBMITTED}
+      ${CaseTransition.SUBMIT}  | ${CaseState.WAITING_FOR_CONFIRMATION}     | ${CaseState.SUBMITTED}
+      ${CaseTransition.RECEIVE} | ${CaseState.SUBMITTED}                    | ${CaseState.RECEIVED}
+      ${CaseTransition.ACCEPT}  | ${CaseState.RECEIVED}                     | ${CaseState.ACCEPTED}
+      ${CaseTransition.REJECT}  | ${CaseState.RECEIVED}                     | ${CaseState.REJECTED}
+      ${CaseTransition.DISMISS} | ${CaseState.RECEIVED}                     | ${CaseState.DISMISSED}
+      ${CaseTransition.DELETE}  | ${CaseState.NEW}                          | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}  | ${CaseState.DRAFT}                        | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED}                    | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}                     | ${CaseState.DELETED}
+      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}                     | ${CaseState.RECEIVED}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -182,19 +186,36 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: caseFileId2,
                 },
                 {
                   type: MessageType.SEND_RULING_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                {
+                  type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
               ],
@@ -204,18 +225,27 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: caseFileId2,
                 },
@@ -229,7 +259,10 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
               ],
@@ -242,7 +275,10 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
               ],
@@ -252,7 +288,10 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
               ],
@@ -286,6 +325,11 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
       ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
       ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
+      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${CaseAppealState.COMPLETED} | ${CaseAppealState.RECEIVED}
+      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.WITHDRAWN}
+      ${CaseTransition.WITHDRAW_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.WITHDRAWN}
+     
+
     `.describe(
     '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
     ({ transition, caseState, currentAppealState, newAppealState }) => {
@@ -329,6 +373,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: currentAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           const updatedCase = {
@@ -337,6 +382,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: newAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           beforeEach(async () => {
@@ -353,12 +399,15 @@ describe('CaseController - Transition', () => {
               {
                 appealState: newAppealState,
                 prosecutorPostponedAppealDate:
-                  newAppealState === CaseAppealState.APPEALED
+                  transition === CaseTransition.APPEAL ? date : undefined,
+                appealReceivedByCourtDate:
+                  transition === CaseTransition.RECEIVE_APPEAL
                     ? date
                     : undefined,
-                appealReceivedByCourtDate:
-                  newAppealState === CaseAppealState.RECEIVED
-                    ? date
+                appealRulingDecision:
+                  transition === CaseTransition.WITHDRAW_APPEAL &&
+                  currentAppealState === CaseAppealState.RECEIVED
+                    ? CaseAppealRulingDecision.DISCONTINUED
                     : undefined,
               },
               { where: { id: caseId }, transaction },
@@ -372,25 +421,37 @@ describe('CaseController - Transition', () => {
               ).toHaveBeenCalledWith([
                 {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: prosecutorAppealBriefId,
                 },
                 {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: prosecutorAppealBriefCaseFileId1,
                 },
                 {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: prosecutorAppealBriefCaseFileId2,
                 },
                 {
                   type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
               ])
@@ -404,7 +465,10 @@ describe('CaseController - Transition', () => {
               ).toHaveBeenCalledWith([
                 {
                   type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
               ])
@@ -418,13 +482,44 @@ describe('CaseController - Transition', () => {
               ).toHaveBeenCalledWith([
                 {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                   caseFileId: appealRulingId,
                 },
                 {
                   type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
-                  user: defaultUser,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                {
+                  type: MessageType.DELIVER_APPEAL_TO_POLICE,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
+                  caseId: theCase.id,
+                },
+              ])
+            }
+          })
+
+          it('should send notifications to queue when appeal is withdrawn', () => {
+            if (transition === CaseTransition.WITHDRAW_APPEAL) {
+              expect(
+                mockMessageService.sendMessagesToQueue,
+              ).toHaveBeenCalledWith([
+                {
+                  type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                  },
                   caseId,
                 },
               ])

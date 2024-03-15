@@ -31,7 +31,9 @@ class BackendAPI extends RESTDataSource {
     })
   }
 
-  createExplicitDiscountCode(body: Record<string, unknown>): Promise<Discount> {
+  createExplicitDiscountCode(
+    body: Record<string, unknown>,
+  ): Promise<Array<Discount>> {
     return this.post('users/createExplicitDiscountCode', body, {
       cacheOptions: { ttl: -1 },
     })

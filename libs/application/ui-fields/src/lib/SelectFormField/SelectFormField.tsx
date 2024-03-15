@@ -54,11 +54,9 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
         <SelectController
           required={required}
           defaultValue={
-            ((getValueViaPath(application.answers, id) as string[]) ??
+            (getValueViaPath(application.answers, id) ??
               getDefaultValue(field, application)) ||
-            required
-              ? ''
-              : undefined
+            (required ? '' : undefined)
           }
           label={formatText(title, application, formatMessage)}
           name={id}

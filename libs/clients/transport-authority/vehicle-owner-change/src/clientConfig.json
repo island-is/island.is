@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Ownerchange API developed in .Net6.0 - Release-6 : 20221202.1",
+    "description": "Ownerchange API developed in .Net6.0 - Release-13 : 20231219.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -1129,27 +1129,27 @@
         "properties": {
           "permno": {
             "type": "string",
-            "description": "",
+            "description": "Vehicle permanent number",
             "nullable": true
           },
           "ownerChangeSerialNumber": {
             "type": "integer",
-            "description": "",
+            "description": "Owner change serial number",
             "format": "int32"
           },
           "coOwnerPersidno": {
             "type": "string",
-            "description": "",
+            "description": "Co onwer social security number",
             "nullable": true
           },
           "coOwnerName": {
             "type": "string",
-            "description": "",
+            "description": "Co owner name",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": ""
+        "description": "CoOwner data transfer object"
       },
       "OwnerChangeDto": {
         "type": "object",
@@ -1364,6 +1364,14 @@
             "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Reporting person's social security number (car sale)"
+          },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Current mileage on vehicle when owner change is reported",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1389,6 +1397,14 @@
             "type": "string",
             "description": "Date of purchase",
             "format": "date-time"
+          },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Current mileage on vehicle when owner change is reported",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1493,6 +1509,14 @@
             "type": "string",
             "description": "Reporting person's social security number (car sale)"
           },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Current mileage on vehicle when owner change is reported",
+            "format": "int32",
+            "nullable": true
+          },
           "contract": {
             "minLength": 1,
             "type": "string",
@@ -1593,6 +1617,14 @@
             "type": "string",
             "description": "Reporting person's social security number (car sale)",
             "nullable": true
+          },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Current mileage on vehicle when owner change is reported",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1618,6 +1650,14 @@
             "minLength": 3,
             "type": "string",
             "description": "Vehicle use group, see REST GET endpoint /vehicle/codetables/usegroups"
+          },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Current mileage on vehicle when owner change is reported",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,

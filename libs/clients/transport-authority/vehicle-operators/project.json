@@ -36,13 +36,12 @@
         "cwd": "libs/clients/transport-authority/vehicle-operators"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/transport-authority/vehicle-operators/gen/fetch -i libs/clients/transport-authority/vehicle-operators/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/transport-authority/vehicle-operators/gen/fetch -i libs/clients/transport-authority/vehicle-operators/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

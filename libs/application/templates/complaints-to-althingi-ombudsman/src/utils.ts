@@ -1,18 +1,24 @@
-import { Answer } from '@island.is/application/types'
+import { Answer, NO, YES, YesOrNo } from '@island.is/application/types'
 import { shared } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  NO,
   OmbudsmanComplaintTypeEnum,
-  YES,
 } from './shared/constants'
 import { complainedFor } from './lib/messages'
+import format from 'date-fns/format'
 
 export const isGovernmentComplainee = (answers: Answer) => {
   return (
     (answers as { complainee: { type: ComplaineeTypes } }).complainee?.type ===
     ComplaineeTypes.GOVERNMENT
+  )
+}
+
+export const isPreviousOmbudsmanComplaint = (answers: Answer) => {
+  return (
+    (answers as { previousOmbudsmanComplaint: { Answer: YesOrNo } })
+      .previousOmbudsmanComplaint?.Answer === YES
   )
 }
 
@@ -30,6 +36,9 @@ const getDateAYearBack = () => {
   d.setFullYear(aYearAgo)
   return d
 }
+
+export const formatDate = (date: Date): string =>
+  date ? format(new Date(date), 'dd.MM.yyyy') : ''
 
 export const isDecisionDateOlderThanYear = (answers: Answer) => {
   // Checks if date exists and if it's older than a year

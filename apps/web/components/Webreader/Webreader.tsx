@@ -1,7 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useI18n } from '@island.is/web/i18n'
+
 import { Box, ResponsiveProp, Space } from '@island.is/island-ui/core'
+import { useI18n } from '@island.is/web/i18n'
+
 import { CUSTOMER_ID, SCRIPT_URL } from './config'
 
 declare global {
@@ -23,7 +25,7 @@ interface WebReaderProps {
   marginBottom?: ResponsiveProp<Space>
 }
 
-export const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
+const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
   readId = 'main-content',
   readClass,
   marginTop = 3,
@@ -62,6 +64,7 @@ export const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
   useEffect(() => {
     if (!window.rsConf) {
       const el = document.createElement('script')
+      el.id = 'rs_req_Init'
       el.src = SCRIPT_URL
       el.type = 'text/javascript'
       document.body.appendChild(el)
@@ -106,25 +109,25 @@ export const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
       : 'Listen to this page using ReadSpeaker'
 
   return (
-    <>
-      <Box marginTop={marginTop} marginBottom={marginBottom}>
-        <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
-          <a
-            rel="nofollow"
-            className="rsbtn_play"
-            accessKey="L"
-            title={buttonTitle}
-            href={href}
-          >
-            <span className="rsbtn_left rsimg rspart">
-              <span className="rsbtn_text">
-                <span>{buttonLabel}</span>
-              </span>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
+      <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
+        <a
+          rel="nofollow"
+          className="rsbtn_play"
+          accessKey="L"
+          title={buttonTitle}
+          href={href}
+        >
+          <span className="rsbtn_left rsimg rspart">
+            <span className="rsbtn_text">
+              <span>{buttonLabel}</span>
             </span>
-            <span className="rsbtn_right rsimg rsplay rspart" />
-          </a>
-        </div>
-      </Box>
-    </>
+          </span>
+          <span className="rsbtn_right rsimg rsplay rspart" />
+        </a>
+      </div>
+    </Box>
   )
 }
+
+export default Webreader

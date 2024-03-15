@@ -8,11 +8,9 @@ import {
 } from '../../constants/domain'
 import { usePortalMeta, useQueryParam } from '@island.is/portals/core'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { isDefined, storageFactory } from '@island.is/shared/utils'
+import { isDefined } from '@island.is/shared/utils'
 import { useAuthDomainsQuery } from './useDomains.generated'
 import { m } from '../../lib/messages'
-
-const sessionStore = storageFactory(() => sessionStorage)
 
 export type DomainOption = {
   label: string
@@ -20,14 +18,12 @@ export type DomainOption = {
 }
 
 /**
- * This domain hook is used to fetch domains list for current user as well as handle selection of the domain,
- * either in query string or session storage.
+ * This domain hook is used to fetch domains list for current user as well as handle selection of the domain
+ * and persisting the selection in query string.
  *
  * The priority is the following:
- * 1. If there is a domain in query string and no session storage, use the query string
- * 2. If there is a domain in query string and session storage, use the query string.
- * 3  If there is no domain in query string and session storage, use session storage.
- * 4. If there is no domain in query string and no session storage, use the default domain, i.e. (ISLAND_DOMAIN or ADMIN_ISLAND_DOMAIN).
+ * 1. If there is a domain in query string, use the query string
+ * 2. If there is no domain in query string, use the default domain, i.e. (ISLAND_DOMAIN or ADMIN_ISLAND_DOMAIN).
  *
  * @param includeDefaultOption If true, the default option will be added to the list of domains.
  */
@@ -35,11 +31,18 @@ export const useDomains = (includeDefaultOption = true) => {
   const { formatMessage, lang } = useLocale()
   const location = useLocation()
   const navigate = useNavigate()
+
   const { portalType } = usePortalMeta()
   const defaultPortalDomain =
-    portalType === 'admin' ? ADMIN_ISLAND_DOMAIN : ISLAND_DOMAIN
+    portalType === 'admin'
+      ? ADMIN_ISLAND_DOMAIN
+      : includeDefaultOption
+      ? ALL_DOMAINS
+      : ISLAND_DOMAIN
   const displayNameQueryParam = useQueryParam('domain')
+
   const [domainName, setDomainName] = useState<string | null>(null)
+  const [queryString, setQueryString] = useState<string>('')
 
   const defaultLabel = formatMessage(m.allDomains)
   const allDomainsOption = {
@@ -73,24 +76,28 @@ export const useDomains = (includeDefaultOption = true) => {
     options.find(({ value }) => value === name)
 
   /**
-   * Updates the domain name in state, session storage and query string.
-   * If no domain exist in query string then we skip it.
+   * Updates the domain name in state and query string.
    */
-  const updateDomain = (opt: DomainOption) => {
-    const option = opt ?? allDomainsOption
+  const updateDomain = (opt?: DomainOption) => {
+    // If opt is empty then we try to read the first option in the list.
+    const option = opt ?? options?.[0]
+
+    // If options is empty we found no option, and we have no domain to update.
+    if (!option) {
+      return
+    }
+
     const name = option.value
     setDomainName(name)
-    sessionStore.setItem('domain', name)
 
-    const query = new URLSearchParams(location.search)
-    const currentDomain = query.get('domain')
+    const query = new URLSearchParams({ domain: name })
 
-    if (currentDomain && currentDomain !== displayNameQueryParam) {
-      query.set('domain', name)
-      navigate(`${location.pathname}?${query.toString()}`, {
-        replace: true,
-      })
-    }
+    const domainQuery = name !== ALL_DOMAINS ? `?${query.toString()}` : ''
+    setQueryString(domainQuery)
+
+    navigate(`${location.pathname}${domainQuery}`, {
+      replace: true,
+    })
   }
 
   const updateDomainByName = (name: string) => {
@@ -105,28 +112,23 @@ export const useDomains = (includeDefaultOption = true) => {
     } else {
       const islandDomainOption = getOptionByName(defaultPortalDomain)
 
-      // Default to default domain if the domain is not found
+      // Default to default domain if the default domain is found
       if (islandDomainOption) {
         updateDomain(islandDomainOption)
       } else {
-        // Default to the first option in the list
-        updateDomain(options[0])
+        // Default to empty option
+        updateDomain()
       }
     }
   }
 
   useEffect(() => {
     if (data?.authDomains) {
-      const sessionDomainName = sessionStore.getItem('domain')
-
       // Priority
       // 1. Query string
-      // 2. Session storage
-      // 3. Default domain
+      // 2. Default domain
       if (displayNameQueryParam) {
         updateDomainByName(displayNameQueryParam)
-      } else if (sessionDomainName) {
-        updateDomainByName(sessionDomainName)
       } else {
         updateDomainByName(defaultPortalDomain)
       }
@@ -140,5 +142,6 @@ export const useDomains = (includeDefaultOption = true) => {
     options,
     selectedOption: getOptionByName(domainName),
     loading,
+    queryString,
   }
 }

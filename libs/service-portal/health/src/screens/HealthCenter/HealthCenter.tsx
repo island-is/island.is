@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
-  m,
-  ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
   CardLoader,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
@@ -17,41 +14,21 @@ import {
   Divider,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
 import { HealthPaths } from '../../lib/paths'
 import { messages as hm } from '../../lib/messages'
-import { Organization } from '@island.is/shared/types'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { Problem } from '@island.is/react-spa/shared'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
-const HEALTH_CENTER_LOGO_PATH = 'Sjúkratryggingar'
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const location = useLocation()
-
-  // Feature flag for transfer option.
-  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthTransferPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setIsTransferAvailable(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   // Check if the user was transfered from another health center
   const wasSuccessfulTransfer = location?.state?.transferSuccess
@@ -66,7 +43,9 @@ const HealthCenter = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
+  const healthCenterData = data?.rightsPortalHealthCenterRegistrationHistory
+
+  const canRegister = healthCenterData?.canRegister ?? false
 
   if (loading)
     return (
@@ -79,17 +58,7 @@ const HealthCenter = () => {
     )
 
   if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.healthCenter).toLowerCase(),
-        })}
-      />
-    )
+    return <Problem error={error} noBorder={false} />
   }
 
   return (
@@ -97,20 +66,9 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
-        img={getOrganizationLogoUrl(
-          HEALTH_CENTER_LOGO_PATH,
-          (data?.getOrganizations?.items ?? []) as Array<Organization>,
-          96,
-        )}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-
-      {!loading && !healthCenterData?.current && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
-      )}
 
       {wasSuccessfulTransfer && !loading && (
         <Box width="full" marginTop={4}>
@@ -126,15 +84,26 @@ const HealthCenter = () => {
         </Box>
       )}
 
+      {!loading && !healthCenterData?.current && (
+        <Box width="full" marginTop={4} display="flex" justifyContent="center">
+          <Box marginTop={8}>
+            <EmptyState />
+          </Box>
+        </Box>
+      )}
+
       {healthCenterData?.current && (
         <Box width="full" marginTop={[1, 1, 4]}>
           <Stack space={2}>
             <UserInfoLine
               title={formatMessage(messages.myRegistration)}
               label={formatMessage(messages.healthCenterTitle)}
-              content={healthCenterData.current.healthCenterName ?? ''}
+              content={
+                healthCenterData.current.healthCenterName ??
+                formatMessage(messages.healthCenterNoHealthCenterRegistered)
+              }
               editLink={
-                isTransferAvailable
+                canRegister
                   ? {
                       url: HealthPaths.HealthCenterRegistration,
                       title: hm.changeRegistration,
@@ -145,7 +114,10 @@ const HealthCenter = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.personalDoctor)}
-              content={healthCenterData.current.doctor ?? ''}
+              content={
+                healthCenterData.current.doctor ??
+                formatMessage(messages.healthCenterNoDoctor)
+              }
             />
             <Divider />
           </Stack>
@@ -154,14 +126,9 @@ const HealthCenter = () => {
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !error && healthCenterData?.history && (
+      {!loading && !error && healthCenterData?.history?.length ? (
         <HistoryTable history={healthCenterData.history} />
-      )}
-      <Box marginTop={6}>
-        <Text fontWeight="regular" variant="small">
-          {formatMessage(hm.healthCenterOverviewInfo)}
-        </Text>
-      </Box>
+      ) : null}
     </Box>
   )
 }

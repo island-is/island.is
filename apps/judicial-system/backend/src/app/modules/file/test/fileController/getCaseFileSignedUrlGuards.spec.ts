@@ -3,9 +3,9 @@ import { CanActivate } from '@nestjs/common'
 import { RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseExistsGuard, CaseReadGuard } from '../../../case'
+import { FileController } from '../../file.controller'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { ViewCaseFileGuard } from '../../guards/viewCaseFile.guard'
-import { FileController } from '../../file.controller'
 
 describe('FileController - Get case file signed url guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

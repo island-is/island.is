@@ -3,10 +3,10 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
-import { CaseModule, CourtModule, AwsS3Module } from '../index'
+import { AwsS3Module, CaseModule, CourtModule } from '../index'
 import { CaseFile } from './models/file.model'
-import { FileService } from './file.service'
 import { FileController } from './file.controller'
+import { FileService } from './file.service'
 import { InternalFileController } from './internalFile.controller'
 import { LimitedAccessFileController } from './limitedAccessFile.controller'
 

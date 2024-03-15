@@ -20,18 +20,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run services-auth-public-api:schemas/build-openapi $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-        ],
-        "parallel": false
+        "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": ["{workspaceRoot}/libs/clients/auth/public-api/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": ["lib:client", "scope:client"],
-  "implicitDependencies": ["services-auth-public-api"]
+  "implicitDependencies": ["services-auth-public-api"],
+  "tags": ["lib:client", "scope:client"]
 }

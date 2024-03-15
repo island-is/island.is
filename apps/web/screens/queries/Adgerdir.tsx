@@ -28,11 +28,7 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
       description
       longDescription
       processEntry {
-        id
-        processTitle
-        processLink
-        openLinkInModal
-        buttonText
+        ...ProcessEntryFields
       }
       content {
         ...AllSlices

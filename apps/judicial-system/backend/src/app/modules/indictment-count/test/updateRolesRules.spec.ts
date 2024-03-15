@@ -1,4 +1,4 @@
-import { prosecutorRule, prosecutorRepresentativeRule } from '../../../guards'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../../guards'
 import { IndictmentCountController } from '../indictmentCount.controller'
 
 describe('IndictmentCountController - Update rules', () => {

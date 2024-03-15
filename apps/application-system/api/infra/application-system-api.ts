@@ -1,42 +1,35 @@
-import {
-  json,
-  ref,
-  service,
-  ServiceBuilder,
-} from '../../../../infra/src/dsl/dsl'
-import {
-  PostgresInfo,
-  RedisInfo,
-} from '../../../../infra/src/dsl/types/input-types'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   ChargeFjsV2,
   Client,
   CriminalRecord,
   DataProtectionComplaint,
+  DirectorateOfImmigration,
   DrivingLicense,
   EHIC,
+  EnergyFunds,
   Finance,
   FishingLicense,
   HealthInsurance,
   Labor,
   MunicipalitiesFinancialAid,
   NationalRegistry,
+  OccupationalLicenses,
   Passports,
   Payment,
   PaymentSchedule,
   Properties,
   RskCompanyInfo,
+  SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
+  WorkMachines,
+  SignatureCollection,
+  ArborgWorkpoint,
 } from '../../../../infra/src/dsl/xroad'
 
-const postgresInfo: PostgresInfo = {
-  passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
-  name: 'application_system_api',
-  username: 'application_system_api',
-}
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
 const namespace = 'application-system'
@@ -46,7 +39,7 @@ export const workerSetup =
     service('application-system-api-worker')
       .namespace(namespace)
       .image('application-system-api')
-      .postgres(postgresInfo)
+      .db()
       .serviceAccount('application-system-api-worker')
       .redis()
       .env({
@@ -83,7 +76,7 @@ export const workerSetup =
           local: 'http://localhost:4200/umsoknir',
         },
       })
-      .xroad(Base, Client, Payment, EHIC)
+      .xroad(Base, Client, Payment, EHIC, WorkMachines)
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -110,10 +103,15 @@ export const workerSetup =
         staging: { schedule: '*/30 * * * *' },
         prod: { schedule: '*/30 * * * *' },
       })
+      .resources({
+        limits: { cpu: '400m', memory: '768Mi' },
+        requests: { cpu: '100m', memory: '384Mi' },
+      })
 
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  skilavottordWs: ServiceBuilder<'skilavottord-ws'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -213,11 +211,15 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
-      NO_UPDATE_NOTIFIER: 'true',
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
+      },
+      XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
+        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        staging: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
@@ -228,6 +230,18 @@ export const serviceSetup = (services: {
         dev: 'https://identity-server.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
+      },
+      RECYCLING_FUND_GQL_BASE_PATH: ref(
+        (h) =>
+          `http://${h.svc(
+            services.skilavottordWs,
+          )}/app/skilavottord/api/graphql`,
+      ),
+      UNIVERSITY_GATEWAY_API_URL: {
+        dev: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        staging:
+          'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
       },
     })
     .xroad(
@@ -244,6 +258,7 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      EnergyFunds,
       Finance,
       Properties,
       RskCompanyInfo,
@@ -252,6 +267,12 @@ export const serviceSetup = (services: {
       Vehicles,
       Passports,
       EHIC,
+      DirectorateOfImmigration,
+      SocialInsuranceAdministration,
+      OccupationalLicenses,
+      SignatureCollection,
+      WorkMachines,
+      ArborgWorkpoint,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -287,15 +308,13 @@ export const serviceSetup = (services: {
       VMST_ID: '/k8s/application-system/VMST_ID',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_USERNAME:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
     })
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
-    })
-    .postgres(postgresInfo)
+    .db()
+    .migrations()
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import cn from 'classnames'
 import {
   Box,
   BoxProps,
@@ -110,7 +111,7 @@ export const SingleLicenseCard = ({
           justifyContent={'spaceBetween'}
           paddingTop={[1, 0]}
         >
-          <Box className={styles.flexShrink}>
+          <Box className={cn({ [styles.flexShrink]: additionalLink })}>
             <Text>{subtitle}</Text>
           </Box>
           <Box

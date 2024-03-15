@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('FinanceCustomerTapsControlModel')
 export class CustomerTapsControlModel {
   @Field()
   RecordsTap!: boolean

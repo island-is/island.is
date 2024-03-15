@@ -2,11 +2,12 @@ import { uuid } from 'uuidv4'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
+import { createTestingUserModule } from './createTestingUserModule'
+
 import { nowFactory } from '../../../factories'
 import { randomDate } from '../../../test'
 import { Institution } from '../../institution'
 import { User } from '../user.model'
-import { createTestingUserModule } from './createTestingUserModule'
 
 jest.mock('../../../factories')
 
@@ -61,6 +62,7 @@ describe('UserController - Get by national id', () => {
         email: '',
         role: UserRole.ADMIN,
         active: true,
+        canConfirmAppeal: false,
       })
     })
   })
@@ -79,7 +81,7 @@ describe('UserController - Get by national id', () => {
 
     it('should return the user', () => {
       expect(mockUserModel.findOne).toHaveBeenCalledWith({
-        where: { nationalId },
+        where: { nationalId, active: true },
         include: [{ model: Institution, as: 'institution' }],
       })
       expect(then.result).toBe(user)

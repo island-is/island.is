@@ -16,6 +16,15 @@ type Notifier = {
   phoneNumber: string
   email: string
   relation: string
+  autonomous: string
+}
+
+type Advocate = {
+  name?: string
+  address?: string
+  nationalId?: string
+  email?: string
+  phone?: string
 }
 
 type EstateMember = {
@@ -23,10 +32,12 @@ type EstateMember = {
   ssn?: string
   nationalId?: string
   relation?: string
+  relationWithApplicant?: string
   dateOfBirth?: string
-  foreignCitizenShip?: 'yes' | 'no'
+  foreignCitizenship?: string | string[]
   phone?: string
   email?: string
+  advocate?: Advocate
 } & SystemMetadata
 
 type Representative = {
@@ -40,6 +51,7 @@ type AssetFrame = {
   assetNumber?: string
   description?: string
   marketValue?: string | number
+  share?: string | number
 } & SystemMetadata
 
 type BankAccount = {
@@ -89,6 +101,11 @@ type SpouseField = {
   selection: string
 }
 
+type EstateWithoutAssetsInfo = {
+  estateAssetsExist?: string
+  estateDebtsExist?: string
+}
+
 type SystemMetadata = {
   enabled?: boolean
 }
@@ -115,4 +132,5 @@ export type UploadData = {
   remarksOnTestament: string
   dividedEstate: string
   deceasedWithUndividedEstate?: SpouseField
+  estateWithoutAssetsInfo: EstateWithoutAssetsInfo
 }

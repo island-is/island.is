@@ -1,12 +1,19 @@
-import { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m, formatDate, amountFormat } from '@island.is/service-portal/core'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import {
+  m,
+  formatDate,
+  amountFormat,
+  DownloadFileButtons,
+} from '@island.is/service-portal/core'
+import { Box, LoadingDots, Table as T, Text } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
-import { RightsPortalBill } from '@island.is/api/schema'
+import { RightsPortalDentistBill } from '@island.is/api/schema'
+import { exportDentistFile } from '../../utils/FileBreakdown'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface Props {
-  bills: Array<RightsPortalBill>
+  bills: Array<RightsPortalDentistBill>
+  loading?: boolean
 }
 
 type TotalBills = {
@@ -14,9 +21,24 @@ type TotalBills = {
   totalCovered: number
 }
 
-const BillsTable: FC<Props> = ({ bills }: Props) => {
+const BillsTable = ({ bills, loading = false }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+
+  if (!bills.length && !loading) {
+    return (
+      <Box marginTop={2}>
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.searchResultsEmpty)}
+          message={formatMessage(messages.searchResultsEmptyDetail)}
+          titleSize="h3"
+          noBorder={false}
+          tag={undefined}
+        />
+      </Box>
+    )
+  }
 
   const totalBills = bills.reduce(
     (total, bill) => ({
@@ -31,6 +53,7 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
 
   return (
     <Box marginTop="containerGutter">
+      {loading && <LoadingDots />}
       <T.Table>
         <T.Head>
           <T.Row>
@@ -46,7 +69,7 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.refundDate)}
+                {formatMessage(messages.repaid)}
               </Text>
             </T.HeadData>
             <T.HeadData>
@@ -116,6 +139,24 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
           </T.Row>
         </T.Body>
       </T.Table>
+      <DownloadFileButtons
+        BoxProps={{
+          paddingTop: 2,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flexEnd',
+        }}
+        buttons={[
+          {
+            text: formatMessage(m.getAsExcel),
+            onClick: () =>
+              exportDentistFile(bills ?? [], 'xlsx', {
+                charge: totalBills.totalCharge,
+                covered: totalBills.totalCovered,
+              }),
+          },
+        ]}
+      />
     </Box>
   )
 }

@@ -55,6 +55,11 @@ export const overview = {
       defaultMessage: 'Dagsetning samnings:',
       description: 'Agreement date label',
     },
+    mileage: {
+      id: 'ta.tvo.application:overview.labels.mileage',
+      defaultMessage: 'Kílómetrar:',
+      description: 'Mileage label',
+    },
   }),
   confirmationModal: defineMessages({
     title: {

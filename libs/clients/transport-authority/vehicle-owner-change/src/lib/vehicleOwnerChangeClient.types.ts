@@ -5,6 +5,7 @@ export interface OwnerChange {
   dateOfPurchase: Date
   dateOfPurchaseTimestamp: string
   saleAmount: number
+  mileage?: number | null
   insuranceCompanyCode?: string | null
   operators?: Array<OwnerChangeOperator> | null
   coOwners?: Array<OwnerChangeCoOwner> | null

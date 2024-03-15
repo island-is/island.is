@@ -1,4 +1,7 @@
-import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationType,
+  AuthDelegationProvider,
+} from '@island.is/shared/types'
 
 export interface JwtAct {
   client_id: string
@@ -17,4 +20,6 @@ export interface JwtPayload {
     nationalId: string
     scope?: string | string[]
   }
+  audkenni_sim_number?: string
+  client_delegation_provider?: AuthDelegationProvider
 }

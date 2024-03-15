@@ -24,7 +24,9 @@ import {
   MaybeWithApplicationAndField,
   MessageWithLinkButtonField,
   Option,
+  PaymentChargeOverviewField,
   PaymentPendingField,
+  PdfLinkButtonField,
   PhoneField,
   RadioField,
   RecordObject,
@@ -32,10 +34,18 @@ import {
   SelectField,
   SubmitField,
   TextField,
+  ImageField,
+  NationalIdWithNameField,
+  ActionCardListField,
+  TableRepeaterField,
+  StaticTableField,
+  HiddenInputWithWatchedValueField,
+  HiddenInputField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
-import { SpanType } from '@island.is/island-ui/core/types'
+import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
+import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -98,6 +108,7 @@ export function buildDateField(
     placeholder,
     backgroundColor = 'blue',
     required,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -110,6 +121,7 @@ export function buildDateField(
     component: FieldComponents.DATE,
     backgroundColor,
     required,
+    readOnly,
   }
 }
 
@@ -123,6 +135,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
   } = data
   return {
     ...extractCommonFields(data),
@@ -134,6 +147,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
   }
@@ -248,6 +262,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -262,6 +277,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -326,10 +342,15 @@ export function buildFileUploadField(
   return {
     ...extractCommonFields(data),
     children: undefined,
-    introduction,
-    uploadHeader,
-    uploadDescription,
-    uploadButtonLabel,
+    introduction: introduction,
+    uploadHeader:
+      uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
+    uploadDescription:
+      uploadDescription ||
+      coreDefaultFieldMessages.defaultFileUploadDescription,
+    uploadButtonLabel:
+      uploadButtonLabel ||
+      coreDefaultFieldMessages.defaultFileUploadButtonLabel,
     uploadMultiple,
     uploadAccept:
       uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
@@ -366,6 +387,9 @@ export function buildKeyValueField(data: {
   colSpan?: SpanType
   condition?: Condition
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }): KeyValueField {
   const {
     label,
@@ -374,6 +398,9 @@ export function buildKeyValueField(data: {
     width = 'full',
     colSpan,
     display = 'block',
+    divider = false,
+    paddingX,
+    paddingY,
   } = data
 
   return {
@@ -386,9 +413,12 @@ export function buildKeyValueField(data: {
     colSpan,
     label,
     value,
+    divider,
     type: FieldTypes.KEY_VALUE,
     component: FieldComponents.KEY_VALUE,
     display,
+    paddingX,
+    paddingY,
   }
 }
 
@@ -465,7 +495,7 @@ export function buildPaymentPendingField(data: {
 export function buildMessageWithLinkButtonField(
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField {
-  const { id, title, url, message, buttonTitle } = data
+  const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
     children: undefined,
     id,
@@ -473,6 +503,8 @@ export function buildMessageWithLinkButtonField(
     url,
     message,
     buttonTitle,
+    marginTop,
+    marginBottom,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
   }
@@ -496,23 +528,12 @@ export function buildExpandableDescriptionField(
 export function buildAlertMessageField(
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField {
-  const {
-    id,
-    title,
-    message,
-    alertType,
-    condition,
-    marginTop,
-    marginBottom,
-    links,
-  } = data
+  const { message, alertType, marginTop, marginBottom, links } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    id,
-    title,
     message,
     alertType,
-    condition,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
     marginTop,
@@ -533,5 +554,258 @@ export function buildLinkField(
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
+  }
+}
+
+export function buildPaymentChargeOverviewField(
+  data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
+): PaymentChargeOverviewField {
+  const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
+    data
+  return {
+    children: undefined,
+    id,
+    title,
+    forPaymentLabel,
+    totalLabel,
+    getSelectedChargeItems,
+    type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
+    component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
+  }
+}
+
+export function buildImageField(
+  data: Omit<ImageField, 'type' | 'component' | 'children'>,
+): ImageField {
+  const {
+    id,
+    title,
+    image,
+    alt,
+    marginTop,
+    marginBottom,
+    condition,
+    imageWidth = 'full',
+    titleVariant = 'h4',
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    image,
+    alt,
+    imageWidth,
+    marginTop,
+    marginBottom,
+    condition,
+    titleVariant,
+    type: FieldTypes.IMAGE,
+    component: FieldComponents.IMAGE,
+  }
+}
+
+export function buildPdfLinkButtonField(
+  data: Omit<PdfLinkButtonField, 'type' | 'component' | 'children'>,
+): PdfLinkButtonField {
+  const {
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+    children: undefined,
+    type: FieldTypes.PDF_LINK_BUTTON,
+    component: FieldComponents.PDF_LINK_BUTTON,
+  }
+}
+
+/**
+ * Constructs a hidden input field configuration object with a watched value.
+ * This function is specifically designed for creating hidden input fields that dynamically
+ * update their value based on the value of another field specified by `watchValue`.
+ *
+ * @param {Omit<HiddenInputWithWatchedValueField, 'type' | 'component' | 'children' | 'title'>} data
+ * - `id`: Unique identifier for the hidden input field, this will get stored in answers.
+ * - `watchValue`: The answer id that this hidden input should watch and update its value accordingly.
+ * - `valueModifier`: An optional function to modify the watched value before setting it.
+ */
+export const buildHiddenInputWithWatchedValue = (
+  data: Omit<
+    HiddenInputWithWatchedValueField,
+    'type' | 'component' | 'children' | 'title'
+  >,
+): HiddenInputWithWatchedValueField => {
+  return {
+    ...extractCommonFields({ title: '', ...data }),
+    id: data.id,
+    type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE,
+    component: FieldComponents.HIDDEN_INPUT,
+    valueModifier: data.valueModifier,
+    watchValue: data.watchValue,
+    title: '',
+    children: undefined,
+  }
+}
+
+/**
+ * Constructs a hidden input field configuration object with a default value.
+ * This function creates a configuration for hidden input fields that are initialized
+ * with a static or computed default value.
+ *
+ * @param {Omit<HiddenInputField, 'type' | 'component' | 'children' | 'title'>} data
+ * - `id`: Unique identifier for the hidden input field.
+ * - `defaultValue`: The default value for the hidden input field. This can be a static value
+ * or a function that computes the value based on the application state or other criteria.
+ */
+export const buildHiddenInput = (
+  data: Omit<HiddenInputField, 'type' | 'component' | 'children' | 'title'>,
+): HiddenInputField => {
+  return {
+    ...extractCommonFields({ title: '', ...data }),
+    id: data.id,
+    type: FieldTypes.HIDDEN_INPUT,
+    component: FieldComponents.HIDDEN_INPUT,
+    title: '',
+    children: undefined,
+    defaultValue: data.defaultValue,
+  }
+}
+
+export function buildNationalIdWithNameField(
+  data: Omit<NationalIdWithNameField, 'type' | 'component' | 'children'>,
+): NationalIdWithNameField {
+  const {
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+    children: undefined,
+    type: FieldTypes.NATIONAL_ID_WITH_NAME,
+    component: FieldComponents.NATIONAL_ID_WITH_NAME,
+  }
+}
+
+export function buildActionCardListField(
+  data: Omit<ActionCardListField, 'type' | 'component' | 'children'>,
+): ActionCardListField {
+  const { items, space, marginTop, marginBottom } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.ACTION_CARD_LIST,
+    component: FieldComponents.ACTION_CARD_LIST,
+    items,
+    marginTop,
+    marginBottom,
+    space,
+  }
+}
+
+export function buildTableRepeaterField(
+  data: Omit<TableRepeaterField, 'type' | 'component' | 'children'>,
+): TableRepeaterField {
+  const {
+    fields,
+    table,
+    formTitle,
+    marginTop,
+    marginBottom,
+    titleVariant,
+    addItemButtonText,
+    saveItemButtonText,
+    removeButtonTooltipText,
+    getStaticTableData,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.TABLE_REPEATER,
+    component: FieldComponents.TABLE_REPEATER,
+    fields,
+    table,
+    formTitle,
+    marginTop,
+    marginBottom,
+    titleVariant,
+    addItemButtonText,
+    saveItemButtonText,
+    removeButtonTooltipText,
+    getStaticTableData,
+  }
+}
+
+export function buildStaticTableField(
+  data: Omit<
+    StaticTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  >,
+): StaticTableField {
+  const {
+    header,
+    condition,
+    dataTestId,
+    title,
+    description,
+    rows,
+    summary,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+  } = data
+
+  return {
+    id: '',
+    title,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.STATIC_TABLE,
+    component: FieldComponents.STATIC_TABLE,
+    header,
+    rows,
+    summary,
+    marginTop,
+    marginBottom,
+    titleVariant,
   }
 }

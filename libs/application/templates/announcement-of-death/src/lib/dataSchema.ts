@@ -82,7 +82,7 @@ export const dataSchema = z.object({
       .object({
         assetNumber: z.string().refine(
           (v) => {
-            return /^[fF]{0,1}\d{7}$/.test(v)
+            return /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(v)
           },
           { params: m.errorAssetNumber },
         ),

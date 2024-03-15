@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -14,91 +8,101 @@ import {
   InputFileUpload,
   RadioButton,
   Text,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
-  Modal,
   PageHeader,
   PageLayout,
+  RestrictionLength,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  mapCaseFileToUploadFile,
+  CaseAppealRulingDecision,
+  CaseDecision,
+  CaseFileCategory,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  TUploadFile,
+  formatDateForServer,
   useCase,
+  useOnceOn,
   useS3Upload,
+  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
-
-  useEffect(() => {
-    if (workingCase.caseFiles) {
-      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
-    }
-  }, [workingCase.caseFiles])
-
-  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
-    useS3Upload(workingCase.id)
-
-  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+  } = useContext(FormContext)
+  const {
+    uploadFiles,
+    allFilesUploaded,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
+    workingCase.id,
+  )
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id } = router.query
-  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
-  const [visibleModal, setVisibleModal] = useState(false)
+
+  const initialize = useCallback(() => {
+    if (
+      isRestrictionCase(workingCase.type) &&
+      workingCase.state === CaseState.ACCEPTED &&
+      (workingCase.decision === CaseDecision.ACCEPTING ||
+        workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
+    ) {
+      setAndSendCaseToServer(
+        [
+          {
+            appealValidToDate: workingCase.validToDate,
+            isAppealCustodyIsolation: workingCase.isCustodyIsolation,
+            appealIsolationToDate: workingCase.isolationToDate,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const [appealConclusionErrorMessage, setAppealConclusionErrorMessage] =
     useState<string>('')
 
-  const allFilesUploaded = useMemo(() => {
-    return displayFiles.every(
-      (file) => file.status === 'done' || file.status === 'error',
-    )
-  }, [displayFiles])
-
   const isStepValid =
-    displayFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.APPEAL_RULING &&
-        file.status === 'done',
-    ) &&
-    allFilesUploaded &&
-    isCourtOfAppealRulingStepValid(workingCase)
-
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
-
-  const removeFileCB = (file: UploadFile) => {
-    setDisplayFiles((previous) =>
-      previous.filter((caseFile) => caseFile.id !== file.id),
-    )
-  }
+    workingCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+      ? allFilesUploaded
+      : uploadFiles.some(
+          (file) =>
+            file.category === CaseFileCategory.APPEAL_RULING &&
+            file.status === 'done',
+        ) &&
+        allFilesUploaded &&
+        isCourtOfAppealRulingStepValid(workingCase)
 
   const handleRulingDecisionChange = (
     appealRulingDecision: CaseAppealRulingDecision,
@@ -115,11 +119,59 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
+  const decisionOptions = [
+    {
+      id: 'case-decision-accepting',
+      decision: CaseAppealRulingDecision.ACCEPTING,
+      message: appealRuling.decisionAccept,
+    },
+    {
+      id: 'case-decision-repeal',
+      decision: CaseAppealRulingDecision.REPEAL,
+      message: appealRuling.decisionRepeal,
+    },
+    {
+      id: 'case-decision-changed',
+      decision: CaseAppealRulingDecision.CHANGED,
+      message: appealRuling.decisionChanged,
+    },
+    {
+      id: 'case-decision-changed-significantly',
+      decision: CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY,
+      message: appealRuling.decisionChangedSignificantly,
+    },
+    {
+      id: 'case-decision-dismissed-from-court-of-appeal',
+      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
+      message: appealRuling.decisionDismissedFromCourtOfAppeal,
+    },
+    {
+      id: 'case-decision-dismissed-from-court',
+      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+      message: appealRuling.decisionDismissedFromCourt,
+    },
+    {
+      id: 'case-decision-unlabeling',
+      decision: CaseAppealRulingDecision.REMAND,
+      message: appealRuling.decisionRemand,
+    },
+    {
+      id: 'case-decision-discontinued',
+      decision: CaseAppealRulingDecision.DISCONTINUED,
+      message: appealRuling.decisionDiscontinued,
+    },
+  ]
+
+  const handleNavigationTo = (destination: string) => {
+    return router.push(`${destination}/${workingCase.id}`)
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
@@ -128,18 +180,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             {formatMessage(strings.title)}
           </Text>
         </Box>
-        <Box marginBottom={7}>
-          <Text as="h2" variant="h2">
-            {formatMessage(strings.caseNumber, {
-              caseNumber: `${workingCase.appealCaseNumber}`,
-            })}
-          </Text>
-          <Text as="h3" variant="default" fontWeight="semiBold">
-            {formatMessage(strings.courtOfAppealCaseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
-          </Text>
-        </Box>
+        <CaseNumbers />
         <Box marginBottom={5}>
           <Box marginBottom={3} display="flex">
             <Text as="h3" variant="h3">
@@ -151,211 +192,183 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Text>
             </Box>
           </Box>
-          <Box background="blue100" padding={3}>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-accepting"
-                label={formatMessage(appealRuling.decisionAccept)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.ACCEPTING
-                }
-                onChange={() => {
-                  handleRulingDecisionChange(CaseAppealRulingDecision.ACCEPTING)
-                }}
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-repeal"
-                label={formatMessage(appealRuling.decisionRepeal)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.REPEAL
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(CaseAppealRulingDecision.REPEAL)
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-changed"
-                label={formatMessage(appealRuling.decisionChanged)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(CaseAppealRulingDecision.CHANGED)
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-dismissed-from-court-of-appeal"
-                label={formatMessage(
-                  appealRuling.decisionDismissedFromCourtOfAppeal,
-                )}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(
-                    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
-                  )
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-dismissed-from-court"
-                label={formatMessage(appealRuling.decisionDismissedFromCourt)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.DISMISSED_FROM_COURT
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(
-                    CaseAppealRulingDecision.DISMISSED_FROM_COURT,
-                  )
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-unlabeling"
-                label={formatMessage(appealRuling.decisionRemand)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.REMAND
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(CaseAppealRulingDecision.REMAND)
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
+          <BlueBox>
+            {decisionOptions.map((option, index) => (
+              <Box
+                marginBottom={index === decisionOptions.length - 1 ? 0 : 2}
+                key={option.id}
+              >
+                <RadioButton
+                  name="case-decision"
+                  id={option.id}
+                  label={formatMessage(option.message)}
+                  checked={workingCase.appealRulingDecision === option.decision}
+                  onChange={() => handleRulingDecisionChange(option.decision)}
+                  backgroundColor="white"
+                  large
+                />
+              </Box>
+            ))}
+          </BlueBox>
+        </Box>
+        {workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.DISCONTINUED ? (
+          <Box marginBottom={10}>
+            <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) =>
+                  file.category === CaseFileCategory.APPEAL_COURT_RECORD,
+              )}
+              accept="application/pdf"
+              header={formatMessage(strings.inputFieldLabel)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              buttonLabel={formatMessage(strings.uploadButtonText)}
+              onChange={(files) => {
+                handleUpload(
+                  addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
+                  updateUploadFile,
+                )
+              }}
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+            />
           </Box>
-        </Box>
-        <Box marginBottom={5}>
-          <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(strings.conclusionHeading)}
-          </Text>
-          <Input
-            label={formatMessage(strings.conclusionHeading)}
-            name="rulingConclusion"
-            value={workingCase.appealConclusion || ''}
-            onChange={(event) => {
-              removeTabsValidateAndSet(
-                'appealConclusion',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                setWorkingCase,
-                appealConclusionErrorMessage,
-                setAppealConclusionErrorMessage,
-              )
-            }}
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'appealConclusion',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setAppealConclusionErrorMessage,
-              )
-            }
-            textarea
-            rows={7}
-            required
-            autoExpand={{ on: true, maxHeight: 300 }}
-            hasError={appealConclusionErrorMessage !== ''}
-            errorMessage={appealConclusionErrorMessage}
-          />
-        </Box>
-        <Box marginBottom={10}>
-          <SectionHeading
-            title={formatMessage(strings.courtConclusionHeading)}
-            required
-          />
-
-          <InputFileUpload
-            fileList={displayFiles.filter(
-              (file) => file.category === CaseFileCategory.APPEAL_RULING,
-            )}
-            accept="application/pdf"
-            header={formatMessage(strings.inputFieldLabel)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(strings.uploadButtonText)}
-            onChange={(files) => {
-              handleChange(
-                files,
-                CaseFileCategory.APPEAL_RULING,
-                setDisplayFiles,
-                handleUIUpdate,
-              )
-            }}
-            onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) =>
-              handleRetry(file, handleUIUpdate, CaseFileCategory.APPEAL_RULING)
-            }
-          />
-        </Box>
+        ) : (
+          <>
+            {isRestrictionCase(workingCase.type) &&
+              workingCase.state === CaseState.ACCEPTED &&
+              (workingCase.decision === CaseDecision.ACCEPTING ||
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+              workingCase.appealRulingDecision ===
+                CaseAppealRulingDecision.CHANGED && (
+                <RestrictionLength
+                  workingCase={workingCase}
+                  handleIsolationChange={(
+                    event: React.ChangeEvent<HTMLInputElement>,
+                  ): void => {
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          isAppealCustodyIsolation: event.target.checked,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  handleIsolationDateChange={(
+                    date: Date | undefined,
+                    valid: boolean,
+                  ): void => {
+                    if (date && valid) {
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            appealIsolationToDate: formatDateForServer(date),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                  }}
+                  handleValidToDateChange={(
+                    date: Date | undefined,
+                    valid: boolean,
+                  ): void => {
+                    if (date && valid) {
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            appealValidToDate: formatDateForServer(date),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                  }}
+                />
+              )}
+            <Box marginBottom={5}>
+              <Text as="h3" variant="h3" marginBottom={3}>
+                {formatMessage(strings.conclusionHeading)}
+              </Text>
+              <Input
+                label={formatMessage(strings.conclusionHeading)}
+                name="rulingConclusion"
+                value={workingCase.appealConclusion || ''}
+                placeholder={formatMessage(strings.conclusionPlaceholder)}
+                onChange={(event) => {
+                  removeTabsValidateAndSet(
+                    'appealConclusion',
+                    event.target.value,
+                    ['empty'],
+                    setWorkingCase,
+                    appealConclusionErrorMessage,
+                    setAppealConclusionErrorMessage,
+                  )
+                }}
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'appealConclusion',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setAppealConclusionErrorMessage,
+                  )
+                }
+                textarea
+                rows={7}
+                required
+                autoExpand={{ on: true, maxHeight: 300 }}
+                hasError={appealConclusionErrorMessage !== ''}
+                errorMessage={appealConclusionErrorMessage}
+              />
+            </Box>
+            <Box marginBottom={10}>
+              <SectionHeading
+                title={formatMessage(strings.courtConclusionHeading)}
+                required
+              />
+              <InputFileUpload
+                fileList={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.APPEAL_RULING,
+                )}
+                accept="application/pdf"
+                header={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) => {
+                  handleUpload(
+                    addUploadFiles(files, CaseFileCategory.APPEAL_RULING),
+                    updateUploadFile,
+                  )
+                }}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+              />
+            </Box>
+          </>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`}
-          onNextButtonClick={async () => {
-            const caseTransitioned = await transitionCase(
-              workingCase.id,
-              CaseTransition.COMPLETE_APPEAL,
-              setWorkingCase,
-            )
-
-            if (caseTransitioned) {
-              setVisibleModal(true)
-            }
-          }}
+          previousUrl={`${constants.COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isStepValid}
           nextButtonIcon="arrowForward"
-          nextButtonText={formatMessage(strings.nextButtonFooter)}
         />
       </FormContentContainer>
-      {visibleModal && (
-        <Modal
-          title={formatMessage(strings.uploadCompletedModalTitle)}
-          text={formatMessage(strings.uploadCompletedModalText)}
-          secondaryButtonText={formatMessage(core.closeModal)}
-          onClose={() => setVisibleModal(false)}
-          onSecondaryButtonClick={() => {
-            router.push(
-              `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-            )
-          }}
-        />
-      )}
     </PageLayout>
   )
 }

@@ -80,10 +80,7 @@ async function ensureIDSsession(
       )
     }
     const sessionObject = JSON.parse(sessionMatch[1])
-    if (
-      sessionObject.status === 'No Session' ||
-      sessionObject.expiresIn < 5 * 60
-    ) {
+    if (sessionObject.status === 'No Session' || sessionObject.isExpired) {
       const idsPage = await context.newPage()
       if (typeof authTrigger === 'string') await idsPage.goto(authTrigger)
       else authTrigger = await authTrigger(idsPage)
@@ -156,13 +153,19 @@ export async function session({
   return context
 }
 
-export async function judicialSystemSession({ browser }: { browser: Browser }) {
+export async function judicialSystemSession({
+  browser,
+  homeUrl,
+}: {
+  browser: Browser
+  homeUrl?: string
+}) {
   const context = await browser.newContext()
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
   await ensureCognitoSessionIfNeeded(
     page,
-    JUDICIAL_SYSTEM_HOME_URL,
+    homeUrl ?? JUDICIAL_SYSTEM_HOME_URL,
     authUrlPrefix,
   )
   await page.close()

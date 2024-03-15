@@ -1,10 +1,11 @@
+import { useMemo } from 'react'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
-import { useMemo } from 'react'
 
 import * as styles from './FjarsyslaRikisinsHeader.css'
 
@@ -20,9 +21,13 @@ const getDefaultStyle = () => {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
-const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
+const FjarsyslaRikisinsHeader = ({
+  organizationPage,
+  logoAltText,
+}: HeaderProps) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
@@ -51,7 +56,7 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -68,7 +73,7 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>

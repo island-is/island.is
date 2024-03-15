@@ -2,11 +2,13 @@ import fetch from 'isomorphic-fetch'
 import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
+
 import { User } from '@island.is/judicial-system/types'
+
+import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { Case } from '../../case'
 import { PoliceCaseInfo } from '../models/policeCaseInfo.model'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('isomorphic-fetch')
 
@@ -96,6 +98,7 @@ describe('PoliceController - Get police case info', () => {
               upprunalegtMalsnumer: '007-2021-000001',
               brotFra: '2021-02-23T13:17:00',
               vettvangur: 'Testgata 1, 101',
+              licencePlate: 'ABC-123',
             },
             {
               upprunalegtMalsnumer: '007-2020-000103',
@@ -113,6 +116,7 @@ describe('PoliceController - Get police case info', () => {
           policeCaseNumber: '007-2021-000001',
           place: 'Testgata 1, 101',
           date: new Date('2021-02-23T13:17:00'),
+          licencePlate: 'ABC-123',
         },
         { policeCaseNumber: '007-2020-000103' },
         { policeCaseNumber: '007-2020-000057' },

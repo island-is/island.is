@@ -3,9 +3,11 @@ import {
   buildCustomField,
   buildMultiField,
   buildSubmitField,
+  buildPaymentChargeOverviewField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
+import { getChargeItemCodes } from '../../utils'
 
 export const paymentSection = buildSection({
   id: 'payment',
@@ -16,10 +18,15 @@ export const paymentSection = buildSection({
       title: payment.general.pageTitle,
       space: 1,
       children: [
-        buildCustomField({
-          id: 'PaymentChargeOverview',
+        buildPaymentChargeOverviewField({
+          id: 'uiForms.paymentChargeOverviewMultifield',
           title: '',
-          component: 'PaymentChargeOverview',
+          forPaymentLabel: payment.paymentChargeOverview.forPayment,
+          totalLabel: payment.paymentChargeOverview.total,
+          getSelectedChargeItems: (_) =>
+            getChargeItemCodes().map((x) => ({
+              chargeItemCode: x,
+            })),
         }),
         buildCustomField({
           id: 'ValidationErrorMessages',

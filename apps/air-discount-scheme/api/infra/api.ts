@@ -34,7 +34,6 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET',
@@ -65,6 +64,12 @@ export const serviceSetup = (services: {
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
+    })
+    .replicaCount({
+      min: 2,
+      max: 10,
+      default: 2,
+      scalingMagicNumber: 20,
     })
     .readiness('/liveness')
     .liveness('/liveness')

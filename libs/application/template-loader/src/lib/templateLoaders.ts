@@ -15,6 +15,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/driving-assessment-approval'),
   [ApplicationTypes.PASSPORT]: () =>
     import('@island.is/application/templates/passport'),
+  [ApplicationTypes.PASSPORT_ANNULMENT]: () =>
+    import('@island.is/application/templates/passport-annulment'),
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: () =>
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
@@ -117,6 +119,58 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/alcohol-tax-redemption'),
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
     import('@island.is/application/templates/european-health-insurance-card'),
+  [ApplicationTypes.OLD_AGE_PENSION]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/old-age-pension'
+    ),
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/household-supplement'
+    ),
+  [ApplicationTypes.CAR_RECYCLING]: () =>
+    import('@island.is/application/templates/car-recycling'),
+  [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-creation'
+    ),
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-signing'
+    ),
+  [ApplicationTypes.CITIZENSHIP]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-immigration/citizenship'
+    ),
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
+    ),
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: () =>
+    import('@island.is/application-templates-official-journal-of-iceland'),
+  [ApplicationTypes.ENERGY_FUNDS]: () =>
+    import('@island.is/application/templates/energy-funds'),
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>
+    import('@island.is/application/templates/healthcare-license-certificate'),
+  [ApplicationTypes.PENSION_SUPPLEMENT]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/pension-supplement'
+    ),
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: () =>
+    import(
+      '@island.is/application/templates/aosh/transfer-of-machine-ownership'
+    ),
+  [ApplicationTypes.HOME_SUPPORT]: () =>
+    import('@island.is/application/templates/home-support'),
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: () =>
+    import('@island.is/application/templates/aosh/change-machine-supervisor'),
+  [ApplicationTypes.UNIVERSITY]: () =>
+    import('@island.is/application/templates/university'),
+  [ApplicationTypes.DEREGISTER_MACHINE]: () =>
+    import('@island.is/application/templates/aosh/deregister-machine'),
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
+    import('@island.is/application/templates/grindavik-housing-buyout'),
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
+    import('@island.is/application/templates/aosh/request-for-inspection'),
 }
 
 export default templates

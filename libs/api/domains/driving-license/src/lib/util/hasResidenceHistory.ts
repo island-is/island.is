@@ -26,50 +26,37 @@ interface NationalRegistryAddress {
   municipalityCode?: string | null
 }
 
-export const hasResidenceHistory = (
+export const mapResidence = (
   history: NationalRegistryResidence[] | undefined,
-) => {
-  if (history) {
-    const res = history.map((residence) => {
-      if (residence.country && residence.dateOfChange)
-        return {
-          address: {
-            streetAddress: residence.address.streetName || undefined,
-            postalCode: residence.address.postalCode || undefined,
-            city: residence.address.city || undefined,
-            municipalityCode: residence.address.municipalityCode || undefined,
-          },
-          country: residence.country,
-          dateOfChange: new Date(residence.dateOfChange),
-        }
-    })
-    const countryResidency = computeCountryResidence(res as Residence[])
+): Residence[] => {
+  const mappedHistory = history?.map((residence) => {
+    if (residence.country && residence.dateOfChange)
+      return {
+        address: {
+          streetAddress: residence.address.streetName || undefined,
+          postalCode: residence.address.postalCode || undefined,
+          city: residence.address.city || undefined,
+          municipalityCode: residence.address.municipalityCode || undefined,
+        },
+        country: residence.country,
+        dateOfChange: new Date(residence.dateOfChange),
+      } as Residence
+  })
+  return mappedHistory?.filter(Boolean) as Residence[]
+}
+
+export const hasResidenceHistory = (residence: Residence[] | undefined) => {
+  if (residence) {
+    const countryResidency = computeCountryResidence(residence)
     return countryResidency ? countryResidency['IS'] >= 185 : false
   }
   return false
 }
 
-export const hasLocalResidence = (
-  history: NationalRegistryResidence[] | undefined,
-) => {
-  if (history) {
-    const res = history.map((residence) => {
-      if (residence.country && residence.dateOfChange)
-        return {
-          address: {
-            streetAddress: residence.address.streetName || undefined,
-            postalCode: residence.address.postalCode || undefined,
-            city: residence.address.city || undefined,
-            municipalityCode: residence.address.municipalityCode || undefined,
-          },
-          country: residence.country,
-          dateOfChange: new Date(residence.dateOfChange),
-        }
-    })
-
-    const sorted = (res as Residence[]).sort(
-      ({ dateOfChange: a }, { dateOfChange: b }) =>
-        compareDesc(new Date(a), new Date(b)),
+export const hasLocalResidence = (residence: Residence[] | undefined) => {
+  if (residence) {
+    const sorted = residence.sort(({ dateOfChange: a }, { dateOfChange: b }) =>
+      compareDesc(new Date(a), new Date(b)),
     )
     return sorted[0]?.country === 'IS' || false
   }

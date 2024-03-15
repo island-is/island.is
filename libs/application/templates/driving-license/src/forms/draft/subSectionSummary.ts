@@ -9,7 +9,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, StaticText } from '@island.is/application/types'
-import { NationalRegistryUser, Teacher } from '../../types/schema'
+import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
@@ -20,6 +20,7 @@ import {
   isApplicationForCondition,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',
@@ -29,7 +30,7 @@ export const subSectionSummary = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.overviewMultiFieldTitle,
-      space: 1,
+      space: 2,
       description: m.overviewMultiFieldDescription,
       children: [
         buildSubmitField({
@@ -71,7 +72,10 @@ export const subSectionSummary = buildSubSection({
           label: m.overviewPhoneNumber,
           width: 'half',
           condition: (answers) => !!answers?.phone,
-          value: ({ answers: { phone } }) => phone as string,
+          value: ({ answers: { phone } }) =>
+            formatPhoneNumber(
+              (phone as string).replace(/(^00354|^\+354|\D)/g, ''),
+            ),
         }),
         buildKeyValueField({
           label: m.overviewEmail,
@@ -84,18 +88,11 @@ export const subSectionSummary = buildSubSection({
           width: 'half',
           value: ({ externalData: { nationalRegistry } }) =>
             (nationalRegistry.data as NationalRegistryUser).address
-              ?.streetAddress,
-        }),
-        buildKeyValueField({
-          label: m.overviewPostalCode,
-          width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).address?.postalCode,
-        }),
-        buildKeyValueField({
-          label: m.overviewCity,
-          width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
+              ?.streetAddress +
+            ', ' +
+            (nationalRegistry.data as NationalRegistryUser).address
+              ?.postalCode +
+            ' ' +
             (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
         buildDividerField({
@@ -113,7 +110,7 @@ export const subSectionSummary = buildSubSection({
             answers,
           }) => {
             if (answers.applicationFor === B_TEMP) {
-              const teacher = (data as Teacher[]).find(
+              const teacher = (data as TeacherV4[]).find(
                 ({ nationalId }) =>
                   getValueViaPath(answers, 'drivingInstructor') === nationalId,
               )
@@ -160,7 +157,7 @@ export const subSectionSummary = buildSubSection({
             const item = items.find(
               ({ chargeItemCode }) => chargeItemCode === targetCode,
             )
-            return (item?.priceAmount?.toLocaleString('de-DE') +
+            return (item?.priceAmount?.toLocaleString('is-IS') +
               ' kr.') as StaticText
           },
           width: 'full',

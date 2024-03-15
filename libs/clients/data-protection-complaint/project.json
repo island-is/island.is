@@ -12,11 +12,12 @@
         ]
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/data-protection-complaint/src/gen/fetch/dev -i libs/clients/data-protection-complaint/src/clientConfig.yml"
-      }
+        "command": "yarn openapi-generator -o libs/clients/data-protection-complaint/src/gen/fetch -i libs/clients/data-protection-complaint/src/clientConfig.yml"
+      },
+      "outputs": ["{projectRoot}/src/gen/fetch"]
     },
     "test": {
       "executor": "@nx/jest:jest",

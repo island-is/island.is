@@ -1,3 +1,4 @@
+import max from 'lodash/max'
 import type {
   CreationOptional,
   InferAttributes,
@@ -16,11 +17,14 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { DEFAULT_DOMAIN } from '../../types'
-import { DelegationDTO, DelegationProvider } from '../dto/delegation.dto'
+import { DelegationDTO } from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { MergedDelegationDTO } from '../dto/merged-delegation.dto'
-import { DelegationType } from '../types/delegationType'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 @Table({
   tableName: 'delegation',
@@ -78,17 +82,12 @@ export class Delegation extends Model<
     }
 
     // 2. Find items with value in the array
-    const arrDates = this.delegationScopes
+    const dates = (this.delegationScopes
       ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
-      .map((x) => x.validTo) as Array<Date>
-    if (arrDates && arrDates.length > 0) {
-      // Return the max value
-      return arrDates.reduce((a, b) => {
-        return a > b ? a : b
-      })
-    }
+      .map((x) => x.validTo) || []) as Array<Date>
 
-    return undefined
+    // Return the max value
+    return max(dates)
   }
 
   @CreatedAt
@@ -111,8 +110,8 @@ export class Delegation extends Model<
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],
-      provider: DelegationProvider.Custom,
-      type: DelegationType.Custom,
+      provider: AuthDelegationProvider.Custom,
+      type: AuthDelegationType.Custom,
       domainName: this.domainName,
     }
   }
@@ -124,7 +123,7 @@ export class Delegation extends Model<
       toNationalId: this.toNationalId,
       toName: this.toName,
       validTo: this.validTo,
-      types: [DelegationType.Custom],
+      types: [AuthDelegationType.Custom],
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],

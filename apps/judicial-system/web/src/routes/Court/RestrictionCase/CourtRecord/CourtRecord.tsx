@@ -12,10 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   closedCourt,
   core,
@@ -31,24 +28,27 @@ import {
   FormContext,
   FormFooter,
   HideableText,
+  PageHeader,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
+  useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import { formatCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { isCourtRecordStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { formatCustodyRestrictions } from '../../../../utils/restrictions'
-import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import AppealSections from '../../components/AppealSections/AppealSections'
 
 export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -201,7 +201,7 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
         {
           courtStartDate: workingCase.courtDate,
           courtLocation:
-            workingCase.court &&
+            workingCase.court?.name &&
             `í ${
               workingCase.court.name.indexOf('dómur') > -1
                 ? workingCase.court.name.replace('dómur', 'dómi')
@@ -293,7 +293,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'courtLocation',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLocationErrorMessage,
                   setCourtLocationMessage,
@@ -347,7 +346,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'courtAttendees',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
               )
             }
@@ -388,7 +386,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'sessionBookings',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
                   setSessionBookingsErrorMessage,
@@ -451,7 +448,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'endOfSessionBookings',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

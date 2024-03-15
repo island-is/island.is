@@ -16,6 +16,12 @@ export class OwnerChangeAnswersVehicle {
 }
 
 @InputType()
+export class OwnerChangeAnswersVehicleMileage {
+  @Field(() => String, { nullable: true })
+  value?: string
+}
+
+@InputType()
 export class OwnerChangeAnswersUser {
   @Field(() => String, { nullable: false })
   nationalId!: string
@@ -58,6 +64,9 @@ export class OwnerChangeAnswers {
 
   @Field(() => OwnerChangeAnswersVehicle, { nullable: false })
   vehicle!: OwnerChangeAnswersVehicle
+
+  @Field(() => OwnerChangeAnswersVehicleMileage, { nullable: false })
+  vehicleMileage!: OwnerChangeAnswersVehicleMileage
 
   @Field(() => OwnerChangeAnswersUser, { nullable: false })
   seller!: OwnerChangeAnswersUser

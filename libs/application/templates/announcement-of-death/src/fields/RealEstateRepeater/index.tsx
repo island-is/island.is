@@ -54,7 +54,7 @@ export const RealEstateRepeater: FC<
 
   const handleAddProperty = () =>
     append({
-      share: 1,
+      share: 100,
       assetNumber: '',
       description: '',
       initial: false,
@@ -80,7 +80,7 @@ export const RealEstateRepeater: FC<
                 description={[
                   `${formatMessage(m.propertyNumber)}: ${asset.assetNumber}`,
                   asset.share
-                    ? `${formatMessage(m.propertyShare)}: ${asset.share * 100}%`
+                    ? `${formatMessage(m.propertyShare)}: ${asset.share}%`
                     : '',
                   <Box marginTop={1} as="span">
                     <Button
@@ -172,7 +172,7 @@ const Item = ({
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence.
     // Has the prefix F.
-    if (/[Ff]{0,1}\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
+    if (/^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(propertyNumberInput.trim())) {
       getProperty({
         variables: {
           input: {

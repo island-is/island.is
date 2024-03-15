@@ -31,9 +31,10 @@ export const GET_OPEN_DATA_PAGE_QUERY = gql`
         id
         title
         cards {
+          id
           title
           body
-          link
+          linkUrl
           linkText
         }
       }

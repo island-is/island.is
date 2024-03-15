@@ -17,6 +17,8 @@ interface ModalProps {
   onPrimaryButtonClick?: () => void
   isPrimaryButtonLoading?: boolean
   isPrimaryButtonDisabled?: boolean
+  primaryButtonColorScheme?: 'default' | 'destructive'
+  isSecondaryButtonLoading?: boolean
   errorMessage?: string
   children?: ReactNode
   invertButtonColors?: boolean
@@ -32,6 +34,8 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
   onPrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
+  primaryButtonColorScheme = 'default',
+  isSecondaryButtonLoading,
   errorMessage,
   children,
   invertButtonColors,
@@ -53,10 +57,12 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
       <motion.div
         key="modal"
         className={styles.container}
-        data-testid="modal"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        role="dialog"
+        aria-modal="true"
+        data-testid="modal"
       >
         <motion.div
           className={styles.modalContainer}
@@ -93,6 +99,7 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
                   data-testid="modalSecondaryButton"
                   variant={invertButtonColors ? undefined : 'ghost'}
                   onClick={onSecondaryButtonClick}
+                  loading={isSecondaryButtonLoading}
                 >
                   {secondaryButtonText}
                 </Button>
@@ -105,6 +112,7 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
                 onClick={onPrimaryButtonClick}
                 loading={isPrimaryButtonLoading}
                 disabled={isPrimaryButtonDisabled}
+                colorScheme={primaryButtonColorScheme}
               >
                 {primaryButtonText}
               </Button>
@@ -133,6 +141,8 @@ const ModalPortal = ({
   onPrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
+  primaryButtonColorScheme,
+  isSecondaryButtonLoading,
   errorMessage,
   children,
   invertButtonColors,
@@ -151,6 +161,8 @@ const ModalPortal = ({
       onPrimaryButtonClick={onPrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
       isPrimaryButtonDisabled={isPrimaryButtonDisabled}
+      primaryButtonColorScheme={primaryButtonColorScheme}
+      isSecondaryButtonLoading={isSecondaryButtonLoading}
       errorMessage={errorMessage}
       children={children}
       invertButtonColors={invertButtonColors}

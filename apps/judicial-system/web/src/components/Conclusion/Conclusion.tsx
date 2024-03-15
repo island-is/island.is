@@ -6,8 +6,8 @@ import BlueBox from '../BlueBox/BlueBox'
 
 interface Props {
   title: string
-  conclusionText?: string
-  judgeName?: string
+  conclusionText?: string | null
+  judgeName?: string | null
 }
 
 const Conclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {

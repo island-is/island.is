@@ -78,6 +78,13 @@ export const externalData = {
     },
   }),
   qualityPhotoAndSignature: defineMessages({
+    error: {
+      id: 'ta.dtdc.application:externalData.qualityPhotoAndSignature.error',
+      defaultMessage:
+        'Það kom upp villa við að sækja mynd og undirskrift úr ökuskírteinaskrá',
+      description:
+        'An error occured fetching photo and signature in driving license registry',
+    },
     missing: {
       id: 'ta.dtdc.application:externalData.qualityPhotoAndSignature.missing',
       defaultMessage: 'Ekki fannst mynd og undirskrift úr ökuskírteinaskrá',
@@ -86,6 +93,13 @@ export const externalData = {
     },
   }),
   newestDriversCard: defineMessages({
+    error: {
+      id: 'ta.dtdc.application:externalData.newestDriversCard.error',
+      defaultMessage:
+        'Það kom upp villa við að sækja íslenskt útgefið ökumannskort',
+      description:
+        'An error occured fetching drivers cards published in Iceland',
+    },
     title: {
       id: 'ta.dtdc.application:externalData.newestDriversCard.title',
       defaultMessage: 'Upplýsingar úr ökutækjaskrá',
@@ -107,6 +121,13 @@ export const externalData = {
       id: 'ta.dtdc.application:externalData.tachonetDriversCard.subTitle',
       defaultMessage: 'Fyrir erlend útgefin ökumannskort',
       description: 'For drivers cards published in Iceland',
+    },
+  }),
+  submit: defineMessages({
+    error: {
+      id: 'ta.dtdc.application:externalData.submit.error',
+      defaultMessage: 'Það kom upp villa við að senda inn umsókn',
+      description: 'An error occured submitting application',
     },
   }),
 }

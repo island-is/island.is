@@ -43,12 +43,6 @@ export interface StudentQueryInput {
   nationalId: string
 }
 
-export interface Jurisdiction {
-  id: number
-  name: string
-  zip: number
-}
-
 export enum RequirementKey {
   drivingAssessmentMissing = 'DrivingAssessmentMissing',
   drivingSchoolMissing = 'DrivingSchoolMissing',
@@ -70,6 +64,7 @@ export enum RequirementKey {
 export interface ApplicationEligibilityRequirement {
   key: RequirementKey
   requirementMet: boolean
+  daysOfResidency?: number
 }
 
 export interface ApplicationEligibility {

@@ -1,26 +1,6 @@
+import { Locale } from 'locale'
 import { useRouter } from 'next/router'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  ContentLanguage,
-  Organization,
-  Query,
-  QueryGetFeaturedSupportQnAsArgs,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationArgs,
-  QueryGetSupportCategoriesInOrganizationArgs,
-  QueryGetSupportQnAsArgs,
-  SupportCategory,
-  QueryGetServiceWebPageArgs,
-} from '@island.is/web/graphql/schema'
-import {
-  GET_FEATURED_SUPPORT_QNAS,
-  GET_NAMESPACE_QUERY,
-  GET_SERVICE_WEB_ORGANIZATION,
-  GET_SERVICE_WEB_PAGE_QUERY,
-  GET_SUPPORT_CATEGORIES,
-  GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
-} from '../../queries'
-import { Screen } from '../../../types'
+
 import {
   Box,
   GridColumn,
@@ -30,29 +10,48 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { sortAlpha } from '@island.is/shared/utils'
-
-import { CustomNextError } from '@island.is/web/units/errors'
 import {
   Card,
-  SimpleStackedSlider,
-  ServiceWebWrapper,
   ServiceWebContext,
+  ServiceWebWrapper,
+  SimpleStackedSlider,
   SliceMachine,
 } from '@island.is/web/components'
 import {
-  useNamespace,
+  ContentLanguage,
+  Organization,
+  Query,
+  QueryGetFeaturedSupportQnAsArgs,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
+  QueryGetServiceWebPageArgs,
+  QueryGetSupportCategoriesInOrganizationArgs,
+  QueryGetSupportQnAsArgs,
+  SupportCategory,
+} from '@island.is/web/graphql/schema'
+import {
   LinkResolverResponse,
   useLinkResolver,
-  LinkType,
+  useNamespace,
 } from '@island.is/web/hooks'
-import ContactBanner from '../ContactBanner/ContactBanner'
-import { getSlugPart } from '../utils'
-import { Locale } from 'locale'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Colors } from '@island.is/island-ui/theme'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 
+import { Screen } from '../../../types'
+import {
+  GET_FEATURED_SUPPORT_QNAS,
+  GET_NAMESPACE_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
+  GET_SUPPORT_CATEGORIES,
+  GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
+} from '../../queries'
+import ContactBanner from '../ContactBanner/ContactBanner'
+import { getSlugPart } from '../utils'
 import * as styles from './Home.css'
 
 interface HomeProps {
@@ -92,10 +91,12 @@ const Home: Screen<HomeProps> = ({
     institutionSlug.includes('mannaudstorg')
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const headerTitle = o(
-    'serviceWebHeaderTitle',
-    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-  )
+  const headerTitle = institutionSlugBelongsToMannaudstorg
+    ? o(
+        'serviceWebHeaderTitle',
+        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      )
+    : ''
   const logoUrl = organization?.logo?.url ?? ''
   const searchTitle = o(
     'serviceWebSearchTitle',
@@ -106,9 +107,11 @@ const Home: Screen<HomeProps> = ({
     'serviceWebPageTitle',
     `${
       institutionSlug && organization && organization.title
-        ? organization.title + ' | '
+        ? institutionSlugBelongsToMannaudstorg
+          ? organization.title + ' | '
+          : organization.title
         : ''
-    }${o('serviceWebPageTitleSuffix', headerTitle)}`,
+    }`,
   )
 
   const hasContent = !!supportCategories?.length
@@ -133,6 +136,7 @@ const Home: Screen<HomeProps> = ({
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
       indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
       showLogoOnMobileDisplays={!institutionSlugBelongsToMannaudstorg}
+      pageData={serviceWebPage}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>

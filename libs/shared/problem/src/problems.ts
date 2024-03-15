@@ -32,6 +32,12 @@ export interface BadSubjectProblem extends BaseProblem {
   alternativeSubjects?: AlternativeSubject[]
 }
 
+export interface AttemptFailedProblem extends BaseProblem {
+  type: ProblemType.ATTEMPT_FAILED
+  remainingAttempts: number
+  fields?: ValidationFailedFields
+}
+
 export interface ProviderErrorReason {
   title: StaticText
   summary: StaticText

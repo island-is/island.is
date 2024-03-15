@@ -1,20 +1,21 @@
 import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  MessageType,
-  MessageService,
-  CaseFileMessage,
-  PoliceCaseMessage,
-  DefendantMessage,
-} from '@island.is/judicial-system/message'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+
 import type { CaseMessage } from '@island.is/judicial-system/message'
+import {
+  CaseFileMessage,
+  DefendantMessage,
+  MessageService,
+  MessageType,
+  PoliceCaseMessage,
+} from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { InternalDeliveryService } from './internalDelivery.service'
 import { appModuleConfig } from './app.config'
+import { InternalDeliveryService } from './internalDelivery.service'
 
 @Injectable()
 export class MessageHandlerService implements OnModuleDestroy {
@@ -102,6 +103,37 @@ export class MessageHandlerService implements OnModuleDestroy {
           message.user,
           message.caseId,
           'deliverCaseToPolice',
+        )
+        break
+      case MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverIndictmentCaseToPolice',
+        )
+        break
+      case MessageType.DELIVER_INDICTMENT_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverIndictmentToPolice',
+        )
+        break
+      case MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE:
+        {
+          const policeCaseMessage = message as PoliceCaseMessage
+          handled = await this.internalDeliveryService.deliver(
+            message.user,
+            policeCaseMessage.caseId,
+            `deliverCaseFilesRecordToPolice/${policeCaseMessage.policeCaseNumber}`,
+          )
+        }
+        break
+      case MessageType.DELIVER_APPEAL_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverAppealToPolice',
         )
         break
       case MessageType.ARCHIVE_CASE_FILE: {
@@ -226,6 +258,38 @@ export class MessageHandlerService implements OnModuleDestroy {
           message.caseId,
           'notification',
           { type: NotificationType.APPEAL_COMPLETED },
+        )
+        break
+      case MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.APPEAL_JUDGES_ASSIGNED },
+        )
+        break
+      case MessageType.SEND_APPEAL_CASE_FILES_UPDATED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.APPEAL_CASE_FILES_UPDATED },
+        )
+        break
+      case MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.APPEAL_WITHDRAWN },
+        )
+        break
+      case MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.INDICTMENT_DENIED },
         )
         break
       default:

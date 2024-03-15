@@ -1,5 +1,6 @@
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import startOfDay from 'date-fns/startOfDay'
 import { isCompany } from 'kennitala'
 import { and, Op, or } from 'sequelize'
 import { Includeable } from 'sequelize/types/model'
@@ -38,6 +39,8 @@ export class DelegationResourcesService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(Domain)
     private domainModel: typeof Domain,
+    @InjectModel(DelegationScope)
+    private delegationScopeModel: typeof DelegationScope,
     private resourceTranslationService: ResourceTranslationService,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
@@ -67,7 +70,11 @@ export class DelegationResourcesService {
     const domains = await this.domainModel.findAll({
       where: onlyDelegations
         ? and(
-            ...this.apiScopeFilter({ user, prefix: 'scopes', direction }),
+            ...(await this.apiScopeFilter({
+              user,
+              prefix: 'scopes',
+              direction,
+            })),
             domainNameFilter,
           )
         : domainNameFilter,
@@ -88,7 +95,7 @@ export class DelegationResourcesService {
       return this.resourceTranslationService.translateDomains(domains, language)
     }
 
-    return domains
+    return domains.sort((a, b) => a.name.localeCompare(b.name, 'is'))
   }
 
   async findOneDomain(
@@ -101,7 +108,7 @@ export class DelegationResourcesService {
         {
           name: domainName,
         },
-        ...this.apiScopeFilter({ user, prefix: 'scopes' }),
+        ...(await this.apiScopeFilter({ user, prefix: 'scopes' })),
       ),
       include: [
         {
@@ -185,7 +192,7 @@ export class DelegationResourcesService {
     return scopesToCheck.every((scopeName) => userScopes.includes(scopeName))
   }
 
-  apiScopeFilter({
+  async apiScopeFilter({
     user,
     prefix,
     direction,
@@ -205,7 +212,7 @@ export class DelegationResourcesService {
       apiScopeFilter.push(
         ...this.skipScopeFilter(user, prefix),
         ...this.accessControlFilter(user, prefix),
-        ...this.delegationTypeFilter(user, prefix),
+        ...(await this.delegationTypeFilter(user, prefix)),
         ...this.grantToAuthenticatedUserFilter(user, prefix),
       )
     }
@@ -215,10 +222,7 @@ export class DelegationResourcesService {
 
   apiScopeInclude(user: User, direction?: DelegationDirection) {
     if (direction === DelegationDirection.OUTGOING) {
-      return [
-        this.accessControlInclude(user),
-        ...this.delegationTypeInclude(user),
-      ]
+      return [this.accessControlInclude(user)]
     } else {
       return []
     }
@@ -243,7 +247,7 @@ export class DelegationResourcesService {
         {
           domainName,
         },
-        ...this.apiScopeFilter({ user, direction }),
+        ...(await this.apiScopeFilter({ user, direction })),
       ),
       include: [ApiScopeGroup, ...this.apiScopeInclude(user, direction)],
       order: [
@@ -298,38 +302,7 @@ export class DelegationResourcesService {
     ]
   }
 
-  private delegationTypeInclude(user: User): Includeable[] {
-    if (
-      !user.delegationType ||
-      !user.actor ||
-      !user.delegationType.includes(AuthDelegationType.Custom)
-    ) {
-      return []
-    }
-
-    return [
-      {
-        attributes: [],
-        model: DelegationScope,
-        required: false,
-        duplicating: false,
-        include: [
-          {
-            attributes: [],
-            model: Delegation,
-            where: {
-              fromNationalId: user.nationalId,
-              toNationalId: user.actor.nationalId,
-            },
-            required: false,
-            duplicating: false,
-          },
-        ],
-      },
-    ]
-  }
-
-  private delegationTypeFilter(user: User, prefix?: string) {
+  private async delegationTypeFilter(user: User, prefix?: string) {
     if (!user.delegationType || !user.actor) {
       return []
     }
@@ -348,9 +321,9 @@ export class DelegationResourcesService {
       delegationOr.push({ [col(prefix, 'grantToProcuringHolders')]: true })
     }
     if (user.delegationType.includes(AuthDelegationType.Custom)) {
+      const scopeNames = await this.findActorCustomDelegationScopes(user)
       delegationOr.push({
-        [col(prefix, 'delegationScopes', 'delegation', 'toNationalId')]:
-          user.actor.nationalId,
+        [col(prefix, 'name')]: scopeNames,
       })
     }
     return [or(...delegationOr)]
@@ -387,5 +360,30 @@ export class DelegationResourcesService {
       }
     }
     return false
+  }
+
+  private async findActorCustomDelegationScopes(user: User): Promise<string[]> {
+    if (!user.actor) {
+      return []
+    }
+
+    const today = startOfDay(new Date())
+    const delegationScopes = await this.delegationScopeModel.findAll({
+      attributes: ['scopeName'],
+      include: {
+        attributes: [],
+        model: Delegation,
+        where: {
+          fromNationalId: user.nationalId,
+          toNationalId: user.actor.nationalId,
+        },
+      },
+      where: {
+        validFrom: { [Op.lte]: today },
+        validTo: or({ [Op.is]: undefined }, { [Op.gte]: today }),
+      },
+      group: 'scopeName',
+    })
+    return delegationScopes.map((delegationScope) => delegationScope.scopeName)
   }
 }

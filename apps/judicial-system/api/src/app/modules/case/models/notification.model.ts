@@ -1,34 +1,32 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  Notification as TNotification,
-  NotificationType,
-  Recipient as TRecipient,
-} from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
+
+registerEnumType(NotificationType, { name: 'NotificationType' })
 
 @ObjectType()
-export class Recipient implements TRecipient {
-  @Field()
+export class Recipient {
+  @Field({ nullable: true })
   address?: string
 
-  @Field()
-  success!: boolean
+  @Field({ nullable: true })
+  success?: boolean
 }
 
 @ObjectType()
-export class Notification implements TNotification {
+export class Notification {
   @Field(() => ID)
   readonly id!: string
 
-  @Field()
-  readonly created!: string
+  @Field({ nullable: true })
+  readonly created?: string
 
-  @Field()
-  readonly caseId!: string
+  @Field({ nullable: true })
+  readonly caseId?: string
 
-  @Field(() => String)
-  readonly type!: NotificationType
+  @Field(() => NotificationType, { nullable: true })
+  readonly type?: NotificationType
 
-  @Field(() => [Recipient])
-  readonly recipients!: Recipient[]
+  @Field(() => [Recipient], { nullable: true })
+  readonly recipients?: Recipient[]
 }

@@ -21,6 +21,8 @@ import {
   Broker,
   PropertyDetail,
   TemporaryEventLicence,
+  VehicleRegistration,
+  RegistryPerson,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -40,6 +42,9 @@ import {
   mapAlcoholLicence,
   cleanPropertyNumber,
   mapTemporaryEventLicence,
+  mapMasterLicence,
+  mapVehicle,
+  mapDepartedToRegistryPerson,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -47,9 +52,9 @@ import {
   SvarSkeyti,
   Configuration,
   VirkLeyfiGetRequest,
-  TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
   VedbondTegundAndlags,
+  Skilabod,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -70,6 +75,7 @@ export class SyslumennService {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-syslumenn',
+          organizationSlug: 'syslumenn',
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,
@@ -104,11 +110,11 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
 
     const homestays = year
-      ? await api.virkarHeimagistingarGet({
+      ? await api.virkarHeimagistingarGet2({
           audkenni: id,
-          ar: year ? JSON.stringify(year) : null,
+          ar: JSON.stringify(year),
         })
-      : await api.virkarHeimagistingarGetAll({
+      : await api.virkarHeimagistingarGet({
           audkenni: id,
         })
 
@@ -259,6 +265,7 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
+
     const response = await api.syslMottakaGognPost(payload).catch((e) => {
       throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
     })
@@ -269,6 +276,27 @@ export class SyslumennService {
     }
 
     return mapDataUploadResponse(response)
+  }
+
+  async uploadDataPreemptiveErrorCheck(
+    persons: Person[],
+    attachments: Attachment[] | undefined,
+    extraData: { [key: string]: string },
+    uploadDataName: string,
+    uploadDataId?: string,
+  ): Promise<Skilabod> {
+    const { id, api } = await this.createApi()
+
+    const payload = constructUploadDataObject(
+      id,
+      persons,
+      attachments,
+      extraData,
+      uploadDataName,
+      uploadDataId,
+    )
+
+    return api.syslMottakaVilluprofaGognPost(payload)
   }
 
   async getCertificateInfo(
@@ -336,6 +364,15 @@ export class SyslumennService {
 
   async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
     return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
+  }
+
+  async getVehicle(vehicleId: string): Promise<VehicleRegistration> {
+    const { id, api } = await this.createApi()
+    const response = await api.okutaekiGet({
+      audkenni: id,
+      fastanumer: vehicleId,
+    })
+    return mapVehicle(response)
   }
 
   async getMortgageCertificate(
@@ -447,6 +484,18 @@ export class SyslumennService {
     }
   }
 
+  async getRegistryPerson(nationalId: string): Promise<RegistryPerson> {
+    const { id, api } = await this.createApi()
+    const res = await api.leitaAdKennitoluIThjodskraPost({
+      skeyti: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+
+    return mapDepartedToRegistryPerson(res)
+  }
+
   async changeEstateRegistrant(
     currentRegistrantNationalId: string,
     newRegistrantNationalId: string,
@@ -473,5 +522,28 @@ export class SyslumennService {
       },
     })
     return res.yfirlit?.map(mapEstateInfo) ?? []
+  }
+
+  async getEstateInfoWithAvailableSettlements(
+    nationalId: string,
+  ): Promise<EstateInfo[]> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarRadstofunDanarbusPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res.yfirlit?.map(mapEstateInfo) ?? []
+  }
+
+  async getMasterLicences() {
+    const { id, api } = await this.createApi()
+    const res = await api.meistaraleyfiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapMasterLicence)
+      .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
   }
 }

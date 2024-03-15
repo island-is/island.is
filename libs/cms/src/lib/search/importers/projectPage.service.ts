@@ -16,7 +16,9 @@ export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
   }
 
   doMapping(entries: IProjectPage[]) {
-    logger.info('Mapping project page', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping project page', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

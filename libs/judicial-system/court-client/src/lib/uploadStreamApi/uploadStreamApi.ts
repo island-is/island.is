@@ -1,6 +1,6 @@
+import FormData from 'form-data'
 import { Agent } from 'http'
 import request from 'request'
-import FormData from 'form-data'
 
 export interface UploadFile {
   value: Buffer

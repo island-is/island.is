@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   CaseOrigin,
@@ -11,10 +11,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { DefendantService } from '../../../defendant'
+import { include, order } from '../../case.service'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { include, order } from '../../case.service'
 
 interface Then {
   result: Case
@@ -25,11 +26,12 @@ type GivenWhenThen = (type: CaseType) => Promise<Then>
 
 describe('CaseController - Create', () => {
   const userId = uuid()
+  const prosecutorsOfficeId = uuid()
   const courtId = uuid()
   const user = {
     id: userId,
     role: UserRole.PROSECUTOR,
-    institution: { defaultCourtId: courtId },
+    institution: { id: prosecutorsOfficeId, defaultCourtId: courtId },
   } as TUser
   const createProperties = {
     property1: uuid(),
@@ -99,6 +101,7 @@ describe('CaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
+          prosecutorsOfficeId,
         },
         { transaction },
       )
@@ -135,6 +138,7 @@ describe('CaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
+          prosecutorsOfficeId,
         },
         { transaction },
       )

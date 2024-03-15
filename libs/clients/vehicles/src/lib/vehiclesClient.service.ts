@@ -25,6 +25,7 @@ export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-vehicles',
+          organizationSlug: 'samgongustofa',
           timeout: config.fetch.timeout,
           autoAuth: idsClientConfig.isConfigured
             ? {

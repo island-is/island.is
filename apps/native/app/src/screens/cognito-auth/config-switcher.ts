@@ -1,10 +1,10 @@
-import {config} from '../../config';
+import { config } from '../../config'
 
 const identityServer = {
   clientId: '@island.is/app',
   scopes:
     'openid profile offline_access @island.is/applications:read @island.is/documents @island.is/user-profile:read @island.is/internal @island.is/me:details',
-};
+}
 
 export const configs = [
   {
@@ -36,10 +36,10 @@ export const configs = [
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
-];
+]
 
 export function cognitoAuthUrl() {
-  const url = `https://cognito.shared.devland.is/login`;
+  const url = `https://cognito.shared.devland.is/login`
   const params = {
     approval_prompt: 'prompt',
     client_id: 'bre6r7d5e7imkcgbt7et1kqlc',
@@ -47,6 +47,6 @@ export function cognitoAuthUrl() {
     response_type: 'token',
     scope: 'openid',
     state: 'state',
-  };
-  return `${url}?${new URLSearchParams(params)}`;
+  }
+  return `${url}?${new URLSearchParams(params)}`
 }

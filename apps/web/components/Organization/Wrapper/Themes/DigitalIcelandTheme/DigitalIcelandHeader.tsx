@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
 import {
   Box,
   GridColumn,
@@ -9,16 +9,19 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import * as styles from './DigitalIcelandHeader.css'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
+import * as styles from './DigitalIcelandHeader.css'
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const DigitalIcelandHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
+  logoAltText,
 }) => {
   const { linkResolver } = useLinkResolver()
 
@@ -45,7 +48,7 @@ const DigitalIcelandHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                       <img
                         src={organizationPage.organization.logo.url}
                         className={styles.headerLogo}
-                        alt=""
+                        alt={logoAltText}
                       />
                     </Link>
                   )
@@ -79,7 +82,7 @@ const DigitalIcelandHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
             <img
               src={organizationPage.organization.logo.url}
               className={styles.headerLogo}
-              alt=""
+              alt={logoAltText}
             />
           </Link>
         )}

@@ -9,7 +9,8 @@ import {
 import { ContentfulService } from './contentful.service'
 import { ArticleSyncService } from './importers/article.service'
 import { CmsSyncService } from './cmsSync.service'
-import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
+import { AnchorPageSyncService } from './importers/anchorPage.service'
+import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
@@ -25,6 +26,10 @@ import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
+import { EventSyncService } from './importers/event.service'
+import { ManualSyncService } from './importers/manual.service'
+import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
+import { CustomPageSyncService } from './importers/customPage.service'
 
 @Module({
   imports: [
@@ -40,7 +45,8 @@ import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
     CmsSyncService,
     ArticleSyncService,
     SubArticleSyncService,
-    LifeEventsPageSyncService,
+    AnchorPageSyncService,
+    LifeEventPageSyncService,
     ArticleCategorySyncService,
     NewsSyncService,
     AdgerdirPageSyncService,
@@ -55,6 +61,10 @@ import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
     EnhancedAssetSyncService,
     VacancySyncService,
     ServiceWebPageSyncService,
+    EventSyncService,
+    ManualSyncService,
+    ManualChapterItemSyncService,
+    CustomPageSyncService,
   ],
   exports: [CmsSyncService],
 })

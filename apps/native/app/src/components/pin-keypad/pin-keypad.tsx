@@ -1,73 +1,73 @@
-import {dynamicColor, font} from '@ui';
-import React, {useCallback, useEffect, useState} from 'react';
-import {useIntl} from 'react-intl';
+import { dynamicColor, font } from '@ui'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Dimensions,
   DynamicColorIOS,
   Image,
   Platform,
-  useWindowDimensions,
   View,
-} from 'react-native';
-import styled, {useTheme} from 'styled-components/native';
-import {testIDs} from '../../utils/test-ids';
+  useWindowDimensions,
+} from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { testIDs } from '../../utils/test-ids'
 
 interface PinKeypadProps {
-  onInput?(value: string): void;
-  onInputIn?(value: string): void;
-  onInputOut?(value: string): void;
-  onFaceIdPress?(value: string): void;
-  onBackPress?(value: string): void;
-  biometricType?: 'faceid' | 'fingerprint' | 'iris';
-  back?: boolean;
+  onInput?(value: string): void
+  onInputIn?(value: string): void
+  onInputOut?(value: string): void
+  onFaceIdPress?(value: string): void
+  onBackPress?(value: string): void
+  biometricType?: 'faceid' | 'fingerprint' | 'iris'
+  back?: boolean
 }
 
 interface NumButtonProps {
-  value: string;
-  testID: string;
-  accessibilityLabel?: string;
-  icon?: any;
-  size: number;
-  gutter: number;
-  onPress?(value: string): void;
-  onPressIn?(value: string): void;
-  onPressOut?(value: string): void;
+  value: string
+  testID: string
+  accessibilityLabel?: string
+  icon?: any
+  size: number
+  gutter: number
+  onPress?(value: string): void
+  onPressIn?(value: string): void
+  onPressOut?(value: string): void
 }
 
 interface NumButtonTouchableProps {
-  size?: number;
-  gutter?: number;
+  size?: number
+  gutter?: number
 }
 
 const NumButtonTouchable = styled.TouchableHighlight<NumButtonTouchableProps>`
-  width: ${props => props.size ?? 64}px;
-  height: ${props => props.size ?? 64}px;
-  border-radius: ${props => (props.size ?? 64) / 2}px;
+  width: ${(props) => props.size ?? 64}px;
+  height: ${(props) => props.size ?? 64}px;
+  border-radius: ${(props) => (props.size ?? 64) / 2}px;
   align-items: center;
   justify-content: center;
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     dark: 'shade300',
     light: props.theme.color.blue100,
   }))};
-  margin: ${props => props.gutter ?? 16}px;
-`;
+  margin: ${(props) => props.gutter ?? 16}px;
+`
 
-const NumButtonText = styled.Text<{pressed: boolean}>`
+const NumButtonText = styled.Text<{ pressed: boolean }>`
   ${font({
     fontWeight: '500',
     fontSize: 32,
-    color: props =>
+    color: (props) =>
       props.pressed
         ? '#ffffff'
-        : {dark: 'foreground', light: props.theme.color.blue400},
+        : { dark: 'foreground', light: props.theme.color.blue400 },
   })}
-`;
+`
 
-const Gap = styled.View<{size?: number; gutter?: number}>`
-  width: ${props => props.size ?? 64}px;
-  height: ${props => props.size ?? 64}px;
-  margin: ${props => props.gutter ?? 16}px;
-`;
+const Gap = styled.View<{ size?: number; gutter?: number }>`
+  width: ${(props) => props.size ?? 64}px;
+  height: ${(props) => props.size ?? 64}px;
+  margin: ${(props) => props.gutter ?? 16}px;
+`
 
 function NumButton({
   value,
@@ -80,17 +80,17 @@ function NumButton({
   size,
   gutter,
 }: NumButtonProps) {
-  const {width} = Dimensions.get('window');
-  const theme = useTheme();
-  const [pressed, setPressed] = useState(false);
+  const { width } = Dimensions.get('window')
+  const theme = useTheme()
+  const [pressed, setPressed] = useState(false)
   useEffect(() => {
     if (pressed && onPressIn) {
-      onPressIn(value);
+      onPressIn(value)
     }
     if (!pressed && onPressOut) {
-      onPressOut(value);
+      onPressOut(value)
     }
-  }, [pressed]);
+  }, [pressed])
 
   return (
     <NumButtonTouchable
@@ -101,7 +101,8 @@ function NumButton({
       accessibilityLabel={accessibilityLabel || value}
       testID={testID}
       size={size}
-      gutter={gutter}>
+      gutter={gutter}
+    >
       {icon ? (
         <Image
           source={icon}
@@ -122,15 +123,15 @@ function NumButton({
         <NumButtonText pressed={pressed}>{value}</NumButtonText>
       )}
     </NumButtonTouchable>
-  );
+  )
 }
 
 const Row = styled.View`
   flex-direction: row;
-`;
+`
 
-const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a));
-const invlerp = (x: number, y: number, a: number) => clamp((a - x) / (y - x));
+const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a))
+const invlerp = (x: number, y: number, a: number) => clamp((a - x) / (y - x))
 
 export function PinKeypad({
   biometricType,
@@ -141,11 +142,11 @@ export function PinKeypad({
   onFaceIdPress,
   onBackPress,
 }: PinKeypadProps) {
-  const {height} = useWindowDimensions();
-  const r = invlerp(512, 1024, height);
-  const size = 50 + 32 * r;
-  const gutter = 8 + 8 * r;
-  const intl = useIntl();
+  const { height } = useWindowDimensions()
+  const r = invlerp(512, 1024, height)
+  const size = 50 + 32 * r
+  const gutter = 8 + 8 * r
+  const intl = useIntl()
 
   const renderBiometricButton = useCallback(() => {
     switch (biometricType) {
@@ -162,7 +163,7 @@ export function PinKeypad({
             size={size}
             gutter={gutter}
           />
-        );
+        )
       case 'fingerprint':
         return (
           <NumButton
@@ -176,7 +177,7 @@ export function PinKeypad({
             size={size}
             gutter={gutter}
           />
-        );
+        )
       case 'iris':
         return (
           <NumButton
@@ -190,12 +191,12 @@ export function PinKeypad({
             size={size}
             gutter={gutter}
           />
-        );
+        )
 
       default:
-        return <Gap size={size} gutter={gutter} />;
+        return <Gap size={size} gutter={gutter} />
     }
-  }, [biometricType]);
+  }, [biometricType])
 
   return (
     <View>
@@ -314,5 +315,5 @@ export function PinKeypad({
         )}
       </Row>
     </View>
-  );
+  )
 }

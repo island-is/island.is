@@ -3,11 +3,11 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, BadRequestException } from '@nestjs/common'
 
-import { Case as TCase, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
+import appModuleConfig from '../app.config'
 import { CreateCaseDto } from '../app.dto'
 import { Case } from '../app.model'
-import appModuleConfig from '../app.config'
 import { createTestingAppModule } from './createTestingAppModule'
 
 jest.mock('isomorphic-fetch')
@@ -42,6 +42,7 @@ describe('AppController - Greate', () => {
     const caseToCreate: CreateCaseDto = {
       policeCaseNumber: '007-2022-1',
       type: CaseType.CUSTODY,
+      prosecutorNationalId: '1111111111',
       accusedNationalId: '00000000000',
     }
 
@@ -71,7 +72,7 @@ describe('AppController - Greate', () => {
   describe('case created', () => {
     const caseToCreate = {} as CreateCaseDto
     const caseId = uuid()
-    const theCase = { id: caseId } as TCase
+    const theCase = { id: caseId }
     let then: Then
 
     beforeEach(async () => {

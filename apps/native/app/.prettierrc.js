@@ -1,7 +1,15 @@
 module.exports = {
-  arrowParens: 'avoid',
-  bracketSameLine: true,
-  bracketSpacing: false,
   singleQuote: true,
+  semi: false,
   trailingComma: 'all',
-};
+  arrowParens: 'always',
+  endOfLine: 'lf',
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      options: {
+        parser: 'babel-ts',
+      },
+    },
+  ],
+}

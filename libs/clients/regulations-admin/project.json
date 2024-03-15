@@ -19,17 +19,14 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/clients/regulations-admin"]
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run regulations-admin-backend:schemas/build-openapi $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/regulations-admin/gen/fetch -i apps/services/regulations-admin-backend/src/openapi.yaml"
-        ],
-        "parallel": false
+        "command": "yarn openapi-generator -o libs/clients/regulations-admin/gen/fetch -i apps/services/regulations-admin-backend/src/openapi.yaml"
       },
-      "outputs": ["{workspaceRoot}/libs/clients/regulations-admin/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["regulations-admin-backend"],
   "tags": ["lib:client", "scope:client"]
 }

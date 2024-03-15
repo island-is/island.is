@@ -11,7 +11,8 @@ import {
 import { ArticleSyncService } from './importers/article.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { ContentfulService } from './contentful.service'
-import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
+import { AnchorPageSyncService } from './importers/anchorPage.service'
+import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { Entry } from 'contentful'
@@ -29,6 +30,10 @@ import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
+import { EventSyncService } from './importers/event.service'
+import { ManualSyncService } from './importers/manual.service'
+import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
+import { CustomPageSyncService } from './importers/customPage.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -55,7 +60,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
     private readonly subArticleSyncService: SubArticleSyncService,
-    private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
+    private readonly anchorPageSyncService: AnchorPageSyncService,
+    private readonly lifeEventPageSyncService: LifeEventPageSyncService,
     private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
     private readonly menuSyncService: MenuSyncService,
@@ -70,11 +76,16 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly elasticService: ElasticService,
     private readonly vacancyService: VacancySyncService,
     private readonly serviceWebPageSyncService: ServiceWebPageSyncService,
+    private readonly eventSyncService: EventSyncService,
+    private readonly manualSyncService: ManualSyncService,
+    private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
+    private readonly customPageSyncService: CustomPageSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
       this.subArticleSyncService,
-      this.lifeEventsPageSyncService,
+      this.anchorPageSyncService,
+      this.lifeEventPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
       this.adgerdirPageSyncService,
@@ -89,6 +100,10 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.enhancedAssetService,
       this.vacancyService,
       this.serviceWebPageSyncService,
+      this.eventSyncService,
+      this.manualSyncService,
+      this.manualChapterItemSyncService,
+      this.customPageSyncService,
     ]
   }
 
@@ -178,7 +193,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     }
 
     // gets all data that needs importing
-    const { items, deletedEntryIds, token, elasticIndex } =
+    const { items, deletedEntryIds, token, elasticIndex, nextPageToken } =
       await this.contentfulService.getSyncEntries(cmsSyncOptions)
     logger.info('Got sync data')
 
@@ -198,6 +213,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
         elasticIndex,
         token,
       },
+      nextPageToken,
     }
   }
 
@@ -215,6 +231,39 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     elasticIndex: string,
     document: Pick<Entry<unknown>, 'sys'>,
   ) {
+    // If we're gonna delete a 'manual' or 'manualChapter' from ElasticSearch then we need to also delete all manualChapterItems that it references
+    if (
+      document.sys.contentType.sys.id === 'manual' ||
+      document.sys.contentType.sys.id === 'manualChapter'
+    ) {
+      const manualChapterItemIds: string[] = []
+      let shouldContinueFetching = true
+      let page = 1
+
+      while (shouldContinueFetching) {
+        const response = await this.elasticService.search(elasticIndex, {
+          queryString: '*',
+          types: ['webManualChapterItem'],
+          tags: [{ key: document.sys.id, type: 'referencedBy' }],
+          page,
+        })
+
+        const responseItems = response?.body?.hits?.hits ?? []
+
+        for (const item of responseItems) {
+          manualChapterItemIds.push(item._id)
+        }
+
+        shouldContinueFetching = responseItems.length > 0
+        page += 1
+      }
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(manualChapterItemIds),
+      )
+    }
+
     // If we're gonna delete an 'article' from ElasticSearch then we need to also delete all subArticles that are have a parent field that points to this article
     if (document.sys.contentType.sys.id === 'article') {
       const subArticles = await this.contentfulService.getContentfulData(100, {

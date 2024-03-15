@@ -6,6 +6,7 @@ export type BackgroundVariations =
   | 'default'
   | 'sjukratryggingar'
   | 'icelandic-health-insurance'
+  | 'iceland-health'
   | string
 
 export type VariationProps = {

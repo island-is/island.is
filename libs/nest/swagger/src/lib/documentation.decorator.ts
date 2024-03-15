@@ -87,11 +87,22 @@ const getRequestDecorators = ({
   )
 
   const headerKeys = Object.keys(header)
+  const defaultHeaderDecorators: MethodDecorator[] =
+    headerKeys.length > 0 && headerKeys.some((key) => key.startsWith('X-Param'))
+      ? includeNoContentResponse
+        ? [ApiNoContentResponse()]
+        : []
+      : []
   const headerDecorators = headerKeys.map((name) =>
     ApiHeader({ name, ...header[name] }),
   )
 
-  return [...queryDecorators, ...paramsDecorators, ...headerDecorators]
+  return [
+    ...queryDecorators,
+    ...paramsDecorators,
+    ...defaultHeaderDecorators,
+    ...headerDecorators,
+  ]
 }
 
 const getExtraDecorators = ({

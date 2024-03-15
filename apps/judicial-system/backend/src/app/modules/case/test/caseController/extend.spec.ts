@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   CaseCustodyRestrictions,
@@ -13,10 +13,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { randomDate, randomEnum } from '../../../../test'
 import { DefendantService } from '../../../defendant'
-import { Case } from '../../models/case.model'
 import { include, order } from '../../case.service'
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case
@@ -62,7 +63,11 @@ describe('CaseController - Extend', () => {
 
   describe('case extended', () => {
     const userId = uuid()
-    const user = { id: userId } as TUser
+    const prosecutorsOfficeId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: prosecutorsOfficeId },
+    } as TUser
     const caseId = uuid()
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
@@ -138,6 +143,7 @@ describe('CaseController - Extend', () => {
           prosecutorId: userId,
           parentCaseId: caseId,
           initialRulingDate: rulingDate,
+          prosecutorsOfficeId,
         },
         { transaction },
       )
@@ -146,7 +152,11 @@ describe('CaseController - Extend', () => {
 
   describe('extended case extended', () => {
     const userId = uuid()
-    const user = { id: userId } as TUser
+    const prosecutorsOfficeId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: prosecutorsOfficeId },
+    } as TUser
     const caseId = uuid()
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
@@ -222,6 +232,7 @@ describe('CaseController - Extend', () => {
           prosecutorId: userId,
           parentCaseId: caseId,
           initialRulingDate,
+          prosecutorsOfficeId,
         },
         { transaction },
       )

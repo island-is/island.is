@@ -2,11 +2,12 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
+
 import { Case } from '../models/case.model'
 import { CaseListEntry } from '../models/caseListEntry.response'
 
@@ -50,6 +51,7 @@ export class CaseListInterceptor implements NestInterceptor {
             appealState: theCase.appealState,
             appealCaseNumber: theCase.appealCaseNumber,
             appealRulingDecision: theCase.appealRulingDecision,
+            prosecutorsOffice: theCase.prosecutorsOffice,
           }
         })
       }),

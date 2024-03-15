@@ -88,6 +88,7 @@ export class VehicleOwnerChangeClient {
           operators: null,
           coOwners: null,
           reportingPersonIdNumber: auth.nationalId,
+          mileage: ownerChange.mileage,
         },
       })
     } catch (e) {
@@ -192,6 +193,7 @@ export class VehicleOwnerChangeClient {
           personIdNumber: coOwner.ssn,
         })),
         reportingPersonIdNumber: auth.nationalId,
+        mileage: ownerChange.mileage,
       },
     })
   }

@@ -16,7 +16,7 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     getValueViaPath<DrivingLicense>(
       application.externalData,
       'currentLicense.data',
-    )?.healthRemarks || []
+    )?.remarks || []
 
   const { setValue } = useFormContext()
 

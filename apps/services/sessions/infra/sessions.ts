@@ -3,9 +3,19 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
-const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
 const geoTmpDir = `${geoDataDir}/tmp`
+
+const geoipExtraValues = {
+  schedule: '0 0 * * *',
+}
+
+const geoipAnnotations = {
+  annotations: {
+    'helm.sh/hook': 'pre-install,pre-upgrade',
+    'helm.sh/hook-delete-policy': 'before-hook-creation,hook-succeeded',
+  },
+}
 
 const geoipVolume: PersistentVolumeClaim[] = [
   {
@@ -16,27 +26,15 @@ const geoipVolume: PersistentVolumeClaim[] = [
   },
 ]
 
-const servicePostgresInfo = {
-  // The service has only read permissions
-  username: 'services_sessions_read',
-  name: dbName,
-  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
-}
-
-const workerPostgresInfo = {
-  // Worker has write permissions
-  username: 'services_sessions',
-  name: dbName,
-  passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
-  extensions: ['uuid-ossp'],
-}
-
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
     .image(imageName)
     .redis()
-    .postgres(servicePostgresInfo)
+    .db({
+      readOnly: true,
+      extensions: ['uuid-ossp'],
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -44,14 +42,6 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
-      GEODATADIR: geoDataDir,
-    })
-    .secrets({
-      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
-    })
-    .volumes({
-      ...geoipSetup().serviceDef.volumes[0],
-      useExisting: true,
     })
     .readiness('/liveness')
     .liveness('/liveness')
@@ -91,13 +81,14 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .postgres(workerPostgresInfo)
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: workerPostgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
+    .db({
+      extensions: ['uuid-ossp'],
+      readOnly: false,
+    })
+    .migrations()
+    .volumes({
+      ...geoipSetup().serviceDef.volumes[0],
+      useExisting: true,
     })
     .liveness('/liveness')
     .readiness('/liveness')
@@ -118,38 +109,37 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+      GEODATADIR: geoDataDir,
     })
 
-export const geoipSetup =
-  (): ServiceBuilder<'services-sessions-geoip-worker'> =>
-    service('services-sessions-geoip-worker')
-      .image(imageName)
-      .namespace(namespace)
-      .redis()
-      .serviceAccount('sessions-geoip')
-      .command('node')
-      .replicaCount({ min: 1, max: 1, default: 1 })
-      .args(
-        './node_modules/geoip-lite/scripts/updatedb.js',
-        'license_key=$(GEOIP_LICENSE_KEY)',
-      )
-      .resources({
-        limits: {
-          cpu: '4',
-          memory: '4Gi',
-        },
-        requests: {
-          cpu: '4',
-          memory: '4Gi',
-        },
-      })
-      .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
-      .secrets({
-        GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
-      })
-      .volumes(...geoipVolume)
-      .extraAttributes({
-        dev: { schedule: '0 0 * * *' },
-        staging: { schedule: '0 0 * * *' },
-        prod: { schedule: '0 0 * * *' },
-      })
+export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
+  service('services-sessions-geoip-job')
+    .image(imageName)
+    .namespace(namespace)
+    .serviceAccount('sessions-geoip')
+    .replicaCount({ min: 1, max: 1, default: 1 })
+    .command('node')
+    .args(
+      './node_modules/geoip-lite/scripts/updatedb.js',
+      'license_key=$(GEOIP_LICENSE_KEY)',
+    )
+    .resources({
+      limits: {
+        cpu: '500m',
+        memory: '1Gi',
+      },
+      requests: {
+        cpu: '500m',
+        memory: '500Mi',
+      },
+    })
+    .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
+    .secrets({
+      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
+    })
+    .volumes(...geoipVolume)
+    .extraAttributes({
+      dev: { ...geoipExtraValues, ...geoipAnnotations },
+      staging: { ...geoipExtraValues, ...geoipAnnotations },
+      prod: { ...geoipExtraValues, ...geoipAnnotations },
+    })

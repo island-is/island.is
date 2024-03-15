@@ -1,0 +1,406 @@
+import addDays from 'date-fns/addDays'
+
+import {
+  NO_ANSWER,
+  buildCustomField,
+  buildDateField,
+  buildForm,
+  buildMultiField,
+  buildRadioField,
+  buildRepeater,
+  buildSection,
+  buildSubSection,
+  buildSubmitField,
+  buildTableRepeaterField,
+  formatText,
+} from '@island.is/application/core'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
+import {
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  StartDateOptions,
+  YES,
+} from '../constants'
+import Logo from '../assets/Logo'
+import { minPeriodDays } from '../config'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import {
+  getAllPeriodDates,
+  getApplicationAnswers,
+  getConclusionScreenSteps,
+  getLeavePlanTitle,
+  getMinimumStartDate,
+  getPeriodSectionTitle,
+} from '../lib/parentalLeaveUtils'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { useLocale } from '@island.is/localization'
+
+export const EditOrAddEmployersAndPeriods: Form = buildForm({
+  id: 'ParentalLeaveEditOrAddEmployersAndPeriods',
+  title: parentalLeaveFormMessages.shared.formEditTitle,
+  logo: Logo,
+  mode: FormModes.DRAFT,
+  children: [
+    buildSection({
+      id: 'editOrAddPeriods',
+      title: getPeriodSectionTitle,
+      children: [
+        buildSubSection({
+          id: 'addPeriods',
+          title: parentalLeaveFormMessages.leavePlan.subSection,
+          children: [
+            buildRadioField({
+              id: 'addPeriods',
+              title: parentalLeaveFormMessages.shared.editOrAddPeriods,
+              width: 'half',
+              required: true,
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
+            buildRepeater({
+              id: 'periods',
+              title: getLeavePlanTitle,
+              component: 'PeriodsRepeater',
+              condition: (answers) => {
+                const { addPeriods } = getApplicationAnswers(answers)
+                return addPeriods === YES
+              },
+              children: [
+                buildCustomField({
+                  id: 'firstPeriodStart',
+                  title: parentalLeaveFormMessages.firstPeriodStart.title,
+                  condition: (answers) => {
+                    const { periods } = getApplicationAnswers(answers)
+
+                    return periods.length === 0
+                  },
+                  component: 'FirstPeriodStart',
+                }),
+                buildDateField({
+                  id: 'startDate',
+                  title: parentalLeaveFormMessages.startDate.title,
+                  description: parentalLeaveFormMessages.startDate.description,
+                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  defaultValue: NO_ANSWER,
+                  condition: (answers) => {
+                    const { periods, rawPeriods } =
+                      getApplicationAnswers(answers)
+                    const currentPeriod = rawPeriods[rawPeriods.length - 1]
+                    const firstPeriodRequestingSpecificStartDate =
+                      currentPeriod?.firstPeriodStart ===
+                      StartDateOptions.SPECIFIC_DATE
+
+                    return (
+                      firstPeriodRequestingSpecificStartDate ||
+                      periods.length !== 0
+                    )
+                  },
+                  minDate: (application: Application) =>
+                    getMinimumStartDate(application),
+                  excludeDates: (application) => {
+                    const { periods } = getApplicationAnswers(
+                      application.answers,
+                    )
+
+                    return getAllPeriodDates(periods)
+                  },
+                }),
+                buildRadioField({
+                  id: 'useLength',
+                  title: parentalLeaveFormMessages.duration.title,
+                  description: parentalLeaveFormMessages.duration.description,
+                  defaultValue: YES,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.duration.monthsOption,
+                      value: YES,
+                    },
+                    {
+                      label:
+                        parentalLeaveFormMessages.duration.specificDateOption,
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildCustomField({
+                  id: 'endDate',
+                  condition: (answers) => {
+                    const { rawPeriods } = getApplicationAnswers(answers)
+                    const period = rawPeriods[rawPeriods.length - 1]
+
+                    return period?.useLength === YES && !!period?.startDate
+                  },
+                  title: parentalLeaveFormMessages.duration.title,
+                  component: 'Duration',
+                }),
+                buildCustomField(
+                  {
+                    id: 'endDate',
+                    title: parentalLeaveFormMessages.endDate.title,
+                    component: 'PeriodEndDate',
+                    condition: (answers) => {
+                      const { rawPeriods } = getApplicationAnswers(answers)
+                      const period = rawPeriods[rawPeriods.length - 1]
+
+                      return period?.useLength === NO && !!period?.startDate
+                    },
+                  },
+                  {
+                    minDate: (application: Application) => {
+                      const { rawPeriods } = getApplicationAnswers(
+                        application.answers,
+                      )
+                      const latestStartDate =
+                        rawPeriods[rawPeriods.length - 1]?.startDate
+
+                      return addDays(
+                        new Date(latestStartDate),
+                        minPeriodDays - 1,
+                      )
+                    },
+                    excludeDates: (application: Application) => {
+                      const { periods } = getApplicationAnswers(
+                        application.answers,
+                      )
+
+                      return getAllPeriodDates(periods)
+                    },
+                  },
+                ),
+                buildCustomField({
+                  id: 'ratio',
+                  title: parentalLeaveFormMessages.ratio.title,
+                  description: parentalLeaveFormMessages.ratio.description,
+                  component: 'PeriodPercentage',
+                  condition: (answers) => {
+                    const { rawPeriods } = getApplicationAnswers(answers)
+                    const period = rawPeriods[rawPeriods.length - 1]
+
+                    return !!period?.startDate && !!period?.endDate
+                  },
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'editOrAddEmployers',
+      title: parentalLeaveFormMessages.shared.employerSection,
+      condition: (answers) => {
+        const {
+          applicationType,
+          isReceivingUnemploymentBenefits,
+          isSelfEmployed,
+          employerLastSixMonths,
+        } = getApplicationAnswers(answers)
+
+        const isNotSelfEmployed = isSelfEmployed !== YES
+
+        return (
+          (applicationType === PARENTAL_LEAVE &&
+            isReceivingUnemploymentBenefits !== YES &&
+            isNotSelfEmployed) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES)
+        )
+      },
+      children: [
+        buildSubSection({
+          id: 'addEmployer',
+          title: parentalLeaveFormMessages.shared.employerSubSection,
+          children: [
+            buildRadioField({
+              id: 'addEmployer',
+              title: parentalLeaveFormMessages.shared.editOrAddEmployer,
+              width: 'half',
+              required: true,
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
+            buildTableRepeaterField({
+              id: 'employers',
+              title: parentalLeaveFormMessages.employer.title,
+              description: (application) => {
+                const { employerLastSixMonths } = getApplicationAnswers(
+                  application.answers,
+                )
+                return employerLastSixMonths === YES
+                  ? parentalLeaveFormMessages.employer.grantsDescription
+                  : parentalLeaveFormMessages.employer.description
+              },
+              condition: (answers) => {
+                const { addEmployer } = getApplicationAnswers(answers)
+                return addEmployer === YES
+              },
+              formTitle: parentalLeaveFormMessages.employer.registration,
+              addItemButtonText: parentalLeaveFormMessages.employer.addEmployer,
+              saveItemButtonText:
+                parentalLeaveFormMessages.employer.registerEmployer,
+              removeButtonTooltipText:
+                parentalLeaveFormMessages.employer.deleteEmployer,
+              marginTop: 0,
+              fields: {
+                email: {
+                  component: 'input',
+                  label: parentalLeaveFormMessages.employer.email,
+                  type: 'email',
+                  dataTestId: 'employer-email',
+                },
+                phoneNumber: {
+                  component: 'input',
+                  label: parentalLeaveFormMessages.employer.phoneNumber,
+                  type: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
+                  dataTestId: 'employer-phone-number',
+                },
+                ratio: {
+                  component: 'select',
+                  label: parentalLeaveFormMessages.employer.ratio,
+                  placeholder:
+                    parentalLeaveFormMessages.employer.ratioPlaceholder,
+                  dataTestId: 'employment-ratio',
+                  options: Array(100)
+                    .fill(undefined)
+                    .map((_, idx, array) => ({
+                      value: `${array.length - idx}`,
+                      label: `${array.length - idx}%`,
+                    })),
+                },
+                stillEmployed: {
+                  component: 'radio',
+                  label: parentalLeaveFormMessages.employer.stillEmployed,
+                  width: 'half',
+                  options: [
+                    {
+                      value: YES,
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                    },
+                    {
+                      value: NO,
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                    },
+                  ],
+                  displayInTable: false,
+                  condition: (application) => {
+                    const { applicationType, employerLastSixMonths } =
+                      getApplicationAnswers(application.answers)
+
+                    return (
+                      (applicationType === PARENTAL_GRANT ||
+                        applicationType === PARENTAL_GRANT_STUDENTS) &&
+                      employerLastSixMonths === YES
+                    )
+                  },
+                },
+              },
+              table: {
+                header: [
+                  parentalLeaveFormMessages.employer.emailHeader,
+                  parentalLeaveFormMessages.employer.phoneNumberHeader,
+                  parentalLeaveFormMessages.employer.ratioHeader,
+                ],
+                format: {
+                  phoneNumber: (value) =>
+                    formatPhoneNumber(removeCountryCode(value ?? '')),
+                  ratio: (value) => `${value}%`,
+                },
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: parentalLeaveFormMessages.confirmation.title,
+      children: [
+        buildMultiField({
+          id: 'confirmation',
+          title: '',
+          children: [
+            buildCustomField({
+              id: 'confirmationScreen',
+              title: '',
+              component: 'EditOrAddEmployersAndPeriodsReview',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                  condition: (answers) => {
+                    // Only display Submit button if changes made
+                    const { addPeriods, addEmployer } =
+                      getApplicationAnswers(answers)
+                    return addPeriods === YES || addEmployer === YES
+                  },
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildFormConclusionSection({
+      alertType: 'success',
+      expandableHeader: parentalLeaveFormMessages.finalScreen.title,
+      expandableDescription: (application: Application) => {
+        const nextSteps = getConclusionScreenSteps(application)
+
+        // Create a markdown from the steps translations strings
+        let markdown = ''
+
+        nextSteps.forEach((step) => {
+          const translation = formatText(
+            step,
+            application,
+            useLocale().formatMessage,
+          )
+          markdown += `* ${translation} \n`
+        })
+
+        return markdown
+      },
+    }),
+  ],
+})

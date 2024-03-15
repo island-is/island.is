@@ -25,6 +25,7 @@ import {
   StaticTextObject,
   SubSection,
 } from '@island.is/application/types'
+import { User } from 'user'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false
@@ -114,10 +115,16 @@ export function getSectionsInForm(
   form: Form,
   answers: FormValue,
   externalData: ExternalData,
+  user: User | null,
 ): Section[] {
   const sections: Section[] = []
   form.children.forEach((child) => {
-    const shouldShowSection = shouldShowFormItem(child, answers, externalData)
+    const shouldShowSection = shouldShowFormItem(
+      child,
+      answers,
+      externalData,
+      user,
+    )
     if (child.type === FormItemTypes.SECTION && shouldShowSection) {
       sections.push(child as Section)
     }
@@ -128,10 +135,16 @@ export function getSubSectionsInSection(
   section: Section,
   answers: FormValue,
   externalData: ExternalData,
+  user: User | null,
 ): SubSection[] {
   const subSections: SubSection[] = []
   section?.children.forEach((child) => {
-    const shouldShowSection = shouldShowFormItem(child, answers, externalData)
+    const shouldShowSection = shouldShowFormItem(
+      child,
+      answers,
+      externalData,
+      user,
+    )
     if (child.type === FormItemTypes.SUB_SECTION && shouldShowSection) {
       subSections.push(child as SubSection)
     }

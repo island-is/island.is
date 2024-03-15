@@ -3,13 +3,29 @@ set -euo pipefail
 
 : "${GIT_ROOT:="$(git rev-parse --show-toplevel)"}"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-PROTECTED="main"
+PROTECTED=("main" "release/*" "pre-release/*") # Add more protected branches or patterns here
 
+# Add additional branches or patterns from environment variable if provided
+if [ -n "${EXTRA_PROTECTED_BRANCHES-}" ]; then
+  IFS=',' read -ra EXTRA_BRANCHES <<<"$EXTRA_PROTECTED_BRANCHES"
+  PROTECTED=("${PROTECTED[@]}" "${EXTRA_BRANCHES[@]}")
+fi
 
-if [[ "$BRANCH" == "$PROTECTED" ]]; then
-	echo "HOOK: Pushing to protected branch ($PROTECTED) 🙊"
-	echo "HOOK: Use git push --no-verify to force this operation."
-	exit 1
+branch_protected=false
+
+for pattern in "${PROTECTED[@]}"; do
+  # We _want_ to match by glob pattern
+  # shellcheck disable=SC2053
+  if [[ "$BRANCH" == $pattern || "$BRANCH" == $pattern/* ]]; then
+    branch_protected=true
+    break
+  fi
+done
+
+if [ "$branch_protected" = true ]; then
+  echo "HOOK: You are pushing to a protected branch ($BRANCH) 🙊"
+  echo "HOOK: Use git push --no-verify to force this operation."
+  exit 1
 fi
 
 exec "$GIT_ROOT/.githooks/defaulthook" pre-push

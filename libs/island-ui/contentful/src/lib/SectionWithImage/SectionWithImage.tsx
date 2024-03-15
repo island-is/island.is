@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { Document } from '@contentful/rich-text-types'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import slugify from '@sindresorhus/slugify'
 import { Slice as SliceType } from '../richTextRendering'
@@ -11,15 +10,23 @@ export interface SectionWithImageProps {
   image?: {
     url: string
   }
-  html?: { __typename: 'Html'; id: string; document: Document }
+  content?: SliceType[]
+  variant?: 'default' | 'even'
+  contain?: boolean
+  reverse?: boolean
 }
 
 export const SectionWithImage: FC<
   React.PropsWithChildren<SectionWithImageProps>
-> = ({ title, image, html }) => {
-  const htmlDocument = html?.document ?? null
-
-  if (!image && htmlDocument) {
+> = ({
+  title,
+  image,
+  content = [],
+  variant = 'default',
+  contain = false,
+  reverse = false,
+}) => {
+  if (!image && content.length) {
     return (
       <>
         {title && (
@@ -33,32 +40,46 @@ export const SectionWithImage: FC<
             {title}
           </Text>
         )}
-        {richText([html] as SliceType[], undefined)}
+        {richText(content as SliceType[], undefined)}
       </>
     )
   }
 
   return (
     <Box
-      className={styles.sectionOffset}
+      className={contain ? {} : styles.sectionOffset}
       marginBottom={[3, 3, 12]}
       marginTop={[3, 3, 12]}
     >
-      <GridRow>
+      <GridRow direction={reverse ? 'rowReverse' : 'row'}>
         {!!image && (
-          <GridColumn span={['12/12', '12/12', '12/12', '3/9']}>
+          <GridColumn
+            span={[
+              '12/12',
+              '12/12',
+              '12/12',
+              variant === 'even' ? '6/12' : '3/9',
+            ]}
+          >
             <Box className={styles.imageContainer}>
               <img className={styles.image} src={image.url + '?w=600'} alt="" />
             </Box>
           </GridColumn>
         )}
-        <GridColumn span={['12/12', '12/12', '12/12', '6/9']}>
+        <GridColumn
+          span={[
+            '12/12',
+            '12/12',
+            '12/12',
+            variant === 'even' ? '6/12' : '6/9',
+          ]}
+        >
           {title && (
             <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={2}>
               {title}
             </Text>
           )}
-          {!!htmlDocument && richText([html] as SliceType[], undefined)}
+          {content.length && richText(content as SliceType[], undefined)}
         </GridColumn>
       </GridRow>
     </Box>

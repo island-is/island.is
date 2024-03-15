@@ -2,9 +2,10 @@ import { uuid } from 'uuidv4'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
+import { createTestingUserModule } from './createTestingUserModule'
+
 import { randomEnum } from '../../../test'
 import { User } from '../user.model'
-import { createTestingUserModule } from './createTestingUserModule'
 
 interface Then {
   result: User
@@ -22,6 +23,7 @@ describe('UserController - Create', () => {
   const role = randomEnum(UserRole)
   const institutionId = uuid()
   const active = true
+  const canConfirmAppeal = false
   let mockUserModel: typeof User
   let givenWhenThen: GivenWhenThen
 
@@ -43,6 +45,7 @@ describe('UserController - Create', () => {
           role,
           institutionId,
           active,
+          canConfirmAppeal,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -72,6 +75,7 @@ describe('UserController - Create', () => {
         role,
         institutionId,
         active,
+        canConfirmAppeal,
       })
       expect(then.result).toBe(user)
     })

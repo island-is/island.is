@@ -19,9 +19,9 @@ export const FileUploadFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     introduction,
-    uploadDescription = 'Documents accepted with extension: .pdf, .docx, .rtf',
-    uploadHeader = 'Drag documents here to upload',
-    uploadButtonLabel = 'Select documents to upload',
+    uploadDescription,
+    uploadHeader,
+    uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
     maxSize,
@@ -44,17 +44,17 @@ export const FileUploadFormField: FC<React.PropsWithChildren<Props>> = ({
           id={id}
           application={application}
           error={error}
-          header={formatText(uploadHeader, application, formatMessage)}
-          description={formatText(
-            uploadDescription,
-            application,
-            formatMessage,
-          )}
-          buttonLabel={formatText(
-            uploadButtonLabel,
-            application,
-            formatMessage,
-          )}
+          header={
+            uploadHeader && formatText(uploadHeader, application, formatMessage)
+          }
+          description={
+            uploadDescription &&
+            formatText(uploadDescription, application, formatMessage)
+          }
+          buttonLabel={
+            uploadButtonLabel &&
+            formatText(uploadButtonLabel, application, formatMessage)
+          }
           multiple={uploadMultiple}
           accept={uploadAccept}
           maxSize={maxSize}

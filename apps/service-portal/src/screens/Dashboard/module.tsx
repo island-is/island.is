@@ -9,6 +9,7 @@ export const indexModule: PortalModule = {
   routes: (props) => [
     {
       name: 'Mínar Síður',
+      layout: 'full',
       path: '/',
       loader: dashboardLoader(props),
       element: <Dashboard />,

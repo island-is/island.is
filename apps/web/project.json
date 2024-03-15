@@ -77,6 +77,12 @@
         }
       }
     },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/web/screens/**/*.{js,ts,tsx}'"
+      }
+    },
     "export": {
       "executor": "@nx/next:export",
       "options": {
@@ -97,7 +103,7 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/web"]
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config apps/web/codegen.yml"

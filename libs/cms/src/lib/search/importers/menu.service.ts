@@ -16,8 +16,9 @@ export class MenuSyncService implements CmsSyncProvider<IMenu> {
   }
 
   doMapping(entries: IMenu[]) {
-    logger.info('Mapping menu', { count: entries.length })
-
+    if (entries.length > 0) {
+      logger.info('Mapping menu', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {

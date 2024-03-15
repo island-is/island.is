@@ -1,9 +1,10 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { createIndictment } from '../../../../formatters'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/indictmentPdf')
 
@@ -51,6 +52,7 @@ describe('LimitedCaseController - Get indictment pdf', () => {
       expect(createIndictment).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
+        undefined,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })

@@ -16,7 +16,13 @@ import { DocumentType } from './models/documentType.model'
 import { DocumentSender } from './models/documentSender.model'
 import { PaperMailBody } from './models/paperMail.model'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
+import { PostMailActionInput } from './dto/postMailActionInput'
+import { ActionMailBody } from './models/actionMail.model'
+import { PostBulkMailActionInput } from './dto/postBulkMailActionInput'
+import { DocumentPageResponse } from './models/documentPage.model'
+import { GetDocumentPageInput } from './dto/documentPageInput'
 
+const LOG_CATEGORY = 'documents-api'
 @Injectable()
 export class DocumentService {
   constructor(
@@ -99,24 +105,24 @@ export class DocumentService {
           [],
         ),
         totalCount: body?.totalCount,
+        unreadCount: body?.unreadCount,
       }
     } catch (exception) {
       logger.error(exception)
-      return { data: [], totalCount: 0 }
+      return { data: [], totalCount: 0, unreadCount: 0 }
     }
   }
 
   async getCategories(nationalId: string): Promise<DocumentCategory[]> {
     try {
       const body = await this.documentClient.customersCategories(nationalId)
-      return (body?.categories || []).reduce(function (
-        result: DocumentCategory[],
-        category: CategoryDTO,
-      ) {
-        if (category) result.push(DocumentCategory.fromCategoryDTO(category))
-        return result
-      },
-      [])
+      return (body?.categories || []).reduce(
+        (result: DocumentCategory[], category: CategoryDTO) => {
+          if (category) result.push(DocumentCategory.fromCategoryDTO(category))
+          return result
+        },
+        [],
+      )
     } catch (exception) {
       logger.error(exception)
       return []
@@ -126,14 +132,13 @@ export class DocumentService {
   async getTypes(nationalId: string): Promise<DocumentType[]> {
     try {
       const body = await this.documentClient.customersTypes(nationalId)
-      return (body?.types || []).reduce(function (
-        result: DocumentType[],
-        type: TypeDTO,
-      ) {
-        if (type) result.push(DocumentType.fromTypeDTO(type))
-        return result
-      },
-      [])
+      return (body?.types || []).reduce(
+        (result: DocumentType[], type: TypeDTO) => {
+          if (type) result.push(DocumentType.fromTypeDTO(type))
+          return result
+        },
+        [],
+      )
     } catch (exception) {
       logger.error(exception)
       return []
@@ -143,17 +148,36 @@ export class DocumentService {
   async getSenders(nationalId: string): Promise<DocumentSender[]> {
     try {
       const body = await this.documentClient.customersSenders(nationalId)
-      return (body?.senders || []).reduce(function (
-        result: DocumentSender[],
-        sender: SenderDTO,
-      ) {
-        if (sender) result.push(DocumentSender.fromSenderDTO(sender))
-        return result
-      },
-      [])
+      return (body?.senders || []).reduce(
+        (result: DocumentSender[], sender: SenderDTO) => {
+          if (sender) result.push(DocumentSender.fromSenderDTO(sender))
+          return result
+        },
+        [],
+      )
     } catch (exception) {
       logger.error(exception)
       return []
+    }
+  }
+
+  async getDocumentPageNumber(
+    input: GetDocumentPageInput,
+    nationalId: string,
+  ): Promise<DocumentPageResponse> {
+    const defaultRes = {
+      messagePage: 1,
+    }
+    try {
+      const res = await this.documentClient.getDocumentPageNumber({
+        ...input,
+        nationalId,
+      })
+      return res ?? defaultRes
+    } catch (exception) {
+      logger.debug(`Document page number error message: ${input.messageId}`)
+      logger.error(exception)
+      return defaultRes
     }
   }
 
@@ -188,10 +212,63 @@ export class DocumentService {
         wantsPaper: res?.wantsPaper,
       }
     } catch (exception) {
-      logger.error(exception)
+      logger.error('Post paper mail failed', {
+        category: LOG_CATEGORY,
+        error: exception,
+      })
       return {
         nationalId,
         wantsPaper: undefined,
+      }
+    }
+  }
+
+  async postMailAction(body: PostMailActionInput): Promise<ActionMailBody> {
+    try {
+      const { action, ...postBody } = body
+      await this.documentClient.postMailAction(postBody, action)
+      return {
+        success: true,
+        messageId: body.messageId,
+        action: body.action,
+      }
+    } catch (e) {
+      logger.error('Post mail action failed', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      return {
+        success: false,
+        messageId: body.messageId,
+        action: body.action,
+      }
+    }
+  }
+
+  async bulkMailAction(body: PostBulkMailActionInput): Promise<ActionMailBody> {
+    const messageIds = body.messageIds ?? []
+    const stringIds = messageIds.toString()
+    try {
+      await this.documentClient.bulkMailAction(
+        {
+          ids: messageIds,
+          action: body.action,
+          status: body.status,
+        },
+        body.nationalId,
+      )
+      return {
+        success: true,
+        messageId: stringIds,
+      }
+    } catch (e) {
+      logger.error('Post batch action failed', {
+        category: LOG_CATEGORY,
+        ...e,
+      })
+      return {
+        success: false,
+        messageId: stringIds,
       }
     }
   }

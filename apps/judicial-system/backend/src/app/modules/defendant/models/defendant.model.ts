@@ -8,9 +8,10 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { Gender } from '@island.is/judicial-system/types'
+import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 
@@ -45,7 +46,7 @@ export class Defendant extends Model {
   caseId!: string
 
   @BelongsTo(() => Case, 'case_id')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
   @Column({
@@ -126,4 +127,12 @@ export class Defendant extends Model {
   })
   @ApiProperty()
   defendantWaivesRightToCounsel!: boolean
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(DefendantPlea),
+  })
+  @ApiProperty({ enum: DefendantPlea })
+  defendantPlea?: DefendantPlea
 }

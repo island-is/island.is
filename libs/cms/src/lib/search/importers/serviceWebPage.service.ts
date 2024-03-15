@@ -19,7 +19,9 @@ export class ServiceWebPageSyncService
   }
 
   doMapping(entries: IServiceWebPage[]) {
-    logger.info('Mapping Service Web page', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping Service Web page', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

@@ -6,20 +6,19 @@ import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CommentsInput,
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const PoliceReport: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -83,7 +82,6 @@ export const PoliceReport: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'demands',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   demandsErrorMessage,
                   setDemandsErrorMessage,
@@ -133,7 +131,6 @@ export const PoliceReport: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'caseFacts',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   caseFactsErrorMessage,
                   setCaseFactsErrorMessage,
@@ -185,7 +182,6 @@ export const PoliceReport: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'legalArguments',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   legalArgumentsErrorMessage,
                   setLegalArgumentsErrorMessage,

@@ -17,6 +17,7 @@ import { EstateAsset } from '@island.is/clients/syslumenn'
 
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
+import { getEstateDataFromApplication } from '../../lib/utils'
 
 type AssetsRepeaterProps = {
   field: {
@@ -45,17 +46,13 @@ export const AssetsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
+  const { control, clearErrors, setValue } = useFormContext()
 
-  const externalData = application.externalData.syslumennOnEntry?.data as {
-    estate: {
-      [key: string]: EstateAsset[]
-    }
-  }
+  const estateData = getEstateDataFromApplication(application)
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate[assetName]) {
-      replace(externalData.estate[assetName])
+    if (fields.length === 0 && estateData.estate?.[assetName]) {
+      replace(estateData.estate[assetName])
     }
   }, [])
 
@@ -64,6 +61,7 @@ export const AssetsRepeater: FC<
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
+      share: 100,
     })
   const handleRemoveAsset = (index: number) => remove(index)
 

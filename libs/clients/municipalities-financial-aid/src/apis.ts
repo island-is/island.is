@@ -24,6 +24,7 @@ export const exportedApis = [
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: Api.name,
+          organizationSlug: 'samband-islenskra-sveitafelaga',
         }),
         headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
         basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

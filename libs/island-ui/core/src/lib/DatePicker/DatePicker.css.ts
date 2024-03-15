@@ -327,3 +327,28 @@ globalStyle(
     borderTop: 0,
   },
 )
+
+/* Time picker styles */
+
+globalStyle(
+  `${root} .react-datepicker__input-time-container .react-datepicker-time__input-container .react-datepicker-time__input input`,
+  {
+    fontFamily: 'IBM Plex Sans',
+    fontStyle: 'normal',
+    fontWeight: 400,
+    fontSize: `${theme.typography.baseFontSize}px`,
+    lineHeight: `${theme.typography.baseLineHeight}`,
+    textAlign: 'center',
+    color: `${theme.color.dark400}`,
+    padding: '10px 10px 10px 20px',
+    border: '1px solid #ccdfff',
+    borderRadius: '0.3rem',
+    marginLeft: '5px',
+  },
+)
+
+globalStyle(`${root} .react-datepicker__input-time-container`, {
+  marginTop: '15px',
+  float: 'none !important' as any,
+  margin: '30px 0px 0px 5px !important',
+})

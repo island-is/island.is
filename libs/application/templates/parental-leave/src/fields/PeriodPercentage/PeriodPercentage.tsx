@@ -122,7 +122,7 @@ export const PeriodPercentage: FC<
     }
 
     return options
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSelect = (option: SelectOption) => {
     const value = option.value as string

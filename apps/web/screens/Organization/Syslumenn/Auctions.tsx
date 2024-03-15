@@ -1,22 +1,27 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
+
+import type { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
+  Button,
+  DatePicker,
+  DialogPrompt,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  LinkContext,
+  LoadingDots,
   NavigationItem,
   Select,
   Tag,
   Text,
-  DialogPrompt,
-  Input,
-  LinkContext,
-  Button,
-  DatePicker,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  LoadingDots,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
+import { OrganizationWrapper, Webreader } from '@island.is/web/components'
 import {
   ContentLanguage,
   Query,
@@ -25,22 +30,21 @@ import {
   QueryGetOrganizationSubpageArgs,
   SyslumennAuction,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_SYSLUMENN_AUCTIONS_QUERY,
 } from '../../queries'
-import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper, Webreader } from '@island.is/web/components'
-import { useQuery } from '@apollo/client'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { useRouter } from 'next/router'
-import { theme } from '@island.is/island-ui/theme'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
@@ -645,6 +649,11 @@ const Auctions: Screen<AuctionsProps> = ({
       // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={
+        subpage?.featuredImage ?? organizationPage?.featuredImage
+      }
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -671,6 +680,7 @@ const Auctions: Screen<AuctionsProps> = ({
           readId={null}
           readClass="rs_read"
         />
+        {webRichText((subpage?.description ?? []) as SliceType[])}
       </Box>
       <GridContainer>
         <GridRow>
@@ -794,6 +804,10 @@ const Auctions: Screen<AuctionsProps> = ({
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
 
+            const displayCustomCardMessage =
+              auction.lotType === LOT_TYPES.VEHICLE ||
+              auction.lotType === LOT_TYPES.LIQUID_ASSETS
+
             return (
               <Box
                 key={`auction-${index}`}
@@ -860,7 +874,6 @@ const Auctions: Screen<AuctionsProps> = ({
                       ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
-
                   {/* Aircraft link */}
                   {auction.lotId && auction.lotType === LOT_TYPES.AIRCRAFT && (
                     <LotLink
@@ -920,6 +933,24 @@ const Auctions: Screen<AuctionsProps> = ({
                       </Text>
                     )}
 
+                  {auction.lotItems && (
+                    <DialogPrompt
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      baseId={auction.lotId}
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      title={auction.lotName}
+                      description={auction.lotItems.split('|').join('  •  ')}
+                      ariaLabel="Upplýsingar um innihald uppboðs."
+                      disclosureElement={
+                        <Button variant="text" size="small" icon="arrowForward">
+                          {n('auctionLotItemsLink', 'Nánar')}
+                        </Button>
+                      }
+                    />
+                  )}
+
                   <Box
                     alignItems="flexEnd"
                     display="flex"
@@ -927,35 +958,42 @@ const Auctions: Screen<AuctionsProps> = ({
                     justifyContent="spaceBetween"
                     marginLeft="auto"
                   >
-                    <Box>
-                      {auction.lotItems && (
-                        <DialogPrompt
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          baseId={auction.lotId}
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          title={auction.lotName}
-                          description={auction.lotItems
-                            .split('|')
-                            .join('  •  ')}
-                          ariaLabel="Upplýsingar um innihald uppboðs."
-                          disclosureElement={
-                            <Button
-                              variant="text"
-                              size="small"
-                              icon="arrowForward"
+                    {!displayCustomCardMessage && (
+                      <Text variant="small">
+                        {auction.lotType}{' '}
+                        {auction.auctionType && ' - ' + auction.auctionType}
+                      </Text>
+                    )}
+
+                    {displayCustomCardMessage && (
+                      <GridContainer>
+                        <GridRow marginTop={3} alignItems="flexEnd">
+                          <GridColumn span="1/2">
+                            <Text variant="small">
+                              <i>
+                                {n(
+                                  'auctionVehicleAndLiquidAssetCustomCardMessage',
+                                  'Í tilviki lausafjáruppboða fer uppboð ekki fram nema gerðarbeiðandi komi andlagi á uppboðsstað',
+                                )}
+                              </i>
+                            </Text>
+                          </GridColumn>
+                          <GridColumn span="1/2">
+                            <Box
+                              display="flex"
+                              justifyContent="flexEnd"
+                              alignItems="flexEnd"
                             >
-                              {n('auctionLotItemsLink', 'Nánar')}
-                            </Button>
-                          }
-                        />
-                      )}
-                    </Box>
-                    <Text variant="small">
-                      {auction.lotType}{' '}
-                      {auction.auctionType && ' - ' + auction.auctionType}
-                    </Text>
+                              <Text variant="small">
+                                {auction.lotType}{' '}
+                                {auction.auctionType &&
+                                  ' - ' + auction.auctionType}
+                              </Text>
+                            </Box>
+                          </GridColumn>
+                        </GridRow>
+                      </GridContainer>
+                    )}
                   </Box>
                 </Box>
               </Box>
@@ -1010,11 +1048,15 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getProps = async ({ apolloClient, locale, req }) => {
+Auctions.getProps = async ({ apolloClient, locale, req, res }) => {
   const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'uppbod'
+
+  if (res) {
+    res.setHeader('Cache-Control', 'no-store, must-revalidate')
+  }
 
   const [
     {
@@ -1049,6 +1091,7 @@ Auctions.getProps = async ({ apolloClient, locale, req }) => {
     }),
     apolloClient.query<Query>({
       query: GET_SYSLUMENN_AUCTIONS_QUERY,
+      fetchPolicy: 'no-cache',
     }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

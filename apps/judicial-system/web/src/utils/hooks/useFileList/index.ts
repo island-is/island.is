@@ -1,13 +1,13 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useGetSignedUrlLazyQuery } from './getSigendUrl.generated'
-import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetigendUrl.generated'
+import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendUrl.generated'
 
 interface Parameters {
   caseId: string
@@ -60,9 +60,9 @@ const useFileList = ({ caseId }: Parameters) => {
         code === 'https://httpstatuses.org/403'
       ) {
         setFileNotFound(true)
-        setWorkingCase((theCase) => ({
-          ...theCase,
-          caseFiles: theCase.caseFiles?.map((file) =>
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
+          caseFiles: prevWorkingCase.caseFiles?.map((file) =>
             file.id === variables.input.id
               ? {
                   ...file,

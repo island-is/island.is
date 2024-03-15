@@ -1,0 +1,24 @@
+query CurrentUser {
+  currentUser {
+    id
+    created
+    modified
+    active
+    name
+    title
+    role
+    email
+    mobileNumber
+    nationalId
+    canConfirmAppeal
+    institution {
+      id
+      created
+      modified
+      name
+      type
+      policeCaseNumberPrefix
+      active
+    }
+  }
+}

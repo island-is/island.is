@@ -43,7 +43,7 @@ export const preexistingComplaint = {
     description: {
       id: `ctao.application:alternativeAlertMessage.preexistingComplaint.description`,
       defaultMessage:
-        'Til þess að umboðsmaður geti tekið kvörtun til meðferðar verða kæruleiðir innan stjórnsýslunnar að hafa verið nýttar og niðurstaða að liggja fyrir. Stjórnvöld leiðbeina oft um kæruleiðir í niðurlagi ákvarðana sinna.',
+        'Til þess að umboðsmaður geti tekið kvörtun til meðferðar verða kæruleiðir innan stjórnsýslunnar að hafa verið nýttar og niðurstaða að liggja fyrir. Þegar stjórnvald hefur tekið ákvörðun um réttindi eða skyldur er oft leiðbeint um kæruleiðir í niðurlagi tilkynningar um hana.',
       description:
         'Prior to submitting this complaint to the Ombudsman, all other appeal options must be exhausted. Higher authorities specify the appeal process in their rulings.',
     },

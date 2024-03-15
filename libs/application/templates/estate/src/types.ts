@@ -1,5 +1,5 @@
 import { FormValue } from '@island.is/application/types'
-import { EstateAsset } from '@island.is/clients/syslumenn'
+import { EstateAsset, Advocate } from '@island.is/clients/syslumenn'
 
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
@@ -22,6 +22,8 @@ export enum OtherPropertiesEnum {
 export type Asset = Partial<EstateAsset & { initial: boolean }>
 
 export type AssetFormField = Asset & { id: string }
+
+export type ErrorValue = { [key: string]: any }
 
 export type Answers = {
   additionalInfo: string
@@ -60,7 +62,8 @@ export type Answers = {
 export interface EstateMember {
   name: string
   nationalId: string
-  relation: RelationEnum | string
+  relation: string
+  relationWithApplicant?: string
   initial?: boolean
   dateOfBirth?: string
   custodian?: string
@@ -68,4 +71,5 @@ export interface EstateMember {
   enabled?: boolean
   phone?: string
   email?: string
+  advocate?: Advocate
 }

@@ -14,18 +14,18 @@ export const information = {
       defaultMessage: 'Fullt nafn',
       description: 'Complainers name',
     },
-    ssn: {
-      id: 'ctao.application:information.aboutTheComplainer.ssn',
+    nationalId: {
+      id: 'ctao.application:information.aboutTheComplainer.nationalId',
       defaultMessage: 'Kennitala',
-      description: 'Complainers SSN',
+      description: 'Complainers nationalId',
     },
     address: {
       id: 'ctao.application:information.aboutTheComplainer.address',
       defaultMessage: 'Lögheimili',
       description: 'Complainers home address',
     },
-    postcode: {
-      id: 'ctao.application:information.aboutTheComplainer.postcode',
+    postalCode: {
+      id: 'ctao.application:information.aboutTheComplainer.postalCode',
       defaultMessage: 'Póstnúmer',
       description: 'Complainers post code',
     },
@@ -39,8 +39,8 @@ export const information = {
       defaultMessage: 'Netfang',
       description: 'Complainers email ',
     },
-    phone: {
-      id: 'ctao.application:information.aboutTheComplainer.phone',
+    phoneNumber: {
+      id: 'ctao.application:information.aboutTheComplainer.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Complainers phone number',
     },

@@ -1,40 +1,43 @@
 {
-  "athugasemdir": null,
-  "rettindi": [
+  "comments": null,
+  "categories": [
     {
-      "gildirTil": "2036-05-25T06:43:15.327",
-      "id": -1,
+      "id": 28009595,
       "nr": "B",
-      "aths": null,
-      "utgafuDags": "2005-05-25T06:43:16.667"
+      "categoryName": "Fólksbifreið/sendibifreið",
+      "publishDate": "2018-05-25T06:43:15.327",
+      "dateTo": "2036-05-25T06:43:15.327",
+      "validToCode": 9,
+      "validToText": "Fimmtán ára gildistími",
+      "comment": null
     }
   ],
-  "faedingarstadur": "0000",
-  "undirskrift": null,
-  "svipting": {
-    "endurupptakaSkirteinis": null,
-    "skirteiniUrGildi": null,
-    "dagsFra": "2006-05-05T05:05:05.005",
-    "tegundSviptingarHeiti": null,
-    "tegundSviptingar": null,
-    "skirteiniGlatad": null,
-    "dagsTil": "2007-05-05T05:05:05.005"
+  "birthPlace": "0000",
+  "signature": null,
+  "deprivation": {
+    "retakeLicense": null,
+    "licenseExpired": null,
+    "dateFrom": "2006-05-05T05:05:05.005",
+    "deprivationName": null,
+    "deprivationType": null,
+    "licenseLost": null,
+    "dateTo": "2007-05-05T05:05:05.005"
   },
-  "nrUtgafustadur": 3,
-  "nafn": "Valid Jónsson",
+  "publishPlaceNr": 3,
+  "name": "Valid Jónsson",
   "id": -1,
-  "kennitala": "0",
-  "mynd": {
-    "kennitala": "0",
+  "socialSecurityNumber": "0",
+  "image": {
+    "socialSecurityNumber": "0",
     "id": -1,
-    "mynd": "/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAAOgAwAEAAAAAQAAAAQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/AABEIAAQAAwMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/3QAEAAH/2gAMAwEAAhEDEQA/AOAGi6v4Lz4Y0b4ifFVdK0hmgsY3+I3imEw28rG5S3WPT9SsbVY7fz/Ih2WyO0UaNO89wZbiVft3ir/oovxS/wDDl+Nv/l7XQeLP+Ri1T/rtH/6Iirna+Ae79Wepg8TiJYPCSlXrSlLDUG5OrNtt0oNtt3bberbd31uf/9k=",
-    "forrit": 5,
-    "gaedi": 0,
-    "skrad": "1999-07-29T00:00:00",
-    "tegund": 1
+    "image": "/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAAOgAwAEAAAAAQAAAAQAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/AABEIAAQAAwMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/3QAEAAH/2gAMAwEAAhEDEQA/AOAGi6v4Lz4Y0b4ifFVdK0hmgsY3+I3imEw28rG5S3WPT9SsbVY7fz/Ih2WyO0UaNO89wZbiVft3ir/oovxS/wDDl+Nv/l7XQeLP+Ri1T/rtH/6Iirna+Ae79Wepg8TiJYPCSlXrSlLDUG5OrNtt0oNtt3bberbd31uf/9k=",
+    "program": 5,
+    "quality": 0,
+    "dateRegistered": "1999-07-29T00:00:00",
+    "type": 1
   },
-  "utgafuDagsetning": "2021-05-25T06:43:15.327",
-  "faedingarStadurHeiti": "Ísland",
-  "gildirTil": "2036-05-25T06:43:15.327",
-  "nafnUtgafustadur": "Ríkissaksóknari"
+  "publishDate": "2018-05-25T06:43:15.327",
+  "birthPlaceName": "Ísland",
+  "dateValidTo": "2036-05-25T06:43:15.327",
+  "publishPlaceName": "Ríkissaksóknari"
 }

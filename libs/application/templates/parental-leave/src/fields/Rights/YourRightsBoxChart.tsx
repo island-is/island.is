@@ -13,7 +13,7 @@ import {
   maxMonths,
 } from '../../config'
 import { YES } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
 interface YourRightsBoxChartProps {
   application: Application
@@ -25,7 +25,7 @@ const YourRightsBoxChart: FC<
 > = ({ application, showDisclaimer = false }) => {
   const { formatMessage } = useLocale()
   const { isRequestingRights, requestDays, isGivingRights, giveDays } =
-    useApplicationAnswers(application)
+    getApplicationAnswers(application.answers)
   const maxDays = maxDaysToGiveOrReceive
 
   const requestDaysStringKey =

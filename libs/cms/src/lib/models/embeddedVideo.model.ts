@@ -12,14 +12,26 @@ export class EmbeddedVideo {
 
   @Field()
   url!: string
+
+  @Field(() => String, { nullable: true })
+  thumbnailImageUrl?: string
 }
 
 export const mapEmbeddedVideo = ({
   fields,
   sys,
-}: IEmbeddedVideo): SystemMetadata<EmbeddedVideo> => ({
-  typename: 'EmbeddedVideo',
-  id: sys.id,
-  title: fields.title ?? '',
-  url: fields.url ?? '',
-})
+}: IEmbeddedVideo): SystemMetadata<EmbeddedVideo> => {
+  const thumbnailImageUrl = fields.thumbnailImage?.fields?.file?.url ?? ''
+  let prefix = ''
+  if (thumbnailImageUrl.startsWith('//')) {
+    prefix = 'https:'
+  }
+
+  return {
+    typename: 'EmbeddedVideo',
+    id: sys.id,
+    title: fields.title ?? '',
+    url: fields.url ?? '',
+    thumbnailImageUrl: prefix + thumbnailImageUrl,
+  }
+}

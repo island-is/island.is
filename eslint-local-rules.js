@@ -3,6 +3,28 @@ const kennitala = require('kennitala')
 const fakeNationalIdPrefixes = ['010130', /(\d+)\1{6,}/]
 
 module.exports = {
+  'require-reduce-defaults': {
+    meta: {
+      type: 'problem',
+      docs: {
+        description: 'require a default value when using .reduce()',
+        category: 'Possible Errors',
+        recommended: true,
+      },
+      schema: [],
+    },
+    create: function (context) {
+      return {
+        "CallExpression[arguments.length=1] > MemberExpression.callee > Identifier.property[name='reduce']":
+          (node) => {
+            context.report({
+              node,
+              message: 'Provide initialValue to .reduce().',
+            })
+          },
+      }
+    },
+  },
   'disallow-kennitalas': {
     meta: {
       docs: {

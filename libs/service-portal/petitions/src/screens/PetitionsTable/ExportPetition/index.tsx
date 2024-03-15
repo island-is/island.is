@@ -52,7 +52,7 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box className={styles.buttonWrapper} display="flex">
+    <Box display="flex">
       <Box marginRight={2} className={styles.hideInMobile}>
         <Button
           onClick={() => {
@@ -78,6 +78,7 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
             render: () => {
               return (
                 <button
+                  key="copyLinkDesktop"
                   className={cn(styles.hideOnDesktop, styles.menuItem)}
                   onClick={() => {
                     const copied = copyToClipboard(baseUrl + petitionId)

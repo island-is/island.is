@@ -1,20 +1,21 @@
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
-  indictmentCases,
   InstitutionType,
-  isIndictmentCase,
-  UserRole,
-  isProsecutionUser,
+  isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
-  isAppealsCourtUser,
-  isPrisonSystemUser,
-  isRestrictionCase,
+  isIndictmentCase,
   isInvestigationCase,
-  CaseAppealState,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRestrictionCase,
+  RequestSharedWithDefender,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
@@ -24,15 +25,7 @@ function canProsecutionUserAccessCase(
   forUpdate = true,
 ): boolean {
   // Check case type access
-  if (user.role === UserRole.PROSECUTOR) {
-    if (
-      !isRestrictionCase(theCase.type) &&
-      !isInvestigationCase(theCase.type) &&
-      !isIndictmentCase(theCase.type)
-    ) {
-      return false
-    }
-  } else if (!isIndictmentCase(theCase.type)) {
+  if (user.role !== UserRole.PROSECUTOR && !isIndictmentCase(theCase.type)) {
     return false
   }
 
@@ -41,6 +34,7 @@ function canProsecutionUserAccessCase(
     ![
       CaseState.NEW,
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
       CaseState.ACCEPTED,
@@ -53,8 +47,7 @@ function canProsecutionUserAccessCase(
 
   // Check prosecutors office access
   if (
-    theCase.creatingProsecutor?.institutionId &&
-    user.institution?.id !== theCase.creatingProsecutor?.institutionId &&
+    user.institution?.id !== theCase.prosecutorsOfficeId &&
     (forUpdate ||
       user.institution?.id !== theCase.sharedWithProsecutorsOfficeId)
   ) {
@@ -75,16 +68,15 @@ function canProsecutionUserAccessCase(
 
 function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   // Check case type access
-  if ([UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role)) {
-    if (
-      !isRestrictionCase(theCase.type) &&
-      !isInvestigationCase(theCase.type) &&
-      !isIndictmentCase(theCase.type)
-    ) {
+  if (
+    ![
+      UserRole.DISTRICT_COURT_JUDGE,
+      UserRole.DISTRICT_COURT_REGISTRAR,
+    ].includes(user.role)
+  ) {
+    if (!isIndictmentCase(theCase.type)) {
       return false
     }
-  } else if (!indictmentCases.includes(theCase.type)) {
-    return false
   }
 
   // Check case state access
@@ -139,9 +131,18 @@ function canAppealsCourtUserAccessCase(theCase: Case): boolean {
   // Check appeal state access
   if (
     !theCase.appealState ||
-    ![CaseAppealState.RECEIVED, CaseAppealState.COMPLETED].includes(
-      theCase.appealState,
-    )
+    ![
+      CaseAppealState.RECEIVED,
+      CaseAppealState.COMPLETED,
+      CaseAppealState.WITHDRAWN,
+    ].includes(theCase.appealState)
+  ) {
+    return false
+  }
+
+  if (
+    theCase.appealState === CaseAppealState.WITHDRAWN &&
+    !theCase.appealReceivedByCourtDate
   ) {
     return false
   }
@@ -178,12 +179,88 @@ function canPrisonSystemUserAccessCase(
   }
 
   // Check case state access
+  if (theCase.state !== CaseState.ACCEPTED) {
+    return false
+  }
+
+  // Check prison access to alternative travel ban
+  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+    if (
+      !theCase.decision ||
+      ![
+        CaseDecision.ACCEPTING,
+        CaseDecision.ACCEPTING_PARTIALLY,
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+      ].includes(theCase.decision)
+    ) {
+      return false
+    }
+  } else {
+    if (
+      !theCase.decision ||
+      ![CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+        theCase.decision,
+      )
+    ) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
+  // Check case state access
   if (
-    theCase.state !== CaseState.ACCEPTED ||
-    (user.institution?.type !== InstitutionType.PRISON_ADMIN &&
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+    ![
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ].includes(theCase.state)
   ) {
     return false
+  }
+
+  // Check submitted case access
+  const canDefenderAccessSubmittedCase =
+    (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) &&
+    theCase.requestSharedWithDefender ===
+      RequestSharedWithDefender.READY_FOR_COURT
+
+  if (
+    theCase.state === CaseState.SUBMITTED &&
+    !canDefenderAccessSubmittedCase
+  ) {
+    return false
+  }
+
+  // Check received case access
+  if (theCase.state === CaseState.RECEIVED) {
+    const canDefenderAccessReceivedCase =
+      isIndictmentCase(theCase.type) ||
+      canDefenderAccessSubmittedCase ||
+      Boolean(theCase.courtDate)
+
+    if (!canDefenderAccessReceivedCase) {
+      return false
+    }
+  }
+
+  // Check case defender access
+  if (isIndictmentCase(theCase.type)) {
+    if (
+      !theCase.defendants?.some(
+        (defendant) => defendant.defenderNationalId === user.nationalId,
+      )
+    ) {
+      return false
+    }
+  } else {
+    if (theCase.defenderNationalId !== user.nationalId) {
+      return false
+    }
   }
 
   return true
@@ -202,12 +279,16 @@ export function canUserAccessCase(
     return canDistrictCourtUserAccessCase(theCase, user)
   }
 
-  if (isAppealsCourtUser(user)) {
+  if (isCourtOfAppealsUser(user)) {
     return canAppealsCourtUserAccessCase(theCase)
   }
 
   if (isPrisonSystemUser(user)) {
     return canPrisonSystemUserAccessCase(theCase, user, forUpdate)
+  }
+
+  if (isDefenceUser(user)) {
+    return canDefenceUserAccessCase(theCase, user)
   }
 
   // Other users cannot access cases

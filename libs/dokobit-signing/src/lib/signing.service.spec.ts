@@ -1,5 +1,5 @@
-import { Base64 } from 'js-base64'
 import { createHash } from 'crypto'
+import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import { Test, TestingModule } from '@nestjs/testing'
@@ -7,9 +7,9 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { LoggingModule } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
+import { signingModuleConfig } from './signing.config'
 import { SigningModule } from './signing.module'
 import { SigningService } from './signing.service'
-import { signingModuleConfig } from './signing.config'
 
 const testAccessToken = uuid()
 const testMobileNumber = '1111111'

@@ -227,11 +227,17 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: false,
     })
     if (data?.books) {
-      const book = data.books
-        .filter((item) => item.status !== 9)
-        .reduce((a, b) =>
+      const filteredBooks = data.books.filter((item) => item.status !== 9)
+
+      const book = filteredBooks.reduce(
+        (a, b) =>
           new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
-        )
+        {},
+      )
+
+      if (!book) {
+        return null
+      }
 
       return getStudentAndBookMapper(data, book)
     }
@@ -370,8 +376,10 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: false,
     })
 
-    const activeBook = data?.books?.reduce((a, b) =>
-      new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+    const activeBook = data?.books?.reduce(
+      (a, b) =>
+        new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+      {},
     )
 
     if (!activeBook?.id || !activeBook?.createdOn) {

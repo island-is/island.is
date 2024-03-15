@@ -9,4 +9,10 @@ export const educationLicenseNavigation: PortalNavigationItem = {
     icon: 'receipt',
   },
   description: m.educationLicenseDescription,
+  children: [
+    {
+      name: m.myEducationLicense,
+      path: EducationLicensePaths.EducationLicense,
+    },
+  ],
 }

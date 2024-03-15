@@ -1,0 +1,146 @@
+query LimitedAccessCase($input: CaseQueryInput!) {
+  limitedAccessCase(input: $input) {
+    id
+    created
+    origin
+    type
+    indictmentSubtypes
+    state
+    policeCaseNumbers
+    caseFiles {
+      id
+      created
+      name
+      category
+      key
+      policeCaseNumber
+    }
+    defendants {
+      id
+      noNationalId
+      nationalId
+      name
+      gender
+      address
+      citizenship
+      defenderName
+      defenderNationalId
+      defenderEmail
+      defenderPhoneNumber
+      defendantWaivesRightToCounsel
+    }
+    defenderName
+    defenderNationalId
+    defenderEmail
+    defenderPhoneNumber
+    requestSharedWithDefender
+    court {
+      id
+      name
+      type
+    }
+    leadInvestigator
+    requestedCustodyRestrictions
+    creatingProsecutor {
+      id
+      name
+      title
+      canConfirmAppeal
+    }
+    prosecutor {
+      id
+      name
+      title
+      email
+      canConfirmAppeal
+    }
+    courtCaseNumber
+    courtEndTime
+    validToDate
+    decision
+    isValidToDateInThePast
+    isCustodyIsolation
+    isolationToDate
+    conclusion
+    accusedPostponedAppealDate
+    prosecutorPostponedAppealDate
+    rulingDate
+    rulingSignatureDate
+    registrar {
+      id
+      name
+      title
+      email
+      canConfirmAppeal
+    }
+    judge {
+      id
+      name
+      title
+      email
+      canConfirmAppeal
+    }
+    courtRecordSignatory {
+      id
+      name
+      title
+      canConfirmAppeal
+    }
+    courtRecordSignatureDate
+    parentCase {
+      id
+      state
+      validToDate
+      decision
+      courtCaseNumber
+      ruling
+    }
+    childCase {
+      id
+    }
+    caseModifiedExplanation
+    caseResentExplanation
+    appealState
+    accusedAppealDecision
+    prosecutorAppealDecision
+    isAppealDeadlineExpired
+    isStatementDeadlineExpired
+    statementDeadline
+    canBeAppealed
+    hasBeenAppealed
+    appealedByRole
+    appealedDate
+    appealDeadline
+    prosecutorStatementDate
+    defendantStatementDate
+    appealReceivedByCourtDate
+    appealConclusion
+    appealRulingDecision
+    appealCaseNumber
+    appealRulingModifiedHistory
+    appealAssistant {
+      id
+      name
+      canConfirmAppeal
+    }
+    appealJudge1 {
+      id
+      name
+      canConfirmAppeal
+    }
+    appealJudge2 {
+      id
+      name
+      canConfirmAppeal
+    }
+    appealJudge3 {
+      id
+      name
+      canConfirmAppeal
+    }
+    prosecutorsOffice {
+      id
+      name
+    }
+  }
+}

@@ -19,11 +19,29 @@ export const alignTiles = style({
       bottom: 0,
       right: 0,
     },
+    xl: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+    },
   }),
 })
 
-export const bg = style({
-  display: 'block',
+export const heroImage = style({
   position: 'relative',
+  display: 'block',
+  margin: '0 auto',
+  height: 'auto',
   width: '100%',
+  maxWidth: 660,
+  paddingBottom: theme.spacing[3],
+  marginBottom: '-1.8%',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      paddingBottom: 'unset',
+    },
+    xl: {
+      paddingBottom: 'unset',
+    },
+  }),
 })

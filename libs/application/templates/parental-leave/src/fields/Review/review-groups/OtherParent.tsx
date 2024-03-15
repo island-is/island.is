@@ -4,8 +4,9 @@ import {
   ReviewGroup,
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { format as formatKennitala } from 'kennitala'
 import {
   MANUAL,
   NO,
@@ -13,15 +14,14 @@ import {
   SINGLE,
   SPOUSE,
 } from '../../../constants'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import {
+  getApplicationAnswers,
   getOtherParentId,
   getOtherParentName,
   getSelectedChild,
   requiresOtherParentApproval,
 } from '../../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../..'
-import { format as formatKennitala } from 'kennitala'
 import { ReviewGroupProps } from './props'
 
 export const OtherParent = ({
@@ -30,8 +30,8 @@ export const OtherParent = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [{ otherParent, otherParentEmail, otherParentPhoneNumber }] =
-    useStatefulAnswers(application)
+  const { otherParent, otherParentEmail, otherParentPhoneNumber } =
+    getApplicationAnswers(application.answers)
 
   const selectedChild = getSelectedChild(
     application.answers,
@@ -52,82 +52,61 @@ export const OtherParent = ({
       isEditable={editable && isPrimaryParent}
       editAction={() => goToScreen?.('otherParentObj')}
     >
-      {(otherParent === NO || otherParent === SINGLE) && (
-        <RadioValue
-          label={formatMessage(
-            parentalLeaveFormMessages.shared.otherParentTitle,
-          )}
-          value={NO}
-        />
-      )}
-
-      {otherParent === SPOUSE && (
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.otherParentName,
-              )}
-              value={otherParentName}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.otherParentID,
-              )}
-              value={formatKennitala(otherParentId!)}
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-
-      {otherParent === MANUAL && (
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.otherParentName,
-              )}
-              value={otherParentName}
-            />
-          </GridColumn>
-
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.otherParentID,
-              )}
-              value={
-                otherParentId ? formatKennitala(otherParentId) : otherParentId
-              }
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-      {otherParentWillApprove && (
-        <GridRow marginTop={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-              )}
-              value={otherParentEmail}
-            />
-          </GridColumn>
-          {otherParentPhoneNumber && (
+      <Stack space={2}>
+        {(otherParent === NO || otherParent === SINGLE) && (
+          <RadioValue
+            label={formatMessage(
+              parentalLeaveFormMessages.shared.otherParentTitle,
+            )}
+            value={NO}
+          />
+        )}
+        {(otherParent === SPOUSE || otherParent === MANUAL) && (
+          <GridRow rowGap={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
-                  parentalLeaveFormMessages.shared
-                    .otherParentPhoneNumberSubSection,
+                  parentalLeaveFormMessages.shared.otherParentName,
                 )}
-                value={formatPhoneNumber(otherParentPhoneNumber)}
+                value={otherParentName}
               />
             </GridColumn>
-          )}
-        </GridRow>
-      )}
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentID,
+                )}
+                value={
+                  otherParentId ? formatKennitala(otherParentId) : otherParentId
+                }
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+        {otherParentWillApprove && (
+          <GridRow rowGap={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentEmailSubSection,
+                )}
+                value={otherParentEmail}
+              />
+            </GridColumn>
+            {otherParentPhoneNumber && (
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared
+                      .otherParentPhoneNumberSubSection,
+                  )}
+                  value={formatPhoneNumber(otherParentPhoneNumber)}
+                />
+              </GridColumn>
+            )}
+          </GridRow>
+        )}
+      </Stack>
     </ReviewGroup>
   )
 }

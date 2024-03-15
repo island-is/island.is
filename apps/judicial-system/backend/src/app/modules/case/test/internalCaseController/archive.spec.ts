@@ -1,24 +1,26 @@
 import CryptoJS from 'crypto-js'
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { ConfigType } from '@island.is/nest/config'
+
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { uuidFactory } from '../../../../factories'
 import { Defendant, DefendantService } from '../../../defendant'
+import { CaseFile, FileService } from '../../../file'
 import {
   IndictmentCount,
   IndictmentCountService,
 } from '../../../indictment-count'
-import { CaseFile, FileService } from '../../../file'
+import { caseModuleConfig } from '../../case.config'
+import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
-import { caseModuleConfig } from '../../case.config'
-import { archiveFilter } from '../../filters/case.archiveFilter'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
@@ -119,7 +121,6 @@ describe('InternalCaseController - Archive', () => {
       description: 'original_description',
       demands: 'original_demands',
       lawsBroken: 'original_lawsBroken',
-      legalBasis: 'original_legalBasis',
       requestedOtherRestrictions: 'original_requestedOtherRestrictions',
       caseFacts: 'original_caseFacts',
       legalArguments: 'original_legalArguments',
@@ -192,8 +193,6 @@ describe('InternalCaseController - Archive', () => {
     const archive = JSON.stringify({
       description: 'original_description',
       demands: 'original_demands',
-      lawsBroken: 'original_lawsBroken',
-      legalBasis: 'original_legalBasis',
       requestedOtherRestrictions: 'original_requestedOtherRestrictions',
       caseFacts: 'original_caseFacts',
       legalArguments: 'original_legalArguments',
@@ -368,8 +367,6 @@ describe('InternalCaseController - Archive', () => {
         {
           description: '',
           demands: '',
-          lawsBroken: '',
-          legalBasis: '',
           requestedOtherRestrictions: '',
           caseFacts: '',
           legalArguments: '',

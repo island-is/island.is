@@ -1,3 +1,4 @@
+import { OrganizationSlugType } from '@island.is/shared/constants'
 import { BodyInit, Headers, Response, ResponseInit } from 'node-fetch'
 import { UnknownProblem } from '@island.is/shared/problem'
 
@@ -21,19 +22,30 @@ export class FetchError extends Error {
     this.response = response
   }
 
-  static async build(response: Response, includeBody = false) {
+  static async build(
+    response: Response,
+    includeBody = false,
+    organizationSlug?: OrganizationSlugType,
+  ) {
     const error = new FetchError(response)
-
     const contentType = response.headers.get('content-type') || ''
     const isJson = contentType.startsWith('application/json')
     const isProblem = contentType.startsWith('application/problem+json')
     const shouldIncludeBody = includeBody && (isJson || isProblem)
+
     if (isProblem || shouldIncludeBody) {
       const body = await response.clone().json()
+
       if (shouldIncludeBody) {
         error.body = body
       }
-      if (isProblem) {
+
+      if (organizationSlug && body.status >= 500) {
+        error.problem = {
+          ...body,
+          organizationSlug,
+        }
+      } else if (isProblem) {
         error.problem = body
       }
     } else if (includeBody) {

@@ -3,8 +3,7 @@ import { merge } from 'lodash'
 import { FeatureNames } from './dsl/features'
 const dev01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
-  auroraReplica:
-    'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+  auroraReplica: 'postgres-applications-reader.internal',
   redisHost: JSON.stringify([
     'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
   ]),
@@ -22,15 +21,13 @@ const dev01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'dev',
-        NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
-      },
-      image: {
-        tag: 'latest_master',
+        NPM_CONFIG_UPDATE_NOTIFIER: 'false',
       },
       initContainer: {
         env: {
           AWS_REGION: 'eu-west-1',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
         },
       },
     },
@@ -55,15 +52,13 @@ const staging01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'staging',
-        NO_UPDATE_NOTIFIER: 'true',
+        NPM_CONFIG_UPDATE_NOTIFIER: 'false',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
-      },
-      image: {
-        tag: 'latest_master',
       },
       initContainer: {
         env: {
           AWS_REGION: 'eu-west-1',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
         },
       },
     },
@@ -102,15 +97,13 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
-          NO_UPDATE_NOTIFIER: 'true',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
-        },
-        image: {
-          tag: 'latest_master',
         },
         initContainer: {
           env: {
             AWS_REGION: 'eu-west-1',
+            NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           },
         },
       },
@@ -135,15 +128,13 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
-          NO_UPDATE_NOTIFIER: 'true',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           AUDIT_GROUP_NAME: '/identity-server/audit-log',
-        },
-        image: {
-          tag: 'latest_master',
         },
         initContainer: {
           env: {
             AWS_REGION: 'eu-west-1',
+            NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           },
         },
       },

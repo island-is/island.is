@@ -11,9 +11,9 @@ import {
   CaseReceivedGuard,
   CaseWriteGuard,
 } from '../../../case'
-import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { CaseTypeGuard } from '../../../case/guards/caseType.guard'
 import { FileController } from '../../file.controller'
+import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 
 describe('FileController - Upload case file to court guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

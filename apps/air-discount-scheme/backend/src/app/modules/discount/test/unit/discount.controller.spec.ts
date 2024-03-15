@@ -64,6 +64,7 @@ describe('DiscountController', () => {
             createDiscountCode: () => ({}),
             getDiscountByDiscountCode: () => ({}),
             createExplicitDiscountCode: () => ({}),
+            createManualDiscountCode: () => ({}),
           })),
         },
         {
@@ -231,8 +232,8 @@ describe('DiscountController', () => {
         0,
       )
       const createExplicitDiscountCodeSpy = jest
-        .spyOn(discountService, 'createExplicitDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
+        .spyOn(privateDiscountAdminController, 'createExplicitDiscountCode')
+        .mockImplementation(() => Promise.resolve([discount]))
 
       const result =
         await privateDiscountAdminController.createExplicitDiscountCode(
@@ -241,20 +242,26 @@ describe('DiscountController', () => {
             nationalId,
             postalcode,
             numberOfDaysUntilExpiration,
+            needsConnectionFlight: false,
+            isExplicit: false,
+            flightLegs: 1,
           },
           auth,
         )
 
       expect(createExplicitDiscountCodeSpy).toHaveBeenCalledWith(
+        {
+          comment,
+          nationalId,
+          postalcode,
+          numberOfDaysUntilExpiration,
+          needsConnectionFlight: false,
+          isExplicit: false,
+          flightLegs: 1,
+        },
         auth,
-        nationalId,
-        postalcode,
-        auth.nationalId,
-        comment,
-        numberOfDaysUntilExpiration,
-        [],
       )
-      expect(result).toEqual(discount)
+      expect(result).toEqual([discount])
     })
   })
 })

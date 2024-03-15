@@ -1,11 +1,9 @@
-import { CanActivate } from '@nestjs/common'
-
 import {
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseTypeGuard } from '../../../case'
+import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { LimitedAccessWriteCaseFileGuard } from '../../guards/limitedAccessWriteCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
@@ -21,46 +19,14 @@ describe('LimitedAccessFileController - Delete case file guards', () => {
     )
   })
 
-  it('should have three guards', () => {
-    expect(guards).toHaveLength(3)
-  })
-
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[0]
+  it('should have the right guard configuration', () => {
+    expect(guards).toHaveLength(4)
+    expect(guards[0]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[0]).toEqual({
+      allowedCaseTypes: [...restrictionCases, ...investigationCases],
     })
-
-    it('should have CaseTypeGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
-  })
-
-  describe('CaseFileExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have CaseFileExistsGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(CaseFileExistsGuard)
-    })
-  })
-
-  describe('LimitedAccessWriteCaseFileGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have LimitedAccessWriteCaseFileGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessWriteCaseFileGuard)
-    })
+    expect(new guards[1]()).toBeInstanceOf(CaseWriteGuard)
+    expect(new guards[2]()).toBeInstanceOf(CaseFileExistsGuard)
+    expect(new guards[3]()).toBeInstanceOf(LimitedAccessWriteCaseFileGuard)
   })
 })

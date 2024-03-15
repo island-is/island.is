@@ -10,19 +10,22 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CaseMessage,
   MessageService,
   MessageType,
+  PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
@@ -33,38 +36,33 @@ import {
   CaseTransition,
   CaseType,
   completedCaseStates,
+  EventType,
   isIndictmentCase,
   isRestrictionCase,
+  prosecutorCanSelectDefenderForInvestigationCase,
   UserRole,
-  EventType,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
-  getRequestPdfAsBuffer,
-  getRulingPdfAsString,
-  getRulingPdfAsBuffer,
-  getCustodyNoticePdfAsBuffer,
-  getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  createCaseFilesRecord,
-  createIndictment,
+  getRulingPdfAsString,
 } from '../../formatters'
+import { AwsS3Service } from '../aws-s3'
+import { CourtService } from '../court'
+import { Defendant, DefendantService } from '../defendant'
+import { CaseEvent, EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
-import { DefendantService, Defendant } from '../defendant'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { User } from '../user'
-import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
-import { CaseEvent, EventService } from '../event'
-import { EventLog } from '../event-log'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
-import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
+import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+
 export interface UpdateCase
   extends Pick<
     Case,
@@ -126,6 +124,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'crimeScenes'
     | 'indictmentIntroduction'
@@ -141,7 +140,12 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
+    | 'indictmentDeniedExplanation'
   > {
   type?: CaseType
   state?: CaseState
@@ -149,7 +153,6 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
-  rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
@@ -158,17 +161,9 @@ export interface UpdateCase
 const eventTypes = Object.values(EventType)
 
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
-  { model: IndictmentCount, as: 'indictmentCounts' },
-  {
-    model: EventLog,
-    as: 'eventLogs',
-    required: false,
-    where: {
-      eventType: { [Op.in]: eventTypes },
-    },
-  },
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
+  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -179,7 +174,6 @@ export const include: Includeable[] = [
     as: 'prosecutor',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'judge',
@@ -194,25 +188,6 @@ export const include: Includeable[] = [
     model: User,
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: Case,
-    as: 'parentCase',
-    include: [
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
-      },
-    ],
-  },
-  { model: Case, as: 'childCase' },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: { state: { [Op.not]: CaseFileState.DELETED } },
   },
   {
     model: User,
@@ -234,6 +209,38 @@ export const include: Includeable[] = [
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
   },
+  {
+    model: Case,
+    as: 'parentCase',
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+        separate: true,
+      },
+    ],
+  },
+  { model: Case, as: 'childCase' },
+  { model: Defendant, as: 'defendants' },
+  { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: { state: { [Op.not]: CaseFileState.DELETED } },
+    separate: true,
+  },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
+    separate: true,
+  },
 ]
 
 export const order: OrderItem[] = [
@@ -242,6 +249,7 @@ export const order: OrderItem[] = [
 ]
 
 export const caseListInclude: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Defendant, as: 'defendants' },
   {
     model: User,
@@ -271,8 +279,6 @@ export const listOrder: OrderItem[] = [
 
 @Injectable()
 export class CaseService {
-  private throttle = Promise.resolve(Buffer.from(''))
-
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -334,60 +340,6 @@ export class CaseService {
 
         return false
       })
-  }
-
-  private async throttleGetCaseFilesRecordPdf(
-    theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<Buffer> {
-    // Serialize all case files pdf generations in this process
-    await this.throttle.catch((reason) => {
-      this.logger.info('Previous case files pdf generation failed', { reason })
-    })
-
-    await this.refreshFormatMessage()
-
-    const caseFiles = theCase.caseFiles
-      ?.filter(
-        (caseFile) =>
-          caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
-          caseFile.type === 'application/pdf' &&
-          caseFile.key &&
-          caseFile.chapter !== null &&
-          caseFile.orderWithinChapter !== null,
-      )
-      ?.sort(
-        (caseFile1, caseFile2) =>
-          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
-          (caseFile1.orderWithinChapter ?? 0) -
-            (caseFile2.orderWithinChapter ?? 0),
-      )
-      ?.map((caseFile) => async () => {
-        const buffer = await this.awsS3Service
-          .getObject(caseFile.key ?? '')
-          .catch((reason) => {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
-              { reason },
-            )
-          })
-
-        return {
-          chapter: caseFile.chapter as number,
-          date: caseFile.displayDate ?? caseFile.created,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          buffer: buffer ?? undefined,
-        }
-      })
-
-    return createCaseFilesRecord(
-      theCase,
-      policeCaseNumber,
-      caseFiles ?? [],
-      this.formatMessage,
-    )
   }
 
   private async createCase(
@@ -546,13 +498,34 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages: (CaseMessage | PoliceCaseMessage)[] = [
       {
         type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
-    ])
+    ]
+
+    if (
+      theCase.type === CaseType.INDICTMENT &&
+      theCase.origin === CaseOrigin.LOKE
+    ) {
+      messages.push({
+        type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+      theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+        messages.push({
+          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
+          user,
+          caseId: theCase.id,
+          policeCaseNumber,
+        }),
+      )
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForCourtCaseConnectionToQueue(
@@ -668,7 +641,6 @@ export class CaseService {
       caseId: theCase.id,
     })
 
-    // Case created from LOKE
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_CASE_TO_POLICE,
@@ -688,6 +660,11 @@ export class CaseService {
       this.getIndictmentArchiveMessages(theCase, user, true).concat([
         {
           type: MessageType.SEND_RULING_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+        },
+        {
+          type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
           user,
           caseId: theCase.id,
         },
@@ -818,6 +795,14 @@ export class CaseService {
       caseId: theCase.id,
     })
 
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVER_APPEAL_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
     return this.messageService.sendMessagesToQueue(messages)
   }
 
@@ -828,6 +813,32 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue([
       {
         type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
+  private addMessagesForAppealWithdrawnToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
+  private addMessagesForDeniedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
@@ -869,13 +880,26 @@ export class CaseService {
       }
     }
 
+    if (
+      isIndictmentCase(updatedCase.type) &&
+      updatedCase.state === CaseState.DRAFT &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
+    }
+
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+      } else if (
+        theCase.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealState === CaseAppealState.RECEIVED
+      ) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.WITHDRAWN) {
+        await this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }
     }
 
@@ -960,6 +984,7 @@ export class CaseService {
             prosecutorId:
               user.role === UserRole.PROSECUTOR ? user.id : undefined,
             courtId: user.institution?.defaultCourtId,
+            prosecutorsOfficeId: user.institution?.id,
           } as CreateCaseDto,
           transaction,
         )
@@ -1035,98 +1060,6 @@ export class CaseService {
           return updatedCase
         }
       })
-  }
-
-  async getRequestPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
-  }
-
-  async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
-    if (theCase.courtRecordSignatureDate) {
-      try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/courtRecord.pdf`,
-        )
-      } catch (error) {
-        this.logger.info(
-          `The court record for case ${theCase.id} was not found in AWS S3`,
-          { error },
-        )
-      }
-    }
-
-    await this.refreshFormatMessage()
-
-    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
-  }
-
-  async getCaseFilesRecordPdf(
-    theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<Buffer> {
-    if (
-      ![CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED].includes(
-        theCase.state,
-      )
-    ) {
-      if (completedCaseStates.includes(theCase.state)) {
-        try {
-          return await this.awsS3Service.getObject(
-            `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-          )
-        } catch {
-          // Ignore the error and try the original key
-        }
-      }
-
-      try {
-        return await this.awsS3Service.getObject(
-          `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        )
-      } catch {
-        // Ignore the error and generate the pdf
-      }
-    }
-
-    this.throttle = this.throttleGetCaseFilesRecordPdf(
-      theCase,
-      policeCaseNumber,
-    )
-
-    return this.throttle
-  }
-
-  async getRulingPdf(theCase: Case): Promise<Buffer> {
-    if (theCase.rulingSignatureDate) {
-      try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/ruling.pdf`,
-        )
-      } catch (error) {
-        this.logger.info(
-          `The ruling for case ${theCase.id} was not found in AWS S3`,
-          { error },
-        )
-      }
-    }
-
-    await this.refreshFormatMessage()
-
-    return getRulingPdfAsBuffer(theCase, this.formatMessage)
-  }
-
-  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return createIndictment(theCase, this.formatMessage)
-  }
-
-  async getCustodyPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
   }
 
   async requestCourtRecordSignature(
@@ -1309,16 +1242,26 @@ export class CaseService {
   async extend(theCase: Case, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
+        const shouldCopyDefender =
+          isRestrictionCase(theCase.type) ||
+          prosecutorCanSelectDefenderForInvestigationCase(theCase.type)
+
         const caseId = await this.createCase(
           {
             origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderName: shouldCopyDefender ? theCase.defenderName : undefined,
+            defenderNationalId: shouldCopyDefender
+              ? theCase.defenderNationalId
+              : undefined,
+            defenderEmail: shouldCopyDefender
+              ? theCase.defenderEmail
+              : undefined,
+            defenderPhoneNumber: shouldCopyDefender
+              ? theCase.defenderPhoneNumber
+              : undefined,
             leadInvestigator: theCase.leadInvestigator,
             courtId: theCase.courtId,
             translator: theCase.translator,
@@ -1334,6 +1277,7 @@ export class CaseService {
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
+            prosecutorsOfficeId: user.institution?.id,
           } as CreateCaseDto,
           transaction,
         )

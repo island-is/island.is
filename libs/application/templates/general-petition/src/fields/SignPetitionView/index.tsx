@@ -81,7 +81,10 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             <Button
               icon="arrowForward"
               onClick={() =>
-                window.open('/minarsidur/min-gogn/listar', '_blank')
+                window.open(
+                  '/minarsidur/min-gogn/listar/undirskriftalistar',
+                  '_blank',
+                )
               }
             >
               {formatMessage(m.backtoSP)}

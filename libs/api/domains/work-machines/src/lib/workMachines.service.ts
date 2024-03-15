@@ -11,6 +11,7 @@ import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetDocumentsInput } from './dto/getDocuments.input'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { MachineDto } from '@island.is/clients/work-machines'
 @Injectable()
 export class WorkMachinesService {
   constructor(
@@ -54,8 +55,12 @@ export class WorkMachinesService {
   async getWorkMachines(
     user: User,
     input: GetWorkMachineCollectionInput,
-  ): Promise<PaginatedCollectionResponse> {
+  ): Promise<PaginatedCollectionResponse | null> {
     const data = await this.machineService.getWorkMachines(user, input)
+
+    if (!data) {
+      return null
+    }
 
     if (!data.links || !data.pagination || !data.labels) {
       this.logger.warn(
@@ -101,6 +106,10 @@ export class WorkMachinesService {
   ): Promise<WorkMachine | null> {
     const data = await this.machineService.getWorkMachineById(user, input)
 
+    if (!data) {
+      return null
+    }
+
     if (!data.links || !data.labels) {
       this.logger.warn('No links or label in work machine response')
     }
@@ -122,4 +131,18 @@ export class WorkMachinesService {
 
   getDocuments = (user: User, input: GetDocumentsInput): Promise<Blob> =>
     this.machineService.getDocuments(user, input)
+
+  async getMachineDetails(auth: User, id: string): Promise<MachineDto> {
+    return this.machineService.getMachineDetail(auth, id)
+  }
+
+  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
+    return this.machineService.getMachineByRegno(auth, regNumber)
+  }
+
+  async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
+    return (
+      (await this.machineService.isPaymentRequired(auth, regNumber)) || false
+    )
+  }
 }

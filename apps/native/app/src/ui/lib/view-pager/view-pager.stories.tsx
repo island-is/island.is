@@ -1,30 +1,31 @@
-import {theme} from '../../utils/theme';
-import {withKnobs} from '@storybook/addon-knobs';
-import {storiesOf} from '@storybook/react-native';
-import React from 'react';
-import {ImageSourcePropType, View} from 'react-native';
-import illustrationSrc from '../../assets/illustrations/digital-services-m3.png';
-import {WelcomeCard} from '../card/welcome-card';
-import {ViewPager} from './view-pager';
+import { withKnobs } from '@storybook/addon-knobs'
+import { storiesOf } from '@storybook/react-native'
+import React from 'react'
+import { ImageSourcePropType, View } from 'react-native'
+import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
+import { theme } from '../../utils/theme'
+import { WelcomeCard } from '../card/welcome-card'
+import { ViewPager } from './view-pager'
 
-const CenterView = ({children}: any) => (
+const CenterView = ({ children }: any) => (
   <View
     style={{
       flex: 1,
       width: '100%',
       justifyContent: 'center',
       alignItems: 'center',
-    }}>
+    }}
+  >
     {children}
   </View>
-);
+)
 
 storiesOf('View Pager', module)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
     return (
-      <View style={{marginHorizontal: 16, width: '90%%'}}>
+      <View style={{ marginHorizontal: 16, width: '90%%' }}>
         <ViewPager>
           <WelcomeCard
             key="card-1"
@@ -55,5 +56,5 @@ storiesOf('View Pager', module)
           />
         </ViewPager>
       </View>
-    );
-  });
+    )
+  })

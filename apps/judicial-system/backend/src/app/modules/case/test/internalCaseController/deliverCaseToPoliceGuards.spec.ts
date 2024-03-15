@@ -5,10 +5,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
-import { InternalCaseController } from '../../internalCase.controller'
+import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { InternalCaseController } from '../../internalCase.controller'
 
 describe('InternalCaseController - Deliver case to police guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

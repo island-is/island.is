@@ -1,5 +1,5 @@
-import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React from 'react'
+
 import {
   Box,
   GridContainer,
@@ -7,17 +7,20 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
 import * as styles from './SjukratryggingarHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const SjukratryggingarHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, logoAltText }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -39,7 +42,7 @@ const SjukratryggingarHeader: React.FC<
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt=""
+                    alt={logoAltText}
                   />
                 </Link>
               )
@@ -57,7 +60,7 @@ const SjukratryggingarHeader: React.FC<
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt=""
+                    alt={logoAltText}
                   />
                 </Link>
               </Hidden>

@@ -11,6 +11,7 @@ import {
   extractStringsFromObject,
   numberOfProcessEntries,
   numberOfLinks,
+  pruneNonSearchableSliceUnionFields,
 } from './utils'
 
 @Injectable()
@@ -53,7 +54,9 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
   }
 
   doMapping(entries: ISupportQna[]) {
-    logger.info('Mapping SupportQNAs', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping SupportQNAs', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {
@@ -62,7 +65,9 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
         try {
           mapped = mapSupportQNA(entry)
           // get the searchable content of this article
-          const searchableContent = extractStringsFromObject(mapped.answer)
+          const searchableContent = extractStringsFromObject(
+            mapped.answer.map(pruneNonSearchableSliceUnionFields),
+          )
 
           const tags: MappedData['tags'] = []
 

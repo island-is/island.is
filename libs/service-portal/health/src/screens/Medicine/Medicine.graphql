@@ -1,0 +1,103 @@
+query getDrugsData {
+  rightsPortalDrugPeriods {
+    id
+    dateFrom
+    dateTo
+    active
+    paidAmount
+    paymentStatus
+    numberOfBills
+    levelNumber
+    levelPercentage
+  }
+}
+
+query getDrugsBills($input: RightsPortalDrugBillInput!) {
+  rightsPortalDrugBills(input: $input) {
+    id
+    date
+    description
+    totalCopaymentAmount
+    totalCustomerAmount
+    totalInsuranceAmount
+    totalExcessAmount
+    totalCalculatedForPaymentStepAmount
+  }
+}
+
+query getDrugBillLineItem($input: RightsPortalDrugsBillLineInput!) {
+  rightsPortalDrugBillLines(input: $input) {
+    billId
+    drugName
+    strength
+    quantity
+    units
+    salesPrice
+    copaymentAmount
+    excessAmount
+    customerAmount
+    insuranceAmount
+  }
+}
+
+query getDrugs($input: RightsPortalDrugInput!) {
+  rightsPortalDrugs(input: $input) {
+    data {
+      nordicCode
+      atcCode
+      name
+      form
+      strength
+      packaging
+      price
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+
+mutation getDrugCalculation($input: RightsPortalDrugCalculatorInput!) {
+  rightsPortalDrugsCalculator(input: $input) {
+    drugs {
+      lineNumber
+      referencePrice
+      customerPrice
+      calculatedCustomerPrice
+      insurancePrice
+      excessPrice
+      fullPrice
+      comment
+    }
+    totalUnits
+    totalPrice
+    totalCustomerPrice
+  }
+}
+
+query getDrugCertificates {
+  rightsPortalDrugCertificates {
+    id
+    atcCode
+    atcName
+    drugName
+    date
+    validFrom
+    validTo
+    doctor
+    processed
+    approved
+    rejected
+    expired
+    valid
+    comment
+    documentId
+    methylDoctors {
+      name
+    }
+  }
+}

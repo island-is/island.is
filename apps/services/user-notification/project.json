@@ -18,7 +18,29 @@
         "outputPath": "dist/apps/services/user-notification",
         "main": "apps/services/user-notification/src/main.ts",
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
-        "assets": ["apps/services/user-notification/src/assets"]
+        "assets": [
+          "apps/services/user-notification/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/user-notification/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/user-notification",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/user-notification",
+            "output": "./"
+          },
+          {
+            "glob": "*",
+            "input": "libs/email-service/src/tools/design",
+            "output": "./email-service-assets"
+          }
+        ]
       },
       "configurations": {
         "production": {
@@ -47,6 +69,13 @@
         "args": ["--job", "worker"]
       }
     },
+    "cleanup": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "cleanup"]
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
@@ -70,14 +99,43 @@
         "cwd": "apps/services/user-notification"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-notification/tsconfig.app.json apps/services/user-notification/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{workspaceRoot}/apps/services/user-notification/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/services/user-notification/"
+      }
+    },
+    "migrate/generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/services/user-notification/"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-user-notification:dev-services",
+          "yarn nx run services-user-notification:migrate"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start services-user-notification"],
+        "parallel": true
+      }
     },
     "docker-express": {}
   },

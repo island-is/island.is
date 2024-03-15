@@ -10,6 +10,7 @@ export const ApiConfiguration = {
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-fiskistofa',
+        organizationSlug: 'fiskistofa',
         ...clientConfig.fetch,
         autoAuth: {
           clientId: clientConfig.accessTokenServiceClientId,

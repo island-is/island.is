@@ -210,6 +210,9 @@ export const Overview: FC<
                   date: currentAnswers?.vehicle?.date,
                   salePrice: currentAnswers?.vehicle?.salePrice,
                 },
+                vehicleMileage: {
+                  value: answers?.vehicleMileage?.value,
+                },
                 seller: {
                   email: currentAnswers?.seller?.email,
                   nationalId: currentAnswers?.seller?.nationalId,
@@ -220,8 +223,8 @@ export const Overview: FC<
                 },
                 buyerCoOwnerAndOperator:
                   currentAnswers?.buyerCoOwnerAndOperator?.map((x) => ({
-                    nationalId: x.nationalId!,
-                    email: x.email!,
+                    nationalId: x.nationalId || '',
+                    email: x.email || '',
                     type: x.type,
                     wasRemoved: x.wasRemoved,
                   })),

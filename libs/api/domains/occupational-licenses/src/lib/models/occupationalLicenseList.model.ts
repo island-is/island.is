@@ -10,6 +10,6 @@ export class OccupationalLicensesList {
   @Field(() => [OccupationalLicense])
   items!: Array<OccupationalLicense>
 
-  @Field(() => OccupationalLicensesError)
-  error!: OccupationalLicensesError
+  @Field(() => [OccupationalLicensesError])
+  errors!: OccupationalLicensesError[]
 }

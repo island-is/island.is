@@ -29,14 +29,16 @@ import {
   Article,
   SubArticle,
   SearchableContentTypes,
-  LifeEventPage,
+  AnchorPage,
   News,
   OrganizationSubpage,
+  LifeEventPage,
 } from '@island.is/web/graphql/schema'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
+import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
 
 import * as styles from './SearchInput.css'
 
@@ -127,6 +129,8 @@ const useSearch = (
                   SearchableContentTypes['WebOrganizationPage'],
                   SearchableContentTypes['WebOrganizationSubpage'],
                   SearchableContentTypes['WebDigitalIcelandService'],
+                  SearchableContentTypes['WebDigitalIcelandCommunityPage'],
+                  SearchableContentTypes['WebManual'],
                 ],
                 highlightResults: true,
                 useQuery: 'suggestions',
@@ -171,10 +175,18 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
 
   return useCallback(
     (item: SubmitType) => {
+      const query: Record<string, string | string[]> = {
+        q: item.string,
+      }
+
+      if (Router.query.referencedBy) {
+        query.referencedBy = Router.query.referencedBy
+      }
+
       Router.push({
         ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q: item.string },
+          query,
         }),
         ...(item.type === 'link' && {
           pathname: item.string,
@@ -243,7 +255,8 @@ export const SearchInput = forwardRef<
     return (
       <Downshift<SubmitType>
         id={id}
-        initialInputValue={initialInputValue}
+        // Since the search supports '*' we don't want to display it in the UI
+        initialInputValue={initialInputValue === '*' ? '' : initialInputValue}
         onChange={(item) => {
           if (!item?.string) {
             return false
@@ -378,6 +391,7 @@ export const SearchInput = forwardRef<
 
 type SearchResultItem =
   | Article
+  | AnchorPage
   | LifeEventPage
   | News
   | SubArticle
@@ -435,7 +449,9 @@ const Results = ({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               .map((item: SearchResultItem, i) => {
-                const typename = item.__typename?.toLowerCase() as LinkType
+                const typename = item.__typename?.toLowerCase() as
+                  | LinkType
+                  | 'anchorpage'
                 let variables = item.slug?.split('/')
 
                 if (typename === 'organizationsubpage') {
@@ -448,7 +464,12 @@ const Results = ({
                 const { onClick, ...itemProps } = getItemProps({
                   item: {
                     type: 'link',
-                    string: linkResolver(typename, variables)?.href,
+                    string: linkResolver(
+                      typename === 'anchorpage'
+                        ? extractAnchorPageLinkType(item as AnchorPage)
+                        : typename,
+                      variables,
+                    )?.href,
                   },
                 })
                 return (

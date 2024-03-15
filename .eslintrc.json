@@ -123,6 +123,16 @@
                 ]
               },
               {
+                "sourceTag": "scope:license",
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:license"
+                ]
+              },
+              {
                 "sourceTag": "scope:judicial-system-api",
                 "onlyDependOnLibsWithTags": [
                   "lib:judicial-system-api",
@@ -217,6 +227,9 @@
             "skipTemplates": true
           }
         ],
+        "prefer-arrow-callback": "warn",
+        "func-style": ["warn", "expression"],
+        "local-rules/require-reduce-defaults": "error",
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
       }

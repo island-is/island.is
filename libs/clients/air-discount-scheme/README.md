@@ -6,8 +6,7 @@ This client exposes some private methods for said backend and is intended for in
 To generate the client run
 
 ```bash
-yarn nx run clients-air-discount-scheme:schemas/build-openapi
-yarn nx run clients-air-discount-scheme:schemas/external-openapi-generator
+yarn nx run clients-air-discount-scheme:codegen/backend-client
 ```
 
 ## Simple usage

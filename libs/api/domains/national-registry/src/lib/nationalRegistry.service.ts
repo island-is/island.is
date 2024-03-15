@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { SoffiaService } from './v1/soffia.service'
 import { BrokerService } from './v3/broker.service'
-import { SharedPerson } from './shared/types'
+import { PersonV3, SharedPerson } from './shared/types'
 import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -15,16 +15,37 @@ export class NationalRegistryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  getPerson(nationalId: string, api: 'v1' | 'v3' = 'v1') {
+  getPerson(
+    nationalId: string,
+    api: 'v1' | 'v3' = 'v1',
+    useFakeData?: boolean,
+  ) {
     return api === 'v3'
-      ? this.v3.getPerson(nationalId)
+      ? this.v3.getPerson(nationalId, undefined, useFakeData)
       : this.v1.getPerson(nationalId)
   }
 
   getChildCustody(nationalId: string, data?: SharedPerson) {
-    return data?.api === 'v3'
-      ? this.v3.getChildrenCustodyInformation(nationalId, data?.rawData)
-      : this.v1.getChildCustody(nationalId, data?.rawData)
+    if (data?.api === 'v3') {
+      return this.v3.getChildrenCustodyInformation(
+        nationalId,
+        data?.rawData,
+        data?.useFakeData,
+      )
+    }
+
+    return this.v1.getChildCustody(nationalId, data?.rawData)
+  }
+
+  async getChildDetails(
+    nationalId: string,
+    api: 'v1' | 'v3',
+    useFakeData?: boolean,
+  ) {
+    if (api === 'v3') {
+      return this.v3.getChildDetails(nationalId, useFakeData)
+    }
+    return this.v1.getPerson(nationalId)
   }
 
   getCustodians(
@@ -66,18 +87,17 @@ export class NationalRegistryService {
     data?: SharedPerson,
   ): Promise<Housing | null> {
     if (data?.api === 'v1') {
-      if (!data.rawData || !data.rawData.Fjolsknr) {
-        return null
-      }
       const family = await this.v1.getFamily(nationalId)
       return {
-        domicileId: data.rawData.Fjolsknr,
+        domicileId: data?.rawData?.Fjolsknr ?? '',
         address: {
-          code: data.rawData.LoghHusk,
-          lastUpdated: data.rawData.LoghHuskBreytt,
-          streetAddress: data.rawData.Logheimili,
-          city: data.rawData.LogheimiliSveitarfelag,
-          postalCode: data.rawData.Postnr,
+          code: data?.rawData?.LoghHusk,
+          lastUpdated: data?.rawData?.LoghHuskBreytt,
+          streetAddress:
+            data?.rawData?.Logheimili || data?.address?.streetAddress,
+          city:
+            data?.rawData?.LogheimiliSveitarfelag || data?.address?.city || '',
+          postalCode: data?.rawData?.Postnr || data?.address?.postalCode,
         },
         domicileInhabitants: family,
       }

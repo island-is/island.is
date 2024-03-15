@@ -7,8 +7,9 @@ import {
 } from '@nestjs/common'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
+
+import { include, order } from '../../case.service'
 import { Case } from '../../models/case.model'
-import { order, include } from '../../case.service'
 import { CaseHasExistedGuard } from '../caseHasExisted.guard'
 
 interface Then {

@@ -1,4 +1,4 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql'
+import { Field, InputType, OmitType, PartialType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 
 @InputType()
@@ -18,4 +18,28 @@ export class ApplicationApplicationsAdminInput extends PartialType(
 ) {
   @Field(() => String)
   nationalId!: string
+}
+
+@InputType()
+export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
+  ApplicationApplicationsAdminInput,
+  ['typeId'],
+) {
+  @Field(() => Number)
+  page!: number
+
+  @Field(() => Number)
+  count!: number
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  applicantNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  from?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  to?: string
 }

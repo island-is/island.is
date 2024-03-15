@@ -1,35 +1,36 @@
 import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
+
+import {
+  capitalize,
+  formatCaseType,
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseType,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import {
-  caseTypes,
-  formatNationalId,
-  capitalize,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
 
+import { core, request as m } from '../messages'
 import { Case } from '../modules/case'
-import { request as m, core } from '../messages'
 import { formatLegalProvisions } from './formatters'
 import {
+  addCoatOfArms,
   addEmptyLines,
+  addFooter,
   addHugeHeading,
   addLargeHeading,
   addLargeText,
   addMediumPlusHeading,
   addMediumText,
-  addNormalText,
-  setLineGap,
-  addFooter,
-  setTitle,
   addNormalJustifiedText,
-  addCoatOfArms,
+  addNormalText,
   addPoliceStar,
+  setLineGap,
+  setTitle,
 } from './pdfHelpers'
 
 function constructRestrictionRequestPdf(
@@ -66,11 +67,7 @@ function constructRestrictionRequestPdf(
 
   setTitle(doc, title)
 
-  if (
-    theCase.creatingProsecutor?.institution?.name?.startsWith(
-      'Lögreglustjórinn',
-    )
-  ) {
+  if (theCase.prosecutorsOffice?.name?.startsWith('Lögreglustjórinn')) {
     addPoliceStar(doc)
     addEmptyLines(doc, 5)
   } else {
@@ -81,8 +78,7 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.creatingProsecutor?.institution?.name ??
-      formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -237,11 +233,7 @@ function constructInvestigationRequestPdf(
 
   setTitle(doc, title)
 
-  if (
-    theCase.creatingProsecutor?.institution?.name?.startsWith(
-      'Lögreglustjórinn',
-    )
-  ) {
+  if (theCase.prosecutorsOffice?.name?.startsWith('Lögreglustjórinn')) {
     addPoliceStar(doc)
     addEmptyLines(doc, 5)
   } else {
@@ -252,8 +244,7 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.creatingProsecutor?.institution?.name ??
-      formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -337,7 +328,7 @@ function constructInvestigationRequestPdf(
     capitalize(
       theCase.type === CaseType.OTHER
         ? formatMessage(core.caseType.investigate)
-        : caseTypes[theCase.type],
+        : formatCaseType(theCase.type),
     ),
     'Times-Roman',
   )

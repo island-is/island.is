@@ -1,12 +1,13 @@
 import { Controller, Get, Inject, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
-import { InstitutionService } from './institution.service'
 import { Institution } from './institution.model'
+import { InstitutionService } from './institution.service'
 
 @Controller('api')
 @ApiTags('institutions')

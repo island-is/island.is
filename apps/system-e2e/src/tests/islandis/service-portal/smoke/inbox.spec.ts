@@ -35,12 +35,6 @@ test.describe('MS - Pósthólf overview', () => {
       // Arrange
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
-      // Act
-      await expect(
-        page.getByRole('button', {
-          name: label(m.date),
-        }),
-      ).toBeVisible()
       const inputField = page.getByRole('textbox', {
         name: label(m.searchLabel),
       })

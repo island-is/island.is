@@ -8,7 +8,8 @@ import {
   useMenuState,
 } from 'reakit/Menu'
 import { useBoxStyles } from '../Box/useBoxStyles'
-import { Button, ButtonProps } from '../Button/Button'
+import { Button } from '../Button/Button'
+import { ButtonProps } from '../Button/types'
 import { getTextStyles } from '../Text/Text'
 
 import * as styles from './DropdownMenu.css'
@@ -41,6 +42,7 @@ export interface DropdownMenuProps {
   iconType?: ButtonProps['iconType']
   disclosure?: ReactElement
   menuClassName?: string
+  fixed?: boolean
   openOnHover?: boolean
 }
 
@@ -52,9 +54,15 @@ export const DropdownMenu = ({
   iconType,
   disclosure,
   menuClassName,
+  fixed = false,
   openOnHover = false,
 }: DropdownMenuProps) => {
-  const menu = useMenuState({ placement: 'bottom', gutter: 8 })
+  const menu = useMenuState({
+    placement: 'bottom',
+    gutter: 8,
+    unstable_fixed: fixed,
+  })
+
   const hoverProps = useMenuHoverProps(menu, openOnHover)
   const menuBoxStyle = useBoxStyles({
     component: 'div',

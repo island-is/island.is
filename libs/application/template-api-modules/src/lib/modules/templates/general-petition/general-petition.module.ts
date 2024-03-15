@@ -5,7 +5,7 @@ import { GeneralPetitionService } from './general-petition.service'
 import {
   Configuration as endorsementConfig,
   EndorsementListApi,
-} from './gen/fetch/endorsements'
+} from './gen/fetch'
 
 export class GeneralPetitionModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {

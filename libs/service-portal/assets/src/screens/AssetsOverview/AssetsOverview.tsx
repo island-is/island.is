@@ -1,4 +1,3 @@
-import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import {
   pagingFragment,
@@ -8,8 +7,8 @@ import { Query } from '@island.is/api/schema'
 import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
-  ErrorScreen,
+  FootNote,
+  HMS_SLUG,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
@@ -17,6 +16,7 @@ import {
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import AssetListCards from '../../components/AssetListCards'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+import { Problem } from '@island.is/react-spa/shared'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery($input: GetMultiPropertyInput!) {
@@ -77,20 +77,6 @@ export const AssetsOverview = () => {
     }
   }
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.realEstate).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   return (
     <>
       <IntroHeader
@@ -103,9 +89,12 @@ export const AssetsOverview = () => {
           defaultMessage:
             'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
         }}
+        serviceProviderSlug={HMS_SLUG}
+        serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
       />
 
-      {loading && <AssetCardLoader />}
+      {loading && !error && <AssetCardLoader />}
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {assetData?.properties && assetData?.properties?.length > 0 && (
         <>
           <GridRow>
@@ -123,11 +112,12 @@ export const AssetsOverview = () => {
                   rel="noreferrer"
                 >
                   <Button
+                    as="span"
+                    unfocusable
                     colorScheme="default"
                     icon="document"
                     iconType="filled"
                     size="default"
-                    type="button"
                     variant="utility"
                   >
                     {formatMessage(m.mortageCertificate)}
@@ -144,10 +134,15 @@ export const AssetsOverview = () => {
         !error &&
         assetData?.properties &&
         assetData?.properties?.length === 0 && (
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
         )}
+      <FootNote serviceProviderSlug={HMS_SLUG} />
     </>
   )
 }

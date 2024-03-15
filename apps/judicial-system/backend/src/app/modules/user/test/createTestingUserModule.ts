@@ -3,15 +3,16 @@ import { mock } from 'jest-mock-extended'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { ConfigModule } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
+
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
+import { userModuleConfig } from '../user.config'
+import { UserController } from '../user.controller'
 import { User } from '../user.model'
 import { UserService } from '../user.service'
-import { UserController } from '../user.controller'
-import { userModuleConfig } from '../user.config'
 
 export const createTestingUserModule = async () => {
   const userModule = await Test.createTestingModule({

@@ -47,6 +47,26 @@ export const information = {
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
       },
+      findPlatePlaceholder: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.findPlatePlaceholder',
+        defaultMessage: 'Sláðu inn plötunúmer',
+        description: 'Pick vehicle find plate placeholder',
+      },
+      findButton: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.findButton',
+        defaultMessage: 'Leita',
+        description: 'Pick vehicle find button',
+      },
+      notFoundTitle: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundTitle',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
+        description: 'vehicle not found',
+      },
+      notFoundMessage: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundMessage',
+        defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
+        description: 'vehicle not found message',
+      },
       hasErrorTitle: {
         id: 'ta.tvo.application:information.labels.pickVehicle.hasErrorTitle',
         defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
@@ -99,6 +119,11 @@ export const information = {
         id: 'ta.tvo.application:information.labels.vehicle.date',
         defaultMessage: 'Dagsetning kaupsamnings',
         description: 'Date of purchase agreement label',
+      },
+      mileage: {
+        id: 'ta.tvo.application:information.labels.vehicle.mileage',
+        defaultMessage: 'Kílómetrar',
+        description: 'Mileage for vehicle label',
       },
     }),
     seller: defineMessages({

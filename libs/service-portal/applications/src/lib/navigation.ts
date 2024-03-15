@@ -10,6 +10,10 @@ export const applicationsNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.myApplications,
+      path: ApplicationsPaths.ApplicationRoot,
+    },
+    {
       name: m.inProgressApplications,
       path: ApplicationsPaths.ApplicationInProgressApplications,
     },

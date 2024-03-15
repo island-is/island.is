@@ -10,7 +10,10 @@ import {
   Attachment,
   Employer,
 } from '@island.is/clients/vmst'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import {
   getSelectedChild,
   getApplicationAnswers,
@@ -29,6 +32,8 @@ import {
   PERMANENT_FOSTER_CARE,
   ChildInformation,
   ADOPTION,
+  FileType,
+  Languages,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -256,7 +261,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-FÓ' : 'M-FÓ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-FÓ' : 'M-FÓ'
+        return 'FO-FÓ'
       } else {
         return applicantIsMale(application) ? 'F-FÓ' : 'FO-FÓ'
       }
@@ -266,7 +271,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-Æ' : 'M-Æ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-Æ' : 'M-Æ'
+        return 'FO-Æ'
       } else {
         return applicantIsMale(application) ? 'F-Æ' : 'FO-Æ'
       }
@@ -346,7 +351,13 @@ export const transformApplicationToParentalLeaveDTO = (
   periods: Period[],
   attachments?: Attachment[],
   onlyValidate?: boolean,
-  type?: 'period' | 'documentPeriod' | 'document' | undefined,
+  type?:
+    | 'period'
+    | 'documentPeriod'
+    | 'document'
+    | 'empper'
+    | 'employer'
+    | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -365,6 +376,7 @@ export const transformApplicationToParentalLeaveDTO = (
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
     employerLastSixMonths,
+    language,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -432,6 +444,7 @@ export const transformApplicationToParentalLeaveDTO = (
         ? multipleBirths.toString()
         : undefined,
     type,
+    language: language === Languages.EN ? language : undefined, // Only send language if EN
   }
 }
 
@@ -473,4 +486,54 @@ export const isDateInTheFuture = (date: string) => {
   const now = new Date().toISOString()
   if (date > now) return true
   return false
+}
+
+export const isParamsActionName = (params: any) => {
+  typeof params === 'string' &&
+  (params === 'period' ||
+    params === 'document' ||
+    params === 'documentPeriod' ||
+    params === 'empper' ||
+    params === 'employer')
+    ? (params as FileType)
+    : undefined
+  return params
+}
+
+export const checkActionName = (
+  application: ApplicationWithAttachments,
+  params: FileType | undefined = undefined,
+) => {
+  const { actionName } = getApplicationAnswers(application.answers)
+  if (params) {
+    params === 'document' ||
+      params === 'documentPeriod' ||
+      params === 'period' ||
+      params === 'empper' ||
+      params === 'employer'
+    return params
+  }
+  if (
+    actionName === 'document' ||
+    actionName === 'documentPeriod' ||
+    actionName === 'period' ||
+    actionName === 'empper' ||
+    actionName === 'employer'
+  ) {
+    return actionName
+  }
+  return undefined
+}
+
+export const getFromDate = (
+  isFirstPeriod: boolean,
+  isActualDateOfBirth: boolean,
+  useLength: string,
+  period: AnswerPeriod,
+) => {
+  return isFirstPeriod && isActualDateOfBirth && useLength === YES
+    ? apiConstants.actualDateOfBirthMonths
+    : isFirstPeriod && isActualDateOfBirth
+    ? apiConstants.actualDateOfBirth
+    : period.startDate
 }

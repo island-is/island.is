@@ -10,7 +10,9 @@ export class ContentSearchResolver {
   constructor(private contentSearchService: ContentSearchService) {}
 
   @Query(() => SearchResult)
-  searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {
+  async searchResults(
+    @Args('query') query: SearcherInput,
+  ): Promise<SearchResult> {
     return this.contentSearchService.find(query)
   }
 

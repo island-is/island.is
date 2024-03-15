@@ -1,10 +1,14 @@
 import { UserProfile, Application } from '@island.is/api/schema'
 import {
+  buildDescriptionField,
   buildMultiField,
   buildPhoneField,
+  buildRadioField,
   buildSection,
+  buildSelectField,
   buildTextField,
 } from '@island.is/application/core'
+import { JA, YES, NEI, NO } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { EstateTypes } from '../../lib/constants'
@@ -86,6 +90,41 @@ export const announcerInfo = buildSection({
             const data = externalData.userProfile?.data as UserProfile
             return data?.email
           },
+        }),
+        buildSelectField({
+          id: 'applicant.relationToDeceased',
+          title: m.relationToDeceased,
+          required: true,
+          condition: (answers) =>
+            answers.selectedEstate === EstateTypes.estateWithoutAssets,
+          width: 'half',
+          options: ({
+            externalData: {
+              syslumennOnEntry: { data },
+            },
+          }) => {
+            return (data as { relationOptions: string[] }).relationOptions.map(
+              (option) =>
+                ({
+                  value: option,
+                  label: option,
+                } || []),
+            )
+          },
+        }),
+        buildRadioField({
+          id: 'applicant.autonomous',
+          title: m.applicantAutonomous,
+          width: 'half',
+          defaultValue: YES,
+          condition: (answers) =>
+            answers.selectedEstate === EstateTypes.permitForUndividedEstate,
+          largeButtons: false,
+          space: 8,
+          options: [
+            { label: JA, value: YES },
+            { label: NEI, value: NO },
+          ],
         }),
       ],
     }),

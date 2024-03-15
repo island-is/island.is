@@ -1,15 +1,17 @@
 import { uuid } from 'uuidv4'
 
 import { SmsService } from '@island.is/nova-sms'
+
 import {
   CaseType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse
@@ -61,7 +63,7 @@ describe('InternalNotificationController - Send heads up notifications', () => {
     it('should send notification', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
         [mobileNumber],
-        'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður.',
+        'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður. Sjá nánar á rettarvorslugatt.island.is.',
       )
       expect(then.result).toEqual({ delivered: true })
     })

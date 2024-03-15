@@ -1,10 +1,16 @@
 import { NO, YES } from '@island.is/application/core'
 import { z } from 'zod'
+import { CardType } from '../shared'
 
 export const DigitalTachographDriversCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   cardTypeSelection: z.object({
-    cardType: z.enum(['firstEdition', 'reissue', 'renewal', 'reprint']),
+    cardType: z.enum([
+      CardType.FIRST_EDITION,
+      CardType.REISSUE,
+      CardType.RENEWAL,
+      CardType.REPRINT,
+    ]),
   }),
   applicant: z.object({
     email: z.string(),

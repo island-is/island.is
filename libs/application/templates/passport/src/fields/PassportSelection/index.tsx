@@ -4,6 +4,7 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
+  NationalRegistryIndividual,
   TagVariant,
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
@@ -40,7 +41,20 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const identityDocumentData = application.externalData.identityDocument
     .data as IdentityDocumentData
 
-  const tag = (identityDocument: IdentityDocument) => {
+  const individual = application.externalData.nationalRegistry
+    .data as NationalRegistryIndividual
+
+  const domicileCode = individual?.address?.municipalityCode
+
+  type TagCheck = {
+    tag: Tag
+    isDisabled: boolean
+  }
+
+  const tag = (
+    identityDocument: IdentityDocument,
+    isChild: boolean,
+  ): TagCheck => {
     const today = new Date()
     const expirationDate = new Date(identityDocument?.expirationDate)
     const todayPlus6Months = new Date(
@@ -48,8 +62,16 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
 
     let tagObject = {} as Tag
+    let isDisabled = false
 
-    if (!identityDocument) {
+    if ((!domicileCode || domicileCode.substring(0, 2) === '99') && !isChild) {
+      isDisabled = true
+      tagObject = {
+        label: formatMessage(m.incorrectDomicileTage),
+        variant: 'red',
+        outlined: true,
+      }
+    } else if (!identityDocument) {
       tagObject = {
         label: formatMessage(m.noPassport),
         variant: 'blue',
@@ -66,22 +88,30 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         label:
           formatMessage(m.validTag) +
           ' ' +
-          format(new Date(expirationDate), 'dd/MM/yy'),
+          format(new Date(expirationDate), 'dd.MM.yy'),
         variant: 'red',
         outlined: true,
       }
     } else if (todayPlus6Months < expirationDate) {
+      isDisabled = true
       tagObject = {
         label:
           formatMessage(m.validTag) +
           ' ' +
-          format(new Date(expirationDate), 'dd/MM/yy'),
+          format(new Date(expirationDate), 'dd.MM.yy'),
         variant: 'mint',
+        outlined: true,
+      }
+    } else if (identityDocument.status === 'ISSUED') {
+      isDisabled = true
+      tagObject = {
+        label: formatMessage(m.orderedTag),
+        variant: 'purple',
         outlined: true,
       }
     }
 
-    return tagObject
+    return { tag: tagObject, isDisabled }
   }
 
   return (
@@ -108,11 +138,11 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   identityDocumentData.userPassport?.subType +
                   identityDocumentData?.userPassport?.number
                 : '',
-              tag: tag(identityDocumentData.userPassport),
+              tag: tag(identityDocumentData.userPassport, false).tag,
               disabled:
-                tag(identityDocumentData.userPassport).label ===
+                tag(identityDocumentData.userPassport, false).tag.label ===
                   m.orderedTag.defaultMessage ||
-                tag(identityDocumentData.userPassport).variant === 'mint',
+                tag(identityDocumentData.userPassport, false).isDisabled,
             },
           ],
           onSelect: () => {
@@ -148,11 +178,11 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     child.passports[0].subType +
                     child.passports[0].number
                   : '',
-                tag: child.passports ? tag(child.passports?.[0]) : undefined,
+                tag: child.passports
+                  ? tag(child.passports?.[0], true).tag
+                  : undefined,
                 disabled: child.passports
-                  ? tag(child.passports?.[0]).label ===
-                      m.orderedTag.defaultMessage ||
-                    tag(child.passports?.[0]).variant === 'mint'
+                  ? tag(child.passports?.[0], true).isDisabled
                   : false,
               }
             },

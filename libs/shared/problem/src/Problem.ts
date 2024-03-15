@@ -4,6 +4,7 @@ import {
   ValidationFailedProblem,
   BadSubjectProblem,
   TemplateApiErrorProblem,
+  AttemptFailedProblem,
 } from './problems'
 
 export type Problem =
@@ -12,3 +13,4 @@ export type Problem =
   | ValidationFailedProblem
   | BadSubjectProblem
   | TemplateApiErrorProblem
+  | AttemptFailedProblem

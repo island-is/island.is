@@ -1,8 +1,8 @@
 import {
-  Injectable,
+  BadRequestException,
   CanActivate,
   ExecutionContext,
-  BadRequestException,
+  Injectable,
 } from '@nestjs/common'
 
 import { CaseService } from '../case.service'

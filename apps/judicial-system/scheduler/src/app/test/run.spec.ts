@@ -2,9 +2,9 @@ import fetch from 'node-fetch'
 
 import { logger } from '@island.is/logging'
 
-import { now } from '../date.factory'
 import { appModuleConfig } from '../app.config'
 import { AppService } from '../app.service'
+import { now } from '../date.factory'
 
 jest.mock('node-fetch')
 jest.mock('@island.is/logging')

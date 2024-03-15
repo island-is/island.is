@@ -76,18 +76,21 @@ export const CheckboxFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           strong={strong}
           error={error}
-          options={finalOptions?.map(({ label, subLabel, tooltip, ...o }) => ({
-            ...o,
-            label: HtmlParser(formatText(label, application, formatMessage)),
-            subLabel:
-              subLabel &&
-              HtmlParser(formatText(subLabel, application, formatMessage)),
-            ...(tooltip && {
-              tooltip: HtmlParser(
-                formatText(tooltip, application, formatMessage) as string,
-              ),
+          options={finalOptions?.map(
+            ({ label, subLabel, rightContent, tooltip, ...o }) => ({
+              ...o,
+              label: HtmlParser(formatText(label, application, formatMessage)),
+              rightContent,
+              subLabel:
+                subLabel &&
+                HtmlParser(formatText(subLabel, application, formatMessage)),
+              ...(tooltip && {
+                tooltip: HtmlParser(
+                  formatText(tooltip, application, formatMessage) as string,
+                ),
+              }),
             }),
-          }))}
+          )}
         />
       </Box>
     </div>

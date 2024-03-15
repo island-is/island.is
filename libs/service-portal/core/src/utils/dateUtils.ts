@@ -8,11 +8,15 @@ export const dateParse = (startDate: string) => {
   return new Date(year, month - 1, day)
 }
 
-// Takes in date string or date
-export const formatDate = (date: string | Date) => {
+// Takes in date string or date, with optional format
+export const formatDate = (
+  date?: string | Date | null,
+  dateFormat?: string,
+) => {
+  if (!date) return ''
   const arg = date instanceof Date ? date : new Date(date)
   try {
-    return format(arg, 'dd.MM.yyyy')
+    return format(arg, dateFormat ?? 'dd.MM.yyyy')
   } catch {
     return date instanceof Date ? date.toDateString() : date
   }
@@ -25,4 +29,21 @@ export const formatDateWithTime = (date: string) => {
   } catch {
     return date
   }
+}
+
+export const icelandLocalTime = (date?: string) => {
+  const targetTimeZone = 'Atlantic/Reykjavik'
+
+  // Get the current local time
+  const theTime = date ? new Date(date) : new Date()
+
+  // Convert local time to a string in the target time zone
+  const formattedTime = theTime.toLocaleDateString('is-IS', {
+    timeZone: targetTimeZone,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+
+  return formattedTime
 }

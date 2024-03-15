@@ -18,13 +18,12 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/inna/gen/fetch -i libs/clients/inna/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/inna/gen/fetch -i libs/clients/inna/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

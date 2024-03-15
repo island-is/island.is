@@ -10,26 +10,32 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
-import { Lawyer, ReactSelectOption } from '../../types'
-import { replaceTabs } from '../../utils/formatters'
+import { type Lawyer } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  ReactSelectOption,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
+import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
   removeTabsValidateAndSet,
   validateAndSendToServer,
   validateAndSetErrorMessage,
-} from '../../utils/formHelper'
-import { useCase, useGetLawyers } from '../../utils/hooks'
-import useDefendants from '../../utils/hooks/useDefendants'
-import { Validation } from '../../utils/validate'
-import { FormContext } from '../FormProvider/FormProvider'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  useCase,
+  useDefendants,
+  useGetLawyers,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+
 import { defenderInput as m } from './DefenderInput.strings'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
-  disabled?: boolean
-  defendantId?: string
+  disabled?: boolean | null
+  defendantId?: string | null
 }
 
 interface PropertyValidation {
@@ -99,8 +105,6 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
 
       if (defendantId) {
         setAndSendDefendantToServer(
-          workingCase.id,
-          defendantId,
           { ...updatedLawyer, caseId: workingCase.id, defendantId },
           setWorkingCase,
         )
@@ -238,7 +242,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
           onChange={handleLawyerChange}
           filterConfig={{ matchFrom: 'start' }}
           isCreatable
-          isDisabled={disabled}
+          isDisabled={Boolean(disabled)}
         />
       </Box>
       <Box marginBottom={2}>
@@ -257,7 +261,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
           }
           errorMessage={emailErrorMessage}
           hasError={emailErrorMessage !== ''}
-          disabled={disabled}
+          disabled={Boolean(disabled)}
           onChange={(event) => {
             if (defendantId) {
               handleLawyerPropertyChange(
@@ -271,7 +275,6 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
                 'defenderEmail',
                 event.target.value,
                 ['email-format'],
-                workingCase,
                 setWorkingCase,
                 emailErrorMessage,
                 setEmailErrorMessage,
@@ -307,7 +310,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
             ? defendantInDefendants?.defenderPhoneNumber || ''
             : workingCase.defenderPhoneNumber || ''
         }
-        disabled={disabled}
+        disabled={Boolean(disabled)}
         onChange={(event) => {
           if (defendantId) {
             handleLawyerPropertyChange(
@@ -321,7 +324,6 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
               'defenderPhoneNumber',
               event.target.value,
               ['phonenumber'],
-              workingCase,
               setWorkingCase,
               phoneNumberErrorMessage,
               setPhoneNumberErrorMessage,

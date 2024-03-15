@@ -1,17 +1,13 @@
+import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
-import {
-  SkeletonLoader,
-  Stack,
-  AlertBanner,
-  Box,
-} from '@island.is/island-ui/core'
+import { SkeletonLoader, Stack, Box } from '@island.is/island-ui/core'
 import sortBy from 'lodash/sortBy'
 import {
   AuthDelegationDirection,
   AuthDelegationType,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals/core'
+import { m } from '../../../lib/messages'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
@@ -52,12 +48,12 @@ export const DelegationsIncoming = () => {
       {loading ? (
         <SkeletonLoader width="100%" height={191} />
       ) : error ? (
-        <AlertBanner
-          description={formatMessage(m.errorFetch)}
-          variant="error"
-        />
+        <Problem error={error} />
       ) : delegations.length === 0 ? (
-        <DelegationsEmptyState />
+        <DelegationsEmptyState
+          message={formatMessage(m.noIncomingDelegations)}
+          imageAlt={formatMessage(m.noDelegationsImageAlt)}
+        />
       ) : (
         <Stack space={3}>
           {delegations.map(

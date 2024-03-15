@@ -13,8 +13,8 @@ export const generateEmployerRejectedApplicationSms: EmployerRejectedGenerator =
 
     return {
       phoneNumber: applicantPhoneNumber,
-      message: `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
-    Your employer has denied your request. You therefore need to modify your application.
+      message: `Vinnuveitandi þinn samþykkti ekki valið tímabil en óskar eftir nýju og breyttu tímabili. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.
+      Your employer did not approve the selected period and requests that you resubmit an alternative period. You can make edits to your application and resubmit for consideration.
     ${link}`,
     }
   }

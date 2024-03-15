@@ -2,12 +2,12 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { PoliceController } from '../police.controller'
 import {
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseReadGuard,
 } from '../../case'
+import { PoliceController } from '../police.controller'
 
 describe('PoliceController - guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

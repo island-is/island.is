@@ -1,0 +1,21 @@
+query GetPaymentSchedule {
+  getPaymentSchedule {
+    myPaymentSchedule {
+      nationalId
+      paymentSchedules {
+        approvalDate
+        paymentCount
+        scheduleName
+        scheduleNumber
+        scheduleStatus
+        scheduleType
+        totalAmount
+        unpaidAmount
+        unpaidWithInterest
+        unpaidCount
+        documentID
+        downloadServiceURL
+      }
+    }
+  }
+}

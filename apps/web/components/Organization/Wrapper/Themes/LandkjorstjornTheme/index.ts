@@ -1,11 +1,10 @@
 import dynamic from 'next/dynamic'
 
+import Header from './LandskjorstjornHeader'
+
 export const LandskjorstjornFooter = dynamic(
   () => import('./LandkjorstjornFooter'),
-  { ssr: false },
+  { ssr: true },
 )
 
-export const LandskjorstjornHeader = dynamic(
-  () => import('./LandskjorstjornHeader'),
-  { ssr: false },
-)
+export const LandskjorstjornHeader = Header

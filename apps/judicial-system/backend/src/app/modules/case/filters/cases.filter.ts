@@ -1,26 +1,26 @@
 import { Op, WhereOptions } from 'sequelize'
 
+import { ForbiddenException } from '@nestjs/common'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   indictmentCases,
   InstitutionType,
   investigationCases,
+  isCourtOfAppealsUser,
+  isDefenceUser,
+  isDistrictCourtUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  RequestSharedWithDefender,
   restrictionCases,
   UserRole,
-  isProsecutionUser,
-  CaseAppealState,
-  isDistrictCourtUser,
-  isAppealsCourtUser,
-  isPrisonSystemUser,
-  isDefenceUser,
-  completedCaseStates,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-
-import { ForbiddenException } from '@nestjs/common'
 
 function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
@@ -29,6 +29,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
       state: [
         CaseState.NEW,
         CaseState.DRAFT,
+        CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
         CaseState.ACCEPTED,
@@ -38,8 +39,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
     },
     {
       [Op.or]: [
-        { creating_prosecutor_id: { [Op.is]: null } },
-        { '$creatingProsecutor.institution_id$': user.institution?.id },
+        { prosecutors_office_id: user.institution?.id },
         { shared_with_prosecutors_office_id: user.institution?.id },
       ],
     },
@@ -77,7 +77,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  if (user.role === UserRole.ASSISTANT) {
+  if (user.role === UserRole.DISTRICT_COURT_ASSISTANT) {
     options.push(
       { type: indictmentCases },
       {
@@ -138,7 +138,17 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
       { type: [...restrictionCases, ...investigationCases] },
       { state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED] },
       {
-        appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+        [Op.or]: [
+          {
+            appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+          },
+          {
+            [Op.and]: [
+              { appeal_state: [CaseAppealState.WITHDRAWN] },
+              { appeal_received_by_court_date: { [Op.not]: null } },
+            ],
+          },
+        ],
       },
     ],
   }
@@ -236,7 +246,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     return getDistrictCourtUserCasesQueryFilter(user)
   }
 
-  if (isAppealsCourtUser(user)) {
+  if (isCourtOfAppealsUser(user)) {
     return getAppealsCourtUserCasesQueryFilter()
   }
 

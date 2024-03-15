@@ -9,17 +9,28 @@ import { useRouter } from 'next/router'
 import localization from '../../Subscriptions.json'
 import { ActionCard } from '../../../../components'
 
+interface EmailBoxProps {
+  email: string
+  emailVerified: boolean
+  getUserEmailLoading: boolean
+}
+
 const emailIsValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
-export const EmailBox = () => {
+export const EmailBox = ({
+  email,
+  emailVerified,
+  getUserEmailLoading,
+}: EmailBoxProps) => {
   const loc = localization['emailBox']
   const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState<boolean>(false)
   const LogIn = useLogIn()
   const [userEmail, setUserEmail] = useState('')
   const [inputVal, setInputVal] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   const client = initApollo()
   const [postEmailMutation, { loading: postEmailLoading }] = useMutation(
@@ -29,15 +40,14 @@ export const EmailBox = () => {
     },
   )
   const router = useRouter()
-  const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
-    isAuthenticated: isAuthenticated,
-  })
 
   useEffect(() => {
     if (!getUserEmailLoading) {
       setUserEmail(email)
       setIsVerified(emailVerified)
+      setIsLoading(false)
     }
+    return () => setIsLoading(true)
   }, [getUserEmailLoading])
 
   const onChangeEmail = (e: BaseSyntheticEvent) => {
@@ -69,7 +79,7 @@ export const EmailBox = () => {
     setIsVerified(false)
   }
 
-  if (userLoading || getUserEmailLoading) {
+  if (isLoading) {
     return <LoadingDots />
   }
 

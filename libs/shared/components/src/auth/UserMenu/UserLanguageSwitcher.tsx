@@ -60,9 +60,10 @@ export const UserLanguageSwitcher = ({
       />
     </Box>
   ) : (
-    <Box marginX={1}>
+    <Box marginRight={[1, 1, 2]}>
       <Button
         variant="utility"
+        colorScheme="white"
         onClick={handleLanguageChange}
         aria-label={'switch language'}
         data-testid="language-switcher-button"

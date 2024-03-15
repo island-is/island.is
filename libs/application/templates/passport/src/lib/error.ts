@@ -12,7 +12,7 @@ export const error = defineMessages({
     description: 'Error message when a value is invalid.',
   },
   invalidAgeDescription: {
-    id: 'pp.application:error.invalidAgeTitle',
+    id: 'pp.application:error.invalidAgeDescription',
     defaultMessage: 'Tilskyldur aldur fyrir þessa umsókn er 18 ára.',
     description: 'Error message when a value is invalid.',
   },

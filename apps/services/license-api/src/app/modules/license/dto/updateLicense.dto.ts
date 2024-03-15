@@ -5,6 +5,7 @@ import {
   IsISO8601,
   IsJSON,
   IsOptional,
+  IsString,
 } from 'class-validator'
 import { LicenseUpdateType } from '../license.types'
 
@@ -23,6 +24,11 @@ export class UpdateLicenseRequest {
   @IsJSON()
   //will be validated in a specific service later! we do not care whats in here as of now, or will we?
   readonly payload?: string
+
+  @IsOptional()
+  @ApiProperty({ description: 'Optional request id for logging purposes' })
+  @IsString()
+  readonly requestId?: string
 }
 export class UpdateLicenseResponse {
   @ApiProperty()

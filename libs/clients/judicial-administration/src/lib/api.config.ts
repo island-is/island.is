@@ -17,8 +17,8 @@ export const ApiConfig = {
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'judicial-administration',
+        organizationSlug: 'domstolasyslan',
         logErrorResponseBody: true,
-
         timeout: config.fetch.timeout,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

@@ -1,20 +1,22 @@
+import { ReactNode } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
+
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
-  Text,
+  Box,
   GridColumn,
   GridContainer,
   GridRow,
-  Box,
   Hidden,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { webRichText } from '@island.is/web/utils/richText'
+
 import * as styles from './GevFooter.css'
-import { ReactNode } from 'react'
 
 interface GevFooterProps {
   title: string
@@ -27,7 +29,7 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
   const { width } = useWindowSize()
 
   return (
-    <footer className={styles.container} aria-labelledby="gev-footer">
+    <footer className={styles.container}>
       <GridContainer>
         <Box display="flex" alignItems="center">
           <img

@@ -1,17 +1,18 @@
-import { GetSingleArticleQuery } from '@island.is/web/graphql/schema'
 import {
   BoostChatPanel,
   boostChatPanelEndpoints,
   LiveChatIncChatPanel,
   WatsonChatPanel,
 } from '@island.is/web/components'
+import { GetSingleArticleQuery } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+
 import {
   defaultWatsonConfig,
   excludedOrganizationWatsonConfig,
   liveChatIncConfig,
   watsonConfig,
 } from './config'
-import { useI18n } from '@island.is/web/i18n'
 
 interface ArticleChatPanelProps {
   article: GetSingleArticleQuery['getSingleArticle']

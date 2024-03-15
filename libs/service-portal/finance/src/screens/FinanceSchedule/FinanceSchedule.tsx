@@ -1,7 +1,3 @@
-import React from 'react'
-
-import { gql, useQuery } from '@apollo/client'
-import { PaymentSchedule, Query } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -14,39 +10,18 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
-  IntroHeader,
   NoDataScreen,
   m as coreMessage,
+  FootNote,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 import { useUserInfo } from '@island.is/auth/react'
-import { m } from '../../lib/messages'
-
-export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
-  query getPaymentSchedulesQuery {
-    getPaymentSchedule {
-      myPaymentSchedule {
-        nationalId
-        paymentSchedules {
-          approvalDate
-          paymentCount
-          scheduleName
-          scheduleNumber
-          scheduleStatus
-          scheduleType
-          totalAmount
-          unpaidAmount
-          unpaidWithInterest
-          unpaidCount
-          documentID
-          downloadServiceURL
-        }
-      }
-    }
-  }
-`
+import { m as messages } from '../../lib/messages'
+import FinanceIntro from '../../components/FinanceIntro'
+import { useGetPaymentScheduleQuery } from './FinanceSchedule.generated'
 
 const FinanceSchedule = () => {
   useNamespaces('sp.finance-schedule')
@@ -58,27 +33,13 @@ const FinanceSchedule = () => {
     data: paymentSchedulesData,
     loading: paymentSchedulesLoading,
     error: paymentSchedulesError,
-  } = useQuery<Query>(GET_FINANCE_PAYMENT_SCHEDULES)
+  } = useGetPaymentScheduleQuery()
 
-  const recordsData: Array<PaymentSchedule> =
+  const recordsData =
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
       ?.paymentSchedules || []
 
-  const applicationButtonText = formatMessage(m.scheduleApplication)
-
-  if (paymentSchedulesError && !paymentSchedulesLoading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(coreMessage.errorTitle)}
-        title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(coreMessage.errorFetchModule, {
-          module: formatMessage(coreMessage.finance).toLowerCase(),
-        })}
-      />
-    )
-  }
+  const applicationButtonText = formatMessage(messages.scheduleApplication)
 
   if (
     recordsData.length <= 0 &&
@@ -111,56 +72,68 @@ const FinanceSchedule = () => {
   }
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={{
-          id: 'sp.finance-schedule:title',
-          defaultMessage: 'Greiðsluáætlanir',
-        }}
-        intro={{
+    <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+      <FinanceIntro
+        text={formatMessage({
           id: 'sp.finance-schedule:intro-text',
           defaultMessage:
             'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
-        }}
+        })}
       />
-      <Stack space={2}>
-        {!isDelegation && (
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-              <Box display="flex" height="full">
-                <a
-                  href="/umsoknir/greidsluaaetlun/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Button
-                    colorScheme="default"
-                    icon="receipt"
-                    iconType="filled"
-                    preTextIconType="outline"
-                    size="default"
-                    type="button"
-                    variant="utility"
+      {paymentSchedulesError && !paymentSchedulesLoading && (
+        <ErrorScreen
+          figure="./assets/images/hourglass.svg"
+          tagVariant="red"
+          tag={formatMessage(coreMessage.errorTitle)}
+          title={formatMessage(coreMessage.somethingWrong)}
+          children={formatMessage(coreMessage.errorFetchModule, {
+            module: formatMessage(coreMessage.finance).toLowerCase(),
+          })}
+        />
+      )}
+      {!paymentSchedulesError && (
+        <Stack space={2}>
+          {!isDelegation && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+                <Box display="flex" height="full">
+                  <a
+                    href="/umsoknir/greidsluaaetlun/"
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    {applicationButtonText}
-                  </Button>
-                </a>
-              </Box>
-            </GridColumn>
-          </GridRow>
-        )}
-        <Box marginTop={4}>
-          {paymentSchedulesLoading && !paymentSchedulesError && (
-            <Box padding={3}>
-              <SkeletonLoader space={1} height={40} repeat={5} />
-            </Box>
+                    <Button
+                      colorScheme="default"
+                      icon="receipt"
+                      iconType="filled"
+                      preTextIconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                      as="span"
+                      unfocusable
+                    >
+                      {applicationButtonText}
+                    </Button>
+                  </a>
+                </Box>
+              </GridColumn>
+            </GridRow>
           )}
+          <Box marginTop={4}>
+            {paymentSchedulesLoading && !paymentSchedulesError && (
+              <Box padding={3}>
+                <SkeletonLoader space={1} height={40} repeat={5} />
+              </Box>
+            )}
 
-          {recordsData.length > 0 ? (
-            <FinanceScheduleTable recordsArray={recordsData} />
-          ) : null}
-        </Box>
-      </Stack>
+            {recordsData.length > 0 ? (
+              <FinanceScheduleTable recordsArray={recordsData} />
+            ) : null}
+          </Box>
+        </Stack>
+      )}
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

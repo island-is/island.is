@@ -1,11 +1,11 @@
+import { createHash } from 'crypto'
 import winston from 'winston'
 import WinstonCloudWatch from 'winston-cloudwatch'
-import { createHash } from 'crypto'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { auditTrailModuleConfig } from './auditTrail.config'
@@ -34,6 +34,7 @@ export enum AuditedAction {
   GET_COURT_RECORD = 'GET_COURT_RECORD',
   GET_CUSTODY_NOTICE_PDF = 'GET_CUSTODY_NOTICE_PDF',
   GET_INDICTMENT_PDF = 'GET_INDICTMENT_PDF',
+  GET_ALL_FILES_ZIP = 'GET_ALL_FILES_ZIP',
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',
   CREATE_PRESIGNED_POST = 'CREATE_PRESIGNED_POST',
   CREATE_FILE = 'CREATE_FILE',

@@ -24,6 +24,7 @@ export const ApiConfig = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-icelandic-government-institution-vacancies',
+        organizationSlug: 'fjarsysla-rikisins',
         logErrorResponseBody: true,
         treat400ResponsesAsErrors: true,
         timeout: 20000,

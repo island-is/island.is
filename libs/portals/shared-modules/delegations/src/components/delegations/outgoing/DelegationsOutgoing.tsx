@@ -1,18 +1,13 @@
 import { useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
-import {
-  SkeletonLoader,
-  Stack,
-  AlertBanner,
-  Box,
-} from '@island.is/island-ui/core'
+import { SkeletonLoader, Stack, Box } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
+import { Problem } from '@island.is/react-spa/shared'
 import {
   AuthCustomDelegation,
   AuthDelegationDirection,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals/core'
 import { AccessCard } from '../../access/AccessCard'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
@@ -21,6 +16,7 @@ import { DomainOption, useDomains } from '../../../hooks/useDomains/useDomains'
 import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 import { ALL_DOMAINS } from '../../../constants/domain'
+import { m } from '../../../lib/messages'
 
 const prepareDomainName = (domainName: string | null) =>
   domainName === ALL_DOMAINS ? null : domainName
@@ -55,7 +51,7 @@ export const DelegationsOutgoing = () => {
   )
 
   const onDomainChange = (option: DomainOption) => {
-    // Select components only supports string or number values, there for we use
+    // Select components only supports string or number values, therefore we use
     // the const ALL_DOMAINS as a value for the all domains option.
     // The service takes null as a value for all domains.
     refetch({
@@ -95,15 +91,15 @@ export const DelegationsOutgoing = () => {
           onSearchChange={setSearchValue}
         />
         <div>
-          {loading || domainName === null ? (
+          {(loading || domainName === null) && !error ? (
             <SkeletonLoader width="100%" height={191} />
-          ) : error && !delegations ? (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
+          ) : error && (!delegations || delegations.length === 0) ? (
+            <Problem error={error} />
           ) : delegations.length === 0 ? (
-            <DelegationsEmptyState />
+            <DelegationsEmptyState
+              message={formatMessage(m.noOutgoingDelegations)}
+              imageAlt={formatMessage(m.noDelegationsImageAlt)}
+            />
           ) : (
             <Stack space={3}>
               {filteredDelegations.map(

@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import {
@@ -8,14 +9,15 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import {
   getCourtRecordPdfAsString,
   getCustodyNoticePdfAsString,
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { PoliceService } from '../../../police'
 import { AwsS3Service } from '../../../aws-s3'
+import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -109,20 +111,22 @@ describe('InternalCaseController - Deliver case to police', () => {
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should generate the court record pdf', async () => {
+    it('should update the police case', async () => {
+      expect(getRequestPdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
       )
-    })
-
-    it('should generate the ruling pdf', async () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         `generated/${caseId}/ruling.pdf`,
       )
-    })
-
-    it('should update the police case', async () => {
+      expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
@@ -132,14 +136,25 @@ describe('InternalCaseController - Deliver case to police', () => {
         defendantNationalId,
         validToDate,
         caseConclusion,
-        requestPdf,
-        courtRecordPdf,
-        rulingPdf,
-        custodyNoticePdf,
+        [
+          {
+            type: CourtDocumentType.RVKR,
+            courtDocument: Base64.btoa(requestPdf),
+          },
+          {
+            type: CourtDocumentType.RVTB,
+            courtDocument: Base64.btoa(courtRecordPdf),
+          },
+          {
+            type: CourtDocumentType.RVUR,
+            courtDocument: Base64.btoa(rulingPdf),
+          },
+          {
+            type: CourtDocumentType.RVVI,
+            courtDocument: Base64.btoa(custodyNoticePdf),
+          },
+        ],
       )
-    })
-
-    it('should return a success response', async () => {
       expect(then.result.delivered).toEqual(true)
     })
   })

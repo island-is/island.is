@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -17,9 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseFileCategory,
-  CaseTransition,
-  isProsecutionRole,
+  isDefenceUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -29,73 +22,114 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import {
-  TUploadFile,
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   useCase,
   useS3Upload,
+  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess, user } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
-  const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
-  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
-    useS3Upload(workingCase.id)
-  const { transitionCase } = useCase()
   const { id } = router.query
-  const appealBriefType = isProsecutionRole(user?.role)
+  const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
+  const [uploadState, setUploadState] = useState<UploadFileState>({
+    isUploading: false,
+    error: false,
+  })
+
+  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { transitionCase } = useCase()
+
+  const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
-  const appealCaseFilesType = isProsecutionRole(user?.role)
+  const appealCaseFilesType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
-    limitedAccess
+    isDefenceUser(user)
       ? constants.DEFENDER_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const allFilesUploaded = useMemo(() => {
-    return displayFiles.every(
-      (file) => file.status === 'done' || file.status === 'error',
+  const newUploadFiles = uploadFiles.filter((file) => {
+    return (
+      workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
+      undefined
     )
-  }, [displayFiles])
+  })
+  const isStepValid = newUploadFiles.length > 0 || uploadState.error
 
-  const isStepValid =
-    displayFiles.some(
-      (file) => file.category === appealBriefType && file.status === 'done',
-    ) && allFilesUploaded
+  const handleNextButtonClick = useCallback(
+    async (isRetry: boolean) => {
+      setUploadState({ isUploading: true, error: false })
 
-  const removeFileCB = useCallback((file: UploadFile) => {
-    setDisplayFiles((previous) =>
-      previous.filter((caseFile) => caseFile.id !== file.id),
-    )
-  }, [])
-
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
+      const uploadSuccess = await handleUpload(
+        newUploadFiles.filter((uf) =>
+          isRetry ? uf.status === 'error' : !uf.key,
+        ),
+        updateUploadFile,
       )
+
+      if (!uploadSuccess) {
+        setUploadState({ isUploading: false, error: true })
+        return
+      }
+
+      const caseTransitioned = await transitionCase(
+        workingCase.id,
+        CaseTransition.APPEAL,
+      )
+
+      if (caseTransitioned) {
+        setVisibleModal('APPEAL_SENT')
+      }
+
+      setUploadState({ isUploading: false, error: false })
     },
-    [generateSingleFileUpdate],
+    [
+      handleUpload,
+      newUploadFiles,
+      transitionCase,
+      updateUploadFile,
+      workingCase.id,
+    ],
   )
 
-  useEffect(() => {
-    if (workingCase.caseFiles) {
-      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
+  const handleRemoveFile = (file: UploadFile) => {
+    if (file.key) {
+      handleRemove(file, removeUploadFile)
+    } else {
+      removeUploadFile(file)
     }
-  }, [workingCase.caseFiles])
+
+    setUploadState({ isUploading: false, error: false })
+  }
+
+  const handleChange = (files: File[], type: CaseFileCategory) => {
+    setUploadState({ isUploading: false, error: false })
+    addUploadFiles(files, type, undefined, {
+      status: 'done',
+      percent: 0,
+    })
+  }
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -120,87 +154,82 @@ const AppealToCourtOfAppeals = () => {
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           </Box>
         )}
-
-        <>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.appealBriefTitle)}
-              required
-            />
-            <InputFileUpload
-              fileList={displayFiles.filter(
-                (file) => file.category === appealBriefType,
-              )}
-              accept={'application/pdf'}
-              header={formatMessage(core.uploadBoxTitle)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-              onChange={(files) =>
-                handleChange(
-                  files,
-                  appealBriefType,
-                  setDisplayFiles,
-                  handleUIUpdate,
-                )
-              }
-              onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) =>
-                handleRetry(file, handleUIUpdate, appealBriefType)
-              }
-            />
-          </Box>
+        <Box component="section" marginBottom={5}>
+          <SectionHeading
+            title={formatMessage(strings.appealBriefTitle)}
+            required
+          />
+          <InputFileUpload
+            fileList={newUploadFiles.filter(
+              (file) => file.category === appealBriefType,
+            )}
+            accept={'application/pdf'}
+            header={formatMessage(core.uploadBoxTitle)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            onChange={(files) => handleChange(files, appealBriefType)}
+            onRemove={(file) => {
+              handleRemoveFile(file)
+            }}
+            hideIcons={newUploadFiles
+              .filter((file) => file.category === appealBriefType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
+          />
+        </Box>
+        <Box
+          component="section"
+          marginBottom={isProsecutionUser(user) ? 5 : 10}
+        >
+          <SectionHeading
+            title={formatMessage(strings.appealCaseFilesTitle)}
+            marginBottom={1}
+          />
+          <Text marginBottom={3} whiteSpace="pre">
+            {formatMessage(strings.appealCaseFilesSubtitle)}
+            {'\n'}
+            {!isDefenceUser(user) &&
+              `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
+          </Text>
+          <InputFileUpload
+            fileList={newUploadFiles.filter(
+              (file) => file.category === appealCaseFilesType,
+            )}
+            accept={'application/pdf'}
+            header={formatMessage(core.uploadBoxTitle)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            onChange={(files) => handleChange(files, appealCaseFilesType)}
+            onRemove={(file) => handleRemoveFile(file)}
+            hideIcons={newUploadFiles
+              .filter((file) => file.category === appealCaseFilesType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
+          />
+        </Box>
+        {isProsecutionUser(user) && (
           <Box component="section" marginBottom={10}>
-            <SectionHeading
-              title={formatMessage(strings.appealCaseFilesTitle)}
-              marginBottom={1}
-            />
-            <Text marginBottom={3}>
-              {formatMessage(strings.appealCaseFilesSubtitle)}
-            </Text>
-            <InputFileUpload
-              fileList={displayFiles.filter(
-                (file) => file.category === appealCaseFilesType,
-              )}
-              accept={'application/pdf'}
-              header={formatMessage(core.uploadBoxTitle)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-              onChange={(files) =>
-                handleChange(
-                  files,
-                  appealCaseFilesType,
-                  setDisplayFiles,
-                  handleUIUpdate,
-                )
-              }
-              onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) =>
-                handleRetry(file, handleUIUpdate, appealCaseFilesType)
-              }
-            />
+            <RequestAppealRulingNotToBePublishedCheckbox />
           </Box>
-        </>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={async () => {
-            const caseTransitioned = await transitionCase(
-              workingCase.id,
-              CaseTransition.APPEAL,
-            )
-
-            if (caseTransitioned) {
-              setVisibleModal('APPEAL_SENT')
-            }
-          }}
-          nextButtonText={formatMessage(strings.nextButtonText)}
+          onNextButtonClick={() => handleNextButtonClick(uploadState.error)}
+          nextButtonText={formatMessage(
+            uploadState.error
+              ? strings.uploadFailedNextButtonText
+              : strings.nextButtonText,
+          )}
           nextIsDisabled={!isStepValid}
+          nextIsLoading={uploadState.isUploading}
           nextButtonIcon={undefined}
+          nextButtonColorScheme={uploadState.error ? 'destructive' : 'default'}
         />
       </FormContentContainer>
       {visibleModal === 'APPEAL_SENT' && (

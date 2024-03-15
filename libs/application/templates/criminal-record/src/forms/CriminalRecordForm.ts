@@ -1,13 +1,10 @@
 import {
   buildForm,
-  buildMultiField,
   buildSection,
-  buildSubmitField,
   buildExternalDataProvider,
   buildDataProviderItem,
-  buildCustomField,
 } from '@island.is/application/core'
-import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import {
   NationalRegistryUserApi,
@@ -15,6 +12,8 @@ import {
   SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
 } from '../dataProviders'
+import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
+import { getChargeItemCodes } from '../utils'
 
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
@@ -55,36 +54,12 @@ export const CriminalRecordForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'payment',
-      title: m.payment,
-      children: [
-        buildMultiField({
-          id: 'payment.info',
-          title: m.payment,
-          space: 1,
-          children: [
-            buildCustomField({
-              id: 'payment.over',
-              title: '',
-              component: 'PaymentChargeOverview',
-            }),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: m.confirm,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.confirm,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
+    buildFormPaymentChargeOverviewSection({
+      sectionTitle: m.payment,
+      getSelectedChargeItems: (_) =>
+        getChargeItemCodes().map((x) => ({
+          chargeItemCode: x,
+        })),
     }),
     buildSection({
       id: 'confirmation',

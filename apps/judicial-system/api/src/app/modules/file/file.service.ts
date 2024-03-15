@@ -1,17 +1,18 @@
-import fetch, { Headers } from 'node-fetch'
 import { Request, Response } from 'express'
+import fetch, { Headers } from 'node-fetch'
 
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
-import { FileExeption } from './file.exception'
 import { fileModuleConfig } from './file.config'
+import { FileExeption } from './file.exception'
 
 @Injectable()
 export class FileService {
@@ -21,14 +22,15 @@ export class FileService {
     private readonly auditTrailService: AuditTrailService,
   ) {}
 
-  private async getPdf(
+  private async getFile(
     id: string,
     route: string,
     req: Request,
     res: Response,
+    contentType: 'pdf' | 'zip',
   ): Promise<Response> {
     const headers = new Headers()
-    headers.set('Content-Type', 'application/pdf')
+    headers.set('Content-Type', `application/${contentType}`)
     headers.set('authorization', req.headers.authorization as string)
     headers.set('cookie', req.headers.cookie as string)
 
@@ -52,19 +54,20 @@ export class FileService {
     return stream.pipe(res)
   }
 
-  async tryGetPdf(
+  async tryGetFile(
     userId: string,
     auditAction: AuditedAction,
     id: string,
     route: string,
     req: Request,
     res: Response,
+    contentType: 'pdf' | 'zip',
   ): Promise<Response> {
     try {
       return this.auditTrailService.audit(
         userId,
         auditAction,
-        this.getPdf(id, route, req, res),
+        this.getFile(id, route, req, res, contentType),
         id,
       )
     } catch (error) {

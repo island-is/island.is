@@ -10,6 +10,7 @@ export * from './types/RouterActionResponse'
 export * from './screens/AccessDenied'
 export * from './screens/NotFound'
 export * from './screens/ModuleRoute'
+export * from './screens/ModuleErrorScreen'
 
 // hooks
 export * from './hooks/useModuleProps'

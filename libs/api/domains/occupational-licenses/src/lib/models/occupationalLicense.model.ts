@@ -5,14 +5,25 @@ import {
   InterfaceType,
   registerEnumType,
 } from '@nestjs/graphql'
+import { OccupationalLicensesError } from './occupationalLicenseError.model'
 
 export enum OccupationalLicenseType {
   EDUCATION = 'EDUCATIONAL',
   HEALTH = 'HEALTH_DIRECTORATE',
 }
 
+export enum OccupationalLicenseStatus {
+  valid = 'valid',
+  error = 'error',
+  limited = 'limited',
+}
+
 registerEnumType(OccupationalLicenseType, {
   name: 'OccupationalLicenseType',
+})
+
+registerEnumType(OccupationalLicenseStatus, {
+  name: 'OccupationalLicenseStatus',
 })
 
 @InterfaceType({
@@ -32,18 +43,18 @@ export abstract class OccupationalLicense {
   institution!: OccupationalLicenseType
 
   @Field(() => ID)
-  id!: string
+  id!: string | number
   @Field(() => String)
   type!: string
 
   @Field(() => String)
   profession!: string
 
-  @Field(() => Boolean)
-  isValid!: boolean
-
   @Field(() => String)
   validFrom!: string
+
+  @Field(() => OccupationalLicenseStatus)
+  status!: OccupationalLicenseStatus
 }
 
 @ObjectType('OccupationalLicensesEducationalLicense', {
@@ -66,4 +77,13 @@ export class HealthDirectorateLicense extends OccupationalLicense {
 
   @Field(() => String, { nullable: true })
   number?: string | null
+}
+
+@ObjectType('OccupationalLicenseResponse')
+export class OccupationalLicenseResponse {
+  @Field(() => [OccupationalLicense])
+  items!: OccupationalLicense[]
+
+  @Field(() => [OccupationalLicensesError])
+  errors!: OccupationalLicensesError[]
 }

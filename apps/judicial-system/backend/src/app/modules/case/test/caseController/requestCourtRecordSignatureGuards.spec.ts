@@ -6,10 +6,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseWriteGuard } from '../../guards/caseWrite.guard'
-import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { CaseController } from '../../case.controller'
+import { CaseExistsGuard } from '../../guards/caseExists.guard'
+import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { CaseWriteGuard } from '../../guards/caseWrite.guard'
 
 describe('CaseController - Request court record signature guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

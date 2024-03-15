@@ -12,6 +12,7 @@ import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
 import { AssetName } from './models/assetName'
+import { VehicleRegistration } from './models/vehicleRegistration'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PropertyDetail } from '@island.is/api/domains/assets'
@@ -27,6 +28,10 @@ import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
 import { AlcoholLicence } from './models/alcoholLicence'
 import { TemporaryEventLicence } from './models/temporaryEventLicence'
+import { MasterLicencesResponse } from './models/masterLicence'
+import { GetVehicleInput } from './dto/getVehicle.input'
+import { RegistryPerson } from './models/registryPerson'
+import { GetRegistryPersonInput } from './dto/getRegistryPerson.input'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -136,6 +141,23 @@ export class SyslumennResolver {
     return this.syslumennService.getVehicleType(licenseNumber)
   }
 
+  @Query(() => VehicleRegistration)
+  syslumennGetVehicle(
+    @Args('input') input: GetVehicleInput,
+  ): Promise<VehicleRegistration> {
+    return this.syslumennService.getVehicle(input.vehicleId)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => RegistryPerson)
+  @BypassAuth()
+  syslumennGetRegistryPerson(
+    @Args('input') input: GetRegistryPersonInput,
+  ): Promise<RegistryPerson> {
+    const person = this.syslumennService.getRegistryPerson(input.nationalId)
+    return person
+  }
+
   @Query(() => PropertyDetail, { nullable: true })
   @Scopes(ApiScope.assets)
   searchForProperty(
@@ -148,5 +170,13 @@ export class SyslumennResolver {
   @Query(() => EstateRelations)
   getSyslumennEstateRelations(): Promise<EstateRelations> {
     return this.syslumennService.getEstateRelations()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => MasterLicencesResponse)
+  @BypassAuth()
+  async getMasterLicences(): Promise<MasterLicencesResponse> {
+    const licences = await this.syslumennService.getMasterLicences()
+    return { licences }
   }
 }

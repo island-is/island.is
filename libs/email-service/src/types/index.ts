@@ -1,5 +1,5 @@
-import { SendMailOptions } from 'nodemailer'
 import handlebars from 'handlebars'
+import { SendMailOptions } from 'nodemailer'
 
 type Alignment = 'left' | 'center' | 'right' | undefined
 type Style = 'bold' | 'italic' | 'normal' | undefined
@@ -55,6 +55,24 @@ interface SubtitleComponent {
   }
 }
 
+interface SpacerComponent {
+  component: 'Spacer'
+  context?: {}
+}
+
+interface TextWithLinkComponent {
+  component: 'TextWithLink'
+  context: {
+    align?: Alignment
+    small?: boolean
+    style?: Style
+    preText?: string
+    postText?: string
+    linkHref: string
+    linkLabel: string
+  }
+}
+
 export type Body =
   | ImageComponent
   | HeadingComponent
@@ -62,6 +80,8 @@ export type Body =
   | ButtonComponent
   | ListComponent
   | SubtitleComponent
+  | SpacerComponent
+  | TextWithLinkComponent
 
 export interface Template {
   title: string

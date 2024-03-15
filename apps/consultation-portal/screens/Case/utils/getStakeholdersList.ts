@@ -10,7 +10,10 @@ const getStakeholdersList = ({ stakeholders, extraStakeholderList }: Props) => {
     return { name: stakeholder.name }
   })
 
-  const mappedExtraStakeholderList = extraStakeholderList
+  const cleanExtraStakeholderList =
+    extraStakeholderList !== '' ? extraStakeholderList : undefined
+
+  const mappedExtraStakeholderList = cleanExtraStakeholderList
     ?.split('\n')
     .map((stakeholder) => {
       return { name: stakeholder }

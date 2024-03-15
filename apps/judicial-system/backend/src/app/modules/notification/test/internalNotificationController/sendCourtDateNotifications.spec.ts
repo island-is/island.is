@@ -1,17 +1,19 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+
 import {
   CaseType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../../case'
-import { DeliverResponse } from '../../models/deliver.response'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
-import { Notification } from '../../models/notification.model'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
+import { Case } from '../../../case'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { DeliverResponse } from '../../models/deliver.response'
+import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../factories')
 
@@ -94,7 +96,7 @@ describe('InternalNotificationController - Send court date notification', () => 
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Fyrirtaka í máli: ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defenderName}.`,
+          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defenderName}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
 

@@ -1,12 +1,14 @@
 import fetch from 'isomorphic-fetch'
+
 import { Inject, Injectable } from '@nestjs/common'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
+
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
@@ -52,6 +54,7 @@ const caseEvent = {
   APPEAL: ':judge: Kæra',
   RECEIVE_APPEAL: ':eyes: Kæra móttekin',
   COMPLETE_APPEAL: ':white_check_mark: Kæru lokið',
+  REOPEN_APPEAL: ':building_construction: Kæra opnuð aftur',
 }
 
 export enum CaseEvent {
@@ -73,6 +76,7 @@ export enum CaseEvent {
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
 }
 
 @Injectable()
@@ -94,7 +98,7 @@ export class EventService {
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
           : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
-      const typeText = `${capitalize(caseTypes[theCase.type])}${
+      const typeText = `${capitalize(formatCaseType(theCase.type))}${
         isIndictmentCase(theCase.type)
           ? `:(${readableIndictmentSubtypes(
               theCase.policeCaseNumbers,
@@ -103,14 +107,15 @@ export class EventService {
           : ''
       } *${theCase.id}*`
       const prosecutionText = `${
-        theCase.creatingProsecutor?.institution
-          ? `${theCase.creatingProsecutor?.institution?.name} `
-          : ''
+        theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
       }*${theCase.policeCaseNumbers.join(', ')}*`
       const courtText = theCase.court
-        ? `${theCase.court.name} ${
+        ? `\n>${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
           }`
+        : ''
+      const courtOfAppealsText = theCase.appealCaseNumber
+        ? `\n>Landsréttur *${theCase.appealCaseNumber}*`
         : ''
       const extraText =
         event === CaseEvent.SCHEDULE_COURT_DATE
@@ -132,7 +137,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${title}*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${extraText}`,
               },
             },
           ],

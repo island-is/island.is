@@ -1,11 +1,12 @@
 import { expect, Page } from '@playwright/test'
-import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
+import { urls, shouldSkipNavigation } from './urls'
 import { debug } from './utils'
 
 export type CognitoCreds = {
   username: string
   password: string
 }
+
 function getCognitoCredentials(): CognitoCreds {
   const username = process.env.AWS_COGNITO_USERNAME
   const password = process.env.AWS_COGNITO_PASSWORD
@@ -15,6 +16,7 @@ function getCognitoCredentials(): CognitoCreds {
     password,
   }
 }
+
 export const cognitoLogin = async (
   page: Page,
   home: string,
@@ -31,10 +33,11 @@ export const cognitoLogin = async (
   await passwordInput.selectText()
   await passwordInput.type(password)
   await cognito.locator('input[name="signInSubmitButton"]:visible').click()
-  if (home === JUDICIAL_SYSTEM_HOME_URL) {
+
+  if (shouldSkipNavigation(home)) {
     return
   }
-  await page.waitForURL(new RegExp(`${home}|${authUrl}/delegation`))
+  await page.waitForURL(new RegExp(`${home}|${authUrl}`))
 }
 
 export async function idsLogin(
@@ -50,14 +53,21 @@ export async function idsLogin(
   const btn = page.locator('button[id="submitPhoneNumber"]')
   await expect(btn).toBeEnabled()
   await btn.click()
-  await page.waitForURL(new RegExp(`${home}|${urls.authUrl}/delegation`), {
-    waitUntil: 'domcontentloaded',
-  })
+  await page.waitForURL(
+    new RegExp(`${home}|${urls.authUrl}/(app/)?delegation`),
+    {
+      waitUntil: 'domcontentloaded',
+    },
+  )
 
   // Handle delegation on login
   if (page.url().startsWith(urls.authUrl)) {
     debug('Still on auth site')
-    const delegations = page.locator('button[name="SelectedNationalId"]')
+    /**
+     * Not using accessible selector here because this test needs to work on both the new and current login page at the same time to handle the transition gracefully
+     * TODO: use accessible selector when the new login pages is out
+     */
+    const delegations = page.locator('.identity-card--name')
     await expect(delegations).not.toHaveCount(0)
     // Default to the first delegation
     if (!delegation) await delegations.first().click()
@@ -71,10 +81,10 @@ export async function idsLogin(
 
       await filteredDelegations.first().click()
     }
+    await page.waitForURL(new RegExp(`${home}`), {
+      waitUntil: 'domcontentloaded',
+    })
   }
-  await page.waitForURL(new RegExp(`${home}`), {
-    waitUntil: 'domcontentloaded',
-  })
 }
 
 export const switchUser = async (

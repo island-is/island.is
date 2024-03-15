@@ -25,7 +25,7 @@ const SAkFooter = ({ footerItems, logo, title }: SAkFooterProps) => {
   const { width } = useWindowSize()
 
   return (
-    <footer className={styles.container} aria-labelledby="sak-footer">
+    <footer className={styles.container}>
       <GridContainer>
         <Box className={styles.firstRow}>
           {!!logo && (

@@ -1,12 +1,14 @@
 import { DigitalTachographDriversCard } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
-import { ExternalData } from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import { getValueViaPath, YES } from '@island.is/application/core'
 
-export const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+export const getChargeItemCodes = (application: Application): Array<string> => {
+  const answers = application.answers as DigitalTachographDriversCard
+  return getChargeItemCodeWithAnswers(answers)
+}
 
-export const getChargeItemCodes = (
+export const getChargeItemCodeWithAnswers = (
   answers: DigitalTachographDriversCard,
 ): Array<string> => {
   const result: Array<string> = []

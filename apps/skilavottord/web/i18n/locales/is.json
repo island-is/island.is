@@ -328,7 +328,8 @@
         "message": "Það kom upp vandamál þegar ökutæki var merkt til úrvinnslu. Vinsamlegast reynið aftur.",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
-      }
+      },
+      "currentMileage": "Núverandi kílómetrastaða"
     }
   },
   "recyclingFundOverview": {

@@ -6,7 +6,10 @@ import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/v
 import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehiclePlateRenewalClient } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
-import { VehicleMiniDto, VehicleSearchApi } from '@island.is/clients/vehicles'
+import {
+  BasicVehicleInformationDto,
+  VehicleSearchApi,
+} from '@island.is/clients/vehicles'
 import {
   OwnerChangeAnswers,
   OperatorChangeAnswers,
@@ -52,22 +55,42 @@ export class TransportAuthorityApi {
     return { exists: hasActiveCard }
   }
 
+  private isOwnerOrCoOwner(
+    vehicle: BasicVehicleInformationDto,
+    auth: Auth,
+  ): boolean {
+    if (vehicle.owners) {
+      for (const owner of vehicle.owners) {
+        if (owner.persidno === auth.nationalId) {
+          return true
+        }
+        if (owner.coOwners) {
+          for (const coOwner of owner.coOwners) {
+            if (coOwner.persidno === auth.nationalId) {
+              return true
+            }
+          }
+        }
+      }
+    }
+    return false
+  }
+
   async getVehicleOwnerchangeChecksByPermno(
     auth: User,
     permno: string,
   ): Promise<VehicleOwnerchangeChecksByPermno | null | ApolloError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
-    const myVehicles = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: false,
-    })
-    const isOwnerOrCoOwner = !!myVehicles?.find(
-      (vehicle: VehicleMiniDto) => vehicle.permno === permno,
-    )
-    if (!isOwnerOrCoOwner) {
+    const vehicle = await this.vehiclesApiWithAuth(
+      auth,
+    ).basicVehicleInformationGet({ permno: permno })
+    if (!vehicle) {
+      throw Error(
+        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
+      )
+    }
+    if (!this.isOwnerOrCoOwner(vehicle, auth)) {
       throw Error(
         'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
       )
@@ -89,6 +112,12 @@ export class TransportAuthorityApi {
       validationErrorMessages: ownerChangeValidation?.hasError
         ? ownerChangeValidation.errorMessages
         : null,
+      basicVehicleInformation: {
+        permno: vehicle.permno,
+        make: `${vehicle.make} ${vehicle.vehcom}`,
+        color: vehicle.color,
+        requireMileage: vehicle.requiresMileageRegistration,
+      },
     }
   }
 
@@ -122,6 +151,8 @@ export class TransportAuthorityApi {
       (x) => x.type === 'operator',
     )
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(user, {
         permno: answers?.pickVehicle?.plate,
@@ -136,6 +167,7 @@ export class TransportAuthorityApi {
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        mileage: mileage ? Number(mileage) || 0 : null,
         insuranceCompanyCode: answers?.insurance?.value || '',
         coOwners: buyerCoOwners?.map((coOwner) => ({
           ssn: coOwner.nationalId,
@@ -185,6 +217,8 @@ export class TransportAuthorityApi {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(user, {
         permno: permno,
@@ -199,6 +233,7 @@ export class TransportAuthorityApi {
         dateOfPurchase: new Date(),
         dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
         saleAmount: currentOwnerChange?.saleAmount,
+        mileage: mileage ? Number(mileage) || 0 : null,
         insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
         operators: currentOperators?.map((operator) => ({
           ssn: operator.ssn || '',
@@ -223,16 +258,15 @@ export class TransportAuthorityApi {
   ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
-    const myVehicles = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: false,
-    })
-    const isOwnerOrCoOwner = !!myVehicles?.find(
-      (vehicle: VehicleMiniDto) => vehicle.permno === permno,
-    )
-    if (!isOwnerOrCoOwner) {
+    const vehicle = await this.vehiclesApiWithAuth(
+      auth,
+    ).basicVehicleInformationGet({ permno: permno })
+    if (!vehicle) {
+      throw Error(
+        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
+      )
+    }
+    if (!this.isOwnerOrCoOwner(vehicle, auth)) {
       throw Error(
         'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
       )
@@ -254,6 +288,12 @@ export class TransportAuthorityApi {
       validationErrorMessages: operatorChangeValidation?.hasError
         ? operatorChangeValidation.errorMessages
         : null,
+      basicVehicleInformation: {
+        color: vehicle.color,
+        make: `${vehicle.make} ${vehicle.vehcom}`,
+        permno: vehicle.permno,
+        requireMileage: vehicle.requiresMileageRegistration,
+      },
     }
   }
 
@@ -289,11 +329,14 @@ export class TransportAuthorityApi {
           : true,
     }))
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOperatorsClient.validateAllForOperatorChange(
         user,
         permno,
         operators,
+        mileage ? Number(mileage) || 0 : null,
       )
 
     return result
@@ -325,6 +368,12 @@ export class TransportAuthorityApi {
       validationErrorMessages: validation?.hasError
         ? validation.errorMessages
         : null,
+      basicVehicleInformation: {
+        color: vehicleInfo.color,
+        make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
+        permno: vehicleInfo.permno,
+        requireMileage: vehicleInfo.requiresMileageRegistration,
+      },
     }
   }
 

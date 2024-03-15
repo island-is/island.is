@@ -47,6 +47,17 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'tabContent',
   'tabSection',
   'organization',
+  'chart',
+  'chartComponent',
+  'event',
+  'latestEventsSlice',
+  'featuredEvents',
+  'price',
+  'sectionWithImage',
+  'sliceDropdown',
+  'teamList',
+  'teamMember',
+  'namespace',
 ]
 
 export const DEFAULT_READ_ONLY_ENTRY_IDS = [
@@ -57,4 +68,5 @@ export const DEFAULT_READ_ONLY_ENTRY_IDS = [
   'subArticle',
   'organizationTag',
   'uiConfiguration',
+  'featuredSupportQNAs',
 ]

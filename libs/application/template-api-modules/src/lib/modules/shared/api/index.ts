@@ -14,6 +14,12 @@ import { SyslumennModule } from './syslumenn/syslumenn.module'
 import { SyslumennService } from './syslumenn/syslumenn.service'
 import { VehiclesModule } from './vehicles/vehicles.module'
 import { VehiclesService } from './vehicles/vehicles.service'
+import { PassportModule } from './passport/passport.module'
+import { PassportService } from './passport/passport.service'
+import { DirectorateOfImmigrationModule } from './directorate-of-immigration/directorate-of-immigration.module'
+import { DirectorateOfImmigrationService } from './directorate-of-immigration/directorate-of-immigration.service'
+import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
+import { HealthInsuranceService } from './health-insurance/health-insurance.service'
 
 export const modules = [
   NationalRegistryModule,
@@ -24,6 +30,9 @@ export const modules = [
   ApplicationModule,
   SyslumennModule,
   VehiclesModule,
+  PassportModule,
+  DirectorateOfImmigrationModule,
+  HealthInsuranceModule,
 ]
 
 export const services = [
@@ -35,4 +44,7 @@ export const services = [
   ApplicationService,
   SyslumennService,
   VehiclesService,
+  PassportService,
+  DirectorateOfImmigrationService,
+  HealthInsuranceService,
 ]

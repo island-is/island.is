@@ -45,7 +45,8 @@ const checkIfStringIsListOfUrls = (urls: string) => {
 
   for (const url of urlsArray) {
     try {
-      new URL(url)
+      // Firefox does not support wildcard subdomains, so we need to remove it before validating the url
+      new URL(url.replace('*.', ''))
     } catch (e) {
       return false
     }
@@ -91,14 +92,18 @@ export const schema = {
           ? AuthAdminRefreshTokenExpiration.Sliding
           : AuthAdminRefreshTokenExpiration.Absolute
       }),
-      slidingRefreshTokenLifetime: z.string().transform((s) => {
-        return Number(s)
+      slidingRefreshTokenLifetime: z.optional(z.string()).transform((s) => {
+        return typeof s === 'string' && s.length > 0 ? Number(s) : undefined
       }),
     })
     .merge(defaultEnvironmentSchema)
     .refine(
       (data) => {
-        if (data.refreshTokenExpiration) {
+        if (
+          data.refreshTokenExpiration ===
+            AuthAdminRefreshTokenExpiration.Sliding &&
+          data.slidingRefreshTokenLifetime !== undefined
+        ) {
           return checkIfStringIsPositiveNumber(
             data.slidingRefreshTokenLifetime.toString(),
           )
@@ -165,6 +170,7 @@ export const schema = {
       allowOfflineAccess: booleanCheckbox,
       supportTokenExchange: booleanCheckbox,
       requireConsent: booleanCheckbox,
+      singleSession: booleanCheckbox,
       accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {

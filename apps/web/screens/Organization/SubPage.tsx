@@ -1,5 +1,8 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useMemo } from 'react'
+import { Locale } from 'locale'
+import { useRouter } from 'next/router'
+import { ParsedUrlQuery } from 'querystring'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -8,10 +11,20 @@ import {
   Link,
   NavigationItem,
   Stack,
-  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import {
+  Form,
+  getThemeConfig,
+  OrganizationWrapper,
+  SignLanguageButton,
+  SliceDropdown,
+  SliceMachine,
+  SliceTableOfContents,
+  TOC,
+  Webreader,
+} from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   Query,
@@ -20,72 +33,27 @@ import {
   QueryGetOrganizationSubpageArgs,
   Slice,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
-import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import {
-  getThemeConfig,
-  SliceMachine,
-  OrganizationWrapper,
-  SliceDropdown,
-  Form,
-  Webreader,
-  SignLanguageButton,
-} from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { ParsedUrlQuery } from 'querystring'
-import { useRouter } from 'next/router'
-import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import { webRichText } from '@island.is/web/utils/richText'
-import { useI18n } from '@island.is/web/i18n'
-import { Locale } from 'locale'
-import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
   namespace: Record<string, string>
   locale: Locale
-}
-
-const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
-  slices,
-  title,
-}) => {
-  const navigation = useMemo(
-    () =>
-      slices
-        .map((slice) => ({
-          id: slice.id,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          text: slice['title'] ?? slice['leftTitle'] ?? '',
-        }))
-        .filter((item) => !!item.text),
-    [slices],
-  )
-  if (navigation.length === 0) {
-    return null
-  }
-  return (
-    <Box marginY={2}>
-      <TableOfContents
-        tableOfContentsTitle={title}
-        headings={navigation.map(({ id, text }) => ({
-          headingTitle: text,
-          headingId: id,
-        }))}
-        onClick={(id) => scrollTo(id, { smooth: true })}
-      />
-    </Box>
-  )
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -123,29 +91,34 @@ const SubPage: Screen<SubPageProps> = ({
   const content = (
     <>
       {subpage?.showTableOfContents && (
-        <TOC
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          slices={subpage.slices}
-          title={n('navigationTitle', 'Efnisyfirlit')}
-        />
+        <Box marginY={2}>
+          <TOC
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            slices={subpage.slices}
+            title={n('navigationTitle', 'Efnisyfirlit')}
+          />
+        </Box>
       )}
       <GridRow className="rs_read">
-        <GridColumn
-          span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
-        >
-          {webRichText(
-            subpage?.description as SliceType[],
-            {
-              renderComponent: {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                Form: (slice) => <Form form={slice} namespace={namespace} />,
+        {subpage?.description && subpage.description.length > 0 && (
+          <GridColumn
+            span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
+            paddingBottom={3}
+          >
+            {webRichText(
+              subpage?.description as SliceType[],
+              {
+                renderComponent: {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  Form: (slice) => <Form form={slice} namespace={namespace} />,
+                },
               },
-            },
-            activeLocale,
-          )}
-        </GridColumn>
+              activeLocale,
+            )}
+          </GridColumn>
+        )}
         {subpage?.links && subpage.links.length > 0 && (
           <GridColumn
             span={['12/12', '12/12', '4/12']}
@@ -202,7 +175,7 @@ const SubPage: Screen<SubPageProps> = ({
       }}
     >
       <GridContainer>
-        <Box paddingY={4}>
+        <Box paddingTop={4}>
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <GridContainer>
@@ -238,6 +211,9 @@ const SubPage: Screen<SubPageProps> = ({
                       {subpage?.signLanguageVideo?.url && (
                         <SignLanguageButton
                           videoUrl={subpage.signLanguageVideo.url}
+                          videoThumbnailImageUrl={
+                            subpage.signLanguageVideo.thumbnailImageUrl
+                          }
                           content={
                             <>
                               <Box className="rs_read" marginBottom={2}>
@@ -252,7 +228,6 @@ const SubPage: Screen<SubPageProps> = ({
                                 subpage.sliceExtraText,
                                 namespace,
                                 organizationPage?.slug,
-                                organizationPage,
                               )}
                             </>
                           }
@@ -267,22 +242,23 @@ const SubPage: Screen<SubPageProps> = ({
           </GridRow>
         </Box>
       </GridContainer>
-      {renderSlices(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.slices,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceCustomRenderer,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceExtraText,
-        namespace,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationPage.slug,
-        organizationPage,
-      )}
+      <Stack space={SLICE_SPACING}>
+        {renderSlices(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.slices,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceCustomRenderer,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceExtraText,
+          namespace,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationPage.slug,
+        )}
+      </Stack>
     </OrganizationWrapper>
   )
 }
@@ -293,16 +269,15 @@ const renderSlices = (
   extraText: string,
   namespace: Record<string, string>,
   slug: string,
-  organizationPage: Query['getOrganizationPage'],
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
+    case 'SliceTableOfContents':
+      return <SliceTableOfContents slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
-        if (slice.__typename === 'LifeEventPageListSlice') {
-          const digitalIcelandDetailPageLinkType: LinkType =
-            'digitalicelandservicesdetailpage'
+        if (slice.__typename === 'AnchorPageListSlice') {
           return (
             <SliceMachine
               key={slice.id}
@@ -311,11 +286,7 @@ const renderSlices = (
               slug={slug}
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
-                renderLifeEventPagesAsProfileCards: true,
-                anchorPageLinkType:
-                  organizationPage?.theme === 'digital_iceland'
-                    ? digitalIcelandDetailPageLinkType
-                    : undefined,
+                renderAnchorPagesAsProfileCards: true,
                 latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
@@ -332,7 +303,7 @@ const renderSlices = (
             slug={slug}
             marginBottom={index === slices.length - 1 ? 5 : 0}
             params={{
-              renderLifeEventPagesAsProfileCards: true,
+              renderAnchorPagesAsProfileCards: true,
               latestNewsSliceBackground: 'white',
               forceTitleSectionHorizontalPadding: 'true',
             }}

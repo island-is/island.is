@@ -144,6 +144,7 @@ export const NewsItems = ({
             width="full"
             justifyContent="center"
             alignItems="center"
+            paddingY={[3, 3, 3, 0]}
           >
             <Link {...linkProps} skipTab>
               <Button

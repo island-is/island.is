@@ -1,7 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { CourtClientModule } from '@island.is/judicial-system/court-client'
 import { EmailModule } from '@island.is/email-service'
+
+import { CourtClientModule } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'
 import { EventModule } from '../index'

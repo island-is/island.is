@@ -24,6 +24,8 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 
+import { getScaledValue } from '../utils/scale-value'
+
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
@@ -56,11 +58,15 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
+      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
+        serviceDef.resources.limits.memory,
+      )}`,
+      LOG_LEVEL: 'info',
     },
     secrets: {},
+    podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
+      maxUnavailable: 1,
+    },
     healthCheck: {
       port: serviceDef.healthPort,
       liveness: {
@@ -84,7 +90,9 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.args) {
     result.args = serviceDef.args
   }
-
+  if (serviceDef.podDisruptionBudget) {
+    result.podDisruptionBudget = serviceDef.podDisruptionBudget
+  }
   // resources
   result.resources = serviceDef.resources
 
@@ -334,6 +342,8 @@ function serializeIngress(
 
   return {
     annotations: {
+      'nginx.ingress.kubernetes.io/service-upstream':
+        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
       'kubernetes.io/ingress.class':
         ingressConf.public ?? true
           ? 'nginx-external-alb'

@@ -60,7 +60,10 @@
     "mimic-response",
     "to-readable-stream",
     "url-parse-lax",
-    "safer-buffer"
+    "safer-buffer",
+    "canvas",
+    "path-scurry",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

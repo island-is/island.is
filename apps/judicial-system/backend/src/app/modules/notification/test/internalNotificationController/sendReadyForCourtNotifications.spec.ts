@@ -1,31 +1,32 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
 import { SmsService } from '@island.is/nova-sms'
+
 import {
   DEFENDER_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  NotificationType,
-  CaseType,
   CaseState,
-  Recipient,
+  CaseType,
   IndictmentSubtype,
-  User,
+  NotificationType,
   RequestSharedWithDefender,
+  User,
 } from '@island.is/judicial-system/types'
+
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { randomDate } from '../../../../test'
 import { Case } from '../../../case'
 import { Institution } from '../../../institution/institution.model'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
+import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse
@@ -52,7 +53,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
     prosecutor: {
       name: 'Derrick',
       email: 'derrick@dummy.is',
-      institution: { name: 'Héraðsdómur Derricks' },
     },
     courtId,
     court: { name: 'Héraðsdómur Reykjavíkur' },
@@ -62,6 +62,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     defenderName: 'Saul Goodman',
     defenderEmail: 'saul@dummy.is',
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+    prosecutorsOffice: { name: 'Héraðsdómur Derricks' },
   } as Case
   const notificationDto = {
     user: { id: userId } as User,
@@ -140,7 +141,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
         [courtMobileNumber],
-        'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Derrick (Héraðsdómur Derricks).',
+        'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Derrick (Héraðsdómur Derricks). Sjá nánar á rettarvorslugatt.island.is.',
       )
     })
 
@@ -189,7 +190,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
         [courtMobileNumber],
-        `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`,
+        `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði. Sjá nánar á rettarvorslugatt.island.is.`,
       )
     })
 
@@ -257,7 +258,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
             address: mockNotificationConfig.email.replyToEmail,
           },
           to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
-          subject: `Gögn í máli ${courtCaseNumber}`,
+          subject: `Krafa í máli ${courtCaseNumber}`,
           html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
         }),
@@ -313,9 +314,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
-    const prosecutor = {
-      institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
-    } as User
+    const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
 
     const theCase = {
       id: caseId,
@@ -327,7 +326,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       },
       courtId,
       court,
-      prosecutor,
+      prosecutorsOffice,
     } as unknown as Case
 
     beforeEach(async () => {
@@ -362,9 +361,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
-    const prosecutor = {
-      institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
-    } as User
+    const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
 
     const theCase = {
       id: caseId,
@@ -383,7 +380,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       },
       courtId,
       court,
-      prosecutor,
+      prosecutorsOffice,
     } as unknown as Case
 
     beforeEach(async () => {

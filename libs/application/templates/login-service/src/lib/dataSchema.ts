@@ -17,9 +17,6 @@ export const LoginServiceSchema = z.object({
     name: z.string().min(1),
     nationalId: z.string().refine((x) => (x ? isValid(x) : false)),
     typeOfOperation: z.string(),
-    // typeOfOperation: z.string().refine((x) => x.slice(0, 2) === '84', {
-    //   params: errorMessages.invalidIsatNumber,
-    // }),
     responsiblePartyName: z.string().min(1),
     responsiblePartyEmail: z.string().min(1),
     responsiblePartyTel: z.string().min(1),

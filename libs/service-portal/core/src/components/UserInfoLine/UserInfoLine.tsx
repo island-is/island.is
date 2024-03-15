@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Box,
   Text,
-  Button,
   GridRow,
   GridColumn,
   GridColumnProps,
@@ -13,18 +12,17 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link, useLocation } from 'react-router-dom'
-import { servicePortalOutboundLink } from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
-import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
 import cn from 'classnames'
+import { LinkButton } from '../LinkButton/LinkButton'
 
 export type EditLink = {
   external?: boolean
   url: string
-  title?: MessageDescriptor
+  title?: MessageDescriptor | string
   skipOutboundTrack?: boolean
   icon?: ButtonProps['icon']
 }
@@ -48,15 +46,16 @@ interface Props {
   translate?: 'yes' | 'no'
   translateLabel?: 'yes' | 'no'
   printable?: boolean
+  tooltipFull?: boolean
 }
 
 export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,
-  labelColumnSpan = ['8/12', '4/12'],
-  valueColumnSpan = ['1/1', '5/12'],
-  editColumnSpan = ['1/1', '3/12'],
+  labelColumnSpan = ['12/12', '4/12', '6/12', '6/12', '4/12'],
+  valueColumnSpan = ['1/1', '5/12', '6/12', '6/12', '5/12'],
+  editColumnSpan = ['1/1', '3/12', '1/1', '1/1', '3/12'],
   loading,
   editLink,
   title,
@@ -69,6 +68,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   translate = 'yes',
   translateLabel = 'yes',
   printable = false,
+  tooltipFull,
 }) => {
   const { pathname } = useLocation()
   const { formatMessage } = useLocale()
@@ -89,7 +89,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
         </Text>
       )}
 
-      <GridRow align="flexStart">
+      <GridRow rowGap={'smallGutter'} align="flexStart">
         <GridColumn order={1} span={labelColumnSpan}>
           <Box
             display="flex"
@@ -105,7 +105,11 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
             >
               {formatMessage(label)}{' '}
               {tooltip && (
-                <Tooltip placement="right" fullWidth text={tooltip} />
+                <Tooltip
+                  placement="top"
+                  fullWidth={tooltipFull}
+                  text={tooltip}
+                />
               )}
             </Text>
           </Box>
@@ -140,51 +144,26 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
           {editLink ? (
             <Box
               display="flex"
-              justifyContent={['flexStart', 'flexEnd']}
+              justifyContent={[
+                'flexStart',
+                'flexEnd',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
               alignItems="center"
               height="full"
               printHidden
             >
-              {editLink.external ? (
-                <a
-                  href={editLink.url}
-                  rel="noopener noreferrer"
-                  onClick={
-                    editLink.skipOutboundTrack
-                      ? undefined
-                      : () =>
-                          servicePortalOutboundLink({
-                            url: formatPlausiblePathToParams(pathname).url,
-                            outboundUrl: editLink.url,
-                          })
-                  }
-                  target="_blank"
-                >
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon="open"
-                    iconType="outline"
-                  >
-                    {editLink.title
-                      ? formatMessage(editLink.title)
-                      : formatMessage(sharedMessages.edit)}
-                  </Button>
-                </a>
-              ) : (
-                <Link to={editLink.url}>
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon={editLink.icon}
-                    iconType="outline"
-                  >
-                    {editLink.title
-                      ? formatMessage(editLink.title)
-                      : formatMessage(sharedMessages.edit)}
-                  </Button>
-                </Link>
-              )}
+              <LinkButton
+                to={editLink.url}
+                text={
+                  editLink.title
+                    ? formatMessage(editLink.title)
+                    : formatMessage(sharedMessages.edit)
+                }
+                skipOutboundTrack={editLink.skipOutboundTrack}
+              />
             </Box>
           ) : null}
         </GridColumn>

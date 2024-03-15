@@ -1,15 +1,26 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { formatPlausiblePathToParams, isExternalLink } from '../..'
 import * as styles from './LinkResolver.css'
+import cn from 'classnames'
 import { servicePortalOutboundLink } from '@island.is/plausible'
+import { useRoutes } from '@island.is/portals/core'
 interface Props {
   children?: ReactNode
+  className?: string
   href: string
+  skipOutboundTrack?: boolean
 }
 
-export const LinkResolver = ({ href = '/', children }: Props) => {
+export const LinkResolver = ({
+  href = '/',
+  children,
+  className,
+  skipOutboundTrack,
+}: Props) => {
   const { pathname } = useLocation()
+  const routes = useRoutes()
+  const routePaths = routes.map((item) => item.path)
 
   if (isExternalLink(href)) {
     return (
@@ -17,12 +28,17 @@ export const LinkResolver = ({ href = '/', children }: Props) => {
         href={href}
         target="_blank"
         rel="noreferrer noopener"
-        className={styles.link}
-        onClick={() =>
-          servicePortalOutboundLink({
-            url: formatPlausiblePathToParams(pathname).url,
-            outboundUrl: href,
-          })
+        className={cn(styles.link, {
+          [`${className}`]: className,
+        })}
+        onClick={
+          skipOutboundTrack
+            ? undefined
+            : () =>
+                servicePortalOutboundLink({
+                  url: formatPlausiblePathToParams(pathname, routePaths).url,
+                  outboundUrl: href,
+                })
         }
       >
         {children}
@@ -30,7 +46,12 @@ export const LinkResolver = ({ href = '/', children }: Props) => {
     )
   }
   return (
-    <Link className={styles.link} to={href}>
+    <Link
+      className={cn(styles.link, {
+        [`${className}`]: className,
+      })}
+      to={href}
+    >
       {children}
     </Link>
   )

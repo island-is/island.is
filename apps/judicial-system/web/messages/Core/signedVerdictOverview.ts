@@ -74,14 +74,14 @@ export const signedVerdictOverview = {
       },
     }),
     modifyDatesModal: defineMessages({
-      titleV3: {
+      title: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.title_v3',
         defaultMessage:
           'Breyting á lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}',
         description:
           'Notaður sem titill í "Breyting á lengd gæsluvarðhalds/vistunar/farbanns" glugga á yfirlitsskjá afgreiddra mála.',
       },
-      successTitleV3: {
+      successTitle: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_title_v3',
         defaultMessage:
           'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} breytt',
@@ -100,14 +100,14 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
       },
-      reasonForChangePlaceholderV3: {
+      reasonForChangePlaceholder: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_placeholder_v3',
         defaultMessage:
           'Bóka þarf ástæðu fyrir breytingu á skráðri lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}.',
         description:
           'Notaður sem skýritexti í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
       },
-      textV2: {
+      text: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.text_v2',
         defaultMessage:
           'Hafi {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
@@ -167,7 +167,7 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
-      modifiedValidToDateLabelV3: {
+      modifiedValidToDateLabel: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label_v3',
         defaultMessage:
           '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbann} other {Gæsluvarðhald}} til',
@@ -229,7 +229,7 @@ export const signedVerdictOverview = {
       },
     }),
     modifyDatesInfo: defineMessages({
-      titleV3: {
+      title: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_info.title_V3',
         defaultMessage:
           'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}} uppfærð',
@@ -322,39 +322,12 @@ export const signedVerdictOverview = {
           'Framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæslu} other {heimild}}',
         description: 'Notaður sem label á framlengja mál takka',
       },
-      extensionInfoV2: {
+      extensionInfo: {
         id: 'judicial.system.core:signed_verdict_overview.case_extension.button_v2',
         defaultMessage:
           '{hasChildCase, select, true {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
         description:
           'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
-      },
-    }),
-    appeal: defineMessages({
-      title: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal.title',
-        defaultMessage: 'Ákvörðun um kæru',
-        description:
-          'Notaður sem titill í Ákvörðun um kæru hluta á yfirlitsskjá afgreiddra mála.',
-      },
-      deadline: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal.deadline',
-        defaultMessage:
-          'Kærufrestur {isAppealDeadlineExpired, select, true {rann} false {rennur}} út {appealDeadline}',
-      },
-      defendantAppealed: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal.defendant_appealed_v2',
-        defaultMessage:
-          'Varnaraðili hefur kært úrskurðinn í þinghaldi sem lauk {rulingDate}',
-        description:
-          'Notaður sem upplýsingatexti sem útskýrir að varnaraðili kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
-      },
-      prosecutorAppealed: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal.prosecutor_appealed_v2',
-        defaultMessage:
-          'Sækjandi hefur kært úrskurðinn í þinghaldi sem lauk {rulingDate}',
-        description:
-          'Notaður sem upplýsingatexti sem útskýrir að sækjandi kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },
     }),
   },

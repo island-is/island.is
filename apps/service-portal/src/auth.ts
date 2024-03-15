@@ -6,6 +6,7 @@ import {
   DocumentsScope,
   EndorsementsScope,
   NationalRegistryScope,
+  NotificationsScope,
   UserProfileScope,
 } from '@island.is/auth/scopes'
 
@@ -32,6 +33,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.financeOverview,
   ApiScope.financeSalary,
   ApiScope.financeSchedule,
+  ApiScope.financeLoans,
   ApiScope.internal,
   ApiScope.internalProcuring,
   ApiScope.meDetails,
@@ -39,8 +41,17 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.licensesVerify,
   ApiScope.company,
   ApiScope.vehicles,
-  ApiScope.health,
   ApiScope.workMachines,
+  ApiScope.healthPayments,
+  ApiScope.healthMedicines,
+  ApiScope.healthAssistiveAndNutrition,
+  ApiScope.healthTherapies,
+  ApiScope.healthHealthcare,
+  ApiScope.healthRightsStatus,
+  ApiScope.healthDentists,
+  ApiScope.signatureCollection,
+  NotificationsScope.read,
+  NotificationsScope.write,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'

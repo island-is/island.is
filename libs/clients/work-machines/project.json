@@ -22,19 +22,20 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token/api/Openapi > src/clientConfig.json",
-          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10013/Vinnueftirlitid-Protected/getOpenAPI?serviceCode=vinnuvelar-token > src/clientConfig.json",
+          "jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json > tmpConfig.json && mv tmpConfig.json src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/work-machines"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/work-machines/gen/fetch -i libs/clients/work-machines/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

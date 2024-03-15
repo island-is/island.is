@@ -1,7 +1,7 @@
 import { createTestIntl } from '@island.is/cms-translations/test'
 
-import { formatCourtEndDate } from './courtRecordPdf'
 import { courtRecord } from '../messages'
+import { formatCourtEndDate } from './courtRecordPdf'
 
 describe('formatCourtEndDate', () => {
   const formatMessage = createTestIntl({

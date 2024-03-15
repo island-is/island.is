@@ -1,45 +1,51 @@
 import {
-  buildCustomField,
+  buildAlertMessageField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
+  buildDateField,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSection,
-  buildSubmitField,
+  buildSelectField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
   getValueViaPath,
-  buildDateField,
-  buildAlertMessageField,
 } from '@island.is/application/core'
-import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-
-import { parentalLeaveFormMessages, errorMessages } from '../lib/messages'
-import Logo from '../assets/Logo'
-import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
-  isEligibleForParentalLeave,
-  getSelectedChild,
+  DefaultEvents,
+  Form,
+  FormModes,
+  UserProfileApi,
+} from '@island.is/application/types'
+import { conclusionMessages } from '@island.is/application/ui-forms'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import Logo from '../assets/Logo'
+import { defaultMultipleBirthsMonths } from '../config'
+import {
+  ADOPTION,
+  NO,
+  OTHER_NO_CHILDREN_FOUND,
+  PERMANENT_FOSTER_CARE,
+  ParentalRelations,
+  YES,
+} from '../constants'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import { errorMessages, parentalLeaveFormMessages } from '../lib/messages'
+import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getApplicationTypeOptions,
+  getChildrenOptions,
+  getFosterCareOrAdoptionDesc,
+  getSelectedChild,
+  isEligibleForParentalLeave,
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
-  getFosterCareOrAdoptionDesc,
 } from '../lib/parentalLeaveUtils'
-import {
-  NO,
-  YES,
-  ParentalRelations,
-  PERMANENT_FOSTER_CARE,
-  OTHER_NO_CHILDREN_FOUND,
-  ADOPTION,
-} from '../constants'
-import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -324,29 +330,24 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'applicationType',
           title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           children: [
-            buildMultiField({
-              id: 'applicationTypes',
+            buildRadioField({
+              id: 'applicationType.option',
               title: parentalLeaveFormMessages.shared.applicationTypeTitle,
               description:
                 parentalLeaveFormMessages.shared
                   .applicationParentalLeaveDescription,
-              children: [
-                buildCustomField({
-                  component: 'ApplicationType',
-                  id: 'applicationType.option',
-                  title: '',
-                }),
-              ],
+              options: getApplicationTypeOptions(),
             }),
           ],
         }),
         buildSubSection({
           id: 'externalData',
-          title: parentalLeaveFormMessages.shared.externalDataSubSection,
+          title: parentalLeaveFormMessages.shared.introductionProvider,
           children: [
             buildExternalDataProvider({
               id: 'approveExternalData',
               title: parentalLeaveFormMessages.shared.introductionProvider,
+              subTitle: parentalLeaveFormMessages.shared.subTitle,
               checkboxLabel: parentalLeaveFormMessages.shared.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
@@ -453,11 +454,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: parentalLeaveFormMessages.confirmation.title,
+                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
-                      event: 'SUBMIT',
+                      event: DefaultEvents.SUBMIT,
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
                     },
@@ -542,11 +543,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: parentalLeaveFormMessages.confirmation.title,
+                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
-                      event: 'SUBMIT',
+                      event: DefaultEvents.SUBMIT,
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
                       condition: (answers) =>
@@ -575,19 +576,44 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
               children: [
-                buildCustomField({
+                buildRadioField({
                   id: 'selectedChild',
-                  title: parentalLeaveFormMessages.selectChild.screenTitle,
-                  component: 'ChildSelector',
+                  title: '',
+                  description:
+                    parentalLeaveFormMessages.selectChild.screenDescription,
+                  required: true,
+                  options: (application) => {
+                    return getChildrenOptions(application)
+                  },
+                  condition: (_answers, externalData) => {
+                    return (
+                      getApplicationExternalData(externalData).children.length >
+                      0
+                    )
+                  },
                 }),
-                buildCustomField({
-                  component: 'HasMultipleBirths',
+                buildRadioField({
                   id: 'multipleBirths.hasMultipleBirths',
                   title:
                     parentalLeaveFormMessages.selectChild.multipleBirthsName,
                   description:
                     parentalLeaveFormMessages.selectChild
                       .multipleBirthsDescription,
+                  space: 6,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'has-multiple-births',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-has-multiple-births',
+                      value: NO,
+                    },
+                  ],
                   condition: (answers, externalData) =>
                     !!answers.selectedChild &&
                     getSelectedChild(answers, externalData)
@@ -614,11 +640,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: parentalLeaveFormMessages.confirmation.title,
+                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
-                      event: 'SUBMIT',
+                      event: DefaultEvents.SUBMIT,
                       dataTestId: 'select-child',
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
@@ -655,7 +681,12 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      title: parentalLeaveFormMessages.confirmation.title,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: conclusionMessages.information.sectionTitle,
       children: [],
     }),
   ],

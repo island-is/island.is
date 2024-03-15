@@ -2,10 +2,11 @@ import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
 
+import { createTestingFileModule } from '../createTestingFileModule'
+
 import { AwsS3Service } from '../../../aws-s3'
 import { CaseFile } from '../../models/file.model'
 import { SignedUrl } from '../../models/signedUrl.model'
-import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: SignedUrl

@@ -50,7 +50,6 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const { search } = useLocation()
 
   const query = React.useMemo(() => new URLSearchParams(search), [search])
-
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
@@ -62,6 +61,10 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       >
     | undefined
   >(undefined)
+
+  const queryParam = template?.initialQueryParameter
+    ? query.get(template?.initialQueryParameter)
+    : null
 
   useApplicationNamespaces(type)
 
@@ -94,6 +97,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       variables: {
         input: {
           typeId: type,
+          initialQuery: queryParam,
         },
       },
     })
@@ -135,12 +139,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       ProblemType.BAD_SUBJECT,
     ])
 
-    if (
-      slug &&
-      foundError?.type === ProblemType.BAD_SUBJECT &&
-      type &&
-      !delegationsChecked
-    ) {
+    const isBadSubject = foundError?.type === ProblemType.BAD_SUBJECT
+
+    if (slug && isBadSubject && type && !delegationsChecked) {
       return (
         <DelegationsScreen
           slug={slug}
@@ -148,6 +149,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
           checkDelegation={setDelegationsChecked}
         />
       )
+    }
+    if (isBadSubject) {
+      return <ErrorShell errorType="badSubject" />
     }
     return <ErrorShell errorType="notExist" />
   }

@@ -5,11 +5,12 @@ import { BadRequestException } from '@nestjs/common'
 import { CaseState, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { createCaseFilesRecord } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
+import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 
@@ -39,7 +40,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
   } as Case
   const pdf = Buffer.from('test case files record')
 
-  let mockawsS3Service: AwsS3Service
+  let mockAwsS3Service: AwsS3Service
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
@@ -50,11 +51,14 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     const { awsS3Service, courtService, internalCaseController } =
       await createTestingCaseModule()
 
-    mockawsS3Service = awsS3Service
-    const mockGetObject = mockawsS3Service.getObject as jest.Mock
+    mockAwsS3Service = awsS3Service
+    const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
-    const mockPutObject = mockawsS3Service.putObject as jest.Mock
+    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
+
+    const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
+    mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
 
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock
@@ -82,8 +86,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGet = createCaseFilesRecord as jest.Mock
-      mockGet.mockResolvedValueOnce(pdf)
+      const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
+      mockCreateCaseFilesRecord.mockResolvedValueOnce(pdf)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValueOnce(uuid())
 
@@ -91,14 +95,14 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
 
     it('should try to get the pdf from AWS S3 indictment completed folder', () => {
-      expect(mockawsS3Service.getObject).toHaveBeenNthCalledWith(
+      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
         1,
         `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
     })
 
     it('should try to get the pdf from AWS S3 indictment folder', () => {
-      expect(mockawsS3Service.getObject).toHaveBeenNthCalledWith(
+      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
         2,
         `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
@@ -113,8 +117,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
       )
     })
 
-    it('shoulc store the case files record in AWS S3', async () => {
-      expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
+    it('should store the case files record in AWS S3', async () => {
+      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
         `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString(),
       )
@@ -141,7 +145,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
 
   describe('pdf returned from AWS S3 indictment completed folder', () => {
     beforeEach(async () => {
-      const mockGetObject = mockawsS3Service.getObject as jest.Mock
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockReturnValueOnce(pdf)
 
       await givenWhenThen(caseId, policeCaseNumber, theCase)
@@ -164,7 +168,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
 
   describe('pdf returned from AWS S3 indictment folder', () => {
     beforeEach(async () => {
-      const mockGetObject = mockawsS3Service.getObject as jest.Mock
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some error'))
       mockGetObject.mockReturnValueOnce(pdf)
 
@@ -206,8 +210,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGet = createCaseFilesRecord as jest.Mock
-      mockGet.mockResolvedValueOnce(pdf)
+      const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
+      mockCreateCaseFilesRecord.mockResolvedValueOnce(pdf)
 
       then = await givenWhenThen(caseId, policeCaseNumber, theCase)
     })

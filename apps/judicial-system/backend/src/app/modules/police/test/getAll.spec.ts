@@ -5,9 +5,10 @@ import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
 
+import { createTestingPoliceModule } from './createTestingPoliceModule'
+
 import { Case } from '../../case'
 import { PoliceCaseFile } from '../models/policeCaseFile.model'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('isomorphic-fetch')
 
@@ -95,6 +96,7 @@ describe('PoliceController - Get all', () => {
               vettvangur: '',
               brotFra: '',
               upprunalegtMalsnumer: '',
+              licencePlate: '',
             },
           ],
         }),

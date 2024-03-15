@@ -2,7 +2,7 @@ import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const img = style({
-  minHeight: '20vh',
+  maxHeight: '135px',
   ...themeUtils.responsiveStyle({
     md: {
       maxHeight: '300px',

@@ -1,4 +1,4 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
+import { testServer, TestServerOptions } from '@island.is/testing/nest'
 import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
@@ -44,7 +44,7 @@ beforeEach(truncate)
 
 afterAll(async () => {
   if (app && sequelize) {
-    await app.close()
     await sequelize.close()
+    await app.close()
   }
 })

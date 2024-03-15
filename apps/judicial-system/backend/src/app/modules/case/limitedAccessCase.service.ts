@@ -1,4 +1,6 @@
+import archiver from 'archiver'
 import { Includeable, Op, OrderItem } from 'sequelize'
+import { Writable } from 'stream'
 
 import {
   Inject,
@@ -8,8 +10,15 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import {
+  CaseMessage,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseFileCategory,
@@ -17,19 +26,18 @@ import {
   CaseState,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
-import {
-  CaseMessage,
-  MessageService,
-  MessageType,
-} from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
+import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
+import {
+  CaseFile,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+} from '../file'
 import { Institution } from '../institution'
 import { User } from '../user'
-import { CaseFile } from '../file'
 import { Case } from './models/case.model'
+import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
   'id',
@@ -48,7 +56,6 @@ export const attributes: (keyof Case)[] = [
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
-  'creatingProsecutorId',
   'prosecutorId',
   'courtCaseNumber',
   'courtDate',
@@ -83,6 +90,9 @@ export const attributes: (keyof Case)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealReceivedByCourtDate',
+  'appealRulingModifiedHistory',
+  'requestAppealRulingNotToBePublished',
+  'prosecutorsOfficeId',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -92,16 +102,12 @@ export interface LimitedAccessUpdateCase
     | 'appealState'
     | 'defendantStatementDate'
     | 'openedByDefender'
+    | 'appealRulingDecision'
   > {}
 
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
   {
     model: User,
     as: 'prosecutor',
@@ -121,32 +127,6 @@ export const include: Includeable[] = [
     model: User,
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
-  },
-  { model: Case, as: 'parentCase', attributes },
-  { model: Case, as: 'childCase', attributes },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: {
-      state: { [Op.not]: CaseFileState.DELETED },
-      category: [
-        CaseFileCategory.RULING,
-        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-        CaseFileCategory.APPEAL_RULING,
-        CaseFileCategory.COURT_RECORD,
-        CaseFileCategory.COVER_LETTER,
-        CaseFileCategory.INDICTMENT,
-        CaseFileCategory.CRIMINAL_RECORD,
-        CaseFileCategory.COST_BREAKDOWN,
-        CaseFileCategory.CASE_FILE,
-      ],
-    },
   },
   {
     model: User,
@@ -168,6 +148,35 @@ export const include: Includeable[] = [
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
   },
+  { model: Case, as: 'parentCase', attributes },
+  { model: Case, as: 'childCase', attributes },
+  { model: Defendant, as: 'defendants' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: {
+      state: { [Op.not]: CaseFileState.DELETED },
+      category: [
+        CaseFileCategory.RULING,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        CaseFileCategory.APPEAL_RULING,
+        CaseFileCategory.COURT_RECORD,
+        CaseFileCategory.COVER_LETTER,
+        CaseFileCategory.INDICTMENT,
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
+        CaseFileCategory.APPEAL_COURT_RECORD,
+      ],
+    },
+  },
 ]
 
 export const order: OrderItem[] = [
@@ -179,6 +188,8 @@ export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
     private readonly defendantService: DefendantService,
+    private readonly pdfService: PDFService,
+    private readonly awsS3Service: AwsS3Service,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -254,6 +265,14 @@ export class LimitedAccessCaseService {
       })
     }
 
+    if (update.appealState === CaseAppealState.WITHDRAWN) {
+      messages.push({
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
     // Return limited access case
     const updatedCase = await this.findById(theCase.id)
 
@@ -294,6 +313,7 @@ export class LimitedAccessCaseService {
       email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
+      canConfirmAppeal: false,
     } as User
   }
 
@@ -332,5 +352,81 @@ export class LimitedAccessCaseService {
             throw new NotFoundException('Defender not found')
           })
       })
+  }
+
+  private zipFiles(
+    files: Array<{ data: Buffer; name: string }>,
+  ): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const buffs: Buffer[] = []
+      const converter = new Writable()
+
+      converter._write = (chunk, _encoding, cb) => {
+        buffs.push(chunk)
+        process.nextTick(cb)
+      }
+
+      converter.on('finish', () => {
+        resolve(Buffer.concat(buffs))
+      })
+
+      const archive = archiver('zip')
+
+      archive.on('error', (err) => {
+        reject(err)
+      })
+
+      archive.pipe(converter)
+
+      for (const file of files) {
+        archive.append(file.data, { name: file.name })
+      }
+
+      archive.finalize()
+    })
+  }
+
+  async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
+    const filesToZip: Array<{ data: Buffer; name: string }> = []
+
+    const caseFilesByCategory =
+      theCase.caseFiles?.filter(
+        (file) =>
+          file.key &&
+          file.category &&
+          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+            file.category,
+          ),
+      ) ?? []
+
+    for (const file of caseFilesByCategory) {
+      await this.awsS3Service
+        .getObject(file.key ?? '')
+        .then((content) => filesToZip.push({ data: content, name: file.name }))
+        .catch((reason) =>
+          // Tolerate failure, but log what happened
+          this.logger.warn(
+            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
+            { reason },
+          ),
+        )
+    }
+
+    filesToZip.push(
+      {
+        data: await this.pdfService.getRequestPdf(theCase),
+        name: 'krafa.pdf',
+      },
+      {
+        data: await this.pdfService.getCourtRecordPdf(theCase, user),
+        name: 'þingbok.pdf',
+      },
+      {
+        data: await this.pdfService.getRulingPdf(theCase),
+        name: 'urskurður.pdf',
+      },
+    )
+
+    return this.zipFiles(filesToZip)
   }
 }

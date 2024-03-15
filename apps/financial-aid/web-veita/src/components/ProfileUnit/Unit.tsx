@@ -53,7 +53,7 @@ const getContent = (item: ApplicationProfileInfo) => {
     default:
       return (
         <>
-          <Text>{content}</Text>
+          <Text whiteSpace="breakSpaces">{content}</Text>
           {other && OtherItem(other)}
         </>
       )

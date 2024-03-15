@@ -1,4 +1,4 @@
-import { Application, Teacher } from '@island.is/api/schema'
+import { Application, TeacherV4 } from '@island.is/api/schema'
 import {
   buildDescriptionField,
   buildMultiField,
@@ -60,7 +60,7 @@ export const informationSection = buildSection({
               application.externalData,
               'teachers.data',
               [],
-            ) as Teacher[]
+            ) as TeacherV4[]
 
             const currentInstructorNationalId = getValueViaPath(
               application.externalData,

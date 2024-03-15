@@ -70,7 +70,7 @@
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -79,8 +79,8 @@
         ]
       },
       "outputs": [
-        "{workspaceRoot}/apps/air-discount-scheme/backend/src/openapi.yaml",
-        "{workspaceRoot}/apps/air-discount-scheme/backend/src/private-openapi.yaml"
+        "{projectRoot}/src/openapi.yaml",
+        "{projectRoot}/src/private-openapi.yaml"
       ]
     },
     "migrate": {

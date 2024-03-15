@@ -48,7 +48,7 @@ export const draft: Form = buildForm({
     }),
     buildSection({
       id: 'done',
-      title: m.overviewDone,
+      title: m.applicationDone,
       children: [],
     }),
   ],

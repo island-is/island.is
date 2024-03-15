@@ -25,7 +25,7 @@ const Staging: EnvironmentConfig = {
 
 describe('Postgres', () => {
   describe('identifier fixes', () => {
-    const sut = service('service-portal-api').postgres()
+    const sut = service('service-portal-api').db()
     let result: SerializeSuccess<HelmService>
     beforeEach(async () => {
       result = (await generateOutputOne({
@@ -41,14 +41,15 @@ describe('Postgres', () => {
         DB_NAME: 'service_portal_api',
         DB_HOST: 'a',
         DB_REPLICAS_HOST: 'a',
-        NODE_OPTIONS: '--max-old-space-size=208',
+        NODE_OPTIONS: '--max-old-space-size=230',
         SERVERSIDE_FEATURES_ON: '',
+        LOG_LEVEL: 'info',
       })
     })
   })
   describe('error reporting', () => {
     const sut = service('service-portal-api')
-      .postgres()
+      .db()
       .secrets({ DB_PASS: 'aaa' })
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     let result: SerializeErrors
@@ -67,6 +68,23 @@ describe('Postgres', () => {
         'Collisions in service-portal-api for environment or secrets for key DB_HOST',
         'Collisions in service-portal-api for environment or secrets for key DB_PASS',
       ])
+    })
+  })
+  describe('strip postfixes', () => {
+    const myService = service('my-service-worker-job').db()
+    let result: SerializeSuccess<HelmService>
+    beforeEach(async () => {
+      result = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: myService,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeSuccess<HelmService>
+    })
+    it('service name (-worker, -job) postfixes should be stripped', () => {
+      expect(result.serviceDef[0]?.env).toMatchObject({
+        DB_USER: 'my_service',
+      })
     })
   })
 })

@@ -18,6 +18,9 @@ query GetInnaPeriods {
       periodName
       periodShort
       periodTo
+      studentId
+      periodId
+      diplomaId
     }
   }
 }

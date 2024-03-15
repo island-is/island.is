@@ -774,6 +774,94 @@
         }
       }
     },
+    "/api/drivinglicense/v5/applications/new/temporarywithhealthdeclaration": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Apply for drivers license for a category",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "JWT token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model of application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTemporaryLicenseWithHealthDeclaration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/drivinglicense/v5/applications/temporarytestfinished": {
       "post": {
         "tags": ["Okuskirteini"],
@@ -3139,6 +3227,63 @@
         "additionalProperties": false,
         "description": "Data transfer object for if person has finished driving school 3"
       },
+      "HealthDeclarationModel": {
+        "type": "object",
+        "properties": {
+          "isDisabled": {
+            "type": "boolean",
+            "description": "Is person disabled",
+            "nullable": true
+          },
+          "hasDiabetes": {
+            "type": "boolean",
+            "description": "Has person diabetes",
+            "nullable": true
+          },
+          "hasEpilepsy": {
+            "type": "boolean",
+            "description": "Has person Epilepsy",
+            "nullable": true
+          },
+          "isAlcoholic": {
+            "type": "boolean",
+            "description": "Is person alcoholic",
+            "nullable": true
+          },
+          "hasHeartDisease": {
+            "type": "boolean",
+            "description": "Does person have a heart disease",
+            "nullable": true
+          },
+          "hasMentalIllness": {
+            "type": "boolean",
+            "description": "Has person mental illness",
+            "nullable": true
+          },
+          "hasOtherDiseases": {
+            "type": "boolean",
+            "description": "Has person other diseases",
+            "nullable": true
+          },
+          "usesMedicalDrugs": {
+            "type": "boolean",
+            "description": "Does person use medical drugs",
+            "nullable": true
+          },
+          "usesContactGlasses": {
+            "type": "boolean",
+            "description": "Does person use contact glasses",
+            "nullable": true
+          },
+          "hasReducedPeripheralVision": {
+            "type": "boolean",
+            "description": "Does person have reduced peripheral vision",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Health declaration when applying for driver's license"
+      },
       "ImageDto": {
         "type": "object",
         "properties": {
@@ -3636,6 +3781,63 @@
             "type": "string",
             "description": "Applicant mobile number",
             "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post new temporary license"
+      },
+      "PostTemporaryLicenseWithHealthDeclaration": {
+        "required": [
+          "authority",
+          "bringNewPhoto",
+          "bringsHealthCertificate",
+          "instructorSSN",
+          "sendLicenseInMail"
+        ],
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "integer",
+            "description": "Publishing authority",
+            "format": "int32"
+          },
+          "bringsHealthCertificate": {
+            "type": "boolean",
+            "description": "Does person need to present health certificate"
+          },
+          "bringNewPhoto": {
+            "type": "boolean",
+            "description": "Applicant will bring new photo for license"
+          },
+          "sendLicenseInMail": {
+            "type": "boolean",
+            "description": "Applicant has asked to send license in mail"
+          },
+          "sendToAddress": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
+          },
+          "instructorSSN": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Social security number for driving teachser"
+          },
+          "email": {
+            "type": "string",
+            "description": "Applicant email",
+            "nullable": true
+          },
+          "gsm": {
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Applicant mobile number",
+            "nullable": true
+          },
+          "healthDeclaration": {
+            "$ref": "#/components/schemas/HealthDeclarationModel"
           }
         },
         "additionalProperties": false,

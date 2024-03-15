@@ -4,6 +4,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { isUuid } from 'uuidv4'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -26,9 +27,9 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { MachineDetails } from './models/machineDetails'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalWorkMachinesModule)
 @Resolver()
 @Audit({ namespace: '@island.is/api/work-machines' })
 export class WorkMachinesResolver {
@@ -41,6 +42,7 @@ export class WorkMachinesResolver {
   ) {}
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => PaginatedCollectionResponse, {
     name: 'workMachinesPaginatedCollection',
     nullable: true,
@@ -58,11 +60,13 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => Document, {
     name: 'workMachinesCollectionDocument',
     nullable: true,
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   async getWorkMachinesCollectionDocument(
     @Args('input', {
       type: () => GetDocumentsInput,
@@ -80,6 +84,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => WorkMachine, { name: 'workMachine', nullable: true })
   @Audit()
   async getWorkMachineById(
@@ -87,6 +92,39 @@ export class WorkMachinesResolver {
     @Args('input', { type: () => GetWorkMachineInput })
     input: GetWorkMachineInput,
   ) {
+    if (!isUuid(input.id)) {
+      return null
+    }
     return this.workMachinesService.getWorkMachineById(user, input)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => MachineDetails)
+  @Audit()
+  async getWorkerMachineDetails(
+    @CurrentUser() auth: User,
+    @Args('id') id: string,
+  ) {
+    return this.workMachinesService.getMachineDetails(auth, id)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => Boolean)
+  @Audit()
+  async getWorkerMachinePaymentRequired(
+    @CurrentUser() auth: User,
+    @Args('regNumber') regNumber: string,
+  ) {
+    return this.workMachinesService.isPaymentRequired(auth, regNumber)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => MachineDetails)
+  @Audit()
+  async getWorkerMachineByRegno(
+    @CurrentUser() auth: User,
+    @Args('regno') regno: string,
+  ) {
+    return this.workMachinesService.getMachineByRegno(auth, regno)
   }
 }
