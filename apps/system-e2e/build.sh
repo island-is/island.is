@@ -7,7 +7,6 @@
 #
 
 set -euo pipefail
-# set -x
 
 APP_ROOT="apps/system-e2e"
 DIST_ROOT="dist/$APP_ROOT"
