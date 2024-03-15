@@ -15,7 +15,7 @@ import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
-import { NudgeInterval } from '../user-profile/types/NudgeInterval'
+import { SkipField } from '../user-profile/types/SkipField'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -100,8 +100,6 @@ export class UserProfileService {
       )
     }
 
-    let currentUserProfile = await this.findById(nationalId, true)
-
     await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
@@ -182,7 +180,11 @@ export class UserProfileService {
         }),
       }
 
-      currentUserProfile = { ...currentUserProfile, ...update }
+      const updatedUserProfile = await this.userProfileModel.findOne({
+        where: { nationalId },
+        transaction,
+        useMaster: true,
+      })
 
       await this.userProfileModel.upsert(
         {
@@ -190,9 +192,25 @@ export class UserProfileService {
           lastNudge: new Date(),
           nextNudge: addMonths(
             new Date(),
-            userProfile.nudgeInterval === NudgeInterval.LONG
-              ? NUDGE_INTERVAL
-              : SKIP_INTERVAL,
+            this.hasUnverifiedData({
+              email: isEmailDefined ? update.email : updatedUserProfile?.email,
+              mobilePhoneNumber: isMobilePhoneNumberDefined
+                ? update.mobilePhoneNumber
+                : updatedUserProfile?.mobilePhoneNumber,
+              emailStatus:
+                update.emailStatus ??
+                (updatedUserProfile?.emailStatus as DataStatus),
+              mobileStatus:
+                update.mobileStatus ??
+                (updatedUserProfile?.mobileStatus as DataStatus),
+              emailVerified:
+                update.emailVerified ?? updatedUserProfile?.emailVerified,
+              mobilePhoneNumberVerified:
+                update.mobilePhoneNumberVerified ??
+                updatedUserProfile?.mobilePhoneNumberVerified,
+            })
+              ? SKIP_INTERVAL
+              : NUDGE_INTERVAL,
           ),
         },
         { transaction },
@@ -212,7 +230,7 @@ export class UserProfileService {
       }
     })
 
-    return currentUserProfile
+    return this.findById(nationalId, true)
   }
 
   async createEmailVerification({
@@ -244,18 +262,18 @@ export class UserProfileService {
     )
   }
 
-  async confirmNudge(
-    nationalId: string,
-    nudgeInterval = NudgeInterval.LONG,
-  ): Promise<void> {
+  async confirmNudge(nationalId: string, skipField: SkipField): Promise<void> {
     const date = new Date()
     await this.userProfileModel.upsert({
       nationalId,
       lastNudge: date,
-      nextNudge: addMonths(
-        date,
-        nudgeInterval === NudgeInterval.LONG ? NUDGE_INTERVAL : SKIP_INTERVAL,
-      ),
+      nextNudge: addMonths(date, skipField === SkipField.OVERWIEW ? 6 : 1),
+      ...(skipField === SkipField.EMAIL && {
+        emailStatus: DataStatus.EMPTY,
+      }),
+      ...(skipField === SkipField.MOBILE_PHONE_NUMBER && {
+        mobileStatus: DataStatus.EMPTY,
+      }),
     })
   }
 
@@ -281,6 +299,39 @@ export class UserProfileService {
     }
 
     return null
+  }
+
+  private hasUnverifiedData({
+    email,
+    mobilePhoneNumber,
+    emailVerified,
+    mobilePhoneNumberVerified,
+    mobileStatus,
+    emailStatus,
+  }: {
+    email: string
+    mobilePhoneNumber: string
+    emailVerified: boolean
+    mobilePhoneNumberVerified: boolean
+    mobileStatus: DataStatus
+    emailStatus: DataStatus
+  }): boolean {
+    if ((email && !emailVerified) || emailStatus === DataStatus.NOT_DEFINED) {
+      return true
+    } else if (
+      (mobilePhoneNumber && !mobilePhoneNumberVerified) ||
+      mobileStatus === DataStatus.NOT_DEFINED
+    ) {
+      return true
+    } else {
+      return false
+    }
+    // return (
+    //   (email && !emailVerified) ||
+    //   emailStatus === DataStatus.NOT_DEFINED ||
+    //   (mobilePhoneNumber && !mobilePhoneNumberVerified) ||
+    //   mobileStatus === DataStatus.NOT_DEFINED
+    // )
   }
 
   /**

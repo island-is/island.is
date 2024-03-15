@@ -7,6 +7,7 @@ import { EmailVerification } from '../src/app/user-profile/emailVerification.mod
 import { SmsVerification } from '../src/app/user-profile/smsVerification.model'
 import { UserProfile } from '../src/app/user-profile/userProfile.model'
 import { UserDeviceTokens } from '../src/app/user-profile/userDeviceTokens.model'
+import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -24,6 +25,8 @@ export class FixtureFactory {
     emailVerified = false,
     lastNudge = null,
     nextNudge = null,
+    emailStatus = DataStatus.NOT_DEFINED,
+    mobileStatus = DataStatus.NOT_DEFINED,
   }) {
     const userProfileModel = this.get(UserProfile)
 
@@ -34,6 +37,8 @@ export class FixtureFactory {
       locale,
       mobilePhoneNumberVerified,
       emailVerified,
+      emailStatus,
+      mobileStatus,
       lastNudge: lastNudge && lastNudge.toISOString(),
       nextNudge: nextNudge && nextNudge.toISOString(),
     })

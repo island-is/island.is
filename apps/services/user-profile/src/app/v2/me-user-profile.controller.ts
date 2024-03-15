@@ -25,7 +25,7 @@ import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-import { NudgeInterval } from '../user-profile/types/NudgeInterval'
+import { SkipField } from '../user-profile/types/SkipField'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -66,8 +66,6 @@ export class MeUserProfileController {
     @CurrentUser() user: User,
     @Body() userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    userProfile.nudgeInterval = userProfile.nudgeInterval || NudgeInterval.LONG
-
     return this.auditService.auditPromise(
       {
         auth: user,
@@ -129,7 +127,7 @@ export class MeUserProfileController {
   })
   confirmNudge(
     @CurrentUser() user: User,
-    @Query('nudgeInterval') nudgeInterval: NudgeInterval,
+    @Query('skipField') skipField: SkipField,
   ) {
     return this.auditService.auditPromise(
       {
@@ -138,10 +136,7 @@ export class MeUserProfileController {
         action: 'nudge',
         resources: user.nationalId,
       },
-      this.userProfileService.confirmNudge(
-        user.nationalId,
-        nudgeInterval || NudgeInterval.LONG,
-      ),
+      this.userProfileService.confirmNudge(user.nationalId, skipField),
     )
   }
 }

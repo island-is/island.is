@@ -55,12 +55,4 @@ export class PatchUserProfileDto {
   @IsOptional()
   @IsBoolean()
   documentNotifications?: boolean
-
-  @ApiPropertyOptional({
-    enum: NudgeInterval,
-    default: NudgeInterval.LONG,
-  })
-  @IsOptional()
-  @IsEnum(NudgeInterval)
-  nudgeInterval?: NudgeInterval
 }
