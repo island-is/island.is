@@ -57,7 +57,6 @@ import {
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
-  geoipSetup as sessionsGeoipSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
@@ -90,7 +89,6 @@ const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
-const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
@@ -134,8 +132,7 @@ const userNotificationService = userNotificationServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService =
-  userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -173,7 +170,6 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
@@ -209,7 +205,6 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
     universityGatewayService,
     universityGatewayWorker,
   ],
@@ -247,7 +242,6 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
     contentfulApps,
     universityGatewayService,
     universityGatewayWorker,

@@ -6,26 +6,6 @@ const imageName = 'services-sessions'
 const geoDataDir = '/geoip-lite/data'
 const geoTmpDir = `${geoDataDir}/tmp`
 
-const geoipExtraValues = {
-  schedule: '0 0 * * *',
-}
-
-const geoipAnnotations = {
-  annotations: {
-    'helm.sh/hook': 'pre-install,pre-upgrade',
-    'helm.sh/hook-delete-policy': 'before-hook-creation,hook-succeeded',
-  },
-}
-
-const geoipVolume: PersistentVolumeClaim[] = [
-  {
-    name: 'sessions-geoip-db',
-    mountPath: geoDataDir,
-    size: '1Gi',
-    accessModes: 'ReadWrite',
-  },
-]
-
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
@@ -86,10 +66,6 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       readOnly: false,
     })
     .migrations()
-    .volumes({
-      ...geoipSetup().serviceDef.volumes[0],
-      useExisting: true,
-    })
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({
@@ -110,36 +86,4 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       },
       REDIS_USE_SSL: 'true',
       GEODATADIR: geoDataDir,
-    })
-
-export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
-  service('services-sessions-geoip-job')
-    .image(imageName)
-    .namespace(namespace)
-    .serviceAccount('sessions-geoip')
-    .replicaCount({ min: 1, max: 1, default: 1 })
-    .command('node')
-    .args(
-      './node_modules/geoip-lite/scripts/updatedb.js',
-      'license_key=$(GEOIP_LICENSE_KEY)',
-    )
-    .resources({
-      limits: {
-        cpu: '500m',
-        memory: '1Gi',
-      },
-      requests: {
-        cpu: '500m',
-        memory: '500Mi',
-      },
-    })
-    .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
-    .secrets({
-      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
-    })
-    .volumes(...geoipVolume)
-    .extraAttributes({
-      dev: { ...geoipExtraValues, ...geoipAnnotations },
-      staging: { ...geoipExtraValues, ...geoipAnnotations },
-      prod: { ...geoipExtraValues, ...geoipAnnotations },
     })
