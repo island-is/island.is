@@ -138,7 +138,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
-    translation: 'ctao.application',
+    translation: ['ctao.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
     slug: 'slysatilkynning',
