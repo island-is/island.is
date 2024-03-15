@@ -15,6 +15,21 @@ export class FixtureFactory {
     return this.app.get(getModelToken(model))
   }
 
+  createIpLocationSessions(
+    authenticatedUserNationalId: string,
+    ipLocationList: string[],
+  ): Promise<Session[]> {
+    const ipLocationSessions = ipLocationList.map((ipLocation) =>
+      createSessionDto({
+        actorNationalId: authenticatedUserNationalId,
+        subjectNationalId: authenticatedUserNationalId,
+        ipLocation: ipLocation,
+      }),
+    )
+
+    return this.get(Session).bulkCreate(ipLocationSessions)
+  }
+
   createDateSessions(
     authenticatedUserNationalId: string,
     to: Date,

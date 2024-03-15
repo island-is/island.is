@@ -15,10 +15,8 @@ export const NationalId = createParamDecorator(
       throw new BadRequestException('No national id provided')
     }
 
-    if (!isPerson(nationalId) && nationalId.length !== 10) {
-      throw new BadRequestException(
-        'Provided national id is invalid. Correct format is 10 numbers, no dashes',
-      )
+    if (!isPerson(nationalId)) {
+      throw new BadRequestException('Provided national id is invalid.')
     }
 
     return nationalId

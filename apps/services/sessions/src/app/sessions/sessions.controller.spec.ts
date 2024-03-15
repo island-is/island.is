@@ -271,6 +271,49 @@ describe('SessionsController', () => {
       })
     })
 
+    describe('Filter by ipLocation', () => {
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+      let factory: FixtureFactory
+      let mockSessions: Session[]
+      const ipLocationList: string[] = ['IS']
+
+      beforeAll(async () => {
+        app = await setupWithAuth({ user })
+        factory = new FixtureFactory(app)
+        mockSessions = await factory.createIpLocationSessions(
+          user.nationalId,
+          ipLocationList,
+        )
+        server = request(app.getHttpServer())
+      })
+
+      afterAll(async () => {
+        app.cleanUp()
+      })
+
+      it('GET /v1/me/sessions should support ipLocation parameter', async () => {
+        const countryCode = ipLocationList[0]
+        const res1 = await server.get(
+          `/v1/me/sessions?ipLocation=${countryCode}`,
+        )
+        const expectedSessionsForCountry = mockSessions.filter(
+          (session) => session.ipLocation === countryCode,
+        )
+
+        expect(res1.status).toEqual(200)
+        res1.body.data.forEach((session: Session) => {
+          expect(
+            expectedSessionsForCountry.some(
+              (expectedSession) => expectedSession.id === session.id,
+            ),
+          ).toBeTruthy()
+        })
+
+        expect(res1.body.data.length).toEqual(expectedSessionsForCountry.length)
+      })
+    })
+
     describe('Filter by date', () => {
       const from = '2022-01-03'
       const to = '2022-01-05'
@@ -291,7 +334,7 @@ describe('SessionsController', () => {
 
         server = request(app.getHttpServer())
       })
-      afterAll(() => {
+      afterAll(async () => {
         app.cleanUp()
       })
 
@@ -433,9 +476,6 @@ describe('SessionsController', () => {
           type: 'https://httpstatuses.org/401',
           title: 'Unauthorized',
         })
-
-        // CleanUp
-        app.cleanUp()
       },
     )
 
@@ -461,9 +501,6 @@ describe('SessionsController', () => {
           title: 'Forbidden',
           detail: 'Forbidden resource',
         })
-
-        // CleanUp
-        app.cleanUp()
       },
     )
   })
