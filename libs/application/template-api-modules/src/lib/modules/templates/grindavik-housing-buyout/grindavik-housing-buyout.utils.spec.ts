@@ -1,10 +1,7 @@
 // domicileCheck.test.ts
 
-import { ResidenceHistoryEntryDto } from '@island.is/clients/national-registry-v2'
-import {
-  getDomicileOnDate,
-  getDomicileAtPostalCodeOnDate,
-} from './grindavik-housing-buyout.utils'
+import { ResidenceEntryDto } from '@island.is/clients/national-registry-v2'
+import { getDomicileAtPostalCodeOnDate } from './grindavik-housing-buyout.utils'
 
 // Mock data for testing
 const mockDomicileData = [
@@ -28,7 +25,7 @@ const mockDomicileData = [
     country: 'CountryB',
     dateOfChange: new Date('2023-05-15T00:00:00.000Z'),
   },
-] as ResidenceHistoryEntryDto[]
+] as ResidenceEntryDto[]
 
 describe('hasDomicileAtPostalCodeOnDate', () => {
   it('should return true for a postal code and date matching an entry', () => {
@@ -72,7 +69,7 @@ describe('hasDomicileAtPostalCodeOnDate', () => {
         country: 'CountryC',
         dateOfChange: '2023-07-01T00:00:00.000Z',
       },
-    ] as ResidenceHistoryEntryDto[]
+    ] as ResidenceEntryDto[]
 
     const result = getDomicileAtPostalCodeOnDate(
       dataWithNullPostalCode,
@@ -96,7 +93,7 @@ describe('hasDomicileAtPostalCodeOnDate', () => {
         country: 'CountryD',
         dateOfChange: null,
       },
-    ] as ResidenceHistoryEntryDto[]
+    ] as ResidenceEntryDto[]
 
     const result = getDomicileAtPostalCodeOnDate(
       dataWithNullDate,
