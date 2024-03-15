@@ -31,6 +31,7 @@ import {
   VerifyLicenseBarcodeError,
 } from './dto/VerifyLicenseBarcodeResult.dto'
 import {
+  barcodeLicenseTypes,
   GenericLicenseFetchResult,
   GenericLicenseMapper,
   GenericLicenseOrganizationSlug,
@@ -525,8 +526,15 @@ export class LicenseServiceService {
   }
 
   async createBarcode(user: User, genericUserLicense: GenericUserLicense) {
+    const genericUserLicenseType = genericUserLicense.license.type
+
+    // Return null if the license type is not supported
+    if (!barcodeLicenseTypes.includes(genericUserLicenseType)) {
+      return null
+    }
+
     const code = randomUUID()
-    const licenseType = this.mapLicenseType(genericUserLicense.license.type)
+    const licenseType = this.mapLicenseType(genericUserLicenseType)
 
     const client = await this.getClient<typeof licenseType>(licenseType)
     let extraData: LicenseVerifyExtraDataResult<LicenseType> | undefined

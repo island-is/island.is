@@ -14,6 +14,18 @@ export enum GenericLicenseType {
 }
 
 /**
+ * List of license types that can be scanned with a barcode scanner.
+ */
+export const barcodeLicenseTypes: GenericLicenseType[] = [
+  GenericLicenseType.DriversLicense,
+  GenericLicenseType.HuntingLicense,
+  GenericLicenseType.AdrLicense,
+  GenericLicenseType.MachineLicense,
+  GenericLicenseType.FirearmLicense,
+  GenericLicenseType.DisabilityLicense,
+]
+
+/**
  * Get organization slug from the CMS.
  * https://app.contentful.com/spaces/8k0h54kbe6bj/entries?id=kc7049zAeHdJezwG&contentTypeId=organization
  * */
