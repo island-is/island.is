@@ -1,22 +1,31 @@
 #!/bin/bash
 
+#
+# This script is used to build the system-e2e app using esbuild.
+# Playwright requieres special handling with esbuild, which is why it can't use
+# the "normal" build process.
+#
+
 set -euo pipefail
 # set -x
 
 APP_ROOT="apps/system-e2e"
 DIST_ROOT="dist/$APP_ROOT"
 
-# Save as an array
+echo "Configuring esbuild entrypoints"
 entryPoints=()
 readarray -t entryPoints < <(
   find "$APP_ROOT" \
     -name '*.ts' \
     -not -path '*/node_modules/*'
 )
+
+echo "Configuring esbuild external dependencies"
 externalDependencies=()
 readarray -t externalDependencies < <(
   jq -r '.dependencies|keys[]|(""+.)' package.json
 )
+# Known additional external dependencies that don't appear in package.json
 externalDependencies+=(
   @angular-devkit
   @nestjs/microservices
@@ -33,15 +42,16 @@ externalDependencies+=(
   ts-node/esm
 )
 
+echo "Processing external dependencies (prefixing with '--external:')"
 processedDependencies=()
 for dep in "${externalDependencies[@]}"; do
-  # echo "Processing external dependency '$dep'"
-  # Append
+  # Append dependencies
   processedDependencies+=(
     "--external:$dep"
   )
 done
 
+echo "Building $APP_ROOT using esbuild"
 esbuild \
   --bundle \
   "${entryPoints[@]}" \
