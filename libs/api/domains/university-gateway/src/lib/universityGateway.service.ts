@@ -86,13 +86,14 @@ export class UniversityGatewayApi {
       id: input.id,
     })
 
-    const [
-      descriptionHtmlEn,
-      descriptionHtmlIs,
-    ] = await Promise.all([
-      convertHtmlToContentfulRichText(item.descriptionEn ?? '', 'descriptionHtmlEn'),
+    const [descriptionHtmlEn, descriptionHtmlIs] = await Promise.all([
       convertHtmlToContentfulRichText(
-        item.descriptionIs ?? '', 'descriptionHtmlIs'
+        item.descriptionEn ?? '',
+        'descriptionHtmlEn',
+      ),
+      convertHtmlToContentfulRichText(
+        item.descriptionIs ?? '',
+        'descriptionHtmlIs',
       ),
     ])
 
