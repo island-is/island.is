@@ -1,17 +1,54 @@
-import { Injectable } from '@nestjs/common'
-import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
-import { User } from '@island.is/auth-nest-tools'
-import { DelegationIndex } from './models/delegation-index.model'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
+
+import { User } from '@island.is/auth-nest-tools'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
+
+import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
-import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
-import { DelegationType } from './types/delegationType'
+import { DelegationDTO } from './dto/delegation.dto'
+import { DelegationRecordInputDTO } from './dto/delegation-index.dto'
+import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import {
+  DelegationRecordType,
+  PersonalRepresentativeDelegationType,
+} from './types/delegationRecord'
+import {
+  validateDelegationTypeAndProvider,
+  validateToAndFromNationalId,
+} from './utils/delegations'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
+
+const getPersonalRepresentativeDelegationType = (right: string) =>
+  `${AuthDelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
+
+const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
+  if (!validateDelegationTypeAndProvider(delegation)) {
+    throw new BadRequestException(
+      'Invalid delegation type and provider combination',
+    )
+  }
+
+  if (!validateToAndFromNationalId(delegation)) {
+    throw new BadRequestException('Invalid national ids')
+  }
+
+  if (
+    delegation.validTo &&
+    new Date(delegation.validTo).getTime() <= new Date().getTime()
+  ) {
+    throw new BadRequestException('Invalid validTo')
+  }
+}
 
 export type DelegationIndexInfo = Pick<
   DelegationIndex,
@@ -22,6 +59,10 @@ export type DelegationIndexInfo = Pick<
   | 'validTo'
   | 'customDelegationScopes'
 >
+
+type DelegationDTOWithStringType = Omit<DelegationDTO, 'type'> & {
+  type: DelegationRecordType
+}
 
 type SortedDelegations = {
   created: DelegationIndexInfo[]
@@ -50,7 +91,7 @@ const hasAllSameScopes = (
 }
 
 const toDelegationIndexInfo = (
-  delegation: DelegationDTO,
+  delegation: DelegationDTOWithStringType,
 ): DelegationIndexInfo => ({
   fromNationalId: delegation.fromNationalId,
   toNationalId: delegation.toNationalId,
@@ -157,6 +198,31 @@ export class DelegationsIndexService {
     await this.saveToIndex(delegations)
   }
 
+  /* Add item to index */
+  async createOrUpdateDelegationRecord(delegation: DelegationRecordInputDTO) {
+    validateCrudParams(delegation)
+
+    const [updatedDelegation] = await this.delegationIndexModel.upsert(
+      delegation,
+    )
+
+    return updatedDelegation.toDTO()
+  }
+
+  /* Delete item from index */
+  async removeDelegationRecord(delegation: DelegationRecordInputDTO) {
+    validateCrudParams(delegation)
+
+    await this.delegationIndexModel.destroy({
+      where: {
+        fromNationalId: delegation.fromNationalId,
+        toNationalId: delegation.toNationalId,
+        provider: delegation.provider,
+        type: delegation.type,
+      },
+    })
+  }
+
   /*
    * Private methods
    * */
@@ -193,7 +259,8 @@ export class DelegationsIndexService {
     const { created, updated } = newItems.reduce(
       (acc, curr) => {
         const existing = currItems.find(
-          (d) => d.fromNationalId === curr.fromNationalId,
+          (d) =>
+            d.fromNationalId === curr.fromNationalId && d.type === curr.type,
         )
 
         if (existing) {
@@ -220,7 +287,11 @@ export class DelegationsIndexService {
 
     const deleted = currItems.filter(
       (delegation) =>
-        !newItems.some((d) => d.fromNationalId === delegation.fromNationalId),
+        !newItems.some(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.type === delegation.type,
+        ),
     )
 
     return { deleted, created, updated }
@@ -235,8 +306,8 @@ export class DelegationsIndexService {
       {
         where: {
           toNationalId: nationalId,
-          type: DelegationType.Custom,
-          provider: DelegationProvider.Custom,
+          type: AuthDelegationType.Custom,
+          provider: AuthDelegationProvider.Custom,
         },
       },
     )
@@ -250,14 +321,38 @@ export class DelegationsIndexService {
   ) {
     const delegations = await this.delegationsIncomingRepresentativeService
       .findAllIncoming({ nationalId }, useMaster)
-      .then((d) => d.map(toDelegationIndexInfo))
+      .then((d) => {
+        // append the personal representative right type code to the delegation type in index
+        const delegationsWithRights = d.reduce(
+          (acc: DelegationDTOWithStringType[], delegation) => {
+            if (!delegation.rights) {
+              return acc
+            }
+
+            const delegations = delegation.rights.map((right) => ({
+              ...delegation,
+              type: getPersonalRepresentativeDelegationType(right.code),
+            }))
+
+            return [...acc, ...delegations]
+          },
+          [],
+        )
+
+        return delegationsWithRights.map(toDelegationIndexInfo)
+      })
 
     const currentDelegationIndexItems = await this.delegationIndexModel.findAll(
       {
         where: {
           toNationalId: nationalId,
-          type: DelegationType.PersonalRepresentative,
-          provider: DelegationProvider.PersonalRepresentativeRegistry,
+          type: {
+            [Op.in]: [
+              AuthDelegationType.PersonalRepresentative,
+              PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
+            ],
+          },
+          provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
         },
       },
     )
@@ -274,8 +369,8 @@ export class DelegationsIndexService {
       {
         where: {
           toNationalId: user.nationalId,
-          type: DelegationType.ProcurationHolder,
-          provider: DelegationProvider.CompanyRegistry,
+          type: AuthDelegationType.ProcurationHolder,
+          provider: AuthDelegationProvider.CompanyRegistry,
         },
       },
     )
@@ -292,8 +387,8 @@ export class DelegationsIndexService {
       {
         where: {
           toNationalId: user.nationalId,
-          type: DelegationType.LegalGuardian,
-          provider: DelegationProvider.NationalRegistry,
+          type: AuthDelegationType.LegalGuardian,
+          provider: AuthDelegationProvider.NationalRegistry,
         },
       },
     )

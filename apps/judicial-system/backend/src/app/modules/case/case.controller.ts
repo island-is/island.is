@@ -94,6 +94,7 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
+import { TransitionInterceptor } from './interceptors/transition.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -256,6 +257,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
+  @UseInterceptors(TransitionInterceptor)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -293,10 +295,15 @@ export class CaseController {
         break
 
       case CaseTransition.SUBMIT:
-        if (isIndictmentCase(theCase.type) && !user.canConfirmAppeal) {
-          throw new ForbiddenException(
-            `User ${user.id} does not have permission to confirm indictments`,
-          )
+        if (isIndictmentCase(theCase.type)) {
+          if (!user.canConfirmAppeal) {
+            throw new ForbiddenException(
+              `User ${user.id} does not have permission to confirm indictments`,
+            )
+          }
+          if (theCase.indictmentDeniedExplanation) {
+            update.indictmentDeniedExplanation = ''
+          }
         }
         break
       case CaseTransition.ACCEPT:
@@ -380,6 +387,12 @@ export class CaseController {
           update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
         }
         break
+      case CaseTransition.DENY_INDICTMENT:
+        if (!user.canConfirmAppeal) {
+          throw new ForbiddenException(
+            `User ${user.id} does not have permission to reject indictments`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(

@@ -1,6 +1,6 @@
 import type { DistributiveOmit } from '@island.is/shared/types'
-
-import { YES, NO, ParentalRelations } from './constants'
+import { MessageDescriptor } from 'react-intl'
+import { NO, ParentalRelations, YES } from './constants'
 
 export interface MultipleBirths {
   hasMultipleBirths: YesOrNo
@@ -38,6 +38,23 @@ export type YesOrNo = typeof NO | typeof YES
 export interface Files {
   name: string
   key: string
+}
+
+export interface Attachments {
+  attachments: Files[]
+  label: MessageDescriptor
+}
+
+export interface FileUpload {
+  selfEmployedFile?: Files[]
+  studentFile?: Files[]
+  benefitsFile?: Files[]
+  singleParent?: Files[]
+  parentWithoutBirthParent?: Files[]
+  permanentFosterCare?: Files[]
+  adoption?: Files[]
+  employmentTerminationCertificateFile?: Files[]
+  file?: Files[]
 }
 
 export interface VMSTPeriod {
