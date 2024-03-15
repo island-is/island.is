@@ -130,7 +130,8 @@ const userNotificationService = userNotificationServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
