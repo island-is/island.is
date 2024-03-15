@@ -9,7 +9,6 @@ import { subSectionQualityPhoto } from './subSectionQualityPhoto'
 import { subSectionDelivery } from './subSectionDelivery'
 import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
 import { subSectionSummary } from './subSectionSummary'
-import { subSectionPhone } from './subSectionPhone'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -33,7 +32,6 @@ export const draft: Form = buildForm({
         subSectionOtherCountryDirections,
         subSectionQualityPhoto,
         subSectionDelivery,
-        subSectionPhone,
         subSectionHealthDeclaration,
         subSectionSummary,
       ],
@@ -50,7 +48,7 @@ export const draft: Form = buildForm({
     }),
     buildSection({
       id: 'done',
-      title: m.overviewDone,
+      title: m.applicationDone,
       children: [],
     }),
   ],
