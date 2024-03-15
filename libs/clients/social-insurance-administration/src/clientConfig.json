@@ -2838,7 +2838,8 @@
           },
           "gildi": {
             "description": "The value to be set for the variable",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           }
         },
         "additionalProperties": false
