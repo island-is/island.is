@@ -58,9 +58,6 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
       e.email,
       formatPhoneNumber(removeCountryCode(e.phoneNumber ?? '')),
       `${e.ratio}%`,
-      e.isApproved
-        ? parentalLeaveFormMessages.shared.yesOptionLabel
-        : parentalLeaveFormMessages.shared.noOptionLabel,
     ]
   })
 
@@ -87,7 +84,6 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
                       parentalLeaveFormMessages.employer.emailHeader,
                       parentalLeaveFormMessages.employer.phoneNumberHeader,
                       parentalLeaveFormMessages.employer.ratioHeader,
-                      parentalLeaveFormMessages.employer.approvedHeader,
                     ],
                     rows,
                   }}

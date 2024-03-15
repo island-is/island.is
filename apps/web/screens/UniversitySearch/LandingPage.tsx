@@ -126,7 +126,10 @@ const LandingPage: Screen<LandingPageProps> = ({
                             </Box>
                             <LinkV2
                               href={
-                                university.contentfulLink?.toString() || '/'
+                                locale === 'is'
+                                  ? university.contentfulLink?.toString() || '/'
+                                  : university.contentfulLinkEn?.toString() ||
+                                    '/'
                               }
                             >
                               <Text color="blueberry600">
@@ -164,7 +167,11 @@ const LandingPage: Screen<LandingPageProps> = ({
                         />
                       </Box>
                       <LinkV2
-                        href={university.contentfulLink?.toString() || '/'}
+                        href={
+                          locale === 'is'
+                            ? university.contentfulLink?.toString() || '/'
+                            : university.contentfulLinkEn?.toString() || '/'
+                        }
                       >
                         <Text color="blueberry600">
                           {university.contentfulTitle}
@@ -185,27 +192,22 @@ const LandingPage: Screen<LandingPageProps> = ({
           display="flex"
           flexDirection={'column'}
         >
-          {organizationPage?.slices?.map((slice, index) => {
-            return (
-              <Box key={index}>
-                <SliceMachine
-                  key={slice.id}
-                  slice={slice}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  namespace={namespace}
-                  slug={organizationPage.slug}
-                  fullWidth={organizationPage.theme === 'landing_page'}
-                  marginBottom={
-                    index === organizationPage.slices.length - 1 ? 5 : 0
-                  }
-                  paddingBottom={
-                    !organizationPage.description && index === 0 ? 0 : 6
-                  }
-                />
-              </Box>
-            )
-          })}
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <Box>
+              <Text variant="h3" paddingBottom={1}>
+                {n('landingPageIntroTitle', 'Finndu þitt nám hér')}
+              </Text>
+              <Text variant="default">
+                {n(
+                  'landingPageIntroSubTitle',
+                  'Leitaðu upplýsinga um háskólanám á Íslandi.',
+                )}
+              </Text>
+            </Box>
+          </GridColumn>
           <GridColumn
             span={['9/9', '9/9', '11/12']}
             offset={['0', '0', '1/12']}
@@ -235,6 +237,27 @@ const LandingPage: Screen<LandingPageProps> = ({
               <Icon size="large" icon="search" color="blue400" />
             </button>
           </GridColumn>
+          {organizationPage?.slices?.map((slice, index) => {
+            return (
+              <Box key={index}>
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  namespace={namespace}
+                  slug={organizationPage.slug}
+                  fullWidth={organizationPage.theme === 'landing_page'}
+                  marginBottom={
+                    index === organizationPage.slices.length - 1 ? 5 : 0
+                  }
+                  paddingBottom={
+                    !organizationPage.description && index === 0 ? 0 : 6
+                  }
+                />
+              </Box>
+            )
+          })}
           <GridColumn
             span={['9/9', '9/9', '11/12']}
             offset={['0', '0', '1/12']}

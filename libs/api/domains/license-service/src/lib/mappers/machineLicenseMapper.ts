@@ -11,8 +11,8 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMapper,
-  DEFAULT_LICENSE_ID,
 } from '../licenceService.type'
+import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 @Injectable()
