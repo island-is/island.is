@@ -1,4 +1,13 @@
-import { InputType, Field } from '@nestjs/graphql'
+import { InputType, Field, registerEnumType } from '@nestjs/graphql'
+
+export enum JournalSignatureBodyTypeEnum {
+  Hefbundin = 'Hefðbundin',
+  Nefnd = 'Nefnd',
+}
+
+registerEnumType(JournalSignatureBodyTypeEnum, {
+  name: 'MinistryOfJusticeAdvertSignatureType',
+})
 
 @InputType('MinistryOfJusticeAdvertsInput')
 export class AdvertsInput {
@@ -14,7 +23,7 @@ export class TypeQueryParams {
   @Field(() => String, { nullable: true })
   department?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   page?: number
 }
 
@@ -29,8 +38,48 @@ export class QueryParams {
   @Field(() => String, { nullable: true })
   search?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   page?: number
+}
+
+@InputType('MinistryOfJusticeAdvertSignatureMember')
+export class AdvertSignatureMember {
+  @Field(() => Boolean)
+  isChairman!: boolean
+
+  @Field(() => String)
+  name!: string
+
+  @Field(() => String, { nullable: true })
+  textAbove?: string
+
+  @Field(() => String, { nullable: true })
+  textAfter?: string
+
+  @Field(() => String, { nullable: true })
+  textBelow?: string
+}
+@InputType('MinistryOfJusticeAdvertSignatureData')
+export class AdvertSignatureData {
+  @Field(() => String)
+  institution!: string
+
+  @Field(() => String)
+  date!: string
+
+  @Field(() => [AdvertSignatureMember])
+  members!: AdvertSignatureMember[]
+}
+@InputType('MinistryOfJusticeAdvertSignature')
+export class AdvertSignature {
+  @Field(() => JournalSignatureBodyTypeEnum)
+  type!: JournalSignatureBodyTypeEnum
+
+  @Field(() => String, { nullable: true })
+  additional?: string
+
+  @Field(() => [AdvertSignatureData])
+  data!: AdvertSignatureData[]
 }
 
 @InputType('MinistryOfJusticeSubmitApplicationInput')
@@ -55,4 +104,7 @@ export class SubmitApplicationInput {
 
   @Field(() => String)
   document!: string
+
+  @Field(() => AdvertSignature)
+  signature!: AdvertSignature
 }

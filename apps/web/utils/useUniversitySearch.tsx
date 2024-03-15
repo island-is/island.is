@@ -14,7 +14,7 @@ interface SearchProductsProps {
   locale: string
 }
 
-interface FuseQueryResult {
+export interface FuseQueryResult {
   item: UniversityGatewayProgram
   refIndex: number
   score: number
