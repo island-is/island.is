@@ -107,18 +107,18 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            issuer: z.string(),
-            nationalId: z.string(),
-            value: z.string().refine((v) => v),
+            description: z.string(),
+            assetNumber: z.string(),
+            propertyValuation: z.string().refine((v) => v),
           })
           .refine(
-            ({ nationalId }) => {
-              return nationalId && nationalId !== ''
-                ? kennitala.isValid(nationalId)
+            ({ assetNumber }) => {
+              return assetNumber && assetNumber !== ''
+                ? kennitala.isValid(assetNumber)
                 : true
             },
             {
-              path: ['nationalId'],
+              path: ['assetNumber'],
             },
           )
           .array()

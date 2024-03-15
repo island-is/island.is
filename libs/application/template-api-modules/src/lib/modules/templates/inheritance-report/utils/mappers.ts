@@ -105,9 +105,9 @@ export const expandAnswers = (
       claims: {
         data: (answers.assets.claims?.data ?? []).map((claim) => {
           return {
-            issuer: claim.issuer ?? '',
-            value: claim.value ?? '',
-            nationalId: claim.nationalId ?? '',
+            assetNumber: claim.assetNumber ?? '',
+            description: claim.description ?? '',
+            propertyValuation: claim.propertyValuation ?? '',
           }
         }),
         total: answers.assets.claims?.total ?? 0,

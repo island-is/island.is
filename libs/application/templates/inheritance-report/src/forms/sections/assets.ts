@@ -365,16 +365,16 @@ export const assets = buildSection({
                 fields: [
                   {
                     title: m.claimsIssuer.defaultMessage,
-                    id: 'issuer',
+                    id: 'description',
                   },
                   {
                     title: m.nationalId.defaultMessage,
-                    id: 'nationalId',
+                    id: 'assetNumber',
                     format: '######-####',
                   },
                   {
                     title: m.claimsAmount.defaultMessage,
-                    id: 'value',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
@@ -382,7 +382,8 @@ export const assets = buildSection({
                 assetKey: 'claims',
                 calcWithShareValue: false,
                 repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
-                sumField: 'value',
+                fromExternalData: 'sharesAndClaims',
+                sumField: 'propertyValuation',
               },
             ),
           ],
