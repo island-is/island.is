@@ -1,4 +1,4 @@
-import { getValueViaPath, hasYes } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   FormValue,
   ApplicationContext,
