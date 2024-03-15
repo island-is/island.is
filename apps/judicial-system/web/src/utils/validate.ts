@@ -1,11 +1,12 @@
 // TODO: Add tests
 import {
-  CaseAppealRulingDecision,
   isIndictmentCase,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
+  CaseFileCategory,
   CaseType,
   SessionArrangements,
   User,
@@ -475,9 +476,21 @@ export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
 export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: Case,
 ): boolean => {
+  return validate([
+    [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+  ]).isValid
+}
+
+export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    validate([
-      [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
-    ]).isValid,
+    workingCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.COVER_LETTER,
+    ) &&
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.INDICTMENT,
+      ) &&
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+      ),
   )
 }
