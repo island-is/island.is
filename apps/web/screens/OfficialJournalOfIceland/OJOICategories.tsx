@@ -26,6 +26,8 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryMinistryOfJusticeCategoriesArgs,
+  QueryMinistryOfJusticeDepartmentsArgs,
+  QueryMinistryOfJusticeTypesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -53,6 +55,7 @@ import {
 } from '../queries'
 import {
   CATEGORIES_QUERY,
+  DEPARTMENTS_QUERY,
   TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
 
@@ -77,6 +80,8 @@ const sortCategories = (cats: typeof malaflokkurOptions) => {
 }
 
 const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
+  // categories,
+  // departments,
   organizationPage,
   organization,
   namespace,
@@ -363,6 +368,7 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 
 interface OJOICategoriesProps {
   categories: Array<MinistryOfJusticeAdvertEntity>
+  departments: Array<MinistryOfJusticeAdvertEntity>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -370,6 +376,7 @@ interface OJOICategoriesProps {
 }
 
 const OJOICategories: Screen<OJOICategoriesProps> = ({
+  departments,
   categories,
   organizationPage,
   organization,
@@ -379,6 +386,7 @@ const OJOICategories: Screen<OJOICategoriesProps> = ({
   return (
     <OJOICategoriesPage
       categories={categories}
+      departments={departments}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -391,9 +399,12 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
-    /*{
+    {
       data: { ministryOfJusticeCategories },
-    },*/
+    },
+    {
+      data: { ministryOfJusticeDepartments },
+    },
     {
       data: { getOrganizationPage },
     },
@@ -402,15 +413,24 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    /*apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
+    apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
         params: {
-          page: '1',
           search: '',
+          // page: 1,
         },
       },
-    }),*/
+    }),
+    apolloClient.query<Query, QueryMinistryOfJusticeDepartmentsArgs>({
+      query: DEPARTMENTS_QUERY,
+      variables: {
+        params: {
+          search: '',
+          // page: 1,
+        },
+      },
+    }),
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -450,10 +470,9 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  // console.log({ gggg: ministryOfJusticeCategories })
-
   return {
-    categories: [], //ministryOfJusticeCategories?.categories,
+    categories: ministryOfJusticeCategories?.categories,
+    departments: ministryOfJusticeDepartments?.departments,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
