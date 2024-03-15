@@ -97,7 +97,6 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
     </>
   ) : (
     <>
-      {' '}
       <TableContainer
         loading={loading}
         testid={testid}
