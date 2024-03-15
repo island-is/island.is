@@ -3,8 +3,6 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
-const geoDataDir = '/geoip-lite/data'
-const geoTmpDir = `${geoDataDir}/tmp`
 
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
@@ -85,5 +83,4 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
-      GEODATADIR: geoDataDir,
     })

@@ -37,13 +37,6 @@
         }
       }
     },
-    "update-geoip": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npm run-script updatedb license_key=${GEOIP_LICENSE_KEY}",
-        "cwd": "node_modules/geoip-lite"
-      }
-    },
     "serve": {
       "executor": "@nx/js:node",
       "options": {
