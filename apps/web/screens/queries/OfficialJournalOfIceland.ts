@@ -127,7 +127,7 @@ export const TYPES_QUERY = gql`
 `
 
 export const DEPARTMENTS_QUERY = gql`
-  query AdvertCategories($params: MinistryOfJusticeQueryInput!) {
+  query AdvertDepartments($params: MinistryOfJusticeQueryInput!) {
     ministryOfJusticeDepartments(params: $params) {
       departments {
         id
@@ -149,8 +149,8 @@ export const DEPARTMENTS_QUERY = gql`
 `
 
 export const CATEGORIES_QUERY = gql`
-  query AdvertCategories($input: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeCategories(params: $input) {
+  query AdvertCategories($params: MinistryOfJusticeQueryInput!) {
+    ministryOfJusticeCategories(params: $params) {
       categories {
         id
         title
