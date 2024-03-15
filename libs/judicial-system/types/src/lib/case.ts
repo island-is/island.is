@@ -268,3 +268,7 @@ export const prosecutorCanSelectDefenderForInvestigationCase = (
       ].includes(type),
   )
 }
+
+export type IndictmentConfirmation =
+  | { actor: string; institution: string; date: Date }
+  | undefined

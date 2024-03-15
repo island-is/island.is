@@ -14,6 +14,7 @@ import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
+import { application as applicationMessage } from './messages'
 
 const States = {
   draft: 'draft',
@@ -34,10 +35,9 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   ComplaintsToAlthingiOmbudsmanEvent
 > = {
   type: ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN,
-  name: 'Kvörtun til umboðsmanns Alþingis',
-  translationNamespaces: [
+  name: applicationMessage.general.name,
+  translationNamespaces:
     ApplicationConfigurations.ComplaintsToAlthingiOmbudsman.translation,
-  ],
   dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
   featureFlag: Features.complaintsToAlthingiOmbudsman,
   stateMachineConfig: {

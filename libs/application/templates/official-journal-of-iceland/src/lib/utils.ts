@@ -1,9 +1,8 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { Routes, TypeIds, emailRegex } from './constants'
-import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationContext, RecordObject } from '@island.is/application/types'
+import { Routes, emailRegex } from './constants'
+import { RecordObject } from '@island.is/application/types'
 import { LocalError } from './types'
 import get from 'lodash/get'
 
@@ -25,6 +24,17 @@ export const getWeekendDates = (
     currentDay = addDays(currentDay, 1)
   }
   return weekdays
+}
+
+export const addWeekdays = (date: Date, days: number) => {
+  let result = new Date(date)
+  while (days > 0) {
+    result = addDays(result, 1)
+    if (isWeekday(result)) {
+      days--
+    }
+  }
+  return result
 }
 
 export const getWeekdayDates = (
@@ -109,22 +119,6 @@ export const mapStatusEnumToStatus = (status?: string) => {
       return 'Tilbúin til útgáfu'
     case 'Published':
       return 'Útgefin'
-    default:
-      return ''
-  }
-}
-
-export const mapIdToType = (id?: TypeIds | string) => {
-  if (!id) return ''
-  switch (id) {
-    case TypeIds.AUGLYSING:
-      return 'Auglýsing'
-    case TypeIds.GJALDSKRA:
-      return 'Gjaldskrá'
-    case TypeIds.REGLUGERDIR:
-      return 'Reglugerðir'
-    case TypeIds.SKIPULAGSSKRA:
-      return 'Skipulagsskrá'
     default:
       return ''
   }
