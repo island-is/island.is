@@ -48,10 +48,12 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         file.category === CaseFileCategory.COVER_LETTER &&
         file.status === 'done',
     ) &&
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.INDICTMENT && file.status === 'done',
-    ) &&
+    (isTrafficViolationCaseCheck ||
+      uploadFiles.some(
+        (file) =>
+          file.category === CaseFileCategory.INDICTMENT &&
+          file.status === 'done',
+      )) &&
     uploadFiles.some(
       (file) =>
         file.category === CaseFileCategory.CRIMINAL_RECORD &&
