@@ -24,6 +24,7 @@ import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import addMonths from 'date-fns/addMonths'
+import { NudgeInterval } from '../../user-profile/types/NudgeInterval'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -178,6 +179,194 @@ describe('MeUserProfileController', () => {
         })
       },
     )
+  })
+
+  describe('PATCH user-profile - nudge dates', () => {
+    let app = null
+    let server = null
+    let fixtureFactory = null
+    let islyklarApi = null
+
+    beforeEach(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read, UserProfileScope.write],
+          audkenniSimNumber,
+        }),
+        // Using postgres here because incrementing the tries field for verification is handled differently in sqlite
+        dbType: 'postgres',
+      })
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+
+      await fixtureFactory.createEmailVerification({
+        ...testEmailVerification,
+        email: newEmail,
+      })
+      await fixtureFactory.createSmsVerification({
+        ...testSMSVerification,
+        mobilePhoneNumber: newPhoneNumber,
+      })
+
+      // Mock islyklar api responses
+      islyklarApi = app.get(IslyklarApi)
+      islyklarApi.islyklarPut = jest.fn()
+      islyklarApi.islyklarPost = jest
+        .fn()
+        .mockImplementation(({ user }: { user: PublicUser }) => {
+          return new Promise((resolve) => {
+            resolve(user)
+          })
+        })
+      islyklarApi.islyklarGet = jest.fn().mockResolvedValue({
+        ssn: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        mobile: testUserProfile.mobilePhoneNumber,
+      })
+    })
+
+    afterEach(async () => {
+      fixtureFactory = null
+      await app.cleanUp()
+    })
+
+    it('PATCH /v2/me should update email and phone and push nextNudge by 6 months ', async () => {
+      await fixtureFactory.createUserProfile(testUserProfile)
+
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        mobilePhoneNumber: formattedNewPhoneNumber,
+        emailVerificationCode: emailVerificationCode,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.email).toBe(newEmail)
+      expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
+      expect(userProfile.nextNudge.toString()).toBe(
+        addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
+      )
+    })
+
+    it('PATCH /v2/me should update email and push nextNudge by 1 month ', async () => {
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        mobilePhoneNumberVerified: false,
+      })
+
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+        nudgeInterval: NudgeInterval.SHORT,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.email).toBe(newEmail)
+      expect(userProfile.nextNudge.toString()).toBe(
+        addMonths(userProfile.lastNudge, SKIP_INTERVAL).toString(),
+      )
+    })
+
+    it('PATCH /v2/me should update phone and push nextNudge by 1 months ', async () => {
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emailVerified: false,
+      })
+
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: formattedNewPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+        nudgeInterval: NudgeInterval.SHORT,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
+      expect(userProfile.nextNudge.toString()).toBe(
+        addMonths(userProfile.lastNudge, SKIP_INTERVAL).toString(),
+      )
+    })
+
+    it('PATCH /v2/me should empty email and push nextNudge by 6 months ', async () => {
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        mobilePhoneNumberVerified: true,
+      })
+
+      const res = await server.patch('/v2/me').send({
+        email: '',
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      console.log({ userProfile })
+
+      expect(userProfile.email).toBe(null)
+      expect(userProfile.mobilePhoneNumber).toBe(
+        testUserProfile.mobilePhoneNumber,
+      )
+      expect(userProfile.nextNudge.toString()).toBe(
+        addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
+      )
+    })
+
+    it('PATCH /v2/me should empty phoneNumber and push nextNudge by 6 month ', async () => {
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emailVerified: true,
+      })
+
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: '',
+      })
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.email).toBe(testUserProfile.email)
+      expect(userProfile.mobilePhoneNumber).toBe(null)
+      expect(userProfile.nextNudge.toString()).toBe(
+        addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
+      )
+    })
   })
 
   describe('PATCH user-profile', () => {
@@ -537,6 +726,9 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumberVerified).toBe(false)
       expect(userProfile.emailStatus).toBe(DataStatus.EMPTY)
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
+      expect(userProfile.nextNudge.toString()).toBe(
+        addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
+      )
 
       // Assert that islyklar api is called
       expect(islyklarApi.islyklarPut).toBeCalledWith({
@@ -775,7 +967,9 @@ describe('MeUserProfileController', () => {
       await fixtureFactory.createUserProfile(testUserProfile)
 
       // Act
-      const res = await server.post('/v2/me/nudge?extendNudgeByMonths=1')
+      const res = await server.post(
+        `/v2/me/nudge?nudgeInterval=${NudgeInterval.SHORT}`,
+      )
 
       // Assert
       expect(res.status).toEqual(200)
@@ -797,7 +991,7 @@ describe('MeUserProfileController', () => {
       await fixtureFactory.createUserProfile(testUserProfile)
 
       // Act
-      const res = await server.post('/v2/me/nudge?extendNudgeByMonths=6')
+      const res = await server.post('/v2/me/nudge')
 
       // Assert
       expect(res.status).toEqual(200)
@@ -810,19 +1004,6 @@ describe('MeUserProfileController', () => {
 
       expect(userProfile.lastNudge).not.toBeNull()
       expect(userProfile.nextNudge).toEqual(addMonths(userProfile.lastNudge, 6))
-    })
-
-    it('POST /v2/me/nudge?extendNudgeByMonths=3 should return bad request since extendNudgeByMonths can only be 1 or 6', async () => {
-      // Arrange
-      const fixtureFactory = new FixtureFactory(app)
-
-      await fixtureFactory.createUserProfile(testUserProfile)
-
-      // Act
-      const res = await server.post('/v2/me/nudge?extendNudgeByMonths=3')
-
-      // Assert
-      expect(res.status).toEqual(400)
     })
   })
 })

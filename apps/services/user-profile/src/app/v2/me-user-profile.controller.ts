@@ -4,13 +4,13 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common'
 
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -20,16 +20,12 @@ import {
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 import { UserProfileScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
 
 import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
-import {
-  NUDGE_INTERVAL,
-  SKIP_INTERVAL,
-  UserProfileService,
-} from './user-profile.service'
+import { UserProfileService } from './user-profile.service'
+import { NudgeInterval } from '../user-profile/types/NudgeInterval'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -70,6 +66,8 @@ export class MeUserProfileController {
     @CurrentUser() user: User,
     @Body() userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
+    userProfile.nudgeInterval = userProfile.nudgeInterval || NudgeInterval.LONG
+
     return this.auditService.auditPromise(
       {
         auth: user,
@@ -131,16 +129,8 @@ export class MeUserProfileController {
   })
   confirmNudge(
     @CurrentUser() user: User,
-    @Query('extendNudgeByMonths') extendNudgeByMonths?: number,
+    @Query('nudgeInterval') nudgeInterval: NudgeInterval,
   ) {
-    // throw bad request if extendNudgeByMonths is defined and it is not 1 or 6
-    if (
-      extendNudgeByMonths &&
-      ![SKIP_INTERVAL, NUDGE_INTERVAL].includes(+extendNudgeByMonths)
-    ) {
-      throw new BadRequestException('extendNudgeByMonths must be either 1 or 6')
-    }
-
     return this.auditService.auditPromise(
       {
         auth: user,
@@ -150,7 +140,7 @@ export class MeUserProfileController {
       },
       this.userProfileService.confirmNudge(
         user.nationalId,
-        extendNudgeByMonths,
+        nudgeInterval || NudgeInterval.LONG,
       ),
     )
   }

@@ -15,6 +15,7 @@ import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
+import { NudgeInterval } from '../user-profile/types/NudgeInterval'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -99,6 +100,8 @@ export class UserProfileService {
       )
     }
 
+    let currentUserProfile = await this.findById(nationalId, true)
+
     await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
@@ -179,11 +182,18 @@ export class UserProfileService {
         }),
       }
 
+      currentUserProfile = { ...currentUserProfile, ...update }
+
       await this.userProfileModel.upsert(
         {
           ...update,
           lastNudge: new Date(),
-          nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          nextNudge: addMonths(
+            new Date(),
+            userProfile.nudgeInterval === NudgeInterval.LONG
+              ? NUDGE_INTERVAL
+              : SKIP_INTERVAL,
+          ),
         },
         { transaction },
       )
@@ -202,7 +212,7 @@ export class UserProfileService {
       }
     })
 
-    return this.findById(nationalId, true)
+    return currentUserProfile
   }
 
   async createEmailVerification({
@@ -236,13 +246,16 @@ export class UserProfileService {
 
   async confirmNudge(
     nationalId: string,
-    extendNudgeByMonths = NUDGE_INTERVAL,
+    nudgeInterval = NudgeInterval.LONG,
   ): Promise<void> {
     const date = new Date()
     await this.userProfileModel.upsert({
       nationalId,
       lastNudge: date,
-      nextNudge: addMonths(date, extendNudgeByMonths),
+      nextNudge: addMonths(
+        date,
+        nudgeInterval === NudgeInterval.LONG ? NUDGE_INTERVAL : SKIP_INTERVAL,
+      ),
     })
   }
 

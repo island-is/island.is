@@ -9,6 +9,7 @@ import {
   ValidateIf,
 } from 'class-validator'
 import { Locale } from '../../user-profile/types/localeTypes'
+import { NudgeInterval } from '../../user-profile/types/NudgeInterval'
 
 export class PatchUserProfileDto {
   @ApiPropertyOptional({
@@ -54,4 +55,12 @@ export class PatchUserProfileDto {
   @IsOptional()
   @IsBoolean()
   documentNotifications?: boolean
+
+  @ApiPropertyOptional({
+    enum: NudgeInterval,
+    default: NudgeInterval.LONG,
+  })
+  @IsOptional()
+  @IsEnum(NudgeInterval)
+  nudgeInterval?: NudgeInterval
 }
