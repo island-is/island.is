@@ -1,4 +1,4 @@
 export enum DocumentsPaths {
   ElectronicDocumentsRoot = '/postholf',
-  ElectronicDocumentsFileDownload = '/postholf/:id',
+  ElectronicDocumentSingle = '/postholf/:id',
 }
