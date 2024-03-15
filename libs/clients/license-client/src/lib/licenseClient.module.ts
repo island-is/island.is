@@ -56,7 +56,9 @@ import { EhicClient, EhicModule } from './clients/ehic-card-client'
           pCardClient: PCardClient,
           ehicCardClient: EhicClient,
         ) =>
-        async (type: LicenseType): Promise<LicenseClient<unknown> | null> => {
+        async (
+          type: LicenseType,
+        ): Promise<LicenseClient<LicenseType> | null> => {
           switch (type) {
             case LicenseType.FirearmLicense:
               return firearmClient
