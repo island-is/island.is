@@ -28,6 +28,11 @@ show_help() {
   cat <<EOF
 Usage:
   ./scripts/clean.sh [OPTIONS]
+
+  --generated     Clean generated files
+  --dist          Clean dist files
+  --cache         Clean caches
+  --yarn          Clean yarn and npm caches (e.g. node_modules)
   -f | --force    Force clean
   -d | --dry      Dry run
   -h | --help     Show help
