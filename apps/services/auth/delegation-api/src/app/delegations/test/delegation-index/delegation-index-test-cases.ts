@@ -1,6 +1,7 @@
-import { clientId, TestCase } from './delegations-index-types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { createClient } from '@island.is/services/auth/testing'
+
+import { clientId, TestCase } from './delegations-index-types'
 
 const person1 = createNationalId('person')
 const person2 = createNationalId('person')
@@ -8,7 +9,7 @@ const company1 = createNationalId('company')
 const company2 = createNationalId('company')
 export const prRight1 = 'pr1'
 
-export const indexingTestcases: Record<string, TestCase> = {
+export const indexingTestCases: Record<string, TestCase> = {
   // Should index custom delegations
   custom: new TestCase(
     createClient({
