@@ -2459,7 +2459,6 @@ services-sessions-worker:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_sessions'
-    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'

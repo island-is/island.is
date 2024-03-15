@@ -2259,7 +2259,6 @@ services-sessions-worker:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
-    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
