@@ -911,18 +911,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) => {
                 const { isSelfEmployed } = getApplicationAnswers(answers)
-                const hasOldSelfEmployedFile =
-                  (
-                    answers as {
-                      employer: {
-                        selfEmployed: {
-                          file: unknown[]
-                        }
-                      }
-                    }
-                  )?.employer?.selfEmployed?.file?.length > 0
 
-                return isSelfEmployed === YES && !hasOldSelfEmployedFile
+                return isSelfEmployed === YES
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
