@@ -13,9 +13,9 @@ import {
 } from '@island.is/island-ui/core'
 import { Organization, OrganizationPage } from '@island.is/web/graphql/schema'
 
-import * as s from './StjornartidindiHomeIntro.css'
+import * as s from './OJOIHomeIntro.css'
 
-export type StjornartidindiHomeIntroProps = {
+export type OJOIHomeIntroProps = {
   organizationPage?: OrganizationPage
   organization?: Organization
   namespace: Record<string, string>
@@ -26,9 +26,7 @@ export type StjornartidindiHomeIntroProps = {
   shortcutsTitle: string
 }
 
-export const StjornartidindiHomeIntro = (
-  props: StjornartidindiHomeIntroProps,
-) => {
+export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
   const organizationPage = props.organizationPage
 
   if (!organizationPage) {

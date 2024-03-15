@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 
 import { Table as T, Text } from '@island.is/island-ui/core'
 
-import { AdvertType, stjornartidindiAdvertUrl } from './stjornartidindiUtils'
+import { AdvertType, advertUrl } from './OJOIUtils'
 
-export const StjornartidindiSearchListView = ({
+export const OJOISearchListView = ({
   adverts,
 }: {
   adverts: Array<AdvertType>

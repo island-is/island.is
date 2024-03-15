@@ -18,20 +18,17 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-import {
-  baseUrl,
-  StjornartidindiWrapper,
-} from '../../components/Stjornartidindi'
-import { StjornartidindiAdvertDisplay } from '../../components/Stjornartidindi/StjornartidindiAdvertDisplay'
+import { baseUrl, OJOIWrapper } from '../../components/OfficialJournalOfIceland'
+import { OJOIAdvertDisplay } from '../../components/OfficialJournalOfIceland/OJOIAdvertDisplay'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
-import { ADVERT_QUERY } from '../queries/Stjornartidindi'
+import { ADVERT_QUERY } from '../queries/OfficialJournalOfIceland'
 
-const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
+const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
   advert,
   organizationPage,
   organization,
@@ -67,7 +64,7 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
   ]
 
   return (
-    <StjornartidindiWrapper
+    <OJOIWrapper
       pageTitle={advert.title}
       hideTitle
       pageDescription={
@@ -143,15 +140,15 @@ const StjornartidindiAdvertPage: Screen<StjornartidindiAdvertProps> = ({
         </Stack>
       }
     >
-      <StjornartidindiAdvertDisplay
+      <OJOIAdvertDisplay
         advertText={advert.document.html}
         isLegacy={advert.document.isLegacy ?? false}
       />
-    </StjornartidindiWrapper>
+    </OJOIWrapper>
   )
 }
 
-interface StjornartidindiAdvertProps {
+interface OJOIAdvertProps {
   advert: MinistryOfJusticeAdvertResponse['advert']
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
@@ -159,7 +156,7 @@ interface StjornartidindiAdvertProps {
   locale: Locale
 }
 
-const StjornartidindiAdvert: Screen<StjornartidindiAdvertProps> = ({
+const OJOIAdvert: Screen<OJOIAdvertProps> = ({
   advert,
   organizationPage,
   organization,
@@ -169,7 +166,7 @@ const StjornartidindiAdvert: Screen<StjornartidindiAdvertProps> = ({
   console.log({ advert })
 
   return (
-    <StjornartidindiAdvertPage
+    <OJOIAdvertPage
       advert={advert}
       namespace={namespace}
       organizationPage={organizationPage}
@@ -179,8 +176,8 @@ const StjornartidindiAdvert: Screen<StjornartidindiAdvertProps> = ({
   )
 }
 
-StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
-  const organizationSlug = 'stjornartidindi'
+OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
+  const organizationSlug = 'OJOI'
 
   const [
     {
@@ -259,4 +256,4 @@ StjornartidindiAdvert.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(StjornartidindiAdvert)
+export default withMainLayout(OJOIAdvert)

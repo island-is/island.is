@@ -11,14 +11,13 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { SLICE_SPACING } from '@island.is/web/constants'
+import { Footer as WebFooter } from '@island.is/web/components'
 import { Image, OrganizationPage } from '@island.is/web/graphql/schema'
 import { usePlausiblePageview } from '@island.is/web/hooks'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 import { HeadWithSocialSharing } from '../HeadWithSocialSharing/HeadWithSocialSharing'
 import { OrganizationFooter, OrganizationHeader } from '../Organization'
-
 type WrapperProps = {
   pageTitle: string
   pageDescription?: string
@@ -31,7 +30,7 @@ type WrapperProps = {
   hideTitle?: boolean
 }
 
-export const StjornartidindiWrapper = ({
+export const OJOIWrapper = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,
@@ -48,11 +47,13 @@ export const StjornartidindiWrapper = ({
     organizationPage.organization?.trackingDomain ?? undefined,
   )
 
+  const organization = organizationPage.organization
+
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
 
-  if (!organizationPage) {
+  if (!organizationPage || !organization) {
     return null
   }
 
@@ -143,11 +144,12 @@ export const StjornartidindiWrapper = ({
       {!sidebarContent && children}
 
       <Box className="rs_read">
-        <OrganizationFooter
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          organizations={[organizationPage.organization]}
-          force={true}
+        <WebFooter
+          imageUrl={organization.logo?.url}
+          heading={organization.title}
+          columns={organization.footerItems}
+          background={organization?.footerConfig?.background}
+          titleVariant="h2"
         />
       </Box>
     </>

@@ -738,17 +738,6 @@ export const OrganizationFooter: React.FC<
         </>
       )
       break
-    case 'stjornartidindi':
-      OrganizationFooterComponent = (
-        <WebFooter
-          imageUrl={organization.logo?.url}
-          heading={organization.title}
-          columns={organization.footerItems}
-          background={organization?.footerConfig?.background}
-          titleVariant="h2"
-        />
-      )
-      break
     default: {
       const footerItems = organization?.footerItems ?? []
       if (footerItems.length === 0) break

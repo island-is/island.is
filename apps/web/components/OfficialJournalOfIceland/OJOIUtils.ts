@@ -3,7 +3,7 @@ import { StringOption as Option } from '@island.is/island-ui/core'
 export const baseUrl = '/s/stjornartidindi'
 export const searchUrl = baseUrl + '/leit'
 export const categoriesUrl = baseUrl + '/malaflokkar'
-export const stjornartidindiAdvertUrl = baseUrl + '/nr'
+export const advertUrl = baseUrl + '/nr'
 
 export type AdvertType = {
   id: string

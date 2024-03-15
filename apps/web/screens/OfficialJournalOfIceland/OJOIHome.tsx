@@ -28,11 +28,11 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   categoriesUrl,
+  OJOIHomeIntro,
+  OJOIWrapper,
   searchUrl,
-  StjornartidindiHomeIntro,
-  StjornartidindiWrapper,
   yfirflokkurOptions,
-} from '../../components/Stjornartidindi'
+} from '../../components/OfficialJournalOfIceland'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -40,7 +40,7 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../queries'
 
-const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
+const OJOIHomePage: Screen<OJOIHomeProps> = ({
   organizationPage,
   organization,
   namespace,
@@ -72,7 +72,7 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
   ]
 
   return (
-    <StjornartidindiWrapper
+    <OJOIWrapper
       pageTitle={organizationPage?.title ?? ''}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -80,7 +80,7 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
       pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
     >
       <Stack space={SLICE_SPACING}>
-        <StjornartidindiHomeIntro
+        <OJOIHomeIntro
           organizationPage={organizationPage ?? undefined}
           organization={organization ?? undefined}
           namespace={namespace}
@@ -174,25 +174,25 @@ const StjornartidindiHomePage: Screen<StjornartidindiHomeProps> = ({
           />
         ))}
       </Stack>
-    </StjornartidindiWrapper>
+    </OJOIWrapper>
   )
 }
 
-interface StjornartidindiHomeProps {
+interface OJOIHomeProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
   locale: Locale
 }
 
-const StjornartidindiHome: Screen<StjornartidindiHomeProps> = ({
+const OJOIHome: Screen<OJOIHomeProps> = ({
   organizationPage,
   organization,
   namespace,
   locale,
 }) => {
   return (
-    <StjornartidindiHomePage
+    <OJOIHomePage
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -201,7 +201,7 @@ const StjornartidindiHome: Screen<StjornartidindiHomeProps> = ({
   )
 }
 
-StjornartidindiHome.getProps = async ({ apolloClient, locale }) => {
+OJOIHome.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
@@ -265,4 +265,4 @@ StjornartidindiHome.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(StjornartidindiHome)
+export default withMainLayout(OJOIHome)

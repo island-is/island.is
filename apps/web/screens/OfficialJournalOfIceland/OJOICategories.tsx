@@ -39,19 +39,22 @@ import {
   emptyOption,
   findValueOption,
   malaflokkurOptions,
+  OJOIWrapper,
   removeEmptyFromObject,
   searchUrl,
   splitArrayIntoGroups,
-  StjornartidindiWrapper,
   yfirflokkurOptions,
-} from '../../components/Stjornartidindi'
+} from '../../components/OfficialJournalOfIceland'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
-import { CATEGORIES_QUERY, TYPES_QUERY } from '../queries/Stjornartidindi'
+import {
+  CATEGORIES_QUERY,
+  TYPES_QUERY,
+} from '../queries/OfficialJournalOfIceland'
 
 type MalaflokkarType = Array<{
   letter: string
@@ -73,7 +76,7 @@ const sortCategories = (cats: typeof malaflokkurOptions) => {
   })
 }
 
-const StjornartidindiCategoriesPage: Screen<StjornartidindiCategoriesProps> = ({
+const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
   organizationPage,
   organization,
   namespace,
@@ -222,7 +225,7 @@ const StjornartidindiCategoriesPage: Screen<StjornartidindiCategoriesProps> = ({
   }
 
   return (
-    <StjornartidindiWrapper
+    <OJOIWrapper
       pageTitle={'Málaflokkar Stjórnartíðinda'}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -354,11 +357,11 @@ const StjornartidindiCategoriesPage: Screen<StjornartidindiCategoriesProps> = ({
           })
         )}
       </Stack>
-    </StjornartidindiWrapper>
+    </OJOIWrapper>
   )
 }
 
-interface StjornartidindiCategoriesProps {
+interface OJOICategoriesProps {
   categories: Array<MinistryOfJusticeAdvertEntity>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
@@ -366,7 +369,7 @@ interface StjornartidindiCategoriesProps {
   locale: Locale
 }
 
-const StjornartidindiCategories: Screen<StjornartidindiCategoriesProps> = ({
+const OJOICategories: Screen<OJOICategoriesProps> = ({
   categories,
   organizationPage,
   organization,
@@ -374,7 +377,7 @@ const StjornartidindiCategories: Screen<StjornartidindiCategoriesProps> = ({
   locale,
 }) => {
   return (
-    <StjornartidindiCategoriesPage
+    <OJOICategoriesPage
       categories={categories}
       namespace={namespace}
       organizationPage={organizationPage}
@@ -384,7 +387,7 @@ const StjornartidindiCategories: Screen<StjornartidindiCategoriesProps> = ({
   )
 }
 
-StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
+OJOICategories.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
@@ -463,4 +466,4 @@ StjornartidindiCategories.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(StjornartidindiCategories)
+export default withMainLayout(OJOICategories)

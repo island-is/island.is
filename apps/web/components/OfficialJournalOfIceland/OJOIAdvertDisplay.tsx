@@ -2,17 +2,17 @@ import { Box } from '@island.is/island-ui/core'
 import dirtyClean from '@island.is/regulations-tools/dirtyClean-browser'
 import { HTMLText } from '@island.is/regulations-tools/types'
 
-import * as s from './StjornartidindiAdvertDisplay.css'
+import * as s from './OJOIAdvertDisplay.css'
 
-export type StjornartidindiAdvertDisplayProps = {
+export type OJOIAdvertDisplayProps = {
   advertText: string
   isLegacy: boolean
 }
 
-export const StjornartidindiAdvertDisplay = ({
+export const OJOIAdvertDisplay = ({
   advertText,
   isLegacy,
-}: StjornartidindiAdvertDisplayProps) => {
+}: OJOIAdvertDisplayProps) => {
   if (!advertText) {
     return null
   }

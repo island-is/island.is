@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 
 import { ActionCard, Box, Inline, Stack, Tag } from '@island.is/island-ui/core'
 
-import { AdvertType, stjornartidindiAdvertUrl } from './stjornartidindiUtils'
+import { AdvertType, advertUrl } from './OJOIUtils'
 
-export const StjornartidindiSearchGridView = ({
+export const OJOISearchGridView = ({
   adverts,
 }: {
   adverts: Array<AdvertType>
@@ -30,7 +30,7 @@ export const StjornartidindiSearchGridView = ({
             variant: 'text',
             size: 'small',
             onClick: () => {
-              router.push(stjornartidindiAdvertUrl + '/' + ad.id)
+              router.push(advertUrl + '/' + ad.id)
             },
           }}
         >

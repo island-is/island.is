@@ -32,12 +32,12 @@ import {
   findValueOption,
   malaflokkurOptions,
   mockAdverts,
+  OJOIWrapper,
   removeEmptyFromObject,
   searchUrl,
-  StjornartidindiWrapper,
-} from '../../components/Stjornartidindi'
-import { StjornartidindiSearchGridView } from '../../components/Stjornartidindi/StjornartidindiSearchGridView'
-import { StjornartidindiSearchListView } from '../../components/Stjornartidindi/StjornartidindiSearchListView'
+} from '../../components/OfficialJournalOfIceland'
+import { OJOISearchGridView } from '../../components/OfficialJournalOfIceland/OJOISearchGridView'
+import { OJOISearchListView } from '../../components/OfficialJournalOfIceland/OJOISearchListView'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -54,7 +54,7 @@ const initialState = {
   stofnun: '',
 }
 
-const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
+const OJOISearchPage: Screen<OJOISearchProps> = ({
   organizationPage,
   organization,
   namespace,
@@ -132,7 +132,7 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
   }
 
   return (
-    <StjornartidindiWrapper
+    <OJOIWrapper
       pageTitle={n('searchPageTitle', 'Leit í Stjórnartíðindum')}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -217,30 +217,30 @@ const StjornartidindiSearchPage: Screen<StjornartidindiSearchProps> = ({
         </Button>
 
         {listView ? (
-          <StjornartidindiSearchListView adverts={mockAdverts} />
+          <OJOISearchListView adverts={mockAdverts} />
         ) : (
-          <StjornartidindiSearchGridView adverts={mockAdverts} />
+          <OJOISearchGridView adverts={mockAdverts} />
         )}
       </Stack>
-    </StjornartidindiWrapper>
+    </OJOIWrapper>
   )
 }
 
-interface StjornartidindiSearchProps {
+interface OJOISearchProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
   locale: Locale
 }
 
-const StjornartidindiSearch: Screen<StjornartidindiSearchProps> = ({
+const OJOISearch: Screen<OJOISearchProps> = ({
   organizationPage,
   organization,
   namespace,
   locale,
 }) => {
   return (
-    <StjornartidindiSearchPage
+    <OJOISearchPage
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -249,7 +249,7 @@ const StjornartidindiSearch: Screen<StjornartidindiSearchProps> = ({
   )
 }
 
-StjornartidindiSearch.getProps = async ({ apolloClient, locale }) => {
+OJOISearch.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
@@ -313,4 +313,4 @@ StjornartidindiSearch.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(StjornartidindiSearch)
+export default withMainLayout(OJOISearch)
