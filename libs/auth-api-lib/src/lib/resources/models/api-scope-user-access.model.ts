@@ -28,9 +28,8 @@ export class ApiScopeUserAccess extends Model {
 
   @PrimaryKey
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.STRING,
     allowNull: false,
-    defaultValue: true,
   })
   @ForeignKey(() => ApiScope)
   @ApiProperty({

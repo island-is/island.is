@@ -160,7 +160,6 @@ const HearingArrangements = () => {
                     'translator',
                     event.target.value,
                     [],
-                    workingCase,
                     setWorkingCase,
                   )
                 }

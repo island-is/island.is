@@ -4,14 +4,13 @@ import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
-  CanCreateInput,
 } from './signature-collection.types'
-import { Collection, CollectionStatus } from './types/collection.dto'
+import { Collection } from './types/collection.dto'
 import { List, ListStatus, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
 import { BulkUpload, mapBulkResponse } from './types/bulkUpload.dto'
-import { Success, mapReasons } from './types/success.dto'
+import { Success } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -43,89 +42,16 @@ export class SignatureCollectionAdminClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(): Promise<Collection> {
-    return await this.sharedService.currentCollection(this.collectionsApi)
-  }
-
-  async collectionStatus(auth: Auth): Promise<CollectionStatus> {
-    const collection = await this.currentCollection()
-    // Collection in inital opening time
-    if (collection.isActive) {
-      return CollectionStatus.InitialActive
-    }
-    const allLists = await this.getLists({ collectionId: collection.id }, auth)
-    let hasActive,
-      hasExtended,
-      hasInReview = false
-    allLists.forEach((list) => {
-      if (list.active) {
-        hasActive = true
-      }
-      if (list.endTime > collection.endTime) {
-        hasExtended = true
-      }
-      if (!list.reviewed) {
-        hasInReview = true
-      }
-    })
-    // Initial opening time passed not all lists reviewed
-    if (!hasActive && !collection.processed && hasInReview) {
-      return CollectionStatus.InReview
-    }
-    // Initial opening time passed all lists reviewd
-    if (!hasActive && !collection.processed && !hasInReview) {
-      return CollectionStatus.Processing
-    }
-    // Initial opening time passed, collection has been manually processed
-    if (!hasActive && collection.processed && !hasInReview) {
-      return CollectionStatus.Processed
-    }
-    // Collection active if any lists have been extended
-    if (hasActive && collection.processed && hasExtended) {
-      return CollectionStatus.Active
-    }
-    // Collection had extended lists that have all expired
-    if (!hasActive && collection.processed && hasExtended) {
-      return CollectionStatus.InReview
-    }
-    return CollectionStatus.Inactive
+  async currentCollection(auth: Auth): Promise<Collection> {
+    return await this.sharedService.currentCollection(
+      this.getApiWithAuth(this.collectionsApi, auth),
+    )
   }
 
   async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
-    const collection = await this.currentCollection()
-
     const list = await this.getList(listId, auth)
-    // Collection is open and list is active
-    // List has been extended and is active
-    if (list.endTime > new Date()) {
-      return ListStatus.Active
-    }
-    const isExtended = list.endTime > collection.endTime
-
-    // Initial collection time has passed and list is not active and has not been manually reviewed
-    // Extended list has expired in review
-    if (!list.reviewed) {
-      return ListStatus.InReview
-    }
-
-    if (!isExtended) {
-      // Check if all lists have been reviewed and list is extendable
-      // If collection is processed or if collection is active and not list
-      const collectionStatus = await this.collectionStatus(auth)
-      if (
-        collectionStatus === CollectionStatus.Processed ||
-        collectionStatus === CollectionStatus.Active
-      ) {
-        return ListStatus.Extendable
-      }
-    }
-
-    // Initial collection time has passed and list is not active and has been manually reviewed
-    // Extended list has expired and has been manually reviewed
-    if (list.reviewed) {
-      return ListStatus.Reviewed
-    }
-    return ListStatus.Inactive
+    const { status } = await this.currentCollection(auth)
+    return this.sharedService.getListStatus(list, status)
   }
 
   async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
@@ -144,18 +70,14 @@ export class SignatureCollectionAdminClientService {
     return { success: false }
   }
 
-  async processCollection(auth: Auth): Promise<Success> {
-    const collectionStatus = await this.collectionStatus(auth)
-    if (collectionStatus === CollectionStatus.Processing) {
-      const collection = await this.getApiWithAuth(
-        this.collectionsApi,
-        auth,
-      ).medmaelasofnunIDToggleSofnunPost({
-        iD: parseInt((await this.currentCollection()).id),
-      })
-      return { success: !!collection }
-    }
-    return { success: false }
+  async processCollection(collectionId: string, auth: Auth): Promise<Success> {
+    const collection = await this.getApiWithAuth(
+      this.collectionsApi,
+      auth,
+    ).medmaelasofnunIDToggleSofnunPost({
+      iD: parseInt(collectionId),
+    })
+    return { success: !!collection }
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
@@ -174,45 +96,25 @@ export class SignatureCollectionAdminClientService {
   }
 
   async getSignatures(listId: string, auth: Auth): Promise<Signature[]> {
-    const signatures = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarIDMedmaeliGet({
-      iD: parseInt(listId),
-    })
-    return signatures
-      .map((signature) => mapSignature(signature))
-      .filter((s) => s.valid)
-  }
-
-  async getAreas(collectionId?: string) {
-    if (!collectionId) {
-      const { id } = await this.currentCollection()
-      collectionId = id
-    }
-    const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
-      iD: parseInt(collectionId),
-    })
-    return areas.map((area) => ({
-      id: area.id ?? 0,
-      name: area.nafn ?? '',
-    }))
+    return await this.sharedService.getSignatures(
+      this.getApiWithAuth(this.listsApi, auth),
+      listId,
+    )
   }
 
   async createListsAdmin(
     { collectionId, owner, areas }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, isActive } = await this.currentCollection()
+    const { id, areas: collectionAreas } = await this.currentCollection(auth)
     // check if collectionId is current collection and current collection is open
-    if (collectionId !== id || !isActive) {
-      throw new Error('Collection is not open')
+    if (collectionId !== id) {
+      throw new Error('Collection id input wrong')
     }
 
-    const collectionAreas = await this.getAreas(id)
     const filteredAreas = areas
       ? collectionAreas.filter((area) =>
-          areas.flatMap((a) => parseInt(a.areaId)).includes(area.id),
+          areas.flatMap((a) => a.areaId).includes(area.id),
         )
       : collectionAreas
 
@@ -226,7 +128,7 @@ export class SignatureCollectionAdminClientService {
         simi: owner.phone,
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
-          svaediID: area.id,
+          svaediID: parseInt(area.id),
           listiNafn: `${owner.name} - ${area.name}`,
         })),
       },
@@ -248,39 +150,16 @@ export class SignatureCollectionAdminClientService {
     return { success: !!signature }
   }
 
-  async canCreate({
-    requirementsMet = false,
-    canCreateInfo,
-    isPresidential,
-    ownedLists,
-  }: CanCreateInput): Promise<Success> {
-    // can create if requirements met and collection is active
-    // if collection is presidential and user has no lists otherwise does not have lists for all areas of collection
-    const alreadyOwnsAllLists = isPresidential
-      ? ownedLists.length > 0
-      : await this.getAreas().then(
-          (areas) => areas.length === ownedLists.length,
-        )
-
-    const canCreate = requirementsMet && !alreadyOwnsAllLists
-    const reasons =
-      mapReasons({
-        ...canCreateInfo,
-        notOwner: !alreadyOwnsAllLists,
-      }) ?? []
-    return { success: canCreate, reasons }
-  }
-
   async candidateLookup(
     nationalId: string,
     auth: Auth,
   ): Promise<CandidateLookup> {
-    const collection = await this.currentCollection()
-    const { id, isPresidential } = collection
+    const collection = await this.currentCollection(auth)
+    const { id, isPresidential, areas } = collection
     const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
-    ).medmaelasofnunIDEinsInfoKennitalaGet({
+    ).medmaelasofnunIDEinsInfoAdminKennitalaGet({
       kennitala: nationalId,
       iD: parseInt(id),
     })
@@ -291,14 +170,14 @@ export class SignatureCollectionAdminClientService {
         ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
-    const { success: canCreate, reasons: canCreateInfo } = await this.canCreate(
-      {
+    const { success: canCreate, reasons: canCreateInfo } =
+      await this.sharedService.canCreate({
         requirementsMet: user.maFrambod,
         canCreateInfo: user.maFrambodInfo,
         ownedLists,
         isPresidential,
-      },
-    )
+        areas,
+      })
 
     return {
       nationalId: user.kennitala ?? '',
@@ -326,19 +205,20 @@ export class SignatureCollectionAdminClientService {
 
   async compareBulkSignaturesOnAllLists(
     nationalIds: string[],
+    collectionId: string,
     auth: Auth,
   ): Promise<Signature[]> {
     // Takes a list of nationalIds and returns signatures found on any list in current collection
-    const { id } = await this.currentCollection()
     const signaturesFound = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
     ).medmaelasofnunIDComparePost({
-      iD: parseInt(id),
+      iD: parseInt(collectionId),
       requestBody: nationalIds,
     })
+
     // Get listTitle for signatures
-    const allLists = await this.getLists({ collectionId: id }, auth)
+    const allLists = await this.getLists({ collectionId }, auth)
     const listNameIndexer: Record<string, string> = allLists.reduce(
       (acc, list) => ({ ...acc, [list.id]: list.title }),
       {},
@@ -365,10 +245,19 @@ export class SignatureCollectionAdminClientService {
       newEndDate: newEndDate,
     })
     const { dagsetningLokar } = list
+    const success = dagsetningLokar
+      ? newEndDate.getTime() === dagsetningLokar.getTime()
+      : false
+
+    // Can only toggle list if it is in review or reviewed
+    if (success && list.lokadHandvirkt) {
+      await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarIDToggleListPatch({ iD: parseInt(listId) })
+    }
     return {
-      success: dagsetningLokar
-        ? newEndDate.getTime() === dagsetningLokar.getTime()
-        : false,
+      success,
     }
   }
 

@@ -33,6 +33,15 @@ export const messages = defineMessages({
     id: 'sp.assets:housing',
     defaultMessage: 'Íbúðarhúsnæði',
   },
+  realEstate: {
+    id: 'sp.assets:real-estate',
+    defaultMessage: 'Fasteign',
+  },
+  realEstateDetailIntro: {
+    id: 'sp.assets:real-estate-detail-intro',
+    defaultMessage:
+      'Hér koma upplýsingar um fasteignina frá Húsnæðis og Mannvirkjastofnun.',
+  },
   appraisal: {
     id: 'sp.assets:appraisal',
     defaultMessage: 'Fasteignamat',
@@ -874,6 +883,18 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:base-patent',
     defaultMessage: 'Grunneinkaleyfi',
   },
+  design: {
+    id: 'sp.intellectual-property:design',
+    defaultMessage: 'Hönnun',
+  },
+  trademark: {
+    id: 'sp.intellectual-property:trademark',
+    defaultMessage: 'Vörumerki',
+  },
+  patent: {
+    id: 'sp.intellectual-property:patent',
+    defaultMessage: 'Einkaleyfi',
+  },
   title: {
     id: 'sp.intellectual-property:title',
     defaultMessage: 'Hugverkaréttindin mín',
@@ -1166,6 +1187,15 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:spc-number',
     defaultMessage: 'SPC númer',
   },
+  notFound: {
+    id: 'sp.intellectual-property:not-found',
+    defaultMessage: '{arg} ekki skráð',
+  },
+  notFoundText: {
+    id: 'sp.intellectual-property:not-found-text',
+    defaultMessage:
+      'Ef þú telur að hér eigi að birtast {arg}, vinsamlegast hafðu samband við þjónustuaðila',
+  },
 })
 
 export const urls = defineMessages({
@@ -1196,6 +1226,10 @@ export const urls = defineMessages({
   hideName: {
     id: 'sp.vehicles:url-hide-private-name',
     defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
+  },
+  recycleCar: {
+    id: 'sp.vehicles:url-recycle-car',
+    defaultMessage: 'http://island.is/umsoknir/skilavottord',
   },
   instructorApplication: {
     id: 'sp.vehicles:url-instructor-application',

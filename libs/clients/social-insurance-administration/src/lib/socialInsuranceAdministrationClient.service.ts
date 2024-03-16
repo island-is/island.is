@@ -11,6 +11,8 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
+  PensionCalculatorApi,
+  ApiProtectedV1PensionCalculatorPostRequest,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -20,6 +22,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly applicantApi: ApplicantApi,
     private readonly paymentPlanApi: PaymentPlanApi,
     private readonly currencyApi: GeneralApi,
+    private readonly pensionCalculatorApi: PensionCalculatorApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -49,6 +52,12 @@ export class SocialInsuranceAdministrationClientService {
     return this.paymentPlanApiWithAuth(
       user,
     ).apiProtectedV1PaymentPlanLegitimatepaymentsGet()
+  }
+
+  getValidYearsForPaymentPlan(user: User): Promise<Array<number>> {
+    return this.paymentPlanApiWithAuth(
+      user,
+    ).apiProtectedV1PaymentPlanValidyearsGet()
   }
 
   sendApplication(
@@ -94,5 +103,14 @@ export class SocialInsuranceAdministrationClientService {
 
   async getCurrencies(user: User): Promise<Array<string>> {
     return this.currencyApiWithAuth(user).apiProtectedV1GeneralCurrenciesGet()
+  }
+
+  async getPensionCalculation(
+    parameters: ApiProtectedV1PensionCalculatorPostRequest['trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput'],
+  ) {
+    return this.pensionCalculatorApi.apiProtectedV1PensionCalculatorPost({
+      trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput:
+        parameters,
+    })
   }
 }

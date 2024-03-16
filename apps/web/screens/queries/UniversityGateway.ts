@@ -21,6 +21,9 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
         durationInYears
         externalId
         schoolAnswerDate
+        specializationExternalId
+        specializationNameEn
+        specializationNameIs
         id
         iscedCode
         studentAnswerDate
@@ -42,6 +45,7 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
       contentfulLogoUrl
       contentfulTitle
       contentfulLink
+      contentfulLinkEn
     }
   }
 `
@@ -90,6 +94,8 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       departmentNameIs
       descriptionEn
       descriptionIs
+      descriptionHtmlEn
+      descriptionHtmlIs
       durationInYears
       externalId
       externalUrlEn

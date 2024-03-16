@@ -23,6 +23,7 @@ import {
   CaseMessage,
   MessageService,
   MessageType,
+  PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -144,6 +145,7 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
+    | 'indictmentDeniedExplanation'
   > {
   type?: CaseType
   state?: CaseState
@@ -496,13 +498,34 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages: (CaseMessage | PoliceCaseMessage)[] = [
       {
         type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
-    ])
+    ]
+
+    if (
+      theCase.type === CaseType.INDICTMENT &&
+      theCase.origin === CaseOrigin.LOKE
+    ) {
+      messages.push({
+        type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+      theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+        messages.push({
+          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
+          user,
+          caseId: theCase.id,
+          policeCaseNumber,
+        }),
+      )
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForCourtCaseConnectionToQueue(
@@ -796,6 +819,32 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForAppealWithdrawnToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
+  private addMessagesForDeniedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -831,6 +880,14 @@ export class CaseService {
       }
     }
 
+    if (
+      isIndictmentCase(updatedCase.type) &&
+      updatedCase.state === CaseState.DRAFT &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
+    }
+
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
@@ -841,6 +898,8 @@ export class CaseService {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.WITHDRAWN) {
+        await this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }
     }
 

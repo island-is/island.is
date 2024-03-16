@@ -14,14 +14,13 @@ export const sectionApplicationFor = buildSubSection({
   children: [
     buildMultiField({
       id: 'info',
-      title: m.drivingLicenseApplyingForTitle,
+      title: m.applicationDrivingLicenseTitle,
+      description: m.drivingLicenseApplyingForTitle,
       children: [
         buildRadioField({
           id: 'applicationFor',
-          backgroundColor: 'white',
           title: '',
-          description: '',
-          space: 0,
+          backgroundColor: 'white',
           largeButtons: true,
           options: (app) => {
             const { currentLicense } = getValueViaPath<DrivingLicense>(

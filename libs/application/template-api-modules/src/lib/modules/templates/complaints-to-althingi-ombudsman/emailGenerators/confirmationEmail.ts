@@ -2,12 +2,14 @@ import { ComplaintsToAlthingiOmbudsmanAnswers } from '@island.is/application/tem
 import { SendMailOptions } from 'nodemailer'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../complaints-to-althingi-ombudsman.utils'
+import { DocumentInfo } from '@island.is/clients/althingi-ombudsman'
 
 interface ConfirmationEmail {
   (
     props: EmailTemplateGeneratorProps,
     applicationSenderName: string,
     applicationSenderEmail: string,
+    pdf: DocumentInfo,
   ): SendMailOptions
 }
 
@@ -15,6 +17,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   props,
   applicationSenderName,
   applicationSenderEmail,
+  pdf,
 ) => {
   const { application } = props
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
@@ -62,5 +65,12 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         },
       ],
     },
+    attachments: [
+      {
+        filename: pdf.fileName,
+        content: pdf.content,
+        encoding: 'base64',
+      },
+    ],
   }
 }

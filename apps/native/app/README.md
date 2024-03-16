@@ -2,7 +2,7 @@
 
 This is the native app Ísland.is for iOS and Android.
 
-## Installation
+## 1. Installation
 
 ```bash
 yarn install
@@ -10,23 +10,25 @@ bundle install
 npx pod-install
 ```
 
-### Building for iOS
+### 2a. Building for iOS
 
 ```bash
 yarn run ios
 ```
 
-### Building for Android
+### 2b. Building for Android
 
 ```bash
 yarn run android
 ```
 
-### Start development server
+### 3. Start development server
 
 ```
 yarn start
 ```
+
+## Deployment
 
 ### Publishing a Beta
 
@@ -40,6 +42,8 @@ Make sure to increment the version of the app by running `yarn run version:incre
 
 ```bash
 yarn run version:increment
+git add .
+git commit -m "feat(native/app): release v1.0.0"
 ```
 
 ## NX commands

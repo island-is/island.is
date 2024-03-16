@@ -64,7 +64,7 @@ export const m = defineMessages({
     description: '',
   },
   uploadedTime: {
-    id: 'sp.signatureCollection:signedTime',
+    id: 'sp.signatureCollection:uploadedTime',
     defaultMessage: 'Lesið inn:',
     description: '',
   },
@@ -95,6 +95,17 @@ export const m = defineMessages({
   },
 
   /* Signee View */
+  noCollectionIsActive: {
+    id: 'sp.signatureCollection:noCollectionIsActive',
+    defaultMessage: 'Engin söfnun í gangi',
+    description: '',
+  },
+  noCollectionIsActiveDescription: {
+    id: 'sp.signatureCollection:noCollectionIsActiveDescription#markdown',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við Þjóðskrá Íslands.',
+    description: '',
+  },
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
     defaultMessage: 'Frambjóðandi sem þú hefur mælt með: ',
@@ -197,11 +208,6 @@ export const m = defineMessages({
   signeesHeader: {
     id: 'sp.signatureCollection:signeesHeader',
     defaultMessage: 'Yfirlit meðmæla',
-    description: '',
-  },
-  downloadList: {
-    id: 'sp.signatureCollection:downloadList',
-    defaultMessage: 'Sækja lista',
     description: '',
   },
   searchInListPlaceholder: {

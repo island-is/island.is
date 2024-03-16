@@ -24,3 +24,8 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
 }
+
+export type ErrorValue = { [key: string]: any }
+
+// TODO: this value should be fetched from the API at some point
+export const TAX_FREE_LIMIT = 6203409

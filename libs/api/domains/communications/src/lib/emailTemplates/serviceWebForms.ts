@@ -40,6 +40,9 @@ enum SyslumennCategories {
 
   // Default/fallback email address
   DEFAULT = 'default',
+
+  // Kaup á íbúðarhúsnæðum í Grindavík
+  KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK = '6Mykuc8BY9W5HiymxRHGsb',
 }
 
 enum Syslumenn {
@@ -77,6 +80,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.FULLNUSTUGERDIR]:
       'vestmannaeyjar.fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'vestmannaeyjar@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.NORDURLANDI_EYSTRA]: {
     [SyslumennCategories.FJOLSKYLDUMAL]:
@@ -98,6 +103,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.FULLNUSTUGERDIR]:
       'nordurlandeystra.fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'nordurlandeystra@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.AUSTURLAND]: {
     [SyslumennCategories.FJOLSKYLDUMAL]: 'austurland.fjolskylda@syslumenn.is',
@@ -113,6 +120,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.LEYFI]: 'austurland.leyfi@syslumenn.is',
     [SyslumennCategories.FULLNUSTUGERDIR]: 'austurland.fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'austurland@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.VESTURLAND]: {
     [SyslumennCategories.FJOLSKYLDUMAL]: 'vesturland.fjolskylda@syslumenn.is',
@@ -128,6 +137,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.LEYFI]: 'vesturland.leyfi@syslumenn.is',
     [SyslumennCategories.FULLNUSTUGERDIR]: 'vesturland.fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'vesturland@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.HOFUDBORGARSVAEDID]: {
     [SyslumennCategories.FJOLSKYLDUMAL]: 'fjolskylda@syslumenn.is',
@@ -142,6 +153,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.LEYFI]: 'leyfi@syslumenn.is',
     [SyslumennCategories.FULLNUSTUGERDIR]: 'fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'smh@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.SUDURNES]: {
     [SyslumennCategories.FJOLSKYLDUMAL]: 'sudurnes.fjolskylda@syslumenn.is',
@@ -156,6 +169,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.LEYFI]: 'sudurnes.leyfi@syslumenn.is',
     [SyslumennCategories.FULLNUSTUGERDIR]: 'sudurnes.fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'sudurnes@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.SUDURLAND]: {
     [SyslumennCategories.FJOLSKYLDUMAL]: 'sudurland.fjolskylda@syslumenn.is',
@@ -170,6 +185,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.LEYFI]: 'sudurland.leyfi@syslumenn.is',
     [SyslumennCategories.FULLNUSTUGERDIR]: 'sudurland.fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'sudurland@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.NORDURLAND_VESTRA]: {
     [SyslumennCategories.FJOLSKYLDUMAL]: 'nordurlandvestra@syslumenn.is',
@@ -185,6 +202,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.LEYFI]: 'nordurlandvestra@syslumenn.is',
     [SyslumennCategories.FULLNUSTUGERDIR]: 'nordurlandvestra@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'nordurlandvestra@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
   [Syslumenn.VESTFIRDIR]: {
     [SyslumennCategories.FJOLSKYLDUMAL]: 'vestfirdir.fjolskylda@syslumenn.is',
@@ -200,6 +219,8 @@ export const syslumennEmails: Record<
     [SyslumennCategories.LEYFI]: 'vestfirdir.leyfi@syslumenn.is',
     [SyslumennCategories.FULLNUSTUGERDIR]: 'vestfirdir.fullnusta@syslumenn.is',
     [SyslumennCategories.DEFAULT]: 'vestfirdir@syslumenn.is',
+    [SyslumennCategories.KAUP_A_IBUDARHUSNAEDUM_I_GRINDAVIK]:
+      'ibudir@syslumenn.zendesk.com',
   },
 }
 
@@ -331,7 +352,7 @@ const grindavikEmails = {
 }
 
 const transportAuthorityEmails = {
-  umferd: 'adstod@samgongustofa.is',
+  umferd: 'afgreidsla@samgongustofa.is',
   siglingar: 'sigling@samgongustofa.is',
 }
 

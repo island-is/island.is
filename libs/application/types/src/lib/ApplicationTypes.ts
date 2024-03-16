@@ -58,8 +58,13 @@ export enum ApplicationTypes {
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  UNIVERSITY = 'University',
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  DEREGISTER_MACHINE = 'DeregisterMachine',
+  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
+  REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
+  OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
 }
 
 export const ApplicationConfigurations = {
@@ -89,7 +94,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
-    translation: 'pl.application',
+    translation: ['pl.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
@@ -133,7 +138,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
-    translation: 'ctao.application',
+    translation: ['ctao.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
     slug: 'slysatilkynning',
@@ -310,5 +315,25 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekis',
     translation: 'aosh.cms.application',
+  },
+  [ApplicationTypes.UNIVERSITY]: {
+    slug: 'haskolanam',
+    translation: 'uni.application',
+  },
+  [ApplicationTypes.DEREGISTER_MACHINE]: {
+    slug: 'afskraning-taekis',
+    translation: 'aosh.drm.application',
+  },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
+    translation: ['ghb.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
+    slug: 'beidni-um-skodun-taekis',
+    translation: 'aosh.rifm.application',
+  },
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
+    slug: 'stjornartidindi',
+    translation: 'ojoi.application',
   },
 }

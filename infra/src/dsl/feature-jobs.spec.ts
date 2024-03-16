@@ -62,7 +62,7 @@ describe('Feature jobs', () => {
           paths: ['/'],
         },
       })
-      .postgres()
+      .db()
 
     dev = getEnvironment()
     const services = await getFeatureAffectedServices(

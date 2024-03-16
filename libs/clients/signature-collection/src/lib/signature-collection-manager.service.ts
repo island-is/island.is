@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { GetListInput } from './signature-collection.types'
-import { Collection } from './types/collection.dto'
-import { List } from './types/list.dto'
+import { Collection, CollectionStatus } from './types/collection.dto'
+import { List, ListStatus } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -26,8 +26,10 @@ export class SignatureCollectionManagerClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(): Promise<Collection> {
-    return await this.sharedService.currentCollection(this.collectionsApi)
+  async currentCollection(auth: Auth): Promise<Collection> {
+    return await this.sharedService.currentCollection(
+      this.getApiWithAuth(this.collectionsApi, auth),
+    )
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
@@ -46,14 +48,14 @@ export class SignatureCollectionManagerClientService {
   }
 
   async getSignatures(listId: string, auth: Auth): Promise<Signature[]> {
-    const signatures = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarIDMedmaeliGet({
-      iD: parseInt(listId),
-    })
-    return signatures
-      .map((signature) => mapSignature(signature))
-      .filter((s) => s.valid)
+    return await this.sharedService.getSignatures(
+      this.getApiWithAuth(this.listsApi, auth),
+      listId,
+    )
+  }
+  async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
+    const list = await this.getList(listId, auth)
+    const { status } = await this.currentCollection(auth)
+    return this.sharedService.getListStatus(list, status)
   }
 }

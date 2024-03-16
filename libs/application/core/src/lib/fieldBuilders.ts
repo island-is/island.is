@@ -38,10 +38,13 @@ import {
   NationalIdWithNameField,
   ActionCardListField,
   TableRepeaterField,
+  StaticTableField,
+  HiddenInputWithWatchedValueField,
+  HiddenInputField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
-import { SpanType } from '@island.is/island-ui/core/types'
+import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (
@@ -384,6 +387,9 @@ export function buildKeyValueField(data: {
   colSpan?: SpanType
   condition?: Condition
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }): KeyValueField {
   const {
     label,
@@ -392,6 +398,9 @@ export function buildKeyValueField(data: {
     width = 'full',
     colSpan,
     display = 'block',
+    divider = false,
+    paddingX,
+    paddingY,
   } = data
 
   return {
@@ -404,9 +413,12 @@ export function buildKeyValueField(data: {
     colSpan,
     label,
     value,
+    divider,
     type: FieldTypes.KEY_VALUE,
     component: FieldComponents.KEY_VALUE,
     display,
+    paddingX,
+    paddingY,
   }
 }
 
@@ -483,7 +495,7 @@ export function buildPaymentPendingField(data: {
 export function buildMessageWithLinkButtonField(
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField {
-  const { id, title, url, message, buttonTitle } = data
+  const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
     children: undefined,
     id,
@@ -491,6 +503,8 @@ export function buildMessageWithLinkButtonField(
     url,
     message,
     buttonTitle,
+    marginTop,
+    marginBottom,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
   }
@@ -613,6 +627,58 @@ export function buildPdfLinkButtonField(
   }
 }
 
+/**
+ * Constructs a hidden input field configuration object with a watched value.
+ * This function is specifically designed for creating hidden input fields that dynamically
+ * update their value based on the value of another field specified by `watchValue`.
+ *
+ * @param {Omit<HiddenInputWithWatchedValueField, 'type' | 'component' | 'children' | 'title'>} data
+ * - `id`: Unique identifier for the hidden input field, this will get stored in answers.
+ * - `watchValue`: The answer id that this hidden input should watch and update its value accordingly.
+ * - `valueModifier`: An optional function to modify the watched value before setting it.
+ */
+export const buildHiddenInputWithWatchedValue = (
+  data: Omit<
+    HiddenInputWithWatchedValueField,
+    'type' | 'component' | 'children' | 'title'
+  >,
+): HiddenInputWithWatchedValueField => {
+  return {
+    ...extractCommonFields({ title: '', ...data }),
+    id: data.id,
+    type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE,
+    component: FieldComponents.HIDDEN_INPUT,
+    valueModifier: data.valueModifier,
+    watchValue: data.watchValue,
+    title: '',
+    children: undefined,
+  }
+}
+
+/**
+ * Constructs a hidden input field configuration object with a default value.
+ * This function creates a configuration for hidden input fields that are initialized
+ * with a static or computed default value.
+ *
+ * @param {Omit<HiddenInputField, 'type' | 'component' | 'children' | 'title'>} data
+ * - `id`: Unique identifier for the hidden input field.
+ * - `defaultValue`: The default value for the hidden input field. This can be a static value
+ * or a function that computes the value based on the application state or other criteria.
+ */
+export const buildHiddenInput = (
+  data: Omit<HiddenInputField, 'type' | 'component' | 'children' | 'title'>,
+): HiddenInputField => {
+  return {
+    ...extractCommonFields({ title: '', ...data }),
+    id: data.id,
+    type: FieldTypes.HIDDEN_INPUT,
+    component: FieldComponents.HIDDEN_INPUT,
+    title: '',
+    children: undefined,
+    defaultValue: data.defaultValue,
+  }
+}
+
 export function buildNationalIdWithNameField(
   data: Omit<NationalIdWithNameField, 'type' | 'component' | 'children'>,
 ): NationalIdWithNameField {
@@ -670,9 +736,13 @@ export function buildTableRepeaterField(
     fields,
     table,
     formTitle,
+    marginTop,
+    marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
   } = data
 
   return {
@@ -683,8 +753,59 @@ export function buildTableRepeaterField(
     fields,
     table,
     formTitle,
+    marginTop,
+    marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
+  }
+}
+
+export function buildStaticTableField(
+  data: Omit<
+    StaticTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  >,
+): StaticTableField {
+  const {
+    header,
+    condition,
+    dataTestId,
+    title,
+    description,
+    rows,
+    summary,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+  } = data
+
+  return {
+    id: '',
+    title,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.STATIC_TABLE,
+    component: FieldComponents.STATIC_TABLE,
+    header,
+    rows,
+    summary,
+    marginTop,
+    marginBottom,
+    titleVariant,
   }
 }

@@ -18,6 +18,7 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   NO_UNEMPLOYED_BENEFITS,
+  Languages,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
@@ -113,6 +114,7 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.phoneNumber },
     ),
+    language: z.enum([Languages.IS, Languages.EN]),
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
@@ -317,16 +319,6 @@ export const dataSchema = z.object({
     ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
-  employer: z.object({
-    selfEmployed: z.object({
-      file: z
-        .array(FileSchema)
-        .optional()
-        .refine((a) => a === undefined || a.length > 0, {
-          params: errorMessages.requiredAttachment,
-        }),
-    }),
-  }),
   fileUpload: z.object({
     selfEmployedFile: z
       .array(FileSchema)
@@ -376,12 +368,6 @@ export const dataSchema = z.object({
       .refine((a) => a === undefined || a.length > 0, {
         params: errorMessages.requiredAttachment,
       }),
-    residenceGrant: z
-      .array(FileSchema)
-      .optional()
-      .refine((a) => a === undefined || a.length > 0, {
-        params: errorMessages.requiredAttachment,
-      }),
     additionalDocuments: z
       .array(FileSchema)
       .optional()
@@ -389,6 +375,44 @@ export const dataSchema = z.object({
         params: errorMessages.requiredAttachment,
       }),
   }),
+  employers: z
+    .array(
+      z
+        .object({
+          email: z
+            .string()
+            .email()
+            .refine((x) => x.trim().length > 0, {
+              params: errorMessages.employerEmail,
+            }),
+          phoneNumber: z
+            .string()
+            .refine(
+              (p) => {
+                const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+                const phoneNumberStartStr = ['6', '7', '8']
+                if (phoneNumber)
+                  return (
+                    phoneNumber.isValid() &&
+                    phoneNumberStartStr.some((substr) =>
+                      phoneNumber.nationalNumber.startsWith(substr),
+                    )
+                  )
+                else return true
+              },
+              { params: errorMessages.phoneNumber },
+            )
+            .optional(),
+          ratio: z.string(),
+          stillEmployed: z.enum([YES, NO]).optional(),
+        })
+        .refine((e) => ('stillEmployed' in e ? !!e.stillEmployed : true), {
+          path: ['stillEmployed'],
+        }),
+    )
+    .refine((e) => e === undefined || e.length > 0, {
+      params: errorMessages.employersRequired,
+    }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

@@ -2,13 +2,12 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  EmptyState,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 import { Box } from '@island.is/island-ui/core'
-import { ipMessages, ipMessages as messages } from '../../lib/messages'
+import { ipMessages } from '../../lib/messages'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
@@ -46,14 +45,6 @@ const IntellectualPropertiesOverview = () => {
     </Box>
   )
 
-  if (error && !loading) {
-    return <Problem error={error} />
-  }
-
-  if (!data?.intellectualProperties?.totalCount && !loading) {
-    return <Problem type="no_data" />
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -67,12 +58,19 @@ const IntellectualPropertiesOverview = () => {
           <CardLoader />
         </Box>
       )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {!loading && (data?.intellectualProperties?.totalCount ?? 0) < 1 && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            return <Problem type="no_data" />
-          </Box>
-        </Box>
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noDataFoundVariable, {
+            arg: formatMessage(m.intellectualProperties).toLowerCase(),
+          })}
+          message={formatMessage(m.noDataFoundVariableDetailVariation, {
+            arg: formatMessage(m.intellectualProperties).toLowerCase(),
+          })}
+          imgSrc="./assets/images/sofa.svg"
+        />
       )}
       {!loading &&
         !error &&
@@ -94,8 +92,8 @@ const IntellectualPropertiesOverview = () => {
                   ),
                   ip.status,
                 )
-              case 'IntellectualPropertiesPatentIS':
               case 'IntellectualPropertiesPatentEP':
+              case 'IntellectualPropertiesPatentIS':
               case 'IntellectualPropertiesSPC':
                 return generateActionCard(
                   index,

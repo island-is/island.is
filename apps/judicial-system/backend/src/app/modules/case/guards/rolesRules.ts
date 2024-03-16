@@ -47,6 +47,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'requestDriversLicenseSuspension',
   'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
+  'indictmentDeniedExplanation',
 ]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
@@ -174,9 +175,12 @@ export const prosecutorTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.OPEN,
+    CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
+    CaseTransition.WITHDRAW_APPEAL,
+    CaseTransition.DENY_INDICTMENT,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -194,6 +198,22 @@ export const prosecutorTransitionRule: RolesRule = {
       return false
     }
 
+    if (
+      !isIndictmentCase(theCase.type) &&
+      (request.body.transition === CaseTransition.DENY_INDICTMENT ||
+        request.body.transition === CaseTransition.ASK_FOR_CONFIRMATION)
+    ) {
+      return false
+    }
+
+    // Deny transition if prosecutor did not appeal the case
+    if (
+      request.body.transition === CaseTransition.WITHDRAW_APPEAL &&
+      !theCase.prosecutorPostponedAppealDate
+    ) {
+      return false
+    }
+
     return true
   },
 }
@@ -206,6 +226,7 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.OPEN,
+    CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
   ],
@@ -216,7 +237,7 @@ export const defenderTransitionRule: RolesRule = {
   role: UserRole.DEFENDER,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.APPEAL],
+  dtoFieldValues: [CaseTransition.APPEAL, CaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => {
     const theCase = request.case
 
@@ -227,6 +248,14 @@ export const defenderTransitionRule: RolesRule = {
 
     // Deny transitions on indictment cases
     if (isIndictmentCase(theCase.type)) {
+      return false
+    }
+
+    // Deny withdrawal if defender did not appeal the case
+    if (
+      request.body.transition === CaseTransition.WITHDRAW_APPEAL &&
+      !theCase.accusedPostponedAppealDate
+    ) {
       return false
     }
 

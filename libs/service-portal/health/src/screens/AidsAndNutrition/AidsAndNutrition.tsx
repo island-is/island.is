@@ -54,14 +54,7 @@ const AidsAndNutrition = () => {
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 
-      {error && (
-        <Problem
-          size="small"
-          noBorder={false}
-          type="internal_service_error"
-          error={error}
-        />
-      )}
+      {error && <Problem error={error} noBorder={false} />}
 
       {loading && !error && <SkeletonLoader space={1} height={30} repeat={4} />}
 

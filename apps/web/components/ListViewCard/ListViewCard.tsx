@@ -22,6 +22,7 @@ type CardProps = {
   href: string
   checkboxId?: string
   checked?: boolean
+  subHeading?: string
 }
 
 export const ListViewCard = ({
@@ -34,10 +35,12 @@ export const ListViewCard = ({
   heading,
   checked,
   href,
+  subHeading,
 }: CardProps) => {
   return (
-    <Box>
+    <Box height="full">
       <Box
+        height="full"
         display="flex"
         flexDirection="column"
         position="relative"
@@ -70,15 +73,29 @@ export const ListViewCard = ({
         </Box>
         <LinkV2 href={href} passHref>
           <Text
-            as="h4"
+            as="h3"
             variant="h4"
             color="blue400"
             truncate={false}
-            title={heading}
-            paddingBottom={3}
+            paddingBottom={subHeading ? 0 : 3}
+            lineHeight="sm"
           >
             {heading}
           </Text>
+          {subHeading && (
+            <Box style={{ paddingTop: '4px' }}>
+              <Text
+                variant="eyebrow"
+                color="blue400"
+                truncate={false}
+                title={subHeading}
+                paddingBottom={3}
+                lineHeight="sm"
+              >
+                {subHeading}
+              </Text>
+            </Box>
+          )}
         </LinkV2>
         {infoItems.map((item) => {
           return (
@@ -90,7 +107,7 @@ export const ListViewCard = ({
               paddingBottom={1}
             >
               <Box paddingRight={2}>{item.icon}</Box>
-              <Text whiteSpace="nowrap" variant="small">
+              <Text whiteSpace="normal" variant="small">
                 {item.title}
               </Text>
             </Box>
@@ -107,19 +124,37 @@ export const ListViewCard = ({
             />
           </Box>
         )}
-        <Box paddingTop={3} width="full">
-          <Button
-            {...(cta.buttonType ?? { variant: cta.variant })}
-            size={cta.size}
-            fluid
-            onClick={cta.onClick}
-            disabled={cta.disabled}
-            icon={cta.icon}
-            iconType={cta.iconType}
-            nowrap
-          >
-            {cta.label}
-          </Button>
+        <Box paddingTop={3} width="full" height="full">
+          <Box display={'flex'} alignItems={'flexEnd'} height="full">
+            {cta.href ? (
+              <LinkV2 href={cta.href} newTab={true}>
+                <Button
+                  {...(cta.buttonType ?? { variant: cta.variant })}
+                  size={cta.size}
+                  fluid
+                  disabled={cta.disabled}
+                  icon={cta.icon}
+                  iconType={cta.iconType}
+                  nowrap
+                >
+                  {cta.label}
+                </Button>
+              </LinkV2>
+            ) : (
+              <Button
+                {...(cta.buttonType ?? { variant: cta.variant })}
+                size={cta.size}
+                fluid
+                onClick={cta.onClick && cta.onClick}
+                disabled={cta.disabled}
+                icon={cta.icon}
+                iconType={cta.iconType}
+                nowrap
+              >
+                {cta.label}
+              </Button>
+            )}
+          </Box>
         </Box>
       </Box>
     </Box>

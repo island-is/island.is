@@ -6,17 +6,14 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
+import {
+  formatBankInfo,
+  formatCurrency,
+} from '@island.is/application/ui-components'
 import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../../lib/messages'
-import {
-  ClaimsData,
-  EstateAssets,
-  OtherAssets,
-  StocksData,
-  otherassetsData,
-} from '../../types'
+import { ClaimsData, EstateAssets, StocksData } from '../../types'
 
 export const overviewAssets = [
   buildDescriptionField({
@@ -36,20 +33,25 @@ export const overviewAssets = [
     {
       cards: ({ answers }: Application) => {
         const realEstateAssets = (answers.assets as unknown as EstateAssets)
-          .realEstate.data
-        return (
-          realEstateAssets.map((asset: any) => ({
+          ?.realEstate?.data
+
+        return (realEstateAssets ?? []).map((asset: any) => {
+          const propertyValuation = parseFloat(asset.propertyValuation)
+          const propertyShare = parseFloat(asset.share)
+
+          return {
             title: asset.description,
             description: [
               `${m.assetNumber.defaultMessage}: ${asset.assetNumber}`,
               m.realEstateEstimation.defaultMessage +
                 ': ' +
-                (asset.propertyValuation
-                  ? formatCurrency(asset.propertyValuation)
+                (propertyValuation
+                  ? formatCurrency(String(propertyValuation))
                   : '0 kr.'),
+              m.propertyShare.defaultMessage + `: ${propertyShare}%`,
             ],
-          })) ?? []
-        )
+          }
+        })
       },
     },
   ),
@@ -189,18 +191,29 @@ export const overviewAssets = [
       doesNotRequireAnswer: true,
     },
     {
-      cards: ({ answers }: Application) => {
-        const bankAccounts = (answers.assets as unknown as EstateAssets)
-          .bankAccounts.data
-        return (
-          bankAccounts.map((asset: any) => ({
-            title: asset.accountNumber,
+      cards: ({ answers }: Application) =>
+        (
+          (answers.assets as unknown as EstateAssets).bankAccounts.data ?? []
+        ).map((account) => {
+          const isForeign = account.foreignBankAccount?.length
+
+          return {
+            title: isForeign
+              ? account.accountNumber
+              : formatBankInfo(account.accountNumber ?? ''),
             description: [
-              asset.balance ? formatCurrency(asset.balance) : '0 kr.',
+              `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
+                account.capital ?? '0',
+              )}`,
+              `${
+                m.bankAccountPenaltyInterestRates.defaultMessage
+              }: ${formatCurrency(account.penalityInterestRates ?? '0')}`,
+              `${m.bankAccountForeign.defaultMessage}: ${
+                isForeign ? m.yes.defaultMessage : m.no.defaultMessage
+              }`,
             ],
-          })) ?? []
-        )
-      },
+          }
+        }),
     },
   ),
   buildKeyValueField({
@@ -232,6 +245,7 @@ export const overviewAssets = [
         return (
           claims.map((asset: ClaimsData) => ({
             title: asset.issuer,
+            titleRequired: false,
             description: [
               m.claimsAmount.defaultMessage +
                 ': ' +
@@ -271,6 +285,7 @@ export const overviewAssets = [
         return (
           stocks.map((stock: StocksData) => ({
             title: stock.organization,
+            titleRequired: false,
             description: [
               `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
                 stock.nationalId ?? '',

@@ -15,6 +15,7 @@ const UniversityStudiesFooter: React.FC<
   const organizationNamespace = useMemo(() => {
     return JSON.parse(organization?.namespace?.fields || '{}')
   }, [organization?.namespace?.fields])
+
   const n = useNamespace(organizationNamespace)
 
   return (
@@ -39,7 +40,7 @@ const UniversityStudiesFooter: React.FC<
       >
         <Box position="absolute" className={styles.ellipsisLeft}></Box>
         <Box position="absolute" className={styles.ellipsisRight}></Box>
-        <Box className={styles.footerLogoContainer} width="full">
+        <Box width="full">
           <img
             src={organization?.logo?.url}
             className={styles.footerLogo}
@@ -52,28 +53,23 @@ const UniversityStudiesFooter: React.FC<
           width="full"
         >
           <Box display={'flex'} className={styles.footerFirstColumnContainer}>
-            <LinkV2 href="https://www.stjornarradid.is/default.aspx?PageID=a496498d-6ce4-40b2-b339-fd61987a9918">
+            <LinkV2
+              href={n(
+                'privacyPolicy',
+                'https://island.is/en/personuverndarstefna-stafraent-islands',
+              )}
+            >
               <Text color="blue600" variant="medium">
                 <span style={{ textDecoration: 'underline' }}>
                   {n('footerPersonalInfo', 'Meðferð persónuupplýsinga')}
                 </span>
               </Text>
             </LinkV2>
-            <LinkV2 href="https://www.stjornarradid.is/raduneyti/haskola-idnadar-og-nyskopunarraduneytid/">
-              <Text color="blue600" variant="medium">
-                <span style={{ textDecoration: 'underline' }}>
-                  {n(
-                    'footerEmbassy',
-                    'Háskóla-, iðnaðar- og nýsköpunarráðuneytið',
-                  )}
-                </span>
-              </Text>
-            </LinkV2>
+            <Text color="blue600" variant="medium">
+              {n('footerEmbassy', 'Háskóla-, iðnaðar- og nýsköpunarráðuneytið')}
+            </Text>
           </Box>
           <Box display={'flex'} className={styles.footerSecondColumnContainer}>
-            <Text color="blue600" variant="medium" fontWeight="semiBold">
-              Aðstoð
-            </Text>
             <Box display={'flex'} style={{ gap: '0.5rem' }}>
               <Text color="blue600" variant="medium">
                 {n('email', 'netfang')}:{' '}
