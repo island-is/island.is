@@ -15,7 +15,7 @@ import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
-import { SkipField } from '../user-profile/types/SkipField'
+import { NudgeFrom } from '../types/nudge-from'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -262,16 +262,16 @@ export class UserProfileService {
     )
   }
 
-  async confirmNudge(nationalId: string, skipField: SkipField): Promise<void> {
+  async confirmNudge(nationalId: string, nudgeFrom: NudgeFrom): Promise<void> {
     const date = new Date()
     await this.userProfileModel.upsert({
       nationalId,
       lastNudge: date,
-      nextNudge: addMonths(date, skipField === SkipField.OVERWIEW ? 6 : 1),
-      ...(skipField === SkipField.EMAIL && {
+      nextNudge: addMonths(date, nudgeFrom === NudgeFrom.OVERVIEW ? 6 : 1),
+      ...(nudgeFrom === NudgeFrom.EMAIL && {
         emailStatus: DataStatus.EMPTY,
       }),
-      ...(skipField === SkipField.MOBILE_PHONE_NUMBER && {
+      ...(nudgeFrom === NudgeFrom.MOBILE_PHONE_NUMBER && {
         mobileStatus: DataStatus.EMPTY,
       }),
     })

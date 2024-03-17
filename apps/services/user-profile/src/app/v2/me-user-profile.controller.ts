@@ -25,7 +25,8 @@ import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-import { SkipField } from '../user-profile/types/SkipField'
+import { NudgeFrom } from '../types/nudge-from'
+import { PostNudgeDto } from './dto/post-nudge.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -122,13 +123,11 @@ export class MeUserProfileController {
   @Post('/nudge')
   @Scopes(UserProfileScope.write)
   @Documentation({
-    description: 'Confirms that the user has seen the nudge',
+    description:
+      'Confirms that the user has seen the nudge from a specific screen. Allowed screens are defined in NudgeFrom enum.',
     response: { status: 200 },
   })
-  confirmNudge(
-    @CurrentUser() user: User,
-    @Query('skipField') skipField: SkipField,
-  ) {
+  confirmNudge(@CurrentUser() user: User, @Body() input: PostNudgeDto) {
     return this.auditService.auditPromise(
       {
         auth: user,
@@ -136,7 +135,7 @@ export class MeUserProfileController {
         action: 'nudge',
         resources: user.nationalId,
       },
-      this.userProfileService.confirmNudge(user.nationalId, skipField),
+      this.userProfileService.confirmNudge(user.nationalId, input.nudgeFrom),
     )
   }
 }

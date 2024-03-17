@@ -1,0 +1,5 @@
+export enum NudgeFrom {
+  'EMAIL' = 'EMAIL',
+  'MOBILE_PHONE_NUMBER' = 'MOBILE_PHONE_NUMBER',
+  'OVERVIEW' = 'OVERVIEW',
+}

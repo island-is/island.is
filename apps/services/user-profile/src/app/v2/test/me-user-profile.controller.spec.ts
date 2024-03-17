@@ -24,7 +24,8 @@ import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import addMonths from 'date-fns/addMonths'
-import { SkipField } from '../../user-profile/types/SkipField'
+import { NudgeFrom } from '../../types/nudge-from'
+import { PostNudgeDto } from '../dto/post-nudge.dto'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -960,14 +961,16 @@ describe('MeUserProfileController', () => {
       expect(userProfile.lastNudge).not.toBeNull()
     })
 
-    it('POST /v2/me/nudge?skipField=email should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with nudgeFrom=NudgeFrom.EMAIL should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
       await fixtureFactory.createUserProfile(testUserProfile)
 
       // Act
-      const res = await server.post(`/v2/me/nudge?skipField=${SkipField.EMAIL}`)
+      const res = await server.post(`/v2/me/nudge`).send({
+        nudgeFrom: NudgeFrom.EMAIL,
+      } as PostNudgeDto)
 
       // Assert
       expect(res.status).toEqual(200)
@@ -983,16 +986,16 @@ describe('MeUserProfileController', () => {
       expect(userProfile.emailStatus).toBe(DataStatus.EMPTY)
     })
 
-    it('POST /v2/me/nudge?skipField=mobilePhoneNumber should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with  nudgeFrom=NudgeFrom.MOBILE_PHONE_NUMBER should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
       await fixtureFactory.createUserProfile(testUserProfile)
 
       // Act
-      const res = await server.post(
-        `/v2/me/nudge?skipField=${SkipField.MOBILE_PHONE_NUMBER}`,
-      )
+      const res = await server.post(`/v2/me/nudge`).send({
+        nudgeFrom: NudgeFrom.MOBILE_PHONE_NUMBER,
+      } as PostNudgeDto)
 
       // Assert
       expect(res.status).toEqual(200)
@@ -1008,16 +1011,16 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
     })
 
-    it('POST /v2/me/nudge?skipField=6 should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with nudgeFrom=NudgeFrom.OVERVIEW should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
       await fixtureFactory.createUserProfile(testUserProfile)
 
       // Act
-      const res = await server.post(
-        `/v2/me/nudge?skipField=${SkipField.OVERWIEW}`,
-      )
+      const res = await server.post(`/v2/me/nudge`).send({
+        nudgeFrom: NudgeFrom.OVERVIEW,
+      } as PostNudgeDto)
 
       // Assert
       expect(res.status).toEqual(200)
