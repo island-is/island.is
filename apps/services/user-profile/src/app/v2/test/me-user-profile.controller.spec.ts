@@ -929,7 +929,9 @@ describe('MeUserProfileController', () => {
       await fixtureFactory.createUserProfile(testUserProfile)
 
       // Act
-      const res = await server.post('/v2/me/nudge')
+      const res = await server.post('/v2/me/nudge').send({
+        nudgeFrom: NudgeFrom.OVERVIEW,
+      } as PostNudgeDto)
 
       // Assert
       expect(res.status).toEqual(200)
@@ -946,7 +948,9 @@ describe('MeUserProfileController', () => {
 
     it(`POST /v2/me/nudge should return 200 and update the lastNudge field when user confirms nudge`, async () => {
       // Act
-      const res = await server.post('/v2/me/nudge')
+      const res = await server.post('/v2/me/nudge').send({
+        nudgeFrom: NudgeFrom.OVERVIEW,
+      } as PostNudgeDto)
 
       // Assert
       expect(res.status).toEqual(200)
