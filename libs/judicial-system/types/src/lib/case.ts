@@ -84,6 +84,7 @@ export interface CrimeSceneMap {
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
+  WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
   ACCEPTED = 'ACCEPTED',
@@ -101,6 +102,7 @@ export enum CaseAppealState {
 
 export enum CaseTransition {
   OPEN = 'OPEN',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
@@ -113,6 +115,7 @@ export enum CaseTransition {
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -184,7 +187,7 @@ export enum DefendantPlea {
 
 export const indictmentCases = [CaseType.INDICTMENT]
 
-export function isIndictmentCase(type?: string | null): boolean {
+export const isIndictmentCase = (type?: string | null): boolean => {
   return Boolean(type) && indictmentCases.includes(type as CaseType)
 }
 
@@ -194,7 +197,7 @@ export const restrictionCases = [
   CaseType.TRAVEL_BAN,
 ]
 
-export function isRestrictionCase(type?: CaseType | null): boolean {
+export const isRestrictionCase = (type?: CaseType | null): boolean => {
   return Boolean(type && restrictionCases.includes(type))
 }
 
@@ -218,7 +221,7 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export function isInvestigationCase(type?: CaseType | null): boolean {
+export const isInvestigationCase = (type?: CaseType | null): boolean => {
   return Boolean(type && investigationCases.includes(type))
 }
 
@@ -227,9 +230,9 @@ export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
-export function isAcceptingCaseDecision(
+export const isAcceptingCaseDecision = (
   decision?: CaseDecision | null,
-): boolean {
+): boolean => {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
 }
 
@@ -239,19 +242,19 @@ export const completedCaseStates = [
   CaseState.DISMISSED,
 ]
 
-export function isCompletedCase(state?: CaseState | null): boolean {
+export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
-export function getStatementDeadline(appealReceived: Date): string {
+export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
 }
 
-export function prosecutorCanSelectDefenderForInvestigationCase(
+export const prosecutorCanSelectDefenderForInvestigationCase = (
   type?: CaseType | null,
-): boolean {
+): boolean => {
   return Boolean(
     type &&
       [
@@ -265,3 +268,7 @@ export function prosecutorCanSelectDefenderForInvestigationCase(
       ].includes(type),
   )
 }
+
+export type IndictmentConfirmation =
+  | { actor: string; institution: string; date: Date }
+  | undefined

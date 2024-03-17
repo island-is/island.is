@@ -39,9 +39,6 @@ export const ClientProvider: FC<React.PropsWithChildren<unknown>> = ({
   const { environment: selectedEnvironment, updateEnvironment } =
     useEnvironmentQuery(clientResult.environments)
 
-  const [currentEnvironment, setCurrentEnvironment] =
-    useState<AuthAdminEnvironment>(selectedEnvironment.environment)
-
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)
 
@@ -54,22 +51,12 @@ export const ClientProvider: FC<React.PropsWithChildren<unknown>> = ({
   }
 
   const changeEnvironment = (environment: AuthAdminEnvironment) => {
-    setCurrentEnvironment(environment)
     updateEnvironment(environment)
   }
 
   const updatePublishData = (publishData: PublishData) => {
     setPublishData(publishData)
   }
-
-  useEffect(() => {
-    if (
-      clientResult &&
-      selectedEnvironment.environment !== currentEnvironment
-    ) {
-      updateEnvironment(currentEnvironment)
-    }
-  }, [clientResult])
 
   return (
     <ClientContext.Provider

@@ -6,6 +6,7 @@ import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Accordion,
   AccordionItem,
@@ -37,7 +38,6 @@ import {
   GetUniversityGatewayQuery,
   GetUniversityGatewayQueryVariables,
   GetUniversityGatewayUniversitiesQuery,
-  OrganizationPage,
   Query,
   QueryGetOrganizationPageArgs,
   UniversityGatewayProgramCourse,
@@ -48,6 +48,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
@@ -56,7 +57,6 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { TranslationDefaults } from './TranslationDefaults'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -77,7 +77,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
-  useSetZIndexOnHeader()
   const [sortedCourses, setSortedCourses] = useState<
     Array<UniversityGatewayProgramCourse>
   >([])
@@ -376,9 +375,15 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                   data.iscedCode
                 }`}</Text>
               )}
-              <Text marginTop={3} marginBottom={3} variant="default">
-                {htmlParser(data.descriptionEn, data.descriptionIs)}
-              </Text>
+              <Box className="rs_read">
+                <Text marginTop={3} marginBottom={3} variant="default" as="div">
+                  {webRichText(
+                    (locale === 'is'
+                      ? [data.descriptionHtmlIs]
+                      : [data.descriptionHtmlEn]) as SliceType[],
+                  )}
+                </Text>
+              </Box>
               {data.externalUrlIs && (
                 <LinkV2
                   underlineVisibility="always"
@@ -644,5 +649,4 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
 
 export default withMainLayout(UniversityDetails, {
   showFooter: false,
-  headerColorScheme: 'white',
 })

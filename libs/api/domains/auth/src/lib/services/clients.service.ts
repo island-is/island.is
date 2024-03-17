@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ClientDto, ClientsApi } from '@island.is/clients/auth/delegation-api'
 
-import { ClientsInput } from './types'
+interface ClientsInput {
+  lang: string
+  clientIds: string[]
+}
 
 @Injectable()
 export class ClientsService {

@@ -6,6 +6,7 @@ import { m as messages } from '../../lib/messages'
 import FinanceIntro from '../../components/FinanceIntro'
 import { useGetHmsLoansHistoryQuery } from './FinanceLoans.generated'
 import { FinanceLoansTable } from '../../components/FinanceLoans/FinanceLoansTable'
+import { Problem } from '@island.is/react-spa/shared'
 
 const FinanceLoans = () => {
   useNamespaces('sp.finance-loans')
@@ -20,18 +21,9 @@ const FinanceLoans = () => {
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-      <FinanceIntro
-        text={formatMessage({
-          id: 'sp.finance-loans:intro',
-          defaultMessage: 'Virk lán hjá HMS',
-        })}
-      />
       <Box marginTop={2}>
-        {loanOverviewError && (
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
-          />
+        {loanOverviewError && loanOverviewCalled && !loanOverviewLoading && (
+          <Problem error={loanOverviewError} noBorder={false} />
         )}
         {(loanOverviewLoading || !loanOverviewCalled) && !loanOverviewError && (
           <Box padding={3}>
@@ -42,9 +34,12 @@ const FinanceLoans = () => {
           loanOverviewCalled &&
           !loanOverviewLoading &&
           !loanOverviewError && (
-            <AlertBanner
-              description={formatMessage(messages.noResultMessage)}
-              variant="warning"
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(m.noData)}
+              message={formatMessage(m.noTransactionFound)}
+              imgSrc="./assets/images/sofa.svg"
             />
           )}
         {loanOverviewData?.hmsLoansHistory?.length ? (

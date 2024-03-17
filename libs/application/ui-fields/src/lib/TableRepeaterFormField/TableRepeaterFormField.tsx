@@ -13,6 +13,7 @@ import {
   Tooltip,
   GridRow,
   GridColumn,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -93,6 +94,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const handleNewItem = () => {
     append({})
     setActiveIndex(fields.length)
+    methods.clearErrors()
   }
 
   const handleRemoveItem = (index: number) => {
@@ -168,7 +170,11 @@ export const TableRepeaterFormField: FC<Props> = ({
                             type="button"
                             onClick={() => handleRemoveItem(index)}
                           >
-                            <Icon icon="removeCircle" type="outline" />
+                            <Icon
+                              icon="removeCircle"
+                              type="outline"
+                              color="dark200"
+                            />
                           </button>
                         </Tooltip>
                       </Box>
@@ -211,18 +217,30 @@ export const TableRepeaterFormField: FC<Props> = ({
                   const span = isHalfColumn ? '1/2' : '1/1'
                   const Component = componentMapper[component]
                   const id = `${data.id}[${activeIndex}].${itemId}`
+                  const activeValues =
+                    activeIndex >= 0 && values ? values[activeIndex] : undefined
 
                   const translatedOptions = options?.map((option) => ({
                     ...option,
                     label: formatText(option.label, application, formatMessage),
                   }))
 
-                  if (condition && !condition(application)) {
+                  if (condition && !condition(application, activeValues)) {
                     return null
                   }
 
                   return (
                     <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
+                      {component === 'radio' && label && (
+                        <Text
+                          variant="h4"
+                          as="h4"
+                          id={id + 'title'}
+                          marginBottom={3}
+                        >
+                          {formatText(label, application, formatMessage)}
+                        </Text>
+                      )}
                       <Component
                         id={id}
                         name={id}
@@ -271,6 +289,11 @@ export const TableRepeaterFormField: FC<Props> = ({
             </Box>
           )}
         </Stack>
+        {error && typeof error === 'string' && fields.length === 0 && (
+          <Box marginTop={3}>
+            <AlertMessage type="error" title={error} />
+          </Box>
+        )}
       </Box>
     </Box>
   )

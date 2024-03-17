@@ -6,7 +6,6 @@ import {
   ActionCard,
   CardLoader,
   IntroHeader,
-  UNI_HI_SLUG,
   m,
 } from '@island.is/service-portal/core'
 import { Query } from '@island.is/api/schema'
@@ -54,8 +53,8 @@ export const EducationGraduation = () => {
     },
   })
   const organizations = orgData?.getOrganizations?.items || {}
-  const studentInfo = data?.universityOfIcelandStudentInfo.transcripts || []
-  const noData = !studentInfo.length && !loading && !error
+
+  const studentInfo = data?.universityOfIcelandStudentInfo?.transcripts || []
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -67,10 +66,22 @@ export const EducationGraduation = () => {
             'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
           description: 'education graduation intro',
         })}
-        serviceProviderSlug={UNI_HI_SLUG}
+        serviceProviderSlug={'haskoli-islands'}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !error && <CardLoader />}
+      {!loading && !error && studentInfo.length === 0 && (
+        <Box marginTop={8}>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        </Box>
+      )}
       <Stack space={2}>
         {studentInfo.length > 0 &&
           studentInfo.map((item, index) => {
@@ -108,17 +119,6 @@ export const EducationGraduation = () => {
               />
             )
           })}
-
-        {error && <Problem noBorder={false} error={error} />}
-        {noData && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFoundDetail)}
-            imgSrc="./assets/images/sofa.svg"
-          />
-        )}
       </Stack>
     </Box>
   )
