@@ -9,7 +9,6 @@ import {
   ValidateIf,
 } from 'class-validator'
 import { Locale } from '../../user-profile/types/localeTypes'
-import { NudgeInterval } from '../../user-profile/types/NudgeInterval'
 
 export class PatchUserProfileDto {
   @ApiPropertyOptional({
