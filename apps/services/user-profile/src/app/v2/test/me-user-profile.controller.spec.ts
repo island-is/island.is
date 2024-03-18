@@ -1,4 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
+import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import faker from 'faker'
 import request, { SuperTest, Test } from 'supertest'
@@ -18,14 +19,13 @@ import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
-import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { formatPhoneNumber } from '../../utils/format-phone-number'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
-import addMonths from 'date-fns/addMonths'
 import { NudgeType } from '../../types/nudge-type'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
+import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
 
@@ -148,7 +148,7 @@ describe('MeUserProfileController', () => {
         verifiedField: string[] | null
         isVerified: boolean
         lastNudge: Date | null
-        nextNudgeLength: 1 | 6
+        nextNudgeLength: typeof SKIP_INTERVAL | typeof NUDGE_INTERVAL
         needsNudgeExpected: boolean | null
       }) => {
         // Arrange

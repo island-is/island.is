@@ -180,7 +180,7 @@ export class UserProfileService {
         }),
       }
 
-      const updatedUserProfile = await this.userProfileModel.findOne({
+      const currentUserProfile = await this.userProfileModel.findOne({
         where: { nationalId },
         transaction,
         useMaster: true,
@@ -192,22 +192,22 @@ export class UserProfileService {
           lastNudge: new Date(),
           nextNudge: addMonths(
             new Date(),
-            this.hasUnverifiedData({
-              email: isEmailDefined ? update.email : updatedUserProfile?.email,
+            this.hasUnverifiedOrNotDefinedData({
+              email: isEmailDefined ? update.email : currentUserProfile?.email,
               mobilePhoneNumber: isMobilePhoneNumberDefined
                 ? update.mobilePhoneNumber
-                : updatedUserProfile?.mobilePhoneNumber,
+                : currentUserProfile?.mobilePhoneNumber,
               emailStatus:
                 update.emailStatus ??
-                (updatedUserProfile?.emailStatus as DataStatus),
+                (currentUserProfile?.emailStatus as DataStatus),
               mobileStatus:
                 update.mobileStatus ??
-                (updatedUserProfile?.mobileStatus as DataStatus),
+                (currentUserProfile?.mobileStatus as DataStatus),
               emailVerified:
-                update.emailVerified ?? updatedUserProfile?.emailVerified,
+                update.emailVerified ?? currentUserProfile?.emailVerified,
               mobilePhoneNumberVerified:
                 update.mobilePhoneNumberVerified ??
-                updatedUserProfile?.mobilePhoneNumberVerified,
+                currentUserProfile?.mobilePhoneNumberVerified,
             })
               ? SKIP_INTERVAL
               : NUDGE_INTERVAL,
@@ -324,7 +324,7 @@ export class UserProfileService {
     return null
   }
 
-  private hasUnverifiedData({
+  private hasUnverifiedOrNotDefinedData({
     email,
     mobilePhoneNumber,
     emailVerified,
