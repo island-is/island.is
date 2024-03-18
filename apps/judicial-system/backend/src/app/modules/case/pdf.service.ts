@@ -184,7 +184,11 @@ export class PDFService {
     }
 
     // return createIndictment(theCase, this.formatMessage, confirmation)
-    return createConfirmedIndictment(confirmation)
+    return createConfirmedIndictment({
+      actor: 'Halla Bergþóra Björnsdóttir Lyngby',
+      institution: 'Lögreglustjórinn á Höfuðborgarsvæðinu',
+      date: new Date(),
+    })
   }
 
   async getCaseFilesRecordPdf(
