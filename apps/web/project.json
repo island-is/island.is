@@ -103,6 +103,13 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/web"]
     },
+    "e2e":  {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "config": "{projectRoot}/playwright.config.ts"
+      }
+    },
+
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
