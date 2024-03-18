@@ -6,9 +6,9 @@ export interface FamilyDto {
   individuals: IndividualDto[]
 }
 
-export function formatFamilyDto(
+export const formatFamilyDto = (
   family: Fjolskyldumedlimir | null,
-): FamilyDto | null {
+): FamilyDto | null => {
   if (family == null || family.fjolskyldunumer == null) {
     return null
   }
