@@ -6,6 +6,7 @@ import { DisabilityDigitalLicenseClientConfig } from '../clients/disability-lice
 import { FirearmDigitalLicenseClientConfig } from '../clients/firearm-license-client'
 import { MachineDigitalLicenseClientConfig } from '../clients/machine-license-client'
 import { DrivingDigitalLicenseClientConfig } from '../clients/driving-license-client'
+import { HuntingDigitalLicenseClientConfig } from '../clients/hunting-license-client'
 
 export const PassTemplateIdsProvider: Provider = {
   provide: CONFIG_PROVIDER,
@@ -15,6 +16,7 @@ export const PassTemplateIdsProvider: Provider = {
     machineConfig: ConfigType<typeof MachineDigitalLicenseClientConfig>,
     disabilityConfig: ConfigType<typeof DisabilityDigitalLicenseClientConfig>,
     drivingConfig: ConfigType<typeof DrivingDigitalLicenseClientConfig>,
+    huntingConfig: ConfigType<typeof HuntingDigitalLicenseClientConfig>,
   ) => {
     const ids: PassTemplateIds = {
       firearmLicense: firearmConfig.passTemplateId,
@@ -22,6 +24,7 @@ export const PassTemplateIdsProvider: Provider = {
       machineLicense: machineConfig.passTemplateId,
       disabilityLicense: disabilityConfig.passTemplateId,
       drivingLicense: drivingConfig.passTemplateId,
+      huntingLicense: huntingConfig.passTemplateId,
     }
     return ids
   },
@@ -31,5 +34,6 @@ export const PassTemplateIdsProvider: Provider = {
     MachineDigitalLicenseClientConfig.KEY,
     DisabilityDigitalLicenseClientConfig.KEY,
     DrivingDigitalLicenseClientConfig.KEY,
+    HuntingDigitalLicenseClientConfig.KEY,
   ],
 }

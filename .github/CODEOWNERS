@@ -17,6 +17,7 @@
 /libs/service-portal/                                                                                    @island-is/hugsmidjan
 /libs/portals/admin/                                                                                     @island-is/aranja
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
+/libs/shared/connected/                                                                                  @island-is/stefna
 
 /*                                                                                                       @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
@@ -153,6 +154,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/work-machines/                                                                             @island-is/hugsmidjan @island-is/origo
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
+/libs/clients/hunting-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
 /libs/clients/license-client/                                                                            @island-is/hugsmidjan @island-is/aranja
 /libs/clients/intellectual-properties/                                                                   @island-is/hugsmidjan
@@ -236,7 +238,6 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/fiskistofa/                                                                            @island-is/stefna
 /libs/clients/fiskistofa/                                                                                @island-is/stefna
 /libs/clients/syslumenn/                                                                                 @island-is/stefna @island-is/juni
-/libs/shared/connected/                                                                                  @island-is/stefna
 /libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
 /libs/clients/icelandic-government-institution-vacancies/                                                @island-is/stefna
 /libs/api/domains/icelandic-government-institution-vacancies/                                            @island-is/stefna
