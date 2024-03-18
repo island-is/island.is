@@ -1,6 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 import {
   Application,
+  ApplicationLifecycle,
   ExternalData,
   Field,
   FormValue,
@@ -2052,4 +2053,27 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
+}
+
+export const calculatePruneDate = (application: Application) => {
+  const { pruneAt } = application as unknown as ApplicationLifecycle
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+  // If date of birth is set then we use that date + 2 years as prune date
+  if (dateOfBirth?.data?.dateOfBirth) {
+    const pruneDate = new Date(dateOfBirth.data.dateOfBirth)
+    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
+
+    return pruneDate
+  }
+
+  // Just to be sure that we have some date set for pruneDate
+  if (!pruneAt) {
+    const pruneDate = new Date()
+    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
+
+    return pruneDate
+  }
+
+  return pruneAt
 }
