@@ -130,10 +130,10 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            organization: z.string(),
-            nationalId: z.string(),
-            faceValue: z.string(),
-            rateOfExchange: z.string(),
+            description: z.string(),
+            assetNumber: z.string(),
+            amount: z.string(),
+            exchangeRateOrInterest: z.string(),
             value: z.string().refine((v) => v),
           })
           .array()

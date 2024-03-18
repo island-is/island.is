@@ -423,21 +423,21 @@ export const assets = buildSection({
                 fields: [
                   {
                     title: m.stocksOrganization.defaultMessage,
-                    id: 'organization',
+                    id: 'description',
                   },
                   {
                     title: m.stocksNationalId.defaultMessage,
-                    id: 'nationalId',
+                    id: 'assetNumber',
                     format: '######-####',
                   },
                   {
                     title: m.stocksFaceValue.defaultMessage,
-                    id: 'faceValue',
+                    id: 'amount',
                     currency: true,
                   },
                   {
                     title: m.stocksRateOfChange.defaultMessage,
-                    id: 'rateOfExchange',
+                    id: 'exchangeRateOrInterest',
                     type: 'number',
                   },
                   {
@@ -452,6 +452,7 @@ export const assets = buildSection({
                 assetKey: 'stocks',
                 repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
                 sumField: 'value',
+                fromExternalData: 'stocks',
               },
             ),
           ],

@@ -36,7 +36,7 @@ type RepeaterProps = {
     props: {
       sectionTitle?: string
       sectionTitleVariant?: string
-      fields: Array<object>
+      fields: Array<Record<string, unknown>>
       repeaterButtonText: string
       sumField: string
       deductionField: string
@@ -47,7 +47,7 @@ type RepeaterProps = {
   }
 }
 
-const valueKeys = ['rateOfExchange', 'faceValue']
+const valueKeys = ['exchangeRateOrInterest', 'amount']
 
 export const ReportFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
@@ -143,15 +143,19 @@ export const ReportFieldsRepeater: FC<
     append(repeaterFields)
   }
 
-  const updateValue = (fieldIndex: string) => {
-    const stockValues: { faceValue?: string; rateOfExchange?: string } =
+  const updateValue = (
+    fieldIndex: string,
+    explicitAVal = '0',
+    explicitBVal = '0',
+  ) => {
+    const stockValues: { amount?: string; exchangeRateOrInterest?: string } =
       getValues(fieldIndex)
 
-    const faceValue = stockValues?.faceValue
-    const rateOfExchange = stockValues?.rateOfExchange
+    const faceValue = stockValues?.amount
+    const rateOfExchange = stockValues?.exchangeRateOrInterest
 
-    const a = faceValue?.replace(/[^\d.]/g, '') || '0'
-    const b = rateOfExchange?.replace(/[^\d.]/g, '') || '0'
+    const a = faceValue?.replace(/[^\d.]/g, '') || explicitAVal
+    const b = rateOfExchange?.replace(/[^\d.]/g, '') || explicitBVal
 
     const aVal = parseFloat(a)
     const bVal = parseFloat(b)
@@ -224,6 +228,34 @@ export const ReportFieldsRepeater: FC<
 
     setForeignBankAccountIndexes(indexes)
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    // The `fields` variable is an empty array at this point
+    // but if we, however, construct the field ids manually the
+    // getValues function will still return their values
+    if (props?.fromExternalData === 'stocks') {
+      let itemIndex = 0
+      // Since there are not an infinite amount of fields
+      // this while(values) loop will terminate when the itemIndex
+      // goes out of bounds (resulting in getValues → undefined)
+      let values = {}
+      while (values) {
+        const fieldIndex = `${id}[${itemIndex}]`
+        const values = getValues(fieldIndex)
+
+        if (values) {
+          updateValue(
+            fieldIndex,
+            values.amount as string,
+            values.exchangeRateOrInterest as string,
+          )
+        } else {
+          break
+        }
+        itemIndex += 1
+      }
+    }
   }, [])
 
   return (
@@ -348,7 +380,7 @@ export const ReportFieldsRepeater: FC<
                         placeholder={field.placeholder}
                         options={relations}
                       />
-                    ) : field.id === 'rateOfExchange' ? (
+                    ) : field.id === 'exchangeRateOrInterest' ? (
                       <NumberInput
                         name={`${fieldIndex}.${field.id}`}
                         placeholder={field.placeholder}

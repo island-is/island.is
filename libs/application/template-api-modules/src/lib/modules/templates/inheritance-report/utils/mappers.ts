@@ -148,10 +148,10 @@ export const expandAnswers = (
       stocks: {
         data: (answers.assets.stocks?.data ?? []).map((stock) => {
           return {
-            faceValue: stock.faceValue ?? '',
-            nationalId: stock.nationalId ?? '',
-            organization: stock.organization ?? '',
-            rateOfExchange: stock.rateOfExchange ?? '',
+            amount: stock.amount ?? '',
+            assetNumber: stock.assetNumber ?? '',
+            description: stock.description ?? '',
+            exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',
           }
         }),
