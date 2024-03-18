@@ -252,6 +252,10 @@ export class UpdateCaseInput {
 
   @Allow()
   @Field({ nullable: true })
+  readonly rulingSignatureDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly judgeId?: string
 
   @Allow()
