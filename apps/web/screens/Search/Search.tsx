@@ -442,7 +442,7 @@ const Search: Screen<CategoryProps> = ({
         type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
           ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
-            connectedTypes[contentType].map((x) => firstLower(x))
+            connectedTypes[contentType].map((x) => camelCase(x))
           : contentType,
       }),
       ...(query.category?.length && { category: query.category }),
@@ -942,7 +942,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-const firstLower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
+const camelCase = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
 
 const useRouterReplace = (): NextRouter['replace'] => {
   const Router = useRouter()
