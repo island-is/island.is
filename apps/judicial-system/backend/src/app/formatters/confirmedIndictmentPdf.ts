@@ -4,6 +4,7 @@ import { IndictmentConfirmation } from '@island.is/judicial-system/types'
 
 import { applyCase } from 'beygla'
 import { drawTextWithEllipsisPDFKit } from './pdfHelpers'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 export const createConfirmedIndictment = async (
   confirmation: IndictmentConfirmation,
@@ -29,7 +30,7 @@ export const createConfirmedIndictment = async (
   const titleHeight = 32
   const titleX = coatOfArmsX + coatOfArmsDimensions + 8
   const confirmedByWidth = 160
-  const institutionWidth = confirmedByWidth + 48
+  const institutionWidth = confirmedByWidth + 62
 
   const { width, height } = doc.getSize()
 
@@ -893,7 +894,7 @@ export const createConfirmedIndictment = async (
   doc.drawRectangle({
     x: coatOfArmsX + coatOfArmsDimensions + confirmedByWidth,
     y: height - pageMargin - titleHeight - 56,
-    width: confirmedByWidth,
+    width: institutionWidth,
     height: shaddowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
@@ -907,11 +908,20 @@ export const createConfirmedIndictment = async (
     font: timesRomanBoldFont,
   })
 
+  if (confirmation?.institution) {
+    doc.drawText(confirmation.institution, {
+      x: coatOfArmsX + coatOfArmsDimensions + confirmedByWidth + 8,
+      y: height - pageMargin - titleHeight - 40,
+      font: timesRomanFont,
+      size: 12,
+    })
+  }
+
   // Draw the "Indictment date" box
   doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsDimensions + confirmedByWidth * 2,
+    x: width - 88 - 22,
     y: height - pageMargin - titleHeight - 56,
-    width: 150,
+    width: 88,
     height: shaddowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
@@ -919,11 +929,24 @@ export const createConfirmedIndictment = async (
   })
 
   doc.drawText('Útgáfa ákæru', {
-    x: coatOfArmsX + coatOfArmsDimensions + confirmedByWidth * 2 + 8,
+    x: width - 88 - 16,
     y: height - pageMargin - titleHeight - 24,
     size: 12,
     font: timesRomanBoldFont,
   })
+
+  if (confirmation?.date) {
+    const dateFormattedDate = formatDate(confirmation.date, 'P')
+
+    if (dateFormattedDate) {
+      doc.drawText(dateFormattedDate, {
+        x: width - 88 - 16,
+        y: height - pageMargin - titleHeight - 40,
+        font: timesRomanFont,
+        size: 12,
+      })
+    }
+  }
 
   const pdfBytes = await pdfDoc.save()
 
