@@ -30,7 +30,7 @@ import { Patent } from './models/patent.model'
 @Resolver()
 @FeatureFlag(Features.isIntellectualPropertyModuleEnabled)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.intellectualProperties)
 @Audit({ namespace: '@island.is/api/intellectual-properties' })
 export class IntellectualPropertiesResolver {
   constructor(
