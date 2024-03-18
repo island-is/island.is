@@ -6,7 +6,7 @@ import {
   CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { Locale } from './types/localeTypes'
 
 @Table({
@@ -48,13 +48,13 @@ export class UserProfile extends Model {
   @Column({
     type: DataType.STRING,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   mobilePhoneNumber?: string
 
   @Column({
     type: DataType.ENUM('en', 'is'),
   })
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'User selected locale',
     enum: Locale,
   })
@@ -63,25 +63,25 @@ export class UserProfile extends Model {
   @Column({
     type: DataType.STRING,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   email?: string
 
   @Column({
     type: DataType.BOOLEAN,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   emailVerified?: boolean
 
   @Column({
     type: DataType.BOOLEAN,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   mobilePhoneNumberVerified?: boolean
 
   @Column({
     type: DataType.STRING,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   profileImageUrl?: string
 
   @Column({
@@ -95,21 +95,21 @@ export class UserProfile extends Model {
     type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
     defaultValue: 'NOT_DEFINED',
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   emailStatus?: string
 
   @Column({
     type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
     defaultValue: 'NOT_DEFINED',
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   mobileStatus?: string
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   lastNudge?: Date
 
   @Column({
@@ -124,6 +124,6 @@ export class UserProfile extends Model {
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   nextNudge?: Date
 }
