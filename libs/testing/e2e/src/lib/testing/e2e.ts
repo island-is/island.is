@@ -3,3 +3,4 @@ export function testingE2e(): string {
 }
 
 export const foo = () => 'bar'
+export const session = (...args: any) => ({} as any)
