@@ -13,7 +13,6 @@ import {
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
-  PkPassVerification,
   PkPassVerificationInputData,
   Result,
   VerifyPkPassResult,
@@ -24,7 +23,7 @@ import {
 } from '@island.is/clients/hunting-license'
 
 /** Category to attach each log message to */
-const LOG_CATEGORY = 'adrlicense-service'
+const LOG_CATEGORY = 'hunting-license-service'
 
 @Injectable()
 export class HuntingLicenseClient
