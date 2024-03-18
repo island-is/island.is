@@ -1,10 +1,11 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
   Disability,
   Firearm,
   DrivingLicense,
+  Hunting,
 } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
@@ -19,6 +20,22 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
+      },
+      LICENSE_SERVICE_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      HUNTING_LICENSE_PASS_TEMPLATE_ID: {
+        dev: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        staging: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        prod: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba',
       },
     })
     .secrets({
@@ -47,8 +64,10 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
+      LICENSE_SERVICE_BARCODE_SECRET_KEY:
+        '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
     })
-    .xroad(Base, Client, Firearm, Disability, DrivingLicense)
+    .xroad(Base, Client, Firearm, Disability, DrivingLicense, Hunting)
     .ingress({
       primary: {
         host: {

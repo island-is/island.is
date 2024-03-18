@@ -14,6 +14,7 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
+  CaseState,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -50,10 +51,11 @@ interface Props {
   cases: CaseListEntry[]
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
+  caseState?: CaseState // TODO: Refactor tables as a whole so we don't have to conditional things like this
 }
 
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, isDeletingCase, onDeleteCase } = props
+  const { cases, isDeletingCase, onDeleteCase, caseState } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -134,6 +136,14 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
+            {theCase.state &&
+              theCase.state === CaseState.WAITING_FOR_CONFIRMATION && (
+                <Text fontWeight={'medium'} variant="small">
+                  {`${formatMessage(
+                    m.activeRequests.table.headers.prosecutor,
+                  )}: ${theCase.prosecutor?.name}`}
+                </Text>
+              )}
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
                 {`${formatMessage(
@@ -193,17 +203,23 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               </Text>
             </th>
             <th className={styles.th}>
-              <SortButton
-                title={capitalize(
-                  formatMessage(m.activeRequests.table.headers.hearing, {
-                    suffix: 'i',
-                  }),
-                )}
-                onClick={() => requestSort('courtDate')}
-                sortAsc={getClassNamesFor('courtDate') === 'ascending'}
-                sortDes={getClassNamesFor('courtDate') === 'descending'}
-                isActive={sortConfig?.column === 'courtDate'}
-              />
+              {caseState === CaseState.WAITING_FOR_CONFIRMATION ? (
+                <Text as="span" fontWeight="regular">
+                  {formatMessage(m.activeRequests.table.headers.prosecutor)}
+                </Text>
+              ) : (
+                <SortButton
+                  title={capitalize(
+                    formatMessage(m.activeRequests.table.headers.hearing, {
+                      suffix: 'i',
+                    }),
+                  )}
+                  onClick={() => requestSort('courtDate')}
+                  sortAsc={getClassNamesFor('courtDate') === 'ascending'}
+                  sortDes={getClassNamesFor('courtDate') === 'descending'}
+                  isActive={sortConfig?.column === 'courtDate'}
+                />
+              )}
             </th>
             <th className={styles.th}></th>
           </tr>
@@ -322,21 +338,32 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                                locale: localeIS,
-                              }),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
+                    {caseState === CaseState.WAITING_FOR_CONFIRMATION ? (
+                      <Text as="span">{c.prosecutor?.name}</Text>
+                    ) : (
+                      c.courtDate && (
+                        <>
+                          <Text>
+                            <Box
+                              component="span"
+                              className={styles.blockColumn}
+                            >
+                              {capitalize(
+                                format(
+                                  parseISO(c.courtDate),
+                                  'EEEE d. LLLL y',
+                                  {
+                                    locale: localeIS,
+                                  },
+                                ),
+                              ).replace('dagur', 'd.')}
+                            </Box>
+                          </Text>
+                          <Text as="span" variant="small">
+                            kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                          </Text>
+                        </>
+                      )
                     )}
                   </td>
                   <td className={styles.td}>

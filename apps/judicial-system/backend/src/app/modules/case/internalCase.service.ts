@@ -14,22 +14,23 @@ import {
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { formatCaseType } from '@island.is/judicial-system/formatters'
-import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseOrigin,
   CaseState,
   CaseType,
+  EventType,
+  type IndictmentConfirmation,
   isCompletedCase,
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
   restrictionCases,
+  type User as TUser,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -48,6 +49,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
+import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CourtDocumentType, PoliceService } from '../police'
@@ -154,6 +156,8 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => EventLogService))
+    private readonly eventLogService: EventLogService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -871,8 +875,27 @@ export class InternalCaseService {
     )
       .then(async (indictmentDocuments) => {
         if (indictmentDocuments.length === 0) {
+          let confirmation: IndictmentConfirmation = undefined
+          const confirmationEvent =
+            await this.eventLogService.findEventTypeByCaseId(
+              EventType.INDICTMENT_CONFIRMED,
+              theCase.id,
+            )
+
+          if (confirmationEvent && confirmationEvent.nationalId) {
+            const actor = await this.userService.findByNationalId(
+              confirmationEvent.nationalId,
+            )
+
+            confirmation = {
+              actor: actor.name,
+              institution: actor.institution?.name ?? '',
+              date: confirmationEvent.created,
+            }
+          }
+
           const file = await this.refreshFormatMessage().then(async () =>
-            createIndictment(theCase, this.formatMessage),
+            createIndictment(theCase, this.formatMessage, confirmation),
           )
 
           indictmentDocuments.push({

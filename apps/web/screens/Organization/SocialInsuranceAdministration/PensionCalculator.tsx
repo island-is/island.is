@@ -143,7 +143,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   )
 
   const typeOfBasePension = methods.watch('typeOfBasePension')
-  const childCount = methods.watch('childCount')
   const birthMonth = methods.watch('birthMonth')
   const birthYear = methods.watch('birthYear')
   const startMonth = methods.watch('startMonth')
@@ -255,76 +254,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       },
     ]
   }, [formatMessage])
-
-  const childSupportCountOptions = useMemo<Option<number>[]>(() => {
-    const options = [
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsNoneLabel,
-        ),
-        value: 0,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsOneLabel,
-        ),
-        value: 1,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsTwoLabel,
-        ),
-        value: 2,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsThreeLabel,
-        ),
-        value: 3,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsFourLabel,
-        ),
-        value: 4,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsFiveLabel,
-        ),
-        value: 5,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsSixLabel,
-        ),
-        value: 6,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsSevenLabel,
-        ),
-        value: 7,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsEightLabel,
-        ),
-        value: 8,
-      },
-      {
-        label: formatMessage(
-          translationStrings.childSupportCountOptionsNineLabel,
-        ),
-        value: 9,
-      },
-    ]
-
-    if (typeof childCount === 'number') {
-      return options.slice(0, childCount + 1)
-    }
-    return []
-  }, [formatMessage, childCount])
 
   const [dateOfCalculations, setDateOfCalculations] = useQueryState(
     'dateOfCalculations',
@@ -780,33 +709,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 translationStrings.childCountPlaceholder,
                               )}
                               options={childCountOptions}
-                              onSelect={(option) => {
-                                if (option) {
-                                  methods.setValue('childSupportCount', 0)
-                                }
-                              }}
                             />
                           </Box>
-
-                          {typeof childCount === 'number' && childCount > 0 && (
-                            <Box className={styles.inputContainer}>
-                              <SelectController
-                                id={
-                                  'childSupportCount' as keyof CalculationInput
-                                }
-                                name={
-                                  'childSupportCount' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.childSupportCountLabel,
-                                )}
-                                placeholder={formatMessage(
-                                  translationStrings.childSupportCountPlaceholder,
-                                )}
-                                options={childSupportCountOptions}
-                              />
-                            </Box>
-                          )}
 
                           {(typeOfBasePension === BasePensionType.Disability ||
                             typeOfBasePension ===
@@ -837,6 +741,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
                                   ).length + 3
                                 }
+                                placeholder={formatMessage(
+                                  translationStrings.ageOfFirst75DisabilityAssessmentPlaceholder,
+                                )}
                               />
                             </Box>
                           )}
@@ -1115,6 +1022,32 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
                         <NumericInputFieldWrapper
                           heading={formatMessage(
+                            translationStrings.foreignBasicPensionHeading,
+                          )}
+                          description={formatMessage(
+                            translationStrings.foreignBasicPensionDescription,
+                          )}
+                        >
+                          <Box className={styles.inputContainer}>
+                            <InputController
+                              id={
+                                'foreignBasicPension' as keyof CalculationInput
+                              }
+                              name={
+                                'foreignBasicPension' as keyof CalculationInput
+                              }
+                              label={formatMessage(
+                                translationStrings.foreignBasicPensionLabel,
+                              )}
+                              placeholder="kr."
+                              currency={true}
+                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                            />
+                          </Box>
+                        </NumericInputFieldWrapper>
+
+                        <NumericInputFieldWrapper
+                          heading={formatMessage(
                             translationStrings.benefitsFromMunicipalityHeading,
                           )}
                           description={formatMessage(
@@ -1153,32 +1086,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               name={'premium' as keyof CalculationInput}
                               label={formatMessage(
                                 translationStrings.premiumLabel,
-                              )}
-                              placeholder="kr."
-                              currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
-                            />
-                          </Box>
-                        </NumericInputFieldWrapper>
-
-                        <NumericInputFieldWrapper
-                          heading={formatMessage(
-                            translationStrings.foreignBasicPensionHeading,
-                          )}
-                          description={formatMessage(
-                            translationStrings.foreignBasicPensionDescription,
-                          )}
-                        >
-                          <Box className={styles.inputContainer}>
-                            <InputController
-                              id={
-                                'foreignBasicPension' as keyof CalculationInput
-                              }
-                              name={
-                                'foreignBasicPension' as keyof CalculationInput
-                              }
-                              label={formatMessage(
-                                translationStrings.foreignBasicPensionLabel,
                               )}
                               placeholder="kr."
                               currency={true}
