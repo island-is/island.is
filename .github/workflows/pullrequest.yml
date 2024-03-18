@@ -15,14 +15,14 @@ concurrency:
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
-  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  CYPRESS_CACHE_DIR: ${{ github.workspace }}/.cypress
 
 jobs:
   prepare:
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
 
     env:
@@ -31,38 +31,52 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      # Don't cause a syntax error during JSON parsing if the relevant steps fail producing outputs
+      BUILD_CHUNKS: "${{ steps.build_projects.outputs.CHUNKS && steps.build_projects.outputs.CHUNKS || '{}' }}"
+      E2E_CHUNKS: "${{ steps.e2e_projects.outputs.CHUNKS && steps.e2e_projects.outputs.CHUNKS || '{}' }}"
+      LINT_CHUNKS: "${{ steps.lint_projects.outputs.CHUNKS && steps.lint_projects.outputs.CHUNKS || '{}' }}"
+      TEST_CHUNKS: "${{ steps.test_projects.outputs.CHUNKS && steps.test_projects.outputs.CHUNKS || '{}' }}"
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
+      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
+      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Debug environment and user
+        run: |
+          mkdir -p "$HOME" || true
+          echo "id: $(id)"
+          echo "whoami: $(whoami)"
+          echo "HOME: $HOME"
+          echo "PWD: $PWD"
+          echo "Homedir permissions: $(ls -lahd $HOME)"
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18.8.0'
 
-      - name: Setup yarn
-        run: npm install -g yarn
-
       - name: Check node version
         run: |
-          node -v
-          ls -l `which node`
+          echo "node version: $(node -v)"
+          echo "node binary location:"
+          ls -l "$(which node)"
+          echo "yarn version: $(yarn --version)"
 
       - name: Checking out relevant branches
         run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
+          set -x
+          set -euo pipefail
+          export GITHUB_BASE_REF GITHUB_HEAD_REF GITHUB_SHA
+          git config --global advice.detachedHead "false"
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
+          git checkout -f "$GITHUB_HEAD_REF" # GITHUB_HEAD_REF
+          git checkout -f "$GITHUB_BASE_REF" # GITHUB_BASE_REF
+          git checkout -f "$GITHUB_SHA" # GITHUB_SHA
 
           BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
           HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
@@ -71,6 +85,7 @@ jobs:
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
+        continue-on-error: true
         with:
           name: pr-event
           path: event.json
@@ -108,28 +123,31 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
-      - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF=$GITHUB_SHA
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
+      - name: Preparing HEAD and BASE tags
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        name: Preparing HEAD and BASE tags
+        run: |
+          set -x
+          set -euo pipefail
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          export HEAD_REF="$GITHUB_HEAD_REF"
+          export BASE_REF="$GITHUB_BASE_REF"
+          export PR_REF="$GITHUB_SHA"
+          export SHELL=/usr/bin/bash
+          export WORKFLOW_ID=pullrequest
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
+          git checkout "$GITHUB_SHA" # GITHUB_SHA
+          echo "BASE=$BASE" >> $GITHUB_ENV
 
       - name: Cache for cypress
         id: cypress
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: /github/home/.cache/Cypress
+          path: ${{ env.CYPRESS_CACHE_DIR }}
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
       - name: Check cypress cache success
@@ -171,6 +189,7 @@ jobs:
         run: ./scripts/ci/20_license-audit.sh
 
       - name: Check user permissions
+        continue-on-error: true
         uses: actions-cool/check-user-permission@v2
         id: check-permission
 
@@ -189,17 +208,14 @@ jobs:
         id: lint_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
 
       - name: Prepare test targets
         id: test_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
+          echo "Got test project chunks: $CHUNKS"
 
       - name: Prepare e2e targets
         id: e2e_projects
@@ -207,9 +223,7 @@ jobs:
           CHUNK_SIZE: 1
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
           echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> $GITHUB_OUTPUT
 
       - name: Prepare build targets
@@ -218,9 +232,7 @@ jobs:
           CHUNK_SIZE: 4
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
+          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
       - name: Check release-manager approval
         id: check-release-manager-approval
         if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && contains(github.event.pull_request.head.ref, '/pre-release/') }}
@@ -228,20 +240,30 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
+
+      - name: Debug outputs
+        run: |
+          echo "test_projects.CHUNKS=${{ steps.test_projects.outputs.CHUNKS }}"
+          echo "e2e_projects.CHUNKS=${{ steps.e2e_projects.outputs.CHUNKS }}"
+          echo "build_projects.CHUNKS=${{ steps.build_projects.outputs.CHUNKS }}"
+          echo "lint_projects.CHUNKS=${{ steps.lint_projects.outputs.CHUNKS }}"
+
   tests:
+    if: ${{ needs.changes.outputs.TEST_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.TEST_CHUNKS)) != '[]' }}
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 3
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -250,9 +272,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -288,12 +307,12 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   e2e:
+    if: ${{ needs.changes.outputs.E2E_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.E2E_CHUNKS)) != '[]' }}
     needs:
       - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -304,16 +323,15 @@ jobs:
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -331,7 +349,7 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: /github/home/.cache/Cypress
+          path: ${{ env.CYPRESS_CACHE_DIR }}
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
       - name: Check cypress cache success
@@ -359,10 +377,11 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -375,10 +394,9 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup yarn
-        run: npm install -g yarn
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
 
@@ -402,7 +420,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -417,8 +435,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -442,27 +458,29 @@ jobs:
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   linting:
+    if: ${{ needs.changes.outputs.LINT_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.LINT_CHUNKS)) != '[]' }}
     needs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 3
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Setup yarn
-        run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -492,26 +510,28 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
+    if: ${{ needs.changes.outputs.BUILD_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.BUILD_CHUNKS)) != '[]' }}
     needs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 2
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS
+      matrix:
+        projects:
+          - ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Setup yarn
-        run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -541,10 +561,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always()
+    if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
@@ -554,6 +571,9 @@ jobs:
       - formatting
       - e2e
       - build
+    runs-on: ec2-runners
+    container:
+      image: ${{ vars.EC2_IMAGE }}
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'

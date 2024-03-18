@@ -18,8 +18,11 @@ import type {
 } from '@island.is/cms'
 import { UniversityGatewayApi } from '../universityGateway.service'
 import { UniversityGatewayUniversity } from './models'
+import { UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE } from '../cacheControl'
 
-const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
+const defaultCache: CacheControlOptions = {
+  maxAge: UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE,
+}
 
 @Resolver(UniversityGatewayUniversity)
 export class UniversityResolver {
