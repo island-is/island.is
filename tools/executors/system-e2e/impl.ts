@@ -6,7 +6,6 @@ import {
   writeFile,
 } from 'fs/promises'
 import { glob } from 'glob'
-import { resolve } from 'path'
 import { promisify } from 'util'
 
 import {
@@ -14,6 +13,7 @@ import {
   type ExecutorContext,
 } from '@nx/devkit'
 import { getExtraDependencies } from '@nx/esbuild/src/executors/esbuild/lib/get-extra-dependencies'
+import {joinPathFragments} from "nx/src/devkit-exports";
 
 type DependentBuildableProjectNode = ReturnType<
   typeof getExtraDependencies
@@ -96,15 +96,15 @@ export default async function* buildExecutor(
     packageManager,
     resolutions,
   }
-  const packageJSONPath = resolve(distRoot, 'package.json')
+  const packageJSONPath = joinPathFragments(distRoot, 'package.json')
   await writeFile(packageJSONPath, JSON.stringify(pkgJson, null, 2))
 
   // Copy the yarn lock file
-  const yarnLockPath = resolve(distRoot, 'yarn.lock')
+  const yarnLockPath = joinPathFragments(distRoot, 'yarn.lock')
   await writeFile(yarnLockPath, await readFile('yarn.lock', 'utf-8'))
 
-  const newYarnPatches = resolve(distRoot, '.yarn', 'patches')
-  const oldYarnPatches = resolve(process.cwd(), '.yarn', 'patches')
+  const newYarnPatches = joinPathFragments(distRoot, '.yarn', 'patches')
+  const oldYarnPatches = joinPathFragments(process.cwd(), '.yarn', 'patches')
 
   // Create patch directory
   await mkdir(newYarnPatches, { recursive: true })
@@ -113,7 +113,7 @@ export default async function* buildExecutor(
   await cp(oldYarnPatches, newYarnPatches, { recursive: true })
 
   // Update the lock file in the dist directory
-  const distDir = resolve(process.cwd(), distRoot)
+  const distDir = joinPathFragments(process.cwd(), distRoot)
   await exec(['yarn', '--mode=update-lockfile'].join(' '), {
     encoding: 'utf-8',
     env: {
