@@ -57,6 +57,7 @@ const requestDocumentation = {
 @ApiSecurity('ias', [AuthScope.delegationIndexWrite])
 @Controller({
   path: 'delegation-index',
+  version: ['1'],
 })
 @Audit({ namespace })
 export class DelegationIndexController {
