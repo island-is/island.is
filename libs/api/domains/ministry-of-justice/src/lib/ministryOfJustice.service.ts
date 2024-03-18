@@ -2,7 +2,6 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   DmrClientService,
   JournalControllerAdvertsRequest,
-  JournalSignatureBodyTypeEnum,
 } from '@island.is/clients/dmr'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
@@ -68,10 +67,7 @@ export class MinistryOfJusticeService {
 
   async submitApplication(auth: User, input: SubmitApplicationInput) {
     return await this.dmrService.submitApplication(auth, {
-      journalPostApplicationBody: {
-        ...input,
-        signature: { data: [], type: JournalSignatureBodyTypeEnum.Hefbundin },
-      },
+      journalPostApplicationBody: input,
     })
   }
 }
