@@ -531,7 +531,6 @@ export class LicenseServiceService {
 
     const client = await this.getClient<typeof licenseType>(licenseType)
 
-    // Return null if the license type is not supported
     if (!client.clientSupportsPkPass) {
       this.logger.warn('License type does not support barcode', {
         licenseType,
