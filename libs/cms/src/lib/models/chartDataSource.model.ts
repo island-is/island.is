@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import {
   ChartDataSourceConfiguration,
@@ -11,7 +11,7 @@ import {
 } from 'api-cms-domain'
 import { IChartDataSource } from '../generated/contentfulTypes'
 
-@ObjectType('StatisticKeyValue')
+@ObjectType('ChartStatisticKeyValue')
 class StatisticKeyValue implements ChartStatisticKeyValue {
   @Field(() => String)
   key!: string
@@ -20,7 +20,7 @@ class StatisticKeyValue implements ChartStatisticKeyValue {
   value!: number | null
 }
 
-@ObjectType('StatisticsForHeader')
+@ObjectType('ChartStatisticsForHeader')
 class StatisticsForHeader implements ChartStatisticsForHeader {
   @Field(() => String)
   header!: string
@@ -28,23 +28,37 @@ class StatisticsForHeader implements ChartStatisticsForHeader {
   @Field(() => String)
   headerType!: string
 
-  @Field(() => [StatisticKeyValue])
+  @CacheField(() => [StatisticKeyValue])
   statisticsForHeader!: StatisticKeyValue[]
 }
 
-@ObjectType('StatisticsQueryResponse')
+@ObjectType('ChartStatisticsQueryResponse')
 export class StatisticsQueryResponse implements ChartStatisticsQueryResponse {
   @CacheField(() => [StatisticsForHeader])
   statistics!: StatisticsForHeader[]
 }
+
+registerEnumType(ChartDataSourceType, { name: 'ChartDataSourceType' })
+registerEnumType(ChartDataSourceExternalJsonProvider, {
+  name: 'ChartDataSourceExternalJsonProvider',
+})
 
 @ObjectType()
 export class ChartDataSource {
   @Field(() => ID)
   id!: string
 
+  @CacheField(() => ChartDataSourceType)
+  dataSourceType!: ChartDataSourceType
+
+  @CacheField(() => ChartDataSourceExternalJsonProvider)
+  externalJsonProvider!: ChartDataSourceExternalJsonProvider
+
   @CacheField(() => StatisticsQueryResponse)
-  sourceData!: ChartDataSourceConfiguration
+  internalJson!: StatisticsQueryResponse
+
+  @Field(() => String)
+  externalCsvProviderUrl!: string
 }
 
 const mapChartDataSourceConfiguration = (
@@ -83,10 +97,9 @@ export const mapChartDataSource = ({
   sys,
   fields,
 }: IChartDataSource): SystemMetadata<ChartDataSource> => {
-  const configuration = mapChartDataSourceConfiguration(fields.configuration)
   return {
     id: sys.id,
     typename: 'ChartDataSource',
-    sourceData: configuration, // This field will be resolved at request time
+    ...mapChartDataSourceConfiguration(fields.configuration),
   }
 }

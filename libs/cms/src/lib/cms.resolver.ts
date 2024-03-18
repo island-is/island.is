@@ -1,3 +1,4 @@
+import { StatisticsClientService } from '@island.is/clients/statistics'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
@@ -111,10 +112,9 @@ import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
-import {
-  ChartDataSource,
-  StatisticsQueryResponse,
-} from './models/chartDataSource.model'
+import { ChartDataByExternalJsonProviderDataLoader } from './loaders/chartDataByExternalJsonProvider.loader'
+import { Loader } from '@island.is/nest/dataloader'
+import { Chart } from './models/chart.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -794,26 +794,50 @@ export class FeaturedEventsResolver {
 }
 
 // TODO: create dataloader
-@Resolver(() => ChartDataSource)
+@Resolver(() => Chart)
 @CacheControl(defaultCache)
-export class ChartDataSourceResolver {
-  constructor() {}
+export class ChartResolver {
+  constructor(
+    @Loader(ChartDataByExternalJsonProviderDataLoader)
+    private readonly externalJsonService: ChartDataByExternalJsonProviderDataLoader,
+    private readonly externalCsvService: StatisticsClientService,
+  ) {}
 
-  @ResolveField(() => StatisticsQueryResponse)
-  async sourceData(@Parent() dataSource: ChartDataSource) {
-    const dataSourceType = dataSource.sourceData.dataSourceType
+  @ResolveField(() => String)
+  async sourceData(@Parent() chart: Chart): Promise<string | undefined> {
+    for (const component of chart.components) {
+      const dataSourceType = component.dataSource?.dataSourceType
 
-    if (dataSourceType === ChartDataSourceType.InternalJson) {
-      return dataSource.sourceData.internalJson
-    }
+      const input = {
+        dateFrom: chart.dateFrom ? new Date(chart.dateFrom) : undefined,
+        dateTo: chart.dateTo ? new Date(chart.dateTo) : undefined,
+        numberOfDataPoints: chart.numberOfDataPoints,
+        interval: chart.interval,
+        sourceDataKeys: [component.sourceDataKey],
+      }
 
-    if (dataSourceType === ChartDataSourceType.ExternalCsv) {
-      // TODO: implement
-    }
+      if (dataSourceType === ChartDataSourceType.ExternalCsv) {
+        const csvUrl = component.dataSource?.externalCsvProviderUrl
+        if (!csvUrl) {
+          return JSON.stringify({
+            statistics: [],
+          })
+        }
+        return JSON.stringify(
+          await this.externalCsvService.getMultipleStatistics(input, [csvUrl]),
+        )
+      }
 
-    // TODO: perhaps skip having this if statement
-    if (dataSourceType === ChartDataSourceType.ExternalJson) {
-      // TODO: call data loader here?
+      // TODO: add new field so we don't need to stringify
+      if (dataSourceType === ChartDataSourceType.ExternalJson) {
+        return JSON.stringify(
+          // TODO: figure out how to call the load method here
+          // TODO: perhaps input is wrong here
+          await this.externalJsonService.load(input),
+        )
+      }
+
+      return chart.sourceData || JSON.stringify({ statistics: [] })
     }
   }
 }

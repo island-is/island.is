@@ -14,11 +14,21 @@ export class UltravioletRadiationSeriesService
     private readonly clientService: UltravioletRadiationClientService,
   ) {}
 
-  async getChartData(_: ChartDataInput): ChartDataOutput {
+  async getChartData(_: ChartDataInput): Promise<ChartDataOutput> {
     const data = await this.clientService.getMeasurementSeries()
-    // TODO: implement mapping
+    // TODO: check out how the data looks
     return {
-      statistics: [],
+      statistics:
+        data?.dataAll?.map(({ time, uvVal }) => ({
+          header: time,
+          headerType: 'date',
+          statisticsForHeader: [
+            {
+              key: 'uvVal',
+              value: uvVal,
+            },
+          ],
+        })) ?? [],
     }
   }
 }

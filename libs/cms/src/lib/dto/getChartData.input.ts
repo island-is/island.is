@@ -1,6 +1,6 @@
 import { ChartDataSourceExternalJsonProvider } from '@island.is/shared/types'
 
-export interface StatisticsQueryInput {
+export interface ChartDataInput {
   dateFrom?: Date
   dateTo?: Date
   numberOfDataPoints?: number

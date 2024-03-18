@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsArray, IsOptional } from 'class-validator'
+import { IsArray } from 'class-validator'
 
 @InputType('StatisticsQueryInput')
 export class StatisticsQueryInput {

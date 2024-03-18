@@ -14,10 +14,11 @@ export class UltravioletRadiationLatestMeasurementService
     private readonly clientService: UltravioletRadiationClientService,
   ) {}
 
-  async getChartData(_: ChartDataInput): ChartDataOutput {
+  async getChartData(_: ChartDataInput): Promise<ChartDataOutput> {
     const data = await this.clientService.getLatestMeasurement()
-    const uvValue = data.body?.dataLatest?.uvVal
-    if (typeof uvValue !== 'number') {
+    const { uvVal, time } = data.body?.dataLatest ?? {}
+    if (typeof uvVal !== 'number' || !time) {
+      // TODO: check what these values are
       return {
         statistics: [],
       }
@@ -25,12 +26,12 @@ export class UltravioletRadiationLatestMeasurementService
     return {
       statistics: [
         {
-          header: 'time', // TODO: check out how this is working today
+          header: time,
           headerType: 'date',
           statisticsForHeader: [
             {
               key: 'uvVal',
-              value: uvValue,
+              value: uvVal,
             },
           ],
         },

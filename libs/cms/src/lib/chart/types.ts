@@ -1,9 +1,9 @@
-import { StatisticsQueryInput } from '../dto/getChartData.input'
+import { ChartDataInput } from '../dto/getChartData.input'
 import { StatisticsQueryResponse } from '../models/chartDataSource.model'
 
-export type ChartDataInput = StatisticsQueryInput
-export type ChartDataOutput = Promise<StatisticsQueryResponse>
+export type { ChartDataInput } from '../dto/getChartData.input'
+export type ChartDataOutput = StatisticsQueryResponse
 
 export interface ChartDataSourceExternalJsonProviderService {
-  getChartData: (input: ChartDataInput) => ChartDataOutput
+  getChartData: (input: ChartDataInput) => Promise<ChartDataOutput>
 }
