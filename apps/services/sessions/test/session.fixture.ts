@@ -9,6 +9,7 @@ export interface CreateSessionDtoOptions {
   actorNationalId?: string
   subjectNationalId?: string
   timestamp?: Date
+  ipLocation?: string
 }
 
 export const createSessionDto = (
@@ -23,4 +24,5 @@ export const createSessionDto = (
   timestamp: options?.timestamp ?? faker.datatype.datetime(),
   userAgent: faker.internet.userAgent(),
   ip: faker.internet.ip(),
+  ipLocation: options?.ipLocation,
 })

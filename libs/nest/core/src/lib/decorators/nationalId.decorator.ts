@@ -8,19 +8,17 @@ import { isPerson } from 'kennitala'
 
 export const NationalId = createParamDecorator(
   (_: unknown, context: ExecutionContext): string => {
-    const headers = context.switchToHttp().getRequest().headers
+    const request = context.switchToHttp().getRequest()
+    const nationalId = request.headers['x-param-nationalid']
 
-    const nationalId = headers['x-param-nationalid']
     if (!nationalId) {
       throw new BadRequestException('No national id provided')
     }
 
-    if (isPerson(nationalId) && nationalId.length === 10) {
-      return nationalId
+    if (!isPerson(nationalId)) {
+      throw new BadRequestException('Provided national id is invalid.')
     }
 
-    throw new BadRequestException(
-      'Provided national id is invalid. Correct format is 10 numbers, no dashes',
-    )
+    return nationalId
   },
 )

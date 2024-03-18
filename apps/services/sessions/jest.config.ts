@@ -1,6 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'services-sessions',
+  detectOpenHandles: true,
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],

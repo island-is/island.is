@@ -1,8 +1,24 @@
-import { registerDecorator, ValidationOptions } from 'class-validator'
+import {
+  registerDecorator,
+  ValidationOptions,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+} from 'class-validator'
 import { isPerson } from 'kennitala'
 
+@ValidatorConstraint({ async: false })
+class NationalIdValidator implements ValidatorConstraintInterface {
+  validate(value: string): boolean {
+    return typeof value === 'string' && isPerson(value) && value.length === 10
+  }
+
+  defaultMessage(): string {
+    return `Contains an invalid national id for a person`
+  }
+}
+
 export const IsNationalId = (validationOptions?: ValidationOptions) => {
-  return (object: Object, propertyName: string) => {
+  return (object: object, propertyName: string) => {
     registerDecorator({
       name: 'IsNationalId',
       target: object.constructor,
@@ -11,13 +27,7 @@ export const IsNationalId = (validationOptions?: ValidationOptions) => {
         message: `${propertyName} contains an invalid national id for a person`,
         ...validationOptions,
       },
-      validator: {
-        validate(value: any) {
-          return (
-            typeof value === 'string' && isPerson(value) && value.length === 10
-          )
-        },
-      },
+      validator: NationalIdValidator,
     })
   }
 }
