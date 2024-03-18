@@ -1,5 +1,9 @@
 import { CacheField } from '@island.is/nest/graphql'
 import { Field, ObjectType } from '@nestjs/graphql'
+import { Document } from '@contentful/rich-text-types'
+import graphqlTypeJson from 'graphql-type-json'
+
+export type Html = { __typename: string; document?: Document }
 
 @ObjectType('UniversityGatewayProgram')
 export class UniversityGatewayProgram {
@@ -116,6 +120,12 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
 
   @Field({ nullable: true })
   arrangementEn?: string
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  descriptionHtmlIs?: Html | null
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  descriptionHtmlEn?: Html | null
 
   @Field()
   allowException!: boolean
