@@ -428,7 +428,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     if (
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      state === States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT ||
       state === States.RESIDENCE_GRANT_APPLICATION
     ) {
       if (residenceGrantFiles) {
