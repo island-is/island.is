@@ -27,6 +27,7 @@ const SERVICE_PORTAL_SCOPES = [
   DocumentsScope.main,
   EndorsementsScope.main,
   EndorsementsScope.admin,
+  ApiScope.intellectualProperties,
   ApiScope.assets,
   ApiScope.education,
   ApiScope.educationLicense,

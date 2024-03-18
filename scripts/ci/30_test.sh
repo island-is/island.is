@@ -15,7 +15,6 @@ NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd
 EXTRA_OPTS=""
 
 projects_uncollectible_coverage=(
-  "contentful-translation-extension"
   "application-templates-no-debt-certificate"
   "api-domains-email-signup"
   "skilavottord-web"
