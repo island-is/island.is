@@ -27,6 +27,8 @@ import addMonths from 'date-fns/addMonths'
 import { NudgeType } from '../../types/nudge-type'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
 
+type StatusFieldType = 'emailStatus' | 'mobileStatus'
+
 const testUserProfile = {
   nationalId: createNationalId(),
   email: faker.internet.email(),
@@ -1045,7 +1047,13 @@ describe('MeUserProfileController', () => {
       ${NudgeType.NUDGE}      | ${'mobileStatus'}
     `(
       'POST /v2/me/nudge with nudgeType=$nudgeType should only update $field to EMPTY when it is NOT_DEFINED',
-      async ({ nudgeType, field }: { nudgeType: NudgeType; field: string }) => {
+      async ({
+        nudgeType,
+        field,
+      }: {
+        nudgeType: NudgeType
+        field: StatusFieldType
+      }) => {
         // Arrange
         const fixtureFactory = new FixtureFactory(app)
         await fixtureFactory.createUserProfile({
@@ -1067,6 +1075,51 @@ describe('MeUserProfileController', () => {
           where: { nationalId: testUserProfile.nationalId },
         })
         expect(userProfile[field]).toBe(DataStatus.EMPTY)
+      },
+    )
+
+    it.each`
+      nudgeType               | field             | dbStatus
+      ${NudgeType.SKIP_EMAIL} | ${'emailStatus'}  | ${DataStatus.VERIFIED}
+      ${NudgeType.SKIP_EMAIL} | ${'emailStatus'}  | ${DataStatus.NOT_VERIFIED}
+      ${NudgeType.SKIP_PHONE} | ${'mobileStatus'} | ${DataStatus.VERIFIED}
+      ${NudgeType.SKIP_PHONE} | ${'mobileStatus'} | ${DataStatus.NOT_VERIFIED}
+      ${NudgeType.NUDGE}      | ${'emailStatus'}  | ${DataStatus.VERIFIED}
+      ${NudgeType.NUDGE}      | ${'emailStatus'}  | ${DataStatus.NOT_VERIFIED}
+      ${NudgeType.NUDGE}      | ${'mobileStatus'} | ${DataStatus.VERIFIED}
+      ${NudgeType.NUDGE}      | ${'mobileStatus'} | ${DataStatus.NOT_VERIFIED}
+    `(
+      `POST /v2/me/nudge with nudgeType=$nudgeType should not update $field to EMPTY when db status is $dbStatus`,
+      async ({
+        nudgeType,
+        field,
+        dbStatus,
+      }: {
+        nudgeType: NudgeType
+        field: StatusFieldType
+        dbStatus: DataStatus
+      }) => {
+        // Arrange
+        const fixtureFactory = new FixtureFactory(app)
+        await fixtureFactory.createUserProfile({
+          ...testUserProfile,
+          [field]: dbStatus,
+        })
+
+        // Act
+        const res = await server.post(`/v2/me/nudge`).send({
+          nudgeType,
+        } as PostNudgeDto)
+
+        // Assert
+        expect(res.status).toEqual(200)
+
+        // Assert that $field status is not updated
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+        expect(userProfile[field]).toBe(dbStatus)
       },
     )
   })
