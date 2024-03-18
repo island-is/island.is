@@ -28,7 +28,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLoaderData, useLocation } from 'react-router-dom'
+import { useLoaderData, useLocation, useNavigate } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -58,6 +58,7 @@ export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
   const loaderNumber = useLoaderData() as number
   const [page, setPage] = useState(loaderNumber)
   const [selectedLines, setSelectedLines] = useState<Array<string>>([])
@@ -287,7 +288,12 @@ export const ServicePortalDocuments = () => {
     }
   })
 
-  useKeyDown('Escape', () => setActiveDocument(null))
+  useKeyDown('Escape', () => {
+    setActiveDocument(null)
+    navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+      replace: true,
+    })
+  })
 
   const debouncedResults = useMemo(() => {
     return debounce(handleSearchChange, 500)
@@ -323,7 +329,15 @@ export const ServicePortalDocuments = () => {
                 color="blue400"
                 fontWeight="semiBold"
               >
-                {formatMessage(m.documents)}
+                <button
+                  onClick={() =>
+                    navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+                      replace: true,
+                    })
+                  }
+                >
+                  {formatMessage(m.documents)}
+                </button>
               </Text>
             </Box>
           </Box>
@@ -512,7 +526,12 @@ export const ServicePortalDocuments = () => {
             category={categoriesAvailable.find(
               (i) => i.id === activeDocument?.categoryId,
             )}
-            onPressBack={() => setActiveDocument(null)}
+            onPressBack={() => {
+              setActiveDocument(null)
+              navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+                replace: true,
+              })
+            }}
             onRefetch={() => {
               if (refetch) {
                 refetch({
