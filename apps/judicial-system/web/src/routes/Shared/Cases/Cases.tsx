@@ -44,11 +44,12 @@ import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-const CreateCaseButton: React.FC<
-  React.PropsWithChildren<{
-    user: User
-  }>
-> = ({ user }) => {
+interface CreateCaseButtonProps {
+  user: User
+}
+
+const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
+  const { user } = props
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
@@ -96,7 +97,7 @@ const CreateCaseButton: React.FC<
   )
 }
 
-export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
