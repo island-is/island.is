@@ -76,7 +76,7 @@ export class LicenseServiceResolver {
   async createBarcode(
     @CurrentUser() user: User,
     @Parent() genericUserLicense: GenericUserLicense,
-  ): Promise<string> {
+  ): Promise<string | null> {
     if (!user.scope.includes(LicenseApiScope.licensesBarcode)) {
       throw new ForbiddenException(
         'User does not have permission to create barcode',

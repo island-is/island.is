@@ -26,6 +26,10 @@ import {
 } from './clients/driving-license-client'
 import { PCardClient, PCardModule } from './clients/p-card-client'
 import { EhicClient, EhicModule } from './clients/ehic-card-client'
+import {
+  HuntingClientModule,
+  HuntingLicenseClient,
+} from './clients/hunting-license-client'
 
 @Module({
   imports: [
@@ -34,6 +38,7 @@ import { EhicClient, EhicModule } from './clients/ehic-card-client'
     MachineClientModule,
     DisabilityClientModule,
     DrivingClientModule,
+    HuntingClientModule,
     PCardModule,
     EhicModule,
   ],
@@ -55,6 +60,7 @@ import { EhicClient, EhicModule } from './clients/ehic-card-client'
           drivingClient: DrivingLicenseClient,
           pCardClient: PCardClient,
           ehicCardClient: EhicClient,
+          huntingClient: HuntingLicenseClient,
         ) =>
         async (
           type: LicenseType,
@@ -74,6 +80,8 @@ import { EhicClient, EhicModule } from './clients/ehic-card-client'
               return pCardClient
             case LicenseType.Ehic:
               return ehicCardClient
+            case LicenseType.HuntingLicense:
+              return huntingClient
             default:
               return null
           }
@@ -86,6 +94,7 @@ import { EhicClient, EhicModule } from './clients/ehic-card-client'
         DrivingLicenseClient,
         PCardClient,
         EhicClient,
+        HuntingLicenseClient,
       ],
     },
   ],
