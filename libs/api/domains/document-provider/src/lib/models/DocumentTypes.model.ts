@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class DocumentProviderTypes {
+export class DocumentProviderType {
   @Field(() => String, { nullable: true })
   name?: string
 
@@ -13,4 +13,4 @@ export class DocumentProviderTypes {
 }
 
 @ObjectType()
-export class DocumentProviderCategories extends DocumentProviderTypes {}
+export class DocumentProviderCategory extends DocumentProviderType {}
