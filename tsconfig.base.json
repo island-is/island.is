@@ -625,6 +625,9 @@
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
+      "@island.is/clients/hunting-license": [
+        "libs/clients/hunting-license/src/index.ts"
+      ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -1007,6 +1010,7 @@
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
       ],
+      "@island.is/services/license": ["libs/services/license/src/index.ts"],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

@@ -15,15 +15,15 @@ export const documentLoader: WrappedLoaderFn =
   ({ client }) =>
   async () => {
     try {
-      const urlParams = new URLSearchParams(window.location.search)
-      const idParam = urlParams.get('id')
-      if (idParam) {
+      const pathName = window.location.pathname
+      const id = pathName.split('/')[pathName.length - 1]
+      if (id) {
         const { data } = await client.query<Query>({
           query: GET_PAGE_NUMBER_QUERY,
           variables: {
             input: {
               pageSize: pageSize,
-              messageId: idParam,
+              messageId: id,
             },
           },
         })
