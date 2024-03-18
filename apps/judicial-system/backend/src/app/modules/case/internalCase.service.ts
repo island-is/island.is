@@ -782,14 +782,6 @@ export class InternalCaseService {
               await getCourtRecordPdfAsString(theCase, this.formatMessage),
             ),
           },
-          {
-            type: CourtDocumentType.RVUR,
-            courtDocument: Base64.btoa(
-              await this.getSignedRulingPdf(theCase).then((pdf) =>
-                pdf.toString('binary'),
-              ),
-            ),
-          },
           ...([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
             theCase.type,
           ) && theCase.state === CaseState.ACCEPTED
@@ -982,6 +974,32 @@ export class InternalCaseService {
     return { delivered }
   }
 
+  async deliverSignedRulingToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const delivered = await await this.getSignedRulingPdf(theCase)
+      .then((pdf) =>
+        this.deliverCaseToPoliceWithFiles(theCase, user, [
+          {
+            type: CourtDocumentType.RVUR,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          },
+        ]),
+      )
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver sigend ruling for case ${theCase.id} to police`,
+          { reason },
+        )
+
+        return false
+      })
+
+    return { delivered }
+  }
+
   async deliverAppealToPolice(
     theCase: Case,
     user: TUser,
@@ -998,9 +1016,9 @@ export class InternalCaseService {
           }
         }) ?? [],
     )
-      .then(async (courtDocuments) => {
-        return this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments)
-      })
+      .then(async (courtDocuments) =>
+        this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
+      )
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
