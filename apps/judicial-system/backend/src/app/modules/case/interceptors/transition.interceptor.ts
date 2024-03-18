@@ -22,12 +22,14 @@ import {
 import { AwsS3Service } from '../../aws-s3'
 import { EventLogService } from '../../event-log'
 import { Case } from '../models/case.model'
+import { PDFService } from '../pdf.service'
 
 @Injectable()
 export class TransitionInterceptor implements NestInterceptor {
   constructor(
     private readonly eventLogService: EventLogService,
     private readonly awsService: AwsS3Service,
+    private readonly pdfService: PDFService,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<Case> {
@@ -66,7 +68,11 @@ export class TransitionInterceptor implements NestInterceptor {
       !isTrafficViolationCase(theCase) &&
       theCase.state === CaseState.SUBMITTED
     ) {
-      console.log('asd')
+      // Create a stamped indictment PDF
+      const confirmedIndictment =
+        this.pdfService.getConfirmedIndictmentPdf('sad')
+
+      // Save the PDF to S3
     }
 
     return next.handle().pipe(

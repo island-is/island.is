@@ -183,7 +183,10 @@ export class PDFService {
       }
     }
 
-    // return createIndictment(theCase, this.formatMessage, confirmation)
+    return createIndictment(theCase, this.formatMessage, confirmation)
+  }
+
+  async getConfirmedIndictmentPdf(linkToPDF: string): Promise<Buffer> {
     return createConfirmedIndictment({
       actor: 'Halla Bergþóra Björnsdóttir Lyngby',
       institution: 'Lögreglustjórinn á Höfuðborgarsvæðinu',
