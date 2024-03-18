@@ -94,6 +94,8 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       departmentNameIs
       descriptionEn
       descriptionIs
+      descriptionHtmlEn
+      descriptionHtmlIs
       durationInYears
       externalId
       externalUrlEn
