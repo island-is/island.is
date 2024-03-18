@@ -10,7 +10,7 @@ import zipObject from 'lodash/zipObject'
 import { NestDataLoader, GraphQLContext } from '@island.is/nest/dataloader'
 import { User } from '@island.is/auth-nest-tools'
 import { ApiScopeInput } from '../dto/apiScope.input'
-import { ApiScope } from '../models'
+import { ApiScope } from '../models/apiScope.model'
 import { ApiScopeService } from '../services/apiScope.service'
 import { ISLAND_DOMAIN } from '../services/constants'
 
