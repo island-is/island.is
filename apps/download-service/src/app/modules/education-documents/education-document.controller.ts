@@ -53,7 +53,7 @@ export class EducationController {
       authorization: `Bearer ${resource.__accessToken}`,
     }
 
-    const documentResponse = await this.universitiesApi.getStudentCareerPdf(
+    const documentResponse = await this.universitiesApi.getStudentTrackPdf(
       authUser,
       parseInt(trackNumber),
       UniversityId.UniversityOfIceland,

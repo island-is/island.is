@@ -98,7 +98,7 @@ export const EducationGraduation = () => {
       />
       {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !error && <CardLoader />}
-      {!loading && !error && studentInfo.length === 0 && (
+      {!loading && !error && !tracks.length && (
         <Box marginTop={8}>
           <Problem
             type="no_data"
