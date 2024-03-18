@@ -1,9 +1,8 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { useRouter } from 'next/router'
 
 import { MinistryOfJusticeAdvertsResponse } from '@island.is/api/schema'
-import { Table as T, Text } from '@island.is/island-ui/core'
+import { Link, Table as T, Text } from '@island.is/island-ui/core'
 
 import { advertUrl } from './OJOIUtils'
 
@@ -12,17 +11,15 @@ export const OJOISearchListView = ({
 }: {
   adverts?: MinistryOfJusticeAdvertsResponse['adverts']
 }) => {
-  const router = useRouter()
-
   return (
     <T.Table>
       <T.Head>
         <T.Row>
-          <T.HeadData>Útgáfa</T.HeadData>
-          <T.HeadData>Deild</T.HeadData>
-          <T.HeadData>Númer</T.HeadData>
-          <T.HeadData>Heiti</T.HeadData>
-          <T.HeadData>Stofnun</T.HeadData>
+          <T.HeadData width={'10%'}>Útgáfa</T.HeadData>
+          <T.HeadData width={'10%'}>Deild</T.HeadData>
+          <T.HeadData width={'10%'}>Númer</T.HeadData>
+          <T.HeadData width={'40%'}>Heiti</T.HeadData>
+          <T.HeadData width={'30%'}>Stofnun</T.HeadData>
         </T.Row>
       </T.Head>
       <T.Body>
@@ -46,10 +43,18 @@ export const OJOISearchListView = ({
               </Text>
             </T.Data>
             <T.Data>
-              <Text variant="small">{ad.title}</Text>
+              <Text variant="small" /*truncate whiteSpace="nowrap"*/>
+                <Link
+                  href={advertUrl + '/' + ad.id}
+                  underline="normal"
+                  color="blue400"
+                >
+                  {ad.title}
+                </Link>
+              </Text>
             </T.Data>
             <T.Data>
-              <Text variant="small" whiteSpace="nowrap">
+              <Text variant="small" /*truncate whiteSpace="nowrap"*/>
                 {ad.involvedParty?.title}
               </Text>
             </T.Data>

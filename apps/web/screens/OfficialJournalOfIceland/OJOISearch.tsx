@@ -57,7 +57,7 @@ const initialState = {
 }
 
 const OJOISearchPage: Screen<OJOISearchProps> = ({
-  adverts,
+  initialAdverts,
   organizationPage,
   organization,
   namespace,
@@ -67,6 +67,8 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
+
+  const [adverts, setAdverts] = useState(initialAdverts)
 
   const organizationNamespace = useMemo(() => {
     return JSON.parse(organization?.namespace?.fields || '{}')
@@ -127,11 +129,19 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
     }
     setSearchState(newState)
     updateSearchParams(newState)
+
+    // TODO: implement search
+    if (key === 'q' && value) {
+      setAdverts([])
+    } else {
+      setAdverts(initialAdverts)
+    }
   }
 
   const resetFilter = () => {
     setSearchState(initialState)
     updateSearchParams(initialState)
+    setAdverts(initialAdverts)
   }
 
   return (
@@ -208,29 +218,38 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
       }
       breadcrumbItems={breadcrumbItems}
     >
-      <Stack space={3}>
-        <Button
-          onClick={() => setListView(!listView)}
-          size="small"
-          iconType="outline"
-          icon={listView ? 'copy' : 'menu'}
-          variant="utility"
-        >
-          {listView ? 'Sýna sem spjöld' : 'Sýna sem listi'}
-        </Button>
+      {adverts?.length ? (
+        <Stack space={3}>
+          <Button
+            onClick={() => setListView(!listView)}
+            size="small"
+            iconType="outline"
+            icon={listView ? 'copy' : 'menu'}
+            variant="utility"
+          >
+            {listView ? 'Sýna sem spjöld' : 'Sýna sem listi'}
+          </Button>
 
-        {listView ? (
-          <OJOISearchListView adverts={adverts} />
-        ) : (
-          <OJOISearchGridView adverts={adverts} />
-        )}
-      </Stack>
+          {listView ? (
+            <OJOISearchListView adverts={adverts} />
+          ) : (
+            <OJOISearchGridView adverts={adverts} />
+          )}
+        </Stack>
+      ) : (
+        <Box padding={[2, 3, 4]} border={'standard'} borderRadius="large">
+          <Text variant="h3" as="h2">
+            Engin mál fundust
+          </Text>
+          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+        </Box>
+      )}
     </OJOIWrapper>
   )
 }
 
 interface OJOISearchProps {
-  adverts?: MinistryOfJusticeAdvertsResponse['adverts']
+  initialAdverts?: MinistryOfJusticeAdvertsResponse['adverts']
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -238,7 +257,7 @@ interface OJOISearchProps {
 }
 
 const OJOISearch: Screen<OJOISearchProps> = ({
-  adverts,
+  initialAdverts,
   organizationPage,
   organization,
   namespace,
@@ -246,7 +265,7 @@ const OJOISearch: Screen<OJOISearchProps> = ({
 }) => {
   return (
     <OJOISearchPage
-      adverts={adverts}
+      initialAdverts={initialAdverts}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -318,7 +337,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
-    adverts: ministryOfJusticeAdverts.adverts,
+    initialAdverts: ministryOfJusticeAdverts.adverts,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
