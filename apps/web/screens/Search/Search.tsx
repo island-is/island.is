@@ -71,6 +71,7 @@ import { AnchorPageType } from '@island.is/web/utils/anchorPage'
 import { hasProcessEntries } from '@island.is/web/utils/article'
 
 import { Screen } from '../../types'
+import SidebarLayout from '../Layouts/SidebarLayout'
 import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_COUNT_QUERY,
@@ -80,8 +81,6 @@ import {
 } from '../queries'
 import { CategoriesProps, FilterLabels, FilterMenu } from './FilterMenu'
 import { ActionType, initialState, reducer } from './Search.state'
-import SidebarLayout from '../Layouts/SidebarLayout'
-
 import * as styles from './Search.css'
 
 const PERPAGE = 10
@@ -628,7 +627,13 @@ const Search: Screen<CategoryProps> = ({
                           active={!query?.type?.length}
                           onClick={() => {
                             dispatch({
-                              type: ActionType.RESET_SEARCH,
+                              type: ActionType.SET_PARAMS,
+                              payload: {
+                                query: {
+                                  ...state.query,
+                                  type: [],
+                                },
+                              },
                             })
                           }}
                         >
@@ -652,10 +657,9 @@ const Search: Screen<CategoryProps> = ({
                                   query: {
                                     processentry: false,
                                     ...getSearchParams(key),
-                                    category: [],
-                                    organization: [],
+                                    organization: state.query.organization,
+                                    category: state.query.category,
                                   },
-                                  searchLocked: false,
                                 },
                               })
                             }}
@@ -675,8 +679,9 @@ const Search: Screen<CategoryProps> = ({
                                   query: {
                                     processentry: true,
                                     ...getSearchParams('webArticle'),
+                                    organization: state.query.organization,
+                                    category: state.query.category,
                                   },
-                                  searchLocked: false,
                                 },
                               })
                             }}
