@@ -1,6 +1,9 @@
 import { JwtAct } from './jwt.payload'
 
-import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 export interface Auth {
   sub?: string
@@ -17,4 +20,5 @@ export interface Auth {
   ip?: string
   userAgent?: string
   audkenniSimNumber?: string
+  delegationProvider?: AuthDelegationProvider
 }

@@ -290,6 +290,16 @@ export const Firearm = new XroadConf({
   },
 })
 
+export const Hunting = new XroadConf({
+  env: {
+    XROAD_HUNTING_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
+      staging: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
+      prod: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api',
+    },
+  },
+})
+
 export const Disability = new XroadConf({
   env: {
     XROAD_DISABILITY_LICENSE_PATH: {
@@ -751,6 +761,16 @@ export const UniversityGatewayHolarUniversity = new XroadConf({
       dev: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
       staging: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
       prod: 'IS/EDU/5001694359/Holar-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayReykjavikUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10062/RvkUni-Hvin-Protected/umsoknir-v1',
+      staging: 'IS-TEST/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
     },
   },
 })

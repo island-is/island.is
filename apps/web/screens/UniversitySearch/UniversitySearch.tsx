@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
-import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client/react/hooks/useQuery'
 
 import {
   Accordion,
@@ -23,6 +23,7 @@ import {
   Navigation,
   NavigationItem,
   Pagination,
+  SkeletonLoader,
   Stack,
   Tag,
   Text,
@@ -44,7 +45,6 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayProgramFiltersQuery,
-  GetUniversityGatewayProgramsQuery,
   GetUniversityGatewayUniversitiesQuery,
   Query,
   QueryGetOrganizationPageArgs,
@@ -57,7 +57,10 @@ import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
+import {
+  FuseQueryResult,
+  SearchProducts,
+} from '@island.is/web/utils/useUniversitySearch'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
@@ -68,18 +71,14 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
-
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
-  data: Array<UniversityGatewayProgram>
   namespace: Record<string, string>
   filterOptions: Array<UniversityGatewayProgramFilter>
   locale: string
@@ -118,6 +117,11 @@ export interface ComparisonProps {
   iconSrc: string
 }
 
+interface UniversityProgramsQuery {
+  universityGatewayPrograms: {
+    data: Array<UniversityGatewayProgram>
+  }
+}
 interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
   applicationStatus: string
 }
@@ -139,7 +143,6 @@ const getActiveNavigationItemTitle = (
 }
 
 const UniversitySearch: Screen<UniversitySearchProps> = ({
-  data,
   filterOptions,
   namespace,
   searchQuery,
@@ -147,7 +150,57 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   organizationPage,
   universities,
 }) => {
+  const { data, loading } = useQuery<UniversityProgramsQuery>(
+    GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
+    { ssr: false },
+  )
+
+  const router = useRouter()
+  const { width } = useWindowSize()
+  const n = useNamespace(namespace)
+  const isMobileScreenWidth = width < theme.breakpoints.lg
+  const isTabletScreenWidth = width < theme.breakpoints.xl
+
+  const [selectedPage, setSelectedPage] = useState(1)
+  const [selectedComparison, setSelectedComparison] = useState<
+    Array<ComparisonProps>
+  >([])
+  const [query, setQuery] = useState('')
+  const searchTermHasBeenInitialized = useRef(false)
+  const [originalSortedResults, setOriginalSortedList] = useState<
+    Array<FuseQueryResult>
+  >([])
+  const [filteredResults, setFilteredResults] = useState<
+    Array<FuseQueryResult>
+  >([])
+  const [gridView, setGridView] = useState<boolean>(true)
+  const { linkResolver } = useLinkResolver()
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [filters, setFilters] = useState<FilterProps>(
+    JSON.parse(JSON.stringify(initialFilters)),
+  )
+
   useEffect(() => {
+    if (!loading) {
+      const sortedResultsWithStatus = [
+        ...(data?.universityGatewayPrograms.data as UniversityGatewayProgram[]),
+      ]
+        .sort(() => Math.random() - 0.5)
+        .map((item: UniversityGatewayProgram, index: number) => {
+          const itemWithStatus = {
+            ...item,
+            applicationStatus: getApplicationStatus(item),
+          }
+          return { item: itemWithStatus, refIndex: index, score: 1 }
+        })
+
+      setOriginalSortedList(sortedResultsWithStatus)
+    }
+  }, [data, loading])
+
+  useEffect(() => {
+    if (!filterOptions) return
+
     // Re-ordering filters.
     const index = filterOptions.findIndex(
       (filter) => filter.field === 'universityId',
@@ -158,9 +211,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
       movedField.options.sort((x, y) => {
         const titleX =
-          universities.filter((uni) => uni.id === x)[0].contentfulTitle || ''
+          universities.filter((uni) => uni.id === x)[0]?.contentfulTitle || ''
         const titleY =
-          universities.filter((uni) => uni.id === y)[0].contentfulTitle || ''
+          universities.filter((uni) => uni.id === y)[0]?.contentfulTitle || ''
         return titleX.localeCompare(titleY)
       })
       filterOptions.splice(2, 0, movedField)
@@ -171,21 +224,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }, [filterOptions, universities])
 
-  const router = useRouter()
-  const { width } = useWindowSize()
-  const n = useNamespace(namespace)
-  useSetZIndexOnHeader()
-
-  const isMobileScreenWidth = width < theme.breakpoints.lg
-  const isTabletScreenWidth = width < theme.breakpoints.xl
-
-  const [selectedPage, setSelectedPage] = useState(1)
-  const [selectedComparison, setSelectedComparison] = useState<
-    Array<ComparisonProps>
-  >([])
-  const [query, setQuery] = useState('')
-  const searchTermHasBeenInitialized = useRef(false)
-
   const getApplicationStatus = (item: UniversityGatewayProgram) => {
     const now = new Date()
     return new Date(item.applicationStartDate) <= now &&
@@ -193,37 +231,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       ? 'OPEN'
       : 'CLOSED'
   }
-
-  // TODO Create proper types here
-  const [originalSortedResults, setOriginalSortedList] = useState<any>(
-    [...data]
-      // .sort((x, y) => (x.nameIs > y.nameIs ? 1 : -1))
-      .sort(() => Math.random() - 0.5)
-      .map((item: UniversityGatewayProgram, index: number) => {
-        const itemWithStatus = {
-          ...item,
-          applicationStatus: getApplicationStatus(item),
-        }
-        return { item: itemWithStatus, refIndex: index, score: 1 }
-      }),
-  )
-
-  const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    originalSortedResults,
-  )
-
-  const { linkResolver } = useLinkResolver()
-
-  //creating a deep copy to avoid original being affected by changes to filters
-  const [filters, setFilters] = useState<FilterProps>(
-    JSON.parse(JSON.stringify(initialFilters)),
-  )
-
-  const [gridView, setGridView] = useState<boolean>(true)
-
-  const [totalPages, setTotalPages] = useState<number>(
-    Math.ceil(data.length / ITEMS_PER_PAGE),
-  )
 
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
@@ -261,10 +268,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseOptions = {
     threshold: 0.3,
     findAllMatches: true,
-    ignoreLocation: true,
+    includeScore: true,
     keys: [
-      `name${locale === 'is' ? 'Is' : 'En'}`,
-      `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+      {
+        name: `name${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 2,
+      },
+      {
+        name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
       'degreeType',
       'modeOfDelivery',
       'startingSemesterSeason',
@@ -274,14 +287,24 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     ],
   }
 
-  const fuseInstance = new Fuse(
-    data.map((item) => {
-      return { ...item, applicationStatus: getApplicationStatus(item) }
-    }),
-    fuseOptions,
-  )
+  const resetFilteredList = () => {
+    setFilteredResults(originalSortedResults)
+  }
 
   useEffect(() => {
+    if (loading) return
+    if (query[query.length - 1] === '´') return
+
+    let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
+    if (originalSortedResults.length > 0) {
+      fuseInstance = new Fuse(
+        originalSortedResults.map((item: FuseQueryResult) => {
+          return item.item
+        }) || [],
+        fuseOptions,
+      )
+    }
+
     const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
     Object.keys(filters).forEach((key) => {
       const str = key as keyof typeof filters
@@ -303,16 +326,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       setFilteredResults(results)
     }
     localStorage.setItem('savedFilters', JSON.stringify(filters))
-  }, [filters, query])
-
-  const resetFilteredList = () => {
-    setFilteredResults(originalSortedResults)
-  }
+  }, [filters, query, data, loading, originalSortedResults, locale])
 
   const applicationUrlParser = (universityId: string) => {
     const university =
       universities.filter((uni) => uni.id === universityId)[0]
-        .contentfulTitle || ''
+        ?.contentfulTitle || ''
 
     switch (university) {
       case 'Háskóli Íslands':
@@ -324,7 +343,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       case 'Háskólinn á Hólum':
         return 'https://ugla.holar.is/namsumsoknir/'
       case 'Háskólinn í Reykjavík':
-        return 'https://www.ru.is/namid/um-namid/umsoknarfrestur'
+        return 'https://umsoknir.ru.is/'
       case 'Landbúnaðarháskóli Íslands':
         return 'https://ugla.lbhi.is/namsumsoknir/'
       case 'Listaháskóli Íslands':
@@ -342,7 +361,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       disabled: item.applicationStatus === 'CLOSED',
-      onClick: () => router.push(applicationUrlParser(item.universityId)),
+      href: applicationUrlParser(item.universityId),
     }
     return CTA
   }
@@ -440,6 +459,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       }?comparison=${JSON.stringify(selectedComparison.map((i) => i.id))}`,
     )
   }
+
   const navList: NavigationItem[] =
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
@@ -493,11 +513,52 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const formatFilterStrings = (tag: string, field: string) => {
     if (field === 'universityId') {
-      return universities.filter((x) => x.id === tag)[0].contentfulTitle || ''
+      return universities.filter((x) => x.id === tag)[0]?.contentfulTitle || ''
     } else if (tag === 'OPEN') {
       return `${n('openForApplication', 'Opið fyrir umsóknir')}`
     } else {
       return n(tag, TranslationDefaults[tag])
+    }
+  }
+
+  const loadSkeletons = () => {
+    if (gridView || isMobileScreenWidth || isTabletScreenWidth) {
+      return (
+        <GridContainer className={styles.gridContainer}>
+          <GridRow rowGap={3}>
+            {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+              <GridColumn
+                span={
+                  isMobileScreenWidth
+                    ? '1/1'
+                    : isTabletScreenWidth
+                    ? '1/2'
+                    : '1/3'
+                }
+                key={i}
+              >
+                <Box width="full">
+                  <SkeletonLoader height={480} width={'100%'} />
+                </Box>
+              </GridColumn>
+            ))}
+          </GridRow>
+        </GridContainer>
+      )
+    } else {
+      return (
+        <GridContainer className={styles.gridContainer}>
+          <GridRow rowGap={3}>
+            <Box width="full">
+              {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+                <Box padding={2} key={i} width="full">
+                  <SkeletonLoader height={480} width={'100%'} />
+                </Box>
+              ))}
+            </Box>
+          </GridRow>
+        </GridContainer>
+      )
     }
   }
 
@@ -705,7 +766,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               {n('searchResults', 'Leitarniðurstöður')}
             </Text>
             <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
               value={query}
@@ -768,13 +829,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   <Tag onClick={() => resetFilteredList()}>
                     {n('showAll', 'Sýna allt')}
                   </Tag>
-                  {filterOptions.map((option) => {
-                    if (
-                      option.field === 'degreeType' ||
-                      option.field === 'universityId'
-                    ) {
-                      return option.options.map((item) => {
-                        if (item !== 'OTHER') {
+                  {filterOptions &&
+                    filterOptions.map((option) => {
+                      if (
+                        option.field === 'degreeType' ||
+                        option.field === 'universityId'
+                      ) {
+                        return option.options.map((item) => {
+                          if (item === 'OTHER') return null
                           return (
                             <Tag
                               onClick={() => handleFilters('degreeType', item)}
@@ -782,19 +844,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               {n(
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle || ''
+                                      ?.contentfulTitle || ''
                                   : item,
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle
+                                      ?.contentfulTitle
                                   : item,
                               )}
                             </Tag>
                           )
-                        }
-                      })
-                    }
-                  })}
+                        })
+                      }
+                    })}
                 </Inline>
               </Box>
             </ContentBlock>
@@ -902,308 +963,320 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 </Box>
               </Hidden>
             </Box>
-            {!gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
-              <Box>
-                {filteredResults &&
-                  filteredResults
-                    .slice(
-                      (selectedPage - 1) * ITEMS_PER_PAGE,
-                      (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
-                    )
-                    .map((item, index) => {
-                      const dataItem =
-                        item.item as UniversityGatewayProgramWithStatus
-                      const specializedName =
-                        locale === 'en'
-                          ? dataItem.specializationNameEn ?? undefined
-                          : dataItem.specializationNameIs ?? undefined
-                      const subHeading =
-                        specializedName !== undefined
-                          ? (locale === 'en'
-                              ? 'Specialization: '
-                              : 'Kjörsvið: ') + specializedName
-                          : undefined
-                      return (
-                        <Box marginBottom={3} key={index}>
-                          <ActionCategoryCard
-                            key={`${index}-${dataItem.id}`}
-                            href={
-                              linkResolver('universitysearchdetails', [
-                                dataItem.id,
-                              ]).href
-                            }
-                            heading={
-                              locale === 'en'
-                                ? dataItem.nameEn
-                                : dataItem.nameIs
-                            }
-                            subHeading={subHeading}
-                            text={
-                              locale === 'en'
-                                ? stripHtml(dataItem.descriptionEn)
-                                : stripHtml(dataItem.descriptionIs)
-                            }
-                            icon={
-                              <img
-                                src={
-                                  universities.filter(
-                                    (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl || ''
+            {loading ? (
+              <>{loadSkeletons()}</>
+            ) : (
+              <>
+                {!gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
+                  <Box>
+                    {filteredResults &&
+                      filteredResults
+                        .slice(
+                          (selectedPage - 1) * ITEMS_PER_PAGE,
+                          (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+                        )
+                        .map((item, index) => {
+                          const dataItem =
+                            item.item as UniversityGatewayProgramWithStatus
+                          const specializedName =
+                            locale === 'en'
+                              ? dataItem.specializationNameEn ?? undefined
+                              : dataItem.specializationNameIs ?? undefined
+                          const subHeading =
+                            specializedName !== undefined
+                              ? (locale === 'en'
+                                  ? 'Specialization: '
+                                  : 'Kjörsvið: ') + specializedName
+                              : undefined
+                          return (
+                            <Box marginBottom={3} key={index}>
+                              <ActionCategoryCard
+                                key={`${index}-${dataItem.id}`}
+                                href={
+                                  linkResolver('universitysearchdetails', [
+                                    dataItem.id,
+                                  ]).href
                                 }
-                                alt={`Logo fyrir ${
+                                heading={
                                   locale === 'en'
                                     ? dataItem.nameEn
                                     : dataItem.nameIs
-                                }`}
+                                }
+                                subHeading={subHeading}
+                                text={
+                                  locale === 'en'
+                                    ? stripHtml(dataItem.descriptionEn)
+                                    : stripHtml(dataItem.descriptionIs)
+                                }
+                                icon={
+                                  <img
+                                    src={
+                                      universities.filter(
+                                        (x) => x.id === dataItem.universityId,
+                                      )[0]?.contentfulLogoUrl || ''
+                                    }
+                                    alt={`${
+                                      locale === 'en'
+                                        ? dataItem.nameEn
+                                        : dataItem.nameIs
+                                    } logo`}
+                                  />
+                                }
+                                sidePanelConfig={{
+                                  cta: createPrimaryCTA(dataItem),
+                                  buttonLabel: n('apply', 'Sækja um'),
+                                  items: [
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'school'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: `${n(
+                                        dataItem.degreeType,
+                                        TranslationDefaults[
+                                          dataItem.degreeType
+                                        ],
+                                      )}, ${dataItem.degreeAbbreviation}`,
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'time'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: `${dataItem.credits} ${n(
+                                        'units',
+                                        'einingar',
+                                      )}, ${dataItem.durationInYears.toLocaleString(
+                                        locale === 'is' ? 'de' : 'en',
+                                      )} ${
+                                        locale === 'en'
+                                          ? dataItem.durationInYears === 1
+                                            ? 'year'
+                                            : 'years'
+                                          : 'ár'
+                                      }`,
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'person'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: formatModeOfDelivery(
+                                        dataItem.modeOfDelivery,
+                                      ),
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'calendar'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: `${n(
+                                        dataItem.startingSemesterSeason,
+                                        TranslationDefaults[
+                                          dataItem.startingSemesterSeason
+                                        ],
+                                      )} ${dataItem.startingSemesterYear}`,
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'time'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title:
+                                        dataItem.applicationStatus === 'OPEN'
+                                          ? `${n(
+                                              'openForApplication',
+                                              'Opið fyrir umsóknir',
+                                            )}`
+                                          : `${n(
+                                              'closedForApplication',
+                                              'Lokað fyrir umsóknir',
+                                            )}`,
+                                    },
+                                  ],
+                                }}
                               />
-                            }
-                            sidePanelConfig={{
-                              cta: createPrimaryCTA(dataItem),
-                              buttonLabel: n('apply', 'Sækja um'),
-                              items: [
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'school'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${n(
-                                    dataItem.degreeType,
-                                    TranslationDefaults[dataItem.degreeType],
-                                  )}, ${dataItem.degreeAbbreviation}`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'time'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${dataItem.credits} ${n(
-                                    'units',
-                                    'einingar',
-                                  )}, ${dataItem.durationInYears.toLocaleString(
-                                    locale === 'is' ? 'de' : 'en',
-                                  )} ${
-                                    locale === 'en'
-                                      ? dataItem.durationInYears === 1
-                                        ? 'year'
-                                        : 'years'
-                                      : 'ár'
-                                  }`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'person'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: formatModeOfDelivery(
-                                    dataItem.modeOfDelivery,
-                                  ),
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'calendar'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${n(
-                                    dataItem.startingSemesterSeason,
-                                    TranslationDefaults[
-                                      dataItem.startingSemesterSeason
-                                    ],
-                                  )} ${dataItem.startingSemesterYear}`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'time'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title:
-                                    dataItem.applicationStatus === 'OPEN'
-                                      ? `${n(
-                                          'openForApplication',
-                                          'Opið fyrir umsóknir',
-                                        )}`
-                                      : `${n(
-                                          'closedForApplication',
-                                          'Lokað fyrir umsóknir',
-                                        )}`,
-                                },
-                              ],
-                            }}
-                          />
-                        </Box>
-                      )
-                    })}
-              </Box>
-            )}
-            {(gridView || isMobileScreenWidth || isTabletScreenWidth) && (
-              <GridContainer className={styles.gridContainer}>
-                <GridRow rowGap={3}>
-                  {filteredResults &&
-                    filteredResults
-                      .slice(
-                        (selectedPage - 1) * ITEMS_PER_PAGE,
-                        (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
-                      )
-                      .map((item, index) => {
-                        const dataItem =
-                          item.item as UniversityGatewayProgramWithStatus
-                        const specializedName =
-                          locale === 'en'
-                            ? dataItem.specializationNameEn ?? undefined
-                            : dataItem.specializationNameIs ?? undefined
-                        const subHeading =
-                          specializedName !== undefined
-                            ? (locale === 'en'
-                                ? 'Specialization: '
-                                : 'Kjörsvið: ') + specializedName
-                            : undefined
-                        return (
-                          <GridColumn
-                            span={
-                              isMobileScreenWidth
-                                ? '1/1'
-                                : isTabletScreenWidth
-                                ? '1/2'
-                                : '1/3'
-                            }
-                            key={index}
-                          >
-                            <ListViewCard
-                              iconText={
-                                universities.filter(
-                                  (x) => x.id === dataItem.universityId,
-                                )[0].contentfulTitle || ''
-                              }
-                              heading={
-                                locale === 'en'
-                                  ? dataItem.nameEn
-                                  : dataItem.nameIs
-                              }
-                              subHeading={subHeading}
-                              icon={
-                                <img
-                                  src={
+                            </Box>
+                          )
+                        })}
+                  </Box>
+                )}
+                {(gridView || isMobileScreenWidth || isTabletScreenWidth) && (
+                  <GridContainer className={styles.gridContainer}>
+                    <GridRow rowGap={3}>
+                      {filteredResults &&
+                        filteredResults
+                          .slice(
+                            (selectedPage - 1) * ITEMS_PER_PAGE,
+                            (selectedPage - 1) * ITEMS_PER_PAGE +
+                              ITEMS_PER_PAGE,
+                          )
+                          .map((item, index) => {
+                            const dataItem =
+                              item.item as UniversityGatewayProgramWithStatus
+                            const specializedName =
+                              locale === 'en'
+                                ? dataItem.specializationNameEn ?? undefined
+                                : dataItem.specializationNameIs ?? undefined
+                            const subHeading =
+                              specializedName !== undefined
+                                ? (locale === 'en'
+                                    ? 'Specialization: '
+                                    : 'Kjörsvið: ') + specializedName
+                                : undefined
+                            return (
+                              <GridColumn
+                                span={
+                                  isMobileScreenWidth
+                                    ? '1/1'
+                                    : isTabletScreenWidth
+                                    ? '1/2'
+                                    : '1/3'
+                                }
+                                key={index}
+                              >
+                                <ListViewCard
+                                  iconText={
                                     universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl || ''
+                                    )[0]?.contentfulTitle || ''
                                   }
-                                  alt={`Logo fyrir ${
+                                  heading={
                                     locale === 'en'
                                       ? dataItem.nameEn
                                       : dataItem.nameIs
-                                  }`}
+                                  }
+                                  subHeading={subHeading}
+                                  icon={
+                                    <img
+                                      src={
+                                        universities.filter(
+                                          (x) => x.id === dataItem.universityId,
+                                        )[0]?.contentfulLogoUrl || ''
+                                      }
+                                      alt={`${
+                                        locale === 'en'
+                                          ? dataItem.nameEn
+                                          : dataItem.nameIs
+                                      } logo`}
+                                    />
+                                  }
+                                  buttonLabel={n('apply', 'Sækja um')}
+                                  cta={createPrimaryCTA(dataItem)}
+                                  href={
+                                    linkResolver('universitysearchdetails', [
+                                      dataItem.id,
+                                    ]).href
+                                  }
+                                  infoItems={[
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'school'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: `${n(
+                                        dataItem.degreeType,
+                                        TranslationDefaults[
+                                          dataItem.degreeType
+                                        ],
+                                      )}, ${dataItem.degreeAbbreviation}`,
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'time'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: `${dataItem.credits} ${n(
+                                        'units',
+                                        'einingar',
+                                      )}, ${dataItem.durationInYears.toLocaleString(
+                                        locale === 'is' ? 'de' : 'en',
+                                      )} ${
+                                        locale === 'en'
+                                          ? dataItem.durationInYears === 1
+                                            ? 'year'
+                                            : 'years'
+                                          : 'ár'
+                                      }`,
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'person'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: formatModeOfDelivery(
+                                        dataItem.modeOfDelivery,
+                                      ),
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'calendar'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title: `${n(
+                                        dataItem.startingSemesterSeason,
+                                        TranslationDefaults[
+                                          dataItem.startingSemesterSeason
+                                        ],
+                                      )} ${dataItem.startingSemesterYear}`,
+                                    },
+                                    {
+                                      icon: (
+                                        <Icon
+                                          icon={'time'}
+                                          type="outline"
+                                          color="blue400"
+                                        />
+                                      ),
+                                      title:
+                                        dataItem.applicationStatus === 'OPEN'
+                                          ? `${n(
+                                              'openForApplication',
+                                              'Opið fyrir umsóknir',
+                                            )}`
+                                          : `${n(
+                                              'closedForApplication',
+                                              'Lokað fyrir umsóknir',
+                                            )}`,
+                                    },
+                                  ]}
                                 />
-                              }
-                              buttonLabel={n('apply', 'Sækja um')}
-                              cta={createPrimaryCTA(dataItem)}
-                              href={
-                                linkResolver('universitysearchdetails', [
-                                  dataItem.id,
-                                ]).href
-                              }
-                              infoItems={[
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'school'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${n(
-                                    dataItem.degreeType,
-                                    TranslationDefaults[dataItem.degreeType],
-                                  )}, ${dataItem.degreeAbbreviation}`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'time'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${dataItem.credits} ${n(
-                                    'units',
-                                    'einingar',
-                                  )}, ${dataItem.durationInYears.toLocaleString(
-                                    locale === 'is' ? 'de' : 'en',
-                                  )} ${
-                                    locale === 'en'
-                                      ? dataItem.durationInYears === 1
-                                        ? 'year'
-                                        : 'years'
-                                      : 'ár'
-                                  }`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'person'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: formatModeOfDelivery(
-                                    dataItem.modeOfDelivery,
-                                  ),
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'calendar'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title: `${n(
-                                    dataItem.startingSemesterSeason,
-                                    TranslationDefaults[
-                                      dataItem.startingSemesterSeason
-                                    ],
-                                  )} ${dataItem.startingSemesterYear}`,
-                                },
-                                {
-                                  icon: (
-                                    <Icon
-                                      icon={'time'}
-                                      type="outline"
-                                      color="blue400"
-                                    />
-                                  ),
-                                  title:
-                                    dataItem.applicationStatus === 'OPEN'
-                                      ? `${n(
-                                          'openForApplication',
-                                          'Opið fyrir umsóknir',
-                                        )}`
-                                      : `${n(
-                                          'closedForApplication',
-                                          'Lokað fyrir umsóknir',
-                                        )}`,
-                                },
-                              ]}
-                            />
-                          </GridColumn>
-                        )
-                      })}
-                </GridRow>
-              </GridContainer>
+                              </GridColumn>
+                            )
+                          })}
+                    </GridRow>
+                  </GridContainer>
+                )}
+              </>
             )}
+
             <Box
               marginTop={2}
               marginBottom={selectedComparison.length > 0 ? 4 : 0}
@@ -1393,52 +1466,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   res.setHeader(
     'Cache-Control',
-    'public, s-maxage=3300, stale-while-revalidate=300',
+    'public, s-maxage=1650, stale-while-revalidate=300',
   )
-  const namespaceResponse = await apolloClient.query<
-    GetNamespaceQuery,
-    GetNamespaceQueryVariables
-  >({
-    query: GET_NAMESPACE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        namespace: 'universityGateway',
-      },
-    },
-  })
-
-  const { search } = query
-
-  const namespace = JSON.parse(
-    namespaceResponse?.data?.getNamespace?.fields || '{}',
-  ) as Record<string, string>
-
-  let showPagesFeatureFlag = false
-
-  if (publicRuntimeConfig?.environment === 'prod') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
-  } else {
-    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
-  }
-
-  if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Page not found')
-  }
 
   const [
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { universityGatewayPrograms },
-    },
     filters,
     {
       data: { universityGatewayUniversities },
     },
+    namespaceResponse,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -1449,19 +1488,34 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
         },
       },
     }),
-    apolloClient.query<GetUniversityGatewayProgramsQuery>({
-      query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    }),
     apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
       query: GET_UNIVERSITY_GATEWAY_FILTERS,
     }),
     apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     }),
+    apolloClient.query<GetNamespaceQuery, GetNamespaceQueryVariables>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+          namespace: 'universityGateway',
+        },
+      },
+    }),
   ])
 
+  const { search } = query
+
+  const namespace = JSON.parse(
+    namespaceResponse?.data?.getNamespace?.fields || '{}',
+  ) as Record<string, string>
+
+  if (!getOrganizationPage) {
+    throw new CustomNextError(404, 'Page not found')
+  }
+
   return {
-    data: universityGatewayPrograms.data,
     searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
@@ -1473,5 +1527,4 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
 
 export default withMainLayout(UniversitySearch, {
   showFooter: false,
-  headerColorScheme: 'white',
 })

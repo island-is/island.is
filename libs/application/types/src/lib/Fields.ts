@@ -73,7 +73,11 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
-  condition?: (application: Application) => boolean
+  condition?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => boolean
+  dataTestId?: string
 } & (
   | {
       component: 'input'
@@ -370,6 +374,9 @@ export interface KeyValueField extends BaseField {
   value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -528,6 +535,8 @@ export interface FindVehicleField extends BaseField {
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
+  isEnergyFunds?: boolean
+  energyFundsMessages?: Record<string, FormText>
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
@@ -553,8 +562,8 @@ export interface StaticTableField extends BaseField {
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   summary?:
-    | { label: StaticText; value: StaticText }
-    | ((application: Application) => { label: StaticText; value: StaticText })
+    | { label: StaticText; value: StaticText }[]
+    | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
 export type Field =

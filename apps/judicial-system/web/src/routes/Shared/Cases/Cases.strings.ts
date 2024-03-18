@@ -104,8 +104,18 @@ export const cases = {
           description:
             'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
         },
+        prosecutor: {
+          id: 'judicial.system.core:cases.active_requests.table.headers.prosecutor',
+          defaultMessage: 'Sækjandi',
+          description: 'Notaður sem titill fyrir sækjanda í málalista.',
+        },
       }),
     },
+    casesAwaitingConfirmationTitle: defineMessage({
+      id: 'judicial.system.core:cases.active_requests.cases_waiting_for_confirmation_title',
+      defaultMessage: 'Mál sem bíða staðfestingar',
+      description: 'Notaður sem titill í fyrsta málalista á heimaskjá.',
+    }),
     title: defineMessage({
       id: 'judicial.system.core:cases.active_requests.title',
       defaultMessage: 'Mál í vinnslu',
@@ -117,11 +127,23 @@ export const cases = {
       description:
         'Notaður sem titill í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá.',
     }),
+    casesAwaitingConfirmationInfoContainerTitle: defineMessage({
+      id: 'judicial.system.core:cases.active_requests.case_waiting_for_confirmation_info_container_title',
+      defaultMessage: 'Engin mál bíða staðfestingar.',
+      description:
+        'Notaður sem titill í upplýsingasvæði sem segir að engin virk mál sem bíða staðfestingar fundust á heimaskjá.',
+    }),
     infoContainerText: defineMessage({
       id: 'judicial.system.core:cases.active_requests.info_container_text',
       defaultMessage: 'Öll mál hafa verið afgreidd.',
       description:
         'Notaður sem texti í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá fangelsisstarfsmanna.',
+    }),
+    casesAwaitingConfirmationInfoContainerText: defineMessage({
+      id: 'judicial.system.core:cases.active_requests.cases_waiting_for_confirmation_info_container_text',
+      defaultMessage: 'Engin mál hafa verið send til staðfestingar.',
+      description:
+        'Notaður sem texti í upplýsingasvæði sem segir að engin virk mál sem bíða staðfestingar fundust á heimaskjá.',
     }),
     prisonStaffUsers: defineMessages({
       title: {

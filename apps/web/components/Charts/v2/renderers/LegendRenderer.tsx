@@ -1,8 +1,13 @@
+import { CSSProperties } from 'react'
 import { Legend, LegendProps } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 
-import { ChartComponentWithRenderProps, ChartData } from '../types'
+import {
+  ChartComponentWithRenderProps,
+  ChartData,
+  CustomStyleConfig,
+} from '../types'
 import { decideChartBase } from '../utils'
 
 const renderLegendItemLabel = (
@@ -26,6 +31,7 @@ type InferredArrayType<T> = T extends (infer U)[] ? U : never
 interface CustomLegendRendererProps extends LegendProps {
   components: ChartComponentWithRenderProps[]
   data: ChartData
+  customStyleConfig: CustomStyleConfig
   payload?:
     | (InferredArrayType<LegendProps['payload']> & {
         payload: {
@@ -56,7 +62,6 @@ const CustomLegendRenderer = (props: CustomLegendRendererProps) => {
         flexWrap: 'wrap',
         columnGap: '15px',
         rowGap: '15px',
-        marginTop: '30px',
         justifyContent: 'center',
       }}
     >
@@ -120,11 +125,17 @@ const CustomLegendRenderer = (props: CustomLegendRendererProps) => {
 interface LegendRendererProps {
   componentsWithAddedProps: ChartComponentWithRenderProps[]
   data: ChartData
+  customStyleConfig: CustomStyleConfig
 }
+
+const DEFAULT_WRAPPER_STYLE = {
+  paddingTop: '30px',
+} as CSSProperties
 
 export const renderLegend = ({
   componentsWithAddedProps,
   data,
+  customStyleConfig,
 }: LegendRendererProps) => {
   if (componentsWithAddedProps.length <= 1) {
     return null
@@ -133,6 +144,10 @@ export const renderLegend = ({
   return (
     <Legend
       aria-hidden="true"
+      verticalAlign={customStyleConfig.legend?.verticalAlign ?? undefined}
+      wrapperStyle={
+        customStyleConfig.legend?.wrapperStyle ?? DEFAULT_WRAPPER_STYLE
+      }
       content={(props) => (
         <CustomLegendRenderer
           {...props}

@@ -86,6 +86,7 @@ export const environmentStore = create<EnvironmentStore>(
                 label: branch.namespace,
                 apiUrl: `https://${branch.host}${branch.path}`,
               })),
+              environments.local,
             ]
             set({ loading: false, fetchedAt: Date.now(), result })
             return result
@@ -106,7 +107,7 @@ export const environmentStore = create<EnvironmentStore>(
       },
     }),
     {
-      name: '@island/environment11',
+      name: '@island/environment13',
       getStorage: () => AsyncStorage,
       deserialize(str: string) {
         const { state, version } = JSON.parse(str)

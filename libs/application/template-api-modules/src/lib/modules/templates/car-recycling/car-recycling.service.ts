@@ -117,7 +117,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       if (ownerResponse && ownerResponse.errors) {
         isError = true
-        this.logger.error(`Error create owner ${applicantName}`, {
+        this.logger.error(`car-recycling: Error creating owner`, {
           error: ownerResponse.errors,
         })
       }
@@ -132,10 +132,15 @@ export class CarRecyclingService extends BaseTemplateApiService {
             RecyclingRequestTypes.cancelled,
           )
 
-          if (cancelResponse && cancelResponse.errors) {
+          if (
+            cancelResponse &&
+            !cancelResponse.data.createSkilavottordRecyclingRequestAppSys.status
+          ) {
             isError = true
             this.logger.error(
-              `Error canceling recycling vehicle ${vehicle.permno} `,
+              `car-recycling: Error canceling recycling vehicle ${vehicle.permno?.slice(
+                -3,
+              )} `,
               {
                 error: cancelResponse.errors,
               },
@@ -155,9 +160,14 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
           if (vechicleResponse && vechicleResponse.errors) {
             isError = true
-            this.logger.error(`Error creating vehicle ${vehicle.permno} `, {
-              error: vechicleResponse.errors,
-            })
+            this.logger.error(
+              `car-recycling: Error creating vehicle ${vehicle.permno?.slice(
+                -3,
+              )} `,
+              {
+                error: vechicleResponse.errors,
+              },
+            )
           }
 
           if (!isError) {
@@ -169,11 +179,19 @@ export class CarRecyclingService extends BaseTemplateApiService {
               RecyclingRequestTypes.pendingRecycle,
             )
 
-            if (response && response.errors) {
+            if (
+              response &&
+              !response.data.createSkilavottordRecyclingRequestAppSys.status
+            ) {
               isError = true
-              this.logger.error(`Error recycling vehicle ${vehicle.permno}`, {
-                error: response.errors,
-              })
+              this.logger.error(
+                `car-recycling: Error recycling vehicle ${vehicle.permno?.slice(
+                  -3,
+                )}`,
+                {
+                  error: response.errors,
+                },
+              )
             }
           }
         }
@@ -184,9 +202,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       if (isError) {
         return Promise.reject(
-          new Error(
-            `Error occurred when recycling vehicle(s) for ${applicantName}`,
-          ),
+          new Error(`car-recycling: Error occurred when recycling vehicle(s)`),
         )
       }
 
@@ -194,10 +210,14 @@ export class CarRecyclingService extends BaseTemplateApiService {
     } catch (error) {
       isError = true
       this.logger.error(
-        `Error occurred when recycling vehicle(s) for ${applicantName}`,
+        `car-recycling: Error occurred when recycling vehicle(s)`,
         {
           error,
         },
+      )
+
+      return Promise.reject(
+        new Error(`Error occurred when recycling vehicle(s)`),
       )
     }
   }

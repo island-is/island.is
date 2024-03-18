@@ -95,7 +95,8 @@ export const expandAnswers = (
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
             accountNumber: account.accountNumber ?? '',
-            balance: account.balance ?? '',
+            capital: account.capital ?? '',
+            penaltyInterestRates: account.penaltyInterestRates ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
           }
         }),
@@ -173,8 +174,11 @@ export const expandAnswers = (
       businessAssets: {
         data: (answers.business.businessAssets?.data ?? []).map((asset) => {
           return {
+            assetType: asset.assetType ?? '',
+            assetNumber: asset.assetNumber ?? '',
+            description: asset.description ?? '',
             businessAsset: asset.businessAsset ?? '',
-            businessAssetValue: asset.businessAssetValue ?? 0,
+            businessAssetValue: asset.businessAssetValue ?? '',
           }
         }),
         total: answers.business.businessAssets?.total ?? 0,

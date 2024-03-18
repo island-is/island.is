@@ -21,7 +21,7 @@ export const removeTabsValidateAndSet = (
 
   validateAndSet(
     field,
-    value.trim(),
+    value,
     validations,
     setWorkingCase,
     errorMessage,
@@ -89,7 +89,7 @@ export const validateAndSendToServer = (
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
-export function toggleInArray<T>(values: T[] | undefined | null, entry: T) {
+export const toggleInArray = <T>(values: T[] | undefined | null, entry: T) => {
   if (!values) return [entry]
 
   return values.includes(entry)

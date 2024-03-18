@@ -1,0 +1,1292 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/journal/advert": {
+      "get": {
+        "operationId": "JournalController_advert",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journal advert by ID.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/JournalAdvert" }
+              }
+            }
+          },
+          "404": {
+            "description": "Advert not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertNotFound" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/journal/adverts": {
+      "get": {
+        "operationId": "JournalController_adverts",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "String to search for in adverts.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "department",
+            "required": false,
+            "in": "query",
+            "description": "One or more departments (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "One or more types (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "One or more categories (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "involvedParty",
+            "required": false,
+            "in": "query",
+            "description": "One or more involved parties (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
+            "schema": { "format": "date-time", "type": "string" }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
+            "schema": { "format": "date-time", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of journal adverts, optional query parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query string validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertsValidationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/journal/departments": {
+      "get": {
+        "operationId": "JournalController_departments",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "String to search for in departments.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of journal advert departments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertDepartmentsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query string validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertsValidationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/journal/types": {
+      "get": {
+        "operationId": "JournalController_types",
+        "parameters": [
+          {
+            "name": "department",
+            "required": false,
+            "in": "query",
+            "description": "Department slug to get categories for.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "String to search for in types.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of journal advert types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertTypesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query string validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertsValidationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/journal/categories": {
+      "get": {
+        "operationId": "JournalController_categories",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "String to search for in categories.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of journal advert types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query string validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalAdvertsValidationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/journal/application": {
+      "post": {
+        "operationId": "JournalController_application",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JournalPostApplicationBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Submit a journal advert application",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalPostApplicationResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Validation failed." }
+        }
+      }
+    },
+    "/api/v1/journal/signatures": {
+      "get": {
+        "operationId": "JournalController_signatures",
+        "parameters": [
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "Search for a specific signature by id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Search for a specific signature by type",
+            "example": "Regular",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search for a specific signature",
+            "example": "Dagur B. Eggertsson",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of signatures",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalSignatureGetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/journal/error": {
+      "get": {
+        "operationId": "JournalController_error",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "Explicit error from service to test logging."
+          }
+        }
+      }
+    },
+    "/api/v1/journal/health": {
+      "get": {
+        "operationId": "JournalController_health",
+        "parameters": [],
+        "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    },
+    "/api/v1/statistics/department": {
+      "get": {
+        "operationId": "StatisticsController_department",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gets statistics for individual department (a, b or c)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsDepartmentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/overview": {
+      "get": {
+        "operationId": "StatisticsController_overview",
+        "parameters": [
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gets overview of statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsOverviewResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{id}": {
+      "get": {
+        "operationId": "CaseController_case",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Case by ID.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Case" }
+              }
+            }
+          },
+          "404": { "description": "Case not found." }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "The Official Journal of Iceland API",
+    "description": "API for advarts and publication in the Official Journal of Iceland.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "JournalAdvertDepartment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the advert department, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the advert department.",
+            "example": "A deild"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the advert department, used in URLs and API requests.",
+            "example": "a-deild"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "JournalAdvertType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the advert type, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the advert type, always uppercased.",
+            "example": "AUGLÝSING"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the advert type, used in URLs and API requests.",
+            "example": "auglysing"
+          },
+          "department": {
+            "description": "Department the advert type belongs to.",
+            "nullable": false,
+            "allOf": [
+              { "$ref": "#/components/schemas/JournalAdvertDepartment" }
+            ]
+          }
+        },
+        "required": ["id", "title", "slug", "department"]
+      },
+      "JournalAdvertPublicationNumber": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "number",
+            "description": "Serial number of the publication number.",
+            "example": "1"
+          },
+          "year": {
+            "type": "number",
+            "description": "Year of the publication number.",
+            "example": "2024"
+          },
+          "full": {
+            "type": "string",
+            "description": "Full publication number, with both `number` and `year` separated with `/`.",
+            "example": "1/2024"
+          }
+        },
+        "required": ["number", "year", "full"]
+      },
+      "JournalAdvertCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the advert category, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the advert category.",
+            "example": "Evrópska efnahagssvæðið"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the advert category, used in URLs and API requests.",
+            "example": "evropska-efnahagssvaedid"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "JournalInvolvedParty": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the involved party, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the involved party.",
+            "example": "Umhverfis- og skipulagssvið Reykjavíkurborgar",
+            "nullable": false
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the involved party, used in URLs and API requests.",
+            "example": "umhvefis-og-skipulagssvid-reykjavikurborgar"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "JournalDocument": {
+        "type": "object",
+        "properties": {
+          "isLegacy": {
+            "type": "boolean",
+            "description": "Is the `html` from the legacy system?",
+            "example": "false"
+          },
+          "html": {
+            "type": "string",
+            "description": "Full HTML for the advert, either generated by new system or legacy system based on `isLegacy`.",
+            "example": "<html string>",
+            "nullable": true
+          },
+          "pdfUrl": {
+            "type": "string",
+            "description": "URL for the generated PDF file.",
+            "example": "<url>",
+            "nullable": true
+          }
+        },
+        "required": ["isLegacy", "html"]
+      },
+      "JournalSignatureMember": {
+        "type": "object",
+        "properties": {
+          "isChairman": {
+            "type": "boolean",
+            "description": "Marks the members as chairman or not",
+            "example": true,
+            "nullable": false
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the committee chairman",
+            "example": "Dagur B. Eggertsson"
+          },
+          "textAbove": {
+            "type": "string",
+            "description": "Text above the name of the signature",
+            "example": "F.h.r",
+            "nullable": true
+          },
+          "textAfter": {
+            "type": "string",
+            "description": "Text after the name of the signature",
+            "example": "formaður",
+            "nullable": true
+          },
+          "textBelow": {
+            "type": "string",
+            "description": "Text above the name of the signature",
+            "example": "borgarstjóri",
+            "nullable": true
+          }
+        },
+        "required": ["isChairman", "name"]
+      },
+      "JournalSignatureData": {
+        "type": "object",
+        "properties": {
+          "institution": {
+            "type": "string",
+            "description": "Institution of the signature",
+            "example": "Reykjavíkurborg"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date of the signature",
+            "example": "2006-10-17 00:00:00.0000",
+            "nullable": false
+          },
+          "members": {
+            "description": "Members of the signature",
+            "example": true,
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignatureMember" }
+          }
+        },
+        "required": ["institution", "date", "members"]
+      },
+      "JournalSignature": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the signature, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "advertId": {
+            "type": "string",
+            "description": "Advert ID",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the signature",
+            "enum": ["Hefðbundin", "Nefnd"],
+            "example": "Hefðbundin"
+          },
+          "additional": {
+            "type": "string",
+            "description": "Optional addiational signature",
+            "example": "Guðrún Jónsdóttir"
+          },
+          "data": {
+            "description": "Signature data",
+            "example": true,
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignatureData" }
+          }
+        },
+        "required": ["id", "advertId", "type", "data"]
+      },
+      "JournalAdvert": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the advert, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "department": {
+            "description": "The department the advert is for.",
+            "nullable": false,
+            "example": "A deild",
+            "allOf": [
+              { "$ref": "#/components/schemas/JournalAdvertDepartment" }
+            ]
+          },
+          "type": {
+            "description": "Type of the advert.",
+            "example": "GJALDSKRÁ",
+            "allOf": [{ "$ref": "#/components/schemas/JournalAdvertType" }]
+          },
+          "subject": {
+            "type": "string",
+            "description": "Subject of the advert, always dependant on the `type`.",
+            "example": "fyrir hundahald í Reykjavíkurborg."
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the advert with both `type` and `subject`.",
+            "example": "GJALDSKRÁ fyrir hundahald í Reykjavíkurborg."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Virk",
+              "Afturkölluð",
+              "Drög",
+              "Eldri auglýsing",
+              "Hafnað",
+              "Í bið",
+              "Í vinnslu",
+              "Innsend",
+              "Tilbúin til útgáfu",
+              "Útgefin"
+            ],
+            "description": "Status of the advert",
+            "nullable": false,
+            "example": "Virk"
+          },
+          "publicationNumber": {
+            "description": "Publication number of the advert",
+            "nullable": true,
+            "allOf": [
+              { "$ref": "#/components/schemas/JournalAdvertPublicationNumber" }
+            ]
+          },
+          "createdDate": {
+            "type": "string",
+            "description": "Date the advert was created. ISO 8601 date and time format in UTC.",
+            "nullable": false,
+            "example": "2024-01-01T09:00:00Z"
+          },
+          "updatedDate": {
+            "type": "string",
+            "description": "Date the advert was last updated. ISO 8601 date and time format in UTC.",
+            "nullable": false,
+            "example": "2024-01-20T09:00:00Z"
+          },
+          "signatureDate": {
+            "type": "string",
+            "description": "Date the advert was signed, can be null. ISO 8601 date and time format in UTC.",
+            "nullable": true,
+            "example": "2024-01-10T16:00:00Z"
+          },
+          "publicationDate": {
+            "type": "string",
+            "description": "Date the advert was signed, can be null. ISO 8601 date and time format in UTC.",
+            "nullable": true,
+            "example": "2024-01-20T09:00:00Z"
+          },
+          "categories": {
+            "description": "List of advert categories.",
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalAdvertCategory" }
+          },
+          "involvedParty": {
+            "description": "Involved party for the advert.",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/JournalInvolvedParty" }]
+          },
+          "document": {
+            "description": "Advert document in different formats.",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/JournalDocument" }]
+          },
+          "signature": {
+            "description": "Signatures for the advert.",
+            "allOf": [{ "$ref": "#/components/schemas/JournalSignature" }]
+          }
+        },
+        "required": [
+          "id",
+          "department",
+          "type",
+          "title",
+          "status",
+          "publicationNumber",
+          "createdDate",
+          "updatedDate",
+          "signatureDate",
+          "publicationDate",
+          "categories",
+          "involvedParty",
+          "document",
+          "signature"
+        ]
+      },
+      "AdvertNotFound": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code of response"
+          },
+          "message": { "type": "string", "description": "Response message" }
+        },
+        "required": ["statusCode", "message"]
+      },
+      "JournalPaging": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "number", "example": 1 },
+          "totalPages": { "type": "number", "example": 10 },
+          "totalItems": { "type": "number", "example": 1000 },
+          "nextPage": { "type": "number", "example": 2, "nullable": true },
+          "previousPage": { "type": "number", "example": 1, "nullable": true },
+          "pageSize": {
+            "type": "number",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "hasNextPage": { "type": "boolean", "example": true },
+          "hasPreviousPage": { "type": "boolean", "example": false }
+        },
+        "required": [
+          "page",
+          "totalPages",
+          "totalItems",
+          "nextPage",
+          "previousPage",
+          "pageSize",
+          "hasNextPage",
+          "hasPreviousPage"
+        ]
+      },
+      "JournalAdvertsResponse": {
+        "type": "object",
+        "properties": {
+          "adverts": {
+            "description": "List of adverts",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalAdvert" }
+          },
+          "paging": {
+            "description": "Paging info",
+            "allOf": [{ "$ref": "#/components/schemas/JournalPaging" }]
+          }
+        },
+        "required": ["adverts", "paging"]
+      },
+      "JournalAdvertsValidationResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Array of error messages",
+            "example": [
+              "message must be shorter than or equal to 10 characters"
+            ],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "error": {
+            "type": "string",
+            "description": "Error type",
+            "example": "Bad Request"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code of response",
+            "example": 400
+          }
+        },
+        "required": ["message", "statusCode"]
+      },
+      "JournalAdvertDepartmentsResponse": {
+        "type": "object",
+        "properties": {
+          "departments": {
+            "description": "List of advert epartments",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalAdvertDepartment" }
+          },
+          "paging": {
+            "description": "Paging info",
+            "allOf": [{ "$ref": "#/components/schemas/JournalPaging" }]
+          }
+        },
+        "required": ["departments", "paging"]
+      },
+      "JournalAdvertTypesResponse": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "description": "List of advert types",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalAdvertType" }
+          },
+          "paging": {
+            "description": "Paging info",
+            "allOf": [{ "$ref": "#/components/schemas/JournalPaging" }]
+          }
+        },
+        "required": ["types", "paging"]
+      },
+      "JournalAdvertCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "description": "List of advert categories",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalAdvertCategory" }
+          },
+          "paging": {
+            "description": "Paging info",
+            "allOf": [{ "$ref": "#/components/schemas/JournalPaging" }]
+          }
+        },
+        "required": ["categories", "paging"]
+      },
+      "JournalSignatureBody": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of the signature",
+            "enum": ["Hefðbundin", "Nefnd"],
+            "example": "Hefðbundin"
+          },
+          "additional": {
+            "type": "string",
+            "description": "Optional addiational signature",
+            "example": "Guðrún Jónsdóttir"
+          },
+          "data": {
+            "description": "Signature data",
+            "example": true,
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignatureData" }
+          }
+        },
+        "required": ["type", "data"]
+      },
+      "JournalPostApplicationBody": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string",
+            "description": "Application id",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "department": {
+            "type": "string",
+            "description": "Application selected department id",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "type": {
+            "type": "string",
+            "description": "Application selected type id",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "categories": {
+            "description": "Application selected array of categories ids",
+            "example": [
+              "00000000-0000-0000-0000-000000000000",
+              "11111111-1111-1111-1111-111111111111"
+            ],
+            "nullable": false,
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "subject": {
+            "type": "string",
+            "description": "Subject of the submitted application",
+            "example": "um hundahald í Reykjavíkurborg",
+            "nullable": false
+          },
+          "requestedPublicationDate": {
+            "type": "string",
+            "description": "Requested publication date of the advert in the submitted application",
+            "example": "2006-10-17 00:00:00.0000",
+            "nullable": false
+          },
+          "document": {
+            "type": "string",
+            "description": "Contents of the advert's document in the submitted application (HTML string)",
+            "example": "<p>GJALDSKRÁ um hundahald í Reykjavík</p><div><p>Dagur B. Eggertsson</p></div>",
+            "nullable": false
+          },
+          "signature": {
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/JournalSignatureBody" }]
+          }
+        },
+        "required": [
+          "applicationId",
+          "department",
+          "type",
+          "categories",
+          "subject",
+          "requestedPublicationDate",
+          "document",
+          "signature"
+        ]
+      },
+      "JournalPostApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "advert": {
+            "description": "Return the submitted application",
+            "allOf": [{ "$ref": "#/components/schemas/JournalAdvert" }]
+          }
+        },
+        "required": ["advert"]
+      },
+      "JournalSignatureGetResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "List of signatures",
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/JournalSignature" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/JournalPaging" }]
+          }
+        },
+        "required": ["items", "paging"]
+      },
+      "StatisticsDepartmentItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Department name",
+            "example": "Department of Justice"
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of adverts",
+            "example": 10
+          },
+          "percentage": {
+            "type": "number",
+            "description": "Percentage of total",
+            "example": 10
+          }
+        },
+        "required": ["name", "count", "percentage"]
+      },
+      "StatisticsDepartmentResponse": {
+        "type": "object",
+        "properties": {
+          "submitted": {
+            "$ref": "#/components/schemas/StatisticsDepartmentItem"
+          },
+          "inProgress": {
+            "$ref": "#/components/schemas/StatisticsDepartmentItem"
+          },
+          "inReview": {
+            "$ref": "#/components/schemas/StatisticsDepartmentItem"
+          },
+          "ready": { "$ref": "#/components/schemas/StatisticsDepartmentItem" },
+          "totalAdverts": {
+            "type": "number",
+            "description": "Total number of adverts",
+            "example": 100
+          },
+          "totalPercentage": {
+            "type": "number",
+            "description": "Total number of departments",
+            "example": 10
+          }
+        },
+        "required": [
+          "submitted",
+          "inProgress",
+          "inReview",
+          "ready",
+          "totalAdverts",
+          "totalPercentage"
+        ]
+      },
+      "StatisticsOverviewCategory": {
+        "type": "object",
+        "properties": {
+          "totalAdverts": { "type": "number" },
+          "text": { "type": "string" }
+        },
+        "required": ["totalAdverts", "text"]
+      },
+      "StatisticsOverviewResponse": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatisticsOverviewCategory"
+            }
+          },
+          "totalAdverts": { "type": "number" }
+        },
+        "required": ["categories", "totalAdverts"]
+      },
+      "CaseInstitution": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "description": "SSN of the institution" },
+          "name": { "type": "string", "description": "Name of the institution" }
+        },
+        "required": ["ssn", "name"]
+      },
+      "CaseCommentTask": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "From who or what initied the task, used by client to show who inited the task.",
+            "example": "Ármann"
+          },
+          "to": {
+            "type": "string",
+            "description": "To whom or what the task is assigned to.",
+            "example": "Pálina J"
+          },
+          "title": {
+            "type": "string",
+            "example": "gerir athugasemd",
+            "description": "The task title"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment itself",
+            "example": "Pálína, getur þú tekið við og staðfest að upplýsingarnar séu réttar?"
+          }
+        },
+        "required": ["from", "to", "title", "comment"]
+      },
+      "CaseComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+            "description": "Id of the case comment."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of the comment, ISO 8601 format, UTC time format.",
+            "example": "2024-01-01T09:00:00Z"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["submit", "assign", "update", "comment"],
+            "example": "comment",
+            "description": "Type of the case task."
+          },
+          "task": {
+            "example": {
+              "from": "Ármann",
+              "to": null,
+              "title": "gerir athugasemd",
+              "comment": "Pálína, getur\n      þú tekið við og staðfest að upplýsingarnar séu réttar?"
+            },
+            "description": "The task itself",
+            "allOf": [{ "$ref": "#/components/schemas/CaseCommentTask" }]
+          }
+        },
+        "required": ["id", "createdAt", "type", "task"]
+      },
+      "Case": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "applicationId": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+            "description": "Id of the submitted application, default to null on older cases."
+          },
+          "year": {
+            "type": "string",
+            "example": 2024,
+            "description": "Year the case was created."
+          },
+          "caseNumber": {
+            "type": "string",
+            "example": "01905",
+            "description": "Case number (numeric string) gets generated automatically when a case is created."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Innsent", "Grunnvinnsla", "Yfirlestur", "Tilbúið"],
+            "example": "Innsent",
+            "description": "Status of the case, default to \"Innsent\""
+          },
+          "tag": {
+            "type": "string",
+            "enum": ["Ekki hafið", "Í yfirlestri", "Samlesin", "Þarf skoðun"],
+            "example": "Ekki hafið",
+            "description": "Internal tag for the case, default to null"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Date the case was created. ISO 8601 date and time format in UTC."
+          },
+          "modifiedAt": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Date when the case was last updated. ISO 8601 date and time format in UTC."
+          },
+          "assignedTo": {
+            "type": "string",
+            "example": "0102030000",
+            "description": "Someway of identifying the employee who is assigned to the case, defaults to null."
+          },
+          "insititution": {
+            "description": "The institution that owns the case.",
+            "example": { "ssn": "0102030000", "name": "Forsætisráðuneytið" },
+            "allOf": [{ "$ref": "#/components/schemas/CaseInstitution" }]
+          },
+          "advert": {
+            "description": "The advert that is associated with the case.",
+            "allOf": [{ "$ref": "#/components/schemas/JournalAdvert" }]
+          },
+          "fastTrack": {
+            "type": "boolean",
+            "example": false,
+            "description": "Requested fast track"
+          },
+          "published": {
+            "type": "boolean",
+            "example": false,
+            "description": "Is the case published."
+          },
+          "publishedAt": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Date the case was published. ISO 8601 date and time format in UTC."
+          },
+          "price": {
+            "type": "number",
+            "example": 23000,
+            "description": "The cost of the case."
+          },
+          "paid": {
+            "type": "boolean",
+            "example": false,
+            "description": "Is the case paid for."
+          },
+          "comments": {
+            "description": "Comments on the case.",
+            "example": {
+              "id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+              "createdAt": "2024-01-01T09:00:00Z",
+              "type": "Comment",
+              "task": {
+                "from": "Ármann",
+                "to": null,
+                "title": "gerir athugasemd",
+                "comment": "Pálína, getur þú tekið við og staðfest að upplýsingarnar séu réttar?"
+              }
+            },
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseComment" }
+          }
+        },
+        "required": [
+          "id",
+          "applicationId",
+          "year",
+          "caseNumber",
+          "status",
+          "tag",
+          "createdAt",
+          "modifiedAt",
+          "assignedTo",
+          "insititution",
+          "advert",
+          "fastTrack",
+          "published",
+          "publishedAt",
+          "price",
+          "paid",
+          "comments"
+        ]
+      }
+    }
+  }
+}

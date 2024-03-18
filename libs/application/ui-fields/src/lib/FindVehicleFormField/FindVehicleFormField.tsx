@@ -12,6 +12,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import {
   BasicVehicleInformation,
+  EnergyFundVehicleDetailsWithGrant,
   MachineDetails,
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
@@ -22,6 +23,9 @@ import { FieldBaseProps, FindVehicleField } from '@island.is/application/types'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
+import format from 'date-fns/format'
+import { formatCurrency } from '@island.is/application/ui-components'
+import { energyFundsLabel } from './FindVehicleFormField.util'
 
 interface VehicleDetails {
   permno: string
@@ -63,14 +67,18 @@ const isVehicleType = function <T>(
   )
 }
 
+export const formatIsk = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
 const extractDetails = function (
   response:
     | VehicleOwnerchangeChecksByPermno
     | VehiclePlateOrderChecksByPermno
     | VehicleOperatorChangeChecksByPermno
     | MachineDetails
+    | EnergyFundVehicleDetailsWithGrant
     | unknown,
-): VehicleDetails | MachineDetails {
+): VehicleDetails | MachineDetails | EnergyFundVehicleDetailsWithGrant {
   // Use type guards to determine the response type and access properties safely
   if (
     isVehicleType<VehicleOwnerchangeChecksByPermno>(
@@ -107,6 +115,15 @@ const extractDetails = function (
     return {
       ...response,
     }
+  } else if (
+    isVehicleType<EnergyFundVehicleDetailsWithGrant>(
+      response,
+      'EnergyFundVehicleDetailsWithGrant',
+    )
+  ) {
+    return {
+      ...response,
+    }
   } else {
     // Handle unexpected response types
     throw new Error('Unexpected response type')
@@ -133,6 +150,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     isNotDebtLessTag,
     requiredValidVehicleErrorMessage,
     isMachine,
+    isEnergyFunds,
+    energyFundsMessages,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -149,6 +168,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const [machineDetails, setMachineDetails] = useState<MachineDetails | null>(
     null,
   )
+  const [energyDetails, setEnergyDetails] =
+    useState<EnergyFundVehicleDetailsWithGrant | null>(null)
   const [machineId, setMachineId] = useState<string>(
     getValueViaPath(application.answers, 'pickMachine.id', '') as string,
   )
@@ -168,7 +189,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
 
       const response = await getDetails(plate.toUpperCase())
 
-      const details: VehicleDetails | MachineDetails = extractDetails(response)
+      const details:
+        | VehicleDetails
+        | MachineDetails
+        | EnergyFundVehicleDetailsWithGrant = extractDetails(response)
       setValues(details)
 
       const isVehicleFound = !!details
@@ -179,17 +203,27 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       setVehicleNotFound(true)
       setVehicleDetails(null)
       setMachineDetails(null)
+      setEnergyDetails(null)
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const setValues = (details: MachineDetails | VehicleDetails) =>
-    isMachine
-      ? setMachineValues(details as MachineDetails)
-      : setVehicleValues(details as VehicleDetails)
-
+  const setValues = (
+    details:
+      | MachineDetails
+      | VehicleDetails
+      | EnergyFundVehicleDetailsWithGrant,
+  ) => {
+    if (isEnergyFunds) {
+      setEnergyFundsValues(details as EnergyFundVehicleDetailsWithGrant)
+    } else if (isMachine) {
+      setMachineValues(details as MachineDetails)
+    } else {
+      setVehicleValues(details as VehicleDetails)
+    }
+  }
   const setVehicleValues = (vehicleDetails: VehicleDetails) => {
     setValue('findVehicle', true)
     setValue(`${field.id}.type`, vehicleDetails.make)
@@ -216,6 +250,30 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue('pickMachine.isValid', machineDetails.disabled ? undefined : true)
     setMachineId(machineDetails?.id || '')
     setMachineDetails(machineDetails)
+  }
+
+  const setEnergyFundsValues = (
+    vehicleDetailsWithGrant: EnergyFundVehicleDetailsWithGrant,
+  ) => {
+    setValue('findVehicle', true)
+    setValue(`${field.id}.type`, vehicleDetailsWithGrant.make)
+    setValue(`${field.id}.plate`, plate)
+    setValue(`${field.id}.color`, vehicleDetailsWithGrant.color || undefined)
+    setValue(
+      `${field.id}.newRegistrationDate`,
+      vehicleDetailsWithGrant.newRegistrationDate || '',
+    )
+    setValue(
+      `${field.id}.firstRegistrationDate`,
+      vehicleDetailsWithGrant.firstRegistrationDate || '',
+    )
+    setValue(`${field.id}.vin`, vehicleDetailsWithGrant.vin)
+    setValue(`${field.id}.grantAmount`, vehicleDetailsWithGrant.vehicleGrant)
+    setValue(
+      `${field.id}.grantItemCode`,
+      vehicleDetailsWithGrant.vehicleGrantItemCode,
+    )
+    setEnergyDetails(vehicleDetailsWithGrant)
   }
 
   const isDisabled =
@@ -303,6 +361,44 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                 heading={machineDetails.regNumber || ''}
                 text={`${machineDetails.type} ${machineDetails.subType}`}
                 focused={true}
+              />
+            )}
+            {energyDetails && !vehicleNotFound && (
+              <ActionCard
+                heading={`${energyDetails.make ?? ''} - ${
+                  energyDetails.permno
+                }`}
+                text={`${energyDetails.color} - ${
+                  energyFundsMessages && energyFundsMessages.registrationDate
+                    ? formatText(
+                        energyFundsMessages.registrationDate,
+                        application,
+                        formatMessage,
+                      ) + ': '
+                    : ''
+                }${
+                  energyDetails.newRegistrationDate
+                    ? format(
+                        new Date(energyDetails.newRegistrationDate),
+                        'dd.MM.yyyy',
+                      )
+                    : ''
+                }`}
+                tag={{
+                  label: energyFundsLabel(
+                    energyDetails,
+                    energyFundsMessages,
+                    formatMessage,
+                    formatCurrency,
+                    application,
+                  ),
+                  outlined: true,
+                  variant:
+                    !energyDetails.hasReceivedSubsidy &&
+                    energyDetails.vehicleGrant
+                      ? 'blue'
+                      : 'red',
+                }}
               />
             )}
             {vehicleDetails && isDisabled && (
