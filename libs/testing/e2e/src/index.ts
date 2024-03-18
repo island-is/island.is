@@ -1,1 +1,1 @@
-export * from './lib/e2e'
+export * from './lib/testing/e2e'

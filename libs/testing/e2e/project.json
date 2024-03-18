@@ -1,5 +1,5 @@
 {
-  "name": "e2e",
+  "name": "testing/e2e",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/testing/e2e/src",
   "projectType": "library",

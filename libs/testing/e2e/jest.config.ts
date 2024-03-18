@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'e2e',
+  displayName: 'testing/e2e',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
