@@ -111,8 +111,6 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
           !initial && searchState.q
             ? cat.label.toLowerCase().includes(searchState.q.toLowerCase())
             : true
-        console.log({ g: searchState.stafur.split('').includes(letter) })
-
         const letterMatch =
           !initial && searchState.stafur
             ? searchState.stafur.split('').includes(letter)

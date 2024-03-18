@@ -18,7 +18,10 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-import { baseUrl, OJOIWrapper } from '../../components/OfficialJournalOfIceland'
+import {
+  OJOIWrapper,
+  searchUrl,
+} from '../../components/OfficialJournalOfIceland'
 import { OJOIAdvertDisplay } from '../../components/OfficialJournalOfIceland/OJOIAdvertDisplay'
 import { Screen } from '../../types'
 import {
@@ -74,7 +77,7 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
       organizationPage={organizationPage!}
       pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
       breadcrumbItems={breadcrumbItems}
-      goBackUrl={baseUrl}
+      goBackUrl={searchUrl}
       sidebarContent={
         <Stack space={[2]}>
           <Box background="blue100" padding={[2, 2, 3]} borderRadius="large">
@@ -177,7 +180,7 @@ const OJOIAdvert: Screen<OJOIAdvertProps> = ({
 }
 
 OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
-  const organizationSlug = 'OJOI'
+  const organizationSlug = 'stjornartidindi'
 
   const [
     {

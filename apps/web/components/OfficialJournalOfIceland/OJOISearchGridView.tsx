@@ -1,29 +1,38 @@
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import { useRouter } from 'next/router'
 
+import { MinistryOfJusticeAdvertsResponse } from '@island.is/api/schema'
 import { ActionCard, Box, Inline, Stack, Tag } from '@island.is/island-ui/core'
 
-import { AdvertType, advertUrl } from './OJOIUtils'
+import { advertUrl } from './OJOIUtils'
 
 export const OJOISearchGridView = ({
   adverts,
 }: {
-  adverts: Array<AdvertType>
+  adverts?: MinistryOfJusticeAdvertsResponse['adverts']
 }) => {
   const router = useRouter()
 
   return (
     <Stack space={2}>
-      {adverts.map((ad) => (
+      {adverts?.map((ad) => (
         <ActionCard
           key={ad.id}
-          eyebrow={ad.stofnun}
-          heading={ad.numer}
+          eyebrow={ad.involvedParty?.title}
+          heading={ad.publicationNumber?.full}
           tag={{
-            label: `${ad.deild} - Útg.: ${ad.utgafa}`,
+            label: `${ad.department?.title} - Útg.: ${format(
+              new Date(ad.publicationDate),
+              'dd.MM.yyyy',
+              {
+                locale: is,
+              },
+            )}`,
             outlined: false,
             variant: 'white',
           }}
-          text={ad.heiti}
+          text={ad.title}
           cta={{
             icon: 'arrowForward',
             label: 'Skoða nánar',
@@ -36,9 +45,9 @@ export const OJOISearchGridView = ({
         >
           <Box marginTop={3}>
             <Inline space={1}>
-              {ad.flokkar.map((f) => (
-                <Tag key={f} variant="white" outlined disabled>
-                  {f}
+              {ad.categories?.map((cat) => (
+                <Tag key={cat.id} variant="white" outlined disabled>
+                  {cat.title}
                 </Tag>
               ))}
             </Inline>

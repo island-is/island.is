@@ -16,9 +16,11 @@ import { debounceTime } from '@island.is/shared/constants'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  MinistryOfJusticeAdvertsResponse,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryMinistryOfJusticeAdvertsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -31,7 +33,6 @@ import {
   emptyOption,
   findValueOption,
   malaflokkurOptions,
-  mockAdverts,
   OJOIWrapper,
   removeEmptyFromObject,
   searchUrl,
@@ -44,6 +45,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
+import { ADVERTS_QUERY } from '../queries/OfficialJournalOfIceland'
 
 const initialState = {
   q: '',
@@ -55,6 +57,7 @@ const initialState = {
 }
 
 const OJOISearchPage: Screen<OJOISearchProps> = ({
+  adverts,
   organizationPage,
   organization,
   namespace,
@@ -217,9 +220,9 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
         </Button>
 
         {listView ? (
-          <OJOISearchListView adverts={mockAdverts} />
+          <OJOISearchListView adverts={adverts} />
         ) : (
-          <OJOISearchGridView adverts={mockAdverts} />
+          <OJOISearchGridView adverts={adverts} />
         )}
       </Stack>
     </OJOIWrapper>
@@ -227,6 +230,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 }
 
 interface OJOISearchProps {
+  adverts?: MinistryOfJusticeAdvertsResponse['adverts']
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -234,6 +238,7 @@ interface OJOISearchProps {
 }
 
 const OJOISearch: Screen<OJOISearchProps> = ({
+  adverts,
   organizationPage,
   organization,
   namespace,
@@ -241,6 +246,7 @@ const OJOISearch: Screen<OJOISearchProps> = ({
 }) => {
   return (
     <OJOISearchPage
+      adverts={adverts}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -254,6 +260,9 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
+      data: { ministryOfJusticeAdverts },
+    },
+    {
       data: { getOrganizationPage },
     },
     {
@@ -261,6 +270,14 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<Query, QueryMinistryOfJusticeAdvertsArgs>({
+      query: ADVERTS_QUERY,
+      variables: {
+        input: {
+          search: '',
+        },
+      },
+    }),
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -301,6 +318,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
+    adverts: ministryOfJusticeAdverts.adverts,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

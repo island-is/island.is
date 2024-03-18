@@ -5,16 +5,6 @@ export const searchUrl = baseUrl + '/leit'
 export const categoriesUrl = baseUrl + '/malaflokkar'
 export const advertUrl = baseUrl + '/nr'
 
-export type AdvertType = {
-  id: string
-  heiti: string
-  utgafa: string
-  deild: string
-  numer: string
-  stofnun: string
-  flokkar: Array<string>
-}
-
 export const splitArrayIntoGroups = <T>(array: Array<T>, groupSize: number) => {
   const groups = []
   for (let i = 0; i < array.length; i += groupSize) {
@@ -130,28 +120,5 @@ export const yfirflokkurOptions: Array<YfirflokkurOption> = [
     label: 'Hugverka- og einkaréttindi',
     value: 'hugverkarettindi',
     cardDescription: 'Höfundarréttur, vörumerki, persónuvernd og einkaleyfi.',
-  },
-]
-
-export const mockAdverts: Array<AdvertType> = [
-  {
-    id: 'bcbefaf4-c021-4b63-877b-001dde880052',
-    stofnun: 'Skipulagsstofnun',
-    numer: '1383/2023',
-    deild: 'A-deild',
-    utgafa: '12.07.2023',
-    heiti:
-      'LÖG um breytingu á lögum um almennar íbúðir og lögum um húsnæðismál (almennar íbúðir vegna náttúruhamfara í Grindavíkurbæ).',
-    flokkar: ['Skipulagsmál', 'Sveitarfélag Hornafjarðar'],
-  },
-  {
-    id: 'bcbefaf4-c021-4b63-877b-001dde880052',
-    stofnun: 'Skipulagsstofnun',
-    numer: '1383/2023',
-    deild: 'A-deild',
-    utgafa: '12.07.2023',
-    heiti:
-      'LÖG um breytingu á lögum um almennar íbúðir og lögum um húsnæðismál (almennar íbúðir vegna náttúruhamfara í Grindavíkurbæ).',
-    flokkar: ['Skipulagsmál', 'Sveitarfélag Hornafjarðar'],
   },
 ]

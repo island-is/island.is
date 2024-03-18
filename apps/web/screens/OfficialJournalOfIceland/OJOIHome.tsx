@@ -154,7 +154,7 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
                   paddingBottom={4}
                 >
                   <CategoryCard
-                    href={`${searchUrl}?malaflokkur=${y.value}`}
+                    href={`${categoriesUrl}?yfirflokkur=${y.value}`}
                     heading={y.label}
                     text={y.cardDescription ?? ''}
                   />
