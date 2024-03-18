@@ -16,6 +16,7 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = `
       contentfulLogoUrl
       contentfulTitle
       contentfulLink
+      contentfulLinkEn
     }
   }
 `
