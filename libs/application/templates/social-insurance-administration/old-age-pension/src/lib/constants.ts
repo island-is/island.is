@@ -5,8 +5,6 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 export const oldAgePensionAge = 67
 export const earlyRetirementMinAge = 65
 export const earlyRetirementMaxAge = 66
-export const fishermenMinAge = 60
-export const fishermenMaxAge = 66
 export const employeeRatio = 50
 
 export enum RatioType {

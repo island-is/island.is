@@ -12,10 +12,6 @@ import { ApplicationModule } from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
-import {
-  CommunicationsConfig,
-  CommunicationsModule,
-} from '@island.is/api/domains/communications'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
@@ -45,6 +41,10 @@ import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
+import {
+  CommunicationsConfig,
+  CommunicationsModule,
+} from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { MinistryOfJusticeModule } from '@island.is/api/domains/ministry-of-justice'
@@ -111,6 +111,7 @@ import {
   AdrDigitalLicenseClientConfig,
   DisabilityDigitalLicenseClientConfig,
   DrivingDigitalLicenseClientConfig,
+  HuntingDigitalLicenseClientConfig,
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
@@ -127,6 +128,7 @@ import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
+import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
@@ -329,6 +331,7 @@ const environment = getConfig
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
+        HuntingDigitalLicenseClientConfig,
         FirearmDigitalLicenseClientConfig,
         DisabilityDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
@@ -342,6 +345,7 @@ const environment = getConfig
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
+        HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsLoansClientConfig,
         FinanceClientConfig,

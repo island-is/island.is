@@ -14,22 +14,23 @@ import {
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { formatCaseType } from '@island.is/judicial-system/formatters'
-import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseOrigin,
   CaseState,
   CaseType,
+  EventType,
+  type IndictmentConfirmation,
   isCompletedCase,
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
   restrictionCases,
+  type User as TUser,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -48,6 +49,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
+import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CourtDocumentType, PoliceService } from '../police'
@@ -154,6 +156,8 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => EventLogService))
+    private readonly eventLogService: EventLogService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -778,14 +782,6 @@ export class InternalCaseService {
               await getCourtRecordPdfAsString(theCase, this.formatMessage),
             ),
           },
-          {
-            type: CourtDocumentType.RVUR,
-            courtDocument: Base64.btoa(
-              await this.getSignedRulingPdf(theCase).then((pdf) =>
-                pdf.toString('binary'),
-              ),
-            ),
-          },
           ...([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
             theCase.type,
           ) && theCase.state === CaseState.ACCEPTED
@@ -879,8 +875,27 @@ export class InternalCaseService {
     )
       .then(async (indictmentDocuments) => {
         if (indictmentDocuments.length === 0) {
+          let confirmation: IndictmentConfirmation = undefined
+          const confirmationEvent =
+            await this.eventLogService.findEventTypeByCaseId(
+              EventType.INDICTMENT_CONFIRMED,
+              theCase.id,
+            )
+
+          if (confirmationEvent && confirmationEvent.nationalId) {
+            const actor = await this.userService.findByNationalId(
+              confirmationEvent.nationalId,
+            )
+
+            confirmation = {
+              actor: actor.name,
+              institution: actor.institution?.name ?? '',
+              date: confirmationEvent.created,
+            }
+          }
+
           const file = await this.refreshFormatMessage().then(async () =>
-            createIndictment(theCase, this.formatMessage),
+            createIndictment(theCase, this.formatMessage, confirmation),
           )
 
           indictmentDocuments.push({
@@ -959,6 +974,32 @@ export class InternalCaseService {
     return { delivered }
   }
 
+  async deliverSignedRulingToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const delivered = await await this.getSignedRulingPdf(theCase)
+      .then((pdf) =>
+        this.deliverCaseToPoliceWithFiles(theCase, user, [
+          {
+            type: CourtDocumentType.RVUR,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          },
+        ]),
+      )
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver sigend ruling for case ${theCase.id} to police`,
+          { reason },
+        )
+
+        return false
+      })
+
+    return { delivered }
+  }
+
   async deliverAppealToPolice(
     theCase: Case,
     user: TUser,
@@ -975,9 +1016,9 @@ export class InternalCaseService {
           }
         }) ?? [],
     )
-      .then(async (courtDocuments) => {
-        return this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments)
-      })
+      .then(async (courtDocuments) =>
+        this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
+      )
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
