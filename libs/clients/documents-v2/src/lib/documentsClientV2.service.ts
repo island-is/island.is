@@ -32,7 +32,6 @@ export class DocumentsClientV2Service {
     })
 
     if (!documents.totalCount) {
-      //throw maybe?
       return null
     }
 
