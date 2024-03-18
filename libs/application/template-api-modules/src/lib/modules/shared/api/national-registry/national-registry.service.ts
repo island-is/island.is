@@ -459,6 +459,25 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
   }
 
+  async getCurrentResidence({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryResidenceHistory | null> {
+    const residency: NationalRegistryResidenceHistory | null =
+      await this.nationalRegistryApi.getCurrentResidence(auth.nationalId)
+
+    if (!residency) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
+    return residency
+  }
+
   async getResidenceHistory({
     auth,
   }: TemplateApiModuleActionProps): Promise<

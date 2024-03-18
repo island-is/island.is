@@ -158,8 +158,8 @@ export const DEPARTMENTS_QUERY = gql`
 `
 
 export const CATEGORIES_QUERY = gql`
-  query AdvertCategories($input: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeCategories(params: $input) {
+  query AdvertCategories($params: MinistryOfJusticeQueryInput!) {
+    ministryOfJusticeCategories(params: $params) {
       categories {
         id
         title
