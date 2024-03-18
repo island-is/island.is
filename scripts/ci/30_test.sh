@@ -14,6 +14,7 @@ set -euxo pipefail
 
 # Exit gracefully if the target is not defined
 if [ -z "$(nx show projects --projects "$APP" --with-target "$TARGET")" ]; then
+  echo "Project $APP has no target $TARGET"
   exit 0
 fi
 
