@@ -3,8 +3,10 @@ import { createClient } from '@island.is/services/auth/testing'
 
 import { clientId, TestCase } from './delegations-index-types'
 
-const person1 = createNationalId('person')
-const person2 = createNationalId('person')
+const adult1 = createNationalId('residentAdult')
+const adult2 = createNationalId('residentAdult')
+const child1 = createNationalId('residentChild')
+const child2 = createNationalId('residentChild')
 const company1 = createNationalId('company')
 const company2 = createNationalId('company')
 export const prRight1 = 'pr1'
@@ -17,8 +19,8 @@ export const indexingTestCases: Record<string, TestCase> = {
       supportsCustomDelegation: true,
     }),
     {
-      fromCustom: [person1, person2],
-      expectedFrom: [person1, person2],
+      fromCustom: [adult1, adult2],
+      expectedFrom: [adult1, adult2],
     },
   ),
   // Should index legal guardian delegations
@@ -28,8 +30,18 @@ export const indexingTestCases: Record<string, TestCase> = {
       supportsLegalGuardians: true,
     }),
     {
-      fromChildren: [person1, person2],
-      expectedFrom: [person1, person2],
+      fromChildren: [child2, child1],
+      expectedFrom: [child2, child1],
+    },
+  ), // should not index if child is 18 eighteen years old
+  ward2: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsLegalGuardians: true,
+    }),
+    {
+      fromChildren: [adult1], // more than 18 years old
+      expectedFrom: [],
     },
   ),
   // Should index procuration holders delegations
@@ -51,9 +63,9 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromRepresentative: [
-        { fromNationalId: person1, rightTypes: [{ code: prRight1 }] },
+        { fromNationalId: adult1, rightTypes: [{ code: prRight1 }] },
       ],
-      expectedFrom: [person1],
+      expectedFrom: [adult1],
     },
   ),
 }

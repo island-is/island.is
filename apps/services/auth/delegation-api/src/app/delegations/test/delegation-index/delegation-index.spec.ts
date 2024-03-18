@@ -174,7 +174,7 @@ describe('DelegationsIndexService', () => {
         const testCase = indexingTestCases[type]
         testCase.user = user
 
-        beforeAll(async () => setup(testCase))
+        beforeEach(async () => setup(testCase))
 
         it('should index delegations', async () => {
           // Act

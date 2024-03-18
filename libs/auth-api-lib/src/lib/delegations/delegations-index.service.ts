@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import * as kennitala from 'kennitala'
+import startOfDay from 'date-fns/startOfDay'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -59,6 +60,22 @@ type SortedDelegations = {
 type FetchDelegationRecordsArgs = {
   scope: ApiScope
   fromNationalId: string
+}
+
+const getTimeUntilEighteen = (nationalId: string) => {
+  const birthDate = kennitala.info(nationalId).birthday
+  const now = startOfDay(new Date())
+  const eighteen = startOfDay(
+    new Date(
+      birthDate.getFullYear() + 18,
+      birthDate.getMonth(),
+      birthDate.getDate(),
+    ),
+  )
+
+  const timeUntilEighteen = eighteen.getTime() - now.getTime()
+
+  return timeUntilEighteen > 0 ? new Date(timeUntilEighteen) : null
 }
 
 const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
@@ -432,7 +449,17 @@ export class DelegationsIndexService {
   private async getWardDelegations(user: User) {
     const delegations = await this.delegationsIncomingWardService
       .findAllIncoming(user)
-      .then((d) => d.map(toDelegationIndexInfo))
+      .then(
+        (delegations) =>
+          delegations
+            .map((delegation) =>
+              toDelegationIndexInfo({
+                ...delegation,
+                validTo: getTimeUntilEighteen(delegation.fromNationalId), // validTo is the date the child turns 18
+              }),
+            )
+            .filter((d) => d.validTo !== null), // if child has already turned 18, we don't want to index the delegation
+      )
 
     const currentDelegationRecord = await this.delegationIndexModel.findAll({
       where: {
