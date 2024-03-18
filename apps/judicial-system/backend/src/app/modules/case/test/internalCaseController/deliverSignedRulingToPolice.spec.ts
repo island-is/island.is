@@ -10,20 +10,11 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import {
-  getCourtRecordPdfAsString,
-  getCustodyNoticePdfAsString,
-  getRequestPdfAsString,
-} from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
-
-jest.mock('../../../../formatters/requestPdf')
-jest.mock('../../../../formatters/courtRecordPdf')
-jest.mock('../../../../formatters/custodyNoticePdf')
 
 interface Then {
   result: DeliverResponse
@@ -32,25 +23,23 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
-describe('InternalCaseController - Deliver case to police', () => {
+describe('InternalCaseController - Deliver signed ruling to police', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
+  let mockAwsS3Service: AwsS3Service
   let mockPoliceService: PoliceService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { policeService, internalCaseController } =
+    const { awsS3Service, policeService, internalCaseController } =
       await createTestingCaseModule()
 
+    mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
 
-    const mockGetRequest = getRequestPdfAsString as jest.Mock
-    mockGetRequest.mockRejectedValue(new Error('Some error'))
-    const mockGetCourtRecord = getCourtRecordPdfAsString as jest.Mock
-    mockGetCourtRecord.mockRejectedValue(new Error('Some error'))
-    const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
-    mockGetCustodyNotice.mockRejectedValue(new Error('Some error'))
+    const mockGetObject = awsS3Service.getObject as jest.Mock
+    mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
     mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
@@ -58,7 +47,7 @@ describe('InternalCaseController - Deliver case to police', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCaseToPolice(caseId, theCase, { user })
+        .deliverSignedRulingToPolice(caseId, theCase, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -84,19 +73,13 @@ describe('InternalCaseController - Deliver case to police', () => {
       validToDate,
       conclusion: caseConclusion,
     } as Case
-    const requestPdf = 'test request'
-    const courtRecordPdf = 'test court record'
-    const custodyNoticePdf = 'test custody notice'
+    const rulingPdf = 'test ruling'
 
     let then: Then
 
     beforeEach(async () => {
-      const mockGetRequest = getRequestPdfAsString as jest.Mock
-      mockGetRequest.mockResolvedValueOnce(requestPdf)
-      const mockGetCourtRecord = getCourtRecordPdfAsString as jest.Mock
-      mockGetCourtRecord.mockResolvedValueOnce(courtRecordPdf)
-      const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
-      mockGetCustodyNotice.mockResolvedValueOnce(custodyNoticePdf)
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
@@ -105,17 +88,8 @@ describe('InternalCaseController - Deliver case to police', () => {
     })
 
     it('should update the police case', async () => {
-      expect(getRequestPdfAsString).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
-      expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
-      expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        `generated/${caseId}/ruling.pdf`,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
@@ -128,16 +102,8 @@ describe('InternalCaseController - Deliver case to police', () => {
         caseConclusion,
         [
           {
-            type: CourtDocumentType.RVKR,
-            courtDocument: Base64.btoa(requestPdf),
-          },
-          {
-            type: CourtDocumentType.RVTB,
-            courtDocument: Base64.btoa(courtRecordPdf),
-          },
-          {
-            type: CourtDocumentType.RVVI,
-            courtDocument: Base64.btoa(custodyNoticePdf),
+            type: CourtDocumentType.RVUR,
+            courtDocument: Base64.btoa(rulingPdf),
           },
         ],
       )
