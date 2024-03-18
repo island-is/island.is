@@ -262,16 +262,25 @@ export class UserProfileService {
     )
   }
 
+  /**
+   * Confirms the nudge for the user
+   * Moves the next nudge date to 6 months from now if the user has skipped the overview
+   * Moves the next nudge date to 1 month from now if the user has skipped the email or mobile phone number
+   * Sets the email and mobile phone number status to empty if the user has skipped the overview, that means the user has seen the nudge and acknowledged that the data is empty
+   * Sets the email and mobile phone number status to empty if the user has skipped the email or mobile phone number, that means the user has seen the nudge and acknowledged that the data is empty
+   * @param nationalId
+   * @param nudgeFrom
+   */
   async confirmNudge(nationalId: string, nudgeFrom: NudgeFrom): Promise<void> {
     const date = new Date()
     await this.userProfileModel.upsert({
       nationalId,
       lastNudge: date,
       nextNudge: addMonths(date, nudgeFrom === NudgeFrom.OVERVIEW ? 6 : 1),
-      ...(nudgeFrom === NudgeFrom.EMAIL && {
+      ...((nudgeFrom === NudgeFrom.EMAIL || nudgeFrom === NudgeFrom.OVERVIEW) && {
         emailStatus: DataStatus.EMPTY,
       }),
-      ...(nudgeFrom === NudgeFrom.MOBILE_PHONE_NUMBER && {
+      ...((nudgeFrom === NudgeFrom.MOBILE_PHONE_NUMBER || nudgeFrom === NudgeFrom.OVERVIEW) && {
         mobileStatus: DataStatus.EMPTY,
       }),
     })
@@ -326,12 +335,6 @@ export class UserProfileService {
     } else {
       return false
     }
-    // return (
-    //   (email && !emailVerified) ||
-    //   emailStatus === DataStatus.NOT_DEFINED ||
-    //   (mobilePhoneNumber && !mobilePhoneNumberVerified) ||
-    //   mobileStatus === DataStatus.NOT_DEFINED
-    // )
   }
 
   /**
