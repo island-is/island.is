@@ -1,21 +1,21 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/sequelize";
-import { isEmail } from "class-validator";
-import addMonths from "date-fns/addMonths";
-import { Sequelize } from "sequelize-typescript";
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { isEmail } from 'class-validator'
+import addMonths from 'date-fns/addMonths'
+import { Sequelize } from 'sequelize-typescript'
 
-import { isDefined } from "@island.is/shared/utils";
-import { AttemptFailed } from "@island.is/nest/problem";
-import type { User } from "@island.is/auth-nest-tools";
+import { isDefined } from '@island.is/shared/utils'
+import { AttemptFailed } from '@island.is/nest/problem'
+import type { User } from '@island.is/auth-nest-tools'
 
-import { VerificationService } from "../user-profile/verification.service";
-import { UserProfile } from "../user-profile/userProfile.model";
-import { formatPhoneNumber } from "../utils/format-phone-number";
-import { PatchUserProfileDto } from "./dto/patch-user-profile.dto";
-import { UserProfileDto } from "./dto/user-profile.dto";
-import { IslykillService } from "./islykill.service";
-import { DataStatus } from "../user-profile/types/dataStatusTypes";
-import { NudgeType } from "../types/nudge-type";
+import { VerificationService } from '../user-profile/verification.service'
+import { UserProfile } from '../user-profile/userProfile.model'
+import { formatPhoneNumber } from '../utils/format-phone-number'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { UserProfileDto } from './dto/user-profile.dto'
+import { IslykillService } from './islykill.service'
+import { DataStatus } from '../user-profile/types/dataStatusTypes'
+import { NudgeType } from '../types/nudge-type'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
