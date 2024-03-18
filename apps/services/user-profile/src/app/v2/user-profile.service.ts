@@ -273,16 +273,30 @@ export class UserProfileService {
    */
   async confirmNudge(nationalId: string, nudgeType: NudgeType): Promise<void> {
     const date = new Date()
+
+    const currentProfile = await this.userProfileModel.findOne({
+      where: {
+        nationalId,
+      },
+    })
+
     await this.userProfileModel.upsert({
       nationalId,
       lastNudge: date,
-      nextNudge: addMonths(date, nudgeType === NudgeType.NUDGE ? 6 : 1),
-      ...(nudgeType === NudgeType.SKIP_EMAIL && {
-        emailStatus: DataStatus.EMPTY,
-      }),
-      ...(nudgeType === NudgeType.SKIP_PHONE && {
-        mobileStatus: DataStatus.EMPTY,
-      }),
+      nextNudge: addMonths(
+        date,
+        nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
+      ),
+      ...(currentProfile?.emailStatus === DataStatus.NOT_DEFINED &&
+        (nudgeType === NudgeType.SKIP_EMAIL ||
+          nudgeType === NudgeType.NUDGE) && {
+          emailStatus: DataStatus.EMPTY,
+        }),
+      ...(currentProfile?.mobileStatus === DataStatus.NOT_DEFINED &&
+        (nudgeType === NudgeType.SKIP_PHONE ||
+          nudgeType === NudgeType.NUDGE) && {
+          mobileStatus: DataStatus.EMPTY,
+        }),
     })
   }
 

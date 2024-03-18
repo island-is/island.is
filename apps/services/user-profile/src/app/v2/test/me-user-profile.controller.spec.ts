@@ -332,8 +332,6 @@ describe('MeUserProfileController', () => {
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      console.log({ userProfile })
-
       expect(userProfile.email).toBe(null)
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
@@ -965,7 +963,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.lastNudge).not.toBeNull()
     })
 
-    it('POST /v2/me/nudge with nudgeType=NudgeFrom.SKIP_EMAIL should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with nudgeType=NudgeType.SKIP_EMAIL should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -990,7 +988,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.emailStatus).toBe(DataStatus.EMPTY)
     })
 
-    it('POST /v2/me/nudge with  nudgeType=NudgeFrom.SKIP_PHONE should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with  nudgeType=NudgeType.SKIP_PHONE should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -1015,7 +1013,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
     })
 
-    it('POST /v2/me/nudge with nudgeType=NudgeFrom.NUDGE should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with nudgeType=NudgeType.NUDGE should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -1038,5 +1036,38 @@ describe('MeUserProfileController', () => {
       expect(userProfile.lastNudge).not.toBeNull()
       expect(userProfile.nextNudge).toEqual(addMonths(userProfile.lastNudge, 6))
     })
+
+    it.each`
+      nudgeType               | field
+      ${NudgeType.SKIP_EMAIL} | ${'emailStatus'}
+      ${NudgeType.SKIP_PHONE} | ${'mobileStatus'}
+      ${NudgeType.NUDGE}      | ${'emailStatus'}
+      ${NudgeType.NUDGE}      | ${'mobileStatus'}
+    `(
+      'POST /v2/me/nudge with nudgeType=$nudgeType should only update $field to EMPTY when it is NOT_DEFINED',
+      async ({ nudgeType, field }: { nudgeType: NudgeType; field: string }) => {
+        // Arrange
+        const fixtureFactory = new FixtureFactory(app)
+        await fixtureFactory.createUserProfile({
+          ...testUserProfile,
+          [field]: DataStatus.NOT_DEFINED,
+        })
+
+        // Act
+        const res = await server.post(`/v2/me/nudge`).send({
+          nudgeType,
+        } as PostNudgeDto)
+
+        // Assert
+        expect(res.status).toEqual(200)
+
+        // Assert that $field status is updated
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+        expect(userProfile[field]).toBe(DataStatus.EMPTY)
+      },
+    )
   })
 })
