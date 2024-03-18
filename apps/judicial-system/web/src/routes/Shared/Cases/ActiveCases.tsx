@@ -79,6 +79,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }, [cases])
 
   useMemo(() => {
+    console.log()
     if (cases && sortConfig) {
       cases.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {

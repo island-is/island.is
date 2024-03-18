@@ -191,7 +191,9 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
-                  <Text as="span">{user.canConfirmAppeal ? 'Já' : 'Nei'}</Text>
+                  <Text as="span">
+                    {user.canConfirmIndictment ? 'Já' : 'Nei'}
+                  </Text>
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">

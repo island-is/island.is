@@ -59,7 +59,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
             mobileNumber: user.mobileNumber,
             email: user.email,
             active: user.active,
-            canConfirmAppeal: user.canConfirmAppeal,
+            canConfirmIndictment: user.canConfirmIndictment,
           },
         },
       })

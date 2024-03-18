@@ -313,7 +313,7 @@ export class LimitedAccessCaseService {
       email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
-      canConfirmAppeal: false,
+      canConfirmIndictment: false,
     } as User
   }
 

@@ -48,5 +48,5 @@ export class User {
   readonly loginCount?: number
 
   @Field(() => Boolean)
-  readonly canConfirmAppeal?: boolean
+  readonly canConfirmIndictment?: boolean
 }

@@ -45,13 +45,13 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     prosecutor {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     courtCaseNumber
     courtEndTime
@@ -67,19 +67,19 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     judge {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     courtRecordSignatory {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     courtRecordSignatureDate
     parentCase {
@@ -113,22 +113,22 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
     appealAssistant {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealJudge1 {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealJudge2 {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealJudge3 {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealConclusion
     appealRulingDecision

@@ -18,7 +18,7 @@ query AppealCaseUsers {
       active
     }
     active
-    canConfirmAppeal
+    canConfirmIndictment
     latestLogin
     loginCount
   }

@@ -55,13 +55,13 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     prosecutor {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     sharedWithProsecutorsOffice {
       id
@@ -103,20 +103,20 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     courtRecordSignatory {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     courtRecordSignatureDate
     registrar {
       id
       name
       title
-      canConfirmAppeal
+      canConfirmIndictment
     }
     parentCase {
       id
@@ -200,22 +200,22 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealAssistant {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealJudge1 {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealJudge2 {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealJudge3 {
       id
       name
-      canConfirmAppeal
+      canConfirmIndictment
     }
     appealConclusion
     appealRulingDecision
