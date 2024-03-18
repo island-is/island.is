@@ -30,14 +30,23 @@ export const SignatureLists: FC<
       <Box marginTop={10}>
         {(collection?.candidates.length > 0 || openLists?.length > 0) && (
           <Box
-            marginBottom={3}
-            display={'flex'}
+            marginBottom={2}
+            display={['block', 'flex']}
             justifyContent={'spaceBetween'}
             alignItems={'baseline'}
           >
             {collection.isActive ? (
               <>
-                <Text variant="h3">{t('title1', 'Forsetakosningar 2024')}</Text>
+                <Box>
+                  <Text variant="h3">
+                    {t('title', 'Forsetakosningar 2024')}
+                  </Text>
+                  <Text variant="eyebrow" color="purple400" marginTop={[1, 2]}>
+                    {t('openTil', 'Lokadagur:') +
+                      ' ' +
+                      format(new Date(collection.endTime), 'dd.MM.yyyy')}
+                  </Text>
+                </Box>
                 <Text variant="eyebrow">
                   {t('totalCandidates', 'Fjöldi frambjóðenda: ') +
                     collection?.candidates.length}
@@ -66,11 +75,12 @@ export const SignatureLists: FC<
                     eyebrow={
                       t('openTil', 'Lokadagur:') +
                       ' ' +
-                      format(new Date(list.endTime), 'dd.MM.yyyy')
+                      format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')
                     }
                     key={list.id}
                     backgroundColor="white"
-                    heading={list.title}
+                    heading={list.title.split(' -')[0]}
+                    text={list.area?.name}
                     cta={{
                       label: t('sign', 'Mæla með framboði'),
                       variant: 'text',
@@ -92,11 +102,6 @@ export const SignatureLists: FC<
               .map((candidate: SignatureCollectionCandidate) => {
                 return (
                   <ActionCard
-                    eyebrow={
-                      t('openTil', 'Lokadagur:') +
-                      ' ' +
-                      format(new Date(collection.endTime), 'dd.MM.yyyy')
-                    }
                     key={candidate.id}
                     backgroundColor="white"
                     heading={candidate.name}
