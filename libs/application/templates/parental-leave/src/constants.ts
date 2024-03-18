@@ -1,4 +1,6 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
+import { parentalLeaveFormMessages } from './lib/messages'
 
 export const YES = 'yes'
 export const NO = 'no'
@@ -142,4 +144,35 @@ export enum FileType {
 export enum Languages {
   IS = 'IS',
   EN = 'EN',
+}
+
+export enum AttachmentTypes {
+  SELF_EMPLOYED = 'selfEmployedFile',
+  STUDENT = 'studentFile',
+  BENEFITS = 'benefitsFile',
+  SINGLE_PARENT = 'singleParent',
+  PARENT_WITHOUT_BIRTH_PARENT = 'parentWithoutBirthParent',
+  PERMANENT_FOSTER_CARE = 'permanentFosterCare',
+  ADOPTION = 'adoption',
+  EMPLOYMENT_TERMINATION_CERTIFICATE = 'employmentTerminationCertificateFile',
+  FILE = 'file',
+}
+
+export const AttachmentLabel: {
+  [key: string]: MessageDescriptor
+} = {
+  selfEmployedFile: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+  studentFile: parentalLeaveFormMessages.attachmentScreen.studentTitle,
+  benefitsFile:
+    parentalLeaveFormMessages.attachmentScreen.unemploymentBenefitsTitle,
+  singleParent: parentalLeaveFormMessages.attachmentScreen.singleParentTitle,
+  parentWithoutBirthParent:
+    parentalLeaveFormMessages.attachmentScreen.parentWithoutBirthParentTitle,
+  permanentFosterCare:
+    parentalLeaveFormMessages.attachmentScreen.permanentFostercareTitle,
+  adoption: parentalLeaveFormMessages.attachmentScreen.adoptionTitle,
+  employmentTerminationCertificateFile:
+    parentalLeaveFormMessages.attachmentScreen
+      .employmentTerminationCertificateTitle,
+  file: parentalLeaveFormMessages.attachmentScreen.title,
 }

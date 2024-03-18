@@ -1,28 +1,30 @@
 import {
+  BaseLicenseUpdateClient,
+  LicenseType,
+  LicenseUpdateClientService,
+} from '@island.is/clients/license-client'
+import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BarcodeService } from '@island.is/services/license'
+import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  UpdateLicenseRequest,
-  VerifyLicenseRequest,
-  UpdateLicenseResponse,
-  VerifyLicenseResponse,
-  RevokeLicenseResponse,
-  RevokeLicenseRequest,
-} from './dto'
-import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
-import { ErrorType, LicenseId } from './license.types'
-import {
-  BaseLicenseUpdateClient,
-  LicenseType,
-  LicenseUpdateClientService,
-} from '@island.is/clients/license-client'
-import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
+import { isJSON, isJWT } from 'class-validator'
 import { uuid } from 'uuidv4'
+import {
+  RevokeLicenseRequest,
+  RevokeLicenseResponse,
+  UpdateLicenseRequest,
+  UpdateLicenseResponse,
+  VerifyLicenseRequest,
+  VerifyLicenseResponse,
+} from './dto'
+import { ErrorType, LicenseId } from './license.types'
+import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
 
 const LOG_CATEGORY = 'license-api'
 
@@ -31,6 +33,7 @@ export class LicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly clientService: LicenseUpdateClientService,
+    private readonly barcodeService: BarcodeService,
   ) {}
 
   private getErrorTypeByCode = (code: number): ErrorType =>
@@ -288,10 +291,59 @@ export class LicenseService {
     )
   }
 
+  async getDataFromToken(
+    token: string,
+    requestId: string,
+  ): Promise<VerifyLicenseResponse> {
+    try {
+      const { c } = await this.barcodeService.verifyToken(token)
+      const data = await this.barcodeService.getCache(c)
+
+      if (!data) {
+        this.logger.error('No data found in cache', {
+          category: LOG_CATEGORY,
+          requestId,
+        })
+
+        return {
+          valid: false,
+        }
+      }
+
+      return {
+        valid: true,
+        ...(data.extraData && { passIdentity: data.extraData }),
+      }
+    } catch (error) {
+      this.logger.error(error.message, {
+        category: LOG_CATEGORY,
+        requestId,
+        error,
+      })
+
+      throw new BadRequestException(error.message)
+    }
+  }
+
   async verifyLicense(
     inputData: VerifyLicenseRequest,
   ): Promise<VerifyLicenseResponse> {
     const requestId = inputData?.requestId ?? this.generateRequestId()
+
+    if (isJWT(inputData.barcodeData)) {
+      return this.getDataFromToken(inputData.barcodeData, requestId)
+    }
+
+    if (!isJSON(inputData.barcodeData)) {
+      const jsonErrorMsg = 'Barcode data must be in JSON format'
+      this.logger.error(jsonErrorMsg, {
+        category: LOG_CATEGORY,
+        requestId,
+      })
+
+      throw new BadRequestException(jsonErrorMsg)
+    }
+
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
 
     this.logger.debug('License verification initiated', {
@@ -322,6 +374,7 @@ export class LicenseService {
       error: verifyRes.error,
       requestId,
     })
+
     throw this.getException(this.getErrorTypeByCode(verifyRes.error.code), {
       message: verifyRes.error.message,
       requestId,

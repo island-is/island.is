@@ -1,1 +1,2 @@
-export { PaymentGroupTableRow } from './PaymentGroupTableRow/PaymentGroupTableRow'
+export { PaymentGroupTable } from './PaymentGroupTable/PaymentGroupTable'
+export { PaymentGroupTableRow } from './PaymentGroupTable/PaymentGroupTableRow'

@@ -54,6 +54,12 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1PaymentPlanLegitimatepaymentsGet()
   }
 
+  getValidYearsForPaymentPlan(user: User): Promise<Array<number>> {
+    return this.paymentPlanApiWithAuth(
+      user,
+    ).apiProtectedV1PaymentPlanValidyearsGet()
+  }
+
   sendApplication(
     user: User,
     applicationDTO: object,

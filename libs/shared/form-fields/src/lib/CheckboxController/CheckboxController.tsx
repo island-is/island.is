@@ -90,7 +90,10 @@ export const CheckboxController: FC<
                 large={large}
                 onChange={() => {
                   clearErrors(id)
-                  const newChoices = handleSelect(option, value || [])
+                  const newChoices = handleSelect(
+                    option,
+                    Array.isArray(value) ? value : [value] || [],
+                  )
                   onChange(newChoices)
                   setValue(id, newChoices)
                   onSelect(newChoices)
