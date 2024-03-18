@@ -149,6 +149,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/ministry-of-justice/                                                                   @island-is/hugsmidjan
 /libs/api/domains/document-provider/                                                                     @island-is/hugsmidjan @island-is/core
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
+/libs/clients/documents-v2/                                                                              @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
