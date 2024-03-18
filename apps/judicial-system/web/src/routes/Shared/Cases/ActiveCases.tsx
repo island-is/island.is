@@ -203,23 +203,17 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               </Text>
             </th>
             <th className={styles.th}>
-              {caseState === CaseState.WAITING_FOR_CONFIRMATION ? (
-                <Text as="span" fontWeight="regular">
-                  {formatMessage(m.activeRequests.table.headers.prosecutor)}
-                </Text>
-              ) : (
-                <SortButton
-                  title={capitalize(
-                    formatMessage(m.activeRequests.table.headers.hearing, {
-                      suffix: 'i',
-                    }),
-                  )}
-                  onClick={() => requestSort('courtDate')}
-                  sortAsc={getClassNamesFor('courtDate') === 'ascending'}
-                  sortDes={getClassNamesFor('courtDate') === 'descending'}
-                  isActive={sortConfig?.column === 'courtDate'}
-                />
-              )}
+              <SortButton
+                title={capitalize(
+                  formatMessage(m.activeRequests.table.headers.hearing, {
+                    suffix: 'i',
+                  }),
+                )}
+                onClick={() => requestSort('courtDate')}
+                sortAsc={getClassNamesFor('courtDate') === 'ascending'}
+                sortDes={getClassNamesFor('courtDate') === 'descending'}
+                isActive={sortConfig?.column === 'courtDate'}
+              />
             </th>
             <th className={styles.th}></th>
           </tr>

@@ -2,9 +2,13 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  displayFirstPlusRemaining,
+  formatDOB,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDistrictCourtUser,
@@ -27,6 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   PastCasesTable,
+  SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
 import {
@@ -43,6 +48,9 @@ import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
+import Table, {
+  useTable,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 
 interface CreateCaseButtonProps {
   user: User
@@ -101,6 +109,7 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
+  const { requestSort, getClassNamesFor, sortConfig } = useTable()
 
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
@@ -225,15 +234,62 @@ export const Cases: React.FC = () => {
                   {loading || isFiltering ? (
                     <TableSkeleton />
                   ) : casesAwaitingConfirmation.length > 0 ? (
-                    <ActiveCases
-                      cases={casesAwaitingConfirmation}
-                      isDeletingCase={
-                        isTransitioningCase || isSendingNotification
-                      }
-                      onDeleteCase={deleteCase}
-                      caseState={CaseState.WAITING_FOR_CONFIRMATION}
+                    <Table
+                      thead={[
+                        <Text as="span" fontWeight="regular">
+                          {formatMessage(tables.caseNumber)}
+                        </Text>,
+                        <SortButton
+                          title={capitalize(
+                            formatMessage(core.defendant, { suffix: 'i' }),
+                          )}
+                          onClick={() => requestSort('defendant')}
+                          sortAsc={
+                            getClassNamesFor('defendant') === 'ascending'
+                          }
+                          sortDes={
+                            getClassNamesFor('defendant') === 'descending'
+                          }
+                          isActive={sortConfig?.column === 'defendant'}
+                          dataTestid="accusedNameSortButton"
+                        />,
+                        <Text as="span" fontWeight="regular">
+                          {formatMessage(m.activeRequests.table.headers.type)}
+                        </Text>,
+                        <SortButton
+                          title={capitalize(
+                            formatMessage(tables.created, { suffix: 'i' }),
+                          )}
+                          onClick={() => requestSort('createdAt')}
+                          sortAsc={
+                            getClassNamesFor('createdAt') === 'ascending'
+                          }
+                          sortDes={
+                            getClassNamesFor('createdAt') === 'descending'
+                          }
+                          isActive={sortConfig?.column === 'createdAt'}
+                          dataTestid="createdAtSortButton"
+                        />,
+                        <Text as="span" fontWeight="regular">
+                          {formatMessage(tables.state)}
+                        </Text>,
+                        <Text as="span" fontWeight="regular">
+                          {formatMessage(
+                            m.activeRequests.table.headers.prosecutor,
+                          )}
+                        </Text>,
+                      ]}
+                      columns={[]}
                     />
                   ) : (
+                    // <ActiveCases
+                    //   cases={casesAwaitingConfirmation}
+                    //   isDeletingCase={
+                    //     isTransitioningCase || isSendingNotification
+                    //   }
+                    //   onDeleteCase={deleteCase}
+                    //   caseState={CaseState.WAITING_FOR_CONFIRMATION}
+                    // />
                     <motion.div
                       className={styles.infoContainer}
                       initial={{ opacity: 0 }}
