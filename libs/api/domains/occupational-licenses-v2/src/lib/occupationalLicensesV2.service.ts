@@ -3,10 +3,7 @@ import { CurrentUser } from '@island.is/auth-nest-tools'
 import capitalize from 'lodash/capitalize'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
-import {
-  DistrictCommissionersLicensesService,
-  RettindiFyrirIslandIsApi,
-} from '@island.is/clients/district-commissioners-licenses'
+import { DistrictCommissionersLicensesService } from '@island.is/clients/district-commissioners-licenses'
 import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { License, OccupationalLicenseStatusV2 } from './models/license.model'
@@ -25,6 +22,12 @@ import {
   OccupationalLicenseV2LicenseResponseType,
 } from './models/licenseResponse.model'
 import { LinkType } from './models/link'
+import {
+  CmsTranslationsService,
+  TranslationsDict,
+} from '@island.is/cms-translations'
+
+const namespaceId = 'service.portal'
 
 export class OccupationalLicensesV2Service {
   constructor(
@@ -34,6 +37,7 @@ export class OccupationalLicensesV2Service {
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly cmsTranslationsService: CmsTranslationsService,
   ) {}
   async getDistrictCommissionerLicenses(user: User): Promise<License[] | null> {
     const licenses = await this.dcService.getLicenses(user)
@@ -221,7 +225,8 @@ export class OccupationalLicensesV2Service {
       return null
     }
 
-    const text = locale === 'is' ? 'Sækja leyfisbréf' : 'Fetch license'
+    const namespace: TranslationsDict =
+      await this.cmsTranslationsService.getTranslations([namespaceId], locale)
 
     return {
       license,
@@ -229,7 +234,7 @@ export class OccupationalLicensesV2Service {
       actions: [
         {
           type: LinkType.FILE,
-          text,
+          text: namespace?.['service.portal:fetch-license'],
           url: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${license.licenseId}`,
         },
       ],

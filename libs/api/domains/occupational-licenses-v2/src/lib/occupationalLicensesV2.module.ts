@@ -5,12 +5,14 @@ import { OccupationalLicensesV2Resolver } from './occupationalLicensesV2.resolve
 import { HealthDirectorateClientModule } from '@island.is/clients/health-directorate'
 import { MMSClientModule } from '@island.is/clients/mms'
 import { OccupationalLicensesV2Service } from './occupationalLicensesV2.service'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 @Module({
   imports: [
     DistrictCommissionersLicensesClientModule,
     HealthDirectorateClientModule,
     MMSClientModule,
+    CmsTranslationsModule,
     FeatureFlagModule,
   ],
   providers: [OccupationalLicensesV2Resolver, OccupationalLicensesV2Service],
