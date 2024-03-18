@@ -147,7 +147,7 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: ${{ github.env.CYPRESS_CACHE_DIR }}
+          path: ${{ env.CYPRESS_CACHE_DIR }}
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
       - name: Check cypress cache success
@@ -346,7 +346,7 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: ${{ github.env.CYPRESS_CACHE_DIR }}
+          path: ${{ env.CYPRESS_CACHE_DIR }}
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
       - name: Check cypress cache success
