@@ -625,7 +625,12 @@ export const translationStrings = defineMessages({
   'REIKNH.PERSAFSLTRMEIRA': {
     id: 'web.pensionCalculator:REIKNH.PERSAFSLTRMEIRA',
     defaultMessage: 'Persónuafsláttur af greiðslum TR (nýting skattkorts 22%)',
-    description: 'Niðurstöðuskjár, Persónuafsláttur',
+    description: 'Niðurstöðuskjár, Persónuafsláttur TR meira',
+  },
+  'REIKNH.PERSAFSLTRMINNA': {
+    id: 'web.pensionCalculator:REIKNH.PERSAFSLTRMINNA',
+    defaultMessage: 'Persónuafsláttur af greiðslum TR',
+    description: 'Niðurstöðuskjár, Persónuafsláttur TR minna',
   },
   'REIKNH.SAMTALSTREFTIRSK': {
     id: 'web.pensionCalculator:REIKNH.SAMTALSTREFTIRSK',
@@ -670,7 +675,7 @@ export const translationStrings = defineMessages({
   'REIKNH.PERSAFSLMEIRA': {
     id: 'web.pensionCalculator:REIKNH.PERSAFSLMEIRA',
     defaultMessage: 'Persónuafsláttur (nýting skattkorts 78%)',
-    description: 'Niðurstöðuskjár, Persónuafsláttur (nýting skattkorts 78%)',
+    description: 'Niðurstöðuskjár, Persónuafsláttur meira',
   },
   'REIKNH.SAMTALSEFTIRSK': {
     id: 'web.pensionCalculator:REIKNH.SAMTALSEFTIRSK',
@@ -757,6 +762,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Frádreginn skattur (1. og 2. skattþrep)',
     description: 'Niðurstöðuskjár, Frádreginn skattur (1. og 2. skattþrep)',
   },
+  'REIKNH.FRADRSKATTURTR3': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTURTR3',
+    defaultMessage: 'Frádreginn skattur (1. - 3. skattþrep)',
+    description: 'Niðurstöðuskjár, Frádreginn skattur (1. - 3. skattþrep)',
+  },
   'REIKNH.GRUNNLIFORORKA': {
     id: 'web.pensionCalculator:REIKNH.GRUNNLIFORORKA',
     defaultMessage: 'Örorkulífeyrir',
@@ -781,6 +791,62 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR1',
     defaultMessage: 'Frádreginn skattur',
     description: 'Niðurstöðuskjár, Frádreginn skattur',
+  },
+  'REIKNH.BARNALIFEYRIR': {
+    id: 'web.pensionCalculator:REIKNH.BARNALIFEYRIR',
+    defaultMessage: 'Barnalífeyrir (óskattskyldur)',
+    description: 'Niðurstöðuskjár, Barnalífeyrir (óskattskyldur)',
+  },
+  'REIKNH.BENSINSTYRKUR': {
+    id: 'web.pensionCalculator:REIKNH.BENSINSTYRKUR',
+    defaultMessage: 'Bensínstyrkur (óskattskyldur)',
+    description: 'Niðurstöðuskjár, Bensínstyrkur (óskattskyldur)',
+  },
+  'REIKNH.ERLGRUNNLIF': {
+    id: 'web.pensionCalculator:REIKNH.ERLGRUNNLIF',
+    defaultMessage: 'Erlendur grunnlífeyrir, ekki vitað með skatt',
+    description:
+      'Niðurstöðuskjár, Erlendur grunnlífeyrir, ekki vitað með skatt',
+  },
+  'REIKNH.FRADRFJARMTEKSK22': {
+    id: 'web.pensionCalculator:REIKNH.FRADRFJARMTEKSK22',
+    defaultMessage: 'Frádreginn fjármagnstekjuskattur 22%',
+    description: 'Niðurstöðuskjár, Frádreginn fjármagnstekjuskattur 22%',
+  },
+  'REIKNH.FRADRSKATTUR2': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR2',
+    defaultMessage: 'Frádreginn skattur (1. og 2. skattþrep)',
+    description: 'Niðurstöðuskjár, Frádreginn skattur (1. og 2. skattþrep)',
+  },
+  'REIKNH.FRADRSKATTUR3': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR3',
+    defaultMessage: 'Frádreginn skattur (1. - 3. skattþrep)',
+    description: 'Niðurstöðuskjár, Frádreginn skattur (1. - 3. skattþrep)',
+  },
+  'REIKNH.MAEDRAFEDRALAUN': {
+    id: 'web.pensionCalculator:REIKNH.MAEDRAFEDRALAUN',
+    defaultMessage: 'Mæðra- / feðralaun',
+    description: 'Niðurstöðuskjár, Mæðra- / feðralaun',
+  },
+  'REIKNH.MEDLAG': {
+    id: 'web.pensionCalculator:REIKNH.MEDLAG',
+    defaultMessage: 'Meðlag',
+    description: 'Niðurstöðuskjár, Meðlag',
+  },
+  'REIKNH.PERSAFSLMINNA	': {
+    id: 'web.pensionCalculator:REIKNH.PERSAFSLMINNA',
+    defaultMessage: 'Persónuafsláttur',
+    description: 'Niðurstöðuskjár, Persónuafsláttur minna',
+  },
+  'REIKNH.SAMANBBOTAFLOKKUR	': {
+    id: 'web.pensionCalculator:REIKNH.SAMANBBOTAFLOKKUR',
+    defaultMessage: 'Samanburðarbótaflokkur við eldra kerfi',
+    description: 'Niðurstöðuskjár, Samanburðarbótaflokkur við eldra kerfi ',
+  },
+  'REIKNH.UPPBVREKSTURSBIFR': {
+    id: 'web.pensionCalculator:REIKNH.UPPBVREKSTURSBIFR',
+    defaultMessage: 'Uppbót v/reksturs bifreiðar (óskattskyld)',
+    description: 'Niðurstöðuskjár, Uppbót v/reksturs bifreiðar (óskattskyld) ',
   },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
