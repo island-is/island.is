@@ -175,6 +175,7 @@ const useSubmit = (
   locale: Locale,
   onRouting?: () => void,
   organization?: string,
+  category?: string,
 ) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
@@ -193,6 +194,10 @@ const useSubmit = (
         query.organization = organization
       }
 
+      if (category) {
+        query.category = category
+      }
+
       Router.push({
         ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
@@ -209,7 +214,7 @@ const useSubmit = (
         onRouting()
       }
     },
-    [Router, linkResolver, onRouting],
+    [Router, linkResolver, onRouting, organization, category],
   )
 }
 
@@ -228,6 +233,7 @@ interface SearchInputProps {
   skipContext?: boolean
   quickContentLabel?: string
   organization?: string
+  category?: string
 }
 
 export const SearchInput = forwardRef<
@@ -251,13 +257,14 @@ export const SearchInput = forwardRef<
       quickContentLabel,
       dataTestId,
       organization,
+      category,
     },
     ref,
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete, organization)
 
-    const onSubmit = useSubmit(locale, undefined, organization)
+    const onSubmit = useSubmit(locale, undefined, organization, category)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {

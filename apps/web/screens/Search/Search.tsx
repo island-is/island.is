@@ -290,8 +290,8 @@ const Search: Screen<CategoryProps> = ({
     | Partial<Record<SearchableContentTypes, string>>
     | Record<string, string> = useMemo(
     () => ({
-      webArticle: n('webArticle', 'Greinar'),
-      webSubArticle: n('webSubArticle', 'Undirgreinar'),
+      webArticle: n('webPage', 'Síður'), // TODO: get feedback about this change
+      webSubArticle: n('webSubpage', 'Undirsíður'), // TODO: get feedback about this change
       webLink: n('webLink', 'Tenglar'),
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
@@ -596,6 +596,8 @@ const Search: Screen<CategoryProps> = ({
                   quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
                   activeLocale={activeLocale}
                   initialInputValue={q}
+                  organization={state.query.organization?.[0]}
+                  category={state.query.category?.[0]}
                 />
                 <Box width="full">
                   <Stack space={3}>
