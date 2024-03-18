@@ -4,7 +4,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   ActorDelegationsControllerFindAllDirectionEnum,
   ActorDelegationsApi,
-  DelegationType,
+  AuthDelegationType,
   MergedDelegationDTO,
 } from '@island.is/clients/auth/public-api'
 
@@ -18,7 +18,7 @@ export class ActorDelegationsService {
 
   getActorDelegations(
     user: User,
-    delegationTypes?: DelegationType[],
+    delegationTypes?: AuthDelegationType[],
   ): Promise<MergedDelegationDTO[]> {
     return this.delegationsApiWithAuth(user).actorDelegationsControllerFindAll({
       direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
