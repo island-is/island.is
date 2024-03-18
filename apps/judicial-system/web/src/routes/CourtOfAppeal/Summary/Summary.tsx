@@ -17,7 +17,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  RulingModifiedModal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealRulingDecision,
@@ -35,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import RulingModifiedModal from './RulingModifiedModal/RulingModifiedModal'
 import { strings } from './Summary.strings'
 
 type ModalType =
@@ -44,10 +44,11 @@ type ModalType =
   | 'none'
 
 const Summary: React.FC = () => {
+  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
   const { transitionCase, isTransitioningCase } = useCase()
+
   const [visibleModal, setVisibleModal] = useState<ModalType>('none')
 
   const handleComplete = async () => {
@@ -148,7 +149,6 @@ const Summary: React.FC = () => {
           <RulingModifiedModal
             onCancel={() => setVisibleModal('none')}
             onContinue={handleComplete}
-            continueDisabled={isTransitioningCase}
           />
         )}
         {visibleModal === 'AppealDiscontinued' && (
