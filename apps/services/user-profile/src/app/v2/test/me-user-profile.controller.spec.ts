@@ -24,7 +24,7 @@ import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import addMonths from 'date-fns/addMonths'
-import { NudgeFrom } from '../../types/nudge-from'
+import { NudgeType } from '../../types/nudge-type'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
 
 const testUserProfile = {
@@ -930,7 +930,7 @@ describe('MeUserProfileController', () => {
 
       // Act
       const res = await server.post('/v2/me/nudge').send({
-        nudgeFrom: NudgeFrom.OVERVIEW,
+        nudgeType: NudgeType.NUDGE,
       } as PostNudgeDto)
 
       // Assert
@@ -949,7 +949,7 @@ describe('MeUserProfileController', () => {
     it(`POST /v2/me/nudge should return 200 and update the lastNudge field when user confirms nudge`, async () => {
       // Act
       const res = await server.post('/v2/me/nudge').send({
-        nudgeFrom: NudgeFrom.OVERVIEW,
+        nudgeType: NudgeType.NUDGE,
       } as PostNudgeDto)
 
       // Assert
@@ -965,7 +965,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.lastNudge).not.toBeNull()
     })
 
-    it('POST /v2/me/nudge with nudgeFrom=NudgeFrom.EMAIL should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with nudgeType=NudgeFrom.SKIP_EMAIL should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -973,7 +973,7 @@ describe('MeUserProfileController', () => {
 
       // Act
       const res = await server.post(`/v2/me/nudge`).send({
-        nudgeFrom: NudgeFrom.EMAIL,
+        nudgeType: NudgeType.SKIP_EMAIL,
       } as PostNudgeDto)
 
       // Assert
@@ -990,7 +990,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.emailStatus).toBe(DataStatus.EMPTY)
     })
 
-    it('POST /v2/me/nudge with  nudgeFrom=NudgeFrom.MOBILE_PHONE_NUMBER should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with  nudgeType=NudgeFrom.SKIP_PHONE should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -998,7 +998,7 @@ describe('MeUserProfileController', () => {
 
       // Act
       const res = await server.post(`/v2/me/nudge`).send({
-        nudgeFrom: NudgeFrom.MOBILE_PHONE_NUMBER,
+        nudgeType: NudgeType.SKIP_PHONE,
       } as PostNudgeDto)
 
       // Assert
@@ -1015,7 +1015,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
     })
 
-    it('POST /v2/me/nudge with nudgeFrom=NudgeFrom.OVERVIEW should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
+    it('POST /v2/me/nudge with nudgeType=NudgeFrom.NUDGE should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -1023,7 +1023,7 @@ describe('MeUserProfileController', () => {
 
       // Act
       const res = await server.post(`/v2/me/nudge`).send({
-        nudgeFrom: NudgeFrom.OVERVIEW,
+        nudgeType: NudgeType.NUDGE,
       } as PostNudgeDto)
 
       // Assert

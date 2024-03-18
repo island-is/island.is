@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEnum } from 'class-validator'
 
-import { NudgeFrom } from '../../types/nudge-from'
+import { NudgeType } from '../../types/nudge-type'
 
 export class PostNudgeDto {
-  @IsEnum(NudgeFrom)
-  @ApiProperty({ enum: NudgeFrom })
-  nudgeFrom: NudgeFrom
+  @IsEnum(NudgeType)
+  @ApiProperty({ enum: NudgeType })
+  nudgeType: NudgeType
 }

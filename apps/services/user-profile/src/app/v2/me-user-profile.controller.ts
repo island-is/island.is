@@ -25,7 +25,7 @@ import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-import { NudgeFrom } from '../types/nudge-from'
+import { NudgeType } from '../types/nudge-type'
 import { PostNudgeDto } from './dto/post-nudge.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
@@ -135,7 +135,7 @@ export class MeUserProfileController {
         action: 'nudge',
         resources: user.nationalId,
       },
-      this.userProfileService.confirmNudge(user.nationalId, input.nudgeFrom),
+      this.userProfileService.confirmNudge(user.nationalId, input.nudgeType),
     )
   }
 }

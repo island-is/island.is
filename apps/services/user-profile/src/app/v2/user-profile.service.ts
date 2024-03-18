@@ -1,21 +1,21 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { isEmail } from 'class-validator'
-import addMonths from 'date-fns/addMonths'
-import { Sequelize } from 'sequelize-typescript'
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/sequelize";
+import { isEmail } from "class-validator";
+import addMonths from "date-fns/addMonths";
+import { Sequelize } from "sequelize-typescript";
 
-import { isDefined } from '@island.is/shared/utils'
-import { AttemptFailed } from '@island.is/nest/problem'
-import type { User } from '@island.is/auth-nest-tools'
+import { isDefined } from "@island.is/shared/utils";
+import { AttemptFailed } from "@island.is/nest/problem";
+import type { User } from "@island.is/auth-nest-tools";
 
-import { VerificationService } from '../user-profile/verification.service'
-import { UserProfile } from '../user-profile/userProfile.model'
-import { formatPhoneNumber } from '../utils/format-phone-number'
-import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
-import { UserProfileDto } from './dto/user-profile.dto'
-import { IslykillService } from './islykill.service'
-import { DataStatus } from '../user-profile/types/dataStatusTypes'
-import { NudgeFrom } from '../types/nudge-from'
+import { VerificationService } from "../user-profile/verification.service";
+import { UserProfile } from "../user-profile/userProfile.model";
+import { formatPhoneNumber } from "../utils/format-phone-number";
+import { PatchUserProfileDto } from "./dto/patch-user-profile.dto";
+import { UserProfileDto } from "./dto/user-profile.dto";
+import { IslykillService } from "./islykill.service";
+import { DataStatus } from "../user-profile/types/dataStatusTypes";
+import { NudgeType } from "../types/nudge-type";
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -269,18 +269,18 @@ export class UserProfileService {
    * Sets the email and mobile phone number status to empty if the user has skipped the overview, that means the user has seen the nudge and acknowledged that the data is empty
    * Sets the email and mobile phone number status to empty if the user has skipped the email or mobile phone number, that means the user has seen the nudge and acknowledged that the data is empty
    * @param nationalId
-   * @param nudgeFrom
+   * @param nudgeType
    */
-  async confirmNudge(nationalId: string, nudgeFrom: NudgeFrom): Promise<void> {
+  async confirmNudge(nationalId: string, nudgeType: NudgeType): Promise<void> {
     const date = new Date()
     await this.userProfileModel.upsert({
       nationalId,
       lastNudge: date,
-      nextNudge: addMonths(date, nudgeFrom === NudgeFrom.OVERVIEW ? 6 : 1),
-      ...((nudgeFrom === NudgeFrom.EMAIL || nudgeFrom === NudgeFrom.OVERVIEW) && {
+      nextNudge: addMonths(date, nudgeType === NudgeType.NUDGE ? 6 : 1),
+      ...(nudgeType === NudgeType.SKIP_EMAIL && {
         emailStatus: DataStatus.EMPTY,
       }),
-      ...((nudgeFrom === NudgeFrom.MOBILE_PHONE_NUMBER || nudgeFrom === NudgeFrom.OVERVIEW) && {
+      ...(nudgeType === NudgeType.SKIP_PHONE && {
         mobileStatus: DataStatus.EMPTY,
       }),
     })
