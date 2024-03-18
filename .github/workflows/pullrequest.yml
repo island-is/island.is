@@ -246,7 +246,7 @@ jobs:
           echo "lint_projects.CHUNKS=${{ steps.lint_projects.outputs.CHUNKS }}"
 
   tests:
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS != '[]' }}
+    if: ${{ needs.changes.outputs.TEST_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.TEST_CHUNKS)) != '[]' }}
     needs:
       - prepare
     runs-on: ec2-runners
@@ -304,7 +304,7 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   e2e:
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS != '[]' }}
+    if: ${{ needs.changes.outputs.E2E_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.E2E_CHUNKS)) != '[]' }}
     needs:
       - prepare
     runs-on: ec2-runners
@@ -413,7 +413,6 @@ jobs:
           severity: warning
 
   formatting:
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS != '[]' }}
     needs:
       - prepare
     runs-on: ec2-runners
@@ -456,7 +455,7 @@ jobs:
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   linting:
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS != '[]' }}
+    if: ${{ needs.changes.outputs.LINT_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.LINT_CHUNKS)) != '[]' }}
     needs:
       - prepare
     runs-on: ec2-runners
@@ -508,7 +507,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS != '[]' }}
+    if: ${{ needs.changes.outputs.BUILD_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.BUILD_CHUNKS)) != '[]' }}
     needs:
       - prepare
     runs-on: ec2-runners
