@@ -1,0 +1,24 @@
+{
+  "title": "Custom Node Application Build Target",
+  "description": "Wraps @nx/node:webpack locally and @anatine/esbuildnx:build for production builds.",
+  "cli": "nx",
+  "type": "object",
+  "properties": {
+    "appRoot": {
+      "type": "string",
+      "description": "Project root"
+    },
+    "sourceRoot": {
+      "type": "string",
+      "description": "Entrypoint files"
+    },
+    "distRoot": {
+      "type": "string",
+      "description": "Dist root."
+    },
+    "tsconfig": {
+      "type": "sting",
+      "description": "Typescript config"
+    }
+  }
+}
