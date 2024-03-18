@@ -1,111 +1,111 @@
-import { ProjectGraphExternalNode, runExecutor } from '@nx/devkit'
-import type { ExecutorContext } from '@nx/devkit'
+import { exec as _exec } from 'child_process';
+import { cp, mkdir, readFile, writeFile } from 'fs/promises';
+import { glob } from 'glob';
+import { resolve } from 'path';
+import { promisify } from 'util';
+
+import  { type ProjectGraphExternalNode, runExecutor, type ExecutorContext } from '@nx/devkit';
 import { getExtraDependencies } from '@nx/esbuild/src/executors/esbuild/lib/get-extra-dependencies';
-type DependentBuildableProjectNode = ReturnType<typeof getExtraDependencies>[number] & {node: ProjectGraphExternalNode};
 
-
-import {exec as _exec} from "child_process";
-import {readFile, writeFile} from "fs/promises";
-import { glob } from 'glob'; 
-import {resolve} from "path";
-import {promisify} from "util";
-
-const exec = promisify(_exec);
-
-export interface BuildExecutorOptions {
+type DependentBuildableProjectNode = ReturnType<typeof getExtraDependencies>[number] & {
+    node: ProjectGraphExternalNode;
+  };
+  
+  export interface BuildExecutorOptions {
     appRoot: string;
     distRoot: string;
     sourceRoot: string;
     tsConfig: string;
-}
+  }
 
-/**
- * Build e2e tests
- * generate package.json
- * generate lock file
+  const exec = promisify(_exec);
+
+  /**
+ * Asynchronously builds e2e tests, generates package.json, and lock file.
+ * 
+ * @param options - Configuration options for the build executor.
+ * @param context - The execution context, including project and graph information.
+ * @returns An async iterable iterator indicating the progress and success of the build process.
  */
 export default async function* buildExecutor(
     options: BuildExecutorOptions,
     context: ExecutorContext,
-
-  ): AsyncIterableIterator<unknown> { 
-    const { distRoot, sourceRoot, tsConfig } = options
-    const { projectName, projectGraph } = context
-
+  ): AsyncIterableIterator<unknown> {
+    const { distRoot, sourceRoot, tsConfig } = options;
+    const { projectName, projectGraph } = context;
+  
     if (!projectName) {
-        throw new Error(`No Project name found`);
+      throw new Error('No Project name found');
     }
     if (!projectGraph) {
-        throw new Error(`No Project Graph found`);
+      throw new Error('No Project Graph found');
     }
-    const nodeDeps = getExtraDependencies(projectName, projectGraph).filter((e) => e.node.type === "npm") as DependentBuildableProjectNode[];
+  
+    // Retrieve external dependencies from the project graph
+    const nodeDeps = getExtraDependencies(projectName, projectGraph).filter(
+      (e) => e.node.type === "npm"
+    ) as DependentBuildableProjectNode[];
+  
+    // Construct a dependencies object for packagejson
+    const depsObj = nodeDeps.reduce<Record<string, string>>((acc, dep) => ({
+      ...acc,
+      [dep.node.data.packageName]: dep.node.data.version,
+    }), {});
 
-    const depsObj = nodeDeps.reduce((a, b) => {
-        return {
-            ...a,
-            [b.node.data.packageName]: b.node.data.version
-        }
-    }, {} as Record<string, string>)
-
+    // Prepare external dependencies for esbuild
     const externalDeps = Object.keys(depsObj).map((pkg) => `--external:${pkg}`);
 
-    const pattern = `${sourceRoot}/**/*.ts`;
-    const optionsForGlob = { ignore: ['**/node_modules/**', '**/*.d.ts'] };
+     // Glob pattern for entry points
+  const pattern = `${sourceRoot}/**/*.ts`;
+  const optionsForGlob = { ignore: ['**/node_modules/**', '**/*.d.ts'] };
+  const entryPoints = await glob(pattern, optionsForGlob);
+  
+   // Bundle with esbuild
+   await exec(['yarn', 'esbuild', '--bundle', ...entryPoints, `--tsconfig=${tsConfig}`, `--outdir=${distRoot}`, '--platform=node', ...externalDeps].join(' '), {
+    encoding: 'utf-8',
+  });
 
-    const entryPoints = await glob(pattern, optionsForGlob);
-    
-    await exec(["yarn", "esbuild", "--bundle", ...entryPoints, `--tsconfig=${tsConfig}`, `--outdir=${distRoot}`, '--platform=node', ...externalDeps].join(" "), {
-        encoding: 'utf-8',
-    });
+  // Read and use the base package.json to maintain consistency
+  const rootPackageJson = JSON.parse(await readFile('package.json', 'utf-8'));
+  const packageManager = rootPackageJson.packageManager as string;
+  const resolutions = rootPackageJson.resolutions;
+  // Generate package.json for the dist
+  const pkgJson = {
+    name: projectName,
+    version: projectGraph.version,
+    dependencies: depsObj,
+    packageManager,
+    resolutions,
+  };
+  const packageJSONPath = resolve(distRoot, "package.json");
+  await writeFile(packageJSONPath, JSON.stringify(pkgJson, null, 2));
 
-    const rootPackageJson = JSON.parse(await readFile('package.json', 'utf-8'));
-    const packageManager = rootPackageJson.packageManager as string;
+  // Copy the yarn lock file
+  const yarnLockPath = resolve(distRoot, "yarn.lock");
+  await writeFile(yarnLockPath, await readFile("yarn.lock", "utf-8"));
 
-    /** Force same resolultions as in base package.json */
-    const resolutions = Object.keys(rootPackageJson.resolutions as Record<string, string>).reduce((a, b) => {
-        if (!Object.keys(depsObj).includes(b)) {
-            return a;
-        }
+  const newYarnPatches = resolve(distRoot, ".yarn", "patches");
+  const oldYarnPatches = resolve(process.cwd(), ".yarn", "patches");
 
-        const res = rootPackageJson.resolutions[b];
-        if (res.startsWith("patch:")) {
-            throw new Error("Patch not implemented");
-        }
-        return {
-            ...a,
-            [b]: rootPackageJson.resolutions[b]
-        }
-    }, {} as Record<string, string>);    
+  // Create patch directory
+  await mkdir(newYarnPatches, {recursive: true});
 
-    // Write package.json file
-    const pkgJson = {
-        name: projectName,
-        version: projectGraph.version,
-        dependencies: depsObj,
-        packageManager,
-        resolutions,
-    }
+  // Copy patches
+  await cp(oldYarnPatches, newYarnPatches, {recursive: true});
 
-    const packageJSONPath = resolve(distRoot, "package.json");
-    await writeFile(packageJSONPath, JSON.stringify(pkgJson, null, 2));
 
-    const yarnLockPath = resolve(distRoot, "yarn.lock");
-    await writeFile(yarnLockPath, await readFile("yarn.lock", "utf-8"))
+  // Update the lock file in the dist directory
+  const distDir = resolve(process.cwd(), distRoot);
+  await exec(['yarn', '--mode=update-lockfile'].join(' '), {
+    encoding: 'utf-8',
+    env: {
+      ...process.env,
+      YARN_ENABLE_IMMUTABLE_INSTALLS: "false",
+    },
+    cwd: distDir,
+  });
 
-    const distDir = resolve(process.cwd(), distRoot);
-
-    // update lock file 
-    await exec(["yarn", "--mode=update-lockfile"].join(" "), {
-        encoding: 'utf-8',
-        env: {
-            ...process.env,
-            // To force recration of yarn lock file
-            YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
-        },
-        cwd: distDir,
-    });
-    
-    return {
-        success: true
-    }
+  return {
+    success: true,
+  };
 };
