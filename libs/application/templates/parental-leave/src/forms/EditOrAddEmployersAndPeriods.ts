@@ -9,13 +9,17 @@ import {
   buildRadioField,
   buildRepeater,
   buildSection,
-  buildSelectField,
   buildSubSection,
   buildSubmitField,
-  buildTextField,
+  buildTableRepeaterField,
   formatText,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import {
   NO,
   PARENTAL_GRANT,
@@ -24,7 +28,6 @@ import {
   StartDateOptions,
   YES,
 } from '../constants'
-
 import Logo from '../assets/Logo'
 import { minPeriodDays } from '../config'
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -36,7 +39,10 @@ import {
   getMinimumStartDate,
   getPeriodSectionTitle,
 } from '../lib/parentalLeaveUtils'
-
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { useLocale } from '@island.is/localization'
 
@@ -241,77 +247,95 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                 },
               ],
             }),
-            buildRepeater({
+            buildTableRepeaterField({
               id: 'employers',
               title: parentalLeaveFormMessages.employer.title,
-              component: 'EmployersOverview',
+              description: (application) => {
+                const { employerLastSixMonths } = getApplicationAnswers(
+                  application.answers,
+                )
+                return employerLastSixMonths === YES
+                  ? parentalLeaveFormMessages.employer.grantsDescription
+                  : parentalLeaveFormMessages.employer.description
+              },
               condition: (answers) => {
                 const { addEmployer } = getApplicationAnswers(answers)
                 return addEmployer === YES
               },
-              children: [
-                buildMultiField({
-                  id: 'addEmployers',
-                  title: parentalLeaveFormMessages.employer.registration,
-                  isPartOfRepeater: true,
-                  children: [
-                    buildTextField({
-                      id: 'email',
-                      variant: 'email',
-                      dataTestId: 'employer-email',
-                      title: parentalLeaveFormMessages.employer.email,
-                    }),
-                    buildTextField({
-                      id: 'phoneNumber',
-                      variant: 'tel',
-                      dataTestId: 'employer-phone-number',
-                      format: '###-####',
-                      placeholder: '000-0000',
-                      title: parentalLeaveFormMessages.employer.phoneNumber,
-                    }),
-                    buildSelectField({
-                      id: 'ratio',
-                      dataTestId: 'employment-ratio',
-                      title: parentalLeaveFormMessages.employer.ratio,
-                      placeholder:
-                        parentalLeaveFormMessages.employer.ratioPlaceholder,
-                      options: Array(100)
-                        .fill(undefined)
-                        .map((_, idx, array) => ({
-                          value: `${array.length - idx}`,
-                          label: `${array.length - idx}%`,
-                        })),
-                    }),
-                    buildRadioField({
-                      id: 'stillEmployed',
-                      condition: (answers) => {
-                        const { applicationType, employerLastSixMonths } =
-                          getApplicationAnswers(answers)
-
-                        return (
-                          (applicationType === PARENTAL_GRANT ||
-                            applicationType === PARENTAL_GRANT_STUDENTS) &&
-                          employerLastSixMonths === YES
-                        )
-                      },
-                      title: parentalLeaveFormMessages.employer.stillEmployed,
-                      width: 'half',
-                      space: 3,
-                      options: [
-                        {
-                          value: YES,
-                          label:
-                            parentalLeaveFormMessages.shared.yesOptionLabel,
-                        },
-                        {
-                          value: NO,
-                          label: parentalLeaveFormMessages.shared.noOptionLabel,
-                        },
-                      ],
-                    }),
+              formTitle: parentalLeaveFormMessages.employer.registration,
+              addItemButtonText: parentalLeaveFormMessages.employer.addEmployer,
+              saveItemButtonText:
+                parentalLeaveFormMessages.employer.registerEmployer,
+              removeButtonTooltipText:
+                parentalLeaveFormMessages.employer.deleteEmployer,
+              marginTop: 0,
+              fields: {
+                email: {
+                  component: 'input',
+                  label: parentalLeaveFormMessages.employer.email,
+                  type: 'email',
+                  dataTestId: 'employer-email',
+                },
+                phoneNumber: {
+                  component: 'input',
+                  label: parentalLeaveFormMessages.employer.phoneNumber,
+                  type: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
+                  dataTestId: 'employer-phone-number',
+                },
+                ratio: {
+                  component: 'select',
+                  label: parentalLeaveFormMessages.employer.ratio,
+                  placeholder:
+                    parentalLeaveFormMessages.employer.ratioPlaceholder,
+                  dataTestId: 'employment-ratio',
+                  options: Array(100)
+                    .fill(undefined)
+                    .map((_, idx, array) => ({
+                      value: `${array.length - idx}`,
+                      label: `${array.length - idx}%`,
+                    })),
+                },
+                stillEmployed: {
+                  component: 'radio',
+                  label: parentalLeaveFormMessages.employer.stillEmployed,
+                  width: 'half',
+                  options: [
+                    {
+                      value: YES,
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                    },
+                    {
+                      value: NO,
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                    },
                   ],
-                }),
-              ],
+                  displayInTable: false,
+                  condition: (application) => {
+                    const { applicationType, employerLastSixMonths } =
+                      getApplicationAnswers(application.answers)
+
+                    return (
+                      (applicationType === PARENTAL_GRANT ||
+                        applicationType === PARENTAL_GRANT_STUDENTS) &&
+                      employerLastSixMonths === YES
+                    )
+                  },
+                },
+              },
+              table: {
+                header: [
+                  parentalLeaveFormMessages.employer.emailHeader,
+                  parentalLeaveFormMessages.employer.phoneNumberHeader,
+                  parentalLeaveFormMessages.employer.ratioHeader,
+                ],
+                format: {
+                  phoneNumber: (value) =>
+                    formatPhoneNumber(removeCountryCode(value ?? '')),
+                  ratio: (value) => `${value}%`,
+                },
+              },
             }),
           ],
         }),
@@ -319,44 +343,38 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      title: parentalLeaveFormMessages.confirmation.title,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirmation',
           title: '',
           children: [
-            buildMultiField({
-              id: 'confirmation',
+            buildCustomField({
+              id: 'confirmationScreen',
               title: '',
-              description: '',
-              children: [
-                buildCustomField({
-                  id: 'confirmationScreen',
-                  title: '',
-                  component: 'EditOrAddEmployersAndPeriodsReview',
-                }),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [
-                    {
-                      event: 'ABORT',
-                      name: parentalLeaveFormMessages.confirmation.cancel,
-                      type: 'reject',
-                    },
-                    {
-                      event: 'SUBMIT',
-                      name: parentalLeaveFormMessages.confirmation.title,
-                      type: 'primary',
-                      condition: (answers) => {
-                        // Only display Submit button if changes made
-                        const { addPeriods, addEmployer } =
-                          getApplicationAnswers(answers)
-                        return addPeriods === YES || addEmployer === YES
-                      },
-                    },
-                  ],
-                }),
+              component: 'EditOrAddEmployersAndPeriodsReview',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                  condition: (answers) => {
+                    // Only display Submit button if changes made
+                    const { addPeriods, addEmployer } =
+                      getApplicationAnswers(answers)
+                    return addPeriods === YES || addEmployer === YES
+                  },
+                },
               ],
             }),
           ],

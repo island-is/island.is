@@ -10125,9 +10125,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.12":
-  version: 0.7.12
-  resolution: "@island.is/regulations-tools@npm:0.7.12"
+"@island.is/regulations-tools@npm:0.7.14":
+  version: 0.7.14
+  resolution: "@island.is/regulations-tools@npm:0.7.14"
   dependencies:
     "@hugsmidjan/htmldiff-js": ^1.2.1
     "@hugsmidjan/qj": ^4.10.2
@@ -10140,7 +10140,7 @@ __metadata:
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 278c2fae6856a3e8abdf029918e490fc7322d6f6477836520ddef2f266eb0d71d50bebad20422c1f7cc427c2e00691bdc2e16a429a69abafecf72395de7909ae
+  checksum: c61b92aadb5281d2758990211a232de2b45aa47512589a430e06a9453c2fb488787a065d47d4920792a563ef4b9a6ee40dd56d69f23df47960dd37bb0c01fc4b
   languageName: node
   linkType: hard
 
@@ -17255,13 +17255,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geoip-lite@npm:1.4.1":
-  version: 1.4.1
-  resolution: "@types/geoip-lite@npm:1.4.1"
-  checksum: fe6807d61d3f6b6abcd28641b35a0b4bcca02440ba9613e31765b3a874616cfd537e415ed8405126fd6a03eca27727f168b28d22bec1e82b197c1266423a66c9
-  languageName: node
-  linkType: hard
-
 "@types/glob@npm:*":
   version: 7.1.3
   resolution: "@types/glob@npm:7.1.3"
@@ -20647,15 +20640,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:2.1 - 2.6.4":
-  version: 2.6.4
-  resolution: "async@npm:2.6.4"
-  dependencies:
-    lodash: ^4.17.14
-  checksum: a52083fb32e1ebe1d63e5c5624038bb30be68ff07a6c8d7dfe35e47c93fc144bd8652cbec869e0ac07d57dde387aa5f1386be3559cdee799cb1f789678d88e19
-  languageName: node
-  linkType: hard
-
 "async@npm:^2.6.2":
   version: 2.6.3
   resolution: "async@npm:2.6.3"
@@ -22732,7 +22716,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:4, chalk@npm:4.1 - 4.1.2, chalk@npm:4.1.2, chalk@npm:^4.0.0, chalk@npm:^4.0.2, chalk@npm:^4.1.0, chalk@npm:^4.1.1, chalk@npm:^4.1.2":
+"chalk@npm:4, chalk@npm:4.1.2, chalk@npm:^4.0.0, chalk@npm:^4.0.2, chalk@npm:^4.1.0, chalk@npm:^4.1.1, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -30518,36 +30502,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"geoip-lite@npm:1.4.7":
-  version: 1.4.7
-  resolution: "geoip-lite@npm:1.4.7"
-  dependencies:
-    async: 2.1 - 2.6.4
-    chalk: 4.1 - 4.1.2
-    iconv-lite: 0.4.13 - 0.6.3
-    ip-address: 5.8.9 - 5.9.4
-    lazy: 1.0.11
-    rimraf: 2.5.2 - 2.7.1
-    yauzl: 2.9.2 - 2.10.0
-  checksum: d4ded09addf9ee4b6a43d17e929ba75df57c081d1962524f22b314cd2e17a04516a5f9cb1523b47c0d6feb5c99288ed9198367d067853d19f1f0427d8dc7998a
-  languageName: node
-  linkType: hard
-
-"geoip-lite@patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch::locator=island.is%40workspace%3A.":
-  version: 1.4.7
-  resolution: "geoip-lite@patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch::version=1.4.7&hash=5760c1&locator=island.is%40workspace%3A."
-  dependencies:
-    async: 2.1 - 2.6.4
-    chalk: 4.1 - 4.1.2
-    iconv-lite: 0.4.13 - 0.6.3
-    ip-address: 5.8.9 - 5.9.4
-    lazy: 1.0.11
-    rimraf: 2.5.2 - 2.7.1
-    yauzl: 2.9.2 - 2.10.0
-  checksum: a9be600e097dacb39667b33603efb71ace2addbb21c8baa50190ee447bb28b1996ac4b76a3e05c8149bc40d7db476008ec9e3f9c07748737001faa9f6ecf8b8e
-  languageName: node
-  linkType: hard
-
 "get-assigned-identifiers@npm:^1.1.0":
   version: 1.2.0
   resolution: "get-assigned-identifiers@npm:1.2.0"
@@ -32189,21 +32143,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.4.13 - 0.6.3, iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
-  version: 0.6.3
-  resolution: "iconv-lite@npm:0.6.3"
-  dependencies:
-    safer-buffer: ">= 2.1.2 < 3.0.0"
-  checksum: 3f60d47a5c8fc3313317edfd29a00a692cc87a19cac0159e2ce711d0ebc9019064108323b5e493625e25594f11c6236647d8e256fbe7a58f4a3b33b89e6d30bf
-  languageName: node
-  linkType: hard
-
 "iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24, iconv-lite@npm:~0.4.13":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
   dependencies:
     safer-buffer: ">= 2.1.2 < 3"
   checksum: bd9f120f5a5b306f0bc0b9ae1edeb1577161503f5f8252a20f1a9e56ef8775c9959fd01c55f2d3a39d9a8abaf3e30c1abeb1895f367dcbbe0a8fd1c9ca01c4f6
+  languageName: node
+  linkType: hard
+
+"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
+  version: 0.6.3
+  resolution: "iconv-lite@npm:0.6.3"
+  dependencies:
+    safer-buffer: ">= 2.1.2 < 3.0.0"
+  checksum: 3f60d47a5c8fc3313317edfd29a00a692cc87a19cac0159e2ce711d0ebc9019064108323b5e493625e25594f11c6236647d8e256fbe7a58f4a3b33b89e6d30bf
   languageName: node
   linkType: hard
 
@@ -32739,17 +32693,6 @@ __metadata:
     redis-parser: ^3.0.0
     standard-as-callback: ^2.1.0
   checksum: 9a23559133e862a768778301efb68ae8c2af3c33562174b54a4c2d6574b976e85c75a4c34857991af733e35c48faf4c356e7daa8fb0a3543d85ff1768c8754bc
-  languageName: node
-  linkType: hard
-
-"ip-address@npm:5.8.9 - 5.9.4":
-  version: 5.9.4
-  resolution: "ip-address@npm:5.9.4"
-  dependencies:
-    jsbn: 1.1.0
-    lodash: ^4.17.15
-    sprintf-js: 1.1.2
-  checksum: 2822dfefe6ff160ba6846bc03954ecc3d74d99db92431c7808e2eeb6f4c201caa9b44b4d5ee8b7164888bb1f40a74f0b6269c03c654cf065264dc973f62e4fa9
   languageName: node
   linkType: hard
 
@@ -33807,7 +33750,7 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
-    "@island.is/regulations-tools": 0.7.12
+    "@island.is/regulations-tools": 0.7.14
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
@@ -33869,7 +33812,6 @@ __metadata:
     "@types/express": 4.17.17
     "@types/faker": 5.5.3
     "@types/folder-hash": 3.3.0
-    "@types/geoip-lite": 1.4.1
     "@types/graphql": 14.5.0
     "@types/http-cache-semantics": 4.0.1
     "@types/identicon.js": 2.3.0
@@ -33993,7 +33935,6 @@ __metadata:
     framer-motion: 6.5.1
     fridagar: ^3.2.0
     fuse.js: 7.0.0
-    geoip-lite: 1.4.7
     glob: 10.3.3
     graphql: 16.6.0
     graphql-tag: 2.12.5
@@ -34103,6 +34044,7 @@ __metadata:
     sequelize-cli: 6.4.1
     sequelize-replace-enum-postgres: 1.6.0
     sequelize-typescript: 2.1.3
+    short-unique-id: 5.0.3
     shorthash: 0.0.2
     slate: 0.70.0
     slate-history: 0.66.0
@@ -35791,13 +35733,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsbn@npm:1.1.0":
-  version: 1.1.0
-  resolution: "jsbn@npm:1.1.0"
-  checksum: 944f924f2bd67ad533b3850eee47603eed0f6ae425fd1ee8c760f477e8c34a05f144c1bd4f5a5dd1963141dc79a2c55f89ccc5ab77d039e7077f3ad196b64965
-  languageName: node
-  linkType: hard
-
 "jsbn@npm:~0.1.0":
   version: 0.1.1
   resolution: "jsbn@npm:0.1.1"
@@ -36560,13 +36495,6 @@ __metadata:
     dotenv: ^16.0.0
     dotenv-expand: ^10.0.0
   checksum: 196e0d701100144fbfe078d604a477573413ebf38dfe8d543748605e6a7074978508a3bb9f8135acd319db4fa947eef78836497163617d15a22163c59a00996b
-  languageName: node
-  linkType: hard
-
-"lazy@npm:1.0.11":
-  version: 1.0.11
-  resolution: "lazy@npm:1.0.11"
-  checksum: fa1ae5fccb7c72c9c0b56c271dd21e2e0caf95da9e5fbf8a230a12d5c132c6a2b09236250cb73ab2b29ecfaec7cb2208745c290272f3bb82761accef3566b3a7
   languageName: node
   linkType: hard
 
@@ -46926,7 +46854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:2.5.2 - 2.7.1, rimraf@npm:^2.6.1, rimraf@npm:^2.6.2, rimraf@npm:^2.7.1":
+"rimraf@npm:^2.6.1, rimraf@npm:^2.6.2, rimraf@npm:^2.7.1":
   version: 2.7.1
   resolution: "rimraf@npm:2.7.1"
   dependencies:
@@ -47972,6 +47900,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"short-unique-id@npm:5.0.3":
+  version: 5.0.3
+  resolution: "short-unique-id@npm:5.0.3"
+  bin:
+    short-unique-id: bin/short-unique-id
+    suid: bin/short-unique-id
+  checksum: 9e5e02276972b103d3f2808280b82ab9f90006dd0aea6a253158e71e3ed618c3ac8dfe509a267080b19826a5d4e20d7a3d1adb2f13e166109f56946da3fdff9b
+  languageName: node
+  linkType: hard
+
 "shorthash@npm:0.0.2":
   version: 0.0.2
   resolution: "shorthash@npm:0.0.2"
@@ -48690,13 +48628,6 @@ __metadata:
   dependencies:
     tslib: ^2.0.3
   checksum: 64f53d930f63c5a9e59d4cae487c1ffa87d25eab682833b01d572cc885e7e3fdbad4f03409a41f03ecb27f1f8959432253eb48332c7007c3388efddb24ba2792
-  languageName: node
-  linkType: hard
-
-"sprintf-js@npm:1.1.2":
-  version: 1.1.2
-  resolution: "sprintf-js@npm:1.1.2"
-  checksum: d4bb46464632b335e5faed381bd331157e0af64915a98ede833452663bc672823db49d7531c32d58798e85236581fb7342fd0270531ffc8f914e186187bf1c90
   languageName: node
   linkType: hard
 
@@ -53868,7 +53799,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yauzl@npm:2.9.2 - 2.10.0, yauzl@npm:^2.10.0":
+"yauzl@npm:^2.10.0":
   version: 2.10.0
   resolution: "yauzl@npm:2.10.0"
   dependencies:

@@ -152,6 +152,7 @@ export const EditClient = () => {
               supportTokenExchange={selectedEnvironment.supportTokenExchange}
               accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
               customClaims={selectedEnvironment.customClaims}
+              singleSession={selectedEnvironment.singleSession}
             />
           )}
           <DangerZone />
