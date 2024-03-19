@@ -1,10 +1,10 @@
 import { applyCase } from 'beygla'
+import { PDFFont, PDFPage } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { coatOfArms } from './coatOfArms'
 import { policeStar } from './policeStar'
-import { PDFFont, PDFPage } from 'pdf-lib'
 
 export const smallFontSize = 9
 export const baseFontSize = 11
