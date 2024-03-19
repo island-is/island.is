@@ -43,7 +43,6 @@ query PrisonCases {
       email
       role
       active
-      canConfirmIndictment
     }
     prosecutor {
       id
@@ -56,7 +55,6 @@ query PrisonCases {
       email
       role
       active
-      canConfirmIndictment
     }
     registrar {
       id
@@ -69,7 +67,6 @@ query PrisonCases {
       email
       role
       active
-      canConfirmIndictment
     }
     creatingProsecutor {
       id
@@ -82,7 +79,6 @@ query PrisonCases {
       email
       role
       active
-      canConfirmIndictment
     }
   }
 }

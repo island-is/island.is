@@ -43,7 +43,6 @@ query Cases {
       email
       role
       active
-      canConfirmIndictment
     }
     prosecutor {
       id
@@ -69,7 +68,6 @@ query Cases {
       email
       role
       active
-      canConfirmIndictment
     }
     creatingProsecutor {
       id

@@ -2,20 +2,23 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertBanner, Box } from '@island.is/island-ui/core'
+import { AlertBanner, Box, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   PageHeader,
   Skeleton,
 } from '@island.is/judicial-system-web/src/components'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  UpdateUserInput,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import UserForm from '../UserForm/UserForm'
 import { useUpdateUserMutation } from './updateUser.generated'
 import { useUserQuery } from './user.generated'
-import { adminStrings as strings } from '../Admin.strings'
+import { strings } from './ChangeUser.strings'
 import * as styles from '../Users/Users.css'
 
 export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -33,21 +36,17 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     errorPolicy: 'all',
   })
 
-  const [updateUserMutation, { loading: userUpdating }] =
-    useUpdateUserMutation()
+  const [updateUserMutation, { loading: userUpdating }] = useUpdateUserMutation(
+    {
+      onCompleted: () => router.push(constants.USERS_ROUTE),
+      onError: () => {
+        toast.error(formatMessage(strings.updateError))
+      },
+    },
+  )
 
   const saveUser = async (user: User) => {
-    if (
-      !userUpdating &&
-      user.name &&
-      user.role &&
-      user.title &&
-      user.mobileNumber &&
-      user.email &&
-      user.active !== undefined &&
-      user.active !== null &&
-      user.institution
-    ) {
+    if (!userUpdating && user.institution) {
       await updateUserMutation({
         variables: {
           input: {
@@ -60,7 +59,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
             email: user.email,
             active: user.active,
             canConfirmIndictment: user.canConfirmIndictment,
-          },
+          } as UpdateUserInput,
         },
       })
     }

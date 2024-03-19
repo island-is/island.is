@@ -45,14 +45,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
       title
-      canConfirmIndictment
     }
     prosecutor {
       id
       name
       title
       email
-      canConfirmIndictment
     }
     courtCaseNumber
     courtEndTime
@@ -71,20 +69,17 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       name
       title
       email
-      canConfirmIndictment
     }
     judge {
       id
       name
       title
       email
-      canConfirmIndictment
     }
     courtRecordSignatory {
       id
       name
       title
-      canConfirmIndictment
     }
     courtRecordSignatureDate
     parentCase {
@@ -121,22 +116,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealAssistant {
       id
       name
-      canConfirmIndictment
     }
     appealJudge1 {
       id
       name
-      canConfirmIndictment
     }
     appealJudge2 {
       id
       name
-      canConfirmIndictment
     }
     appealJudge3 {
       id
       name
-      canConfirmIndictment
     }
     prosecutorsOffice {
       id
