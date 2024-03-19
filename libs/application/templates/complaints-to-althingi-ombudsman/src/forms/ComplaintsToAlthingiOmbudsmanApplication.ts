@@ -512,6 +512,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
+      alertMessage: confirmation.general.alertMessage,
+      multiFieldTitle: confirmation.general.multiFieldTitle,
       expandableHeader: confirmation.information.title,
       expandableIntro: confirmation.information.intro,
       expandableDescription: confirmation.information.bulletList,
