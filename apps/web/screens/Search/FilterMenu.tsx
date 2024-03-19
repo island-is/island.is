@@ -32,9 +32,9 @@ export type FilterLabels = Pick<
 
 export type CategoriesProps = {
   id: string
-  label: string | ReactNode
+  label: string
   selected: Array<string>
-  filters: Array<{ value: string; label: string | ReactNode }>
+  filters: Array<{ value: string; label: string }>
   inline?: boolean
   singleOption?: boolean
 }
