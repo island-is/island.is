@@ -24,7 +24,7 @@ export class OrganizationTitleByReferenceIdLoader
     const organizationTitles =
       await this.cmsContentfulService.getOrganizationTitles(
         organizationKeys as string[],
-        'is'
+        'is',
       )
 
     return organizationTitles

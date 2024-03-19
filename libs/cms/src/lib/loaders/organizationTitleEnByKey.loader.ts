@@ -5,7 +5,6 @@ import { NestDataLoader } from '@island.is/nest/dataloader'
 import { CmsContentfulService } from '../cms.contentful.service'
 import { ShortTitle } from './organizationTitleByKey.loader'
 
-
 export type OrganizationTitleEnByReferenceIdDataLoader = DataLoader<
   string,
   ShortTitle,
@@ -24,7 +23,7 @@ export class OrganizationTitleEnByReferenceIdLoader
     const organizationTitles =
       await this.cmsContentfulService.getOrganizationTitles(
         organizationKeys as string[],
-        'en'
+        'en',
       )
 
     return organizationTitles
