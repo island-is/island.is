@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { Inject, NotFoundException, UseGuards } from '@nestjs/common'
 import { NotificationsService } from './notifications.service'
 import {
@@ -25,6 +25,7 @@ export const AUDIT_NAMESPACE = 'notifications-resolver'
 export class NotificationsResolver {
   constructor(
     private readonly service: NotificationsService,
+    private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -32,7 +33,6 @@ export class NotificationsResolver {
     name: 'userNotification',
     nullable: true,
   })
-  @Audit()
   async getNotification(
     @CurrentUser() user: User,
     @Args('id', { type: () => Number, nullable: false })
@@ -42,7 +42,15 @@ export class NotificationsResolver {
   ) {
     let notification
     try {
-      notification = await this.service.getNotification(id, locale, user)
+      notification = await this.auditService.auditPromise(
+        {
+          auth: user,
+          namespace: AUDIT_NAMESPACE,
+          action: 'getNotification',
+          resources: `${id}`,
+        },
+        this.service.getNotification(id, locale, user),
+      )
     } catch (e) {
       this.logger.error('failed to get notification by id', {
         id,
@@ -90,7 +98,6 @@ export class NotificationsResolver {
     name: 'markNotificationAsRead',
     nullable: true,
   })
-  @Audit()
   async markNotificationAsRead(
     @CurrentUser() user: User,
     @Args('id', { type: () => Number, nullable: false })
@@ -101,7 +108,15 @@ export class NotificationsResolver {
     let result
 
     try {
-      result = await this.service.markNotificationAsRead(id, locale, user)
+      result = await this.auditService.auditPromise(
+        {
+          auth: user,
+          namespace: AUDIT_NAMESPACE,
+          action: 'getNotification',
+          resources: `${id}`,
+        },
+        this.service.markNotificationAsRead(id, locale, user),
+      )
     } catch (e) {
       this.logger.error('failed to mark notification as read', {
         id,
