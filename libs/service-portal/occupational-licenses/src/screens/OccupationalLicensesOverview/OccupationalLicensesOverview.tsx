@@ -1,19 +1,21 @@
-import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
+import { getGraphQLErrorsFromResult } from '@apollo/client/utilities'
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
 import {
   CardLoader,
-  IntroHeader,
   FootNote,
+  IntroHeader,
   m,
+  mapGqlErrorPaths,
 } from '@island.is/service-portal/core'
-import { isDefined } from '@island.is/shared/utils'
-import { LicenceActionCard } from '../../components/LicenceActionCard'
-import { OccupationalLicensesPaths } from '../../lib/paths'
-import { Problem } from '@island.is/react-spa/shared'
 import { useOrganizations } from '@island.is/service-portal/graphql'
+import { isDefined } from '@island.is/shared/utils'
 import { useMemo } from 'react'
+import { LicenceActionCard } from '../../components/LicenceActionCard'
 import { olMessage } from '../../lib/messages'
+import { OccupationalLicensesPaths } from '../../lib/paths'
+import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
 
 export const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({
@@ -33,40 +35,31 @@ export const OccupationalLicensesOverview = () => {
   )
 
   const errorString = useMemo(() => {
-    const mapPathsToIssuerString = (paths?: Array<string | number>) => {
-      const mapPath = (path: string | number) => {
-        if (typeof path === 'number') {
-          return
-        }
-        switch (path) {
-          case 'education':
-            return formatMessage(olMessage.education)
-          case 'districtCommissioners':
-            return formatMessage(olMessage.districtCommissioners)
-          case 'health':
-            return formatMessage(olMessage.health)
-          default:
-            return
-        }
-      }
-      if (!paths) {
-        return
-      }
+    if (error) {
+      const errors = mapGqlErrorPaths(error, [
+        'education',
+        'districtCommissioners',
+        'health',
+      ])
 
-      return paths.map((p) => mapPath(p)).filter(isDefined)
+      return errors
+        .map((e) => {
+          switch (e) {
+            case 'education':
+              return formatMessage(olMessage.education)
+            case 'districtCommissioners':
+              return formatMessage(olMessage.districtCommissioners)
+            case 'health':
+              return formatMessage(olMessage.health)
+            default:
+              return undefined
+          }
+        })
+        .filter(isDefined)
+        .join(', ')
     }
-    let issuersArray: Array<string> = []
-    if (error?.graphQLErrors) {
-      error.graphQLErrors.forEach((e) => {
-        const paths = e.path ? [...e.path] : []
-        const mappedPaths = mapPathsToIssuerString(paths)
-        if (mappedPaths) {
-          issuersArray = [...issuersArray, ...mappedPaths]
-        }
-      })
-    }
-    return issuersArray.join(', ')
-  }, [error?.graphQLErrors, formatMessage])
+    return
+  }, [formatMessage, error])
 
   return (
     <Box marginBottom={[6, 6, 10]}>

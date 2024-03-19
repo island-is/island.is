@@ -12,13 +12,9 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { olMessage as om } from '../../lib/messages'
 import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
-import { useMemo } from 'react'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useOrganization } from '@island.is/service-portal/graphql'
-import {
-  OccupationalLicenseV2LicenseResponseType,
-  OccupationalLicensesV2LinkType,
-} from '@island.is/api/schema'
+import { OccupationalLicensesV2LinkType } from '@island.is/api/schema'
 
 type UseParams = {
   id: string
