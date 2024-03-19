@@ -23,6 +23,7 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
+import { formatConfirmedIndictmentKey } from '../../formatters/formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -242,7 +243,7 @@ export class FileService {
         ...completedCaseStates,
       ].includes(theCase.state)
     ) {
-      key = key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
+      key = formatConfirmedIndictmentKey(key)
     }
 
     const exists = await this.awsS3Service.objectExists(key)
@@ -397,10 +398,11 @@ export class FileService {
           ].includes(theCase.state)
         ) {
           return this.awsS3Service.copyObject(
-            file.key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? '',
-            file.key
-              ?.replace(/\/([^/]*)$/, '/confirmed/$1')
-              .replace('indictments/', 'indictments/completed/') ?? '',
+            formatConfirmedIndictmentKey(file.key),
+            formatConfirmedIndictmentKey(file.key).replace(
+              'indictments/',
+              'indictments/completed/',
+            ) ?? '',
           )
         }
       })

@@ -19,6 +19,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../factories'
+import { formatConfirmedIndictmentKey } from '../../../formatters/formatters'
 import { AwsS3Service } from '../../aws-s3'
 import { EventLogService } from '../../event-log'
 import { TransitionCaseDto } from '../dto/transitionCase.dto'
@@ -67,7 +68,7 @@ export class TransitionInterceptor implements NestInterceptor {
 
         // Save the PDF to S3
         await this.awsService.putObject(
-          indictment.key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? '',
+          formatConfirmedIndictmentKey(indictment.key),
           confirmedIndictment.toString('binary'),
         )
       }
