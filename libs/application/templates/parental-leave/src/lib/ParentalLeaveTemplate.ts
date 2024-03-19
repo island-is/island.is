@@ -980,8 +980,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
-              // cond: (application) =>
-              // goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
