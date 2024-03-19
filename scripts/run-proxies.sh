@@ -6,7 +6,8 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${REMOVE_CONTAINERS_ON_START:=}"
 : "${REMOVE_CONTAINERS_ON_FAIL:=}"
 : "${REMOVE_CONTAINERS_FORCE:=}"
-: "${RESTART_INTERVAL_TIME:=1}"
+: "${REUSE_EXISTING_PROXIES:=true}"
+: "${RESTART_INTERVAL:=10}"
 : "${RESTART_MAX_RETRIES:=3}"
 : "${LOCAL_PORT:=}"
 : "${DRY:=}"
@@ -81,6 +82,8 @@ Options:
   -p, --port N
     Local port to bind to (default: 5432 for db, 6379 for redis, 9200 for es, 8443 for soffia, 8081 for xroad)
     Only works for single-proxy mode
+  --(no-)reuse-proxies
+    Reuse existing proxies if possible (default: $REUSE_EXISTING_PROXIES)
 
 Proxies:
   es
@@ -132,7 +135,7 @@ parse_cli() {
       REMOVE_CONTAINERS_ON_FAIL="$value"
       ;;
     -i | --interval)
-      RESTART_INTERVAL_TIME="${opt}"
+      RESTART_INTERVAL="${opt}"
       shift
       ;;
     -r | --restart-max-retries)
@@ -263,28 +266,15 @@ run-xroad-proxy() {
   run-proxy 80 "${LOCAL_PORT:=8081}" xroad
 }
 
-parse_cli "$@"
-
-loop_proxy() {
-  local proxy="${1}"
-  local container_name="socat-$proxy"
-  [ "$proxy" == "es" ] && container_name="es-proxy"
-
-  while true; do
-    run-"${proxy}"-proxy "${ARGS[@]}" || echo "Exit code for $proxy proxy: $?"
-    if [ -n "${REMOVE_CONTAINERS_ON_FAIL:-}" ]; then
-      echo "Removing container $container_name on fail..."
-      containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
-    fi
-    echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
-    sleep "$RESTART_INTERVAL_TIME"
-  done
-}
-
 main() {
   PROXY_PIDS=()
   for proxy in "${PROXIES[@]}"; do
     if [ -z "$proxy" ]; then continue; fi
+    if [ "$REUSE_EXISTING_PROXIES" == true ] && containerer ps | grep -qP "\b${proxy}\b"; then
+      echo "Found existing container for '$proxy', reusing..."
+      continue
+    fi
+
     local container_name="socat-$proxy"
     [ "$proxy" == "es" ] && container_name="es-proxy"
 
@@ -302,8 +292,8 @@ main() {
           echo "Removing container $container_name on fail..."
           containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
         fi
-        echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
-        sleep "$RESTART_INTERVAL_TIME"
+        echo "Restarting $proxy proxy in $RESTART_INTERVAL seconds..."
+        sleep "$RESTART_INTERVAL"
       done
     ) &
     PROXY_PIDS+=("$!")
@@ -311,4 +301,5 @@ main() {
   wait
 }
 
+parse_cli "$@"
 main

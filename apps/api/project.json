@@ -64,13 +64,6 @@
         "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["yarn get-secrets api"],
-        "parallel": false
-      }
-    },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
@@ -78,7 +71,14 @@
         "cwd": "apps/api"
       }
     },
-    "dev": {
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn get-secrets api"],
+        "parallel": false
+      }
+    },
+    "dev-run": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -87,6 +87,16 @@
           "yarn start api"
         ],
         "parallel": true
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run {projectName}:dev-init",
+          "nx run {projectName}:dev-run"
+        ],
+        "parallel": false
       }
     },
     "docker-express": {}

@@ -128,13 +128,13 @@
           "echo 'You must manually add these to your .env.secrets file (used for e.g. extract-strings):'",
           "echo '  CONTENTFUL_HOST '",
           "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
-          "echo ''",
-          "yarn nx run api:dev-init"
+          "echo ''"
         ],
         "parallel": false
-      }
+      },
+      "dependsOn": ["api"]
     },
-    "dev": {
+    "dev-run": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -143,6 +143,18 @@
           "yarn start web"
         ],
         "parallel": true
+      }
+        ,
+        "dependsOn": []
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run web:dev-init",
+          "nx run web:dev-run"
+        ],
+        "parallel": false
       }
     },
     "docker-next": {}
