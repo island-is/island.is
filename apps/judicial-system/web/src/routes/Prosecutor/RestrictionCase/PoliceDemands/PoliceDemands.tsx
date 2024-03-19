@@ -22,6 +22,7 @@ import {
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseCustodyRestrictions,
@@ -192,12 +193,10 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcDemands.sections.demands.heading)}
-            </Text>
-            {workingCase.parentCase && (
-              <Box marginTop={1}>
+          <SectionHeading
+            title={formatMessage(rcDemands.sections.demands.heading)}
+            description={
+              workingCase.parentCase ? (
                 <Text>
                   {formatMessage(rcDemands.sections.demands.pastRestriction, {
                     caseType: workingCase.type,
@@ -209,9 +208,9 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     )?.replace('dagur,', 'dagsins')}
                   </Text>
                 </Text>
-              </Box>
-            )}
-          </Box>
+              ) : undefined
+            }
+          />
           <BlueBox>
             <Box
               marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 2 : 0}
@@ -308,11 +307,9 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <Box component="section" marginBottom={7}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(rcDemands.sections.lawsBroken.heading)}
-              </Text>
-            </Box>
+            <SectionHeading
+              title={formatMessage(rcDemands.sections.lawsBroken.heading)}
+            />
             <Input
               data-testid="lawsBroken"
               name="lawsBroken"
@@ -358,14 +355,10 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Box>
         )}
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcDemands.sections.legalBasis.heading)}{' '}
-              <Text as="span" color={'red600'} fontWeight="semiBold">
-                *
-              </Text>
-            </Text>
-          </Box>
+          <SectionHeading
+            title={formatMessage(rcDemands.sections.legalBasis.heading)}
+            required
+          />
           <BlueBox>
             <Box marginBottom={2}>
               <CheckboxList
@@ -428,24 +421,20 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
             data-testid="custodyRestrictions"
           >
             <Box marginBottom={3}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  {formatMessage(
-                    rcDemands.sections.custodyRestrictions.headingV2,
-                    {
-                      caseType: workingCase.type,
-                    },
-                  )}
-                </Text>
-              </Box>
-              <Text>
-                {formatMessage(
+              <SectionHeading
+                title={formatMessage(
+                  rcDemands.sections.custodyRestrictions.headingV2,
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
+                description={formatMessage(
                   rcDemands.sections.custodyRestrictions.subHeadingV2,
                   {
                     caseType: workingCase.type,
                   },
                 )}
-              </Text>
+              />
             </Box>
             <BlueBox>
               <CheckboxList
@@ -470,24 +459,20 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
             marginBottom={4}
             data-testid="travelBanRestrictions"
           >
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(
-                  rcDemands.sections.custodyRestrictions.headingV2,
-                  {
-                    caseType: workingCase.type,
-                  },
-                )}
-              </Text>
-              <Text>
-                {formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeadingV2,
-                  {
-                    caseType: workingCase.type,
-                  },
-                )}
-              </Text>
-            </Box>
+            <SectionHeading
+              title={formatMessage(
+                rcDemands.sections.custodyRestrictions.headingV2,
+                {
+                  caseType: workingCase.type,
+                },
+              )}
+              description={formatMessage(
+                rcDemands.sections.custodyRestrictions.subHeadingV2,
+                {
+                  caseType: workingCase.type,
+                },
+              )}
+            />
             <BlueBox>
               <Box marginBottom={3}>
                 <CheckboxList
