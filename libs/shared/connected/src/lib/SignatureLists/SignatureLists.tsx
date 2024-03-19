@@ -30,23 +30,14 @@ export const SignatureLists: FC<
       <Box marginTop={10}>
         {(collection?.candidates.length > 0 || openLists?.length > 0) && (
           <Box
-            marginBottom={2}
+            marginBottom={3}
             display={['block', 'flex']}
             justifyContent={'spaceBetween'}
             alignItems={'baseline'}
           >
             {collection.isActive ? (
               <>
-                <Box>
-                  <Text variant="h3">
-                    {t('title', 'Forsetakosningar 2024')}
-                  </Text>
-                  <Text variant="eyebrow" color="purple400" marginTop={[1, 2]}>
-                    {t('openTil', 'Lokadagur:') +
-                      ' ' +
-                      format(new Date(collection.endTime), 'dd.MM.yyyy')}
-                  </Text>
-                </Box>
+                <Text variant="h3">{t('title', 'Forsetakosningar 2024')}</Text>
                 <Text variant="eyebrow">
                   {t('totalCandidates', 'Fjöldi frambjóðenda: ') +
                     collection?.candidates.length}
@@ -105,6 +96,11 @@ export const SignatureLists: FC<
                     key={candidate.id}
                     backgroundColor="white"
                     heading={candidate.name}
+                    eyebrow={
+                      t('openTil', 'Lokadagur:') +
+                      ' ' +
+                      format(new Date(collection.endTime), 'dd.MM.yyyy')
+                    }
                     cta={
                       collection.isActive
                         ? {

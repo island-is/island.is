@@ -62,6 +62,10 @@ export class OccupationalLicensesService {
         return OccupationalLicenseStatus.limited
       case 'INVALID':
         return OccupationalLicenseStatus.error
+      case 'REVOKED':
+        return OccupationalLicenseStatus.revoked
+      case 'WAVIED':
+        return OccupationalLicenseStatus.waived
       default:
         this.logger.log('Unknown health directorate status', {
           category: LOG_CATEGORY,

@@ -1320,6 +1320,10 @@ export const m = defineMessages({
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
   },
+  backToList: {
+    id: 'service.portal:back-to-list',
+    defaultMessage: 'Aftur í lista',
+  },
   month: {
     id: 'service.portal:month',
     defaultMessage: 'Mánuður',

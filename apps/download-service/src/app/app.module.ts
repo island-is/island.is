@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { DocumentsClientModule } from '@island.is/clients/documents'
+import {
+  DocumentsClientModule,
+  DocumentClientConfig,
+} from '@island.is/clients/documents'
 import {
   FinanceClientConfig,
   FinanceClientModule,
@@ -64,12 +67,7 @@ import { DistrictCommissionersLicensesClientModule } from '@island.is/clients/di
   imports: [
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
-    DocumentsClientModule.register({
-      basePath: environment.documentService.basePath,
-      clientId: environment.documentService.clientId,
-      clientSecret: environment.documentService.clientSecret,
-      tokenUrl: environment.documentService.tokenUrl,
-    }),
+    DocumentsClientModule,
     FinanceClientModule,
     VehiclesClientModule,
     UniversityOfIcelandClientModule,
@@ -92,6 +90,7 @@ import { DistrictCommissionersLicensesClientModule } from '@island.is/clients/di
         WorkMachinesClientConfig,
         MMSClientConfig,
         RightsPortalClientConfig,
+        DocumentClientConfig,
       ],
     }),
   ],
