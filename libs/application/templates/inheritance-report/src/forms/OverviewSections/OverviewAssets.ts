@@ -36,8 +36,8 @@ export const overviewAssets = [
           ?.realEstate?.data
 
         return (realEstateAssets ?? []).map((asset: any) => {
-          const propertyValuation = parseInt(asset.propertyValuation, 10)
-          const propertyShare = parseInt(asset.share, 10)
+          const propertyValuation = parseFloat(asset.propertyValuation)
+          const propertyShare = parseFloat(asset.share)
 
           return {
             title: asset.description,
@@ -202,9 +202,12 @@ export const overviewAssets = [
               ? account.accountNumber
               : formatBankInfo(account.accountNumber ?? ''),
             description: [
-              `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
-                account.balance ?? '0',
+              `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
+                account.capital ?? '0',
               )}`,
+              `${
+                m.bankAccountPenaltyInterestRates.defaultMessage
+              }: ${formatCurrency(account.penalityInterestRates ?? '0')}`,
               `${m.bankAccountForeign.defaultMessage}: ${
                 isForeign ? m.yes.defaultMessage : m.no.defaultMessage
               }`,

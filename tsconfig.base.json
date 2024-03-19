@@ -591,6 +591,9 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/documents-v2": [
+        "libs/clients/documents-v2/src/index.ts"
+      ],
       "@island.is/clients/driving-license": [
         "libs/clients/driving-license/src/index.ts"
       ],
@@ -627,6 +630,9 @@
       "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
+      "@island.is/clients/hunting-license": [
+        "libs/clients/hunting-license/src/index.ts"
       ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
@@ -1011,6 +1017,7 @@
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
       ],
+      "@island.is/services/license": ["libs/services/license/src/index.ts"],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

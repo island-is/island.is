@@ -13,6 +13,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -29,13 +30,25 @@ import {
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const plate = getValueViaPath(
+    application.answers,
+    'selectVehicle.plate',
+    undefined,
+  ) as string | undefined
+  return {
+    name: applicationMessage.name,
+    value: plate ? `- ${plate}` : '',
+  }
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.ENERGY_FUNDS,
-  name: applicationMessage.name,
+  name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
   translationNamespaces: [ApplicationConfigurations.EnergyFunds.translation],
   dataSchema: EnergyFundsSchema,
