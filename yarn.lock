@@ -12876,15 +12876,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.29":
-  version: 1.29.2
-  resolution: "@playwright/test@npm:1.29.2"
+"@playwright/test@npm:1.42":
+  version: 1.42.1
+  resolution: "@playwright/test@npm:1.42.1"
   dependencies:
-    "@types/node": "*"
-    playwright-core: 1.29.2
+    playwright: 1.42.1
   bin:
     playwright: cli.js
-  checksum: 614cd4ed3baa4e41a6c7865f3c49733caef2c9d5a1aae5832b3d145ffdb0be2dd9d30136c0cb8aed5f9d452782baf2f380e5b12092958bf9fa7578a6d5fa61bf
+  checksum: a41505f02a4dac358e645452a190cac620b8d4eae79ab5d90ea1fb7ca06d86a9f5749b1a803dea789b662d1cbfd216380f722bed72093897e18b4238f4a07a4d
   languageName: node
   linkType: hard
 
@@ -33858,7 +33857,7 @@ __metadata:
     "@nx/webpack": 16.9.0
     "@nx/workspace": 16.9.0
     "@openapitools/openapi-generator-cli": 1.0.15-4.3.1
-    "@playwright/test": 1.29
+    "@playwright/test": 1.42
     "@react-pdf/renderer": ^3.1.9
     "@rehooks/component-size": 1.0.3
     "@sindresorhus/slugify": 1.0.0
@@ -42665,15 +42664,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.29.2":
-  version: 1.29.2
-  resolution: "playwright-core@npm:1.29.2"
-  bin:
-    playwright: cli.js
-  checksum: 19e00e162a24eb99878408518930346c1d2c8ce83bb02993e3dd890c99df4530240cfebe4ec4e5aca01656462695b6328fb8f913cf2e229c2c73941623ac524e
-  languageName: node
-  linkType: hard
-
 "playwright-core@npm:1.42.1":
   version: 1.42.1
   resolution: "playwright-core@npm:1.42.1"
@@ -42683,7 +42673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.42":
+"playwright@npm:1.42, playwright@npm:1.42.1":
   version: 1.42.1
   resolution: "playwright@npm:1.42.1"
   dependencies:

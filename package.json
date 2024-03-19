@@ -347,7 +347,7 @@
     "@nx/webpack": "16.9.0",
     "@nx/workspace": "16.9.0",
     "@openapitools/openapi-generator-cli": "1.0.15-4.3.1",
-    "@playwright/test": "1.29",
+    "@playwright/test": "1.42",
     "@storybook/addon-a11y": "7.4.1",
     "@storybook/addon-essentials": "7.4.1",
     "@storybook/addon-mdx-gfm": "7.4.1",
