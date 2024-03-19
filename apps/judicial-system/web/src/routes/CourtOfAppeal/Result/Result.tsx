@@ -57,7 +57,20 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseOverviewHeader />
+          <CaseOverviewHeader
+            alerts={
+              workingCase.requestAppealRulingNotToBePublished
+                ? [
+                    {
+                      message: formatMessage(
+                        strings.requestAppealRulingNotToBePublished,
+                      ),
+                    },
+                  ]
+                : undefined
+            }
+          />
+
           {workingCase.appealRulingModifiedHistory && (
             <Box marginBottom={5}>
               <AlertMessage

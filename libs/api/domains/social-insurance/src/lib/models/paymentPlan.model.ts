@@ -1,14 +1,17 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { PaymentGroup } from './paymentGroup'
+import { PaymentGroup } from './paymentGroup.model'
 
 @ObjectType('SocialInsurancePaymentPlan')
 export class PaymentPlan {
   @Field(() => Int, { nullable: true })
-  nextPayment?: number
+  totalPayments?: number
 
   @Field(() => Int, { nullable: true })
-  previousPayment?: number
+  totalPaymentsSubtraction?: number
 
-  @Field(() => [PaymentGroup])
+  @Field(() => Int, { nullable: true })
+  totalPaymentsReceived?: number
+
+  @Field(() => [PaymentGroup], { nullable: true })
   paymentGroups?: Array<PaymentGroup>
 }

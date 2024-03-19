@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
-import { ApiScope } from '../models'
+import { ApiScope } from '../models/apiScope.model'
 import { ApiScopesInput } from '../dto/apiScopes.input'
 import {
   DomainsApi,

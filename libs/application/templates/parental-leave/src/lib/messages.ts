@@ -1,8 +1,6 @@
-import { defineMessages, MessageDescriptor } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
-type MessageDir = Record<string, Record<string, MessageDescriptor>>
-
-export const parentalLeaveFormMessages: MessageDir = {
+export const parentalLeaveFormMessages = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
     institution: {
@@ -896,11 +894,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employerSubSection',
       defaultMessage: 'Breyta eða bæta við vinnuveitanda',
       description: 'Edit or add an employer',
-    },
-    periodReview: {
-      id: 'pl.application:periodReview',
-      defaultMessage: 'Tímabil',
-      description: 'Period',
     },
     editOrAddInfoSection: {
       id: 'pl.application:editOrAddInfoSection',
@@ -1908,6 +1901,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Language to use in communication with the Parental Leave Fund',
     },
+    benefits: {
+      id: 'pl.application:review.benefits',
+      defaultMessage: 'Bætur',
+      description: 'Benefits',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -1999,15 +1997,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fela allt',
       description: 'Collapse all',
     },
-    section: {
-      id: 'pl.application:confirmation.section',
-      defaultMessage: 'Samþykkja',
-      description: 'Confirmation',
-    },
     title: {
       id: 'pl.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Review and submit',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
     },
     cancel: {
       id: 'pl.application:confirmation.cancel',
@@ -2020,6 +2013,11 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description:
         'Please review your information before submitting the application.',
+    },
+    submitButton: {
+      id: 'pl.application:confirmation.submit.button',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
     },
   }),
 

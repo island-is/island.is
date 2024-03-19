@@ -5,7 +5,7 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Loader } from '@island.is/nest/dataloader'
 
 import { DomainLoader } from '../loaders/domain.loader'
-import { Domain } from '../models'
+import { Domain } from '../models/domain.model'
 import { ConsentTenant } from '../models/consentTenants.model'
 
 import type { DomainDataLoader } from '../loaders/domain.loader'
