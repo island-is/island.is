@@ -1,13 +1,13 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { LanguageType } from "./global.model";
 import { ApplicantTypeNameSuggestion } from "./applicantTypeNameSuggestion";
 
 @ObjectType('FormSystemApplicantType')
 export class ApplicantType {
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   applicantTypeId?: number
 
   @Field(() => LanguageType, { nullable: true })

@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { EExternalEndpointType, EExternalEndpointEnvironment } from '@island.is/clients/form-system'
 
 registerEnumType(EExternalEndpointType, {
@@ -11,7 +11,7 @@ registerEnumType(EExternalEndpointEnvironment, {
 
 @ObjectType('FormSystemExternalEndpoints')
 export class ExternalEndpoints {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => String, { nullable: true })

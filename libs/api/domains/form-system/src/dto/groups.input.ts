@@ -1,11 +1,11 @@
-import { Field, ID, InputType, Int } from "@nestjs/graphql"
+import { Field, InputType, Int } from "@nestjs/graphql"
 import { LanguageTypeInput } from "./language.input"
 import { InputInput } from "./inputs.input"
 
 
 @InputType('FormSystemGroupCreation')
 export class CreateGroup {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   stepId?: number
 
   @Field(() => Number, { nullable: true })
@@ -14,7 +14,7 @@ export class CreateGroup {
 
 @InputType('FormSystemGroupUpdate')
 export class UpdateGroup {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
@@ -59,7 +59,7 @@ export class UpdateGroupInput {
 
 @InputType('FormSystemGroupInput')
 export class GroupInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
@@ -68,16 +68,16 @@ export class GroupInput {
   @Field(() => String, { nullable: true })
   guid?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   displayOrder?: number
 
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
   @Field(() => [InputInput])
-  InputInputInputs?: InputInput[] | null
+  inputs?: InputInput[] | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   stepId?: number
 
   @Field(() => Number, { nullable: true })

@@ -1,4 +1,4 @@
-import { InputType, Field } from "@nestjs/graphql"
+import { InputType, Field, Int, Float } from "@nestjs/graphql"
 import { LanguageTypeInput } from "./language.input"
 import { ListItemInput } from "./listItem.input"
 
@@ -26,28 +26,28 @@ export class InputSettingsInput {
   @Field(() => [String], { nullable: true })
   types?: string[]
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   maxSize?: number
 
   @Field(() => Boolean, { nullable: true })
   isMulti?: boolean
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Float, { nullable: true })
   amount?: number
 
   @Field(() => String, { nullable: true })
   header?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   maxLength?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   minLength?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   min?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   max?: number
 
   @Field(() => [ListItemInput], { nullable: true })

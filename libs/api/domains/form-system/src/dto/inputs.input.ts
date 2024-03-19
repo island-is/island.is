@@ -1,20 +1,20 @@
-import { Field, ID, InputType, Int } from "@nestjs/graphql"
+import { Field, InputType, Int } from "@nestjs/graphql"
 import { LanguageTypeInput } from "./language.input"
 import graphqlTypeJson from 'graphql-type-json'
 import { InputSettingsInput } from "./inputSettings.input"
 
 @InputType('FormSystemInputCreation')
 export class CreateInput {
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   groupId?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   displayOrder?: number
 }
 
 @InputType('FormSystemInputUpdate')
 export class UpdateInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
@@ -26,7 +26,7 @@ export class UpdateInput {
   @Field()
   isRequired?: boolean
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   displayOrder?: number
 
   @Field()
@@ -73,7 +73,7 @@ export class UpdateInputInput {
 
 @InputType('FormSystemInputInput')
 export class InputInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
@@ -85,10 +85,10 @@ export class InputInput {
   @Field()
   isRequired?: boolean
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   displayOrder?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   groupId?: number
 
   @Field()

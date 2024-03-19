@@ -7,18 +7,21 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import TableRow from '../../components/TableRow/TableRow'
+import { useFormSystemGetFormsQuery } from './Forms.generated'
+
 const Forms = () => {
   const navigate = useNavigate()
-  // const {data: formBuilder, loading} = useGetFormBuilderQuery({
-  //   variables: {
-  //     input: 1
-  //   }
-  // })
-  const formBuilder: any = {
-    forms: []
-  }
+  const { data, loading, error } = useFormSystemGetFormsQuery({
+    variables: {
+      input: {
+        organizationId: 1
+      }
+    }
+  })
 
-  if (navigate) {
+  const forms = data?.formSystemGetForms.forms
+  console.log(data)
+  if (!loading && !error) {
     return (
       <Box>
         {/* Title and buttons  */}
@@ -49,18 +52,18 @@ const Forms = () => {
           <Box></Box>
         </Box>
         <TableRow isHeader={true} />
-        {formBuilder.forms &&
-          formBuilder.forms?.map((f) => {
+        {forms &&
+          forms?.map((f) => {
             return (
               <TableRow
-                key={f.id}
-                id={f.id}
-                name={f.name.is}
-                created={f.created}
-                lastModified={f.lastChanged}
-                org={f.organization.id}
+                key={f?.id}
+                id={f?.id}
+                name={f?.name?.is ?? ''}
+                // created={f?.created}
+                // lastModified={f?.lastChanged}
+                org={f?.organization?.id}
                 isHeader={false}
-                translated={f.isTranslated}
+                translated={f?.isTranslated}
               />
             )
           })}

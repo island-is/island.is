@@ -1,12 +1,25 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
-import { FormSystemGetFormsQuery } from './Forms.generated'
+import { FormSystemGetFormsDocument, FormSystemGetFormsQuery } from './Forms.generated'
+import { FormSystemForm } from '@island.is/api/schema'
 
 
 export const formsLoader: WrappedLoaderFn = ({ client }) => {
-  return async ()/*: Promise<FormListResponse>*/ => {
+  return async (): Promise<Array<FormSystemForm>> => {
     const { data, error } =
       await client.query<FormSystemGetFormsQuery>({
-
+        query: FormSystemGetFormsDocument,
+        variables: {
+          input: {
+            organizationId: 1
+          }
+        }
       })
+    if (error) {
+      throw error
+    }
+    if (!data) {
+      throw new Error('No forms were found')
+    }
+    return data.formSystemGetForms.forms?.filter((form) => form !== null) as FormSystemForm[];
   }
 }

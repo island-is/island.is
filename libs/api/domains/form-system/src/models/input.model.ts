@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
 import { InputSettings } from './inputSettings.model'
@@ -6,7 +6,7 @@ import { LanguageType } from './global.model'
 
 @ObjectType('FormSystemInput')
 export class Input {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageType, { nullable: true })
@@ -18,10 +18,10 @@ export class Input {
   @Field()
   isRequired?: boolean
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   displayOrder?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   groupId?: number
 
   @Field()

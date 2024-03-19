@@ -1,4 +1,4 @@
-import { Field, ID, InputType } from "@nestjs/graphql"
+import { Field, Int, InputType } from "@nestjs/graphql"
 import { InputInput } from "./inputs.input"
 import { DocumentTypeInput } from "./documentType.input"
 import { FormInput } from "./forms.input"
@@ -27,7 +27,7 @@ export class CreateOrganizationInput {
 
 @InputType('FormSystemOrganizationInput')
 export class OrganizationInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })

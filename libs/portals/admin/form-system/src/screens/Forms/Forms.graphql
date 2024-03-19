@@ -2,6 +2,19 @@ query formSystemGetForms(
   $input: FormSystemGetFormsInput!
 ) {
   formSystemGetForms(input: $input) {
-    forms
+    forms {
+      id
+      name {
+        is
+        en
+      }
+      created
+      lastChanged
+      organization {
+        id
+      }
+      isTranslated
+    }
   }
 }
+

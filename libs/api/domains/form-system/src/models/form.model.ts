@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './global.model'
 import { Group } from './group.model'
 import { Input } from './input.model'
@@ -14,7 +14,7 @@ export type Dependencies = {
 
 @ObjectType('FormSystemForm')
 export class Form {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageType, { nullable: true })
@@ -50,7 +50,7 @@ export class Form {
   @Field()
   stopProgressOnValidatingStep?: boolean
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   applicationsDaysToRemove?: number
 
   @Field(() => [Step], { nullable: 'itemsAndList' })

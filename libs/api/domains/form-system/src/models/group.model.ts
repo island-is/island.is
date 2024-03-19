@@ -1,10 +1,10 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { LanguageType } from "./global.model";
 import { Input } from "./input.model";
 
 @ObjectType('FormSystemGroup')
 export class Group {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageType, { nullable: true })
@@ -22,7 +22,7 @@ export class Group {
   @Field(() => [Input])
   inputs?: Input[] | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   stepId?: number
 
   @Field(() => Number, { nullable: true })

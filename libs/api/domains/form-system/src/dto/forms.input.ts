@@ -1,4 +1,4 @@
-import { Field, ID, InputType, Int } from "@nestjs/graphql"
+import { Field, InputType, Int } from "@nestjs/graphql"
 import graphqlTypeJson from 'graphql-type-json'
 import { LanguageTypeInput } from "./language.input"
 import { InputInput } from "./inputs.input"
@@ -35,7 +35,7 @@ export class DeleteFormInput {
 
 @InputType('FormSystemFormInput')
 export class FormInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
@@ -71,7 +71,7 @@ export class FormInput {
   @Field()
   stopProgressOnValidatingStep?: boolean
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   applicationsDaysToRemove?: number
 
   @Field(() => [StepInput], { nullable: 'itemsAndList' })

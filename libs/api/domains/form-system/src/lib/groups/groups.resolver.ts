@@ -1,11 +1,13 @@
 import { Query, Args, Resolver, Mutation } from "@nestjs/graphql";
-import { CurrentUser, type User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, type User } from '@island.is/auth-nest-tools'
 import { GroupsService } from "./groups.service";
 import { GetGroupInput, CreateGroupInput, DeleteGroupInput, UpdateGroupInput } from "../../dto/groups.input";
 import { Group } from "../../models/group.model";
 import { Audit } from '@island.is/nest/audit'
+import { UseGuards } from "@nestjs/common";
 
 @Resolver()
+@UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class GroupsResolver {
   constructor(private readonly groupsService: GroupsService) { }

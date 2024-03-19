@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './global.model'
 import { Input } from './input.model'
 import { ApplicantType } from './applicantType.model'
@@ -9,7 +9,7 @@ import { Form } from './form.model'
 
 @ObjectType('FormSystemOrganization')
 export class Organization {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => LanguageType, { nullable: true })

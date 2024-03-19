@@ -1,12 +1,14 @@
 import { Query, Args, Resolver, Mutation } from "@nestjs/graphql";
-import { CurrentUser, type User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, type User } from '@island.is/auth-nest-tools'
 import { CreateStepInput, DeleteStepInput, GetStepInput, UpdateStepInput } from "../../dto/steps.input";
 import { Step } from "../../models/step.model";
 import { StepsService } from "./steps.service";
 import { Audit } from '@island.is/nest/audit'
+import { UseGuards } from "@nestjs/common";
 
 
 @Resolver()
+@UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class StepsResolver {
   constructor(private readonly stepsService: StepsService) { }

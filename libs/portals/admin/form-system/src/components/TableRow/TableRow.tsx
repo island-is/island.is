@@ -20,11 +20,11 @@ import {
 import { FormSystemPaths } from '../../lib/paths'
 
 interface Props {
-  id?: number
+  id?: number | null
   name?: string
   created?: Date
   lastModified?: Date
-  org?: number
+  org?: number | null
   state?: number
   options?: string
   isHeader: boolean

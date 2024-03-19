@@ -1,10 +1,10 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { LanguageType } from "./global.model";
 
 
 @ObjectType('FormSystemListType')
 export class ListType {
-  @Field(() => ID, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number
 
   @Field(() => String, { nullable: true })
