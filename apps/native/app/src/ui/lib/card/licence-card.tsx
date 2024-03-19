@@ -1,8 +1,18 @@
+import { Barcode, BARCODE_CONTAINER_HEIGHT } from '@ui/lib/barcode/barcode'
+import { Skeleton } from '@ui/lib/skeleton/skeleton'
 import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType, StyleProp, ViewStyle } from 'react-native'
+import {
+  Animated,
+  Image,
+  ImageSourcePropType,
+  StyleProp,
+  ViewStyle,
+} from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
+import { screenWidth } from '../../../utils/dimensions'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import IconStatusNonVerified from '../../assets/card/danger.png'
@@ -19,17 +29,44 @@ import LogoEnvironmentAgency from '../../assets/card/ust.png'
 import BackgroundHuntingCard from '../../assets/card/veidikort.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
-import { dynamicColor } from '../../utils'
+import { dynamicColor, theme } from '../../utils'
 import { font } from '../../utils/font'
 
-const Host = styled.View`
-  padding-top: 1px;
-  padding: 16px 24px;
+export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
+
+const Host = styled(Animated.View)`
+  padding: ${({ theme: { spacing } }) => `${spacing[2]}px ${spacing[3]}`}px;
   min-height: 112px;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  border-radius: 16px;
+  row-gap: ${LICENSE_CARD_ROW_GAP}px;
+  border-radius: ${({ theme: { border } }) => border.radius.extraLarge};
   overflow: hidden;
+`
+
+const ContentContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`
+
+const BarcodeWrapper = styled.View`
+  flex: 1;
+  min-height: ${BARCODE_CONTAINER_HEIGHT}px;
+  max-height: ${BARCODE_CONTAINER_HEIGHT}px;
+  border-radius: ${({ theme: { border } }) => border.radius.large};
+  overflow: hidden;
+`
+
+const BarcodeContainer = styled.View`
+  flex: 1;
+  background-color: ${({ theme: { color } }) => color.white};
+  padding: ${({ theme: { spacing } }) => spacing.smallGutter}px;
+`
+
+const ProgressBarContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
 `
 
 const BackgroundImage = styled.ImageBackground<{ color: string }>`
@@ -85,40 +122,6 @@ const ImgWrap = styled.View`
   justify-content: center;
 `
 
-export enum CustomLicenseType {
-  Passport = 'Passport',
-}
-
-type LicenseType = GenericLicenseType | CustomLicenseType
-
-type CardPreset = {
-  title: string
-  logo: ImageSourcePropType
-  backgroundImage: ImageSourcePropType
-  backgroundColor: string
-}
-
-interface LicenceCardProps {
-  status: 'VALID' | 'NOT_VALID'
-  title?: string
-  date?: Date | string
-  nativeID?: string
-  style?: StyleProp<ViewStyle>
-  type?: LicenseType
-  logo?: ImageSourcePropType
-  backgroundImage?: ImageSourcePropType
-  backgroundColor?: string
-}
-
-type StatusStyle = {
-  text: string
-  icon: ImageSourcePropType
-}
-
-type StatusStyles = {
-  [key: string]: StatusStyle
-}
-
 // Todo when we know the status type add to intl
 const statusIcon: StatusStyles = {
   NOT_VALID: {
@@ -137,48 +140,60 @@ const LicenseCardPresets: Record<LicenseType, CardPreset> = {
     logo: LogoCoatOfArms,
     backgroundImage: BackgroundDriversLicense,
     backgroundColor: '#F5E4EC',
+    barcode: {
+      background: '#F5EAEF',
+      overlay: '#F0DDE5',
+    },
   },
   AdrLicense: {
     title: 'ADR skírteini',
     logo: LogoAOSH,
     backgroundImage: BackgroundADR,
     backgroundColor: '#F2FAEC',
+    barcode: {
+      background: '#FAFDF7',
+      overlay: '#F4FCEE',
+    },
   },
   MachineLicense: {
     title: 'Vinnuvélaskírteini',
     logo: LogoAOSH,
     backgroundImage: BackgroundVinnuvelar,
     backgroundColor: '#C5E6AF',
-  },
-  Passport: {
-    title: 'Almennt vegabréf',
-    logo: LogoRegistersIceland,
-    backgroundImage: BackgroundPassport,
-    backgroundColor: '#fff',
+    barcode: {
+      background: '#DEF1D1',
+      overlay: '#C8E6B3',
+    },
   },
   FirearmLicense: {
     title: 'Skotvopnaleyfi',
     logo: CoatOfArms,
     backgroundImage: BackgroundWeaponLicense,
     backgroundColor: '#EBEBF2',
+    barcode: {
+      background: '#FDFDF7',
+      overlay: '#FAFAEB',
+    },
   },
   HuntingLicense: {
     title: 'Veiðikort',
     logo: LogoEnvironmentAgency,
     backgroundImage: BackgroundHuntingCard,
     backgroundColor: '#E2EDFF',
-  },
-  Ehic: {
-    title: 'Evrópukort',
-    logo: LogoCoatOfArms,
-    backgroundImage: BackgroundPassport,
-    backgroundColor: '#E2EDFF',
+    barcode: {
+      background: '#F6F9F2',
+      overlay: '#EEF4E7',
+    },
   },
   DisabilityLicense: {
     title: 'Örorkuskírteini',
     logo: DisabilityLicenseLogo,
     backgroundImage: DisabilityLicenseBg,
     backgroundColor: '#C5D5C8',
+    barcode: {
+      background: '#D7E3D7',
+      overlay: '#A0BAA2',
+    },
   },
   PCard: {
     title: 'Stæðiskort',
@@ -186,9 +201,63 @@ const LicenseCardPresets: Record<LicenseType, CardPreset> = {
     backgroundImage: BackgroundPCardLicense,
     backgroundColor: '#F2F7FF',
   },
+  Passport: {
+    title: 'Almennt vegabréf',
+    logo: LogoRegistersIceland,
+    backgroundImage: BackgroundPassport,
+    backgroundColor: '#fff',
+  },
+  Ehic: {
+    title: 'Evrópukort',
+    logo: LogoCoatOfArms,
+    backgroundImage: BackgroundPassport,
+    backgroundColor: '#E2EDFF',
+  },
 }
 
-// export type LicenseCardType = keyof typeof LicenseCardPresets
+export enum CustomLicenseType {
+  Passport = 'Passport',
+}
+
+type LicenseType = GenericLicenseType | CustomLicenseType
+
+type CardPreset = {
+  title: string
+  logo: ImageSourcePropType
+  backgroundImage: ImageSourcePropType
+  backgroundColor: string
+  barcode?: {
+    background: string
+    overlay: string
+  }
+}
+
+type StatusStyle = {
+  text: string
+  icon: ImageSourcePropType
+}
+
+type StatusStyles = {
+  [key: string]: StatusStyle
+}
+
+interface LicenceCardProps {
+  status: 'VALID' | 'NOT_VALID'
+  title?: string
+  date?: Date | string
+  nativeID?: string
+  style?: StyleProp<ViewStyle>
+  type?: LicenseType
+  logo?: ImageSourcePropType
+  backgroundImage?: ImageSourcePropType
+  backgroundColor?: string
+  barcode?: {
+    value?: string | null
+    loading?: boolean
+    expirationTime?: Date
+    expirationTimeCallback?(): void
+  }
+}
 
 export function LicenceCard({
   nativeID,
@@ -196,9 +265,11 @@ export function LicenceCard({
   date,
   status,
   type,
+  barcode,
   ...props
 }: LicenceCardProps) {
   const theme = useTheme()
+  const barcodeWidth = screenWidth - theme.spacing[3] * 2
   const intl = useIntl()
   const variant = statusIcon[status]
   const preset = type
@@ -209,49 +280,84 @@ export function LicenceCard({
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
   const textColor = theme.shades.light.foreground
+  const showBarcodeView =
+    (barcode && barcode?.value) || (barcode?.loading && !barcode?.value)
 
   return (
-    <Host nativeID={nativeID} style={style}>
+    <Host>
       <BackgroundImage
         source={backgroundImage}
         color={backgroundColor}
         resizeMode="cover"
       />
-      <Content>
-        <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
-          {title}
-        </Title>
-        {variant && (
-          <ValidationWrap>
-            <Image
-              source={variant.icon as ImageSourcePropType}
-              resizeMode="contain"
-              style={{ width: 15, height: 15, marginRight: 8 }}
-            />
-            <Validation color={textColor}>{variant.text}</Validation>
-          </ValidationWrap>
-        )}
-        {date && (
-          <TimeStamp color={textColor}>
-            {type === CustomLicenseType.Passport
-              ? intl.formatMessage({ id: 'walletPass.expirationDate' })
-              : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
-            {': '}
-            {type === CustomLicenseType.Passport ? (
-              <FormattedDate value={date} {...{ dateStyle: 'short' }} />
-            ) : (
-              <FormattedDate
-                value={date}
-                {...{ dateStyle: 'short', timeStyle: 'short' }}
+      <ContentContainer>
+        <Content>
+          <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
+            {title}
+          </Title>
+          {variant && (
+            <ValidationWrap>
+              <Image
+                source={variant.icon as ImageSourcePropType}
+                resizeMode="contain"
+                style={{ width: 15, height: 15, marginRight: 8 }}
               />
-            )}
-          </TimeStamp>
+              <Validation color={textColor}>{variant.text}</Validation>
+            </ValidationWrap>
+          )}
+          {date && (
+            <TimeStamp color={textColor}>
+              {type === CustomLicenseType.Passport
+                ? intl.formatMessage({ id: 'walletPass.expirationDate' })
+                : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
+              {': '}
+              {type === CustomLicenseType.Passport ? (
+                <FormattedDate value={date} {...{ dateStyle: 'short' }} />
+              ) : (
+                <FormattedDate
+                  value={date}
+                  {...{ dateStyle: 'short', timeStyle: 'short' }}
+                />
+              )}
+            </TimeStamp>
+          )}
+        </Content>
+        {logo && (
+          <ImgWrap>
+            <Image source={logo} />
+          </ImgWrap>
         )}
-      </Content>
-      {logo && (
-        <ImgWrap>
-          <Image source={logo} />
-        </ImgWrap>
+      </ContentContainer>
+      {showBarcodeView && (
+        <BarcodeWrapper>
+          {!barcode.loading && barcode?.value ? (
+            <BarcodeContainer>
+              <Barcode value={barcode.value} />
+              {barcode?.expirationTime && (
+                <ProgressBarContainer>
+                  <ExpirationProgressBar
+                    expirationDate={barcode.expirationTime}
+                    doneCallback={barcode?.expirationTimeCallback}
+                    expireTime={
+                      barcode.expirationTime.getTime() - new Date().getTime()
+                    }
+                    barContainerWidth={barcodeWidth}
+                  />
+                </ProgressBarContainer>
+              )}
+            </BarcodeContainer>
+          ) : (
+            <Skeleton
+              active
+              backgroundColor={
+                preset.barcode?.background ?? theme.color.blue100
+              }
+              overlayColor={preset.barcode?.overlay ?? theme.color.blue200}
+              overlayOpacity={1}
+              style={{ flex: 1 }}
+            />
+          )}
+        </BarcodeWrapper>
       )}
     </Host>
   )
