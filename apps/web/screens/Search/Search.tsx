@@ -840,33 +840,27 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   const referencedBy = query.referencedBy ?? ''
   const countTag = {}
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const tags: TagType[] = [
-    ...stringToArray(category).map(
-      (key: string): TagType => ({
-        type: 'category' as SearchableTags,
-        key,
-      }),
-    ),
-    ...stringToArray(organization).map(
-      (key: string): TagType => ({
-        type: 'organization' as SearchableTags,
-        key,
-      }),
-    ),
-    ...(processentry && [
-      {
-        type: 'processentry' as SearchableTags,
-        key: 'true',
-      },
-    ]),
-    ...stringToArray(referencedBy).map(
-      (key: string): TagType => ({
-        type: 'referencedBy' as SearchableTags,
-        key,
-      }),
-    ),
+    ...stringToArray(category).map<TagType>((key: string) => ({
+      type: SearchableTags.Category,
+      key,
+    })),
+    ...stringToArray(organization).map<TagType>((key: string) => ({
+      type: SearchableTags.Organization,
+      key,
+    })),
+    ...(processentry
+      ? [
+          {
+            type: SearchableTags.Processentry,
+            key: 'true',
+          },
+        ]
+      : []),
+    ...stringToArray(referencedBy).map<TagType>((key: string) => ({
+      type: SearchableTags.ReferencedBy,
+      key,
+    })),
   ]
 
   const types: SearchableContentTypes[] = stringToArray(type).map(
@@ -934,9 +928,9 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           countTag: [
-            'category' as SearchableTags,
-            'organization' as SearchableTags,
-            'processentry' as SearchableTags,
+            SearchableTags.Category,
+            SearchableTags.Organization,
+            SearchableTags.Processentry,
           ],
           types: ensureContentTypeExists(allTypes) ? allTypes : [],
           countTypes: true,
