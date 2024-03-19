@@ -18,7 +18,6 @@ export const documentLoader: WrappedLoaderFn =
       const pathName = window.location.pathname
       const pathArray = pathName.split('/')
       const id = pathArray[pathArray.length - 1]
-      console.log('id', id)
       if (id) {
         const { data } = await client.query<Query>({
           query: GET_PAGE_NUMBER_QUERY,
