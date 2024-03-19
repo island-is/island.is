@@ -51,9 +51,21 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:invalid-license',
     defaultMessage: 'Útrunnið',
   },
+  unknownLicense: {
+    id: 'sp.occupational-licenses:unknown-license',
+    defaultMessage: 'Óþekkt',
+  },
   validWithLimitationsLicense: {
     id: 'sp.occupational-licenses:valid-with-limitations-license',
     defaultMessage: 'Í gildi með takmörkunum',
+  },
+  revokedLicense: {
+    id: 'sp.occupational-licenses:revoked-license',
+    defaultMessage: 'Svipting',
+  },
+  waivedLicense: {
+    id: 'sp.occupational-licenses:waived-license',
+    defaultMessage: 'Afsal',
   },
   dayOfPublication: {
     id: 'sp.occupational-licenses:day-of-publication',
