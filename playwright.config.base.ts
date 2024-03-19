@@ -9,6 +9,8 @@ import type {
  */
 // require('dotenv').config();
 
+export const CI = !!process.env.CI || process.env.NODE_ENV === 'prod'
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -26,14 +28,14 @@ const config: PlaywrightTestConfig = {
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
+  forbidOnly: !!CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 0 : 0,
+  retries: CI ? 0 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ...((process.env.CI
+    ...((CI
       ? [
           ['line'],
           [
@@ -48,7 +50,7 @@ const config: PlaywrightTestConfig = {
           ],
         ]
       : [['dot']]) as ReporterDescription[]),
-    ['html', { open: 'never' }],
+    ['html', { open: 'on-failure', outputFolder: 'dist/playwright-report' }],
   ],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -60,7 +62,7 @@ const config: PlaywrightTestConfig = {
     baseURL: 'http://localhost:4200',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure',
+    trace: CI ? 'retain-on-failure' : 'on',
   },
 
   /* Configure projects for major browsers */
