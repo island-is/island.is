@@ -7,7 +7,13 @@ import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
-const cli = yargs(process.argv.slice(2))
+yargs(process.argv.slice(2))
+  .option('dry', { alias: 'n', type: 'boolean', default: false })
+  .option('verbose', {
+    alias: 'v',
+    type: 'boolean',
+    count: true,
+  })
   .command(
     'render-env',
     'Render a chart for environment',
@@ -59,7 +65,6 @@ const cli = yargs(process.argv.slice(2))
       return yargs
         .option('service', { demandOption: true, array: true, type: 'string' })
         .option('json', { type: 'boolean', default: false })
-        .option('dry', { type: 'boolean', default: true })
         .option('no-update-secrets', { type: 'boolean', default: false })
     },
     async (argv) =>
@@ -79,7 +84,6 @@ const cli = yargs(process.argv.slice(2))
         .option('service', { array: true, type: 'string', demandOption: true })
         .option('dependencies', { array: true, type: 'string', default: [] })
         .option('json', { type: 'boolean', default: false })
-        .option('dry', { type: 'boolean', default: false })
         .option('no-update-secrets', {
           type: 'boolean',
           default: false,
@@ -103,5 +107,7 @@ const cli = yargs(process.argv.slice(2))
         startProxies: argv.proxies,
       }),
   )
-  .demandCommand(1)
+  .demandCommand(1, 'Please pass at least one command')
+  .strict()
+  .help()
   .parse()
