@@ -1,14 +1,18 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
+export const active = style({
+  color: theme.color.blue400,
+  backgroundColor: theme.color.white,
+})
+
 export const tab = style({
   position: 'relative',
   padding: '10px',
   minHeight: `${theme.spacing[7]}px`,
-  width: '100%',
+  flexGrow: 1,
   outline: 0,
   fontWeight: 'lighter',
-  backgroundColor: theme.color.blue100,
   borderBottom: `1px solid ${theme.color.blue200}`,
 })
 
@@ -28,22 +32,23 @@ export const tabNotSelected = style({
   },
 })
 
-export const tabSelected = style({
-  color: theme.color.blue400,
-  backgroundColor: theme.color.white,
-  border: `1px solid ${theme.color.blue200}`,
-  borderBottom: 'none',
-  fontWeight: theme.typography.semiBold,
-  zIndex: '2',
-  selectors: {
-    '&:first-child': {
-      borderLeft: 'none',
-    },
-    '&:last-child': {
-      borderRight: 'none',
+export const tabSelected = style([
+  active,
+  {
+    border: `1px solid ${theme.color.blue200}`,
+    borderBottom: 'none',
+    fontWeight: theme.typography.semiBold,
+    zIndex: '2',
+    selectors: {
+      '&:first-child': {
+        borderLeft: 'none',
+      },
+      '&:last-child': {
+        borderRight: 'none',
+      },
     },
   },
-})
+])
 
 export const select = style({
   '@media': {
@@ -57,6 +62,9 @@ export const select = style({
 export const tabList = style({
   display: 'inline-flex',
   width: '100%',
+  background: theme.color.blue100,
+  justifyContent: 'space-between',
+  margin: '3px 1px',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       height: 0,
@@ -64,6 +72,12 @@ export const tabList = style({
       display: 'none',
     },
   },
+})
+
+export const subTabList = style({
+  display: 'flex',
+  background: theme.color.blue100,
+  width: 'fit-content',
 })
 
 export const description = style({})

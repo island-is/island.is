@@ -121,7 +121,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                 <GridColumn span="6/8">
                   <Box printHidden className={styles.description}>
                     {(activeItemChildren?.length ?? 0) > 1 && (
-                      <Inline>
+                      <Box className={styles.subTabList} component="ul">
                         {activeItemChildren?.map((itemChild, ii) => (
                           <SubTabItem
                             key={`subnav-${ii}`}
@@ -133,10 +133,9 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                             }
                             title={formatMessage(itemChild.name)}
                             isActive={pathname === itemChild.path}
-                            marginLeft={0}
                           />
                         ))}
-                      </Inline>
+                      </Box>
                     )}
                     {descriptionText && (
                       <Box>
