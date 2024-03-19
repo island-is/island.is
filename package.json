@@ -457,7 +457,6 @@
     "webpack-bundle-analyzer": "4.5.0"
   },
   "resolutions": {
-    "immer": "9.0.6",
     "marked": "2.0.0",
     "elliptic": "6.5.4",
     "ssri": "8.0.1",
