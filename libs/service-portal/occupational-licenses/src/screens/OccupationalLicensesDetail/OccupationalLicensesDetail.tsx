@@ -42,23 +42,12 @@ const OccupationalLicenseDetail = () => {
   const res = data?.occupationalLicenseV2
   const license = res?.license
 
-  const introHeaderFallbackIntro = useMemo(() => {
-    switch (data?.occupationalLicenseV2?.type) {
-      case OccupationalLicenseV2LicenseResponseType.HEALTH_DIRECTORATE:
-        return formatMessage(om.healthDirectorateIntro)
-      case OccupationalLicenseV2LicenseResponseType.EDUCATION:
-        return formatMessage(om.educationIntro)
-      default:
-        return undefined
-    }
-  }, [data?.occupationalLicenseV2?.type, formatMessage])
-
   return (
     <>
       <IntroHeader
         marginBottom={2}
         title={license?.title ?? formatMessage(om.occupationalLicense)}
-        intro={res?.headerText ?? introHeaderFallbackIntro}
+        intro={res?.headerText ?? ''}
         serviceProviderSlug={license?.issuer as OrganizationSlugType}
       >
         {res?.actions && (

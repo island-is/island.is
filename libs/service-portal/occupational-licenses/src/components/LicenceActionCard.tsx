@@ -56,44 +56,6 @@ const getTagProps = (
   }
 }
 
-const getTagProps = (
-  status: OccupationalLicenseStatus,
-  formatMessage: FormatMessage,
-): { label: string; variant: TagVariant | undefined } => {
-  switch (status) {
-    case OccupationalLicenseStatus.valid:
-      return {
-        label: formatMessage(ol.validLicense),
-        variant: 'blue',
-      }
-    case OccupationalLicenseStatus.limited:
-      return {
-        label: formatMessage(ol.validWithLimitationsLicense),
-        variant: 'yellow',
-      }
-    case OccupationalLicenseStatus.revoked:
-      return {
-        label: formatMessage(ol.revokedLicense),
-        variant: 'red',
-      }
-    case OccupationalLicenseStatus.waived:
-      return {
-        label: formatMessage(ol.waivedLicense),
-        variant: 'red',
-      }
-    case OccupationalLicenseStatus.error:
-      return {
-        label: formatMessage(ol.invalidLicense),
-        variant: 'red',
-      }
-    default:
-      return {
-        label: formatMessage(ol.unknownLicense),
-        variant: 'red',
-      }
-  }
-}
-
 export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
   title,
   validFrom,
