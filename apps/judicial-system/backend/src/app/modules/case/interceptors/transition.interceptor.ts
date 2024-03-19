@@ -1,4 +1,3 @@
-import flatten from 'lodash/flatten'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
@@ -13,10 +12,9 @@ import {
   CaseFileCategory,
   CaseState,
   CaseTransition,
-  CaseType,
   EventType,
-  IndictmentSubtype,
   isIndictmentCase,
+  isTrafficViolationCase,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -39,29 +37,6 @@ export class TransitionInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<Case>> {
-    const isTrafficViolationCase = (theCase: Case): boolean => {
-      if (!theCase.indictmentSubtypes || theCase.type !== CaseType.INDICTMENT) {
-        return false
-      }
-
-      const flatIndictmentSubtypes = flatten(
-        Object.values(theCase.indictmentSubtypes),
-      )
-
-      return Boolean(
-        !(
-          theCase.caseFiles &&
-          theCase.caseFiles.find(
-            (file) => file.category === CaseFileCategory.INDICTMENT,
-          )
-        ) &&
-          flatIndictmentSubtypes.length > 0 &&
-          flatIndictmentSubtypes.every(
-            (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
-          ),
-      )
-    }
-
     const request = context.switchToHttp().getRequest()
     const theCase: Case = request.case
     const dto: TransitionCaseDto = request.body
@@ -69,7 +44,7 @@ export class TransitionInterceptor implements NestInterceptor {
 
     if (
       isIndictmentCase(theCase.type) &&
-      !isTrafficViolationCase(theCase) &&
+      !isTrafficViolationCase(theCase.indictmentSubtypes, theCase.type) &&
       theCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
       dto.transition === CaseTransition.SUBMIT
     ) {
