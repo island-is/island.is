@@ -13,7 +13,8 @@ export const sectionRequirements = buildSubSection({
   children: [
     buildMultiField({
       id: 'info',
-      title: m.eligibilityRequirementTitle,
+      title: m.applicationEligibilityTitle,
+      description: m.eligibilityRequirementTitle,
       children: [
         buildCustomField({
           title: m.eligibilityRequirementTitle,

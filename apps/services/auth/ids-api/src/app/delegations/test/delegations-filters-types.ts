@@ -114,13 +114,6 @@ export class TestCase {
     }
   }
 
-  get personalRepresentativeDelegation(): CreatePersonalRepresentativeDelegation[] {
-    return this.fromRepresentative.map((d: string) => ({
-      toNationalId: this.user.nationalId,
-      fromNationalId: d,
-    }))
-  }
-
   get apiScopeUserAccess(): CreateApiScopeUserAccess[] {
     return this.scopeAccess.map((access) => ({
       nationalId: access[0],

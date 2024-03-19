@@ -75,7 +75,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         <Box marginBottom={2}>
           <Text variant="h2">
             {formatMessage(
-              application.state === States.VINNUMALASTOFNUN_APPROVAL 
+              application.state === States.VINNUMALASTOFNUN_APPROVAL
                 ? parentalLeaveFormMessages.reviewScreen.titleReceived
                 : application.state === States.APPROVED
                 ? parentalLeaveFormMessages.reviewScreen.titleApproved

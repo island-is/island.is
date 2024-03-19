@@ -6,8 +6,11 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
 import { ApiScopeInfo } from './delegations-incoming.service'
-import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
-import { DelegationType } from './types/delegationType'
+import { DelegationDTO } from './dto/delegation.dto'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 @Injectable()
 export class IncomingDelegationsCompanyService {
@@ -47,8 +50,8 @@ export class IncomingDelegationsCompanyService {
               toNationalId: user.nationalId,
               fromNationalId: relationship.nationalId,
               fromName: relationship.name,
-              type: DelegationType.ProcurationHolder,
-              provider: DelegationProvider.CompanyRegistry,
+              type: AuthDelegationType.ProcurationHolder,
+              provider: AuthDelegationProvider.CompanyRegistry,
             },
         )
 

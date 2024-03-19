@@ -88,20 +88,6 @@ export const generateAssignOtherParentApplicationEmail: AssignOtherParentEmail =
               href: link,
             },
           },
-          {
-            component: 'Copy',
-            context: {
-              copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
-              small: true,
-            },
-          },
-          {
-            component: 'Copy',
-            context: {
-              copy: link,
-              small: true,
-            },
-          },
         ],
       },
     }

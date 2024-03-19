@@ -1,0 +1,92 @@
+fragment Appraisal on Appraisal {
+  activeAppraisal
+  plannedAppraisal
+  activeStructureAppraisal
+  plannedStructureAppraisal
+  activePlotAssessment
+  plannedPlotAssessment
+  activeYear
+  plannedYear
+}
+
+fragment Address on PropertyLocation {
+  locationNumber
+  postNumber
+  municipality
+  propertyNumber
+  display
+  displayShort
+}
+
+fragment Owner on PropertyOwner {
+  name
+  ssn
+  ownership
+  purchaseDate
+  grantDisplay
+}
+
+fragment UnitsOfUse on UnitOfUse {
+  propertyNumber
+  unitOfUseNumber
+  marking
+  usageDisplay
+  displaySize
+  buildYearDisplay
+  fireAssessment
+  explanation
+  appraisal {
+    ...Appraisal
+  }
+  address {
+    ...Address
+  }
+}
+
+fragment Paging on PagingData {
+  page
+  pageSize
+  totalPages
+  offset
+  total
+  hasPreviousPage
+  hasNextPage
+}
+
+query GetAssetsPropertyOwners($input: GetPagingTypes!) {
+  assetsPropertyOwners(input: $input) {
+    registeredOwners {
+      ...Owner
+    }
+    paging {
+      ...Paging
+    }
+  }
+}
+
+query GetSingleRealEstate($input: GetRealEstateInput!) {
+  assetsDetail(input: $input) {
+    propertyNumber
+    defaultAddress {
+      ...Address
+    }
+    appraisal {
+      ...Appraisal
+    }
+    registeredOwners {
+      registeredOwners {
+        ...Owner
+      }
+    }
+    land {
+      landNumber
+      landAppraisal
+      useDisplay
+      area
+      areaUnit
+    }
+    unitsOfUse {
+      ...UnitsOfUse
+    }
+  }
+}
