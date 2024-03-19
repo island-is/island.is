@@ -49,7 +49,7 @@ export const debts = buildSection({
                 fields: [
                   {
                     title: m.debtsCreditorName.defaultMessage,
-                    id: 'creditorName',
+                    id: 'description',
                   },
                   {
                     title: m.creditorsNationalId.defaultMessage,
@@ -58,17 +58,18 @@ export const debts = buildSection({
                   },
                   {
                     title: m.debtsLoanIdentity.defaultMessage,
-                    id: 'loanIdentity',
+                    id: 'assetNumber',
                   },
                   {
                     title: m.debtsBalance.defaultMessage,
-                    id: 'balance',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-                sumField: 'balance',
+                fromExternalData: 'otherDebts',
+                sumField: 'propertyValuation',
               },
             ),
           ],

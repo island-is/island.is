@@ -162,10 +162,10 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            creditorName: z.string(),
+            description: z.string(),
             nationalId: z.string(),
-            loanIdentity: z.string(),
-            balance: z.string(),
+            assetNumber: z.string(),
+            propertyValuation: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -179,35 +179,39 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ creditorName, nationalId, balance, loanIdentity }) => {
-              return nationalId !== '' || creditorName !== '' || balance !== ''
-                ? isValidString(loanIdentity)
-                : true
-            },
-            {
-              path: ['loanIdentity'],
-            },
-          )
-          .refine(
-            ({ creditorName, nationalId, balance, loanIdentity }) => {
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
               return nationalId !== '' ||
-                creditorName !== '' ||
-                loanIdentity !== ''
-                ? isValidString(balance)
+                description !== '' ||
+                propertyValuation !== ''
+                ? isValidString(assetNumber)
                 : true
             },
             {
-              path: ['balance'],
+              path: ['assetNumber'],
             },
           )
           .refine(
-            ({ creditorName, nationalId, balance, loanIdentity }) => {
-              return nationalId !== '' || balance !== '' || loanIdentity !== ''
-                ? isValidString(creditorName)
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
+              return nationalId !== '' ||
+                description !== '' ||
+                assetNumber !== ''
+                ? isValidString(propertyValuation)
                 : true
             },
             {
-              path: ['creditorName'],
+              path: ['propertyValuation'],
+            },
+          )
+          .refine(
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
+              return nationalId !== '' ||
+                propertyValuation !== '' ||
+                assetNumber !== ''
+                ? isValidString(description)
+                : true
+            },
+            {
+              path: ['description'],
             },
           )
           .array()

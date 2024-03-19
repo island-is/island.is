@@ -200,9 +200,9 @@ export const expandAnswers = (
         data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
-              loanIdentity: debt.loanIdentity ?? '',
-              balance: debt.balance ?? 0,
-              creditorName: debt.creditorName ?? '',
+              assetNumber: debt.assetNumber ?? '',
+              propertyValuation: debt.propertyValuation ?? 0,
+              description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
             }
           },

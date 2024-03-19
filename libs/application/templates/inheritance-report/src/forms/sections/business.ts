@@ -90,7 +90,7 @@ export const business = buildSection({
                 repeaterButtonText:
                   m.businessAssetRepeaterButton.defaultMessage,
                 sumField: 'propertyValuation',
-                fromExternalData: 'assetsInBusiness',
+                fromExternalData: 'otherAssets',
               },
             ),
           ],
