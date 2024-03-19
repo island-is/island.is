@@ -9,7 +9,7 @@ import {
 import { PaymentApi, Configuration } from '../../gen/fetch'
 import { HousingBenefitsConfig } from './hms-housing-benefits.config'
 
-export const HmsLoansApiProvider: Provider<PaymentApi> = {
+export const HmsHousingBenefitsApiProvider: Provider<PaymentApi> = {
   provide: PaymentApi,
   scope: LazyDuringDevScope,
   useFactory: (

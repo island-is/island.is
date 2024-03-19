@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { HmsLoansApiProvider } from './hms-housing-benefits.provider'
+import { HmsHousingBenefitsApiProvider } from './hms-housing-benefits.provider'
 
 @Module({
-  providers: [HmsLoansApiProvider],
-  exports: [HmsLoansApiProvider],
+  providers: [HmsHousingBenefitsApiProvider],
+  exports: [HmsHousingBenefitsApiProvider],
 })
 export class HmsHousingBenefitsClientModule {}
