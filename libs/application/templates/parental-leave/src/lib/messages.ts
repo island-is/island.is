@@ -2297,8 +2297,8 @@ export const employerFormMessages = defineMessages({
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'pl.application:inReview.form.title',
-    defaultMessage: 'Fæðingarorlof',
-    description: 'Parental Leave',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: 'Application Overview',
   },
 })
 
