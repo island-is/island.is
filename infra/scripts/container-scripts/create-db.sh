@@ -16,7 +16,8 @@ function create_or_update_user {
 
   # Attempt to fetch existing password
   set +e # Disable script stopping for this command
-  local password=$(node secrets get "$password_key")
+  local password
+  password=$(node secrets get "$password_key")
   local fetch_status=$?
   set -e # Re-enable script stopping on errors
 
@@ -75,7 +76,7 @@ PGPASSWORD=$(node secrets get "$PGPASSWORD_KEY")
 export PGPASSWORD
 
 echo "Creating database if it doesn't exist."
-psql -c "CREATE DATABASE $DB_NAME" || true
+psql -c "CREATE DATABASE $db_name" || true
 
 # Determine if $DB_USER is a read-only user and adjust DB_PASSWORD_KEY for the write user accordingly
 if [[ "$DB_USER" == *"_read" ]]; then
