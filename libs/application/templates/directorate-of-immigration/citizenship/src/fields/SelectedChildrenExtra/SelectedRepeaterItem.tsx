@@ -155,17 +155,6 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
         ]}
       />
 
-      {/* <HiddenInputFormField
-        application={application}
-        field={{
-          id: `selectedChildrenExtraData[${index}].nationalId`,
-          type: FieldTypes.HIDDEN_INPUT,
-          component: FieldComponents.HIDDEN_INPUT,
-          title: '',
-          children: undefined,
-        }}
-      /> */}
-
       <HiddenTextInput
         application={application}
         field={{
