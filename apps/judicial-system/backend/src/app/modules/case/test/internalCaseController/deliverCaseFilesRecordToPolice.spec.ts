@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
@@ -136,7 +137,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         [
           {
             type: CourtDocumentType.RVMG,
-            courtDocument: pdf.toString('binary'),
+            courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
       )
@@ -165,7 +166,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         [
           {
             type: CourtDocumentType.RVMG,
-            courtDocument: pdf.toString('binary'),
+            courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
       )
@@ -194,7 +195,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         [
           {
             type: CourtDocumentType.RVMG,
-            courtDocument: pdf.toString('binary'),
+            courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
       )

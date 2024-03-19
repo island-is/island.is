@@ -49,7 +49,7 @@ import {
 import { formatCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { isCourtRecordStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import AppealSections from '../../components/AppealSections/AppealSections'
+import { AppealSections } from '../../components'
 
 export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {

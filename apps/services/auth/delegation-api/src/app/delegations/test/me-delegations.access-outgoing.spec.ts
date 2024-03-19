@@ -272,7 +272,7 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         'DELETE /v1/me/delegations/:id works and removes scopes you have access to in $name',
         async (domain) => {
           // Arrange
-          const delegationScopeModel = await app.get<typeof DelegationScope>(
+          const delegationScopeModel = app.get<typeof DelegationScope>(
             getModelToken(DelegationScope),
           )
           const delegation = delegations.find(

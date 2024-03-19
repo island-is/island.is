@@ -4,6 +4,7 @@ import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
   OrganizationLinkByReferenceIdLoader,
+  OrganizationLinkEnByReferenceIdLoader,
   OrganizationLogoByReferenceIdLoader,
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
@@ -17,8 +18,11 @@ import type {
 } from '@island.is/cms'
 import { UniversityGatewayApi } from '../universityGateway.service'
 import { UniversityGatewayUniversity } from './models'
+import { UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE } from '../cacheControl'
 
-const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
+const defaultCache: CacheControlOptions = {
+  maxAge: UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE,
+}
 
 @Resolver(UniversityGatewayUniversity)
 export class UniversityResolver {
@@ -54,6 +58,16 @@ export class UniversityResolver {
   @ResolveField('contentfulLink', () => String, { nullable: true })
   async resolveContentfulLink(
     @Loader(OrganizationLinkByReferenceIdLoader)
+    organizationLinkLoader: OrganizationLinkByReferenceIdDataLoader,
+    @Parent() university: UniversityGatewayUniversity,
+  ): Promise<OrganizationLink> {
+    return organizationLinkLoader.load(university.contentfulKey)
+  }
+
+  @CacheControl(defaultCache)
+  @ResolveField('contentfulLinkEn', () => String, { nullable: true })
+  async resolveContentfulLinkEn(
+    @Loader(OrganizationLinkEnByReferenceIdLoader)
     organizationLinkLoader: OrganizationLinkByReferenceIdDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<OrganizationLink> {
