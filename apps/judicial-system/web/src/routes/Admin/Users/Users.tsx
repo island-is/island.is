@@ -213,7 +213,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <AlertMessage
             type="info"
             title="Enginn notandi fannst"
-            message="Vinsamlegast veldur aðra stofnun"
+            message="Vinsamlegast veldu aðra stofnun"
           />
         </Box>
       )}
