@@ -186,12 +186,11 @@ export class PDFService {
     return createIndictment(theCase, this.formatMessage, confirmation)
   }
 
-  async getConfirmedIndictmentPdf(linkToPDF: string): Promise<Buffer> {
-    return createConfirmedIndictment({
-      actor: 'Halla Bergþóra Björnsdóttir Lyngby',
-      institution: 'Lögreglustjórinn á Höfuðborgarsvæðinu',
-      date: new Date(),
-    })
+  async getConfirmedIndictmentPdf(
+    confirmation: IndictmentConfirmation,
+    indictmentPDF: Buffer,
+  ): Promise<Buffer> {
+    return createConfirmedIndictment(confirmation, indictmentPDF)
   }
 
   async getCaseFilesRecordPdf(

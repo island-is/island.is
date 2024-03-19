@@ -9,12 +9,9 @@ import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
 export const createConfirmedIndictment = async (
   confirmation: IndictmentConfirmation,
+  indictmentPDF: Buffer,
 ): Promise<Buffer> => {
-  const url = 'https://pdf-lib.js.org/assets/with_update_sections.pdf'
-
-  const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer())
-
-  const pdfDoc = await PDFDocument.load(existingPdfBytes)
+  const pdfDoc = await PDFDocument.load(indictmentPDF)
   const pages = pdfDoc.getPages()
   const doc = pages[0]
 
