@@ -62,7 +62,11 @@ import {
   SubArticle,
   Tag as TagType,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import {
+  LinkResolverResponse,
+  LinkType,
+  useNamespace,
+} from '@island.is/web/hooks'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -95,7 +99,7 @@ interface CategoryProps {
   page: number
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   referencedByTitle?: string
 }
 
@@ -140,7 +144,7 @@ const connectedTypes: Partial<
   webManual: ['WebManual', 'WebManualChapterItem'],
 }
 
-const stringToArray = (value: string | string[]) =>
+const stringToArray = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
 
 const Search: Screen<CategoryProps> = ({
@@ -156,14 +160,8 @@ const Search: Screen<CategoryProps> = ({
     ...initialState,
     query: {
       q,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       type: stringToArray(query.type) as SearchableContentTypes[],
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       category: stringToArray(query.category),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       organization: stringToArray(query.organization),
     },
   })
@@ -176,8 +174,6 @@ const Search: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const routerReplace = useRouterReplace()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -230,27 +226,17 @@ const Search: Screen<CategoryProps> = ({
   const getLabels = (item: SearchEntryType) => {
     const labels = []
 
-    switch (item.__typename) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
+    switch (item.__typename as string | undefined) {
       case 'LifeEventPage':
         labels.push(n('lifeEvent'))
         break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'News':
         labels.push(n('newsTitle'))
         break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'AdgerdirPage':
         labels.push(n('adgerdirTitle'))
         break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'ManualChapterItem':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         labels.push(item.manualChapter.title)
         break
       default:
@@ -290,8 +276,8 @@ const Search: Screen<CategoryProps> = ({
     | Partial<Record<SearchableContentTypes, string>>
     | Record<string, string> = useMemo(
     () => ({
-      webArticle: n('webPage', 'Síður'), // TODO: get feedback about this change
-      webSubArticle: n('webSubpage', 'Undirsíður'), // TODO: get feedback about this change
+      webArticle: n('webArticle', 'Greinar'),
+      webSubArticle: n('webSubArticle', 'Undirgreinar'),
       webLink: n('webLink', 'Tenglar'),
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
@@ -324,9 +310,7 @@ const Search: Screen<CategoryProps> = ({
           }
 
           return {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            title: tagTitles[x.key] as string,
+            title: tagTitles[x.key as keyof typeof tagTitles] as string,
             key: x.key,
             count,
           }
@@ -334,7 +318,9 @@ const Search: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  const getItemLink = (item: SearchEntryType) => {
+  const getItemLink = (
+    item: SearchEntryType,
+  ): LinkResolverResponse | undefined => {
     if (
       item.__typename === 'AnchorPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -350,9 +336,14 @@ const Search: Screen<CategoryProps> = ({
       ])
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
-    return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
+    if (!item.__typename) {
+      return undefined
+    }
+
+    return linkResolver(
+      item.__typename as LinkType,
+      item.url ?? item.slug?.split('/'),
+    )
   }
 
   const getItemImages = (item: SearchEntryType) => {
@@ -848,6 +839,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   const processentry = query.processentry ?? ''
   const referencedBy = query.referencedBy ?? ''
   const countTag = {}
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const tags: TagType[] = [
@@ -1054,9 +1046,9 @@ const EnglishResultsLink: FC<
       >
         <Text variant="intro" as="p">
           <a href={linkResolver('search', [], 'en').href + `?q=${q}`}>
-            {total} niðurstöður
+            {total} {total === 1 ? 'niðurstaða' : 'niðurstöður'}
           </a>{' '}
-          fundust á ensku.
+          {total === 1 ? 'fannst' : 'fundust'} á ensku.
         </Text>
       </LinkContext.Provider>
     )
