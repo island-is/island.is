@@ -102,13 +102,8 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
   status,
 }) => {
   const { formatMessage } = useLocale()
-<<<<<<< HEAD
-
-  const { label, variant } = getTagProps(status, formatMessage)
-=======
   const { label, variant } = getTagProps(status, formatMessage)
 
->>>>>>> main
   return (
     <ActionCard
       capitalizeHeading={true}
