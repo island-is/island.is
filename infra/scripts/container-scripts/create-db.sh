@@ -1,7 +1,8 @@
+#!/bin/bash
+
 # This script creates or updates database users with appropriate permissions and passwords in PostgreSQL.
 # It also handles read-only and write users based on the naming convention and enables specified Postgres extensions.
 
-#!/bin/bash
 set -euo pipefail
 shopt -s inherit_errexit
 
@@ -30,22 +31,22 @@ function create_or_update_user {
   else
     echo "Using existing password for $user."
   fi
-  set -x
+
   # Create or update user with password
   echo "Creating or updating database user."
   psql -c "DO
-\$do\$
-BEGIN
-   IF NOT EXISTS (
-      SELECT FROM pg_catalog.pg_roles
-      WHERE  rolname = '$user') THEN
+    \$do\$
+      BEGIN
+        IF NOT EXISTS (
+            SELECT FROM pg_catalog.pg_roles
+            WHERE  rolname = '$user') THEN
 
-      CREATE ROLE $user LOGIN ENCRYPTED PASSWORD '$password';
-   ELSE
-      ALTER ROLE $user WITH ENCRYPTED PASSWORD '$password';
-   END IF;
-END
-\$do\$;"
+            CREATE ROLE $user LOGIN ENCRYPTED PASSWORD '$password';
+        ELSE
+            ALTER ROLE $user WITH ENCRYPTED PASSWORD '$password';
+        END IF;
+      END
+    \$do\$;"
 
   if [[ "$password_generated" == "true" ]]; then
     echo "Storing new password in AWS SSM."
@@ -68,7 +69,6 @@ END
     psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $user"
     echo "Configured $user with full access."
   fi
-  set +x
 }
 
 PGPASSWORD=$(node secrets get "$PGPASSWORD_KEY")
