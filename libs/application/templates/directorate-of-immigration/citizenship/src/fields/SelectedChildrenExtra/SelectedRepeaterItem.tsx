@@ -216,21 +216,25 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
               />
             </GridColumn>
           </GridRow>
-          <GridRow>
-            <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-              <DatePickerController
-                defaultValue={currentBirthDate}
-                id={otherParentBirthDateField}
-                locale={lang}
-                label={formatMessage(selectChildren.extraInformation.dateLabel)}
-                onChange={(value) => setCurrentBirthDate(value as string)}
-                error={
-                  errors && getErrorViaPath(errors, otherParentBirthDateField)
-                }
-                maxDate={new Date()}
-              />
-            </GridColumn>
-          </GridRow>
+          {!readOnlyFields && (
+            <GridRow>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                <DatePickerController
+                  defaultValue={currentBirthDate}
+                  id={otherParentBirthDateField}
+                  locale={lang}
+                  label={formatMessage(
+                    selectChildren.extraInformation.dateLabel,
+                  )}
+                  onChange={(value) => setCurrentBirthDate(value as string)}
+                  error={
+                    errors && getErrorViaPath(errors, otherParentBirthDateField)
+                  }
+                  maxDate={new Date()}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
         </Box>
       )}
     </Box>
