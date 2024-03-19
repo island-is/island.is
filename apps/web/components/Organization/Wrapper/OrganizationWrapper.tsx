@@ -90,7 +90,7 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
+import { TryggingastofnunFooter } from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
@@ -131,12 +131,7 @@ interface HeaderProps {
 
 const darkThemes = ['hms']
 
-const blueberryThemes = [
-  'sjukratryggingar',
-  'rikislogmadur',
-  'tryggingastofnun',
-  'nti',
-]
+const blueberryThemes = ['sjukratryggingar', 'rikislogmadur', 'nti']
 
 const lightThemes = [
   'digital_iceland',
@@ -296,13 +291,6 @@ export const OrganizationHeader: React.FC<
     case 'fjarsysla-rikisins':
       return (
         <FjarsyslaRikisinsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'tryggingastofnun':
-      return (
-        <TryggingastofnunHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
