@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Program } from './model/program'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
-import { ProgramCourse } from './model/programCourse'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
 import {
   ApplicationProgramsResponse,
   ProgramsResponse,
 } from './dto/programsResponse'
-import { Course } from '../course/model/course'
 import { University } from '../university/model/university'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
@@ -84,14 +82,6 @@ export class ProgramService {
         {
           model: University,
         },
-        // {
-        //   model: ProgramCourse,
-        //   include: [
-        //     {
-        //       model: Course,
-        //     },
-        //   ],
-        // },
         {
           model: ProgramModeOfDelivery,
         },
