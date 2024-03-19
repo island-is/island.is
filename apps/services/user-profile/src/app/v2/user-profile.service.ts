@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
-import subMonths from 'date-fns/subMonths'
+import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
@@ -15,8 +15,10 @@ import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
+import { NudgeType } from '../types/nudge-type'
 
 export const NUDGE_INTERVAL = 6
+export const SKIP_INTERVAL = 1
 
 @Injectable()
 export class UserProfileService {
@@ -178,10 +180,38 @@ export class UserProfileService {
         }),
       }
 
+      const currentUserProfile = await this.userProfileModel.findOne({
+        where: { nationalId },
+        transaction,
+        useMaster: true,
+      })
+
       await this.userProfileModel.upsert(
         {
           ...update,
           lastNudge: new Date(),
+          nextNudge: addMonths(
+            new Date(),
+            this.hasUnverifiedOrNotDefinedData({
+              email: isEmailDefined ? update.email : currentUserProfile?.email,
+              mobilePhoneNumber: isMobilePhoneNumberDefined
+                ? update.mobilePhoneNumber
+                : currentUserProfile?.mobilePhoneNumber,
+              emailStatus:
+                update.emailStatus ??
+                (currentUserProfile?.emailStatus as DataStatus),
+              mobileStatus:
+                update.mobileStatus ??
+                (currentUserProfile?.mobileStatus as DataStatus),
+              emailVerified:
+                update.emailVerified ?? currentUserProfile?.emailVerified,
+              mobilePhoneNumberVerified:
+                update.mobilePhoneNumberVerified ??
+                currentUserProfile?.mobilePhoneNumberVerified,
+            })
+              ? SKIP_INTERVAL
+              : NUDGE_INTERVAL,
+          ),
         },
         { transaction },
       )
@@ -232,23 +262,55 @@ export class UserProfileService {
     )
   }
 
-  async confirmNudge(nationalId: string): Promise<void> {
-    await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
+  /**
+   * Confirms the nudge for the user
+   * Moves the next nudge date to 6 months from now if the user has skipped the overview
+   * Moves the next nudge date to 1 month from now if the user has skipped the email or mobile phone number
+   * Sets the email and mobile phone number status to empty if the user has skipped the overview, that means the user has seen the nudge and acknowledged that the data is empty
+   * Sets the email and mobile phone number status to empty if the user has skipped the email or mobile phone number, that means the user has seen the nudge and acknowledged that the data is empty
+   * @param nationalId
+   * @param nudgeType
+   */
+  async confirmNudge(nationalId: string, nudgeType: NudgeType): Promise<void> {
+    const date = new Date()
+
+    const currentProfile = await this.userProfileModel.findOne({
+      where: {
+        nationalId,
+      },
+    })
+
+    await this.userProfileModel.upsert({
+      nationalId,
+      lastNudge: date,
+      nextNudge: addMonths(
+        date,
+        nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
+      ),
+      ...(currentProfile?.emailStatus === DataStatus.NOT_DEFINED &&
+        (nudgeType === NudgeType.SKIP_EMAIL ||
+          nudgeType === NudgeType.NUDGE) && {
+          emailStatus: DataStatus.EMPTY,
+        }),
+      ...(currentProfile?.mobileStatus === DataStatus.NOT_DEFINED &&
+        (nudgeType === NudgeType.SKIP_PHONE ||
+          nudgeType === NudgeType.NUDGE) && {
+          mobileStatus: DataStatus.EMPTY,
+        }),
+    })
   }
 
   private checkNeedsNudge(userProfile: UserProfile): boolean | null {
-    if (userProfile.lastNudge) {
-      const cutOffDate = subMonths(new Date(), NUDGE_INTERVAL)
-
+    if (userProfile.nextNudge) {
       if (!userProfile.email && !userProfile.mobilePhoneNumber) {
-        return userProfile.lastNudge < cutOffDate
+        return userProfile.nextNudge < new Date()
       }
 
       if (
         (userProfile.email && userProfile.emailVerified) ||
         (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
       ) {
-        return userProfile.lastNudge < cutOffDate
+        return userProfile.nextNudge < new Date()
       }
     } else {
       if (
@@ -260,6 +322,33 @@ export class UserProfileService {
     }
 
     return null
+  }
+
+  private hasUnverifiedOrNotDefinedData({
+    email,
+    mobilePhoneNumber,
+    emailVerified,
+    mobilePhoneNumberVerified,
+    mobileStatus,
+    emailStatus,
+  }: {
+    email: string
+    mobilePhoneNumber: string
+    emailVerified: boolean
+    mobilePhoneNumberVerified: boolean
+    mobileStatus: DataStatus
+    emailStatus: DataStatus
+  }): boolean {
+    if ((email && !emailVerified) || emailStatus === DataStatus.NOT_DEFINED) {
+      return true
+    } else if (
+      (mobilePhoneNumber && !mobilePhoneNumberVerified) ||
+      mobileStatus === DataStatus.NOT_DEFINED
+    ) {
+      return true
+    } else {
+      return false
+    }
   }
 
   /**

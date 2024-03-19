@@ -6,6 +6,7 @@ import {
   ClientClaim,
   ClientGrantType,
   DelegationDTO,
+  DelegationIndex,
   DelegationScopeDTO,
   IdentityResource,
   PersonalRepresentativeRightTypeDTO,
@@ -60,5 +61,28 @@ export type CreatePersonalRepresentativeDelegation = Optional<
   'toNationalId' | 'fromNationalId' | 'fromName' | 'validTo'
 > & {
   type?: CreatePersonalRepresentativeType
-  rightType?: CreatePersonalRepresentativeRightType
+  rightTypes?: CreatePersonalRepresentativeRightType[]
+}
+
+export type CreateDelegationIndexRecord = Optional<
+  Pick<
+    DelegationIndex,
+    | 'fromNationalId'
+    | 'toNationalId'
+    | 'provider'
+    | 'type'
+    | 'validTo'
+    | 'customDelegationScopes'
+  >,
+  | 'fromNationalId'
+  | 'toNationalId'
+  | 'provider'
+  | 'type'
+  | 'validTo'
+  | 'customDelegationScopes'
+>
+
+export type CreatePersonalRepresentativeScopePermission = {
+  rightTypeCode: string
+  apiScopeName: string
 }
