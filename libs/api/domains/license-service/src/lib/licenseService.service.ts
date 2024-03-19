@@ -526,9 +526,19 @@ export class LicenseServiceService {
 
   async createBarcode(user: User, genericUserLicense: GenericUserLicense) {
     const code = randomUUID()
-    const licenseType = this.mapLicenseType(genericUserLicense.license.type)
+    const genericUserLicenseType = genericUserLicense.license.type
+    const licenseType = this.mapLicenseType(genericUserLicenseType)
 
     const client = await this.getClient<typeof licenseType>(licenseType)
+
+    if (!client.clientSupportsPkPass) {
+      this.logger.warn('License type does not support barcode', {
+        licenseType,
+      })
+
+      return null
+    }
+
     let extraData: LicenseVerifyExtraDataResult<LicenseType> | undefined
 
     if (client?.verifyExtraData) {
