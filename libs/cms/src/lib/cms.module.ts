@@ -21,6 +21,7 @@ import { OrganizationTitleByReferenceIdLoader } from './loaders/organizationTitl
 import { OrganizationLinkByReferenceIdLoader } from './loaders/organizationLinkByKey.loader'
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
+import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
@@ -38,6 +39,7 @@ import { PowerBiConfig } from './powerbi.config'
     FeaturedSupportQNAsResolver,
     OrganizationLogoLoader,
     OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
@@ -49,6 +51,7 @@ import { PowerBiConfig } from './powerbi.config'
     CmsContentfulService,
     OrganizationLogoLoader,
     OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
     CmsElasticsearchService,
   ],
