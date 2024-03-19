@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common'
 
 import { NestDataLoader } from '@island.is/nest/dataloader'
 import { CmsContentfulService } from '../cms.contentful.service'
+import { ShortTitle } from './organizationTitleByKey.loader'
 
-export type ShortTitle = string | null
 
-export type OrganizationTitleByReferenceIdDataLoader = DataLoader<
+export type OrganizationTitleEnByReferenceIdDataLoader = DataLoader<
   string,
   ShortTitle,
   string
 >
 
 @Injectable()
-export class OrganizationTitleByReferenceIdLoader
+export class OrganizationTitleEnByReferenceIdLoader
   implements NestDataLoader<string, ShortTitle>
 {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
@@ -24,13 +24,13 @@ export class OrganizationTitleByReferenceIdLoader
     const organizationTitles =
       await this.cmsContentfulService.getOrganizationTitles(
         organizationKeys as string[],
-        'is'
+        'en'
       )
 
     return organizationTitles
   }
 
-  generateDataLoader(): OrganizationTitleByReferenceIdDataLoader {
+  generateDataLoader(): OrganizationTitleEnByReferenceIdDataLoader {
     return new DataLoader((keys) => this.loadOrganizationTitle(keys))
   }
 }
