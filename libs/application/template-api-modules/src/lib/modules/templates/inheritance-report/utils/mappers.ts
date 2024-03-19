@@ -95,7 +95,9 @@ export const expandAnswers = (
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
             accountNumber: account.accountNumber ?? '',
-            balance: account.balance ?? '',
+            capital: account.capital ?? '',
+            penaltyInterestRates: account.penaltyInterestRates ?? '',
+            foreignBankAccount: account?.foreignBankAccount ?? [],
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -172,8 +174,11 @@ export const expandAnswers = (
       businessAssets: {
         data: (answers.business.businessAssets?.data ?? []).map((asset) => {
           return {
+            assetType: asset.assetType ?? '',
+            assetNumber: asset.assetNumber ?? '',
+            description: asset.description ?? '',
             businessAsset: asset.businessAsset ?? '',
-            businessAssetValue: asset.businessAssetValue ?? 0,
+            businessAssetValue: asset.businessAssetValue ?? '',
           }
         }),
         total: answers.business.businessAssets?.total ?? 0,
@@ -209,7 +214,20 @@ export const expandAnswers = (
       },
       publicCharges: (answers.debts.publicCharges ?? 0).toString(),
     },
-    funeralCostAmount: answers.funeralCostAmount ?? '',
+    funeralCost: {
+      build: answers?.funeralCost?.build ?? '',
+      cremation: answers?.funeralCost?.cremation ?? '',
+      print: answers?.funeralCost?.print ?? '',
+      flowers: answers?.funeralCost?.flowers ?? '',
+      music: answers?.funeralCost?.music ?? '',
+      rent: answers?.funeralCost?.rent ?? '',
+      food: answers?.funeralCost?.food ?? '',
+      tombstone: answers?.funeralCost?.tombstone ?? '',
+      hasOther: answers?.funeralCost?.hasOther ?? [],
+      other: answers?.funeralCost?.other ?? '',
+      otherDetails: answers?.funeralCost?.otherDetails ?? '',
+      total: answers?.funeralCost?.total ?? '',
+    },
     heirs: {
       data: (answers.heirs?.data ?? []).map((heir) => {
         return {
@@ -236,6 +254,13 @@ export const expandAnswers = (
         }
       }),
       total: answers.heirs?.total ?? 0,
+    },
+    spouse: {
+      wasInCohabitation: answers?.spouse?.wasInCohabitation,
+      hadSeparateProperty: answers?.spouse?.hadSeparateProperty,
+      spouseTotalDeduction: answers?.spouse?.spouseTotalDeduction ?? 0,
+      spouseTotalSeparateProperty:
+        answers?.spouse?.spouseTotalSeparateProperty ?? 0,
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',

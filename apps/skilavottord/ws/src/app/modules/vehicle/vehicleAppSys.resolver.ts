@@ -1,17 +1,10 @@
-import {
-  Inject,
-  NotFoundException,
-  UseGuards,
-  forwardRef,
-} from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import parse from 'date-fns/parse'
 
 import { CurrentUser, User } from '../auth'
 
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
-import { SamgongustofaService } from '../samgongustofa'
 import { CreateVehicleInput } from './dto/createVehicle.input'
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
@@ -19,51 +12,24 @@ import { VehicleService } from './vehicle.service'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleModel)
 export class VehicleAppSysResolver {
-  constructor(
-    private vehicleService: VehicleService,
-    @Inject(forwardRef(() => SamgongustofaService))
-    private samgongustofaService: SamgongustofaService,
-  ) {}
+  constructor(private vehicleService: VehicleService) {}
 
   @Mutation(() => Boolean)
   async createSkilavottordVehicleAppSys(
     @CurrentUser() user: User,
     @Args('input') input: CreateVehicleInput,
   ) {
-    logger.info(`Creating Vehicle ${input.permno}`, {
-      permno: input.permno,
+    logger.info(`car-recycling: Creating Vehicle ${input.permno.slice(-3)}`, {
       mileage: input.mileage,
-      userName: user.name,
     })
 
-    const vehicle = await this.samgongustofaService.getUserVehicle(
-      user.nationalId,
-      input.permno,
-    )
-
-    logger.info(`Vehicle ${input.permno}`, { vehicle })
-
-    if (!vehicle) {
-      logger.error(
-        `Vehicle ${input.permno} not allowed for recycling or is not found for user ${user.name}`,
-        { permno: input.permno, user },
-      )
-      throw new NotFoundException(
-        `User ${user.nationalId} does not own the requested vehicle`,
-      )
-    }
-
     const newVehicle = new VehicleModel()
-    newVehicle.vinNumber = vehicle.vinNumber
-    newVehicle.newregDate = parse(
-      vehicle.firstRegDate,
-      'dd.MM.yyyy',
-      new Date(),
-    )
-    newVehicle.vehicleColor = vehicle.color
-    newVehicle.vehicleType = vehicle.type
+    newVehicle.vinNumber = input.vin
+    newVehicle.newregDate = input.firstRegistrationDate
+    newVehicle.vehicleColor = input.color
+    newVehicle.vehicleType = input.make
     newVehicle.ownerNationalId = user.nationalId
-    newVehicle.vehicleId = vehicle.permno
+    newVehicle.vehicleId = input.permno
     newVehicle.mileage = input.mileage
 
     return await this.vehicleService.create(newVehicle)

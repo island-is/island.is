@@ -47,6 +47,7 @@ const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
   namespace,
   universities,
+  locale,
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
@@ -125,7 +126,10 @@ const LandingPage: Screen<LandingPageProps> = ({
                             </Box>
                             <LinkV2
                               href={
-                                university.contentfulLink?.toString() || '/'
+                                locale === 'is'
+                                  ? university.contentfulLink?.toString() || '/'
+                                  : university.contentfulLinkEn?.toString() ||
+                                    '/'
                               }
                             >
                               <Text color="blueberry600">
@@ -163,7 +167,11 @@ const LandingPage: Screen<LandingPageProps> = ({
                         />
                       </Box>
                       <LinkV2
-                        href={university.contentfulLink?.toString() || '/'}
+                        href={
+                          locale === 'is'
+                            ? university.contentfulLink?.toString() || '/'
+                            : university.contentfulLinkEn?.toString() || '/'
+                        }
                       >
                         <Text color="blueberry600">
                           {university.contentfulTitle}
@@ -184,6 +192,51 @@ const LandingPage: Screen<LandingPageProps> = ({
           display="flex"
           flexDirection={'column'}
         >
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <Box>
+              <Text variant="h3" paddingBottom={1}>
+                {n('landingPageIntroTitle', 'Finndu þitt nám hér')}
+              </Text>
+              <Text variant="default">
+                {n(
+                  'landingPageIntroSubTitle',
+                  'Leitaðu upplýsinga um háskólanám á Íslandi.',
+                )}
+              </Text>
+            </Box>
+          </GridColumn>
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <Input
+              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
+              id="searchuniversity"
+              name="filterInput"
+              size="md"
+              value={searchTerm}
+              className={cn(styles.searchInput)}
+              backgroundColor="blue"
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+              }}
+              onKeyDown={(k) => {
+                if (k.code === 'Enter') {
+                  routeToSearch()
+                }
+              }}
+            />
+            <button
+              aria-label="Search"
+              className={cn(styles.searchIcon)}
+              onClick={() => routeToSearch()}
+            >
+              <Icon size="large" icon="search" color="blue400" />
+            </button>
+          </GridColumn>
           {organizationPage?.slices?.map((slice, index) => {
             return (
               <Box key={index}>
@@ -209,40 +262,11 @@ const LandingPage: Screen<LandingPageProps> = ({
             span={['9/9', '9/9', '11/12']}
             offset={['0', '0', '1/12']}
           >
-            <Input
-              label={n('searchPrograms', 'Leit í háskólanámi')}
-              id="searchuniversity"
-              name="filterInput"
-              size="md"
-              value={searchTerm}
-              className={cn(styles.searchInput)}
-              backgroundColor="blue"
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
-              }}
-              onKeyDown={(k) => {
-                if (k.code === 'Enter') {
-                  routeToSearch()
-                }
-              }}
-            />
-            <button
-              aria-label="Search"
-              className={cn(styles.searchIcon)}
-              onClick={() => routeToSearch()}
-            >
-              <Icon size="large" icon="search" color="blue400" />
-            </button>
-          </GridColumn>
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
             <NewsCard
               title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
               readMoreText={`${n(
-                'applyToUniversityProgram',
-                'Sækja um í Háskóla',
+                'searchForProgram',
+                'Leitaðu að háskólanámi',
               )}`}
               introduction={n(
                 'straightToApplying',
@@ -251,7 +275,11 @@ const LandingPage: Screen<LandingPageProps> = ({
               image={{
                 url: 'https://images.ctfassets.net/8k0h54kbe6bj/442DRqHvfQcYnuffRbnbHD/5d27a2e0a399aef064d5b3702821ff0b/woman_in_chair.png',
               }}
-              href={''}
+              href={
+                locale === 'is'
+                  ? 'https://island.is/haskolanam/leit'
+                  : 'https://island.is/en/university-studies/search'
+              }
             />
           </GridColumn>
         </Box>
@@ -332,4 +360,6 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(LandingPage, { showFooter: false })
+export default withMainLayout(LandingPage, {
+  showFooter: false,
+})

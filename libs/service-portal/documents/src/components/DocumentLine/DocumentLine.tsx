@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 
 import {
   Document,
@@ -15,7 +15,7 @@ import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import AvatarImage from './AvatarImage'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
@@ -67,6 +67,9 @@ export const DocumentLine: FC<Props> = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const date = format(new Date(documentLine.date), dateFormat.is)
+  const { id } = useParams<{
+    id: string
+  }>()
 
   const {
     submitMailAction,
@@ -89,6 +92,12 @@ export const DocumentLine: FC<Props> = ({
   useEffect(() => {
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
+
+  useEffect(() => {
+    if (id === documentLine.id) {
+      onLineClick()
+    }
+  }, [id, documentLine])
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -161,6 +170,18 @@ export const DocumentLine: FC<Props> = ({
   }, [fileLoading])
 
   const onLineClick = async () => {
+    if (documentLine?.id) {
+      navigate(
+        DocumentsPaths.ElectronicDocumentSingle.replace(
+          ':id',
+          documentLine?.id,
+        ),
+        { replace: true },
+      )
+    } else {
+      navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
+    }
+
     getFileByIdData
       ? displayPdf()
       : await getDocument({
@@ -242,6 +263,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
+              id={active ? `button-${documentLine.id}` : undefined}
               className={styles.docLineButton}
             >
               <Text

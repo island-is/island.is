@@ -11,16 +11,16 @@ import { Box, Column, SkeletonLoader } from '@island.is/island-ui/core'
 
 import { useGetInnaPeriodsQuery } from './Periods.generated'
 import { tagSelector } from '../../utils/tagSelector'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { edMessage } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const EducationGraduationDetail = () => {
+  useNamespaces('sp.education-secondary-school')
   const { data: innaData, loading, error } = useGetInnaPeriodsQuery()
   const { formatMessage } = useLocale()
 
   const periodItems = innaData?.innaPeriods?.items || []
-  const noData = !periodItems.length && !loading && !error
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -58,6 +58,17 @@ export const EducationGraduationDetail = () => {
           </Column>
         )}
       </Box>
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && !loading && !periodItems.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
       {periodItems.length > 0 &&
         !loading &&
         periodItems.map((item, i) => (
@@ -94,17 +105,6 @@ export const EducationGraduationDetail = () => {
             />
           </Box>
         ))}
-
-      {error && <Problem noBorder={false} error={error} />}
-      {noData && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
     </Box>
   )
 }

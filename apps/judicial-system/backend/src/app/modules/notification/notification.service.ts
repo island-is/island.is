@@ -19,6 +19,7 @@ import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
+  INDICTMENTS_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
@@ -1552,6 +1553,35 @@ export class NotificationService {
     )
   }
   //#endregion
+  //#region INDICTMENT_DENIED notifications
+
+  private async sendIndictmentDeniedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(notifications.indictmentDenied.subject)
+    const html = this.formatMessage(notifications.indictmentDenied.body, {
+      caseNumber: theCase.policeCaseNumbers[0],
+      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    const recipient = await this.sendEmail(
+      subject,
+      html,
+      theCase.prosecutor?.name,
+      theCase.prosecutor?.email,
+      undefined,
+      true,
+    )
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.INDICTMENT_DENIED,
+      [recipient],
+    )
+  }
+
+  //#endregion
   //#region Appeal notifications
   //#region APPEAL_TO_COURT_OF_APPEALS notifications
 
@@ -2351,6 +2381,8 @@ export class NotificationService {
         return this.sendAppealCaseFilesUpdatedNotifications(theCase, user)
       case NotificationType.APPEAL_WITHDRAWN:
         return this.sendAppealWithdrawnNotifications(theCase, user)
+      case NotificationType.INDICTMENT_DENIED:
+        return this.sendIndictmentDeniedNotifications(theCase)
     }
   }
 
@@ -2374,15 +2406,6 @@ export class NotificationService {
           break
         case NotificationType.READY_FOR_COURT:
           messages = this.getReadyForCourtNotificationMessages(user, theCase)
-          break
-        case NotificationType.RECEIVED_BY_COURT:
-          messages = [
-            this.getNotificationMessage(
-              MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
-              user,
-              theCase,
-            ),
-          ]
           break
         case NotificationType.COURT_DATE:
           if (notification.eventOnly) {
@@ -2409,15 +2432,6 @@ export class NotificationService {
               ),
             ]
           }
-          break
-        case NotificationType.REVOKED:
-          messages = [
-            this.getNotificationMessage(
-              MessageType.SEND_REVOKED_NOTIFICATION,
-              user,
-              theCase,
-            ),
-          ]
           break
         case NotificationType.DEFENDER_ASSIGNED:
           messages = [
@@ -2446,16 +2460,6 @@ export class NotificationService {
             ),
           ]
           break
-        case NotificationType.APPEAL_WITHDRAWN:
-          messages = [
-            this.getNotificationMessage(
-              MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
-              user,
-              theCase,
-            ),
-          ]
-          break
-
         default:
           throw new InternalServerErrorException(
             `Invalid notification type ${notification.type}`,

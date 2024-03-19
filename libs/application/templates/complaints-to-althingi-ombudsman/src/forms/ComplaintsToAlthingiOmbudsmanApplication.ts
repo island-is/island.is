@@ -44,6 +44,7 @@ import {
   confirmation,
   complaintOverview,
   previousOmbudsmanComplaint,
+  application as applicationMessage,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -61,7 +62,7 @@ import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
-  title: 'Kvörtun til umboðsmanns Alþingis',
+  title: applicationMessage.general.name,
   mode: FormModes.DRAFT,
   logo: Logo,
   children: [
@@ -511,6 +512,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
+      alertMessage: confirmation.general.alertMessage,
+      multiFieldTitle: confirmation.general.multiFieldTitle,
       expandableHeader: confirmation.information.title,
       expandableIntro: confirmation.information.intro,
       expandableDescription: confirmation.information.bulletList,

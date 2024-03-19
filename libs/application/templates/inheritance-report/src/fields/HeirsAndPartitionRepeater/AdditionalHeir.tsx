@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
@@ -23,6 +24,7 @@ import { EstateMember } from '../../types'
 import { ErrorValue } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
+import ShareInput from '../../components/ShareInput'
 
 export const AdditionalHeir = ({
   field,
@@ -194,6 +196,7 @@ export const AdditionalHeir = ({
                 requiredNationalId: true,
               },
             }}
+            backgroundColor="blue"
             error={error}
           />
         </Box>
@@ -243,7 +246,7 @@ export const AdditionalHeir = ({
               ) : null}
 
               {customField.id === 'relation' ? (
-                <GridColumn span="1/1" paddingBottom={2}>
+                <GridColumn span="1/2" paddingBottom={2}>
                   <SelectController
                     id={relationField}
                     name={relationField}
@@ -259,24 +262,15 @@ export const AdditionalHeir = ({
                   />
                 </GridColumn>
               ) : customField.id === 'heirsPercentage' ? (
-                <GridColumn span={['1/2']} paddingBottom={2}>
-                  <InputController
-                    id={`${fieldIndex}.${customField.id}`}
+                <GridColumn span="1/2" paddingBottom={2}>
+                  <ShareInput
                     name={`${fieldIndex}.${customField.id}`}
                     disabled={!currentHeir.enabled}
                     label={customField.title}
-                    defaultValue={defaultValue ? defaultValue : '0'}
-                    type="number"
-                    suffix="%"
-                    onChange={(
-                      event: React.ChangeEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                      >,
-                    ) => {
-                      const val = parseInt(event.target.value, 10)
+                    onAfterChange={(val) => {
                       updateValues(fieldIndex, val)
                     }}
-                    error={
+                    errorMessage={
                       error && error[index]
                         ? error[index][customField.id]
                         : undefined
@@ -330,6 +324,7 @@ export const AdditionalHeir = ({
                 field={{
                   id: `${fieldIndex}.advocate`,
                 }}
+                backgroundColor="blue"
                 error={error}
               />
             </GridColumn>
@@ -359,25 +354,27 @@ export const AdditionalHeir = ({
           </GridRow>
         </Box>
       )}
-      <GridColumn span="1/1" paddingBottom={2}>
-        <Box width="half">
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: YES,
-              },
-            ]}
-            onSelect={(val) => {
-              setValue(foreignCitizenshipField, val)
-            }}
-          />
-        </Box>
-      </GridColumn>
+      <GridRow>
+        <GridColumn span="1/1" paddingBottom={2}>
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
+            />
+          </Box>
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }

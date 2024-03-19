@@ -9,24 +9,27 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
-import {
-  useGetCurrentCollection,
-  useGetListsForUser,
-  useGetSignedList,
-} from '../../hooks'
+import { useGetListsForUser, useGetSignedList } from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import SignedList from '../../components/SignedList'
 import { useAuth } from '@island.is/auth/react'
+import { SignatureCollection } from '../../types/schema'
+import { sortAlpha } from '@island.is/shared/utils'
 
-const SigneeView = () => {
+const SigneeView = ({
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   useNamespaces('sp.signatureCollection')
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
-  const { currentCollection } = useGetCurrentCollection()
   const { signedLists, loadingSignedLists } = useGetSignedList()
-  const { listsForUser, loadingUserLists } = useGetListsForUser()
+  const { listsForUser, loadingUserLists } = useGetListsForUser(
+    currentCollection?.id,
+  )
 
   return (
     <Box>
@@ -52,7 +55,10 @@ const SigneeView = () => {
           )}
           {listsForUser.length === 0 && signedLists.length === 0 && (
             <Box marginTop={10}>
-              <EmptyState title={m.noCollectionIsActive} />
+              <EmptyState
+                title={m.noCollectionIsActive}
+                description={m.noCollectionIsActiveDescription}
+              />
             </Box>
           )}
           <Box marginTop={[2, 7]}>
@@ -67,8 +73,8 @@ const SigneeView = () => {
                 </Text>
               )}
 
-              <Stack space={5}>
-                {listsForUser?.map((list) => {
+              <Stack space={3}>
+                {listsForUser?.sort(sortAlpha('title')).map((list) => {
                   return (
                     <ActionCard
                       key={list.id}

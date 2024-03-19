@@ -19,7 +19,6 @@ export const EducationGraduationDetail = () => {
   const { formatMessage } = useLocale()
 
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
-  const noData = !diplomaItems.length && !loading && !error
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -33,6 +32,17 @@ export const EducationGraduationDetail = () => {
         serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
         serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && !loading && !diplomaItems.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
       <Box marginTop={4}>{loading && <CardLoader />}</Box>
       <Box marginBottom={3}>
         {diplomaItems.length > 0 &&
@@ -60,17 +70,6 @@ export const EducationGraduationDetail = () => {
               />
             </Box>
           ))}
-
-        {error && <Problem noBorder={false} error={error} />}
-        {noData && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFoundDetail)}
-            imgSrc="./assets/images/sofa.svg"
-          />
-        )}
       </Box>
     </Box>
   )

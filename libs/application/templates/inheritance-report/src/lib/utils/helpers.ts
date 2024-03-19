@@ -69,20 +69,17 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
  * @param value
  * @returns number
  */
-export const valueToNumber = (value?: unknown): number => {
-  if (!value) {
-    return 0
-  }
-
+export const valueToNumber = (value: unknown, delimiter = '.'): number => {
   if (typeof value === 'number') {
     return value
   }
 
-  if (typeof value === 'string') {
-    const numStr = value.replace(/[^0-9]/g, '')
-    const num = parseFloat(numStr)
+  if (typeof value === 'string' && value.length > 0) {
+    const regex = new RegExp(`[^${delimiter}\\d]+`, 'g')
+    const regex2 = new RegExp(`(?<=\\${delimiter}.*)\\${delimiter}`, 'g')
 
-    return isNaN(num) ? 0 : num
+    const parsed = value.replace(regex, '').replace(regex2, '')
+    return parseFloat(parsed.replace(delimiter, '.'))
   }
 
   return 0

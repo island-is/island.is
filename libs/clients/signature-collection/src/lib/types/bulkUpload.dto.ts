@@ -24,7 +24,7 @@ export const mapBulkResponse = (
     })) ?? []),
     ...(signatures.medMedmaeliALista?.map((nationalId) => ({
       nationalId,
-      reason: 'Þegar meðmæli á lista',
+      reason: 'Þegar meðmæli á þessum lista',
     })) ?? []),
     ...(signatures.notFound?.map((nationalId) => ({
       nationalId,
@@ -41,6 +41,10 @@ export const mapBulkResponse = (
     ...(signatures.ekkiIsRik?.map((nationalId) => ({
       nationalId,
       reason: 'Ekki með íslenskt ríkisfang',
+    })) ?? []),
+    ...(signatures.ekkiBuseta?.map((nationalId) => ({
+      nationalId,
+      reason: 'Ekki með íslenska búsetu',
     })) ?? []),
   ],
 })

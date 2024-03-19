@@ -417,7 +417,7 @@ export const m = defineMessages({
   },
   vehicleNumberLabel: {
     id: 'ir.application:vehicleNumberLabel',
-    defaultMessage: 'Skráningarnúmer ökutækis',
+    defaultMessage: 'Fastanúmer ökutækis',
     description: 'Vehicle number label',
   },
   vehicleTypeLabel: {
@@ -488,6 +488,16 @@ export const m = defineMessages({
   bankAccountBalance: {
     id: 'ir.application:bankAccountBalance',
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
+    description: '',
+  },
+  bankAccountCapital: {
+    id: 'ir.application:bankAccountCapital',
+    defaultMessage: 'Höfuðstóll á dánardegi',
+    description: '',
+  },
+  bankAccountPenaltyInterestRates: {
+    id: 'ir.application:bankAccountPenaltyInterestRates',
+    defaultMessage: 'Áfallnir vextir á dánardegi',
     description: '',
   },
   bankAccountPlaceholder: {
@@ -737,17 +747,88 @@ export const m = defineMessages({
   },
   funeralCostTitle: {
     id: 'ir.application:funeralCostTitle',
-    defaultMessage: 'Útfarakostnaður',
+    defaultMessage: 'Útfararkostnaður',
     description: '',
   },
   funeralCostDescription: {
     id: 'ir.application:funeralCostDescription',
-    defaultMessage: 'Útfarakostnaður samkvæmt yfirlit um útfarakostnað.',
+    defaultMessage: 'Útfararkostnaður samkvæmt yfirliti um útfararkostnað.',
     description: '',
   },
   amount: {
+    id: 'ir.application:amount',
+    defaultMessage: 'Fjárhæð',
+    description: '',
+  },
+  funeralCostAmount: {
     id: 'ir.application:funeralCostAmount',
     defaultMessage: 'Fjárhæð',
+    description: '',
+  },
+  funeralBuildCost: {
+    id: 'ir.application:funeralBuildCost',
+    defaultMessage: 'Smíði kistu og umbúnaður',
+    description: '',
+  },
+  funeralCremationCost: {
+    id: 'ir.application:funeralCremationCost',
+    defaultMessage: 'Líkbrennsla',
+    description: '',
+  },
+  funeralPrintCost: {
+    id: 'ir.application:funeralPrintCost',
+    defaultMessage: 'Prentun',
+    description: '',
+  },
+  funeralFlowersCost: {
+    id: 'ir.application:funeralFlowersCost',
+    defaultMessage: 'Blóm',
+    description: '',
+  },
+  funeralMusicCost: {
+    id: 'ir.application:funeralMusicCost',
+    defaultMessage: 'Tónlistarflutningur',
+    description: '',
+  },
+  funeralRentCost: {
+    id: 'ir.application:funeralRentCost',
+    defaultMessage: 'Leiga á sal',
+    description: '',
+  },
+  funeralFoodAndDrinkCost: {
+    id: 'ir.application:funeralFoodAndDrinkCost',
+    defaultMessage: 'Erfidrykkja',
+    description: '',
+  },
+  funeralTombstoneCost: {
+    id: 'ir.application:funeralTombstoneCost',
+    defaultMessage: 'Legsteinn (áætlaður kostnaður)',
+    description: '',
+  },
+  funeralOtherCostQuestion: {
+    id: 'ir.application:funeralOtherCostQuestion',
+    defaultMessage: 'Annar kostnaður?',
+    description: '',
+  },
+  funeralOtherCost: {
+    id: 'ir.application:funeralOtherCost',
+    defaultMessage: 'Annar kostnaður',
+    description: '',
+  },
+  funeralOtherCostDetails: {
+    id: 'ir.application:funeralOtherCostDetails',
+    defaultMessage:
+      'Vinsamlegast tilgreinið með nánari hætti hvað felst í öðrum kostnaði',
+    description: '',
+  },
+  funeralOtherCostDetailsOverview: {
+    id: 'ir.application:funeralOtherCostDetailsOverview',
+    defaultMessage: 'Hvað felst í öðrum kostnaði',
+    description: '',
+  },
+  totalCost: {
+    id: 'ir.application:totalCost',
+    defaultMessage: 'Heildarkostnaður',
     description: '',
   },
   debtsTitle: {
@@ -896,6 +977,54 @@ export const m = defineMessages({
   spousesShare: {
     id: 'ir.application:spousesShare',
     defaultMessage: 'Búshluti eftirlifandi maka',
+    description: '',
+  },
+  deceasedSeparateProperty: {
+    id: 'ir.application:deceasedSeparateProperty',
+    defaultMessage: 'Séreign hins látna',
+    description: '',
+  },
+  spousesShareDescription: {
+    id: 'ir.application:spousesShareDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  wasInCohabitation: {
+    id: 'ir.application:wasInCohabitation',
+    defaultMessage: 'Var hinn látni í hjúskap?',
+    description: '',
+  },
+  hadSeparateProperty: {
+    id: 'ir.application:hadSeparateProperty',
+    defaultMessage:
+      'Átti hinn látni séreign í hjúskapnum samkvæmt kaupmála eða fyrirmælum í erfðaskrá?',
+    description: '',
+  },
+  totalSeparateProperty: {
+    id: 'ir.application:totalSeparateProperty',
+    defaultMessage:
+      'Vinsamlegast tilgreindu heildarverðmæti séreignar hins látna.',
+    description: '',
+  },
+  totalSeparatePropertyDescription: {
+    id: 'ir.application:totalSeparatePropertyDescription',
+    defaultMessage: '[Nánari lýsing hér fyrir til að útskýra þessa upphæð]',
+    description: '',
+  },
+  errorTotalSeparateProperty: {
+    id: 'ir.application:errorTotalSeparateProperty',
+    defaultMessage: 'Vantar að fylla út.',
+    description: '',
+  },
+  errorTotalDeduction: {
+    id: 'ir.application:errorTotalDeduction',
+    defaultMessage: 'Vantar að fylla út.',
+    description: '',
+  },
+  totalSeparatePropertyLabel: {
+    id: 'ir.application:totalSeparatePropertyLabel',
+    defaultMessage: 'Heildarverðmæti séreignir hins látna',
     description: '',
   },
   propertyForExchange: {
@@ -1140,6 +1269,11 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn athugasemdir hér',
     description: '',
   },
+  invalidShareValue: {
+    id: 'ir.application:invalidShareValue',
+    defaultMessage: 'Ógilt eignarhlutfall',
+    description: '',
+  },
   totalPercentage: {
     id: 'ir.application:totalPercentage',
     defaultMessage: 'Samtals arfshlutfall',
@@ -1206,9 +1340,10 @@ export const m = defineMessages({
   },
 
   // Tax Free Limit
+  // This will be fetched from sýslumaður API when ready
   taxFreeLimit: {
     id: 'ir.application:taxFreeLimit',
-    defaultMessage: '5757759',
+    defaultMessage: '6203409',
     description: '',
   },
 

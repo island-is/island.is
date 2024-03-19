@@ -450,6 +450,7 @@ enum LicenseTypePath {
   okurettindi = 'okurettindi',
   skotvopnaleyfi = 'skotvopnaleyfi',
   adrrettindi = 'adrrettindi',
+  veidikort = 'veidikort',
   vinnuvelarettindi = 'vinnuvelarettindi',
   ororkuskirteini = 'ororkuskirteini',
   pcard = 'pkort',
@@ -493,6 +494,12 @@ export const getLicenseDetailHeading = (
       return {
         title: formatMessage(m.yourMachineLicense),
         text: formatMessage(m.machineLicenseDescription),
+      }
+
+    case LicenseType.HuntingLicense:
+      return {
+        title: formatMessage(m.huntingLicense),
+        text: formatMessage(m.huntingLicenseDescription),
       }
 
     case LicenseType.FirearmLicense:
@@ -553,7 +560,11 @@ export const getTitleAndLogo = (type: string) => {
         title: m.machineLicense,
         logo: './assets/images/adr_machine.svg',
       }
-
+    case LicenseType.HuntingLicense:
+      return {
+        title: m.huntingLicense,
+        logo: './assets/images/umhverfisstofnun.svg',
+      }
     case LicenseType.FirearmLicense:
       return {
         title: m.firearmLicense,
@@ -591,6 +602,8 @@ export const getPathFromType = (type: string) => {
       return LicensePaths.MachineLicensesDetail
     case LicenseType.DisabilityLicense:
       return LicensePaths.DisabilityLicense
+    case LicenseType.HuntingLicense:
+      return LicensePaths.HuntingLicense
     case LicenseType.PCard:
       return LicensePaths.PCardDetail
     case LicenseType.Ehic:
@@ -611,7 +624,9 @@ export const getTypeFromPath = (path: string) => {
     case LicenseTypePath.vinnuvelarettindi:
       return LicenseType.MachineLicense
     case LicenseTypePath.ororkuskirteini:
-      return LicenseType.DisabilityLicense
+      return LicenseType.MachineLicense
+    case LicenseTypePath.veidikort:
+      return LicenseType.HuntingLicense
     case LicenseTypePath.pcard:
       return LicenseType.PCard
     case LicenseTypePath.ehic:

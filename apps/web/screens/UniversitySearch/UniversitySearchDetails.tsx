@@ -6,6 +6,7 @@ import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Accordion,
   AccordionItem,
@@ -37,7 +38,6 @@ import {
   GetUniversityGatewayQuery,
   GetUniversityGatewayQueryVariables,
   GetUniversityGatewayUniversitiesQuery,
-  OrganizationPage,
   Query,
   QueryGetOrganizationPageArgs,
   UniversityGatewayProgramCourse,
@@ -48,6 +48,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
@@ -86,8 +87,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     false,
     false,
   ])
-
-  console.log(data)
 
   const toggleIsOpen = (index: number) => {
     const newIsOpen = isOpen.map((x, i) => {
@@ -219,6 +218,60 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       : ReactHtmlParser(dataIs ? dataIs : '')
   }
 
+  const applicationUrlParser = () => {
+    switch (universityData.contentfulTitle) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://umsoknir.ru.is/'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
+  }
+
+  const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
+    const length = items.length
+
+    if (length === 0) {
+      return ''
+    }
+
+    if (length === 1) {
+      return n(items[0], TranslationDefaults[items[0]])
+    }
+
+    if (length === 2) {
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
+    }
+
+    const formattedList = items.map((item, index) => {
+      if (index === length - 1) {
+        return `${n('or', 'eða')} ${n(item, TranslationDefaults[item])}`
+      } else {
+        return `${n(item, TranslationDefaults[item])}, `
+      }
+    })
+
+    return formattedList.join('')
+  }
+
   return (
     <>
       {organizationPage && (
@@ -251,14 +304,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               imgSrc={universityData.contentfulLogoUrl || ''}
               alt="University infomation"
             />
-            <Box width="full">
-              <Button fluid>
-                <Box display={'flex'} style={{ gap: '0.5rem' }}>
-                  {n('applyToUniversityProgram', 'Sækja um háskólanám')}
-                  <Icon icon="open" type="outline" />
-                </Box>
-              </Button>
-            </Box>
           </Stack>
         }
       >
@@ -281,9 +326,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             <Box
               display={'flex'}
               flexDirection={'column'}
-              style={{ gap: '1rem' }}
+              style={{ gap: '0.5rem' }}
             >
-              <Box style={{ marginBottom: '-24px' }}>
+              <Box style={{ marginBottom: '-16px' }}>
                 <Webreader />
               </Box>
               <Text variant="h1" as="h2">
@@ -312,7 +357,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 {n('applyForProgram', 'Umsókn í háskólanám')}
               </Text>
 
-              <Button>
+              <Button onClick={() => router.push(applicationUrlParser())}>
                 <Box display={'flex'} style={{ gap: '0.5rem' }}>
                   {n('apply', 'Sækja um')}
                   <Icon icon="open" type="outline" />
@@ -326,11 +371,19 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
               {data.iscedCode && (
-                <Text variant="default">{`ISCED-F-2023: ${data.iscedCode}`}</Text>
+                <Text variant="small">{`${n('isced', 'ISCED Flokkun')}: ${
+                  data.iscedCode
+                }`}</Text>
               )}
-              <Text marginTop={3} marginBottom={3} variant="default">
-                {htmlParser(data.descriptionEn, data.descriptionIs)}
-              </Text>
+              <Box className="rs_read">
+                <Text marginTop={3} marginBottom={3} variant="default" as="div">
+                  {webRichText(
+                    (locale === 'is'
+                      ? [data.descriptionHtmlIs]
+                      : [data.descriptionHtmlEn]) as SliceType[],
+                  )}
+                </Text>
+              </Box>
               {data.externalUrlIs && (
                 <LinkV2
                   underlineVisibility="always"
@@ -434,16 +487,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       <Text variant="medium">{`${n(
                         'modeOfDelivery',
                         'Námsform',
-                      )}: ${data.modeOfDelivery.map((delivery, index) => {
-                        if (index !== 0) {
-                          return `, ${n(
-                            delivery,
-                            TranslationDefaults[delivery],
-                          )}`
-                        } else {
-                          return n(delivery, TranslationDefaults[delivery])
-                        }
-                      })}`}</Text>
+                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}`}</Text>
                     </Box>
                   </GridColumn>
                 </GridRow>
@@ -603,4 +647,6 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(UniversityDetails, { showFooter: false })
+export default withMainLayout(UniversityDetails, {
+  showFooter: false,
+})
