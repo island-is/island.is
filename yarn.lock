@@ -38098,10 +38098,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"netmask@npm:2.0.1":
-  version: 2.0.1
-  resolution: "netmask@npm:2.0.1"
-  checksum: 17bae91cecf9312116180757842e4516ab83e3fa6c3f4fa919380df17b6d24bab611c977f52e381c01ca63740e5d588fcedd89da4b33d1663b511af25ee54ac5
+"netmask@npm:^2.0.1":
+  version: 2.0.2
+  resolution: "netmask@npm:2.0.2"
+  checksum: c65cb8d3f7ea5669edddb3217e4c96910a60d0d9a4b52d9847ff6b28b2d0277cd8464eee0ef85133cdee32605c57940cacdd04a9a019079b091b6bba4cb0ec22
   languageName: node
   linkType: hard
 
