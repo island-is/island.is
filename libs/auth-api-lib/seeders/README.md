@@ -2,7 +2,7 @@
 
 You can define clients and scopes for production using seed migrations in the `seeders/data` folder.
 
-These are generally "island.is" clients and scopes that need to be deployed to our dev, staging and prod environments. Other organisations can get access to a self-service interface and should manage their data through that. 
+These are generally "island.is" clients and scopes that need to be deployed to our dev, staging and prod environments. Other organisations can get access to a self-service interface and should manage their data through that.
 
 Note that even though it is possible to create machine clients using this method we do not recommend doing so as the client secret will need to be manually added to a parameter storage.
 
@@ -45,7 +45,10 @@ export const up = createClient({
     procuringHolders: true,
   },
   redirectUris: {
-    dev: ['http://localhost:4444/some/path', 'https://beta.dev01.devland.is/some/path'],
+    dev: [
+      'http://localhost:4444/some/path',
+      'https://beta.dev01.devland.is/some/path',
+    ],
     staging: ['https://beta.staging01.devland.is/some/path'],
     prod: ['https://island.is/some/path'],
   },
@@ -65,7 +68,7 @@ Notes about the arguments:
 - `description` should describe the purpose of the client. Not shown to the user.
 - `contactNationalId` and `contactEmail` default to Digital Iceland and it's technical contact.
 - `grantTypes` specifies which token grant flows the client can use. Defaults to `['client_credentials']` for `machine` clients, `['authorization_code']` for `spa`, `web` and `native` clients.
-- `allowedScopes` lists the identity and/or api scopes this client can request. Machine clients should not request any identity scopes but `spa`, `web` and `native` clients usually request the `openid` and `profile` scopes. All clients can request api scopes. 
+- `allowedScopes` lists the identity and/or api scopes this client can request. Machine clients should not request any identity scopes but `spa`, `web` and `native` clients usually request the `openid` and `profile` scopes. All clients can request api scopes.
 - `supportDelegations` toggles whether users can authenticate to this client with delegations (legal guardians, procuring holders and custom delegations).
 - `delegations` specifies which types of delegations are allowed by the client.
 - `redirectUri` should specify the list of allowed redirect uris for each environment. Required for any client using the `authorization_code` grant type.
