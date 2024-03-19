@@ -12,6 +12,9 @@ import {
   hasMatchingContactInfo,
 } from './worker.utils'
 import { environment } from '../../environments'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import { NUDGE_INTERVAL } from '../v2/user-profile.service'
 
 /**
  * The purpose of this worker is to import user profiles from Advania
@@ -45,6 +48,7 @@ export class UserProfileWorkerService {
         email: advaniaProfile.email?.toLowerCase?.(),
         mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
         lastNudge: null,
+        nextNudge: null,
         documentNotifications: advaniaProfile.canNudge === true,
       })
     }
@@ -53,6 +57,7 @@ export class UserProfileWorkerService {
       return this.userProfileModel.upsert({
         nationalId: advaniaProfile.ssn,
         lastNudge: advaniaProfile.nudgeLastAsked,
+        nextNudge: addMonths(advaniaProfile.nudgeLastAsked, NUDGE_INTERVAL),
       })
     }
 
@@ -67,6 +72,7 @@ export class UserProfileWorkerService {
         ...emailAndPhoneFields,
         documentNotifications: advaniaProfile.canNudge === true,
         lastNudge: null,
+        nextNudge: null,
       })
     }
 
@@ -76,6 +82,10 @@ export class UserProfileWorkerService {
     return this.userProfileModel.upsert({
       nationalId,
       lastNudge: emailVerified || mobilePhoneNumberVerified ? modified : null,
+      nextNudge:
+        emailVerified || mobilePhoneNumberVerified
+          ? addMonths(modified, NUDGE_INTERVAL)
+          : null,
     })
   }
 
