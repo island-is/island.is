@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Front page', () => {
   test('has expected sections @lang:is', async ({ page }) => {
-    await page.goto('https://island.is')
+    await page.goto('/')
     await expect(
       page.locator('text=Öll opinber þjónusta á einum stað'),
     ).toBeVisible()
