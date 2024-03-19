@@ -2,25 +2,21 @@
 
 You can define clients and scopes for production using seed migrations in the `seeders/data` folder.
 
-These are generally "island.is" clients and scopes that need to be deployed to our dev, staging and prod environments. Other organisations will eventually get access to a self-service interface and should not need to manage their data in all IDS environments.
+These are generally "island.is" clients and scopes that need to be deployed to our dev, staging and prod environments. Other organisations can get access to a self-service interface and should manage their data through that. 
+
+Note that even though it is possible to create machine clients using this method we do not recommend doing so as the client secret will need to be manually added to a parameter storage.
 
 ## Defining seed migrations
 
 First, create a TypeScript module with a file name describing your new client or scope, prefixed with `client-` or `scope-` respectively. E.g. `scope-finance.ts`.
 
-{% hint style="info" %}
 The filename is important in that Sequelize uses the filename to deduplicate seed migrations. Each seed migration runs only once in each environment. This means you should avoid renaming migrations after they've run in some environments.
-{% endhint %}
 
-{% hint style="info" %}
 Seed migrations run in alphabetized order based on file names, which means that `client-*.ts` migrations are run before `scope-*.ts` migrations.
 
 If you're creating data that is connected and migrated in the same release, make sure that one (e.g. the client) is created first and then connect them when creating the other one (e.g. the `addToClients` option on the scope).
-{% endhint %}
 
-{% hint style="warning" %}
 It is not possible to import any modules from outside the `seeders/data` folder since everything in this folder is transpiled manually into the dist folder during build.
-{% endhint %}
 
 ### Creating clients
 
@@ -40,9 +36,14 @@ export const up = createClient({
   // Optional:
   contactNationalId: '1111111111',
   contactEmail: 'hello@test.is',
-  grantTypes: ['client_credentials']
+  grantTypes: ['client_credentials'],
   allowedScopes: ['openid', '@island.is/applications:read'],
   supportDelegations: true,
+  delegation: {
+    custom: false,
+    legalGuardians: true,
+    procuringHolders: true,
+  },
   redirectUris: {
     dev: ['http://localhost:4444/some/path', 'https://beta.dev01.devland.is/some/path'],
     staging: ['https://beta.staging01.devland.is/some/path'],
@@ -63,15 +64,14 @@ Notes about the arguments:
 - `displayName` will be shown to the user when they are authenticating to this client.
 - `description` should describe the purpose of the client. Not shown to the user.
 - `contactNationalId` and `contactEmail` default to Digital Iceland and it's technical contact.
-- `grantTypes` specifies which token grant flows the client can use. Defaults to `['client_credentials']` for `machine` and `web` clients, `['authorization_code']` for `spa` and `native` clients.
-- `allowedScopes` lists the scopes this client can request. Should include `openid` and any identity and api scopes that the client needs access to.
+- `grantTypes` specifies which token grant flows the client can use. Defaults to `['client_credentials']` for `machine` clients, `['authorization_code']` for `spa`, `web` and `native` clients.
+- `allowedScopes` lists the identity and/or api scopes this client can request. Machine clients should not request any identity scopes but `spa`, `web` and `native` clients usually request the `openid` and `profile` scopes. All clients can request api scopes. 
 - `supportDelegations` toggles whether users can authenticate to this client with delegations (legal guardians, procuring holders and custom delegations).
-- `redirectUri` should specify the list of allowed redirect uris for each environment.
-- `postLogoutRedirectUri` is where the user should be redirected to after logging out.
+- `delegations` specifies which types of delegations are allowed by the client.
+- `redirectUri` should specify the list of allowed redirect uris for each environment. Required for any client using the `authorization_code` grant type.
+- `postLogoutRedirectUri` is where the user should be redirected to after logging out. If no url is specified the user will be redirected to island.is frontpage
 
-{% hint style="info" %}
 The module export must be named `up` so Sequelize picks it up. You don't need to define `down` exports. All migrations should be one directional and backwards compatible and never need a rollback.
-{% endhint %}
 
 ### Creating scopes
 
@@ -102,11 +102,11 @@ export const up = createScope({
 Notes about the arguments:
 
 - `name` should be prefixed with the organisation domain, eg `@island.is`.
-- `displayName` is the name of the scope, shown to users.
-- `description` is a description of what the scope gives access to, also shown to users.
+- `displayName` is the name of the scope, shown to users if custom delegations are supported.
+- `description` is a description of what the scope gives access to, also shown to users if custom delegations are supported.
 - `delegation` allows you to configure if the scope should be automatically granted to legal guardians and procuring holders, or if it should support custom delegations. Defaults to no delegation support.
 - `accessControlled: true` makes this a special scope that normal users don't have access to. It is possible to give users access to this scope in the IDS admin. This is a simple tool to manage access to admin clients and resources.
-- `addToResource` specifies which resource this scope belongs to. Defaults to `@island.is`.
+- `addToResource` Deprecated, we no longer recommend assigning scopes to a resource or audience. Specifies which resource this scope belongs to. Defaults to `@island.is`.
 - `addToClients` adds this scope as `allowedScopes` for the specified clients.
 
 ### Using compose.
