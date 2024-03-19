@@ -22,12 +22,12 @@ import {
 import { logger } from '@island.is/logging'
 import { DocumentProviderPaperMailResponse } from '../models/PaperMail.model'
 import {
-  DocumentProviderCategories,
-  DocumentProviderTypes,
+  DocumentProviderCategory,
+  DocumentProviderType,
 } from '../models/DocumentTypes.model'
 import {
-  CategoriesAndTypesPutInput,
-  CategoriesAndTypesPostInput,
+  DocumentProviderCategoriesAndTypesPutInput,
+  DocumentProviderCategoriesAndTypesPostInput,
 } from '../dto/mutateCategoryOrType.input'
 import { DocumentProviderPaperMailInput } from '../dto/paperMail.input'
 
@@ -194,7 +194,7 @@ export class AdminDocumentProviderResolver {
 
   @Scopes(AdminPortalScope.documentProvider)
   @Query(() => DocumentProviderPaperMailResponse)
-  async getPaperMailList(
+  async documentProviderPaperMailList(
     @Args('input', { nullable: true }) input: DocumentProviderPaperMailInput,
   ): Promise<DocumentProviderPaperMailResponse> {
     return this.documentProviderService.getPaperMailList(input)
@@ -202,47 +202,49 @@ export class AdminDocumentProviderResolver {
 
   // Types
   @Scopes(AdminPortalScope.documentProvider)
-  @Query(() => [DocumentProviderTypes])
-  async getDocumentProvidedTypes(): Promise<DocumentProviderTypes[]> {
+  @Query(() => [DocumentProviderType])
+  async documentProviderProvidedTypes(): Promise<DocumentProviderType[]> {
     return this.documentProviderService.getDocumentProvidedTypes()
   }
 
   @Scopes(AdminPortalScope.documentProvider)
-  @Mutation(() => DocumentProviderTypes)
-  async postDocumentProvidedType(
-    @Args('input') input: CategoriesAndTypesPostInput,
-  ): Promise<DocumentProviderTypes> {
+  @Mutation(() => DocumentProviderType)
+  async documentProviderPostProvidedType(
+    @Args('input') input: DocumentProviderCategoriesAndTypesPostInput,
+  ): Promise<DocumentProviderType> {
     return this.documentProviderService.postDocumentProvidedType(input)
   }
 
   @Scopes(AdminPortalScope.documentProvider)
-  @Mutation(() => DocumentProviderTypes)
-  async putDocumentProvidedType(
-    @Args('input') input: CategoriesAndTypesPutInput,
-  ): Promise<DocumentProviderTypes> {
+  @Mutation(() => DocumentProviderType)
+  async documentProviderPutProvidedType(
+    @Args('input') input: DocumentProviderCategoriesAndTypesPutInput,
+  ): Promise<DocumentProviderType> {
     return this.documentProviderService.putDocumentProvidedType(input)
   }
 
   // Categories
   @Scopes(AdminPortalScope.documentProvider)
-  @Query(() => [DocumentProviderCategories])
-  async getDocumentProvidedCategories(): Promise<DocumentProviderCategories[]> {
+  @Query(() => [DocumentProviderCategory])
+  async documentProviderProvidedCategories(): Promise<
+    DocumentProviderCategory[]
+  > {
     return this.documentProviderService.getDocumentProvidedCategories()
   }
 
   @Scopes(AdminPortalScope.documentProvider)
-  @Mutation(() => DocumentProviderCategories)
-  async postDocumentProvidedCategory(
-    @Args('input') input: CategoriesAndTypesPostInput,
-  ): Promise<DocumentProviderCategories> {
+  @Mutation(() => DocumentProviderCategory)
+  async documentProviderPostProvidedCategory(
+    @Args('input') input: DocumentProviderCategoriesAndTypesPostInput,
+  ): Promise<DocumentProviderCategory> {
     return this.documentProviderService.postDocumentProvidedCategory(input)
   }
 
   @Scopes(AdminPortalScope.documentProvider)
-  @Mutation(() => DocumentProviderCategories)
-  async putDocumentProvidedCategory(
-    @Args('input') input: CategoriesAndTypesPutInput,
-  ): Promise<DocumentProviderCategories> {
+  @Mutation(() => DocumentProviderCategory)
+  async documentProviderPutProvidedCategory(
+    @Args('input') input: DocumentProviderCategoriesAndTypesPutInput,
+  ): Promise<DocumentProviderCategory> {
     return this.documentProviderService.putDocumentProvidedCategory(input)
   }
 }

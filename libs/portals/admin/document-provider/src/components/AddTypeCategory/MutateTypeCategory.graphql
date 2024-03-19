@@ -1,29 +1,37 @@
-mutation PutDocumentProvidedType($input: CategoriesAndTypesPutInput!) {
-  putDocumentProvidedType(input: $input) {
+mutation PutDocumentProvidedType(
+  $input: DocumentProviderCategoriesAndTypesPutInput!
+) {
+  documentProviderPutProvidedType(input: $input) {
     id
     name
     active
   }
 }
 
-mutation PostDocumentProvidedType($input: CategoriesAndTypesPostInput!) {
-  postDocumentProvidedType(input: $input) {
+mutation PostDocumentProvidedType(
+  $input: DocumentProviderCategoriesAndTypesPostInput!
+) {
+  documentProviderPostProvidedType(input: $input) {
     id
     name
     active
   }
 }
 
-mutation PutDocumentProvidedCategory($input: CategoriesAndTypesPutInput!) {
-  putDocumentProvidedCategory(input: $input) {
+mutation PutDocumentProvidedCategory(
+  $input: DocumentProviderCategoriesAndTypesPutInput!
+) {
+  documentProviderPutProvidedCategory(input: $input) {
     id
     name
     active
   }
 }
 
-mutation PostDocumentProvidedCategory($input: CategoriesAndTypesPostInput!) {
-  postDocumentProvidedCategory(input: $input) {
+mutation PostDocumentProvidedCategory(
+  $input: DocumentProviderCategoriesAndTypesPostInput!
+) {
+  documentProviderPostProvidedCategory(input: $input) {
     id
     name
     active

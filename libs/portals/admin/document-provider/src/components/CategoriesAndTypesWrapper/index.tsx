@@ -9,14 +9,14 @@ import {
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import {
-  DocumentProviderCategories,
-  DocumentProviderTypes,
+  DocumentProviderCategory,
+  DocumentProviderType,
 } from '@island.is/api/schema'
 import { ApolloError } from '@apollo/client'
 import { TypeCategoryContext } from '../../screens/CategoriesAndTypes/TypeCategoryContext'
 
 interface Props {
-  dataArray: Array<DocumentProviderCategories | DocumentProviderTypes>
+  dataArray: Array<DocumentProviderCategory | DocumentProviderType>
   loading: boolean
   error?: ApolloError
   callback: () => void

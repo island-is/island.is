@@ -13,12 +13,12 @@ import {
 } from '../dto'
 import { DocumentProviderPaperMailResponse } from '../models/PaperMail.model'
 import {
-  DocumentProviderTypes,
-  DocumentProviderCategories,
+  DocumentProviderType,
+  DocumentProviderCategory,
 } from '../models/DocumentTypes.model'
 import {
-  CategoriesAndTypesPostInput,
-  CategoriesAndTypesPutInput,
+  DocumentProviderCategoriesAndTypesPostInput,
+  DocumentProviderCategoriesAndTypesPutInput,
 } from '../dto/mutateCategoryOrType.input'
 import { DocumentProviderPaperMailInput } from '../dto/paperMail.input'
 
@@ -194,7 +194,7 @@ export class AdminDocumentProviderService {
   }
 
   // Types
-  async getDocumentProvidedTypes(): Promise<DocumentProviderTypes[]> {
+  async getDocumentProvidedTypes(): Promise<DocumentProviderType[]> {
     try {
       logger.debug('Getting document types')
       const res =
@@ -213,8 +213,8 @@ export class AdminDocumentProviderService {
   }
 
   async postDocumentProvidedType(
-    input: CategoriesAndTypesPostInput,
-  ): Promise<DocumentProviderTypes> {
+    input: DocumentProviderCategoriesAndTypesPostInput,
+  ): Promise<DocumentProviderType> {
     try {
       logger.debug('Posting document type')
       const res =
@@ -234,8 +234,8 @@ export class AdminDocumentProviderService {
   }
 
   async putDocumentProvidedType(
-    input: CategoriesAndTypesPutInput,
-  ): Promise<DocumentProviderTypes> {
+    input: DocumentProviderCategoriesAndTypesPutInput,
+  ): Promise<DocumentProviderType> {
     try {
       logger.debug('Putting document types')
       const res = await this.documentProviderClientProd.putDocumentProvidedType(
@@ -256,7 +256,7 @@ export class AdminDocumentProviderService {
   }
 
   // Categories
-  async getDocumentProvidedCategories(): Promise<DocumentProviderCategories[]> {
+  async getDocumentProvidedCategories(): Promise<DocumentProviderCategory[]> {
     try {
       logger.debug('Getting document categories')
       const res =
@@ -277,8 +277,8 @@ export class AdminDocumentProviderService {
   }
 
   async postDocumentProvidedCategory(
-    input: CategoriesAndTypesPostInput,
-  ): Promise<DocumentProviderCategories> {
+    input: DocumentProviderCategoriesAndTypesPostInput,
+  ): Promise<DocumentProviderCategory> {
     try {
       logger.debug('Posting document category')
       const res =
@@ -300,8 +300,8 @@ export class AdminDocumentProviderService {
   }
 
   async putDocumentProvidedCategory(
-    input: CategoriesAndTypesPutInput,
-  ): Promise<DocumentProviderCategories> {
+    input: DocumentProviderCategoriesAndTypesPutInput,
+  ): Promise<DocumentProviderCategory> {
     try {
       logger.debug('Putting document category')
       const res =

@@ -1,4 +1,4 @@
-import { CategoriesAndTypesPutInput } from '@island.is/api/schema'
+import { DocumentProviderCategoriesAndTypesPutInput } from '@island.is/api/schema'
 import { TabOptions } from '../../screens/CategoriesAndTypes/TypeCategoryContext'
 import {
   usePutDocumentProvidedCategoryMutation,
@@ -26,7 +26,7 @@ export const useTypeAndCategoryMutation = (group: TabOptions | undefined) => {
   const { refetch: refetchTypes } = useGetDocumentProvidedTypesQuery()
 
   const mutationFunction = (
-    input: Partial<CategoriesAndTypesPutInput>,
+    input: Partial<DocumentProviderCategoriesAndTypesPutInput>,
     success?: string,
     error?: string,
   ) => {

@@ -1,5 +1,5 @@
 query GetPaperMailList($input: DocumentProviderPaperMailInput!) {
-  getPaperMailList(input: $input) {
+  documentProviderPaperMailList(input: $input) {
     paperMail {
       nationalId
       origin

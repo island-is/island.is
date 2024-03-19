@@ -1,11 +1,11 @@
 import {
-  DocumentProviderCategories,
-  DocumentProviderTypes,
+  DocumentProviderCategory,
+  DocumentProviderType,
 } from '@island.is/api/schema'
 import { createContext } from 'react'
 
 export type CategoryAndType = Partial<
-  DocumentProviderCategories | DocumentProviderTypes
+  DocumentProviderCategory | DocumentProviderType
 >
 
 export type TabOptions = 'categories' | 'types'

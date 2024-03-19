@@ -8,7 +8,7 @@ type Props = {
 
 const DocumentCategories = (props: Props) => {
   const { data, loading, error } = useGetDocumentProvidedCategoriesQuery()
-  const categoryArray = data?.getDocumentProvidedCategories ?? []
+  const categoryArray = data?.documentProviderProvidedCategories ?? []
 
   return (
     <CategoriesAndTypesWrapper

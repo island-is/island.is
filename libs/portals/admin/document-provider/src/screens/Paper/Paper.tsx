@@ -37,8 +37,8 @@ const PaperScreen = () => {
     return <Problem error={error} />
   }
 
-  const paperMailArray = data?.getPaperMailList.paperMail ?? []
-  const totalCount = data?.getPaperMailList.totalCount ?? 0
+  const paperMailArray = data?.documentProviderPaperMailList.paperMail ?? []
+  const totalCount = data?.documentProviderPaperMailList.totalCount ?? 0
 
   return (
     <GridContainer>

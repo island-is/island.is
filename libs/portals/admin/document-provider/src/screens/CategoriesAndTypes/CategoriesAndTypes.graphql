@@ -1,5 +1,5 @@
 query GetDocumentProvidedTypes {
-  getDocumentProvidedTypes {
+  documentProviderProvidedTypes {
     id
     name
     active
@@ -7,7 +7,7 @@ query GetDocumentProvidedTypes {
 }
 
 query GetDocumentProvidedCategories {
-  getDocumentProvidedCategories {
+  documentProviderProvidedCategories {
     id
     name
     active
