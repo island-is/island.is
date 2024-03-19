@@ -331,6 +331,31 @@ export class InternalCaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )
+  @Post('case/:caseId/deliverSignedRulingToPolice')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a signed ruling to police',
+  })
+  deliverSignedRulingToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the signed ruling for case ${caseId} to police`,
+    )
+
+    return this.internalCaseService.deliverSignedRulingToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
   @Post('case/:caseId/deliverAppealToPolice')
   @ApiOkResponse({
     type: DeliverResponse,

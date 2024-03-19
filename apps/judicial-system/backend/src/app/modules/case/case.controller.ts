@@ -338,7 +338,6 @@ export class CaseController {
         break
       case CaseTransition.REOPEN:
         update.rulingDate = null
-        update.rulingSignatureDate = null
         update.courtRecordSignatoryId = null
         update.courtRecordSignatureDate = null
         break

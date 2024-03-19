@@ -10,7 +10,7 @@ import {
 } from '../types/delegationRecord'
 import kennitala from 'kennitala'
 
-const delegationProviderTypeMap: Record<
+export const delegationProviderTypeMap: Record<
   AuthDelegationProvider,
   DelegationRecordType[]
 > = {
