@@ -269,21 +269,27 @@ run-xroad-proxy() {
 main() {
   PROXY_PIDS=()
   for proxy in "${PROXIES[@]}"; do
+    # Ignore if the proxy is empty (for whatever reason 🤷)
     if [ -z "$proxy" ]; then continue; fi
-    if [ "$REUSE_EXISTING_PROXIES" == true ] && containerer ps | grep -qP "\b${proxy}\b"; then
-      echo "Found existing container for '$proxy', reusing..."
-      continue
-    fi
 
+    # Remap service name
     local container_name="socat-$proxy"
     [ "$proxy" == "es" ] && container_name="es-proxy"
 
+    # Remove existing container if requested
     if [ -n "${REMOVE_CONTAINERS_ON_START:-}" ]; then
       echo "Removing container for '$proxy' on start..."
       containerer stop "$container_name" 2>/dev/null || true
       containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name" || echo "Failed to remove $container_name"
     fi
 
+    # Re-use proxies if requested (default)
+    if [ "$REUSE_EXISTING_PROXIES" == true ] && containerer ps | grep -qP "\b${proxy}\b"; then
+      echo "Found existing container for '$proxy', reusing..."
+      continue
+    fi
+
+    # Start the proxy
     echo "Starting $proxy proxy"
     (
       for ((i = 1; i <= RESTART_MAX_RETRIES; i++)); do
