@@ -135,6 +135,8 @@ import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
+import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
+
 import {
   ConfigModule,
   DownloadServiceConfig,
@@ -161,12 +163,13 @@ import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
 import { HealthController } from './health.controller'
+import { DocumentClientConfig } from '@island.is/clients/documents'
 import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
-  BifrostUniversityCareerClientConfig,
-  HolarUniversityCareerClientConfig,
-  UniversityOfAkureyriCareerClientConfig,
   UniversityOfIcelandCareerClientConfig,
+  UniversityOfAkureyriCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
 } from '@island.is/clients/university-careers'
 
 const environment = getConfig
@@ -208,14 +211,7 @@ const environment = getConfig
     LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
-    DocumentModule.register({
-      documentClientConfig: {
-        basePath: environment.documentService.basePath!,
-        clientId: environment.documentService.clientId,
-        clientSecret: environment.documentService.clientSecret,
-        tokenUrl: environment.documentService.tokenUrl,
-      },
-    }),
+    DocumentModule,
     DocumentProviderModule.register({
       test: {
         basePath: environment.documentProviderService.test.basePath!,
@@ -369,6 +365,8 @@ const environment = getConfig
         FiskistofaClientConfig,
         ChargeFjsV2ClientConfig,
         EnergyFundsClientConfig,
+        DocumentClientConfig,
+        DocumentsClientV2Config,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,

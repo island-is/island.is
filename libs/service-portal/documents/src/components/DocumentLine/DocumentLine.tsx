@@ -263,6 +263,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
+              id={active ? `button-${documentLine.id}` : undefined}
               className={styles.docLineButton}
             >
               <Text

@@ -6,15 +6,16 @@ import {
   createCurrentUser,
   createNationalId,
 } from '@island.is/testing/fixtures'
+import { AuthScope } from '@island.is/auth/scopes'
 import { DelegationIndex } from '@island.is/auth-api-lib'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
-import { AuthScope } from '@island.is/auth/scopes'
 
-import { setupWithAuth } from '../../../../test/setup'
+import { setupWithAuth } from '../../../../../test/setup'
 
+const path = '/v1/delegation-index/.id'
 const testNationalId = createNationalId('person')
 
 const validationTestCases = [
@@ -86,14 +87,14 @@ describe('DelegationIndexController', () => {
       server = request(app.getHttpServer())
     })
 
-    afterAll(() => {
-      app.cleanUp
+    afterAll(async () => {
+      await app.cleanUp()
     })
 
     it('PUT: should return status 403', async () => {
       // Act
       const response = await server
-        .put('/delegation-index/.id')
+        .put(path)
         .set(
           'X-Param-Id',
           `${AuthDelegationType.ProcurationHolder}_${createNationalId(
@@ -109,7 +110,7 @@ describe('DelegationIndexController', () => {
     it('DELETE: should return status 403', async () => {
       // Act
       const response = await server
-        .delete('/delegation-index/.id')
+        .delete(path)
         .set(
           'X-Param-Id',
           `${AuthDelegationType.ProcurationHolder}_${createNationalId(
@@ -144,15 +145,15 @@ describe('DelegationIndexController', () => {
           server = request(app.getHttpServer())
         })
 
-        afterAll(() => {
-          app.cleanUp
+        afterAll(async () => {
+          await app.cleanUp()
         })
 
         testCase.forEach((delegationType) => {
           it(`PUT: should return status 400 for ${delegationType}`, async () => {
             // Act
             const response = await server
-              .put('/delegation-index/.id')
+              .put(path)
               .set(
                 'X-Param-Id',
                 `${delegationType}_${createNationalId('person')}_${
@@ -171,7 +172,7 @@ describe('DelegationIndexController', () => {
           it(`DELETE: should return status 400 for ${delegationType}`, async () => {
             // Act
             const response = await server
-              .delete('/delegation-index/.id')
+              .delete(path)
               .set(
                 'X-Param-Id',
                 `${delegationType}_${createNationalId('person')}_${
@@ -208,14 +209,14 @@ describe('DelegationIndexController', () => {
       server = request(app.getHttpServer())
     })
 
-    afterAll(() => {
-      app.cleanUp
+    afterAll(async () => {
+      await app.cleanUp()
     })
 
     it('PUT: should return status 400', async () => {
       // Act
       const response = await server
-        .put('/delegation-index/.id')
+        .put(path)
         .set(
           'X-Param-Id',
           `${AuthDelegationType.ProcurationHolder}_${createNationalId(
@@ -231,7 +232,7 @@ describe('DelegationIndexController', () => {
     it('DELETE: should return status 400', async () => {
       // Act
       const response = await server
-        .delete('/delegation-index/.id')
+        .delete(path)
         .set(
           'X-Param-Id',
           `${AuthDelegationType.ProcurationHolder}_${createNationalId(
@@ -266,8 +267,8 @@ describe('DelegationIndexController', () => {
       delegationIndexModel = app.get(getModelToken(DelegationIndex))
     })
 
-    afterAll(() => {
-      app.cleanUp
+    afterAll(async () => {
+      await app.cleanUp()
     })
 
     describe('PUT - validation', () => {
@@ -275,7 +276,7 @@ describe('DelegationIndexController', () => {
         it(testCase.message, async () => {
           // Act
           const response = await server
-            .put('/delegation-index/.id')
+            .put(path)
             .set('X-Param-Id', testCase.param)
             .send({})
 
@@ -297,7 +298,7 @@ describe('DelegationIndexController', () => {
 
       // Act
       const response = await server
-        .put('/delegation-index/.id')
+        .put(path)
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send({
           validTo: validTo,
@@ -332,13 +333,13 @@ describe('DelegationIndexController', () => {
 
       // Act
       await server
-        .put('/delegation-index/.id')
+        .put(path)
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send({
           validTo: validTo,
         })
       const response = await server
-        .put('/delegation-index/.id')
+        .put(path)
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send({
           validTo: validToUpdated,
@@ -368,7 +369,7 @@ describe('DelegationIndexController', () => {
         it(testCase.message, async () => {
           // Act
           const response = await server
-            .delete('/delegation-index/.id')
+            .delete(path)
             .set('X-Param-Id', testCase.param)
             .send({})
 
@@ -388,13 +389,13 @@ describe('DelegationIndexController', () => {
 
       // Act
       await server
-        .put('/delegation-index/.id')
+        .put(path)
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send({
           validTo,
         })
       const response = await server
-        .delete('/delegation-index/.id')
+        .delete(path)
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send({})
 

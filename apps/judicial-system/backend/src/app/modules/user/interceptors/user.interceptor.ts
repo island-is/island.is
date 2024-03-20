@@ -41,7 +41,7 @@ export class UserInterceptor implements NestInterceptor {
                     role: user.role,
                     institution: user.institution,
                     active: user.active,
-                    canConfirmAppeal: user.canConfirmAppeal,
+                    canConfirmIndictment: user.canConfirmIndictment,
                     latestLogin: log?.latest,
                     loginCount: log?.count,
                   }
