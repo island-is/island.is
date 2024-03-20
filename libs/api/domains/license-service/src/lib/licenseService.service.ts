@@ -666,17 +666,6 @@ export class LicenseServiceService {
       }
     }
 
-    const parsedExpireTime = expires || date
-
-    // If the expiration date is in the past, the barcode is expired
-    if (parsedExpireTime && !isAfter(new Date(parsedExpireTime), new Date())) {
-      return {
-        barcodeType: VerifyLicenseBarcodeType.PK_PASS,
-        valid: false,
-        error: VerifyLicenseBarcodeError.EXPIRED,
-      }
-    }
-
     const client = await this.licenseClient.getClientByPassTemplateId(
       passTemplateId,
     )
@@ -693,10 +682,19 @@ export class LicenseServiceService {
     }
 
     const licenseType = this.mapGenericLicenseType(client.type)
-
     const commonResult = {
       licenseType,
       barcodeType: VerifyLicenseBarcodeType.PK_PASS,
+    }
+    const parsedExpireTime = expires || date
+
+    // If the expiration date is in the past, the barcode is expired
+    if (parsedExpireTime && !isAfter(new Date(parsedExpireTime), new Date())) {
+      return {
+        ...commonResult,
+        valid: false,
+        error: VerifyLicenseBarcodeError.EXPIRED,
+      }
     }
 
     if (!client.verifyPkPass) {
