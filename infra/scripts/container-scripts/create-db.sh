@@ -6,10 +6,15 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+declare \
+  DB_NAME \
+  DB_USER \
+  DB_PASSWORD_KEY \
+  DB_EXTENSIONS
+
 function create_or_update_user {
   local user=$1
   local password_key=$2
-  local db_name=$3
   local is_read_only=$4
 
   echo "Configuring user: $user"
@@ -60,14 +65,14 @@ function create_or_update_user {
 
   if [[ "$is_read_only" == "true" ]]; then
     # Grant read-only access
-    psql -c "GRANT CONNECT ON DATABASE $db_name TO $user"
+    psql -c "GRANT CONNECT ON DATABASE $DB_NAME TO $user"
     psql -c "GRANT USAGE ON SCHEMA public TO $user"
     psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $user"
     psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO $user"
     echo "Configured $user with read-only access."
   else
     # Grant full privileges
-    psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $user"
+    psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $user"
     echo "Configured $user with full access."
   fi
 }
@@ -76,19 +81,19 @@ PGPASSWORD=$(node secrets get "$PGPASSWORD_KEY")
 export PGPASSWORD
 
 echo "Creating database if it doesn't exist."
-psql -c "CREATE DATABASE $db_name" || true
+psql -c "CREATE DATABASE $DB_NAME" || true
 
 # Determine if $DB_USER is a read-only user and adjust DB_PASSWORD_KEY for the write user accordingly
 if [[ "$DB_USER" == *"_read" ]]; then
   # The DB_PASSWORD_KEY for the read-only user is correct, so use it as is
-  create_or_update_user "$DB_USER" "$DB_PASSWORD_KEY" "$DB_NAME" "true"
+  create_or_update_user "$DB_USER" "$DB_PASSWORD_KEY" "true"
   # Remove "readonly/" to create the write user's DB_PASSWORD_KEY
   WRITE_DB_PASSWORD_KEY="${DB_PASSWORD_KEY/readonly\//}"
   WRITE_USER="${DB_USER%_read}"
-  create_or_update_user "$WRITE_USER" "$WRITE_DB_PASSWORD_KEY" "$DB_NAME" "false"
+  create_or_update_user "$WRITE_USER" "$WRITE_DB_PASSWORD_KEY" "false"
 else
   # Handle write user only
-  create_or_update_user "$DB_USER" "$DB_PASSWORD_KEY" "$DB_NAME" "false"
+  create_or_update_user "$DB_USER" "$DB_PASSWORD_KEY" "false"
 fi
 
 echo "Checking if Postgres extensions should be installed..."
