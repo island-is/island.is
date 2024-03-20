@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 APP="${1:-$APP}"
-: "${TARGET:="${2:-test}"}"
+TARGET="${2:-${TARGET:-test}}"
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
 : "${DD_ENV:=ci}"
