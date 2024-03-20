@@ -82,7 +82,7 @@ export const business = buildSection({
                   },
                   {
                     title: m.propertyValuationOnDeath.defaultMessage,
-                    id: 'businessAssetValue',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
@@ -128,7 +128,7 @@ export const business = buildSection({
                 fields: [
                   {
                     title: m.debtsCreditorName.defaultMessage,
-                    id: 'businessDebt',
+                    id: 'description',
                   },
                   {
                     title: m.creditorsNationalId.defaultMessage,
@@ -137,18 +137,19 @@ export const business = buildSection({
                   },
                   {
                     title: m.debtsLoanIdentity.defaultMessage,
-                    id: 'loanIdentity',
+                    id: 'assetNumber',
                   },
                   {
                     title: m.debtsBalance.defaultMessage,
-                    id: 'debtValue',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                     width: 'half',
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-                sumField: 'debtValue',
+                sumField: 'propertyValuation',
+                fromExternalData: 'debtsInBusiness',
               },
             ),
           ],

@@ -183,9 +183,9 @@ export const expandAnswers = (
       businessDebts: {
         data: (answers.business.businessDebts?.data ?? []).map((debt) => {
           return {
-            loanIdentity: debt.loanIdentity ?? '',
-            businessDebt: debt.businessDebt ?? '',
-            debtValue: debt.debtValue ?? 0,
+            assetNumber: debt.assetNumber ?? '',
+            description: debt.description ?? '',
+            propertyValuation: debt.propertyValuation ?? 0,
             nationalId: debt.nationalId ?? '',
           }
         }),

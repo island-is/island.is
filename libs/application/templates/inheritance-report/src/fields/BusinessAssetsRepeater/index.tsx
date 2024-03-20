@@ -112,6 +112,10 @@ export const BusinessAssetsRepeater: FC<
         extData.map((x) => ({
           ...x,
           share: String(x.share),
+          // Assetnumber refers to estate number in this case
+          // This may be confusing because of the naming
+          // But these are the default names overall
+          assetType: x.assetNumber ? 'estate' : 'asset',
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)

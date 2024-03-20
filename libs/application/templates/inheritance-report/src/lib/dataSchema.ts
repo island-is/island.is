@@ -316,10 +316,10 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            businessDebt: z.string(),
-            loanIdentity: z.string(),
+            description: z.string(),
+            assetNumber: z.string(),
             nationalId: z.string(),
-            debtValue: z.string(),
+            propertyValuation: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -333,39 +333,39 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
               return nationalId !== '' ||
-                businessDebt !== '' ||
-                debtValue !== ''
-                ? isValidString(loanIdentity)
+                description !== '' ||
+                propertyValuation !== ''
+                ? isValidString(assetNumber)
                 : true
             },
             {
-              path: ['loanIdentity'],
+              path: ['assetNumber'],
             },
           )
           .refine(
-            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
               return nationalId !== '' ||
-                businessDebt !== '' ||
-                loanIdentity !== ''
-                ? isValidString(debtValue)
+                description !== '' ||
+                assetNumber !== ''
+                ? isValidString(propertyValuation)
                 : true
             },
             {
-              path: ['debtValue'],
+              path: ['propertyValuation'],
             },
           )
           .refine(
-            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
               return nationalId !== '' ||
-                debtValue !== '' ||
-                loanIdentity !== ''
-                ? isValidString(businessDebt)
+                propertyValuation !== '' ||
+                assetNumber !== ''
+                ? isValidString(description)
                 : true
             },
             {
-              path: ['businessDebt'],
+              path: ['description'],
             },
           )
           .array()
