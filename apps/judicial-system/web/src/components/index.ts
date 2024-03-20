@@ -95,3 +95,7 @@ export {
   useIndictmentsLawsBroken,
 } from './AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
+export {
+  default as WithdrawAppealContextMenuModal,
+  useWithdrawAppealMenuOption,
+} from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'

@@ -7,7 +7,7 @@ services:
     networks:
       - local
     volumes:
-      - ./local-db/:/docker-entrypoint-initdb.d/
+      - ./local-db/:/docker-entrypoint-initdb.d/:Z
     environment:
       - POSTGRES_DB=dev_db
       - POSTGRES_USER=dev_db
