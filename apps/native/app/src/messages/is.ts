@@ -476,11 +476,26 @@ export const is = {
 
   // air discount
   'airDiscount.screenTitle': 'Loftbrú',
-  'airDiscount.heading.title': 'Lægra fargjald með Loftbrú',
-  'airDiscount.heading.subtitle':
-    'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári. með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið notendaskilmála Loftbrúar.',
+  'airDiscount.headingTitle': 'Lægra fargjald með Loftbrú',
+  'airDiscount.headingSubtitle':
+    'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári. Með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið notendaskilmála Loftbrúar.',
   'airDiscount.tosLinkText': 'Notendaskilmálar',
-  'airDiscount.alert.title': 'Athugið',
-  'airDiscount.alert.description':
+  'airDiscount.alertTitle': 'Athugið',
+  'airDiscount.alertDescription':
     'Kóðinn endurnýjast eftir 1 notkun\n(gildir í 24 klst.)',
+  'airDiscount.myRights': 'Mín réttindi',
+  'airDiscount.remainingFares': 'Eftirstandandi {remaining} af {total}',
+  'airDiscount.copyDiscountCode': 'Afrita kóða',
+  'airDiscount.bulletPointDiscount':
+    'Hver afsláttur nemur 40% af flugfargjaldi.',
+  'airDiscount.bulletPointUsage':
+    'Kóðinn virkjar afslátt í bókunarvél félagsins.',
+  'airDiscount.activeConnectionCodes':
+    'Virkir afsláttarkóðar fyrir áframhaldandi flug',
+  'airDiscount.flight': 'Flugleið: {flight}',
+  'airDiscount.validTo': 'Gildir til: {date} {time}',
+  'airDiscount.airfaresUsage': 'Notkun á núverandi tímabili',
+  'airDiscount.emptyListTitle': 'Enginn réttur',
+  'airDiscount.emptyListDescription':
+    'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
 }

@@ -66,6 +66,8 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
   const intl = useIntl()
   const showFinances = useFeatureFlag('isFinancesEnabled', false)
+  const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
+
   useNavigationOptions(componentId)
   return (
     <>
@@ -131,17 +133,19 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
               }
             />
           )}
-          <ListButton
-            title={intl.formatMessage({ id: 'profile.airDiscount' })}
-            onPress={() => navigateTo(`/air-discount`)}
-            icon={
-              <Image
-                source={airplaneIcon as any}
-                style={{ width: 24, height: 24 }}
-                resizeMode="contain"
-              />
-            }
-          />
+          {showAirDiscount && (
+            <ListButton
+              title={intl.formatMessage({ id: 'profile.airDiscount' })}
+              onPress={() => navigateTo(`/air-discount`)}
+              icon={
+                <Image
+                  source={airplaneIcon as any}
+                  style={{ width: 24, height: 24 }}
+                  resizeMode="contain"
+                />
+              }
+            />
+          )}
         </Row>
       </ScrollView>
       <BottomTabsIndicator index={4} total={5} />

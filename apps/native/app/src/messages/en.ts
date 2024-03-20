@@ -476,11 +476,25 @@ export const en: TranslatedMessages = {
 
   // air discount
   'airDiscount.screenTitle': 'Air discount scheme',
-  'airDiscount.heading.title': 'Lower airfares with Air Discount Scheme',
-  'airDiscount.heading.subtitle':
+  'airDiscount.headingTitle': 'Lower airfares with Air Discount Scheme',
+  'airDiscount.headingSubtitle':
     'Each individual is entitled to lower fares on up to three round trips to and from Reykjavík per year (six flights). By using the Loftbrú discount you are acknowledging that you have read the Air Discount scheme terms and conditions.',
   'airDiscount.tosLinkText': 'Terms and conditions',
-  'airDiscount.alert.title': 'Attention',
-  'airDiscount.alert.description':
-    'The code will be renewed after 1 usage\n(valid for 24 hours)',
+  'airDiscount.alertTitle': 'Attention',
+  'airDiscount.alertDescription':
+    'Code gets renewed after 1 usage\n(expires in 24 hours)',
+  'airDiscount.myRights': 'My benefits',
+  'airDiscount.remainingFares': 'Remaining fares {remaining} of {total}',
+  'airDiscount.copyDiscountCode': 'Copy code',
+  'airDiscount.bulletPointDiscount':
+    'Each discount amounts to 40% of the airfare.',
+  'airDiscount.bulletPointUsage':
+    "Code enables a discount when booking on airline's booking engine.",
+  'airDiscount.activeConnectionCodes': 'Active codes for connecting flights',
+  'airDiscount.flight': 'Flight path: {flight}',
+  'airDiscount.validTo': 'Valid to: {date} {time}',
+  'airDiscount.airfaresUsage': 'Usage in the current season',
+  'airDiscount.emptyListTitle': 'No benefits',
+  'airDiscount.emptyListDescription':
+    'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
 }
