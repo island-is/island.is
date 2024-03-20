@@ -91,6 +91,7 @@ export const business = buildSection({
                   m.businessAssetRepeaterButton.defaultMessage,
                 sumField: 'propertyValuation',
                 fromExternalData: 'otherAssets',
+                assetKey: 'assetsInBusiness',
               },
             ),
           ],
