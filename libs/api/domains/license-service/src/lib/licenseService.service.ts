@@ -1,4 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
+import isAfter from 'date-fns/isAfter'
 import {
   LicenseClient,
   LicenseClientService,
@@ -27,8 +28,9 @@ import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
 import {
-  VerifyLicenseBarcodeResult,
   VerifyLicenseBarcodeError,
+  VerifyLicenseBarcodeResult,
+  VerifyLicenseBarcodeType,
 } from './dto/VerifyLicenseBarcodeResult.dto'
 import {
   GenericLicenseFetchResult,
@@ -47,6 +49,7 @@ import {
   DEFAULT_LICENSE_ID,
   LICENSE_MAPPER_FACTORY,
 } from './licenseService.constants'
+import { CreateBarcodeResult } from './dto/CreateBarcodeResult.dto'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -524,7 +527,10 @@ export class LicenseServiceService {
     }
   }
 
-  async createBarcode(user: User, genericUserLicense: GenericUserLicense) {
+  async createBarcode(
+    user: User,
+    genericUserLicense: GenericUserLicense,
+  ): Promise<CreateBarcodeResult | null> {
     const code = randomUUID()
     const genericUserLicenseType = genericUserLicense.license.type
     const licenseType = this.mapLicenseType(genericUserLicenseType)
@@ -552,10 +558,10 @@ export class LicenseServiceService {
       }
     }
 
-    const [token] = await Promise.all([
+    const [{ exp, token }] = await Promise.all([
       // Create a token with the version and a server reference (Redis key) code
       this.barcodeService.createToken({
-        v: '2',
+        v: VerifyLicenseBarcodeType.V2,
         t: licenseType,
         c: code,
       }),
@@ -567,7 +573,11 @@ export class LicenseServiceService {
       }),
     ])
 
-    return token
+    return {
+      token,
+      // Make sure to convert the expiration time to milliseconds
+      exp: new Date(exp * 1000),
+    }
   }
 
   logError(error: Error | string, meta?: Record<string, unknown>) {
@@ -578,7 +588,7 @@ export class LicenseServiceService {
     })
   }
 
-  async getDataFromToken(token: string): Promise<VerifyLicenseBarcodeResult> {
+  async getDataFromToken(token: string) {
     let code: string | undefined
 
     try {
@@ -624,21 +634,51 @@ export class LicenseServiceService {
     data: string,
   ): Promise<VerifyLicenseBarcodeResult> {
     if (isJWT(data)) {
-      return this.getDataFromToken(data)
+      // Verify the barcode data as a token, e.g. new barcode format
+      const tokenData = await this.getDataFromToken(data)
+
+      return {
+        barcodeType: VerifyLicenseBarcodeType.V2,
+        ...tokenData,
+      }
     }
+
+    // else fallback to the old barcode format
 
     if (!isJSON(data)) {
       this.logError('Invalid JSON data')
 
-      return COMMON_VERIFY_ERROR
+      return {
+        barcodeType: VerifyLicenseBarcodeType.UNKNOWN,
+        ...COMMON_VERIFY_ERROR,
+      }
     }
 
-    const { passTemplateId }: { passTemplateId?: string } = JSON.parse(data)
+    const {
+      passTemplateId,
+      expires,
+      date,
+    }: { passTemplateId?: string; expires?: string; date?: string } =
+      JSON.parse(data)
 
     if (!passTemplateId) {
       this.logError('No passTemplateId found in data')
 
-      return COMMON_VERIFY_ERROR
+      return {
+        barcodeType: VerifyLicenseBarcodeType.UNKNOWN,
+        ...COMMON_VERIFY_ERROR,
+      }
+    }
+
+    const parsedExpireTime = expires || date
+
+    // If the expiration date is in the past, the barcode is expired
+    if (parsedExpireTime && !isAfter(new Date(parsedExpireTime), new Date())) {
+      return {
+        barcodeType: VerifyLicenseBarcodeType.PK_PASS,
+        valid: false,
+        error: VerifyLicenseBarcodeError.EXPIRED,
+      }
     }
 
     const client = await this.licenseClient.getClientByPassTemplateId(
@@ -650,13 +690,26 @@ export class LicenseServiceService {
         'Invalid passTemplateId supplied to getClientByPassTemplateId',
       )
 
-      return COMMON_VERIFY_ERROR
+      return {
+        barcodeType: VerifyLicenseBarcodeType.PK_PASS,
+        ...COMMON_VERIFY_ERROR,
+      }
+    }
+
+    const licenseType = this.mapGenericLicenseType(client.type)
+
+    const commonResult = {
+      licenseType,
+      barcodeType: VerifyLicenseBarcodeType.PK_PASS,
     }
 
     if (!client.verifyPkPass) {
       this.logError('License client has no verifyPkPass implementation')
 
-      return COMMON_VERIFY_ERROR
+      return {
+        ...commonResult,
+        ...COMMON_VERIFY_ERROR,
+      }
     }
 
     const res = await client.verifyPkPass(data)
@@ -664,15 +717,17 @@ export class LicenseServiceService {
     if (!res.ok) {
       this.logError('Unable to verify pkpass for user')
 
-      return COMMON_VERIFY_ERROR
+      return {
+        ...commonResult,
+        ...COMMON_VERIFY_ERROR,
+      }
     }
 
     const licenseData = res.data.data
-    const licenseType = this.mapGenericLicenseType(client.type)
 
     return {
+      ...commonResult,
       valid: true,
-      licenseType,
       data: licenseData
         ? {
             type: licenseType,

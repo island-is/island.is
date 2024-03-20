@@ -56,23 +56,36 @@ export class BarcodeService {
           return reject(err)
         }
 
-        return resolve(decoded as LicenseTokenData)
+        return resolve((decoded as { data: LicenseTokenData }).data)
       }),
     )
   }
 
-  async createToken(
-    data: LicenseTokenData,
-    options: SignOptions = { expiresIn: BARCODE_EXPIRE_TIME_IN_SEC },
-  ): Promise<string> {
-    return new Promise((resolve, reject) =>
-      sign(data, this.config.barcodeSecretKey, options, (err, encoded) => {
-        if (err || !encoded) {
-          return reject(err)
-        }
+  async createToken(data: LicenseTokenData): Promise<{
+    token: string
+    exp: number
+  }> {
+    const exp = Math.floor(Date.now() / 1000) + BARCODE_EXPIRE_TIME_IN_SEC
 
-        return resolve(encoded)
-      }),
+    return new Promise((resolve, reject) =>
+      sign(
+        {
+          data,
+          exp,
+        },
+        this.config.barcodeSecretKey,
+        {},
+        (err, encoded) => {
+          if (err || !encoded) {
+            return reject(err)
+          }
+
+          return resolve({
+            token: encoded,
+            exp,
+          })
+        },
+      ),
     )
   }
 
