@@ -57,7 +57,8 @@
     "safer-buffer",
     "ioredis",
     "bull",
-    "geoip-lite"
+    "@mikro-orm/core",
+    "ip3country"
   ],
   "keepNames": true
 }

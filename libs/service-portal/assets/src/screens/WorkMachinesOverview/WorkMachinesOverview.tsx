@@ -6,8 +6,6 @@ import {
 } from './WorkMachinesOverview.generated'
 import {
   m,
-  ErrorScreen,
-  EmptyState,
   CardLoader,
   ActionCard,
   formSubmit,
@@ -32,6 +30,7 @@ import { messages } from '../../lib/messages'
 import { useDebounce } from 'react-use'
 import { WorkMachinesFileType } from '@island.is/api/schema'
 import { AssetsPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 type FilterValue = {
   label: string
@@ -124,21 +123,6 @@ const WorkMachinesOverview = () => {
       },
     })
   }
-
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.workMachines).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -146,6 +130,7 @@ const WorkMachinesOverview = () => {
         intro={formatMessage(messages.workMachinesDescription)}
         serviceProviderSlug={VINNUEFTIRLITID_SLUG}
         serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+        fixedImgWidth
       />
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">
@@ -244,20 +229,26 @@ const WorkMachinesOverview = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      {loading && (
-        <Box marginBottom={2}>
-          <CardLoader />
-        </Box>
-      )}
-
-      {!loading && !data?.workMachinesPaginatedCollection?.data?.length && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
-      )}
-
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && loading && <CardLoader />}
+      {!error &&
+        !loading &&
+        !data?.workMachinesPaginatedCollection?.data?.length && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noDataFoundVariableFeminine, {
+              arg: formatMessage(m.workMachines).toLowerCase(),
+            })}
+            message={formatMessage(
+              m.noDataFoundVariableDetailVariationFeminine,
+              {
+                arg: formatMessage(m.workMachines).toLowerCase(),
+              },
+            )}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
       {!loading &&
         !error &&
         !!data?.workMachinesPaginatedCollection?.data &&

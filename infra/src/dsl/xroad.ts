@@ -290,6 +290,16 @@ export const Firearm = new XroadConf({
   },
 })
 
+export const Hunting = new XroadConf({
+  env: {
+    XROAD_HUNTING_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
+      staging: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
+      prod: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api',
+    },
+  },
+})
+
 export const Disability = new XroadConf({
   env: {
     XROAD_DISABILITY_LICENSE_PATH: {
@@ -534,6 +544,16 @@ export const Vehicles = new XroadConf({
   },
 })
 
+export const Inna = new XroadConf({
+  env: {
+    XROAD_INNA_PATH: {
+      dev: 'IS-DEV/EDU/10020/MMS-Protected/inna-v1',
+      staging: 'IS-TEST/EDU/5708150320/MMS-Protected/inna-v1',
+      prod: 'IS/EDU/5708150320/MMS-Protected/inna-v1',
+    },
+  },
+})
+
 export const VehiclesMileage = new XroadConf({
   env: {
     XROAD_VEHICLES_MILEAGE_PATH: {
@@ -705,6 +725,16 @@ export const UniversityGatewayUniversityOfAkureyri = new XroadConf({
   },
 })
 
+export const UniversityGatewayBifrostUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5502690239/Bifrost-Protected/umsoknir-v1',
+    },
+  },
+})
+
 export const UniversityGatewayIcelandUniversityOfTheArts = new XroadConf({
   env: {
     XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: {
@@ -735,13 +765,32 @@ export const UniversityGatewayHolarUniversity = new XroadConf({
   },
 })
 
+export const UniversityGatewayReykjavikUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10062/RvkUni-Hvin-Protected/umsoknir-v1',
+      staging: 'IS-TEST/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
+    },
+  },
+})
+
 export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
-      dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
-      staging:
-        'IS-TEST/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
-      prod: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
+      dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1',
+      staging: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1',
+      prod: 'IS/GOV/5012130120/TR-Protected/external-v1',
+    },
+  },
+})
+
+export const ArborgWorkpoint = new XroadConf({
+  env: {
+    WORKPOINT_ARBORG_SERVICE_PATH: {
+      dev: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1',
+      staging: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1',
+      prod: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1',
     },
   },
 })

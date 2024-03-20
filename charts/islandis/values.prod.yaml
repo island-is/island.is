@@ -12,6 +12,7 @@ air-discount-scheme-api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -48,6 +49,8 @@ air-discount-scheme-api:
           paths:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -86,6 +89,7 @@ air-discount-scheme-backend:
     ENVIRONMENT: 'prod'
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -138,6 +142,7 @@ air-discount-scheme-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -152,8 +157,10 @@ air-discount-scheme-backend:
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+      DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -168,7 +175,7 @@ air-discount-scheme-backend:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
@@ -185,6 +192,7 @@ air-discount-scheme-web:
     API_URL: 'http://web-air-discount-scheme-api'
     ENVIRONMENT: 'prod'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
+    LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://loftbru.island.is'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -225,6 +233,8 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -281,10 +291,13 @@ api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
+    HUNTING_LICENSE_PASS_TEMPLATE_ID: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -332,7 +345,9 @@ api:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_LOANS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/calc-v1'
+    XROAD_HUNTING_LICENSE_PATH: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1'
+    XROAD_INNA_PATH: 'IS/EDU/5708150320/MMS-Protected/inna-v1'
     XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI/'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/license-api-v1'
@@ -347,7 +362,7 @@ api:
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '35000'
     XROAD_RSK_PROCURING_PATH: 'IS/GOV/5402696029/Skatturinn/relationships-v1'
-    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["redis-applications.internal:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
     XROAD_SHIP_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
@@ -355,7 +370,7 @@ api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
-    XROAD_TR_PATH: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1'
+    XROAD_TR_PATH: 'IS/GOV/5012130120/TR-Protected/external-v1'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
@@ -411,6 +426,8 @@ api:
           paths:
             - '/api'
   namespace: 'islandis'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -478,6 +495,7 @@ api:
     INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
@@ -505,6 +523,8 @@ api:
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
     VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
+    WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY'
+    WATSON_ASSISTANT_CHAT_FEEDBACK_URL: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
@@ -562,6 +582,7 @@ application-system-api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NOVA_USERNAME: 'IslandIs_User_Production'
@@ -569,6 +590,9 @@ application-system-api:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
+    UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
+    WORKPOINT_ARBORG_SERVICE_PATH: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1'
+    XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS/GOV/5605882089/UA-Protected/kvortun-v1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
@@ -604,7 +628,7 @@ application-system-api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
-    XROAD_TR_PATH: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1'
+    XROAD_TR_PATH: 'IS/GOV/5012130120/TR-Protected/external-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -665,6 +689,7 @@ application-system-api:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -679,8 +704,10 @@ application-system-api:
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+      DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -697,7 +724,6 @@ application-system-api:
       memory: '512Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
-    ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH'
     ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
@@ -705,7 +731,7 @@ application-system-api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
     DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
@@ -766,6 +792,7 @@ application-system-api-worker:
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -778,6 +805,7 @@ application-system-api-worker:
     XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+    XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
@@ -802,6 +830,8 @@ application-system-api-worker:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -820,7 +850,7 @@ application-system-api-worker:
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
     DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD'
@@ -846,6 +876,7 @@ application-system-form:
   enabled: true
   env:
     BASEPATH: '/umsoknir'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
@@ -890,6 +921,8 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -918,6 +951,7 @@ consultation-portal:
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'prod'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
+    LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://island.is/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -957,6 +991,8 @@ consultation-portal:
           paths:
             - '/samradsgatt'
   namespace: 'consultation-portal'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -977,14 +1013,14 @@ consultation-portal:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-contentful-translation-extension:
+contentful-apps:
   enabled: true
   env:
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces:
-    - 'nginx-ingress-external'
-  grantNamespacesEnabled: true
+  grantNamespaces: []
+  grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1001,41 +1037,51 @@ contentful-translation-extension:
         nginxRequestsIrate: 5
       replicas:
         max: 10
-        min: 3
+        min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
   ingress:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'contentful-translation-extension.devland.is'
+        - host: 'contentful-apps.island.is'
           paths:
             - '/'
-  namespace: 'contentful-translation-extension'
+  namespace: 'contentful-apps'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
+    default: 1
     max: 10
-    min: 3
+    min: 1
   resources:
     limits:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '50m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/contentful-apps'
+    create: true
+    name: 'contentful-apps'
 download-service:
   enabled: true
   env:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1088,6 +1134,8 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1136,6 +1184,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -1194,6 +1243,8 @@ endorsement-system-api:
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1243,6 +1294,7 @@ icelandic-names-registry-backend:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -1287,7 +1339,7 @@ icelandic-names-registry-backend:
           - 'db:seed:all'
         command:
           - 'npx'
-        name: 'seeds'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
@@ -1304,6 +1356,8 @@ icelandic-names-registry-backend:
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1325,6 +1379,7 @@ icelandic-names-registry-backend:
 island-ui-storybook:
   enabled: true
   env:
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -1359,6 +1414,8 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1379,7 +1436,10 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    HUNTING_LICENSE_PASS_TEMPLATE_ID: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -1391,6 +1451,7 @@ license-api:
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
+    XROAD_HUNTING_LICENSE_PATH: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
@@ -1425,6 +1486,8 @@ license-api:
           paths:
             - '/'
   namespace: 'license-api'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1446,6 +1509,7 @@ license-api:
     DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
     FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+    LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
     PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
@@ -1474,7 +1538,6 @@ namespaces:
     - 'skilavottord'
     - 'services-documents'
     - 'storybook'
-    - 'contentful-translation-extension'
     - 'xroad-collector'
     - 'download-service'
     - 'icelandic-names-registry'
@@ -1484,10 +1547,13 @@ namespaces:
     - 'user-notification'
     - 'license-api'
     - 'services-sessions'
+    - 'services-university-gateway'
+    - 'contentful-apps'
 portals-admin:
   enabled: true
   env:
     BASEPATH: '/stjornbord'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
@@ -1528,6 +1594,8 @@ portals-admin:
           paths:
             - '/stjornbord'
   namespace: 'portals-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1557,6 +1625,7 @@ regulations-admin-backend:
     DB_USER: 'regulations_admin_backend'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -1598,6 +1667,7 @@ regulations-admin-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -1614,6 +1684,8 @@ regulations-admin-backend:
     secrets:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1649,6 +1721,7 @@ search-indexer-service:
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     ENVIRONMENT: 'prod'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
@@ -1738,6 +1811,8 @@ search-indexer-service:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -1771,6 +1846,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
@@ -1817,6 +1893,8 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1847,6 +1925,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1895,6 +1974,7 @@ service-portal-api:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -1909,8 +1989,10 @@ service-portal-api:
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+      DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1927,7 +2009,7 @@ service-portal-api:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -1960,6 +2042,7 @@ service-portal-api-worker:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1994,6 +2077,8 @@ service-portal-api-worker:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2009,7 +2094,7 @@ service-portal-api-worker:
   schedule: '0 0 31 12 *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2030,6 +2115,7 @@ services-documents:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -2062,6 +2148,7 @@ services-documents:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2078,6 +2165,8 @@ services-documents:
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2103,8 +2192,8 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions_read'
-    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
@@ -2143,13 +2232,9 @@ services-sessions:
           paths:
             - '/'
   namespace: 'services-sessions'
-  pvcs:
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/geoip-lite/data'
-      name: 'sessions-geoip-db'
-      size: '1Gi'
-      storageClass: 'efs-csi'
-      useExisting: true
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
   replicaCount:
     default: 1
     max: 10
@@ -2164,82 +2249,9 @@ services-sessions:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
-    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-geoip-job:
-  annotations:
-    helm.sh/hook: 'pre-install,pre-upgrade'
-    helm.sh/hook-delete-policy: 'before-hook-creation,hook-succeeded'
-  args:
-    - './node_modules/geoip-lite/scripts/updatedb.js'
-    - 'license_key=$(GEOIP_LICENSE_KEY)'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    GEODATADIR: '/geoip-lite/data'
-    GEOTMPDIR: '/geoip-lite/data/tmp'
-    NODE_OPTIONS: '--max-old-space-size=921'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'islandis'
-    - 'identity-server'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
-      replicas:
-        max: 1
-        min: 1
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
-  namespace: 'services-sessions'
-  podSecurityContext:
-    fsGroup: 65534
-  pvcs:
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/geoip-lite/data'
-      name: 'sessions-geoip-db'
-      size: '1Gi'
-      storageClass: 'efs-csi'
-      useExisting: false
-  replicaCount:
-    default: 1
-    max: 1
-    min: 1
-  resources:
-    limits:
-      cpu: '500m'
-      memory: '1Gi'
-    requests:
-      cpu: '500m'
-      memory: '500Mi'
-  schedule: '0 0 * * *'
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/sessions-geoip'
-    create: true
-    name: 'sessions-geoip'
 services-sessions-worker:
   args:
     - 'main.js'
@@ -2254,6 +2266,7 @@ services-sessions-worker:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
@@ -2289,6 +2302,7 @@ services-sessions-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2306,6 +2320,8 @@ services-sessions-worker:
     secrets:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2331,11 +2347,222 @@ services-sessions-worker:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/sessions-worker'
     create: true
     name: 'sessions-worker'
+services-university-gateway:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_university_gateway'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: 'IS/EDU/5502690239/Bifrost-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS/EDU/5001694359/Holar-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS/EDU/4210984099/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: 'IS/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS/EDU/5206871229/UNAK-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'services-university-gateway.internal.island.is'
+          paths:
+            - '/api'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+      - args:
+          - 'sequelize-cli'
+          - 'db:seed:all'
+        command:
+          - 'npx'
+        name: 'seed'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_university_gateway'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'services_university_gateway'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    secrets:
+      DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+  namespace: 'services-university-gateway'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '384Mi'
+    requests:
+      cpu: '50m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-university-gateway'
+    create: true
+    name: 'services-university-gateway'
+services-university-gateway-worker:
+  args:
+    - 'main.js'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_university_gateway'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: 'IS/EDU/5502690239/Bifrost-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS/EDU/5001694359/Holar-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS/EDU/4210984099/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: 'IS/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS/EDU/5206871229/UNAK-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  namespace: 'services-university-gateway'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '384Mi'
+    requests:
+      cpu: '50m'
+      memory: '256Mi'
+  schedule: '0 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-university-gateway-worker'
+    create: true
+    name: 'services-university-gateway-worker'
 skilavottord-web:
   enabled: true
   env:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'prod'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -2375,6 +2602,8 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2406,6 +2635,7 @@ skilavottord-ws:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -2449,6 +2679,7 @@ skilavottord-ws:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2465,6 +2696,8 @@ skilavottord-ws:
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2507,6 +2740,7 @@ user-notification:
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -2554,6 +2788,8 @@ user-notification:
           paths:
             - '/'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2597,6 +2833,7 @@ user-notification-cleanup-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -2628,6 +2865,7 @@ user-notification-cleanup-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2644,6 +2882,8 @@ user-notification-cleanup-worker:
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2687,6 +2927,7 @@ user-notification-worker:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -2730,6 +2971,7 @@ user-notification-worker:
           - 'db:migrate'
         command:
           - 'npx'
+        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -2746,6 +2988,8 @@ user-notification-worker:
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2784,6 +3028,7 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'prod'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
@@ -2829,6 +3074,8 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -2857,6 +3104,7 @@ xroad-collector:
   enabled: true
   env:
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2887,6 +3135,8 @@ xroad-collector:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []

@@ -565,11 +565,20 @@ export interface IChartFields {
   /** Source Data */
   sourceData?: Record<string, any> | undefined
 
+  /** Flip Axis */
+  flipAxis?: boolean | undefined
+
   /** X Axis Key */
   xAxisKey?: string | undefined
 
   /** X Axis Value Type */
   xAxisValueType?: 'date' | 'number' | 'string' | undefined
+
+  /** X Axis Format */
+  xAxisFormat?: string | undefined
+
+  /** Custom Style Config */
+  customStyleConfig?: Record<string, any> | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -717,6 +726,40 @@ export interface IContactUs extends Entry<IContactUsFields> {
     contentType: {
       sys: {
         id: 'contactUs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICustomPageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Unique Identifier */
+  uniqueIdentifier: 'PensionCalculator'
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Translation Namespace */
+  translationNamespace?: INamespace | undefined
+
+  /** Configuration */
+  configJson?: Record<string, any> | undefined
+}
+
+export interface ICustomPage extends Entry<ICustomPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'customPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1124,6 +1167,34 @@ export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
     contentType: {
       sys: {
         id: 'featuredArticles'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFeaturedEventsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** No events found text */
+  noEventsFoundText?: Document | undefined
+}
+
+export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredEvents'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1952,10 +2023,10 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink
+  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
 
   /** Children Links */
-  childrenLinks?: ILink[] | undefined
+  childrenLinks?: (ILink | IOrganizationSubpage | IProjectSubpage)[] | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -2873,7 +2944,7 @@ export interface IOrganizationSubpageFields {
     | undefined
 
   /** Slice Custom Renderer */
-  sliceCustomRenderer?: 'SliceDropdown' | undefined
+  sliceCustomRenderer?: 'SliceDropdown' | 'SliceTableOfContents' | undefined
 
   /** Slice Extra Text */
   sliceExtraText?: string | undefined
@@ -3126,6 +3197,9 @@ export interface IProjectPageFields {
 
   /** Sidebar */
   sidebar: boolean
+
+  /** Sidebar Frontpage Link */
+  sidebarFrontpageLink: boolean
 
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
@@ -3561,6 +3635,9 @@ export interface ISliceDropdownFields {
 
   /** Dropdown Label */
   dropdownLabel?: string | undefined
+
+  /** Alphabetically ordered */
+  alphabeticallyOrdered?: boolean | undefined
 
   /** Slices */
   slices?: IOneColumnText[] | undefined
@@ -4723,6 +4800,7 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'customPage'
   | 'districts'
   | 'emailSignup'
   | 'embed'
@@ -4734,6 +4812,7 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
+  | 'featuredEvents'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'

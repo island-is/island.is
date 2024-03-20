@@ -23,6 +23,7 @@ import {
   CaseMessage,
   MessageService,
   MessageType,
+  PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -144,6 +145,7 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
+    | 'indictmentDeniedExplanation'
   > {
   type?: CaseType
   state?: CaseState
@@ -496,13 +498,31 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages: (CaseMessage | PoliceCaseMessage)[] = [
       {
         type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
-    ])
+    ]
+
+    if (isIndictmentCase(theCase.type) && theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+      theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+        messages.push({
+          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
+          user,
+          caseId: theCase.id,
+          policeCaseNumber,
+        }),
+      )
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForCourtCaseConnectionToQueue(
@@ -577,7 +597,7 @@ export class CaseService {
     )
   }
 
-  private addMessagesForCompletedCaseToQueue(
+  private addMessagesForSignedRulingToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -587,12 +607,35 @@ export class CaseService {
         user,
         caseId: theCase.id,
       },
+      { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId: theCase.id },
+    ]
+
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVER_SIGNED_RULING_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  private addMessagesForCompletedCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    const messages = [
       {
         type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
         user,
         caseId: theCase.id,
       },
-      { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId: theCase.id },
+      {
+        type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+        user,
+        caseId: theCase.id,
+      },
     ]
 
     const deliverCaseFileToCourtMessages =
@@ -612,11 +655,7 @@ export class CaseService {
           caseFileId: caseFile.id,
         })) ?? []
 
-    messages.push(...deliverCaseFileToCourtMessages, {
-      type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
-      user,
-      caseId: theCase.id,
-    })
+    messages.push(...deliverCaseFileToCourtMessages)
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
@@ -637,6 +676,11 @@ export class CaseService {
       this.getIndictmentArchiveMessages(theCase, user, true).concat([
         {
           type: MessageType.SEND_RULING_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+        },
+        {
+          type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
           user,
           caseId: theCase.id,
         },
@@ -791,6 +835,32 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForAppealWithdrawnToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
+  private addMessagesForDeniedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -810,20 +880,32 @@ export class CaseService {
           user,
           theCase.state,
         )
-      } else if (isIndictmentCase(updatedCase.type)) {
-        if (updatedCase.state === CaseState.SUBMITTED) {
-          await this.addMessagesForSubmittedIndicitmentCaseToQueue(
-            updatedCase,
-            user,
-          )
-        } else if (completedCaseStates.includes(updatedCase.state)) {
-          // Indictment cases are not signed
+      } else if (completedCaseStates.includes(updatedCase.state)) {
+        if (isIndictmentCase(updatedCase.type)) {
           await this.addMessagesForCompletedIndictmentCaseToQueue(
             updatedCase,
             user,
           )
+        } else {
+          await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
+      } else if (
+        updatedCase.state === CaseState.SUBMITTED &&
+        isIndictmentCase(updatedCase.type)
+      ) {
+        await this.addMessagesForSubmittedIndicitmentCaseToQueue(
+          updatedCase,
+          user,
+        )
       }
+    }
+
+    if (
+      isIndictmentCase(updatedCase.type) &&
+      updatedCase.state === CaseState.DRAFT &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
     }
 
     if (updatedCase.appealState !== theCase.appealState) {
@@ -836,6 +918,8 @@ export class CaseService {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.WITHDRAWN) {
+        await this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }
     }
 
@@ -1147,7 +1231,7 @@ export class CaseService {
         false,
       )
 
-      await this.addMessagesForCompletedCaseToQueue(theCase, user)
+      await this.addMessagesForSignedRulingToQueue(theCase, user)
 
       return { documentSigned: true }
     } catch (error) {

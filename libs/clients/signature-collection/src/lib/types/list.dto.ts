@@ -1,9 +1,26 @@
 import { Area, mapArea } from './area.dto'
 import { UserBase } from './user.dto'
-import { MedmaelalistiBaseDTO, MedmaelalistiDTO } from '../../../gen/fetch'
+import {
+  MedmaelalistiBaseDTO,
+  MedmaelalistiDTO,
+  UmbodBaseDTO,
+} from '../../../gen/fetch'
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
-import { Collection, CollectionInfo } from './collection.dto'
+
+export enum ListStatus {
+  Active = 'active',
+  InReview = 'inReview',
+  Reviewed = 'reviewed',
+  Extendable = 'extendable',
+  Inactive = 'inactive',
+}
+
+export interface ListBase {
+  id: string
+  title: string
+  area: Area
+}
 
 export interface List {
   id: string
@@ -18,19 +35,25 @@ export interface List {
   numberOfSignatures: number
   slug: string
   maxReached: boolean
+  reviewed: boolean
+  isExtended: boolean
 }
 
-export function getSlug(id: number | string): string {
+export interface SignedList extends List {
+  signedDate: Date
+  isDigital: boolean
+  pageNumber?: number
+  isValid: boolean
+  canUnsign: boolean
+}
+
+export const getSlug = (id: number | string): string => {
   return `/umsoknir/maela-med-frambodi/?candidate=${id}`
 }
 
-export function mapListBase(
-  list: MedmaelalistiBaseDTO,
-  candidate: Candidate,
-  collection: CollectionInfo,
-): List {
+export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
   const { id: id, svaedi: areas } = list
-  if (!id || !collection || !candidate || !candidate.id || !areas) {
+  if (!id || !areas) {
     logger.warn(
       'Received partial collection information from the national registry.',
       list,
@@ -38,53 +61,66 @@ export function mapListBase(
     throw new Error('List has no area')
   }
   const area = mapArea(areas)
-  const numberOfSignatures = list.fjoldiMedmaela ?? 0
   return {
     id: list.id?.toString() ?? '',
-    collectionId: collection.id.toString(),
     title: list.listiNafn ?? '',
-    startTime: collection.startTime,
-    endTime: collection.endTime,
     area,
-    candidate,
-    // TODO: update active functionality
-    active: true,
-    numberOfSignatures: list.fjoldiMedmaela ?? 0,
-    slug: getSlug(candidate.id),
-    maxReached: area.max <= numberOfSignatures,
   }
 }
 
-export function mapList(list: MedmaelalistiDTO): List {
+export const mapList = (
+  list: MedmaelalistiDTO,
+  collectors?: UmbodBaseDTO[],
+): List => {
   const {
     id: id,
     medmaelasofnun: collection,
     frambod: candidate,
     svaedi: areas,
+    dagsetningLokar: endTime,
   } = list
-  if (!id || !collection || !candidate || !candidate.id || !areas) {
+  if (
+    !id ||
+    !collection?.sofnunEnd ||
+    !candidate ||
+    !candidate.id ||
+    !areas ||
+    !endTime
+  ) {
     logger.warn(
       'Received partial collection information from the national registry.',
       list,
     )
-    throw new Error('List has no area')
+    throw new Error(
+      'Fetch list failed. Received partial collection information from the national registry.',
+    )
   }
   const area = mapArea(areas)
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
+
+  const isActive = endTime > new Date()
+  const isExtended = endTime > collection.sofnunEnd
+  const reviewed = list.lokadHandvirkt ?? false
+
   return {
     id: list.id?.toString() ?? '',
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
     title: list.listiNafn ?? '',
     startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
-    endTime: list.dagsetningLokar ?? new Date(),
-
+    endTime,
+    collectors: collectors
+      ? collectors?.map((collector) => ({
+          name: collector.nafn ?? '',
+          nationalId: collector.kennitala ?? '',
+        }))
+      : [],
     candidate: mapCandidate(candidate),
-    // TODO: update active functionality
     slug: getSlug(candidate.id),
     area,
-
-    active: true,
+    active: isActive,
     numberOfSignatures,
     maxReached: area.max <= numberOfSignatures,
+    reviewed,
+    isExtended,
   }
 }

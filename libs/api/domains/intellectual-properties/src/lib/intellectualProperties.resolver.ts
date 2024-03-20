@@ -12,7 +12,6 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
-import { Patent } from './models/patent.model'
 import { Image } from './models/image.model'
 import { ImageList } from './models/imageList.model'
 import { Design } from './models/design.model'
@@ -26,11 +25,12 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { Patent } from './models/patent.model'
 
 @Resolver()
 @FeatureFlag(Features.isIntellectualPropertyModuleEnabled)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.intellectualProperties)
 @Audit({ namespace: '@island.is/api/intellectual-properties' })
 export class IntellectualPropertiesResolver {
   constructor(
@@ -69,7 +69,10 @@ export class IntellectualPropertiesResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
-  ) {
+  ): Promise<Patent | null> {
+    if (input.key.includes('SPC')) {
+      return this.ipService.getSPCById(user, input.key)
+    }
     return this.ipService.getPatentById(user, input.key)
   }
 
@@ -83,7 +86,13 @@ export class IntellectualPropertiesResolver {
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
   ) {
-    return this.ipService.getDesignById(user, input.key)
+    const design = await this.ipService.getDesignById(user, input.key)
+
+    if (!design) {
+      return null
+    }
+
+    return design
   }
 
   @Query(() => ImageList, {
@@ -97,6 +106,7 @@ export class IntellectualPropertiesResolver {
     input: IntellectualPropertiesInput,
   ): Promise<ImageList | null> {
     const images = await this.ipService.getDesignImages(user, input.key)
+
     if (!images) {
       return null
     }

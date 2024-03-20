@@ -21,4 +21,6 @@ export enum InstitutionTypes {
   ORKUSTOFNUN = 'Orkustofnun',
   EMBAETTI_LANDLAEKNIS = 'embaetti-landlaeknis',
   VINNUEFTIRLITID = 'vinnueftirlitid',
+  HASKOLARADUNEYTI = 'haskolaraduneyti',
+  DOMSMALARADUNEYTID = 'domsmalaraduneytid',
 }

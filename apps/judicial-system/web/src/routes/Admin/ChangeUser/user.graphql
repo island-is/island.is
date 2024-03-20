@@ -18,5 +18,6 @@ query User($input: UserQueryInput!) {
       active
     }
     active
+    canConfirmIndictment
   }
 }

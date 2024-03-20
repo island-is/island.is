@@ -51,6 +51,7 @@ export type Icon =
   | 'lockOpened'
   | 'logOut'
   | 'mail'
+  | 'mailOpen'
   | 'menu'
   | 'notifications'
   | 'open'
@@ -69,6 +70,7 @@ export type Icon =
   | 'settings'
   | 'star'
   | 'time'
+  | 'timer'
   | 'trash'
   | 'volumeHigh'
   | 'volumeMute'
@@ -85,6 +87,8 @@ export type Icon =
   | 'listView'
   | 'gridView'
   | 'swapVertical'
+  | 'thumbsUp'
+  | 'thumbsDown'
 
 export default {
   filled: {
@@ -139,6 +143,7 @@ export default {
     lockOpened: 'LockOpened',
     logOut: 'LogOut',
     mail: 'Mail',
+    mailOpen: 'MailOpen',
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
@@ -164,6 +169,7 @@ export default {
     reload: 'Reload',
     remove: 'Remove',
     time: 'Time',
+    timer: 'Timer',
     save: 'Save',
     bookmark: 'Bookmark',
     share: 'Share',
@@ -173,6 +179,8 @@ export default {
     listView: 'ListView',
     gridView: 'GridView',
     swapVertical: 'SwapVertical',
+    thumbsUp: 'ThumbsUp',
+    thumbsDown: 'ThumbsDown',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -226,6 +234,7 @@ export default {
     lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',
+    mailOpen: 'MailOpenOutline',
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
@@ -251,6 +260,7 @@ export default {
     reload: 'ReloadOutline',
     remove: 'Remove',
     time: 'TimeOutline',
+    timer: 'TimerOutline',
     save: 'SaveOutline',
     bookmark: 'BookmarkOutline',
     share: 'ShareOutline',
@@ -260,5 +270,7 @@ export default {
     listView: 'ListView',
     gridView: 'GridView',
     swapVertical: 'SwapVertical',
+    thumbsUp: 'ThumbsUpOutline',
+    thumbsDown: 'ThumbsDownOutline',
   },
 }

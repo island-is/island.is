@@ -3,6 +3,10 @@ import addYears from 'date-fns/addYears'
 import startOfDay from 'date-fns/startOfDay'
 import faker from 'faker'
 import { Model } from 'sequelize'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 import {
   ApiScope,
@@ -17,10 +21,16 @@ import {
   ClientRedirectUri,
   ClientSecret,
   Delegation,
+  DelegationIndex,
   DelegationScope,
   Domain,
   IdentityResource,
   Language,
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeType,
   Translation,
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
@@ -40,7 +50,12 @@ import {
   CreateClientGrantType,
   CreateClientUri,
   CreateCustomDelegation,
+  CreateCustomDelegationScope,
+  CreateDelegationIndexRecord,
   CreateIdentityResource,
+  CreatePersonalRepresentativeDelegation,
+  CreatePersonalRepresentativeRightType,
+  CreatePersonalRepresentativeScopePermission,
 } from './types'
 
 export class FixtureFactory {
@@ -71,8 +86,8 @@ export class FixtureFactory {
       organisationLogoKey: organisationLogoKey ?? faker.random.word(),
     })
     domain.scopes = await Promise.all(
-      apiScopes.map((apiScope) =>
-        this.createApiScope({ domainName: domain.name, ...apiScope }),
+      apiScopes.map((apiScope, order) =>
+        this.createApiScope({ domainName: domain.name, order, ...apiScope }),
       ),
     )
     return domain
@@ -307,8 +322,7 @@ export class FixtureFactory {
 
     delegation.delegationScopes = await Promise.all(
       scopes.map(({ scopeName, validFrom, validTo }) =>
-        this.get(DelegationScope).create({
-          id: faker.datatype.uuid(),
+        this.createCustomScope({
           delegationId: delegation.id,
           scopeName,
           validFrom: validFrom ?? startOfDay(new Date()),
@@ -323,6 +337,131 @@ export class FixtureFactory {
     })
 
     return delegation
+  }
+
+  async createCustomScope({
+    scopeName,
+    validFrom,
+    validTo,
+    delegationId,
+  }: CreateCustomDelegationScope & {
+    delegationId: string
+  }): Promise<DelegationScope> {
+    const scope = await this.get(DelegationScope).create({
+      id: faker.datatype.uuid(),
+      delegationId: delegationId,
+      scopeName,
+      validFrom: validFrom ?? startOfDay(new Date()),
+      validTo: validTo ?? addYears(new Date(), 1),
+    })
+
+    return scope
+  }
+
+  async createPersonalRepresentativeRightType(
+    rightType?: CreatePersonalRepresentativeRightType,
+  ) {
+    const [personalRepresentativeRightType] = await this.get(
+      PersonalRepresentativeRightType,
+    ).findCreateFind({
+      where: {
+        code: rightType?.code ?? faker.random.word(),
+      },
+      defaults: {
+        validFrom: rightType?.validFrom ?? startOfDay(new Date()),
+        validTo: rightType?.validTo ?? addYears(new Date(), 1),
+        description: rightType?.description ?? faker.random.words(3),
+      },
+    })
+
+    return personalRepresentativeRightType
+  }
+
+  async createPersonalRepresentativeRight({
+    rightTypeCode,
+    personalRepresentativeId,
+    id,
+  }: {
+    rightTypeCode: string
+    personalRepresentativeId: string
+    id?: string | null
+  }) {
+    return this.get(PersonalRepresentativeRight).create({
+      id: id ?? faker.datatype.uuid(),
+      personalRepresentativeId,
+      rightTypeCode,
+    })
+  }
+
+  async createPersonalRepresentativeScopePermission({
+    rightTypeCode,
+    apiScopeName,
+  }: CreatePersonalRepresentativeScopePermission) {
+    // need to create the right type first because of foreign key constraint
+    await this.createPersonalRepresentativeRightType({ code: rightTypeCode })
+
+    return this.get(PersonalRepresentativeScopePermission).findCreateFind({
+      where: {
+        rightTypeCode,
+        apiScopeName,
+      },
+      defaults: {
+        rightTypeCode,
+        apiScopeName,
+      },
+    })
+  }
+
+  async createPersonalRepresentativeDelegation({
+    toNationalId,
+    fromNationalId,
+    validTo,
+    type,
+    rightTypes,
+  }: CreatePersonalRepresentativeDelegation) {
+    const [personalRepresentativeType] = await this.get(
+      PersonalRepresentativeType,
+    ).findCreateFind({
+      where: { code: type?.code ?? faker.random.word() },
+      defaults: {
+        validTo: type?.validTo ?? addYears(new Date(), 1),
+        name: type?.name ?? faker.random.word(),
+        description: type?.description ?? faker.random.words(3),
+      },
+    })
+
+    const personalRepresentative = await this.get(
+      PersonalRepresentative,
+    ).create({
+      id: faker.datatype.uuid(),
+      nationalIdRepresentedPerson: fromNationalId ?? createNationalId(),
+      nationalIdPersonalRepresentative:
+        toNationalId ?? createNationalId('person'),
+      validTo: validTo ?? addYears(new Date(), 1),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
+      contractId: 'data_for_tests',
+      externalUserId: 'data_for_tests',
+    })
+
+    const personalRepresentativeRightTypes = await Promise.all(
+      rightTypes
+        ? rightTypes.map((rightType) =>
+            this.createPersonalRepresentativeRightType(rightType),
+          )
+        : [this.createPersonalRepresentativeRightType()],
+    )
+
+    await Promise.all(
+      personalRepresentativeRightTypes.map((personalRepresentativeRightType) =>
+        this.createPersonalRepresentativeRight({
+          id: personalRepresentative.id,
+          personalRepresentativeId: personalRepresentative.id,
+          rightTypeCode: personalRepresentativeRightType.code,
+        }),
+      ),
+    )
+
+    return personalRepresentative
   }
 
   async createTranslations(
@@ -350,5 +489,23 @@ export class FixtureFactory {
       englishDescription: 'Lang en description',
     })
     return this.get(Translation).bulkCreate(translationObjs)
+  }
+
+  async createDelegationIndexRecord({
+    fromNationalId,
+    toNationalId,
+    provider,
+    type,
+    customDelegationScopes,
+    validTo,
+  }: CreateDelegationIndexRecord) {
+    return this.get(DelegationIndex).create({
+      fromNationalId: fromNationalId ?? createNationalId(),
+      toNationalId: toNationalId ?? createNationalId('person'),
+      provider: provider ?? AuthDelegationProvider.Custom,
+      type: type ?? AuthDelegationType.Custom,
+      customDelegationScopes,
+      validTo,
+    })
   }
 }

@@ -39,9 +39,11 @@ import {
   ShipRegistry,
   DistrictCommissioners,
   DirectorateOfImmigration,
+  Hunting,
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
+  Inna,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -61,7 +63,6 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
-
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -222,7 +223,17 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      HUNTING_LICENSE_PASS_TEMPLATE_ID: {
+        dev: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        staging: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        prod: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba',
+      },
       XROAD_RSK_PROCURING_REDIS_NODES: {
+        dev: json(['redis-applications.internal:6379']),
+        staging: json(['redis-applications.internal:6379']),
+        prod: json(['redis-applications.internal:6379']),
+      },
+      APOLLO_CACHE_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         ]),
@@ -233,7 +244,7 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
-      APOLLO_CACHE_REDIS_NODES: {
+      LICENSE_SERVICE_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         ]),
@@ -353,10 +364,17 @@ export const serviceSetup = (services: {
       CHART_STATISTIC_SOURCE_DATA_PATHS:
         '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
       CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_URL:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
+      LICENSE_SERVICE_BARCODE_SECRET_KEY:
+        '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
     })
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
+      Hunting,
       Firearm,
       Disability,
       Base,
@@ -364,6 +382,7 @@ export const serviceSetup = (services: {
       OccupationalLicenses,
       HealthInsurance,
       IntellectualProperties,
+      Inna,
       Labor,
       DrivingLicense,
       Payment,

@@ -6,11 +6,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
   return service('services-auth-public-api')
     .namespace('identity-server-admin')
     .image('services-auth-public-api')
-    .postgres({
-      username: 'servicesauth',
-      name: 'servicesauth',
-      passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
-    })
+    .db({ name: 'servicesauth' })
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -97,7 +93,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         },
       },
     })
-    .readiness('/liveness')
+    .readiness('/health/check')
     .liveness('/liveness')
     .replicaCount({
       default: 2,

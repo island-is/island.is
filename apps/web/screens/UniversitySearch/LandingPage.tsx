@@ -1,45 +1,73 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
-import { Box, GridColumn, Icon, Input } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  GridColumn,
+  Hidden,
+  Icon,
+  Input,
+  LinkV2,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   getThemeConfig,
+  NewsCard,
   OrganizationWrapper,
   SliceMachine,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
+  GetUniversityGatewayUniversitiesQuery,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  UniversityGatewayUniversity,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../types'
-import { LandingPageFooter } from '../Organization/Home/LandingPage'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
+import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
 import * as styles from './UniversitySearch.css'
+
 interface LandingPageProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
+  universities: Array<UniversityGatewayUniversity>
   namespace: Record<string, string>
   locale: string
 }
 const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
   namespace,
+  universities,
+  locale,
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
+  const [sortedUniversities, setSortedUniversities] = useState<
+    UniversityGatewayUniversity[]
+  >([])
 
+  useEffect(() => {
+    const newArray = [...universities]
+    newArray.sort((x, y) => {
+      const titleX =
+        locale === 'is' ? x.contentfulTitle || '' : x.contentfulTitleEn || ''
+      const titleY =
+        locale === 'is' ? y.contentfulTitle || '' : y.contentfulTitleEn || ''
+      return titleX.localeCompare(titleY, locale)
+    })
+
+    setSortedUniversities(newArray)
+  }, [universities, locale])
   const [searchTerm, setSearchTerm] = useState('')
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -48,13 +76,12 @@ const LandingPage: Screen<LandingPageProps> = ({
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
-      active: false,
+      active: router.asPath === primaryLink?.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
       })),
     })) ?? []
-
   const routeToSearch = () => {
     router.push(`${linkResolver('universitysearch').href}?search=${searchTerm}`)
   }
@@ -76,28 +103,121 @@ const LandingPage: Screen<LandingPageProps> = ({
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
+      sidebarContent={
+        <>
+          <Hidden above="sm">
+            <Box marginBottom={4}>
+              <Accordion>
+                <AccordionItem id="uni_dropdown" label="Háskólar">
+                  <Box width="full" className={cn(styles.courseListContainer)}>
+                    <Box className={cn(styles.courseListContentContainer)}>
+                      <Text variant="eyebrow" color="blueberry600">
+                        {n('universities', 'Háskólar')}
+                      </Text>
+                      {sortedUniversities.map((university) => {
+                        return (
+                          <Box
+                            className={cn(styles.courseListItems)}
+                            key={university.contentfulTitle}
+                          >
+                            <Box style={{ width: '1.5rem', height: '1.5rem' }}>
+                              <img
+                                src={university.contentfulLogoUrl?.toString()}
+                                alt={`logo for ${university.contentfulTitle}`}
+                              />
+                            </Box>
+                            <LinkV2
+                              href={
+                                locale === 'is'
+                                  ? university.contentfulLink?.toString() || '/'
+                                  : university.contentfulLinkEn?.toString() ||
+                                    '/'
+                              }
+                            >
+                              <Text color="blueberry600">
+                                {locale === 'is'
+                                  ? university.contentfulTitle || ''
+                                  : university.contentfulTitleEn || ''}
+                              </Text>
+                            </LinkV2>
+                          </Box>
+                        )
+                      })}
+                    </Box>
+                  </Box>
+                </AccordionItem>
+              </Accordion>
+            </Box>
+          </Hidden>
+          <Hidden below="md">
+            <Box width="full" className={cn(styles.courseListContainer)}>
+              <Box
+                width="full"
+                className={cn(styles.courseListContentContainer)}
+              >
+                <Text variant="eyebrow" color="blueberry600">
+                  {n('universities', 'Háskólar')}
+                </Text>
+                {sortedUniversities.map((university) => {
+                  return (
+                    <Box
+                      className={cn(styles.courseListItems)}
+                      key={university.contentfulTitle}
+                    >
+                      <Box style={{ width: '1.5rem', height: '1.5rem' }}>
+                        <img
+                          src={university.contentfulLogoUrl?.toString()}
+                          alt={`logo for ${university.contentfulTitle}`}
+                        />
+                      </Box>
+                      <LinkV2
+                        href={
+                          locale === 'is'
+                            ? university.contentfulLink?.toString() || '/'
+                            : university.contentfulLinkEn?.toString() || '/'
+                        }
+                      >
+                        <Text color="blueberry600">
+                          {locale === 'is'
+                            ? university.contentfulTitle || ''
+                            : university.contentfulTitleEn || ''}
+                        </Text>
+                      </LinkV2>
+                    </Box>
+                  )
+                })}
+              </Box>
+            </Box>
+          </Hidden>
+        </>
+      }
       mainContent={
-        <Box>
-          {organizationPage?.slices?.map((slice, index) => {
-            return (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                namespace={namespace}
-                slug={organizationPage.slug}
-                fullWidth={organizationPage.theme === 'landing_page'}
-                marginBottom={
-                  index === organizationPage.slices.length - 1 ? 5 : 0
-                }
-                paddingBottom={
-                  !organizationPage.description && index === 0 ? 0 : 6
-                }
-              />
-            )
-          })}
-          <GridColumn offset="1/9" span="7/9">
+        <Box
+          paddingTop={0}
+          style={{ gap: '2.5rem' }}
+          display="flex"
+          flexDirection={'column'}
+        >
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <Box>
+              <Text variant="h3" paddingBottom={1}>
+                {n('landingPageIntroTitle', 'Finndu þitt nám hér')}
+              </Text>
+              <Text variant="default">
+                {n(
+                  'landingPageIntroSubTitle',
+                  'Leitaðu upplýsinga um háskólanám á Íslandi.',
+                )}
+              </Text>
+            </Box>
+          </GridColumn>
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
             <Input
               placeholder={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
@@ -116,11 +236,57 @@ const LandingPage: Screen<LandingPageProps> = ({
               }}
             />
             <button
+              aria-label="Search"
               className={cn(styles.searchIcon)}
               onClick={() => routeToSearch()}
             >
               <Icon size="large" icon="search" color="blue400" />
             </button>
+          </GridColumn>
+          {organizationPage?.slices?.map((slice, index) => {
+            return (
+              <Box key={index}>
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  namespace={namespace}
+                  slug={organizationPage.slug}
+                  fullWidth={organizationPage.theme === 'landing_page'}
+                  marginBottom={
+                    index === organizationPage.slices.length - 1 ? 5 : 0
+                  }
+                  paddingBottom={
+                    !organizationPage.description && index === 0 ? 0 : 6
+                  }
+                />
+              </Box>
+            )
+          })}
+          <GridColumn
+            span={['9/9', '9/9', '11/12']}
+            offset={['0', '0', '1/12']}
+          >
+            <NewsCard
+              title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
+              readMoreText={`${n(
+                'searchForProgram',
+                'Leitaðu að háskólanámi',
+              )}`}
+              introduction={n(
+                'straightToApplying',
+                'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið',
+              )}
+              image={{
+                url: 'https://images.ctfassets.net/8k0h54kbe6bj/442DRqHvfQcYnuffRbnbHD/5d27a2e0a399aef064d5b3702821ff0b/woman_in_chair.png',
+              }}
+              href={
+                locale === 'is'
+                  ? 'https://island.is/haskolanam/leit'
+                  : 'https://island.is/en/university-studies/search'
+              }
+            />
           </GridColumn>
         </Box>
       }
@@ -142,11 +308,6 @@ const LandingPage: Screen<LandingPageProps> = ({
           }}
         />
       ))}
-      {organizationPage?.theme === 'landing_page' && (
-        <LandingPageFooter
-          footerItems={organizationPage.organization?.footerItems}
-        />
-      )}
     </OrganizationWrapper>
   )
 }
@@ -156,22 +317,11 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getOrganization },
-    },
     namespace,
+    universities,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: locale === 'is' ? 'haskolanam' : 'university-studies',
@@ -194,23 +344,28 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    }),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Page not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
-    organization: getOrganization,
     namespace,
+    universities: universities.data.universityGatewayUniversities,
     locale,
     showSearchInHeader: false,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
+      getOrganizationPage?.organization,
     ),
   }
 }
 
-export default withMainLayout(LandingPage)
+export default withMainLayout(LandingPage, {
+  showFooter: false,
+})

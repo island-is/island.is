@@ -7,6 +7,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   ApplicationWithAttachments,
+  UserProfile,
   UserProfileParameters,
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -35,7 +36,7 @@ export class UserProfileService extends BaseTemplateApiService {
     application,
     auth,
     params,
-  }: TemplateApiModuleActionProps<UserProfileParameters>) {
+  }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
     // Temporary solution while we still run the old user profile service.
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })

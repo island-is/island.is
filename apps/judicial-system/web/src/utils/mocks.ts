@@ -1,6 +1,11 @@
+import faker from 'faker'
+
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
   CaseAppealState,
+  CaseFile,
+  CaseFileCategory,
+  CaseFileState,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -172,6 +177,7 @@ export const mockCase = (caseType: CaseType): Case => {
 export const mockUser = (userRole: UserRole): User => {
   return {
     active: true,
+    canConfirmIndictment: false,
     created: '',
     email: '',
     id: '',
@@ -193,5 +199,26 @@ export const mockUser = (userRole: UserRole): User => {
       name: '',
       active: true,
     },
+  }
+}
+
+export const mockCaseFile = (category?: CaseFileCategory): CaseFile => {
+  return {
+    caseId: faker.datatype.uuid(),
+    category: category ?? CaseFileCategory.CASE_FILE,
+    chapter: null,
+    created: faker.date.past().toISOString(),
+    displayDate: faker.date.past().toISOString(),
+    id: faker.datatype.uuid(),
+    key: faker.lorem.paragraph(3).replace(' ', ''),
+    modified: faker.date.past().toISOString(),
+    name: faker.random.word(),
+    orderWithinChapter: null,
+    policeCaseNumber: '123123213',
+    policeFileId: '123123123',
+    size: 123,
+    state: CaseFileState.STORED_IN_RVG,
+    type: '??',
+    userGeneratedFilename: '',
   }
 }

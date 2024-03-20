@@ -13,10 +13,10 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { refetchIsOwner } = useIsOwner()
-  const { refetchListsForUser } = useGetListsForUser()
+  const { refetchListsForUser } = useGetListsForUser(collectionId)
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
-      variables: { input: { id: collectionId } },
+      variables: { input: { collectionId: collectionId } },
     })
 
   const onCancelCollection = async () => {
@@ -40,7 +40,7 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   }
 
   return (
-    <Box marginTop={[5, 8]} display={'flex'} justifyContent={'center'}>
+    <Box marginTop={5} display={'flex'} justifyContent={'center'}>
       <Modal
         id="cancelCollection"
         isVisible={modalIsOpen}
@@ -59,10 +59,22 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
         }
       >
         <Text variant="h2" marginTop={[5, 0]}>
+          {formatMessage(m.cancelCollectionButton)}
+        </Text>
+        <Text variant="default" marginTop={2}>
           {formatMessage(m.cancelCollectionModalMessage)}
         </Text>
-        <Box marginTop={10} display="flex" justifyContent="center">
-          <Button onClick={() => onCancelCollection()} loading={loading}>
+        <Box
+          marginTop={[7, 10]}
+          marginBottom={5}
+          display="flex"
+          justifyContent="center"
+        >
+          <Button
+            onClick={() => onCancelCollection()}
+            loading={loading}
+            colorScheme="destructive"
+          >
             {formatMessage(m.cancelCollectionModalConfirmButton)}
           </Button>
         </Box>

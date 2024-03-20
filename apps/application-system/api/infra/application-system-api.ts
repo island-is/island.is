@@ -1,48 +1,35 @@
-import {
-  json,
-  ref,
-  service,
-  ServiceBuilder,
-} from '../../../../infra/src/dsl/dsl'
-import {
-  PostgresInfo,
-  RedisInfo,
-} from '../../../../infra/src/dsl/types/input-types'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   ChargeFjsV2,
-  EnergyFunds,
   Client,
   CriminalRecord,
   DataProtectionComplaint,
+  DirectorateOfImmigration,
   DrivingLicense,
   EHIC,
+  EnergyFunds,
   Finance,
   FishingLicense,
   HealthInsurance,
   Labor,
   MunicipalitiesFinancialAid,
   NationalRegistry,
+  OccupationalLicenses,
   Passports,
   Payment,
   PaymentSchedule,
   Properties,
   RskCompanyInfo,
+  SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
   WorkMachines,
-  DirectorateOfImmigration,
-  SocialInsuranceAdministration,
-  OccupationalLicenses,
   SignatureCollection,
+  ArborgWorkpoint,
 } from '../../../../infra/src/dsl/xroad'
 
-const postgresInfo: PostgresInfo = {
-  passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
-  name: 'application_system_api',
-  username: 'application_system_api',
-}
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
 const namespace = 'application-system'
@@ -52,7 +39,7 @@ export const workerSetup =
     service('application-system-api-worker')
       .namespace(namespace)
       .image('application-system-api')
-      .postgres(postgresInfo)
+      .db()
       .serviceAccount('application-system-api-worker')
       .redis()
       .env({
@@ -89,7 +76,7 @@ export const workerSetup =
           local: 'http://localhost:4200/umsoknir',
         },
       })
-      .xroad(Base, Client, Payment, EHIC)
+      .xroad(Base, Client, Payment, EHIC, WorkMachines)
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -229,6 +216,11 @@ export const serviceSetup = (services: {
         staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
       },
+      XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
+        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        staging: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
+      },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',
@@ -245,6 +237,12 @@ export const serviceSetup = (services: {
             services.skilavottordWs,
           )}/app/skilavottord/api/graphql`,
       ),
+      UNIVERSITY_GATEWAY_API_URL: {
+        dev: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        staging:
+          'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+      },
     })
     .xroad(
       Base,
@@ -274,6 +272,7 @@ export const serviceSetup = (services: {
       OccupationalLicenses,
       SignatureCollection,
       WorkMachines,
+      ArborgWorkpoint,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -309,18 +308,13 @@ export const serviceSetup = (services: {
       VMST_ID: '/k8s/application-system/VMST_ID',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
-      ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH:
-        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH',
       ALTHINGI_OMBUDSMAN_XROAD_USERNAME:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
     })
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-    })
-    .postgres(postgresInfo)
+    .db()
+    .migrations()
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({

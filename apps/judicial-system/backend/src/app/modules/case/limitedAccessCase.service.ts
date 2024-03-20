@@ -24,14 +24,16 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
-import { CaseFile } from '../file'
+import {
+  CaseFile,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+} from '../file'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
@@ -100,6 +102,7 @@ export interface LimitedAccessUpdateCase
     | 'appealState'
     | 'defendantStatementDate'
     | 'openedByDefender'
+    | 'appealRulingDecision'
   > {}
 
 export const include: Includeable[] = [
@@ -170,6 +173,7 @@ export const include: Includeable[] = [
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
+        CaseFileCategory.APPEAL_COURT_RECORD,
       ],
     },
   },
@@ -261,6 +265,14 @@ export class LimitedAccessCaseService {
       })
     }
 
+    if (update.appealState === CaseAppealState.WITHDRAWN) {
+      messages.push({
+        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
     // Return limited access case
     const updatedCase = await this.findById(theCase.id)
 
@@ -301,6 +313,7 @@ export class LimitedAccessCaseService {
       email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
+      canConfirmIndictment: false,
     } as User
   }
 

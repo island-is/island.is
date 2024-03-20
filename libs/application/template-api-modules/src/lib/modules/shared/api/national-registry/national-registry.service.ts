@@ -459,6 +459,25 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
   }
 
+  async getCurrentResidence({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryResidenceHistory | null> {
+    const residency: NationalRegistryResidenceHistory | null =
+      await this.nationalRegistryApi.getCurrentResidence(auth.nationalId)
+
+    if (!residency) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
+    return residency
+  }
+
   async getResidenceHistory({
     auth,
   }: TemplateApiModuleActionProps): Promise<
@@ -497,5 +516,30 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
 
     return cohabitants
+  }
+
+  async getCohabitantsDetailed(
+    props: TemplateApiModuleActionProps,
+  ): Promise<(NationalRegistryIndividual | null)[]> {
+    const cohabitants = await this.getCohabitants(props)
+
+    if (!cohabitants) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCohabitantsMissing,
+          summary: coreErrorMessages.nationalRegistryCohabitantsMissing,
+        },
+        404,
+      )
+    }
+
+    const cohabitantsDetails = await Promise.all(
+      cohabitants.map(async (cohabitant) => {
+        const individual = await this.getIndividual(cohabitant)
+        return individual
+      }),
+    )
+
+    return cohabitantsDetails
   }
 }

@@ -45,6 +45,7 @@ import {
   IChart,
   IChartComponent,
   IChartNumberBox,
+  IFeaturedEvents,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -133,6 +134,10 @@ import {
   ChartNumberBox,
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
+import {
+  FeaturedEvents,
+  mapFeaturedEvents,
+} from '../models/featuredEvents.model'
 
 export type SliceTypes =
   | ITimeline
@@ -177,6 +182,7 @@ export type SliceTypes =
   | IChart
   | IChartComponent
   | IChartNumberBox
+  | IFeaturedEvents
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -226,6 +232,7 @@ export const SliceUnion = createUnionType({
     Chart,
     ChartComponent,
     ChartNumberBox,
+    FeaturedEvents,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -317,6 +324,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapChartComponent(slice as IChartComponent)
     case 'chartNumberBox':
       return mapChartNumberBox(slice as IChartNumberBox)
+    case 'featuredEvents':
+      return mapFeaturedEvents(slice as IFeaturedEvents)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

@@ -1,41 +1,50 @@
 import addDays from 'date-fns/addDays'
 
 import {
+  NO_ANSWER,
   buildCustomField,
   buildDateField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildRepeater,
   buildSection,
-  buildSubmitField,
   buildSubSection,
-  NO_ANSWER,
-  buildRadioField,
-  buildSelectField,
-  buildTextField,
+  buildSubmitField,
+  buildTableRepeaterField,
+  formatText,
 } from '@island.is/application/core'
-import { Form, FormModes, Application } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import {
   NO,
-  PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
   StartDateOptions,
   YES,
 } from '../constants'
-
 import Logo from '../assets/Logo'
+import { minPeriodDays } from '../config'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getApplicationAnswers,
   getAllPeriodDates,
-  getEditOrAddInfoSectionDescription,
-  getEditOrAddInfoSectionTitle,
-  getPeriodSectionTitle,
+  getApplicationAnswers,
+  getConclusionScreenSteps,
   getLeavePlanTitle,
   getMinimumStartDate,
+  getPeriodSectionTitle,
 } from '../lib/parentalLeaveUtils'
-import { minPeriodDays } from '../config'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { useLocale } from '@island.is/localization'
 
 export const EditOrAddEmployersAndPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddEmployersAndPeriods',
@@ -43,136 +52,6 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
-    buildSection({
-      id: 'editOrAddInfo',
-      title: parentalLeaveFormMessages.shared.editOrAddInfoSection,
-      children: [
-        buildCustomField({
-          id: 'periodsImageScreen',
-          title: getEditOrAddInfoSectionTitle,
-          description: getEditOrAddInfoSectionDescription,
-          component: 'PeriodsSectionImage',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'editOrAddEmployers',
-      title: parentalLeaveFormMessages.shared.employerSection,
-      condition: (answers) => {
-        const {
-          applicationType,
-          isReceivingUnemploymentBenefits,
-          isSelfEmployed,
-          employerLastSixMonths,
-        } = getApplicationAnswers(answers)
-        const isNotSelfEmployed = isSelfEmployed !== YES
-
-        return (
-          (applicationType === PARENTAL_LEAVE &&
-            isReceivingUnemploymentBenefits !== YES &&
-            isNotSelfEmployed) ||
-          ((applicationType === PARENTAL_GRANT ||
-            applicationType === PARENTAL_GRANT_STUDENTS) &&
-            employerLastSixMonths === YES)
-        )
-      },
-      children: [
-        buildSubSection({
-          id: 'addEmployer',
-          title: parentalLeaveFormMessages.shared.employerSubSection,
-          children: [
-            buildRadioField({
-              id: 'addEmployer',
-              title: parentalLeaveFormMessages.shared.editOrAddEmployer,
-              width: 'half',
-              required: true,
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                  value: NO,
-                },
-              ],
-            }),
-            buildRepeater({
-              id: 'employers',
-              title: parentalLeaveFormMessages.employer.title,
-              component: 'EmployersOverview',
-              condition: (answers) => {
-                const { addEmployer } = getApplicationAnswers(answers)
-                return addEmployer === YES
-              },
-              children: [
-                buildMultiField({
-                  id: 'addEmployers',
-                  title: parentalLeaveFormMessages.employer.registration,
-                  isPartOfRepeater: true,
-                  children: [
-                    buildTextField({
-                      id: 'email',
-                      variant: 'email',
-                      dataTestId: 'employer-email',
-                      title: parentalLeaveFormMessages.employer.email,
-                    }),
-                    buildTextField({
-                      id: 'phoneNumber',
-                      variant: 'tel',
-                      dataTestId: 'employer-phone-number',
-                      format: '###-####',
-                      placeholder: '000-0000',
-                      title: parentalLeaveFormMessages.employer.phoneNumber,
-                    }),
-                    buildSelectField({
-                      id: 'ratio',
-                      dataTestId: 'employment-ratio',
-                      title: parentalLeaveFormMessages.employer.ratio,
-                      placeholder:
-                        parentalLeaveFormMessages.employer.ratioPlaceholder,
-                      options: Array(100)
-                        .fill(undefined)
-                        .map((_, idx, array) => ({
-                          value: `${array.length - idx}`,
-                          label: `${array.length - idx}%`,
-                        })),
-                    }),
-                    buildRadioField({
-                      id: 'stillEmployed',
-                      condition: (answers) => {
-                        const { applicationType, employerLastSixMonths } =
-                          getApplicationAnswers(answers)
-
-                        return (
-                          (applicationType === PARENTAL_GRANT ||
-                            applicationType === PARENTAL_GRANT_STUDENTS) &&
-                          employerLastSixMonths === YES
-                        )
-                      },
-                      title: parentalLeaveFormMessages.employer.stillEmployed,
-                      width: 'half',
-                      space: 3,
-                      options: [
-                        {
-                          value: YES,
-                          label:
-                            parentalLeaveFormMessages.shared.yesOptionLabel,
-                        },
-                        {
-                          value: NO,
-                          label: parentalLeaveFormMessages.shared.noOptionLabel,
-                        },
-                      ],
-                    }),
-                  ],
-                }),
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSection({
       id: 'editOrAddPeriods',
       title: getPeriodSectionTitle,
@@ -326,55 +205,202 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      id: 'editOrAddEmployers',
+      title: parentalLeaveFormMessages.shared.employerSection,
+      condition: (answers) => {
+        const {
+          applicationType,
+          isReceivingUnemploymentBenefits,
+          isSelfEmployed,
+          employerLastSixMonths,
+        } = getApplicationAnswers(answers)
+
+        const isNotSelfEmployed = isSelfEmployed !== YES
+
+        return (
+          (applicationType === PARENTAL_LEAVE &&
+            isReceivingUnemploymentBenefits !== YES &&
+            isNotSelfEmployed) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES)
+        )
+      },
       children: [
         buildSubSection({
-          title: '',
+          id: 'addEmployer',
+          title: parentalLeaveFormMessages.shared.employerSubSection,
           children: [
-            buildMultiField({
-              id: 'confirmation',
-              title: '',
-              description: '',
-              children: [
-                buildCustomField({
-                  id: 'confirmationScreen',
-                  title: '',
-                  component: 'EditOrAddEmployersAndPeriodsReview',
-                }),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [
+            buildRadioField({
+              id: 'addEmployer',
+              title: parentalLeaveFormMessages.shared.editOrAddEmployer,
+              width: 'half',
+              required: true,
+              options: [
+                {
+                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  value: YES,
+                },
+                {
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  value: NO,
+                },
+              ],
+            }),
+            buildTableRepeaterField({
+              id: 'employers',
+              title: parentalLeaveFormMessages.employer.title,
+              description: (application) => {
+                const { employerLastSixMonths } = getApplicationAnswers(
+                  application.answers,
+                )
+                return employerLastSixMonths === YES
+                  ? parentalLeaveFormMessages.employer.grantsDescription
+                  : parentalLeaveFormMessages.employer.description
+              },
+              condition: (answers) => {
+                const { addEmployer } = getApplicationAnswers(answers)
+                return addEmployer === YES
+              },
+              formTitle: parentalLeaveFormMessages.employer.registration,
+              addItemButtonText: parentalLeaveFormMessages.employer.addEmployer,
+              saveItemButtonText:
+                parentalLeaveFormMessages.employer.registerEmployer,
+              removeButtonTooltipText:
+                parentalLeaveFormMessages.employer.deleteEmployer,
+              marginTop: 0,
+              fields: {
+                email: {
+                  component: 'input',
+                  label: parentalLeaveFormMessages.employer.email,
+                  type: 'email',
+                  dataTestId: 'employer-email',
+                },
+                phoneNumber: {
+                  component: 'input',
+                  label: parentalLeaveFormMessages.employer.phoneNumber,
+                  type: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
+                  dataTestId: 'employer-phone-number',
+                },
+                ratio: {
+                  component: 'select',
+                  label: parentalLeaveFormMessages.employer.ratio,
+                  placeholder:
+                    parentalLeaveFormMessages.employer.ratioPlaceholder,
+                  dataTestId: 'employment-ratio',
+                  options: Array(100)
+                    .fill(undefined)
+                    .map((_, idx, array) => ({
+                      value: `${array.length - idx}`,
+                      label: `${array.length - idx}%`,
+                    })),
+                },
+                stillEmployed: {
+                  component: 'radio',
+                  label: parentalLeaveFormMessages.employer.stillEmployed,
+                  width: 'half',
+                  options: [
                     {
-                      event: 'ABORT',
-                      name: parentalLeaveFormMessages.confirmation.cancel,
-                      type: 'reject',
+                      value: YES,
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
                     },
                     {
-                      event: 'SUBMIT',
-                      name: parentalLeaveFormMessages.confirmation.title,
-                      type: 'primary',
-                      condition: (answers) => {
-                        // Only display Submit button if changes made
-                        const { addPeriods, addEmployer } =
-                          getApplicationAnswers(answers)
-                        return addPeriods === YES || addEmployer === YES
-                      },
+                      value: NO,
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
                     },
                   ],
-                }),
+                  displayInTable: false,
+                  condition: (application) => {
+                    const { applicationType, employerLastSixMonths } =
+                      getApplicationAnswers(application.answers)
+
+                    return (
+                      (applicationType === PARENTAL_GRANT ||
+                        applicationType === PARENTAL_GRANT_STUDENTS) &&
+                      employerLastSixMonths === YES
+                    )
+                  },
+                },
+              },
+              table: {
+                header: [
+                  parentalLeaveFormMessages.employer.emailHeader,
+                  parentalLeaveFormMessages.employer.phoneNumberHeader,
+                  parentalLeaveFormMessages.employer.ratioHeader,
+                ],
+                format: {
+                  phoneNumber: (value) =>
+                    formatPhoneNumber(removeCountryCode(value ?? '')),
+                  ratio: (value) => `${value}%`,
+                },
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: parentalLeaveFormMessages.confirmation.title,
+      children: [
+        buildMultiField({
+          id: 'confirmation',
+          title: '',
+          children: [
+            buildCustomField({
+              id: 'confirmationScreen',
+              title: '',
+              component: 'EditOrAddEmployersAndPeriodsReview',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                  condition: (answers) => {
+                    // Only display Submit button if changes made
+                    const { addPeriods, addEmployer } =
+                      getApplicationAnswers(answers)
+                    return addPeriods === YES || addEmployer === YES
+                  },
+                },
               ],
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: parentalLeaveFormMessages.finalScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertType: 'success',
+      expandableHeader: parentalLeaveFormMessages.finalScreen.title,
+      expandableDescription: (application: Application) => {
+        const nextSteps = getConclusionScreenSteps(application)
+
+        // Create a markdown from the steps translations strings
+        let markdown = ''
+
+        nextSteps.forEach((step) => {
+          const translation = formatText(
+            step,
+            application,
+            useLocale().formatMessage,
+          )
+          markdown += `* ${translation} \n`
+        })
+
+        return markdown
+      },
     }),
   ],
 })

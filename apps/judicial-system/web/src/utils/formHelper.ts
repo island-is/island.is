@@ -11,8 +11,7 @@ export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -24,8 +23,7 @@ export const removeTabsValidateAndSet = (
     field,
     value,
     validations,
-    theCase,
-    setCase,
+    setWorkingCase,
     errorMessage,
     setErrorMessage,
   )
@@ -61,17 +59,16 @@ export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
   removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: value,
-  })
+  }))
 }
 
 export const validateAndSendToServer = (
@@ -92,7 +89,7 @@ export const validateAndSendToServer = (
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
-export function toggleInArray<T>(values: T[] | undefined | null, entry: T) {
+export const toggleInArray = <T>(values: T[] | undefined | null, entry: T) => {
   if (!values) return [entry]
 
   return values.includes(entry)
@@ -104,7 +101,7 @@ export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]
@@ -117,10 +114,10 @@ export const setCheckboxAndSendToServer = (
     checks.splice(checks.indexOf(value), 1)
   }
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: checks,
-  })
+  }))
 
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })
@@ -166,7 +163,7 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -247,7 +244,8 @@ export const stepValidations = (): stepValidationsType => {
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
       validations.isTrafficViolationStepValidIndictments(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
+      validations.isCaseFilesStepValidIndictments(theCase),
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),

@@ -4,7 +4,7 @@ import { DocumentInfoDTO } from '@island.is/clients/documents'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { Document } from './models/document.model'
+import { Document } from './models/v1/document.model'
 import { DocumentTypeFilter, FileType } from './types'
 
 @Injectable()
@@ -21,6 +21,13 @@ export class DocumentBuilder {
       senderNatReg: '5402696029',
       subjectContains: 'Niðurstaða álagningar',
       url: 'https://thjonustusidur.rsk.is/alagningarsedill',
+      fileType: FileType.URL,
+    },
+    {
+      senderName: 'Ríkisskattstjóri',
+      senderNatReg: '5402696029',
+      subjectContains: 'Skjöl send í undirritun fyrir umsókn',
+      url: '',
       fileType: FileType.URL,
     },
   ]

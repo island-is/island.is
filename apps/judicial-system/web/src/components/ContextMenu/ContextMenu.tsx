@@ -14,7 +14,7 @@ import { TestSupport } from '@island.is/island-ui/utils'
 
 import * as styles from './ContextMenu.css'
 
-export interface ContextMenuProps {
+interface ContextMenuProps {
   // Aria label for menu
   menuLabel: string
 

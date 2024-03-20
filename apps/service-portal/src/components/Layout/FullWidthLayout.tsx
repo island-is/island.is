@@ -57,13 +57,12 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
     setActiveChild(activeVisibleChild)
   }, [activeParent?.children])
 
-  const activeDescription =
-    activeChild?.description || activeParent?.description
   return (
     <Box
       as="main"
       component="main"
       className={isDocuments ? styles.fullWidthSplit : undefined}
+      paddingTop={9}
       style={{
         marginTop: height,
         minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
@@ -72,11 +71,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
       <Box>
         {!isDashboard && !isDocuments && (
           <>
-            <Box
-              paddingBottom={[3, 4]}
-              paddingTop={[4, 4, 0]}
-              background="blue100"
-            >
+            <Box paddingBottom={[3, 4]} paddingTop={[4, 4, 0]}>
               <GridContainer className={styles.wrap} position="none">
                 <GridRow>
                   <GridColumn span="12/12">
@@ -103,29 +98,13 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                 </GridRow>
               </GridContainer>
             </Box>
-            <Box
-              marginBottom={4}
-              paddingTop={0}
-              paddingBottom={2}
-              background="blue100"
-            >
+            <Box>
               <GridContainer position="none">
                 <GridRow>
                   <GridColumn span="12/12">
                     <IntroHeader
                       title={activeParent?.name || ''}
                       intro={activeParent?.heading}
-                      serviceProviderSlug={
-                        activeChild?.serviceProvider ??
-                        activeParent?.serviceProvider
-                      }
-                      serviceProviderTooltip={
-                        activeDescription
-                          ? formatMessage(activeDescription)
-                          : undefined
-                      }
-                      backgroundColor="white"
-                      tooltipVariant="white"
                     />
                   </GridColumn>
                 </GridRow>
@@ -134,7 +113,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
           </>
         )}
         {navItems && navItems?.length > 0 ? (
-          <Box paddingTop={[0, 0, 4]}>
+          <Box>
             <GridContainer position="none">
               <GridRow>
                 <GridColumn span="12/12">

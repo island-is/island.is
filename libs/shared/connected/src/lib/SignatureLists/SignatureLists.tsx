@@ -4,13 +4,14 @@ import { FC } from 'react'
 import {
   ConnectedComponent,
   SignatureCollectionCandidate,
-  SignatureCollectionList,
+  SignatureCollectionListBase,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../utils'
 import {
   useGetCurrentCollection,
   useGetOpenLists,
 } from './useGetSignatureLists'
+import { sortAlpha } from '@island.is/shared/utils'
 
 interface SignatureListsProps {
   slice: ConnectedComponent
@@ -20,63 +21,88 @@ export const SignatureLists: FC<
   React.PropsWithChildren<SignatureListsProps>
 > = ({ slice }) => {
   const { collection, loading } = useGetCurrentCollection()
-  const { openLists } = useGetOpenLists()
+  const { openLists, openListsLoading } = useGetOpenLists(collection?.id || '')
   const t = useLocalization(slice.json)
 
   return (
-    !loading && (
-      <Box marginTop={7}>
-        <Box marginBottom={3}>
-          <Text variant="h4">
-            {t('title', 'Frambjóðendur sem hægt er að mæla með')}
-          </Text>
-        </Box>
-        <Stack space={4}>
+    !loading &&
+    !openListsLoading && (
+      <Box marginTop={10}>
+        {(collection?.candidates.length > 0 || openLists?.length > 0) && (
+          <Box
+            marginBottom={3}
+            display={['block', 'flex']}
+            justifyContent={'spaceBetween'}
+            alignItems={'baseline'}
+          >
+            {collection.isActive ? (
+              <>
+                <Text variant="h3">{t('title', 'Forsetakosningar 2024')}</Text>
+                <Text variant="eyebrow">
+                  {t('totalCandidates', 'Fjöldi frambjóðenda: ') +
+                    collection?.candidates.length}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text variant="h3">
+                  {t('title2', 'Forsetakosningar 2024 - Framlengt')}
+                </Text>
+                <Text variant="eyebrow">
+                  {t('totalLists', 'Fjöldi lista: ') + openLists?.length}
+                </Text>
+              </>
+            )}
+          </Box>
+        )}
+        <Stack space={3}>
           {/* if collection time is over yet there are still open lists, show them */}
-          {new Date() > new Date(collection.endTime) && openLists?.length ? (
-            openLists?.map((list: SignatureCollectionList) => {
-              return (
-                <ActionCard
-                  eyebrow={
-                    t('openTil', 'Lokadagur:') +
-                    ' ' +
-                    format(new Date(list.endTime), 'dd.MM.yyyy')
-                  }
-                  key={list.id}
-                  backgroundColor="white"
-                  heading={list.title}
-                  text={collection.name}
-                  cta={{
-                    label: t('sign', 'Mæla með framboði'),
-                    variant: 'text',
-                    icon: 'open',
-                    iconType: 'outline',
-                    size: 'small',
-                    onClick: () =>
-                      window.open(
-                        `${window.location.origin}/${list.slug}`,
-                        '_blank',
-                      ),
-                  }}
-                />
-              )
-            })
-          ) : collection?.candidates.length > 0 ? (
-            collection.candidates.map(
-              (candidate: SignatureCollectionCandidate) => {
+          {!collection?.isActive && openLists?.length > 0 ? (
+            [...openLists]
+              ?.sort(sortAlpha('title'))
+              .map((list: SignatureCollectionListBase) => {
                 return (
                   <ActionCard
                     eyebrow={
                       t('openTil', 'Lokadagur:') +
                       ' ' +
-                      format(new Date(collection.endTime), 'dd.MM.yyyy')
+                      format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')
                     }
+                    key={list.id}
+                    backgroundColor="white"
+                    heading={list.title.split(' -')[0]}
+                    text={list.area?.name}
+                    cta={{
+                      label: t('sign', 'Mæla með framboði'),
+                      variant: 'text',
+                      icon: 'open',
+                      iconType: 'outline',
+                      size: 'small',
+                      onClick: () =>
+                        window.open(
+                          `${window.location.origin}${list.slug}`,
+                          '_blank',
+                        ),
+                    }}
+                  />
+                )
+              })
+          ) : collection?.candidates?.length > 0 ? (
+            [...collection.candidates]
+              ?.sort(sortAlpha('name'))
+              .map((candidate: SignatureCollectionCandidate) => {
+                return (
+                  <ActionCard
                     key={candidate.id}
                     backgroundColor="white"
                     heading={candidate.name}
-                    text={collection.name}
+                    eyebrow={
+                      t('openTil', 'Lokadagur:') +
+                      ' ' +
+                      format(new Date(collection.endTime), 'dd.MM.yyyy')
+                    }
                     cta={
-                      new Date() < new Date(collection.endTime)
+                      collection.isActive
                         ? {
                             label: t('sign', 'Mæla með framboði'),
                             variant: 'text',
@@ -92,7 +118,7 @@ export const SignatureLists: FC<
                         : undefined
                     }
                     tag={
-                      new Date() > new Date(collection.endTime)
+                      !collection.isActive
                         ? {
                             label: t('closed', 'Söfnuninni lokið'),
                             variant: 'red',
@@ -101,10 +127,11 @@ export const SignatureLists: FC<
                     }
                   />
                 )
-              },
-            )
+              })
           ) : (
-            <Text variant="h4">{t('noLists', 'Engin söfnun er opin')}</Text>
+            <Text variant="h4">
+              {t('noLists', 'Engin meðmælasöfnun er í gangi í augnablikinu.')}
+            </Text>
           )}
         </Stack>
       </Box>

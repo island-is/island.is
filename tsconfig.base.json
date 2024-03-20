@@ -156,6 +156,9 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
+      "@island.is/api/domains/ministry-of-justice": [
+        "libs/api/domains/ministry-of-justice/src/index.ts"
+      ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
       ],
@@ -167,6 +170,9 @@
       ],
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
+      ],
+      "@island.is/api/domains/notifications": [
+        "libs/api/domains/notifications/src/index.ts"
       ],
       "@island.is/api/domains/occupational-licenses": [
         "libs/api/domains/occupational-licenses/src/index.ts"
@@ -237,6 +243,9 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+      "@island.is/application-templates-official-journal-of-iceland": [
+        "libs/application/templates/official-journal-of-iceland/src/index.ts"
+      ],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
@@ -279,6 +288,12 @@
       ],
       "@island.is/application/templates/aosh/change-machine-supervisor": [
         "libs/application/templates/aosh/change-machine-supervisor/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/deregister-machine": [
+        "libs/application/templates/aosh/deregister-machine/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/request-for-inspection": [
+        "libs/application/templates/aosh/request-for-inspection/src/index.ts"
       ],
       "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
         "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
@@ -370,11 +385,17 @@
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
       ],
+      "@island.is/application/templates/grindavik-housing-buyout": [
+        "libs/application/templates/grindavik-housing-buyout/src/index.ts"
+      ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/home-support": [
+        "libs/application/templates/home-support/src/index.ts"
       ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
@@ -481,6 +502,9 @@
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
+      "@island.is/application/templates/university": [
+        "libs/application/templates/university/src/index.ts"
+      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
@@ -559,10 +583,14 @@
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"
       ],
+      "@island.is/clients/dmr": ["libs/clients/dmr/src/index.ts"],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/documents-v2": [
+        "libs/clients/documents-v2/src/index.ts"
+      ],
       "@island.is/clients/driving-license": [
         "libs/clients/driving-license/src/index.ts"
       ],
@@ -596,6 +624,9 @@
       "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
+      "@island.is/clients/hunting-license": [
+        "libs/clients/hunting-license/src/index.ts"
       ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
@@ -693,6 +724,9 @@
       "@island.is/clients/university-application/agricultural-university-of-iceland": [
         "libs/clients/university-application/agricultural-university-of-iceland/src/index.ts"
       ],
+      "@island.is/clients/university-application/bifrost-university": [
+        "libs/clients/university-application/bifrost-university/src/index.ts"
+      ],
       "@island.is/clients/university-application/holar-university": [
         "libs/clients/university-application/holar-university/src/index.ts"
       ],
@@ -730,6 +764,9 @@
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
+      ],
+      "@island.is/clients/workpoint/arborg": [
+        "libs/clients/workpoint/arborg/src/index.ts"
       ],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
@@ -973,6 +1010,7 @@
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
       ],
+      "@island.is/services/license": ["libs/services/license/src/index.ts"],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

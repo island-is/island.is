@@ -1,13 +1,14 @@
 import type {
+  ActionCardProps,
   BoxProps,
   DatePickerBackgroundColor,
+  DatePickerProps,
   IconProps,
   InputBackgroundColor,
   ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import { FormItem, FormText, FormTextArray, StaticText } from './Form'
-
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
@@ -17,6 +18,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
+import { Locale } from '@island.is/shared/types'
 
 type Space = keyof typeof theme.spacing
 
@@ -51,6 +53,67 @@ export type TagVariant =
   | 'dark'
   | 'mint'
   | 'disabled'
+
+export type TableRepeaterFields =
+  | 'input'
+  | 'select'
+  | 'radio'
+  | 'checkbox'
+  | 'date'
+
+export type TableRepeaterItem = {
+  component: TableRepeaterFields
+  /**
+   * Defaults to true
+   */
+  displayInTable?: boolean
+  label?: StaticText
+  placeholder?: StaticText
+  options?: { label: StaticText; value: string }[]
+  backgroundColor?: 'blue' | 'white'
+  width?: 'half' | 'full'
+  required?: boolean
+  condition?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => boolean
+  dataTestId?: string
+} & (
+  | {
+      component: 'input'
+      label: StaticText
+      type?: 'text' | 'number' | 'email' | 'tel'
+      format?: string
+      textarea?: boolean
+      rows?: number
+      maxLength?: number
+      currency?: boolean
+    }
+  | {
+      component: 'date'
+      label: StaticText
+      locale?: Locale
+      maxDate?: DatePickerProps['maxDate']
+      minDate?: DatePickerProps['minDate']
+      minYear?: number
+      maxYear?: number
+      excludeDates?: DatePickerProps['excludeDates']
+    }
+  | {
+      component: 'select'
+      label: StaticText
+      options: { label: StaticText; value: string }[]
+      isSearchable?: boolean
+    }
+  | {
+      component: 'radio'
+      largeButtons?: boolean
+    }
+  | {
+      component: 'checkbox'
+      large?: boolean
+    }
+)
 
 export type AlertMessageLink = {
   title: MessageDescriptor | string
@@ -121,6 +184,12 @@ export enum FieldTypes {
   IMAGE = 'IMAGE',
   PDF_LINK_BUTTON = 'PDF_LINK_BUTTON',
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
+  ACTION_CARD_LIST = 'ACTION_CARD_LIST',
+  TABLE_REPEATER = 'TABLE_REPEATER',
+  HIDDEN_INPUT = 'HIDDEN_INPUT',
+  HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
+  FIND_VEHICLE = 'FIND_VEHICLE',
+  STATIC_TABLE = 'STATIC_TABLE',
 }
 
 export enum FieldComponents {
@@ -147,6 +216,11 @@ export enum FieldComponents {
   IMAGE = 'ImageFormField',
   PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
+  ACTION_CARD_LIST = 'ActionCardListFormField',
+  TABLE_REPEATER = 'TableRepeaterFormField',
+  HIDDEN_INPUT = 'HiddenInputFormField',
+  FIND_VEHICLE = 'FindVehicleFormField',
+  STATIC_TABLE = 'StaticTableFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -170,6 +244,7 @@ export interface DateField extends BaseField {
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
   required?: boolean
+  readOnly?: boolean
 }
 
 export interface DescriptionField extends BaseField {
@@ -180,6 +255,7 @@ export interface DescriptionField extends BaseField {
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
   titleVariant?: TitleVariants
 }
 
@@ -298,6 +374,9 @@ export interface KeyValueField extends BaseField {
   value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -323,13 +402,15 @@ export interface MessageWithLinkButtonField extends BaseField {
   url: string
   buttonTitle: FormText
   message: FormText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText?: StaticText
-  description: StaticText
+  description: FormText
   startExpanded?: boolean
 }
 
@@ -402,6 +483,89 @@ export interface NationalIdWithNameField extends BaseField {
   minAgePerson?: number
 }
 
+export type ActionCardListField = BaseField & {
+  readonly type: FieldTypes.ACTION_CARD_LIST
+  component: FieldComponents.ACTION_CARD_LIST
+  items: (application: Application) => ActionCardProps[]
+  space?: BoxProps['paddingTop']
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
+}
+
+export type TableRepeaterField = BaseField & {
+  readonly type: FieldTypes.TABLE_REPEATER
+  component: FieldComponents.TABLE_REPEATER
+  formTitle?: StaticText
+  addItemButtonText?: StaticText
+  saveItemButtonText?: StaticText
+  getStaticTableData?: (application: Application) => Record<string, string>[]
+  removeButtonTooltipText?: StaticText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  fields: Record<string, TableRepeaterItem>
+  table?: {
+    /**
+     * List of strings to render,
+     * if not provided it will be auto generated from the fields
+     */
+    header?: StaticText[]
+    /**
+     * List of field id's to render,
+     * if not provided it will be auto generated from the fields
+     */
+    rows?: string[]
+    format?: Record<string, (value: string) => string>
+  }
+}
+export interface FindVehicleField extends BaseField {
+  readonly type: FieldTypes.FIND_VEHICLE
+  component: FieldComponents.FIND_VEHICLE
+  disabled?: boolean
+  required?: boolean
+  additionalErrors: boolean
+  getDetails?: (plate: string) => Promise<unknown>
+  findVehicleButtonText?: FormText
+  findPlatePlaceholder?: FormText
+  notFoundErrorMessage?: FormText
+  notFoundErrorTitle?: FormText
+  fallbackErrorMessage?: FormText
+  hasErrorTitle?: FormText
+  isNotDebtLessTag?: FormText
+  validationErrors?: Record<string, FormText>
+  requiredValidVehicleErrorMessage?: FormText
+  isMachine?: boolean
+  isEnergyFunds?: boolean
+  energyFundsMessages?: Record<string, FormText>
+}
+
+export interface HiddenInputWithWatchedValueField extends BaseField {
+  watchValue: string
+  type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
+  component: FieldComponents.HIDDEN_INPUT
+  valueModifier?: (value: unknown) => unknown
+}
+
+export interface HiddenInputField extends BaseField {
+  watchValue?: never
+  type: FieldTypes.HIDDEN_INPUT
+  component: FieldComponents.HIDDEN_INPUT
+  valueModifier?: never
+}
+
+export interface StaticTableField extends BaseField {
+  readonly type: FieldTypes.STATIC_TABLE
+  component: FieldComponents.STATIC_TABLE
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  summary?:
+    | { label: StaticText; value: StaticText }[]
+    | ((application: Application) => { label: StaticText; value: StaticText }[])
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -427,3 +591,9 @@ export type Field =
   | ImageField
   | PdfLinkButtonField
   | NationalIdWithNameField
+  | ActionCardListField
+  | TableRepeaterField
+  | HiddenInputWithWatchedValueField
+  | HiddenInputField
+  | FindVehicleField
+  | StaticTableField

@@ -1,48 +1,79 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { User } from '@island.is/auth-nest-tools'
-import { PaymentPlan } from './models/paymentPlan.model'
 import { handle404 } from '@island.is/clients/middlewares'
-import { PaymentGroup } from './models/paymentGroup'
+import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  CmsElasticsearchService,
+  CustomPageUniqueIdentifier,
+} from '@island.is/cms'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
-import addYears from 'date-fns/addYears'
+import { Inject, Injectable } from '@nestjs/common'
+import { PensionCalculationInput } from './dtos/pensionCalculation.input'
+import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import {
+  getPensionCalculationHighlightedItems,
+  groupPensionCalculationItems,
+  mapPensionCalculationInput,
+} from './utils'
+import { PaymentGroup } from './models/paymentGroup.model'
+import { PaymentPlan } from './models/paymentPlan.model'
+import { Payments } from './models/payments.model'
+import { mapToPaymentGroupType } from './models/paymentGroupType.model'
 
 @Injectable()
 export class SocialInsuranceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly socialInsuranceApi: SocialInsuranceAdministrationClientService,
+    private readonly cmsElasticService: CmsElasticsearchService,
   ) {}
+
+  async getPayments(user: User): Promise<Payments | undefined> {
+    const [payments, years] = await Promise.all([
+      this.socialInsuranceApi.getPayments(user).catch(handle404),
+      this.socialInsuranceApi.getValidYearsForPaymentPlan(user),
+    ])
+
+    if (!payments || !years) {
+      return undefined
+    }
+
+    //if no data
+    if (!payments.nextPayment && !payments.previousPayment && !years) {
+      return undefined
+    }
+
+    return {
+      nextPayment: payments.nextPayment ?? undefined,
+      previousPayment: payments.previousPayment ?? undefined,
+      paymentYears: years,
+    }
+  }
 
   async getPaymentPlan(
     user: User,
-    year?: number,
+    year: number,
   ): Promise<PaymentPlan | undefined> {
-    const [paymentPlan, payments] = await Promise.all([
-      this.socialInsuranceApi
-        .getPaymentPlan(user, year ?? addYears(new Date(), -1).getFullYear())
-        .catch(handle404),
-      this.socialInsuranceApi.getPayments(user).catch(handle404),
-    ])
+    const paymentPlan = await this.socialInsuranceApi
+      .getPaymentPlan(user, year)
+      .catch(handle404)
 
-    if (!paymentPlan && !payments) {
+    if (!paymentPlan) {
       return undefined
     }
 
     const paymentGroups: Array<PaymentGroup> =
-      paymentPlan?.paymentPlan?.groups
+      paymentPlan?.groups
         ?.map((g) => {
           if (!g.group) {
             return null
           }
+
           return {
-            type: g.group,
-            totalYearCumulativeAmount: g.monthTotals?.reduce(
-              (total, current) => (total += current.amount ?? 0),
-              0,
-            ),
+            type: mapToPaymentGroupType(g.groupId ?? undefined),
+            name: g.group,
+            totalYearCumulativeAmount: g.total ?? undefined,
             monthlyPaymentHistory:
               g.monthTotals
                 ?.map((mt) => {
@@ -62,11 +93,8 @@ export class SocialInsuranceService {
                     return null
                   }
                   return {
-                    type: r.name,
-                    totalYearCumulativeAmount: r.months?.reduce(
-                      (total, current) => (total += current.amount ?? 0),
-                      0,
-                    ),
+                    name: r.name,
+                    totalYearCumulativeAmount: r.total ?? undefined,
                     monthlyPaymentHistory:
                       r.months
                         ?.map((m) => {
@@ -86,17 +114,43 @@ export class SocialInsuranceService {
         })
         .filter(isDefined) ?? []
 
-    const data = {
-      nextPayment: payments?.nextPayment ?? undefined,
-      previousPayment: payments?.previousPayment ?? undefined,
-      paymentGroups: paymentGroups,
-    }
-
-    //if no data
-    if (!data.nextPayment && !data.previousPayment && !paymentGroups.length) {
+    if (!paymentGroups.length) {
       return undefined
     }
 
-    return data
+    return {
+      totalPayments: paymentPlan.totalPayment ?? undefined,
+      totalPaymentsReceived: paymentPlan.paidOut ?? undefined,
+      totalPaymentsSubtraction: paymentPlan.subtracted ?? undefined,
+      paymentGroups,
+    }
+  }
+  async getValidPaymentPlanYear(user: User): Promise<Array<number>> {
+    return this.socialInsuranceApi.getValidYearsForPaymentPlan(user)
+  }
+
+  async getPensionCalculation(
+    input: PensionCalculationInput,
+  ): Promise<PensionCalculationResponse> {
+    const pageData = await this.cmsElasticService.getCustomPage({
+      lang: 'is',
+      uniqueIdentifier: CustomPageUniqueIdentifier.PensionCalculator,
+    })
+
+    const mappedInput = mapPensionCalculationInput(input, pageData)
+    const calculation = await this.socialInsuranceApi.getPensionCalculation(
+      mappedInput,
+    )
+
+    const groups = groupPensionCalculationItems(calculation, pageData)
+    const highlightedItems = getPensionCalculationHighlightedItems(
+      calculation,
+      pageData,
+    )
+
+    return {
+      highlightedItems,
+      groups,
+    }
   }
 }

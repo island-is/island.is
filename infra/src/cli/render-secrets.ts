@@ -2,6 +2,7 @@ import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { renderHelmServices } from '../dsl/exports/helm'
 import { getSsmParams } from '../dsl/adapters/get-ssm-params'
+import { logger } from '../common'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
@@ -14,15 +15,15 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 }
 
 export const renderSecretsCommand = async (service: string) => {
-  renderSecrets(service).catch((error) => {
+  return renderSecrets(service).catch((error) => {
     if (error.name === 'CredentialsProviderError') {
-      console.error(
+      logger.error(
         'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
       )
     } else {
-      console.error(error)
+      logger.error(error)
     }
-    process.exit(1)
+    return {} as ReturnType<typeof renderSecrets>
   })
 }
 
@@ -61,11 +62,16 @@ export const renderSecrets = async (service: string) => {
   const values = await getSsmParams(
     secretRequests.map(([_, ssmName]) => ssmName),
   )
+  const envMap = Object.fromEntries(
+    secretRequests.map(([envName, ssmName]) => [envName, values[ssmName]]),
+  )
 
-  secretRequests.forEach(([envName, ssmName]) => {
-    const escapedValue = values[ssmName]
-      .replace(/\s+/g, ' ')
-      .replace(/'/g, "'\\''")
-    console.log(`export ${envName}='${escapedValue}'`)
+  logger.debug('env when rendering', { envMap })
+  Object.entries(envMap).forEach(([key, value]) => {
+    const escapedValue = (value ?? '')
+      .replace(/\n/g, '\\n')
+      .replace(/"/g, '\\"')
+    console.log(`export ${key}='${escapedValue}'`)
   })
+  return envMap
 }

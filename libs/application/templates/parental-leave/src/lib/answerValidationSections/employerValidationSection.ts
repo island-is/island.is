@@ -2,7 +2,7 @@ import { Answer, Application } from '@island.is/application/types'
 import { getApplicationAnswers } from '../parentalLeaveUtils'
 import isEmpty from 'lodash/isEmpty'
 import { buildError } from './utils'
-import { AnswerValidationConstants, NO, YES } from '../../constants'
+import { AnswerValidationConstants, NO } from '../../constants'
 import { errorMessages } from '../messages'
 import { isValidEmail } from '../isValidEmail'
 import { coreErrorMessages } from '@island.is/application/core'
@@ -19,17 +19,6 @@ export const employerValidationSection = (
   // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
   if (obj.isSelfEmployed) {
     return undefined
-  }
-
-  if (
-    isSelfEmployed === YES &&
-    isEmpty((obj.selfEmployed as { file: unknown[] }).file)
-  ) {
-    return buildError(
-      errorMessages.requiredAttachment,
-      'selfEmployed.file',
-      EMPLOYER,
-    )
   }
 
   if (isSelfEmployed === NO && isEmpty(obj?.email)) {

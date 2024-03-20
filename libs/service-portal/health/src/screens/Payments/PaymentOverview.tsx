@@ -37,7 +37,7 @@ import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const PaymentOverview = () => {
-  const { formatMessage, formatDateFns } = useLocale()
+  const { formatMessage, formatDateFns, lang } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
     sub(new Date(), { years: 3 }),
@@ -100,12 +100,7 @@ export const PaymentOverview = () => {
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
       {error ? (
-        <Problem
-          size="small"
-          noBorder={false}
-          type="internal_service_error"
-          error={error}
-        />
+        <Problem noBorder={false} error={error} />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (
@@ -141,6 +136,7 @@ export const PaymentOverview = () => {
                     handleChange={(date) => setStartDate(date)}
                     backgroundColor="blue"
                     selected={startDate}
+                    locale={lang}
                   />
                 </GridColumn>
                 <GridColumn span={'1/2'}>
@@ -151,6 +147,7 @@ export const PaymentOverview = () => {
                     handleChange={(date) => setEndDate(date)}
                     backgroundColor="blue"
                     selected={endDate}
+                    locale={lang}
                   />
                 </GridColumn>
               </GridRow>
@@ -185,12 +182,7 @@ export const PaymentOverview = () => {
             </GridContainer>
             <Box>
               {overviewError ? (
-                <Problem
-                  size="small"
-                  noBorder={false}
-                  type="internal_service_error"
-                  error={error}
-                />
+                <Problem error={error} noBorder={false} />
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : overview?.bills?.length ? (

@@ -118,6 +118,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         email: defenderEmail,
         role: UserRole.DEFENDER,
         active: true,
+        canConfirmIndictment: false,
       })
     })
   })
@@ -150,6 +151,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         email: defenderEmail,
         role: UserRole.DEFENDER,
         active: true,
+        canConfirmIndictment: false,
       })
     })
   })

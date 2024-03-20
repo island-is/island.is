@@ -1,4 +1,4 @@
-name: Monorepo
+name: Monorepo pipeline - build and deploy
 
 on:
   push:
@@ -220,7 +220,7 @@ jobs:
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       - name: Checking out relevant branches for a branch build
-        if: "!(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy')"
+        if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
           git checkout main
           git checkout $GITHUB_SHA
@@ -228,6 +228,7 @@ jobs:
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        continue-on-error: true
         with:
           name: pr-event
           path: event.json
@@ -252,7 +253,7 @@ jobs:
 
       - name: Send Slack notification
         id: slack
-        if: "startsWith(env.GIT_BASE_BRANCH, 'release/')"
+        if: ${{ startsWith( github.env.GIT_BASE_BRANCH, 'release/' ) }}
         uses: 8398a7/action-slack@v3
         with:
           status: custom
@@ -272,7 +273,7 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Calculate cache key for node_modules
+      - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
           PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
@@ -284,15 +285,14 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/codegen.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'libs/application/types/src/lib/ApplicationTypes.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'libs/**/mutations/**/*.tsx?', 'libs/**/fragments/**/*.tsx?' , 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'apps/judicial-system/**/*.graphql', 'libs/**/*.graphql.ts', 'libs/**/*.graphql', 'libs/**/clientConfig.yaml') }}
+          export HASH=$(./scripts/_hash-generated-files.sh)
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
-        continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
@@ -343,7 +343,7 @@ jobs:
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: cache
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
@@ -354,7 +354,7 @@ jobs:
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps-base
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
@@ -372,7 +372,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
@@ -456,7 +456,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -467,7 +467,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -533,7 +533,7 @@ jobs:
         id: generated-files-cache
         if: steps.gather.outcome == 'success'
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -549,7 +549,7 @@ jobs:
         if: steps.gather.outcome == 'success'
         id: cache-deps-base
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: cache_output
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
@@ -561,7 +561,7 @@ jobs:
         id: cache-deps
         if: steps.gather.outcome == 'success'
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
@@ -573,7 +573,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -673,7 +673,7 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
-    if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
+    if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
     needs:
       - pre-checks
       - docker-build
@@ -703,7 +703,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
+    if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
     needs:
       - retag-unaffected
       - pre-checks
@@ -758,7 +758,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always()
+    if: ${{ !cancelled() }}
     needs:
       - pre-checks
       - retag-unaffected

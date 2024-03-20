@@ -10,6 +10,7 @@ query CurrentUser {
     email
     mobileNumber
     nationalId
+    canConfirmIndictment
     institution {
       id
       created

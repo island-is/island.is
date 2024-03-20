@@ -1,14 +1,3 @@
-import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
-import differenceInDays from 'date-fns/differenceInDays'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import getDaysInMonth from 'date-fns/getDaysInMonth'
-import isSameMonth from 'date-fns/isSameMonth'
-import isThisMonth from 'date-fns/isThisMonth'
-import parseISO from 'date-fns/parseISO'
-import round from 'lodash/round'
-
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
@@ -16,38 +5,28 @@ import {
   Field,
   FormValue,
   Option,
+  PendingAction,
   RepeaterProps,
 } from '@island.is/application/types'
-
-import {
-  ADOPTION,
-  MANUAL,
-  NO,
-  OTHER_NO_CHILDREN_FOUND,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  PARENTAL_LEAVE,
-  PERMANENT_FOSTER_CARE,
-  ParentalRelations,
-  SINGLE,
-  SPOUSE,
-  StartDateOptions,
-  States,
-  TransferRightsOption,
-  YES,
-} from '../constants'
-import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
-import { SchemaFormValues } from '../lib/dataSchema'
-import { parentalLeaveFormMessages } from '../lib/messages'
-
 import { FormatMessage } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import format from 'date-fns/format'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
+import isSameMonth from 'date-fns/isSameMonth'
+import isThisMonth from 'date-fns/isThisMonth'
+import parseISO from 'date-fns/parseISO'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
+import round from 'lodash/round'
+import { MessageDescriptor } from 'react-intl'
 import {
   additionalSingleParentMonths,
   daysInMonth,
@@ -56,14 +35,39 @@ import {
   multipleBirthsDefaultDays,
 } from '../config'
 import {
+  ADOPTION,
+  AttachmentLabel,
+  AttachmentTypes,
+  MANUAL,
+  NO,
+  OTHER_NO_CHILDREN_FOUND,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
+  ParentalRelations,
+  Roles,
+  SINGLE,
+  SPOUSE,
+  StartDateOptions,
+  States,
+  TransferRightsOption,
+  UnEmployedBenefitTypes,
+  YES,
+} from '../constants'
+import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
+import { SchemaFormValues } from '../lib/dataSchema'
+import {
   calculatePeriodLength,
   daysToMonths,
   monthsToDays,
 } from '../lib/directorateOfLabour.utils'
+import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
 import {
+  Attachments,
   ChildInformation,
-  ChildrenAndExistingApplications,
   EmployerRow,
+  FileUpload,
   Files,
   OtherParentObj,
   Period,
@@ -74,9 +78,9 @@ import {
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
-export function getExpectedDateOfBirthOrAdoptionDate(
+export const getExpectedDateOfBirthOrAdoptionDate = (
   application: Application,
-): string | undefined {
+): string | undefined => {
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -92,25 +96,25 @@ export function getExpectedDateOfBirthOrAdoptionDate(
   return selectedChild.expectedDateOfBirth
 }
 
-export function getBeginningOfThisMonth(): Date {
+export const getBeginningOfThisMonth = (): Date => {
   const today = new Date()
   return addDays(today, today.getDate() * -1 + 1)
 }
 
-export function getBeginningOfMonth3MonthsAgo(): Date {
+export const getBeginningOfMonth3MonthsAgo = (): Date => {
   return addMonths(getBeginningOfThisMonth(), -3)
 }
 
-export function getLastDayOfLastMonth(): Date {
+export const getLastDayOfLastMonth = (): Date => {
   const today = new Date()
   return addDays(today, today.getDate() * -1)
 }
 
 // TODO: Once we have the data, add the otherParentPeriods here.
-export function formatPeriods(
+export const formatPeriods = (
   application: Application,
   formatMessage: FormatMessage,
-): TimelinePeriod[] {
+): TimelinePeriod[] => {
   const { periods, firstPeriodStart, addPeriods, tempPeriods } =
     getApplicationAnswers(application.answers)
   const { applicationFundId } = getApplicationExternalData(
@@ -421,6 +425,9 @@ export const getOtherParentOptions = (application: Application) => {
   const spouse = getSpouse(application)
 
   if (spouse) {
+    options.forEach((o) => {
+      o.disabled = true
+    })
     options.unshift({
       value: SPOUSE,
       label: {
@@ -498,12 +505,11 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const { dataProvider, children, existingApplications } =
-    getApplicationExternalData(externalData)
+  const { dataProvider, children } = getApplicationExternalData(externalData)
 
   return (
     dataProvider?.hasActivePregnancy &&
-    (children.length > 0 || existingApplications.length > 0) &&
+    children.length > 0 &&
     dataProvider?.remainingDays > 0
   )
 }
@@ -530,9 +536,9 @@ const getOrFallback = (condition: YesOrNo, value: number | undefined = 0) => {
   return 0
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const dataProvider = getValueViaPath(
     externalData,
     'children.data',
@@ -542,13 +548,7 @@ export function getApplicationExternalData(
     externalData,
     'children.data.children',
     [],
-  ) as ChildrenAndExistingApplications['children']
-
-  const existingApplications = getValueViaPath(
-    externalData,
-    'children.data.existingApplications',
-    [],
-  ) as ChildrenAndExistingApplications['existingApplications']
+  ) as ChildInformation[]
 
   const userEmail = getValueViaPath(
     externalData,
@@ -591,7 +591,6 @@ export function getApplicationExternalData(
     applicationFundId,
     dataProvider,
     children,
-    existingApplications,
     navId,
     userEmail,
     userPhoneNumber,
@@ -599,7 +598,7 @@ export function getApplicationExternalData(
   }
 }
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   let applicationType = getValueViaPath(answers, 'applicationType.option')
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
@@ -658,13 +657,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
-  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
+  const useUnion = getValueViaPath(answers, 'payments.useUnion') as YesOrNo
 
   const union = getValueViaPath(answers, 'payments.union') as string
 
   const usePrivatePensionFund = getValueViaPath(
     answers,
-    'usePrivatePensionFund',
+    'payments.usePrivatePensionFund',
   ) as YesOrNo
 
   const privatePensionFund = getValueViaPath(
@@ -820,10 +819,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+
   const employerLastSixMonths = getValueViaPath(
     answers,
     'employerLastSixMonths',
   ) as YesOrNo
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -1004,6 +1008,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUsage,
     employers,
     employerLastSixMonths,
+    isNotStillEmployed,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -1129,22 +1134,18 @@ export const requiresOtherParentApproval = (
 
 export const otherParentApprovalDescription = (
   answers: Application['answers'],
-  formatMessage: FormatMessage,
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
 
   const { isRequestingRights, usePersonalAllowanceFromSpouse } =
     applicationAnswers
 
-  const description =
-    isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
-      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
-      : isRequestingRights === YES
-      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
-      : parentalLeaveFormMessages.reviewScreen
-          .otherParentDescRequestingPersonalDiscount
-
-  return formatMessage(description)
+  return isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+    ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+    : isRequestingRights === YES
+    ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+    : parentalLeaveFormMessages.reviewScreen
+        .otherParentDescRequestingPersonalDiscount
 }
 
 export const allowOtherParentToUsePersonalAllowance = (
@@ -1460,29 +1461,6 @@ export const getRightsDescTitle = (application: Application) => {
     : otherParent === SINGLE
     ? parentalLeaveFormMessages.shared.singleParentRightsDescription
     : parentalLeaveFormMessages.shared.rightsDescription
-}
-
-export const getPeriodImageTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
-  }
-  return parentalLeaveFormMessages.shared.periodsImageTitle
-}
-
-export const getEditOrAddInfoSectionTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
-  }
-  return parentalLeaveFormMessages.shared.editOrAddInfoSectionTitle
-}
-
-export const getEditOrAddInfoSectionDescription = (
-  application: Application,
-) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionDescription
-  }
-  return parentalLeaveFormMessages.shared.editOrAddInfoSectionDescription
 }
 
 export const getFirstPeriodTitle = (application: Application) => {
@@ -1810,6 +1788,67 @@ export const setTestBirthAndExpectedDate = (
   }
 }
 
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.nameGrant
+  }
+
+  return parentalLeaveFormMessages.shared.name
+}
+
+export const otherParentApprovalStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.otherParentRequestApprovalTitle,
+      content: statesMessages.otherParentRequestApprovalDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    const applicationAnswers = getApplicationAnswers(application.answers)
+
+    const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+      applicationAnswers
+
+    const description =
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+        : isRequestingRights === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+        : parentalLeaveFormMessages.reviewScreen
+            .otherParentDescRequestingPersonalDiscount
+
+    return {
+      title: statesMessages.otherParentApprovalDescription,
+      content: description,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const employerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.employerApprovalPendingActionTitle,
+      content: statesMessages.employerApprovalPendingActionDescription,
+      displayStatus: 'info',
+    }
+  } else {
+    return {
+      title: statesMessages.employerWaitingToAssignDescription,
+      content: parentalLeaveFormMessages.reviewScreen.employerDesc,
+      displayStatus: 'info',
+    }
+  }
+}
+
 export const getChildrenOptions = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData) as {
     children: {
@@ -1862,4 +1901,155 @@ export const getChildrenOptions = (application: Application) => {
       subLabel,
     }
   })
+}
+
+// applicant that cannot apply for residence grant: secondary parents, adoption and foster care
+export const showResidenceGrant = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData)
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+  const childrenData = children as unknown as ChildInformation[]
+  if (
+    childrenData?.length &&
+    childrenData[0]?.parentalRelation?.match('primary') &&
+    noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
+    noChildrenFoundTypeOfApplication !== ADOPTION
+  )
+    return true
+  return false
+}
+
+export const getConclusionScreenSteps = (
+  application: Application,
+): MessageDescriptor[] => {
+  const {
+    isSelfEmployed,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    employerLastSixMonths,
+    employers,
+  } = getApplicationAnswers(application.answers)
+
+  const steps = [
+    parentalLeaveFormMessages.finalScreen.step3,
+  ] as MessageDescriptor[]
+
+  // Added this check for applications that is in the db already
+  const oldApplication = applicationType === undefined
+  const isBeneficiaries = !oldApplication
+    ? applicationType === PARENTAL_LEAVE
+      ? isReceivingUnemploymentBenefits === YES
+      : false
+    : false
+  const isStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === YES,
+  )
+
+  if (isSelfEmployed === NO && !isBeneficiaries) {
+    steps.unshift(parentalLeaveFormMessages.reviewScreen.employerDesc)
+  }
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isStillEmployed
+  ) {
+    steps.unshift(parentalLeaveFormMessages.reviewScreen.employerDesc)
+  }
+
+  if (
+    requiresOtherParentApproval(application.answers, application.externalData)
+  ) {
+    steps.unshift(otherParentApprovalDescription(application.answers))
+  }
+
+  return steps
+}
+
+export const getAttachments = (application: Application) => {
+  const getAttachmentDetails = (
+    attachmentsArr: Files[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers } = application
+  const {
+    isSelfEmployed,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    unemploymentBenefits,
+    otherParent,
+    noChildrenFoundTypeOfApplication,
+    employerLastSixMonths,
+    isNotStillEmployed,
+    commonFiles,
+  } = getApplicationAnswers(answers)
+
+  const attachments: Attachments[] = []
+
+  const fileUpload = answers.fileUpload as FileUpload
+
+  if (isSelfEmployed === YES) {
+    getAttachmentDetails(
+      fileUpload?.selfEmployedFile,
+      AttachmentTypes.SELF_EMPLOYED,
+    )
+  }
+  if (applicationType === PARENTAL_GRANT_STUDENTS) {
+    getAttachmentDetails(fileUpload?.studentFile, AttachmentTypes.STUDENT)
+  }
+  if (
+    isSelfEmployed === NO &&
+    isReceivingUnemploymentBenefits === YES &&
+    (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+      unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance)
+  ) {
+    getAttachmentDetails(fileUpload?.benefitsFile, AttachmentTypes.BENEFITS)
+  }
+  if (otherParent === SINGLE) {
+    getAttachmentDetails(
+      fileUpload?.singleParent,
+      AttachmentTypes.SINGLE_PARENT,
+    )
+  }
+  if (isParentWithoutBirthParent(answers)) {
+    getAttachmentDetails(
+      fileUpload?.parentWithoutBirthParent,
+      AttachmentTypes.PARENT_WITHOUT_BIRTH_PARENT,
+    )
+  }
+  if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
+    getAttachmentDetails(
+      fileUpload?.permanentFosterCare,
+      AttachmentTypes.PERMANENT_FOSTER_CARE,
+    )
+  }
+  if (noChildrenFoundTypeOfApplication === ADOPTION) {
+    getAttachmentDetails(fileUpload?.adoption, AttachmentTypes.ADOPTION)
+  }
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isNotStillEmployed
+  ) {
+    getAttachmentDetails(
+      fileUpload?.employmentTerminationCertificateFile,
+      AttachmentTypes.EMPLOYMENT_TERMINATION_CERTIFICATE,
+    )
+  }
+  if (commonFiles.length > 0) {
+    getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
+  }
+
+  return attachments
 }

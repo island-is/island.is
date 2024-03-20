@@ -1,15 +1,19 @@
+import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import {
   DataValue,
   Label,
   RadioValue,
   ReviewGroup,
+  formatPhoneNumber,
+  removeCountryCode,
 } from '@island.is/application/ui-components'
+import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { NO, YES, parentalLeaveFormMessages, PARENTAL_LEAVE } from '../../..'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
-import { EmployersTable } from '../../components/EmployersTable'
+import { NO, PARENTAL_LEAVE, States, YES } from '../../../constants'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import { ReviewGroupProps } from './props'
 
 export const Employment = ({
   application,
@@ -17,16 +21,32 @@ export const Employment = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [
-    {
-      isSelfEmployed,
-      isReceivingUnemploymentBenefits,
-      unemploymentBenefits,
-      employers,
-      employerLastSixMonths,
-      applicationType,
-    },
-  ] = useStatefulAnswers(application)
+  const {
+    isSelfEmployed,
+    isReceivingUnemploymentBenefits,
+    unemploymentBenefits,
+    employers,
+    employerLastSixMonths,
+    applicationType,
+  } = getApplicationAnswers(application.answers)
+
+  const shouldShowApproved = application.state !== States.DRAFT
+
+  const rows = employers.map((e) => {
+    return [
+      e.email,
+      formatPhoneNumber(removeCountryCode(e.phoneNumber ?? '')),
+      `${e.ratio}%`,
+      // Only display employer approval after application submit
+      ...(shouldShowApproved
+        ? [
+            e.isApproved
+              ? parentalLeaveFormMessages.shared.yesOptionLabel
+              : parentalLeaveFormMessages.shared.noOptionLabel,
+          ]
+        : []),
+    ]
+  })
 
   return (
     <ReviewGroup
@@ -39,8 +59,8 @@ export const Employment = ({
         )
       }
     >
-      {applicationType === PARENTAL_LEAVE && (
-        <>
+      {applicationType === PARENTAL_LEAVE &&
+        (isSelfEmployed === YES ? (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <RadioValue
@@ -51,62 +71,49 @@ export const Employment = ({
               />
             </GridColumn>
           </GridRow>
-          {isSelfEmployed === NO && ( // only show benefits in review if user had to answer that question
+        ) : (
+          isReceivingUnemploymentBenefits === YES && (
             <GridRow>
-              <GridColumn
-                span={['12/12', '12/12', '12/12', '5/12']}
-                paddingTop={2}
-              >
-                <RadioValue
+              <GridColumn span={['7/12', '7/12', '7/12', '12/12']}>
+                <DataValue
                   label={formatMessage(
-                    parentalLeaveFormMessages.employer
-                      .isReceivingUnemploymentBenefitsTitle,
+                    parentalLeaveFormMessages.reviewScreen.benefits,
                   )}
-                  value={isReceivingUnemploymentBenefits}
+                  value={unemploymentBenefits}
                 />
               </GridColumn>
-
-              {isReceivingUnemploymentBenefits === YES && (
-                <GridColumn
-                  span={['12/12', '12/12', '12/12', '5/12']}
-                  paddingTop={2}
-                >
-                  <DataValue
-                    label={formatMessage(
-                      parentalLeaveFormMessages.employer.unemploymentBenefits,
-                    )}
-                    value={unemploymentBenefits}
-                  />
-                </GridColumn>
-              )}
             </GridRow>
-          )}
-        </>
-      )}
-      {employerLastSixMonths === YES && (
-        <GridRow>
-          <GridColumn span={['7/12', '7/12', '7/12', '12/12']} paddingTop={2}>
-            <RadioValue
-              label={formatMessage(
-                parentalLeaveFormMessages.reviewScreen.employerLastSixMonths,
-              )}
-              value={employerLastSixMonths}
-            />
-          </GridColumn>
-        </GridRow>
-      )}
+          )
+        ))}
       {((isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO) ||
         employerLastSixMonths === YES) && (
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={2}>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
             <Label>
               {formatMessage(parentalLeaveFormMessages.employer.title)}
             </Label>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
             {employers?.length > 0 && (
-              <Box paddingTop={2}>
-                <EmployersTable employers={employers} />
+              <Box paddingTop={3}>
+                <StaticTableFormField
+                  application={application}
+                  field={{
+                    type: FieldTypes.STATIC_TABLE,
+                    component: FieldComponents.STATIC_TABLE,
+                    children: undefined,
+                    id: 'employersTable',
+                    title: '',
+                    header: [
+                      parentalLeaveFormMessages.employer.emailHeader,
+                      parentalLeaveFormMessages.employer.phoneNumberHeader,
+                      parentalLeaveFormMessages.employer.ratioHeader,
+                      // Only display employer approval after application submit
+                      ...(shouldShowApproved
+                        ? [parentalLeaveFormMessages.employer.approvedHeader]
+                        : []),
+                    ],
+                    rows,
+                  }}
+                />
               </Box>
             )}
           </GridColumn>

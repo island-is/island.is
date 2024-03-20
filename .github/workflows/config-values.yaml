@@ -28,7 +28,7 @@ jobs:
   prepare:
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -37,14 +37,18 @@ jobs:
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           # ENVS=("dev" "staging")
-          ENVS=("dev" "staging" "prod")
+          ENVS=("dev" "staging")
+          if [[ $GIT_BRANCH =~ ^release\/ ]]; then
+            echo "Adding prod environments to test set"
+            ENVS+=("prod")
+          fi
           ENVS_JSON=$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')
-          echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
+          echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -66,7 +70,7 @@ jobs:
       - name: Cache for NodeJS dependencies
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
@@ -98,7 +102,7 @@ jobs:
       - helm-values-validation # waiting on this job so the cache would be prepared
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
@@ -111,7 +115,7 @@ jobs:
       - name: Cache for NodeJS dependencies
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra

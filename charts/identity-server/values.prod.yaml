@@ -9,6 +9,7 @@ auth-admin-web:
   env:
     BASE_URL: 'https://innskra.island.is/admin'
     IDENTITYSERVER_DOMAIN: 'innskra.island.is'
+    LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://innskra.island.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -49,6 +50,8 @@ auth-admin-web:
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -90,7 +93,7 @@ identity-server:
     ASPNETCORE_URLS: 'http://*:5000'
     AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log'
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
-    Application__AllowedRedirectUris: 'https://island.is/minarsidur'
+    Application__AllowedRedirectUris: 'https://island.is/minarsidur,https://island.is/umsoknir'
     Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
     CORECLR_ENABLE_PROFILING: '1'
@@ -100,12 +103,14 @@ identity-server:
     ContentfulSettings__BaseAddress: 'https://cdn.contentful.com'
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
+    DD_TRACE_DEBUG: 'true'
     Datadog__Metrics__Port: '5003'
     IdentityServer__ConsentsScope: '@island.is/auth/consents'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'false'
     IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
+    LOG_LEVEL: 'info'
     MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.island.is'
     NODE_OPTIONS: '--max-old-space-size=1843'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
@@ -150,6 +155,8 @@ identity-server:
           paths:
             - '/'
   namespace: 'identity-server'
+  podDisruptionBudget:
+    maxUnavailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -209,6 +216,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -223,7 +231,7 @@ services-auth-admin-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/backend/liveness'
+      path: '/backend/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -246,6 +254,8 @@ services-auth-admin-api:
           paths:
             - '/backend'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -261,7 +271,7 @@ services-auth-admin-api:
   secrets:
     CLIENT_SECRET_ENCRYPTION_KEY: '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -274,6 +284,7 @@ services-auth-delegation-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -298,7 +309,7 @@ services-auth-delegation-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -320,6 +331,8 @@ services-auth-delegation-api:
           paths:
             - '/'
   namespace: 'identity-server-delegation'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -334,7 +347,7 @@ services-auth-delegation-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   securityContext:
@@ -352,6 +365,7 @@ services-auth-ids-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     PUBLIC_URL: 'https://innskra.island.is/api'
@@ -378,7 +392,7 @@ services-auth-ids-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -426,8 +440,10 @@ services-auth-ids-api:
       DB_USER: 'servicesauth'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+      DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -442,7 +458,7 @@ services-auth-ids-api:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
@@ -457,9 +473,22 @@ services-auth-personal-representative:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
+    XROAD_RSK_PROCURING_PATH: 'IS/GOV/5402696029/Skatturinn/relationships-v1'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -469,7 +498,7 @@ services-auth-personal-representative:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -491,6 +520,8 @@ services-auth-personal-representative:
           paths:
             - '/'
   namespace: 'personal-representative'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -505,7 +536,8 @@ services-auth-personal-representative:
       memory: '192Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -517,6 +549,7 @@ services-auth-personal-representative-public:
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
@@ -528,7 +561,7 @@ services-auth-personal-representative-public:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -558,6 +591,8 @@ services-auth-personal-representative-public:
           paths:
             - '/'
   namespace: 'personal-representative'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -572,7 +607,7 @@ services-auth-personal-representative-public:
       memory: '192Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -585,6 +620,7 @@ services-auth-public-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=345'
     PUBLIC_URL: 'https://innskra.island.is/api'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -613,7 +649,7 @@ services-auth-public-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -639,6 +675,8 @@ services-auth-public-api:
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    maxUnavailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -653,7 +691,7 @@ services-auth-public-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   securityContext:

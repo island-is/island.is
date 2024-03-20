@@ -1,15 +1,23 @@
 import { style } from '@vanilla-extract/css'
+
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
+  position: 'relative',
   ...themeUtils.responsiveStyle({
     xs: {
-      marginTop: -100,
-      paddingTop: 100,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 340,
     },
     md: {
-      marginTop: -110,
-      paddingTop: 110,
+      display: 'block',
+      justifyContent: 'unset',
+      alignItems: 'unset',
+      height: 340,
+    },
+    lg: {
       height: 444,
     },
   }),
@@ -25,12 +33,21 @@ export const iconCircle = style({
   justifyContent: 'center',
   alignItems: 'center',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
+  zIndex: 1000,
   ...themeUtils.responsiveStyle({
     xs: {
       marginTop: 32,
     },
     md: {
       marginTop: 168,
+      position: 'relative',
+    },
+    lg: {
+      marginTop: 265,
+      position: 'relative',
+    },
+    xl: {
+      marginTop: 280,
       position: 'relative',
     },
   }),
@@ -48,12 +65,99 @@ export const headerBorder = style({
 })
 
 export const headerWrapper = style({
-  marginTop: -20,
+  marginTop: -30,
 })
 
 export const headerLogo = style({
-  width: 70,
-  maxHeight: 70,
+  width: 120,
+  maxHeight: 120,
+})
+
+export const footerLogo = style({
+  marginBottom: -30,
+  width: 180,
+  maxHeight: 180,
+  padding: '2rem 0',
+})
+
+export const footerContainer = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      maxWidth: '1440px',
+    },
+  }),
+})
+
+export const footerLinksContainer = style({
+  padding: '2rem 0',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  gap: '2.5rem',
+  ...themeUtils.responsiveStyle({
+    md: {
+      flexDirection: 'row',
+      padding: '3rem 0',
+      justifyContent: 'flex-start',
+    },
+  }),
+})
+
+export const ellipsisLeft = style({
+  height: '100%',
+  width: '12.5rem',
+  borderRadius: '55.5rem',
+  background: '#E1E9FD',
+  filter: 'blur(66px)',
+  top: 0,
+  left: 40,
+  zIndex: '-1',
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: '50%',
+      height: '12.5rem',
+      borderRadius: '55.5rem',
+      top: 40,
+      left: 0,
+    },
+  }),
+})
+
+export const ellipsisRight = style({
+  height: '100%',
+  width: '12.5rem',
+  borderRadius: '55.5rem',
+  background: '#FDECE7',
+  filter: 'blur(66px)',
+  zIndex: '-1',
+  top: 0,
+  right: 40,
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: '50%',
+      height: '12.5rem',
+      borderRadius: '55.5rem',
+      top: 40,
+      right: 0,
+    },
+  }),
+})
+
+export const footerFirstColumnContainer = style({
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  width: '17rem',
+  height: '100%',
+  gap: '1.5rem',
+})
+
+export const footerSecondColumnContainer = style({
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  width: '17rem',
+  gap: '1.5rem',
 })
 
 export const navigation = style({
@@ -68,23 +172,6 @@ export const navigation = style({
       paddingLeft: 24,
       paddingRight: 24,
       paddingTop: 32,
-    },
-  }),
-})
-
-export const desktopTitleContainer = style({
-  ...themeUtils.responsiveStyle({
-    xl: {
-      display: 'flex',
-      justifyContent: 'center',
-    },
-  }),
-})
-
-export const desktopTitle = style({
-  ...themeUtils.responsiveStyle({
-    xl: {
-      transform: 'translate(-150px, 165px)',
     },
   }),
 })

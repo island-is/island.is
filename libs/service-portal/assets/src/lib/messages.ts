@@ -33,6 +33,15 @@ export const messages = defineMessages({
     id: 'sp.assets:housing',
     defaultMessage: 'Íbúðarhúsnæði',
   },
+  realEstate: {
+    id: 'sp.assets:real-estate',
+    defaultMessage: 'Fasteign',
+  },
+  realEstateDetailIntro: {
+    id: 'sp.assets:real-estate-detail-intro',
+    defaultMessage:
+      'Hér koma upplýsingar um fasteignina frá Húsnæðis og Mannvirkjastofnun.',
+  },
   appraisal: {
     id: 'sp.assets:appraisal',
     defaultMessage: 'Fasteignamat',
@@ -129,6 +138,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:title',
     defaultMessage: 'Vinnuvélar',
   },
+  workMachineSingular: {
+    id: 'sp.work-machines:work-machine-singular',
+    defaultMessage: 'Vinnuvél',
+  },
   workMachinesDescription: {
     id: 'sp.work-machines:description',
     defaultMessage:
@@ -188,6 +201,10 @@ export const vehicleMessage = defineMessages({
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
     defaultMessage: 'Hreinsa síu',
+  },
+  vehiclesRequireMileageRegistration: {
+    id: 'sp.vehicles:vehicles-require-mileage-registration',
+    defaultMessage: 'Skráningarskyld ökutæki',
   },
   notFound: {
     id: 'sp.vehicles:not-found',
@@ -862,6 +879,22 @@ export const vehicleMessage = defineMessages({
 })
 
 export const ipMessages = defineMessages({
+  basePatent: {
+    id: 'sp.intellectual-property:base-patent',
+    defaultMessage: 'Grunneinkaleyfi',
+  },
+  design: {
+    id: 'sp.intellectual-property:design',
+    defaultMessage: 'Hönnun',
+  },
+  trademark: {
+    id: 'sp.intellectual-property:trademark',
+    defaultMessage: 'Vörumerki',
+  },
+  patent: {
+    id: 'sp.intellectual-property:patent',
+    defaultMessage: 'Einkaleyfi',
+  },
   title: {
     id: 'sp.intellectual-property:title',
     defaultMessage: 'Hugverkaréttindin mín',
@@ -910,6 +943,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:make',
     defaultMessage: 'Gerð',
   },
+  internationalApplication: {
+    id: 'sp.intellectual-property:international-application',
+    defaultMessage: 'Alþjóðleg umsókn',
+  },
   internationalRegistration: {
     id: 'sp.intellectual-property:international-registration',
     defaultMessage: 'Alþjóðleg skráning',
@@ -925,6 +962,14 @@ export const ipMessages = defineMessages({
   publishDate: {
     id: 'sp.intellectual-property:publish-date',
     defaultMessage: 'Birtingardagur',
+  },
+  translationSubmitted: {
+    id: 'sp.intellectual-property:translation-submitted',
+    defaultMessage: 'Þýðing lögð inn',
+  },
+  provisionPublishedInGazette: {
+    id: 'sp.intellectual-property:provision-published-in-gazette',
+    defaultMessage: 'Veiting birt',
   },
   registration: {
     id: 'sp.intellectual-property:registration',
@@ -946,9 +991,21 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:application',
     defaultMessage: 'Umsókn',
   },
+  epApplication: {
+    id: 'sp.intellectual-property:ep-application',
+    defaultMessage: 'EP umsókn',
+  },
   applicationNumber: {
     id: 'sp.intellectual-property:application-number',
     defaultMessage: 'Umsóknarnúmer',
+  },
+  epApplicationNumber: {
+    id: 'sp.intellectual-property:ep-application-number',
+    defaultMessage: 'EP umsóknarnúmer',
+  },
+  maxValidDate: {
+    id: 'sp.intellectual-property:max-valid-date',
+    defaultMessage: 'Hámarksgilditími',
   },
   maxValidObjectionDate: {
     id: 'sp.intellectual-property:max-valid-objection-date',
@@ -970,6 +1027,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:owner',
     defaultMessage: 'Eigandi',
   },
+  owners: {
+    id: 'sp.intellectual-property:owners',
+    defaultMessage: 'Eigendur',
+  },
   address: {
     id: 'sp.intellectual-property:address',
     defaultMessage: 'Heimilisfang',
@@ -978,9 +1039,25 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:agent',
     defaultMessage: 'Umboðsmaður',
   },
+  agents: {
+    id: 'sp.intellectual-property:agents',
+    defaultMessage: 'Umboðsmenn',
+  },
   designer: {
     id: 'sp.intellectual-property:designer',
     defaultMessage: 'Hönnuður',
+  },
+  designers: {
+    id: 'sp.intellectual-property:designers',
+    defaultMessage: 'Hönnuðir',
+  },
+  inventor: {
+    id: 'sp.intellectual-property:inventor',
+    defaultMessage: 'Uppfinningamaður',
+  },
+  inventors: {
+    id: 'sp.intellectual-property:inventors',
+    defaultMessage: 'Uppfinningamenn',
   },
   category: {
     id: 'sp.intellectual-property:category',
@@ -1026,6 +1103,99 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:application-date',
     defaultMessage: 'Umsóknardagur',
   },
+  epApplicationDate: {
+    id: 'sp.intellectual-property:ep-application-date',
+    defaultMessage: 'EP umsóknardagur',
+  },
+  epApplicationDateShort: {
+    id: 'sp.intellectual-property:ep-application-date-short',
+    defaultMessage: 'EP ums.dags',
+  },
+  applicationDatePublishedAsAvailable: {
+    id: 'sp.intellectual-property:application-date-published-as-available',
+    defaultMessage: 'Umsókn birt',
+  },
+  epApplicationDatePublishedAsAvailable: {
+    id: 'sp.intellectual-property:ep-application-date-published-as-available',
+    defaultMessage: 'EP veiting',
+  },
+  epApplicationDatePublishedAsAvailableShort: {
+    id: 'sp.intellectual-property:ep-application-date-published-as-available-short',
+    defaultMessage: 'EP veitt.dags',
+  },
+  applicationRegistrationDate: {
+    id: 'sp.intellectual-property:application-registration-date',
+    defaultMessage: 'Dags. veitingar',
+  },
+  applicationRegistration: {
+    id: 'sp.intellectual-property:application-registration',
+    defaultMessage: 'Veiting',
+  },
+  titleInEnglish: {
+    id: 'sp.intellectual-property:title-in-english',
+    defaultMessage: 'Titill á ensku',
+  },
+  originalPatentLanguage: {
+    id: 'sp.intellectual-property:original-patent-language',
+    defaultMessage: 'Tungumál veitts einkaleyfis',
+  },
+  patentNumber: {
+    id: 'sp.intellectual-property:patent-number',
+    defaultMessage: 'Einkaleyfisnúmer',
+  },
+  medicineTitle: {
+    id: 'sp.intellectual-property:medicine-title',
+    defaultMessage: 'Heiti lyfs',
+  },
+  medicineForChildren: {
+    id: 'sp.intellectual-property:medicine-for-children',
+    defaultMessage: 'Lyf fyrir börn',
+  },
+  marketingAuthorization: {
+    id: 'sp.intellectual-property:marketing-authorization',
+    defaultMessage: 'Markaðsleyfi',
+  },
+  marketingAuthorizationNumber: {
+    id: 'sp.intellectual-property:marketing-authorization-number',
+    defaultMessage: 'Númer íslensks markaðsleyfis',
+  },
+  foreignMarketingAuthorizationNumber: {
+    id: 'sp.intellectual-property:foreign-marketing-authorization-number',
+    defaultMessage: 'Númer erlends markaðsleyfis',
+  },
+  epoInfoLink: {
+    id: 'sp.intellectual-property:epo-info-link',
+    defaultMessage: 'Upplýsingar hjá EPO',
+  },
+  priority: {
+    id: 'sp.intellectual-property:priority',
+    defaultMessage: 'Forgangsréttur',
+  },
+  pctNumber: {
+    id: 'sp.intellectual-property:pct-number',
+    defaultMessage: 'PCT númer',
+  },
+  pctDate: {
+    id: 'sp.intellectual-property:pct-date',
+    defaultMessage: 'PCT dagsetning',
+  },
+  supplementaryProtection: {
+    id: 'sp.intellectual-property:supplementary-protection',
+    defaultMessage: 'Viðbótarvernd',
+  },
+  spcNumber: {
+    id: 'sp.intellectual-property:spc-number',
+    defaultMessage: 'SPC númer',
+  },
+  notFound: {
+    id: 'sp.intellectual-property:not-found',
+    defaultMessage: '{arg} ekki skráð',
+  },
+  notFoundText: {
+    id: 'sp.intellectual-property:not-found-text',
+    defaultMessage:
+      'Ef þú telur að hér eigi að birtast {arg}, vinsamlegast hafðu samband við þjónustuaðila',
+  },
 })
 
 export const urls = defineMessages({
@@ -1056,6 +1226,10 @@ export const urls = defineMessages({
   hideName: {
     id: 'sp.vehicles:url-hide-private-name',
     defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
+  },
+  recycleCar: {
+    id: 'sp.vehicles:url-recycle-car',
+    defaultMessage: 'http://island.is/umsoknir/skilavottord',
   },
   instructorApplication: {
     id: 'sp.vehicles:url-instructor-application',
