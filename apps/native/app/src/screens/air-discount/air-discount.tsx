@@ -204,18 +204,11 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
                   ),
               )
               .map((discount) => {
-                const code =
-                  discount.user.fund?.credit === 0
-                    ? undefined
-                    : discount.discountCode
-                    ? discount.discountCode
-                    : '0'
-
                 return (
                   <AirDiscountCard
-                    key={`loftbru-item-${code}`}
+                    key={`loftbru-item-${discount.discountCode}`}
                     name={discount.user.name}
-                    code={code}
+                    code={discount.discountCode}
                     credit={discount.user.fund?.credit}
                     text={intl.formatMessage(
                       { id: 'airDiscount.remainingFares' },
