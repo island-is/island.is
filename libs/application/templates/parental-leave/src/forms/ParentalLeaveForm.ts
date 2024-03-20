@@ -1179,7 +1179,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   .commentSection,
               variant: 'textarea',
               rows: 10,
-              maxLength: 250,
+              maxLength: 1024,
               description:
                 parentalLeaveFormMessages.applicant
                   .commentDescription,
