@@ -534,7 +534,6 @@ export class LicenseServiceService {
     const code = randomUUID()
     const genericUserLicenseType = genericUserLicense.license.type
     const licenseType = this.mapLicenseType(genericUserLicenseType)
-
     const client = await this.getClient<typeof licenseType>(licenseType)
 
     if (!client.clientSupportsPkPass) {
@@ -594,7 +593,16 @@ export class LicenseServiceService {
       this.logError(error)
 
       if (error.message.includes(TOKEN_EXPIRED_ERROR)) {
+        // If the token is expired, we can still get the token payload by ignoring the expiration date
+        const { t: licenseType } = await this.barcodeService.verifyToken(
+          token,
+          {
+            ignoreExpiration: true,
+          },
+        )
+
         return {
+          licenseType,
           valid: false,
           error: VerifyLicenseBarcodeError.EXPIRED,
         }

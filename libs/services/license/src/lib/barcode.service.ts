@@ -5,7 +5,7 @@ import {
 import { ConfigType } from '@nestjs/config'
 import { Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
-import { sign, SignOptions, verify } from 'jsonwebtoken'
+import { sign, VerifyOptions, verify } from 'jsonwebtoken'
 import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
 import { LicenseConfig } from './license.config'
 
@@ -45,9 +45,12 @@ export class BarcodeService {
     private readonly cacheManager: CacheManager,
   ) {}
 
-  async verifyToken(token: string): Promise<LicenseTokenData> {
+  async verifyToken(
+    token: string,
+    options?: VerifyOptions,
+  ): Promise<LicenseTokenData> {
     return new Promise((resolve, reject) =>
-      verify(token, this.config.barcodeSecretKey, (err, decoded) => {
+      verify(token, this.config.barcodeSecretKey, options, (err, decoded) => {
         if (err) {
           if (err.name === TOKEN_EXPIRED_ERROR) {
             throw new Error(err.name)
