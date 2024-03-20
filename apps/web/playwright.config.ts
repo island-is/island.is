@@ -8,7 +8,7 @@ const localConfig: PlaywrightTestConfig = {
     port: 4200,
     command:
       'yarn infra run-local-env --service=web --dependencies=api --proxies',
-    timeout: 120 * 1000, // 2 minutes for the slow web 🐌
+    timeout: 180 * 1000, // 2 minutes for the slow web 🐌
     reuseExistingServer: true,
   },
 }
