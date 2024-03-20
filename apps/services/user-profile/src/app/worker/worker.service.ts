@@ -12,7 +12,6 @@ import {
   hasMatchingContactInfo,
 } from './worker.utils'
 import { environment } from '../../environments'
-import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import { NUDGE_INTERVAL } from '../v2/user-profile.service'
 
