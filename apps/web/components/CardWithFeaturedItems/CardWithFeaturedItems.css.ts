@@ -7,15 +7,16 @@ export const container = style({
   minHeight: 0,
 })
 
-export const icon = style({
+export const image = style({
   width: '100%',
   height: 'auto',
-  maxWidth: 170,
-  maxHeight: 170,
+  maxWidth: 100,
+  maxHeight: 100,
   ...themeUtils.responsiveStyle({
-    xs: {
-      maxWidth: 105,
+    xl: {
+      maxWidth: 120,
       maxHeight: 120,
+      marginRight: 20,
     },
   }),
 })

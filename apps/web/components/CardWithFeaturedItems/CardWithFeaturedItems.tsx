@@ -102,7 +102,7 @@ export const CardWithFeaturedItems = ({
         </Box>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <img src={imgSrc} alt={alt} className={styles.icon} />
+        <img src={imgSrc} alt={alt} className={styles.image} />
       </Box>
     </FocusableBox>
   )
