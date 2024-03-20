@@ -30,8 +30,6 @@ interface Props {
 
 const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
   const n = useNamespace(namespace)
-
-  console.log('items', lifeEvents)
   return (
     <>
       <Head>
@@ -82,7 +80,6 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
         third
       >
         {lifeEvents?.map((event: any, index: number) => {
-          console.log('event', event)
           return (
             <CardWithFeaturedItems
               key={index}
