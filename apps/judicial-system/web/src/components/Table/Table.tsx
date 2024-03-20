@@ -3,6 +3,7 @@ import { useLocalStorage } from 'react-use'
 
 import { CaseListEntry } from '../../graphql/schema'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
+import { useCaseList } from '../../utils/hooks'
 import * as styles from './Table.css'
 
 interface TableProps {
@@ -45,6 +46,7 @@ export const useTable = () => {
 
 const Table: React.FC<TableProps> = (props) => {
   const { thead, data, columns } = props
+  const { isOpeningCaseId, handleOpenCase } = useCaseList()
 
   return (
     <table className={styles.table}>
@@ -59,7 +61,16 @@ const Table: React.FC<TableProps> = (props) => {
       </thead>
       <tbody>
         {data.map((row) => (
-          <tr key={row.id}>
+          <tr
+            key={row.id}
+            role="button"
+            aria-label="Opna kröfu"
+            aria-disabled={isOpeningCaseId === row.id}
+            className={styles.tableRowContainer}
+            onClick={() => {
+              handleOpenCase(row.id)
+            }}
+          >
             {columns.map((td) => (
               <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
                 {td.cell(row)}

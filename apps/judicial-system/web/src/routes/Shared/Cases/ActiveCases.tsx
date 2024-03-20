@@ -51,11 +51,10 @@ interface Props {
   cases: CaseListEntry[]
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
-  caseState?: CaseState // TODO: Refactor tables as a whole so we don't have to conditional things like this
 }
 
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, isDeletingCase, onDeleteCase, caseState } = props
+  const { cases, isDeletingCase, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
