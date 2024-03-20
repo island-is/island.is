@@ -259,7 +259,7 @@ interface LicenceCardProps {
   }
 }
 
-export function LicenceCard({
+export function LicenseCard({
   nativeID,
   style,
   date,

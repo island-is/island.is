@@ -1,7 +1,7 @@
 import {
   Alert as InfoAlert,
   dynamicColor,
-  LicenceCard,
+  LicenseCard,
   LICENSE_CARD_ROW_GAP,
 } from '@ui'
 import { BARCODE_HEIGHT } from '@ui/lib/barcode/barcode'
@@ -269,7 +269,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
       <LicenseCardWrapper>
-        <LicenceCard
+        <LicenseCard
           nativeID={`license-${data?.license?.type}_destination`}
           type={data?.license?.type}
           date={new Date(Number(data?.fetch?.updated))}

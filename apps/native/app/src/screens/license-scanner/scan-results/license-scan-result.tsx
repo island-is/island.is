@@ -8,7 +8,6 @@ export const LicenseScanResult = ({
   onLoad,
   isExpired,
   title,
-  hasNoData,
   type,
 }: any) => {
   const [loading, setLoading] = useState(true)

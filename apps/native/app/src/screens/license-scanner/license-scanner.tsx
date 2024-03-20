@@ -1,13 +1,12 @@
 import { Bubble, Button, theme } from '@ui'
 import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
-import { ImpactFeedbackStyle, impactAsync } from 'expo-haptics'
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Alert,
   LayoutRectangle,
-  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -21,6 +20,8 @@ import styled from 'styled-components/native'
 import flashligth from '../../assets/icons/flashlight.png'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { isAndroid, isIos } from '../../utils/devices'
+import { isJWT } from '../../utils/token'
 
 const BottomRight = styled.View`
   position: absolute;
@@ -65,7 +66,7 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-const isSimulator = Platform.OS === 'ios' && DeviceInfo.isEmulatorSync()
+const isSimulator = isIos && DeviceInfo.isEmulatorSync()
 
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
@@ -109,12 +110,15 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
   const onBarCodeScanned = useCallback(({ type, data }: BarCodeEvent) => {
     let isExpired
+
     if (invalidTimeout.current) {
       clearTimeout(invalidTimeout.current)
     }
 
     if (type === Constants.BarCodeType.pdf417) {
-      if (!data.includes('TGLJZW') && !data.includes('passTemplateId')) {
+      if (isJWT(data)) {
+        // TODO something with JWT
+      } else if (!data.includes('TGLJZW') && !data.includes('passTemplateId')) {
         invalidTimeout.current = setTimeout(() => {
           setInvalid(false)
         }, 2000)
@@ -153,7 +157,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   }, [])
 
   const prepareRatio = async () => {
-    if (Platform.OS === 'android') {
+    if (isAndroid) {
       const screenRatio = layout!.height / layout!.width
       const ratios = await camera.current!.getSupportedRatiosAsync()
       // find ratio closest to screen ratio

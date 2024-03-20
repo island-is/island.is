@@ -1,4 +1,4 @@
-import { CustomLicenseType, LicenceCard } from '@ui'
+import { CustomLicenseType, LicenseCard } from '@ui'
 import React from 'react'
 import { SafeAreaView } from 'react-native'
 import styled from 'styled-components/native'
@@ -44,7 +44,7 @@ export const WalletItem = React.memo(
             }}
           >
             <SafeAreaView>
-              <LicenceCard
+              <LicenseCard
                 nativeID={`license-${CustomLicenseType.Passport}_source`}
                 type={CustomLicenseType.Passport}
                 date={new Date(item?.expirationDate)}
@@ -72,7 +72,7 @@ export const WalletItem = React.memo(
             }}
           >
             <SafeAreaView>
-              <LicenceCard
+              <LicenseCard
                 nativeID={`license-${item?.license?.type}_source`}
                 type={item?.license?.type}
                 date={new Date(Number(item.fetch.updated))}

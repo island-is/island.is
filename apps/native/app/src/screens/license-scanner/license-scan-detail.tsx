@@ -9,6 +9,7 @@ import {
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import { StackRegistry } from '../../utils/component-registry'
+import { isJWT } from '../../utils/token'
 import { LicenseScanResult } from './scan-results/license-scan-result'
 
 enum ScanResult {
@@ -57,7 +58,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
 
   useEffect(() => {
     try {
-      if (type === Constants.BarCodeType.pdf417) {
+      if (type === Constants.BarCodeType.pdf417 && !isJWT(data)) {
         const parsed = JSON.parse(data)
 
         if (parsed?.TGLJZW) {
@@ -84,11 +85,6 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
           setScanResult(ScanResult.DISABILITY_LICENSE)
         }
       }
-      // else if (type === Constants.BarCodeType.qr) {
-      //   if (data.startsWith('HC1')) {
-      //     setScanResult(ScanResult.COVID_CERTIFICATE)
-      //   }
-      // }
     } catch (err) {
       console.log('unable to decode barcode', err)
     }
@@ -96,24 +92,18 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
-      {isExpired === true ? (
+      {isExpired ? (
         <ScanResultCard
           type={scanResult}
           loading={false}
           isExpired={isExpired}
-          error={true}
+          error
           errorMessage={intl.formatMessage({
             id: 'licenseScanDetail.barcodeExpired',
           })}
         />
       ) : (
-        <>
-          <LicenseScanResult data={data} onLoad={setLoaded} type={scanResult} />
-
-          {/* {scanResult === ScanResult.COVID_CERTIFICATE && (
-            <CovidCertificateScanResult data={data} onLoad={setLoaded} />
-          )} */}
-        </>
+        <LicenseScanResult data={data} onLoad={setLoaded} type={scanResult} />
       )}
     </View>
   )
