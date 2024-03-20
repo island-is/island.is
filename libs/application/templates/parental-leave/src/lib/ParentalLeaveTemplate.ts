@@ -98,7 +98,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(9),
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 7 * 24 * 3600 * 1000,
+          },
           onExit: defineTemplateApi({
             action: ApiModuleActions.setChildrenInformation,
             externalDataId: 'children',
