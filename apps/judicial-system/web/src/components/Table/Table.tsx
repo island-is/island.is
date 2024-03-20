@@ -1,12 +1,14 @@
 import React, { ReactNode } from 'react'
-
-import * as styles from './Table.css'
-import { SortConfig, directionType, sortableTableColumn } from '../../types'
 import { useLocalStorage } from 'react-use'
+
+import { CaseListEntry } from '../../graphql/schema'
+import { directionType, sortableTableColumn, SortConfig } from '../../types'
+import * as styles from './Table.css'
 
 interface TableProps {
   thead: ReactNode[]
-  columns: ReactNode[]
+  data: CaseListEntry[]
+  columns: { cell: (row: CaseListEntry) => ReactNode }[]
 }
 
 export const useTable = () => {
@@ -42,7 +44,7 @@ export const useTable = () => {
 }
 
 const Table: React.FC<TableProps> = (props) => {
-  const { thead, columns } = props
+  const { thead, data, columns } = props
 
   return (
     <table className={styles.table}>
@@ -56,13 +58,15 @@ const Table: React.FC<TableProps> = (props) => {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          {columns.map((td) => (
-            <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
-              {td}
-            </td>
-          ))}
-        </tr>
+        {data.map((row) => (
+          <tr key={row.id}>
+            {columns.map((td) => (
+              <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
+                {td.cell(row)}
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   )

@@ -7,6 +7,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   displayFirstPlusRemaining,
+  formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -27,13 +28,19 @@ import {
   PageHeader,
   SectionHeading,
   SharedPageLayout,
+  TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  ColumnCaseType,
+  DefendantInfo,
   PastCasesTable,
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import Table, {
+  useTable,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -48,9 +55,6 @@ import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import Table, {
-  useTable,
-} from '@island.is/judicial-system-web/src/components/Table/Table'
 
 interface CreateCaseButtonProps {
   user: User
@@ -279,7 +283,50 @@ export const Cases: React.FC = () => {
                           )}
                         </Text>,
                       ]}
-                      columns={[]}
+                      data={casesAwaitingConfirmation}
+                      columns={[
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <Text
+                              as="span"
+                              title={row.policeCaseNumbers?.join(', ')}
+                            >
+                              {displayFirstPlusRemaining(
+                                row.policeCaseNumbers,
+                              ) || '-'}
+                            </Text>
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <DefendantInfo defendants={row.defendants} />
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <ColumnCaseType type={row.type} />
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <Text as="span">
+                              {formatDate(row.created, 'd.M.y')}
+                            </Text>
+                          ),
+                        },
+                        {
+                          cell: () => (
+                            <TagCaseState
+                              caseState={CaseState.WAITING_FOR_CONFIRMATION}
+                            />
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <Text as="span">{row.prosecutor?.name}</Text>
+                          ),
+                        },
+                      ]}
                     />
                   ) : (
                     // <ActiveCases

@@ -332,32 +332,21 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {caseState === CaseState.WAITING_FOR_CONFIRMATION ? (
-                      <Text as="span">{c.prosecutor?.name}</Text>
-                    ) : (
-                      c.courtDate && (
-                        <>
-                          <Text>
-                            <Box
-                              component="span"
-                              className={styles.blockColumn}
-                            >
-                              {capitalize(
-                                format(
-                                  parseISO(c.courtDate),
-                                  'EEEE d. LLLL y',
-                                  {
-                                    locale: localeIS,
-                                  },
-                                ),
-                              ).replace('dagur', 'd.')}
-                            </Box>
-                          </Text>
-                          <Text as="span" variant="small">
-                            kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                          </Text>
-                        </>
-                      )
+                    {c.courtDate && (
+                      <>
+                        <Text>
+                          <Box component="span" className={styles.blockColumn}>
+                            {capitalize(
+                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
+                                locale: localeIS,
+                              }),
+                            ).replace('dagur', 'd.')}
+                          </Box>
+                        </Text>
+                        <Text as="span" variant="small">
+                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                        </Text>
+                      </>
                     )}
                   </td>
                   <td className={styles.td}>
