@@ -63,8 +63,9 @@ export class BarcodeService {
 
   async createToken(data: LicenseTokenData): Promise<{
     token: string
-    exp: number
+    exp: Date
   }> {
+    // jsonwebtoken uses seconds for expiration time
     const exp = Math.floor(Date.now() / 1000) + BARCODE_EXPIRE_TIME_IN_SEC
 
     return new Promise((resolve, reject) =>
@@ -82,7 +83,8 @@ export class BarcodeService {
 
           return resolve({
             token: encoded,
-            exp,
+            // Make sure to convert the expiration time back to milliseconds
+            exp: new Date(exp * 1000),
           })
         },
       ),

@@ -558,7 +558,7 @@ export class LicenseServiceService {
       }
     }
 
-    const [{ exp, token }] = await Promise.all([
+    const [tokenPayload] = await Promise.all([
       // Create a token with the version and a server reference (Redis key) code
       this.barcodeService.createToken({
         v: VerifyLicenseBarcodeType.V2,
@@ -573,11 +573,7 @@ export class LicenseServiceService {
       }),
     ])
 
-    return {
-      token,
-      // Make sure to convert the expiration time to milliseconds
-      exp: new Date(exp * 1000),
-    }
+    return tokenPayload
   }
 
   logError(error: Error | string, meta?: Record<string, unknown>) {
