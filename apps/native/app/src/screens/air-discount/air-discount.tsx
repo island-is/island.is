@@ -118,6 +118,8 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
     fetchPolicy: 'cache-and-network',
   })
 
+  const flightLegs = flightLegsData?.airDiscountSchemeUserAndRelationsFlights
+
   const connectionCodes = data?.airDiscountSchemeDiscounts?.filter(
     (discount) => discount.connectionDiscountCodes.length > 0,
   )
@@ -255,30 +257,27 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
         )}
       </SafeAreaView>
 
-      {flightLegsData &&
-        flightLegsData?.airDiscountSchemeUserAndRelationsFlights.length > 0 && (
-          <View
+      {flightLegs && flightLegs.length > 0 && (
+        <View
+          style={{
+            marginTop: theme.spacing[4],
+          }}
+        >
+          <Typography
+            weight="600"
             style={{
-              marginTop: theme.spacing[4],
+              marginBottom: theme.spacing[2],
+              marginHorizontal: theme.spacing[2],
             }}
           >
-            <Typography
-              weight="600"
-              style={{
-                marginBottom: theme.spacing[2],
-                marginHorizontal: theme.spacing[2],
-              }}
-            >
-              <FormattedMessage
-                id="airDiscount.airfaresUsage"
-                defaultMessage="Notkun á núverandi tímabili"
-              />
-            </Typography>
-            <AirfaresUsageTable
-              data={flightLegsData.airDiscountSchemeUserAndRelationsFlights}
+            <FormattedMessage
+              id="airDiscount.airfaresUsage"
+              defaultMessage="Notkun á núverandi tímabili"
             />
-          </View>
-        )}
+          </Typography>
+          <AirfaresUsageTable data={flightLegs} />
+        </View>
+      )}
     </ScrollView>
   )
 }

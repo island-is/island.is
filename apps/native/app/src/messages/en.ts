@@ -282,7 +282,7 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
-  'profile.airDiscount': 'Air discount',
+  'profile.airDiscount': 'Air discount scheme',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
