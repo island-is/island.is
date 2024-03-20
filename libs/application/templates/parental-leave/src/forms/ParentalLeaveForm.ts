@@ -198,7 +198,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
-                  title: '', //parentalLeaveFormMessages.shared.otherParentSubTitle,
+                  title: '',
                   options: (application) => getOtherParentOptions(application),
                   defaultValue: (application: Application) =>
                     getOtherParentOptions(application)[0].value === SPOUSE

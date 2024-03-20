@@ -215,11 +215,6 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
     },
-    // otherParentSubTitle: {
-    //   id: 'pl.application:otherParent.sub.title',
-    //   defaultMessage: 'Hitt foreldrið',
-    //   description: 'Other parent',
-    // },
     otherParentName: {
       id: 'pl.application:otherParent.name',
       defaultMessage: 'Nafn hins foreldrisins',
