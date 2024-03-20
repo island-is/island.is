@@ -23,7 +23,7 @@ export type LicenseTokenData = {
   /**
    * License type
    */
-  t: string
+  t: LicenseType
   /**
    * Code (Reference to redis record with license data)
    */
@@ -52,10 +52,6 @@ export class BarcodeService {
     return new Promise((resolve, reject) =>
       verify(token, this.config.barcodeSecretKey, options, (err, decoded) => {
         if (err) {
-          if (err.name === TOKEN_EXPIRED_ERROR) {
-            throw new Error(err.name)
-          }
-
           return reject(err)
         }
 

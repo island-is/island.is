@@ -590,9 +590,11 @@ export class LicenseServiceService {
       const payload = await this.barcodeService.verifyToken(token)
       code = payload.c
     } catch (error) {
-      this.logError(error)
+      this.logger.warn(error, {
+        category: LOG_CATEGORY,
+      })
 
-      if (error.message.includes(TOKEN_EXPIRED_ERROR)) {
+      if (error.name === TOKEN_EXPIRED_ERROR) {
         // If the token is expired, we can still get the token payload by ignoring the expiration date
         const { t: licenseType } = await this.barcodeService.verifyToken(
           token,
@@ -602,7 +604,7 @@ export class LicenseServiceService {
         )
 
         return {
-          licenseType,
+          licenseType: this.mapGenericLicenseType(licenseType),
           valid: false,
           error: VerifyLicenseBarcodeError.EXPIRED,
         }
