@@ -6,7 +6,9 @@ const localConfig: PlaywrightTestConfig = {
   testDir: './e2e',
   webServer: {
     port: 4200,
-    command: 'yarn run-local-env --service=web',
+    command:
+      'yarn infra run-local-env --service=web --dependencies=api --proxies',
+    timeout: 120 * 1000, // 2 minutes for the slow web 🐌
     reuseExistingServer: true,
   },
 }
