@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
 import { error } from './messages'
 
 const UserSchemaBase = z.object({
@@ -188,7 +187,7 @@ const PassportSchema = z
     },
     {
       params: error.passportDateError,
-      path: ['publishDate'],
+      path: ['expirationDate'],
     },
   )
 
@@ -215,7 +214,7 @@ const ChildrenPassportSchema = z
     },
     {
       params: error.passportDateError,
-      path: ['publishDate'],
+      path: ['expirationDate'],
     },
   )
 
