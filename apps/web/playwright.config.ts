@@ -1,4 +1,4 @@
-import config from '../../playwright.config.base'
+import { playwrightPreset } from '../../playwright.config.base'
 
 import type { PlaywrightTestConfig } from '@playwright/test'
 
@@ -12,4 +12,4 @@ const localConfig: PlaywrightTestConfig = {
     reuseExistingServer: true,
   },
 }
-export default { ...config, ...localConfig }
+export default { ...playwrightPreset, ...localConfig }

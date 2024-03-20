@@ -14,7 +14,7 @@ export const CI = !!process.env.CI || process.env.NODE_ENV === 'prod'
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-const config: PlaywrightTestConfig = {
+const playwrightPreset: PlaywrightTestConfig = {
   testDir: '**/e2e',
   /* Maximum time one test can run for. */
   timeout: 90 * 1000,
@@ -127,4 +127,4 @@ const config: PlaywrightTestConfig = {
   // },
 }
 
-export default config
+export { playwrightPreset }
