@@ -43,5 +43,5 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly canConfirmAppeal!: boolean
+  readonly canConfirmIndictment!: boolean
 }
