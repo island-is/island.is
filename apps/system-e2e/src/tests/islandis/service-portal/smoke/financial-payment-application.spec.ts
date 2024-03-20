@@ -36,7 +36,7 @@ test.describe('MS - Fjármál overview', () => {
 
       // Act
       const applicationButton = page.locator(
-        `role=button[name="${label(m.scheduleApplication)}"]`,
+        `role=button[name="${'Gera greiðsluáætlun'}"]`,
       )
 
       // Assert
@@ -51,7 +51,7 @@ test.describe('MS - Fjármál overview', () => {
 
       // Act
       const applicationButton = page.locator(
-        `role=button[name="${label(m.scheduleApplication)}"]`,
+        `role=button[name="${'Gera greiðsluáætlun'}"]`,
       )
 
       const [delegationPopup] = await Promise.all([
@@ -79,10 +79,10 @@ test.describe('MS - Fjármál overview', () => {
     //
     //   // Assert
     //   await expect(page.locator('role=table')).toContainText(
-    //     label(m.createdDate),
+    //     'Stofndagur',
     //   )
     //   await expect(page.locator('role=table')).toContainText(
-    //     label(m.financeStatusValid),
+    //     'Í gildi',
     //   )
     //
     //   // "Skattar og gjöld" comes from the api - not translateable
