@@ -19,13 +19,13 @@ export const formSystemModule: PortalModule = {
   layout: 'full',
   enabled: ({ userInfo }) =>
     userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
-  routes: (props) => {
+  routes: () => {
     return [
       {
         name: m.formSystemTitle,
         path: FormSystemPaths.FormSystemRoot,
         element: <Forms />,
-        loader: formsLoader(props)
+        // loader: formsLoader(props)
       }
     ]
   }
