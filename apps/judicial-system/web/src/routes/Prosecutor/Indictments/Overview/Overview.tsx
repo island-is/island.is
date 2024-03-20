@@ -60,7 +60,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const userCanSendCaseToCourt =
-    user?.canConfirmAppeal &&
+    user?.canConfirmIndictment &&
     workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
 
   const handleTransition = async (transitionType: CaseTransition) => {
@@ -194,7 +194,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
-            user?.canConfirmAppeal &&
+            user?.canConfirmIndictment &&
             workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
               ? undefined
               : formatMessage(strings.nextButtonText, {
