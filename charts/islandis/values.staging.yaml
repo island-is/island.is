@@ -2962,9 +2962,11 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
+    GRAPHQL_URL: 'http://web-api'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691'
     SERVERSIDE_FEATURES_ON: ''
+    SI_PUBLIC_GRAPHQL_API: '/api/graphql'
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-external'
