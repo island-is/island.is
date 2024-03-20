@@ -85,7 +85,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'attemptToSetPrimaryParentAsOtherParent',
           'setRightsToOtherParent',
-          'setAllowanceToOtherParent',
           'setMultipleBirthsIfNo',
         ],
         meta: {
@@ -736,8 +735,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
-              cond: (application) =>
-                goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
@@ -806,6 +803,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               cond: (application) =>
                 goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
               target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
         },
@@ -944,6 +944,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           onExit: defineTemplateApi({
+            triggerEvent: DefaultEvents.SUBMIT,
             action: ApiModuleActions.validateApplication,
             throwOnError: true,
           }),
@@ -1854,24 +1855,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(answers, 'requestRights.isRequestingRights', NO)
           set(answers, 'giveRights.isGivingRights', NO)
         }
-
-        return context
-      }),
-      setAllowanceToOtherParent: assign((context) => {
-        const { application } = context
-        const { answers, externalData } = application
-        const selectedChild = getSelectedChild(answers, externalData)
-
-        if (!selectedChild) {
-          return context
-        }
-
-        if (selectedChild.parentalRelation === ParentalRelations.primary) {
-          return context
-        }
-
-        set(answers, 'usePersonalAllowance', NO)
-        set(answers, 'usePersonalAllowanceFromSpouse', NO)
 
         return context
       }),

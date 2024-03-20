@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="XFyOMNRHPZt_d9PDHA7L" name="Page-1">
-        <mxGraphModel dx="1764" dy="1654" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="1827" dy="1654" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -251,9 +251,6 @@
                 <mxCell id="56" value="Reject" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="170" y="370" width="60" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="57" value="Reject" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry x="620" y="1080" width="60" height="30" as="geometry"/>
-                </mxCell>
                 <mxCell id="59" value="Reject" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="900" y="390" width="60" height="30" as="geometry"/>
                 </mxCell>
@@ -274,9 +271,6 @@
                 </mxCell>
                 <mxCell id="66" value="Approve" style="text;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="320" y="560" width="50" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="67" value="Finished" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry x="1010" y="1500" width="70" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="68" value="Edit Periods or Employers" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="396" y="532" width="160" height="30" as="geometry"/>
@@ -396,7 +390,7 @@
                 <mxCell id="164" value="Reject" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="170" y="470" width="60" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="165" value="Finished" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1" parent="1">
+                <mxCell id="165" value="Finished" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="304" y="690" width="70" height="30" as="geometry"/>
                 </mxCell>
             </root>

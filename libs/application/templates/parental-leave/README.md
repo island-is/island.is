@@ -9,7 +9,7 @@ This application template allows applicants to apply for parental leave. For fur
 
 Below you'll find a flow chart for the application:
 
-![](./assets/parental-leave-flow-chart-2.png)
+![](./assets/parental-leave-flow-chart.png)
 
 ### Glossary
 
