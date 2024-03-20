@@ -1230,7 +1230,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             defineTemplateApi({
               triggerEvent: DefaultEvents.APPROVE,
               action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
