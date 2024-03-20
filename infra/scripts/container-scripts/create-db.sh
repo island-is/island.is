@@ -9,8 +9,14 @@ shopt -s inherit_errexit
 function create_or_update_user {
   local user=$1
   local password_key=$2
+<<<<<<< Updated upstream
   local db_name=$3
   local is_read_only=$4
+||||||| Stash base
+  local is_read_only=$4
+=======
+  local is_read_only=$3
+>>>>>>> Stashed changes
 
   echo "Configuring user: $user"
 
