@@ -4,12 +4,22 @@ import { useLocalStorage } from 'react-use'
 import { CaseListEntry } from '../../graphql/schema'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
 import { useCaseList } from '../../utils/hooks'
+import ContextMenu, {
+  ContextMenuItem,
+  type MenuItems,
+  PrebuiltMenuItems,
+  useContextMenu,
+} from '../ContextMenu/ContextMenu'
+import IconButton from '../IconButton/IconButton'
 import * as styles from './Table.css'
 
 interface TableProps {
   thead: ReactNode[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
+  contextMenu?: {
+    menuItems: MenuItems
+  }
 }
 
 export const useTable = () => {
@@ -45,8 +55,9 @@ export const useTable = () => {
 }
 
 const Table: React.FC<TableProps> = (props) => {
-  const { thead, data, columns } = props
+  const { thead, data, columns, contextMenu } = props
   const { isOpeningCaseId, handleOpenCase } = useCaseList()
+  const { openCaseInNewTabMenuItem } = useContextMenu()
 
   return (
     <table className={styles.table}>
@@ -57,6 +68,7 @@ const Table: React.FC<TableProps> = (props) => {
               {th}
             </th>
           ))}
+          {contextMenu && <th className={styles.th} />}
         </tr>
       </thead>
       <tbody>
@@ -76,6 +88,27 @@ const Table: React.FC<TableProps> = (props) => {
                 {td.cell(row)}
               </td>
             ))}
+            {contextMenu && (
+              <td className={styles.td}>
+                <ContextMenu
+                  menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
+                  items={contextMenu.menuItems.map((item) =>
+                    item === PrebuiltMenuItems.openCaseInNewTab
+                      ? openCaseInNewTabMenuItem(row.id)
+                      : (item as ContextMenuItem),
+                  )}
+                  disclosure={
+                    <IconButton
+                      icon="ellipsisVertical"
+                      colorScheme="transparent"
+                      onClick={(evt) => {
+                        evt.stopPropagation()
+                      }}
+                    />
+                  }
+                />
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

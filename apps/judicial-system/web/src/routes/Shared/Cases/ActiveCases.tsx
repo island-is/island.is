@@ -26,6 +26,7 @@ import {
   TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { contextMenu as contextMenuStrings } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
@@ -359,7 +360,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
                           items={[
                             {
-                              title: formatMessage(m.contextMenu.openCase),
+                              title: formatMessage(
+                                contextMenuStrings.openInNewTab,
+                              ),
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
@@ -367,7 +370,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                               ? [
                                   {
                                     title: formatMessage(
-                                      m.contextMenu.deleteCase,
+                                      contextMenuStrings.deleteCase,
                                     ),
                                     onClick: () => {
                                       setRequestToRemoveIndex(i)

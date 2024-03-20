@@ -31,6 +31,7 @@ import {
   TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { PrebuiltMenuItems } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   DefendantInfo,
@@ -284,6 +285,9 @@ export const Cases: React.FC = () => {
                         </Text>,
                       ]}
                       data={casesAwaitingConfirmation}
+                      contextMenu={{
+                        menuItems: [PrebuiltMenuItems.openCaseInNewTab],
+                      }}
                       columns={[
                         {
                           cell: (row: CaseListEntry) => (
