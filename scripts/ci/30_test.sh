@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-: "${APP:="${1:-$APP}"}"
+APP="${1:-$APP}"
 : "${TARGET:="${2:-test}"}"
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
