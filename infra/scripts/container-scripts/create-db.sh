@@ -15,7 +15,7 @@ declare \
 function create_or_update_user {
   local user=$1
   local password_key=$2
-  local is_read_only=$4
+  local is_read_only=$3
 
   echo "Configuring user: $user"
 
