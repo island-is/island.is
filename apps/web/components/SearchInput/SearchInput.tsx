@@ -17,6 +17,7 @@ import {
   AsyncSearchInputProps,
   AsyncSearchSizes,
   Box,
+  Inline,
   Link,
   Stack,
   Text,
@@ -123,7 +124,6 @@ const useSearch = (
               types: [
                 // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
                 SearchableContentTypes['WebArticle'],
-                SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
                 SearchableContentTypes['WebOrganizationPage'],
                 SearchableContentTypes['WebOrganizationSubpage'],
@@ -399,6 +399,7 @@ export const SearchInput = forwardRef<
                   }
                 }}
                 highlightedResults={true}
+                displayPostfix={!organization}
               />
             )}
           </AsyncSearchInput>
@@ -425,6 +426,7 @@ type ResultsProps = {
   onRouting?: () => void
   quickContentLabel?: string
   highlightedResults?: boolean | false
+  displayPostfix?: boolean
 }
 
 const Results = ({
@@ -435,6 +437,7 @@ const Results = ({
   onRouting,
   quickContentLabel = 'Beint að efninu',
   highlightedResults,
+  displayPostfix = false,
 }: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -491,34 +494,77 @@ const Results = ({
                     )?.href,
                   },
                 })
+
+                let postfix = null
+
+                if (
+                  displayPostfix &&
+                  item.__typename === 'OrganizationSubpage'
+                ) {
+                  const organizationTitle =
+                    item.organizationPage?.organization?.shortTitle ||
+                    item.organizationPage?.organization?.title ||
+                    item.organizationPage.title
+
+                  if (organizationTitle) {
+                    postfix = organizationTitle
+                  }
+                }
+
                 return (
-                  <Link
-                    key={item.id}
-                    {...itemProps}
-                    onClick={(e: any) => {
-                      trackSearchQuery(search.term, 'Web Suggestion')
-                      onClick(e)
-                      onRouting?.()
-                    }}
-                    color="blue400"
-                    underline="normal"
-                    dataTestId="search-result"
-                    pureChildren
-                    underlineVisibility={
-                      search.suggestions.length + i === highlightedIndex
-                        ? 'always'
-                        : 'hover'
-                    }
-                    skipTab
-                  >
-                    {highlightedResults ? (
-                      <span
-                        dangerouslySetInnerHTML={{ __html: item.title }}
-                      ></span>
-                    ) : (
-                      item.title
+                  <Inline space={1} alignY="bottom">
+                    <Link
+                      key={item.id}
+                      {...itemProps}
+                      onClick={(e: any) => {
+                        trackSearchQuery(search.term, 'Web Suggestion')
+                        onClick(e)
+                        onRouting?.()
+                      }}
+                      color="blue400"
+                      underline="normal"
+                      dataTestId="search-result"
+                      pureChildren
+                      underlineVisibility={
+                        search.suggestions.length + i === highlightedIndex
+                          ? 'always'
+                          : 'hover'
+                      }
+                      skipTab
+                    >
+                      {highlightedResults ? (
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html: item.title,
+                          }}
+                        ></span>
+                      ) : (
+                        item.title
+                      )}
+                    </Link>
+                    {postfix && (
+                      <Box userSelect="none">
+                        <Text
+                          color="purple400"
+                          variant="eyebrow"
+                          fontWeight="medium"
+                        >
+                          -
+                        </Text>
+                      </Box>
                     )}
-                  </Link>
+                    {postfix && (
+                      <Box userSelect="none">
+                        <Text
+                          color="purple400"
+                          variant="eyebrow"
+                          fontWeight="medium"
+                        >
+                          {postfix}
+                        </Text>
+                      </Box>
+                    )}
+                  </Inline>
                 )
               })}
           </Stack>

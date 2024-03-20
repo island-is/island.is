@@ -49,6 +49,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           slug
           organizationPage {
             slug
+            title
+            organization {
+              shortTitle
+              title
+            }
           }
         }
         ... on Manual {
