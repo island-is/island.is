@@ -403,8 +403,6 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
     })
   }
 
-  // const firstLetter =
-
   return (
     <BlueBox>
       {onDelete && (
