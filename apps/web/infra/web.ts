@@ -2,16 +2,24 @@ import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'api'>
+  graphql: ServiceBuilder<'api'>
 }): ServiceBuilder<'web'> => {
   const web = service('web')
   web
     .namespace('islandis')
     .env({
+      GRAPHQL_URL: ref((h) => `http://${h.svc(services.graphql)}`),
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       TRACKING_DOMAIN: {
         dev: 'beta.dev01.devland.is',
         staging: 'beta.staging01.devland.is',
         prod: 'island.is',
+      },
+      SI_PUBLIC_GRAPHQL_API: {
+        prod: '/api/graphql',
+        staging: '/api/graphql',
+        dev: '/api/graphql',
+        local: ref((h) => `http://${h.svc(services.graphql)}/api/graphql`),
       },
       DISABLE_API_CATALOGUE: { dev: 'false', staging: 'false', prod: 'false' },
       DISABLE_SYSLUMENN_PAGE: { dev: 'false', staging: 'false', prod: 'false' },
