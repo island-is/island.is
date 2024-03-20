@@ -1,5 +1,8 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { useLocalStorage } from 'react-use'
+import { AnimatePresence } from 'framer-motion'
+
+import { Box } from '@island.is/island-ui/core'
 
 import { CaseListEntry } from '../../graphql/schema'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
@@ -56,7 +59,8 @@ export const useTable = () => {
 
 const Table: React.FC<TableProps> = (props) => {
   const { thead, data, columns, contextMenu } = props
-  const { isOpeningCaseId, handleOpenCase } = useCaseList()
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
+    useCaseList()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
   return (
@@ -90,23 +94,31 @@ const Table: React.FC<TableProps> = (props) => {
             ))}
             {contextMenu && (
               <td className={styles.td}>
-                <ContextMenu
-                  menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
-                  items={contextMenu.menuItems.map((item) =>
-                    item === PrebuiltMenuItems.openCaseInNewTab
-                      ? openCaseInNewTabMenuItem(row.id)
-                      : (item as ContextMenuItem),
-                  )}
-                  disclosure={
-                    <IconButton
-                      icon="ellipsisVertical"
-                      colorScheme="transparent"
-                      onClick={(evt) => {
-                        evt.stopPropagation()
-                      }}
+                <AnimatePresence exitBeforeEnter initial={false}>
+                  {isOpeningCaseId === row.id && showLoading ? (
+                    <Box padding={1}>
+                      <LoadingIndicator />
+                    </Box>
+                  ) : (
+                    <ContextMenu
+                      menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
+                      items={contextMenu.menuItems.map((item) =>
+                        item === PrebuiltMenuItems.openCaseInNewTab
+                          ? openCaseInNewTabMenuItem(row.id)
+                          : (item as ContextMenuItem),
+                      )}
+                      disclosure={
+                        <IconButton
+                          icon="ellipsisVertical"
+                          colorScheme="transparent"
+                          onClick={(evt) => {
+                            evt.stopPropagation()
+                          }}
+                        />
+                      }
                     />
-                  }
-                />
+                  )}
+                </AnimatePresence>
               </td>
             )}
           </tr>

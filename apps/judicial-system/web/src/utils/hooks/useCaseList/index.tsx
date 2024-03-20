@@ -194,12 +194,6 @@ const useCaseList = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: theme.spacing[3],
-        }}
       >
         <LoadingDots single />
       </motion.div>
