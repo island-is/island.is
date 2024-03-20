@@ -493,7 +493,7 @@ export class LicenseServiceService {
     ) {
       const missingMethodMsg =
         'License client has no verifyPkPass nor verifyPkPassDeprecated implementation'
-      this.logError(missingMethodMsg, {
+      this.logger.error(missingMethodMsg, {
         passTemplateId,
       })
 
@@ -575,11 +575,9 @@ export class LicenseServiceService {
     return tokenPayload
   }
 
-  logError(error: Error | string, meta?: Record<string, unknown>) {
-    this.logger.error(isString(error) ? error : error.message, {
+  logWarn(msg: string) {
+    this.logger.warn(msg, {
       category: LOG_CATEGORY,
-      ...(isString(error) ? {} : { error }),
-      ...meta,
     })
   }
 
@@ -616,7 +614,7 @@ export class LicenseServiceService {
     const data = await this.barcodeService.getCache(code)
 
     if (!data) {
-      this.logError('No data found in cache')
+      this.logWarn('No data found in cache')
 
       return COMMON_VERIFY_ERROR
     }
@@ -652,7 +650,7 @@ export class LicenseServiceService {
     // else fallback to the old barcode format
 
     if (!isJSON(data)) {
-      this.logError('Invalid JSON data')
+      this.logWarn('Invalid JSON data')
 
       return {
         barcodeType: VerifyLicenseBarcodeType.UNKNOWN,
@@ -668,7 +666,7 @@ export class LicenseServiceService {
       JSON.parse(data)
 
     if (!passTemplateId) {
-      this.logError('No passTemplateId found in data')
+      this.logWarn('No passTemplateId found in data')
 
       return {
         barcodeType: VerifyLicenseBarcodeType.UNKNOWN,
@@ -681,7 +679,7 @@ export class LicenseServiceService {
     )
 
     if (!client) {
-      this.logError(
+      this.logWarn(
         'Invalid passTemplateId supplied to getClientByPassTemplateId',
       )
 
@@ -708,7 +706,7 @@ export class LicenseServiceService {
     }
 
     if (!client.verifyPkPass) {
-      this.logError('License client has no verifyPkPass implementation')
+      this.logWarn('License client has no verifyPkPass implementation')
 
       return {
         ...commonResult,
@@ -719,7 +717,7 @@ export class LicenseServiceService {
     const res = await client.verifyPkPass(data)
 
     if (!res.ok) {
-      this.logError('Unable to verify pkpass for user')
+      this.logWarn('Unable to verify pkpass for user')
 
       return {
         ...commonResult,
