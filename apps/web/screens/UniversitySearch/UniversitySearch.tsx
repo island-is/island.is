@@ -209,12 +209,19 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     if (index !== -1) {
       const movedField = filterOptions.splice(index, 1)[0]
 
+      const universityTitlesMap = new Map()
+      universities.forEach((uni) => {
+        universityTitlesMap.set(uni.id, {
+          is: uni.contentfulTitle || '',
+          en: uni.contentfulTitleEn || '',
+        })
+      })
+
       movedField.options.sort((x, y) => {
-        const titleX =
-          universities.filter((uni) => uni.id === x)[0]?.contentfulTitle || ''
-        const titleY =
-          universities.filter((uni) => uni.id === y)[0]?.contentfulTitle || ''
-        return titleX.localeCompare(titleY)
+        const titleX = universityTitlesMap.get(x)?.[locale] || ''
+        const titleY = universityTitlesMap.get(y)?.[locale] || ''
+
+        return titleX.localeCompare(titleY, locale)
       })
       filterOptions.splice(2, 0, movedField)
       const lastElement = filterOptions[filterOptions.length - 1]
@@ -222,7 +229,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         filterOptions[filterOptions.length - 2]
       filterOptions[filterOptions.length - 2] = lastElement
     }
-  }, [filterOptions, universities])
+  }, [filterOptions, universities, locale])
 
   const getApplicationStatus = (item: UniversityGatewayProgram) => {
     const now = new Date()
@@ -513,7 +520,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const formatFilterStrings = (tag: string, field: string) => {
     if (field === 'universityId') {
-      return universities.filter((x) => x.id === tag)[0]?.contentfulTitle || ''
+      if (locale === 'is')
+        return (
+          universities.filter((x) => x.id === tag)[0]?.contentfulTitle || ''
+        )
+      else
+        return (
+          universities.filter((x) => x.id === tag)[0]?.contentfulTitleEn || ''
+        )
     } else if (tag === 'OPEN') {
       return `${n('openForApplication', 'Opið fyrir umsóknir')}`
     } else {
