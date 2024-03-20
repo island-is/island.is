@@ -8,9 +8,7 @@ import { GenericLicenseType } from '../licenceService.type'
 import { DriverLicenseData } from './licenses/DriverLicenseData.dto'
 
 export enum VerifyLicenseBarcodeError {
-  // When the token is expired
-  TOKEN_EXPIRED = 'TOKEN_EXPIRED',
-  // When the license barcode is expired, e.g. if the JSON string data includes an expired expiration date
+  // When the license barcode is expired, e.g. token expired or the JSON string data includes an expired expiration date field value
   EXPIRED = 'EXPIRED',
   // ERROR is for all errors except token expired, we do not want to expose the actual error message
   // to the clients. Instead, we will log the actual error.

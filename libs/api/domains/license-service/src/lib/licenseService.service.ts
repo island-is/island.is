@@ -596,7 +596,7 @@ export class LicenseServiceService {
       if (error.message.includes(TOKEN_EXPIRED_ERROR)) {
         return {
           valid: false,
-          error: VerifyLicenseBarcodeError.TOKEN_EXPIRED,
+          error: VerifyLicenseBarcodeError.EXPIRED,
         }
       }
 
