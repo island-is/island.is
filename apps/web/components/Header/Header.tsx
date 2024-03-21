@@ -119,6 +119,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                         {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
                         onMenuOpen={webMenuButtonClicked}
+                        organizationSearchFilter={organizationSearchFilter}
                       />
                     </Box>
                   </Box>

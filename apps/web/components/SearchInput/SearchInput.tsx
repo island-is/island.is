@@ -512,59 +512,59 @@ const Results = ({
                 }
 
                 return (
-                  <Inline space={1} alignY="bottom">
-                    <Link
-                      key={item.id}
-                      {...itemProps}
-                      onClick={(e: any) => {
-                        trackSearchQuery(search.term, 'Web Suggestion')
-                        onClick(e)
-                        onRouting?.()
+                  <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexFlow: 'column nowrap',
+                        gap: '4px',
                       }}
-                      color="blue400"
-                      underline="normal"
-                      dataTestId="search-result"
-                      pureChildren
-                      underlineVisibility={
-                        search.suggestions.length + i === highlightedIndex
-                          ? 'always'
-                          : 'hover'
-                      }
-                      skipTab
                     >
-                      {highlightedResults ? (
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: item.title,
-                          }}
-                        ></span>
-                      ) : (
-                        item.title
+                      {postfix && (
+                        <Box userSelect="none">
+                          <p
+                            style={{
+                              fontSize: '13px',
+                              color: '#6a2ea0',
+                              fontWeight: '400',
+                            }}
+                          >
+                            {postfix}
+                          </p>
+                        </Box>
                       )}
-                    </Link>
-                    {postfix && (
-                      <Box userSelect="none">
-                        <Text
-                          color="purple400"
-                          variant="eyebrow"
-                          fontWeight="medium"
-                        >
-                          -
-                        </Text>
-                      </Box>
-                    )}
-                    {postfix && (
-                      <Box userSelect="none">
-                        <Text
-                          color="purple400"
-                          variant="eyebrow"
-                          fontWeight="medium"
-                        >
-                          {postfix}
-                        </Text>
-                      </Box>
-                    )}
-                  </Inline>
+                      <Link
+                        style={{ width: 'fit-content' }}
+                        key={item.id}
+                        {...itemProps}
+                        onClick={(e: any) => {
+                          trackSearchQuery(search.term, 'Web Suggestion')
+                          onClick(e)
+                          onRouting?.()
+                        }}
+                        color="blue400"
+                        underline="normal"
+                        dataTestId="search-result"
+                        pureChildren
+                        underlineVisibility={
+                          search.suggestions.length + i === highlightedIndex
+                            ? 'always'
+                            : 'hover'
+                        }
+                        skipTab
+                      >
+                        {highlightedResults ? (
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: item.title,
+                            }}
+                          ></span>
+                        ) : (
+                          item.title
+                        )}
+                      </Link>
+                    </div>
+                  </div>
                 )
               })}
           </Stack>
