@@ -96,6 +96,13 @@ export const EducationGraduation = () => {
         serviceProviderSlug={'haskoli-islands'}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
+      {error && !loading && data && (
+        <AlertMessage
+          type="warning"
+          title={'fetch fail'}
+          message={`fetch failed for the following providers; ${errorString}`}
+        />
+      )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !error && <CardLoader />}
       {!loading && !error && !tracks.length && (
@@ -146,25 +153,6 @@ export const EducationGraduation = () => {
               />
             )
           })}
-        {!error && !!tracks.length && !loading && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFoundDetail)}
-            imgSrc="./assets/images/sofa.svg"
-          />
-        )}
-        {error && !data && !loading && (
-          <Problem noBorder={false} error={error} />
-        )}
-        {error && !loading && data && (
-          <AlertMessage
-            type="warning"
-            title={'fetch fail'}
-            message={`fetch failed for the following providers; ${errorString}`}
-          />
-        )}
       </Stack>
     </Box>
   )
