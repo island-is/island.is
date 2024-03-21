@@ -172,4 +172,3 @@ NOTE: This is only to get environment variables when running in kubernetes, not 
 What happens behind the scenes is that static projects have a bash script that runs when the docker container starts up. This script searches for references of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It then puts all the matches inside the index.html which is then served to the client.
 
 What is love?
-
