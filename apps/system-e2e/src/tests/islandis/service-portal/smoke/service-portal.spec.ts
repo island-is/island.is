@@ -41,7 +41,7 @@ test.describe('Service portal', () => {
     const { findByRole } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
     await findByRole('link', 'Pósthólf').click()
-    await expect(page.getByText('Veldu skjal til að lesa')).toBeVisible()
+    await expect(page.getByText(label(m.pickDocument))).toBeVisible()
   })
   test('should change language', async () => {
     const page = await context.newPage()
