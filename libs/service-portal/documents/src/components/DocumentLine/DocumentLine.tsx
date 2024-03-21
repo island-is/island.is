@@ -15,7 +15,7 @@ import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import AvatarImage from './AvatarImage'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
@@ -67,7 +67,9 @@ export const DocumentLine: FC<Props> = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const date = format(new Date(documentLine.date), dateFormat.is)
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { id } = useParams<{
+    id: string
+  }>()
 
   const {
     submitMailAction,
@@ -92,11 +94,10 @@ export const DocumentLine: FC<Props> = ({
   }, [isAvatarFocused])
 
   useEffect(() => {
-    const paramId = searchParams.get('id')
-    if (paramId === documentLine.id) {
+    if (id === documentLine.id) {
       onLineClick()
     }
-  }, [searchParams.get('id'), documentLine])
+  }, [id, documentLine])
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -169,12 +170,16 @@ export const DocumentLine: FC<Props> = ({
   }, [fileLoading])
 
   const onLineClick = async () => {
-    const paramId = searchParams.get('id')
-    if (paramId !== documentLine?.id) {
-      setSearchParams((params) => {
-        params.delete('id')
-        return params
-      })
+    if (documentLine?.id) {
+      navigate(
+        DocumentsPaths.ElectronicDocumentSingle.replace(
+          ':id',
+          documentLine?.id,
+        ),
+        { replace: true },
+      )
+    } else {
+      navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
 
     getFileByIdData
@@ -258,6 +263,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
+              id={active ? `button-${documentLine.id}` : undefined}
               className={styles.docLineButton}
             >
               <Text

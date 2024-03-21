@@ -13,7 +13,6 @@ import { isUuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 
 import { AuditService } from '@island.is/nest/audit'
-import { AuthDelegationType } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IndividualDto,
@@ -35,15 +34,18 @@ import { DEFAULT_DOMAIN } from '../types'
 import { DelegationConfig } from './DelegationConfig'
 import { DelegationScopeService } from './delegation-scope.service'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
-import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
+import { DelegationDTO } from './dto/delegation.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { DelegationDirection } from './types/delegationDirection'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
-import { DelegationType } from './types/delegationType'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -208,7 +210,7 @@ export class DelegationsService {
    */
   async findAllIncoming(
     user: User,
-    delegationTypes?: DelegationType[],
+    delegationTypes?: AuthDelegationType[],
   ): Promise<DelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
     const delegationPromises = []
@@ -219,28 +221,28 @@ export class DelegationsService {
     if (
       (!client || client.supportsLegalGuardians) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.LegalGuardian))
+        delegationTypes?.includes(AuthDelegationType.LegalGuardian))
     ) {
       delegationPromises.push(this.findAllWardsIncoming(user))
     }
     if (
       (!client || client.supportsProcuringHolders) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.ProcurationHolder))
+        delegationTypes?.includes(AuthDelegationType.ProcurationHolder))
     ) {
       delegationPromises.push(this.findAllCompaniesIncoming(user))
     }
     if (
       (!client || client.supportsCustomDelegation) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.Custom))
+        delegationTypes?.includes(AuthDelegationType.Custom))
     ) {
       delegationPromises.push(this.findAllValidCustomIncoming(user))
     }
     if (
       (!client || client.supportsPersonalRepresentatives) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.PersonalRepresentative))
+        delegationTypes?.includes(AuthDelegationType.PersonalRepresentative))
     ) {
       delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
     }
@@ -423,8 +425,8 @@ export class DelegationsService {
               toNationalId: user.nationalId,
               fromNationalId: p.nationalId,
               fromName: p.name,
-              type: DelegationType.LegalGuardian,
-              provider: DelegationProvider.NationalRegistry,
+              type: AuthDelegationType.LegalGuardian,
+              provider: AuthDelegationProvider.NationalRegistry,
             },
         )
     } catch (error) {
@@ -452,8 +454,8 @@ export class DelegationsService {
               toNationalId: user.nationalId,
               fromNationalId: relationship.nationalId,
               fromName: relationship.name,
-              type: DelegationType.ProcurationHolder,
-              provider: DelegationProvider.CompanyRegistry,
+              type: AuthDelegationType.ProcurationHolder,
+              provider: AuthDelegationProvider.CompanyRegistry,
             },
         )
       }
@@ -480,8 +482,8 @@ export class DelegationsService {
         toNationalId: representative.nationalIdPersonalRepresentative,
         fromNationalId: representative.nationalIdRepresentedPerson,
         fromName: name,
-        type: DelegationType.PersonalRepresentative,
-        provider: DelegationProvider.PersonalRepresentativeRegistry,
+        type: AuthDelegationType.PersonalRepresentative,
+        provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
       })
 
       const personalRepresentatives =

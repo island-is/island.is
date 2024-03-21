@@ -94,6 +94,7 @@ export const laws = {
   _95_1_C: 'c-lið 1. mgr. 95. gr. sml.',
   _95_1_D: 'd-lið 1. mgr. 95. gr. sml.',
   _95_2: '2. mgr. 95. gr. sml.',
+  _97_1: '1. mgr. 97. gr. sml.',
   _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
 }

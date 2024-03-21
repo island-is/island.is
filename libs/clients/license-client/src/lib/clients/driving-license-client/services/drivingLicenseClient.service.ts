@@ -1,32 +1,37 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { FetchError } from '@island.is/clients/middlewares'
 import {
   DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
   RemarkCode,
 } from '@island.is/clients/driving-license'
-import {
-  LicenseClient,
-  LicensePkPassAvailability,
-  PkPassVerification,
-  PkPassVerificationInputData,
-  Result,
-} from '../../../licenseClient.type'
+import { FetchError } from '@island.is/clients/middlewares'
 import {
   Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+
+import {
+  LicenseClient,
+  LicensePkPassAvailability,
+  LicenseType,
+  PkPassVerificationInputData,
+  VerifyPkPassResult,
+  Result,
+} from '../../../licenseClient.type'
+import { DrivingLicenseVerifyExtraData } from '../drivingLicenseClient.type'
 import { createPkPassDataInput } from '../drivingLicenseMapper'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
 
 @Injectable()
-export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
+export class DrivingLicenseClient
+  implements LicenseClient<LicenseType.DrivingLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private drivingApi: DrivingLicenseApi,
@@ -34,6 +39,7 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.DrivingLicense
 
   private checkLicenseValidity(
     license: DriversLicense,
@@ -274,17 +280,39 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     }
   }
 
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+  async verifyPkPassDeprecated(data: string) {
+    const res = await this.verifyPkPass(data)
+
+    if (!res.ok) {
+      return res
+    }
+
+    const newData = res.data.data
+
+    return {
+      ...res,
+      data: {
+        valid: res.data.valid,
+        data: JSON.stringify({
+          ...newData,
+          photo: newData?.picture,
+        }),
+      },
+    }
+  }
+
+  async verifyPkPass(
+    data: string,
+  ): Promise<Result<VerifyPkPassResult<LicenseType.DrivingLicense>>> {
     const parsedInput = JSON.parse(data)
-
     const { code, date } = parsedInput as PkPassVerificationInputData
-
     const result = await this.smartApi.verifyPkPass({ code, date })
 
     if (!result) {
       this.logger.warn('Missing pkpass verify from client', {
         category: LOG_CATEGORY,
       })
+
       return result
     }
 
@@ -317,23 +345,58 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
       throw new BadRequestException('No license found for pkass national id')
     }
 
-    const licenseNationalId = license?.socialSecurityNumber
+    const nationalId = license?.socialSecurityNumber
     const name = license?.name
-    const photo = license?.photo?.image ?? ''
+    const picture = license?.photo?.image ?? undefined
 
-    const rawData = license ? JSON.stringify(license) : undefined
+    if (!nationalId || !name) {
+      const missingDataErrorMsg = 'Missing data. nationalId or name missing'
+      this.logger.error(missingDataErrorMsg, {
+        category: LOG_CATEGORY,
+      })
+
+      return {
+        ok: false,
+        error: {
+          code: 14,
+          message: missingDataErrorMsg,
+        },
+      }
+    }
 
     return {
       ok: true,
       data: {
-        valid: result.data.valid,
-        data: JSON.stringify({
-          nationalId: licenseNationalId,
+        valid: true,
+        data: {
+          nationalId,
           name,
-          photo,
-          rawData,
-        }),
+          picture,
+        },
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<DrivingLicenseVerifyExtraData> {
+    const res = await this.fetchLicense(user)
+
+    if (!res.ok) {
+      const errorMsg = res.error.message
+        ? res.error.message
+        : 'License fetch failed'
+      this.logger.warn(errorMsg, { category: LOG_CATEGORY })
+
+      throw new BadRequestException(res.error.message)
+    } else if (!res.data) {
+      throw new BadRequestException('No license found')
+    } else if (!res.data.name) {
+      throw new BadRequestException('No name found')
+    }
+
+    return {
+      nationalId: user.nationalId,
+      name: res.data.name,
+      picture: res.data.photo?.image || undefined,
     }
   }
 }
