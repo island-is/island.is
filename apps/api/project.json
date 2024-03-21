@@ -67,36 +67,38 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/api"
-      }
-    },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["yarn get-secrets api"],
-        "parallel": false
-      }
-    },
-    "dev-run": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "./scripts/run-xroad-proxy.sh",
-          "./scripts/run-soffia-proxy.sh",
-          "yarn start api"
-        ],
-        "parallel": true
+        "command": "nx run {projectName}:dev:services",
+        "cwd": "{projectRoot}"
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run {projectName}:dev-init",
-          "nx run {projectName}:dev-run"
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
         ],
         "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "commands": ["docker-compose up -d"],
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "yarn get-secrets {projectName}",
+            "nx run {projectName}:dev:services"
+          ]
+        },
+        "run": {
+          "commands": [
+            "./scripts/run-xroad-proxy.sh",
+            "./scripts/run-soffia-proxy.sh",
+            "yarn start {projectName}"
+          ],
+          "parallel": true
+        }
       }
     },
     "docker-express": {}
