@@ -30,6 +30,7 @@ ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
+RUN cat libs/clients/national-registry/v2/gen/fetch/index.ts
 RUN yarn run build ${APP} --prod
 
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
