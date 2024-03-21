@@ -35,17 +35,26 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const [activeItemChildren, setActiveItemChildren] = useState<
     PortalNavigationItem[] | undefined
   >()
+  const [currentChild, setCurrentChild] = useState<
+    PortalNavigationItem | undefined
+  >()
   const navigate = useNavigate()
   const { width } = useWindowSize()
 
   const { data: organization, loading } = useOrganization(
-    activeItem?.serviceProvider,
+    currentChild?.serviceProvider ?? activeItem?.serviceProvider,
   )
 
   useEffect(() => {
     const activeItem = items.filter((itm) => itm.active)?.[0] ?? undefined
+    const activeChildren = activeItem?.children?.filter((itm) => !itm.navHide)
     setActiveItem(activeItem)
-    setActiveItemChildren(activeItem?.children?.filter((itm) => !itm.navHide))
+    setActiveItemChildren(activeChildren)
+
+    const currentActiveChild = activeChildren?.find(
+      (itemChild) => pathname === itemChild.path,
+    )
+    setCurrentChild(currentActiveChild)
   }, [items])
 
   const tabChangeHandler = (id?: string) => {
@@ -57,6 +66,11 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const descriptionText =
     activeItemChildren?.find((itemChild) => pathname === itemChild.path)
       ?.description ?? activeItem?.description
+
+  const tooltipText =
+    currentChild && currentChild?.serviceProviderTooltip
+      ? currentChild?.serviceProviderTooltip
+      : activeItem?.serviceProviderTooltip
 
   const isMobile = width < theme.breakpoints.md
   return (
@@ -141,23 +155,23 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                   </Box>
                 </GridColumn>
               )}
-              {activeItem.displayServiceProviderLogo && !isMobile && (
-                <GridColumn span="1/8" offset="1/8">
-                  {organization?.logo && (
-                    <InstitutionPanel
-                      loading={loading}
-                      linkHref={organization.link ?? ''}
-                      img={organization.logo?.url ?? ''}
-                      tooltipText={
-                        activeItem.serviceProviderTooltip
-                          ? formatMessage(activeItem.serviceProviderTooltip)
-                          : ''
-                      }
-                      imgContainerDisplay={isMobile ? 'block' : 'flex'}
-                    />
-                  )}
-                </GridColumn>
-              )}
+              {(activeItem.displayServiceProviderLogo ||
+                currentChild?.displayServiceProviderLogo) &&
+                !isMobile && (
+                  <GridColumn span="1/8" offset="1/8">
+                    {organization?.logo && (
+                      <InstitutionPanel
+                        loading={loading}
+                        linkHref={organization.link ?? ''}
+                        img={organization.logo?.url ?? ''}
+                        tooltipText={
+                          tooltipText ? formatMessage(tooltipText) : ''
+                        }
+                        imgContainerDisplay={isMobile ? 'block' : 'flex'}
+                      />
+                    )}
+                  </GridColumn>
+                )}
             </GridRow>
           </GridContainer>
         </Box>

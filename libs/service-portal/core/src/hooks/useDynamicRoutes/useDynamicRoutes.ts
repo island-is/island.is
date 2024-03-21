@@ -59,7 +59,7 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(DynamicPaths.FinanceLocalTax)
     }
     if (tabData?.schedulesTap) {
-      dynamicPathArray.push(DynamicPaths.FinanceSchedule)
+      dynamicPathArray.push(DynamicPaths.FinancePaymentsSchedule)
     }
 
     /**

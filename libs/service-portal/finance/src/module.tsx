@@ -5,6 +5,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 import { financeRoutesLoader } from './screens/FinanceRoutes.loader'
+import { redirects } from './financeRedirects'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
@@ -18,6 +19,7 @@ const FinanceEmployeeClaims = lazy(() =>
 const FinanceLocalTax = lazy(() => import('./screens/FinanceLocalTax'))
 const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
 const FinanceLoans = lazy(() => import('./screens/FinanceLoans'))
+const FinanceHousingBenefits = lazy(() => import('./screens/HousingBenefits'))
 
 export const financeModule: PortalModule = {
   name: 'Fjármál',
@@ -41,7 +43,7 @@ export const financeModule: PortalModule = {
     },
     {
       name: m.financeBills,
-      path: FinancePaths.FinanceBills,
+      path: FinancePaths.FinancePaymentsBills,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceBills />,
     },
@@ -80,11 +82,17 @@ export const financeModule: PortalModule = {
     },
     {
       name: m.financeSchedules,
-      path: FinancePaths.FinanceSchedule,
+      path: FinancePaths.FinancePaymentsSchedule,
       enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
       element: <FinanceSchedule />,
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeHousingBenefits,
+      path: FinancePaths.FinancePaymentsHousingBenefits,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      element: <FinanceHousingBenefits />,
     },
     {
       name: m.financeLoans,
@@ -93,5 +101,6 @@ export const financeModule: PortalModule = {
       element: <FinanceLoans />,
       key: 'FinanceHmsLoans',
     },
+    ...redirects,
   ],
 }
