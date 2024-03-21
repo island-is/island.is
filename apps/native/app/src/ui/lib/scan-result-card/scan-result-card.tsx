@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, Image, ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
 import { formatNationalId } from '../../../lib/format-national-id'
 import BackgroundADR from '../../assets/card/adr-bg.png'
@@ -15,6 +15,7 @@ import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import { font } from '../../utils'
+import { GenericLicenseType } from '../../../graphql/types/schema'
 
 const Host = styled.View<{ backgroundColor: string }>`
   border-radius: 16px;
@@ -165,7 +166,7 @@ const Copy = styled.Text`
 `
 
 interface ScanResultCardProps {
-  loading: boolean
+  loading?: boolean
   error?: boolean
   valid?: boolean
   isExpired?: boolean
@@ -180,7 +181,24 @@ interface ScanResultCardProps {
   type: ScanResultCardType
 }
 
-const ScanResultCardPresets = {
+export enum SupportedGenericLicenseTypes {
+  DriversLicense = GenericLicenseType.DriversLicense,
+  AdrLicense = GenericLicenseType.AdrLicense,
+  MachineLicense = GenericLicenseType.MachineLicense,
+  FirearmLicense = GenericLicenseType.FirearmLicense,
+  DisabilityLicense = GenericLicenseType.DisabilityLicense,
+  Unknown = 'Unknown',
+}
+
+const ScanResultCardPresets: Record<
+  SupportedGenericLicenseTypes,
+  {
+    title: string
+    logo: ImageSourcePropType
+    backgroundImage: ImageSourcePropType
+    backgroundColor?: string
+  }
+> = {
   DriversLicense: {
     title: 'Ökuskírteini (IS)',
     logo: LogoCoatOfArms,
@@ -221,20 +239,19 @@ const ScanResultCardPresets = {
 
 export type ScanResultCardType = keyof typeof ScanResultCardPresets
 
-export function ScanResultCard(props: ScanResultCardProps) {
-  const {
-    error,
-    errorMessage,
-    title,
-    isExpired,
-    loading,
-    nationalId,
-    name,
-    photo,
-    data,
-    hasNoData = false,
-    type,
-  } = props
+export function ScanResultCard({
+  error,
+  errorMessage,
+  title,
+  isExpired,
+  loading,
+  nationalId,
+  name,
+  photo,
+  data,
+  hasNoData = false,
+  type,
+}: ScanResultCardProps) {
   const intl = useIntl()
 
   const preset = type

@@ -85,6 +85,12 @@ const Content = styled.View`
   justify-content: center;
 `
 
+const Base64Image = styled.Image`
+  width: 64px;
+  height: 72px;
+  border-radius: ${({ theme: { border } }) => border.radius.large};
+`
+
 const Title = styled.Text<{ color: string }>`
   margin-bottom: 8px;
 
@@ -248,7 +254,7 @@ interface LicenceCardProps {
   nativeID?: string
   style?: StyleProp<ViewStyle>
   type?: LicenseType
-  logo?: ImageSourcePropType
+  logo?: ImageSourcePropType | string
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
   barcode?: {
@@ -324,7 +330,11 @@ export function LicenseCard({
         </Content>
         {logo && (
           <ImgWrap>
-            <Image source={logo} />
+            {typeof logo === 'string' ? (
+              <Base64Image source={{ uri: logo }} />
+            ) : (
+              <Image source={logo} />
+            )}
           </ImgWrap>
         )}
       </ContentContainer>

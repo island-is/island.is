@@ -47,7 +47,11 @@ export const WalletItem = React.memo(
               <LicenseCard
                 nativeID={`license-${CustomLicenseType.Passport}_source`}
                 type={CustomLicenseType.Passport}
-                date={new Date(item?.expirationDate)}
+                date={
+                  item?.expirationDate
+                    ? new Date(item?.expirationDate)
+                    : undefined
+                }
                 status={isInvalid ? 'NOT_VALID' : 'VALID'}
               />
             </SafeAreaView>

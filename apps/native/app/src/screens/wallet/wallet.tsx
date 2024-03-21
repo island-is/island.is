@@ -29,6 +29,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
+import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
@@ -91,7 +92,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
-  const loadingTimeout = useRef<NodeJS.Timeout>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
@@ -159,7 +160,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         domain: 'licences',
       }
     })
-    if (Platform.OS === 'ios') {
+    if (isIos) {
       SpotlightSearch.indexItems(indexItems)
     }
   }, [licenseItems])
@@ -263,7 +264,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           },
         )}
         ListHeaderComponent={
-          Platform.OS === 'ios' ? (
+          isIos ? (
             <View style={{ marginBottom: 16 }}>
               <Alert
                 type="info"
