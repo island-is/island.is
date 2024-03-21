@@ -1,5 +1,5 @@
 import { SendMailOptions } from 'nodemailer'
-import { ServiceWebFormsInputWithInstitutionEmail } from '../dto/serviceWebForms.input'
+import { ServiceWebFormsInputWithInstitutionEmailAndConfig } from '../dto/serviceWebForms.input'
 import { environment } from '../environments/environment'
 
 type StringOrNull = string | null
@@ -355,15 +355,14 @@ const transportAuthorityEmails = {
   umferd: 'afgreidsla@samgongustofa.is',
   siglingar: 'sigling@samgongustofa.is',
 }
-
-export const getTemplate = (
-  input: ServiceWebFormsInputWithInstitutionEmail,
-): SendMailOptions => {
+const getToAddress = (
+  input: ServiceWebFormsInputWithInstitutionEmailAndConfig,
+): string => {
+  const institutionEmail = input.institutionEmail
   const categoryId = input.category
   const syslumadurId = input.syslumadur
-  const institutionEmail = input.institutionEmail
 
-  let toAddress = institutionEmail
+  let toAddress: string = institutionEmail
 
   if (syslumadurId) {
     const emailList = syslumennEmails[syslumadurId as Syslumenn]
@@ -374,41 +373,18 @@ export const getTemplate = (
         emailList.default ??
         institutionEmail
     }
-  } else if (
-    input.institutionSlug === 'sjukratryggingar' ||
-    input.institutionSlug === 'icelandic-health-insurance' ||
-    input.institutionSlug === 'iceland-health'
-  ) {
-    toAddress =
-      sjukratryggingarEmails[categoryId as SjukratryggingarCategories] ??
-      institutionEmail
-  } else if (
-    input.institutionSlug === 'utlendingastofnun' ||
-    input.institutionSlug === 'directorate-of-immigration'
-  ) {
-    toAddress =
-      directorateOfImmigrationEmails[
-        categoryId as keyof typeof directorateOfImmigrationEmails
-      ] ?? institutionEmail
-  } else if (
-    input.institutionSlug === 'fyrir-grindavik' ||
-    input.institutionSlug === 'for-grindavik'
-  ) {
-    toAddress =
-      grindavikEmails[categoryId as keyof typeof grindavikEmails] ??
-      institutionEmail
-  } else if (
-    input.institutionSlug === 'samgongustofa' ||
-    input.institutionSlug === 'transport-authority'
-  ) {
-    toAddress =
-      transportAuthorityEmails[
-        categoryId as keyof typeof transportAuthorityEmails
-      ] ?? institutionEmail
   }
 
-  const name = 'Ísland.is aðstoð'
+  if (input.config[categoryId as keyof typeof input.config]) {
+    toAddress = input.config[categoryId as keyof typeof input.config]
+  }
 
+  return toAddress
+}
+
+export const getTemplate = (
+  input: ServiceWebFormsInputWithInstitutionEmailAndConfig,
+): SendMailOptions => {
   return {
     from: {
       name: input.name,
@@ -420,8 +396,8 @@ export const getTemplate = (
     },
     to: [
       {
-        name,
-        address: toAddress,
+        name: 'Ísland.is aðstoð',
+        address: getToAddress(input),
       },
     ],
     subject: input.subject,

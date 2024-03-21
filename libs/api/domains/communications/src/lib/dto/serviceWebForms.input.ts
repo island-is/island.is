@@ -42,6 +42,8 @@ export class ServiceWebFormsInput {
   lang?: string = 'is-IS'
 }
 
-export type ServiceWebFormsInputWithInstitutionEmail = ServiceWebFormsInput & {
-  institutionEmail: string
-}
+export type ServiceWebFormsInputWithInstitutionEmailAndConfig =
+  ServiceWebFormsInput & {
+    institutionEmail: string
+    config: Record<string, string>
+  }
