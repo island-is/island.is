@@ -163,6 +163,7 @@ jobs:
       - name: Verify cypress
         id: cypress-check
         run: npx cypress verify
+        continue-on-error: true
 
       - name: Install cypress
         if: steps.cypress-check.outcome != 'success'
