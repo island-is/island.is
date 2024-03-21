@@ -506,10 +506,7 @@ export class CaseService {
       },
     ]
 
-    if (
-      theCase.type === CaseType.INDICTMENT &&
-      theCase.origin === CaseOrigin.LOKE
-    ) {
+    if (isIndictmentCase(theCase.type) && theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
         user,
@@ -600,7 +597,7 @@ export class CaseService {
     )
   }
 
-  private addMessagesForCompletedCaseToQueue(
+  private addMessagesForSignedRulingToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -610,12 +607,35 @@ export class CaseService {
         user,
         caseId: theCase.id,
       },
+      { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId: theCase.id },
+    ]
+
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVER_SIGNED_RULING_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  private addMessagesForCompletedCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    const messages = [
       {
         type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
         user,
         caseId: theCase.id,
       },
-      { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId: theCase.id },
+      {
+        type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+        user,
+        caseId: theCase.id,
+      },
     ]
 
     const deliverCaseFileToCourtMessages =
@@ -635,11 +655,7 @@ export class CaseService {
           caseFileId: caseFile.id,
         })) ?? []
 
-    messages.push(...deliverCaseFileToCourtMessages, {
-      type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
-      user,
-      caseId: theCase.id,
-    })
+    messages.push(...deliverCaseFileToCourtMessages)
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
@@ -864,19 +880,23 @@ export class CaseService {
           user,
           theCase.state,
         )
-      } else if (isIndictmentCase(updatedCase.type)) {
-        if (updatedCase.state === CaseState.SUBMITTED) {
-          await this.addMessagesForSubmittedIndicitmentCaseToQueue(
-            updatedCase,
-            user,
-          )
-        } else if (completedCaseStates.includes(updatedCase.state)) {
-          // Indictment cases are not signed
+      } else if (completedCaseStates.includes(updatedCase.state)) {
+        if (isIndictmentCase(updatedCase.type)) {
           await this.addMessagesForCompletedIndictmentCaseToQueue(
             updatedCase,
             user,
           )
+        } else {
+          await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
+      } else if (
+        updatedCase.state === CaseState.SUBMITTED &&
+        isIndictmentCase(updatedCase.type)
+      ) {
+        await this.addMessagesForSubmittedIndicitmentCaseToQueue(
+          updatedCase,
+          user,
+        )
       }
     }
 
@@ -1211,7 +1231,7 @@ export class CaseService {
         false,
       )
 
-      await this.addMessagesForCompletedCaseToQueue(theCase, user)
+      await this.addMessagesForSignedRulingToQueue(theCase, user)
 
       return { documentSigned: true }
     } catch (error) {

@@ -40,5 +40,5 @@ export class UpdateUserInput {
 
   @Allow()
   @Field(() => Boolean)
-  readonly canConfirmAppeal!: boolean
+  readonly canConfirmIndictment!: boolean
 }

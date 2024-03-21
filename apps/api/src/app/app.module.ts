@@ -130,6 +130,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
+import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
@@ -162,6 +163,7 @@ import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
 import { HealthController } from './health.controller'
+import { DocumentClientConfig } from '@island.is/clients/documents'
 
 const environment = getConfig
 
@@ -202,14 +204,7 @@ const environment = getConfig
     LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
-    DocumentModule.register({
-      documentClientConfig: {
-        basePath: environment.documentService.basePath!,
-        clientId: environment.documentService.clientId,
-        clientSecret: environment.documentService.clientSecret,
-        tokenUrl: environment.documentService.tokenUrl,
-      },
-    }),
+    DocumentModule,
     DocumentProviderModule.register({
       test: {
         basePath: environment.documentProviderService.test.basePath!,
@@ -363,6 +358,8 @@ const environment = getConfig
         FiskistofaClientConfig,
         ChargeFjsV2ClientConfig,
         EnergyFundsClientConfig,
+        DocumentClientConfig,
+        DocumentsClientV2Config,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
