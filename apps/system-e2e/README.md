@@ -21,7 +21,7 @@ When testing an app/project you need to first start the app, then test it with P
 
 - Set up Playwright: `yarn install && yarn codegen && yarn playwright install`
 - Start the application: `yarn dev-init <app> && yarn dev <app>`
-- Test the app: `yarn system-e2e <name-of-your-app>`
+- Test the app: `yarn system-e2e -g <name-of-your-app>`
 
 ## 👨‍🍳 Prepare the app
 
@@ -46,15 +46,15 @@ However, not all projects support this, or are incomplete in this setup. If this
 First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
 - Using playwright directly: `yarn playwright test -c apps/system-e2e '<name-of-your-app>/.*/<smoke|acceptance>'`
-- Specific test file: `yarn system-e2e '<path/to/your/test/file>'`
-- Using a path pattern (regex): `yarn system-e2e '<pattern>'`
+- Specific test file: `yarn system-e2e -g '<path/to/your/test/file>'`
+- Using a path pattern (regex): `yarn system-e2e -g '<pattern>'`
 
 {% hint style="example" %}
 
-- smoke: `yarn system-e2e 'application-system-form/smoke'`
-- acceptance: `yarn system-e2e 'service-portal/acceptance'`
-- both: `yarn system-e2e 'system-e2e/.*/web'`
-- pattern `yarn system-e2e 'system-e2e/.*/s?port?'`
+- smoke: `yarn system-e2e -g 'application-system-form/smoke'`
+- acceptance: `yarn system-e2e -g 'service-portal/acceptance'`
+- both: `yarn system-e2e -g 'system-e2e/.*/web'`
+- pattern `yarn system-e2e -g 'system-e2e/.*/s?port?'`
 
 Note that the pattern is a RegEx string in quotes.
 {% endhint %}
@@ -211,4 +211,4 @@ This is an infrastructure issue and should have been resolved. If you see this i
 
 ## ⌛ Tests are timing out
 
-This indicates either a local network issue like bad internet (your problem), or a performance problem in the application code. In some cases this can be remedied by increasing the timeout if a certain site/service is known to be slow with `page.goto('/my-url', { timeout: Timeout.medium })`.
+This indicates either a local network issue like bad internet (your problem), or a performance problem in the application code. In some cases this can be remedied by increasing the timeout if a certain site/service is known to be slow with `page.goto('/my-url', { timeout: 1e11 })`.
