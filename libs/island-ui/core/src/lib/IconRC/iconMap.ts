@@ -70,6 +70,7 @@ export type Icon =
   | 'settings'
   | 'star'
   | 'time'
+  | 'timer'
   | 'trash'
   | 'volumeHigh'
   | 'volumeMute'
@@ -168,6 +169,7 @@ export default {
     reload: 'Reload',
     remove: 'Remove',
     time: 'Time',
+    timer: 'Timer',
     save: 'Save',
     bookmark: 'Bookmark',
     share: 'Share',
@@ -258,6 +260,7 @@ export default {
     reload: 'ReloadOutline',
     remove: 'Remove',
     time: 'TimeOutline',
+    timer: 'TimerOutline',
     save: 'SaveOutline',
     bookmark: 'BookmarkOutline',
     share: 'ShareOutline',

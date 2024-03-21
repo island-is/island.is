@@ -1,12 +1,12 @@
 import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Loader } from '@island.is/nest/dataloader'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
-import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
   OrganizationLinkByReferenceIdLoader,
   OrganizationLinkEnByReferenceIdLoader,
   OrganizationLogoByReferenceIdLoader,
   OrganizationTitleByReferenceIdLoader,
+  OrganizationTitleEnByReferenceIdLoader,
 } from '@island.is/cms'
 import type {
   LogoUrl,
@@ -48,6 +48,16 @@ export class UniversityResolver {
   @ResolveField('contentfulTitle', () => String, { nullable: true })
   async resolveContentfulTitle(
     @Loader(OrganizationTitleByReferenceIdLoader)
+    organizationTitleLoader: OrganizationTitleByReferenceIdDataLoader,
+    @Parent() university: UniversityGatewayUniversity,
+  ): Promise<ShortTitle> {
+    return organizationTitleLoader.load(university.contentfulKey)
+  }
+
+  @CacheControl(defaultCache)
+  @ResolveField('contentfulTitleEn', () => String, { nullable: true })
+  async resolveContentfulTitleEn(
+    @Loader(OrganizationTitleEnByReferenceIdLoader)
     organizationTitleLoader: OrganizationTitleByReferenceIdDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<ShortTitle> {

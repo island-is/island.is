@@ -85,6 +85,17 @@ export const DesktopOverview: FC<Props> = ({
         }}
       />
       <Box>{<DocumentRenderer document={activeDocument} />}</Box>
+      {activeDocument?.id && (
+        <Box className={styles.reveal}>
+          <button
+            onClick={() => {
+              document.getElementById(`button-${activeDocument?.id}`)?.focus()
+            }}
+          >
+            {formatMessage(m.backToList)}
+          </button>
+        </Box>
+      )}
     </Box>
   )
 }
