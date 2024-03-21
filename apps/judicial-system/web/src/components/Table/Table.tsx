@@ -69,7 +69,7 @@ const Table: React.FC<TableProps> = (props) => {
   const { thead, data, columns, contextMenu } = props
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem, deleteCaseMenuItem } = useContextMenu()
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
 
   useMemo(() => {
@@ -155,6 +155,8 @@ const Table: React.FC<TableProps> = (props) => {
                       items={contextMenu.menuItems.map((item) =>
                         item === PrebuiltMenuItems.openCaseInNewTab
                           ? openCaseInNewTabMenuItem(row.id)
+                          : item === PrebuiltMenuItems.deleteCase
+                          ? deleteCaseMenuItem(row)
                           : (item as ContextMenuItem),
                       )}
                       disclosure={

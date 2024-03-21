@@ -254,7 +254,10 @@ export const Cases: React.FC = () => {
                       ]}
                       data={casesAwaitingConfirmation}
                       contextMenu={{
-                        menuItems: [PrebuiltMenuItems.openCaseInNewTab],
+                        menuItems: [
+                          PrebuiltMenuItems.openCaseInNewTab,
+                          PrebuiltMenuItems.deleteCase,
+                        ],
                       }}
                       columns={[
                         {
