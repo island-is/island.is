@@ -128,7 +128,6 @@ const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
           className={cn(styles.menu, menuBoxStyle)}
         >
           {items.map((item, index) => {
-            const a = item
             let anchorProps = {}
             if (item.href) {
               anchorProps = {
