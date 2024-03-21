@@ -3,6 +3,7 @@
 set -euo pipefail
 
 CLEAN_DRY=false
+CLEAN_DIST=false
 CLEAN_CACHES=false
 CLEAN_YARN=false
 CLEAN_GENERATED=false
@@ -27,6 +28,11 @@ show_help() {
   cat <<EOF
 Usage:
   ./scripts/clean.sh [OPTIONS]
+
+  --generated     Clean generated files
+  --dist          Clean dist files
+  --cache         Clean caches
+  --yarn          Clean yarn and npm caches (e.g. node_modules)
   -f | --force    Force clean
   -d | --dry      Dry run
   -h | --help     Show help
@@ -43,6 +49,9 @@ cli() {
     --yarn)
       CLEAN_YARN=true
       ;;
+    --dist)
+      CLEAN_DIST=true
+      ;;
     --cache)
       CLEAN_CACHES=true
       ;;
@@ -51,12 +60,13 @@ cli() {
       ;;
     *)
       show_help
-      exit
+      exit 1
       ;;
     esac
     shift
   done
-  if [[ "$CLEAN_GENERATED" == "false" && "$CLEAN_YARN" == "false" && "$CLEAN_CACHES" == "false" ]]; then
+  if [[ "$CLEAN_GENERATED" == "false" && "$CLEAN_YARN" == "false" && "$CLEAN_CACHES" == "false" && "$CLEAN_DIST" == "false" ]]; then
+    CLEAN_DIST=true
     CLEAN_GENERATED=true
     CLEAN_YARN=true
     CLEAN_CACHES=true
@@ -83,6 +93,12 @@ clean_caches() {
   dry || rm -rf "${CLEAN_CACHES_LIST[@]}"
 }
 
+clean_dist() {
+
+  dry || rm -rf -- **/dist/
+
+}
+
 clean_yarn() {
   if ! [[ -d ".yarn" ]]; then
     log "No .yarn folder"
@@ -101,7 +117,7 @@ clean_yarn() {
 }
 
 clean_all() {
-  for job in generated caches yarn; do
+  for job in generated caches dist yarn; do
     job_uppercase=$(echo $job | tr '[:lower:]' '[:upper:]')
     job_variable="CLEAN_${job_uppercase}"
 
