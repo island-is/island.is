@@ -9,13 +9,18 @@ import {
 } from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { m } from '@island.is/service-portal/core'
+import { ServicePortalPaths, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import AvatarImage from './AvatarImage'
-import { useNavigate, useParams } from 'react-router-dom'
+import {
+  matchPath,
+  useNavigate,
+  useParams,
+  useLocation,
+} from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
@@ -66,6 +71,7 @@ export const DocumentLine: FC<Props> = ({
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const location = useLocation()
   const date = format(new Date(documentLine.date), dateFormat.is)
   const { id } = useParams<{
     id: string
@@ -162,15 +168,14 @@ export const DocumentLine: FC<Props> = ({
   }, [fileLoading])
 
   const onLineClick = async () => {
-    if (documentLine?.id) {
-      navigate(
-        DocumentsPaths.ElectronicDocumentSingle.replace(
-          ':id',
-          documentLine?.id,
-        ),
-        { replace: true },
-      )
-    } else {
+    const pathName = location.pathname
+    const match = matchPath(
+      {
+        path: DocumentsPaths.ElectronicDocumentSingle,
+      },
+      pathName,
+    )
+    if (match?.params?.id && match?.params?.id !== documentLine?.id) {
       navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
 
