@@ -82,6 +82,7 @@ const OrganizationSubpageSlugField = () => {
               content_type: 'organizationSubpage',
               'fields.slug': value,
               'sys.id[ne]': sdk.entry.getSys().id,
+              'sys.archivedVersion[exists]': false,
               limit: 1000,
             },
           })
