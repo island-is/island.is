@@ -23,7 +23,7 @@ export class TypeQueryParams {
   @Field(() => String, { nullable: true })
   department?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   page?: number
 }
 
@@ -38,7 +38,7 @@ export class QueryParams {
   @Field(() => String, { nullable: true })
   search?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   page?: number
 }
 
