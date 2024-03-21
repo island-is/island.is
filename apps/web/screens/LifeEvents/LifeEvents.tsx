@@ -124,7 +124,7 @@ LifeEvents.getProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'LifeEvents',
+            namespace: 'LifeEventsOverview',
             lang: locale,
           },
         },
