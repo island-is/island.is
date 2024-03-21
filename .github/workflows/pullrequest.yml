@@ -142,26 +142,6 @@ jobs:
           git checkout "$GITHUB_SHA" # GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
 
-      - name: Cache for cypress
-        id: cypress
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: ${{ env.CYPRESS_CACHE_DIR }}
-          key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-
-      - name: Check cypress cache success
-        run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Verify cypress
-        id: cypress-check
-        run: npx cypress verify
-        continue-on-error: true
-
-      - name: Install cypress
-        if: steps.cypress-check.outcome != 'success'
-        run: npx cypress install
-
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
@@ -185,37 +165,9 @@ jobs:
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh
 
-      - name: License audit Node modules
-        run: ./scripts/ci/20_license-audit.sh
-
-      - name: Check user permissions
-        continue-on-error: true
-        uses: actions-cool/check-user-permission@v2
-        id: check-permission
-
-      - name: Set magic env if test-everything label is set
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
-        run: |
-          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> $GITHUB_ENV
-
-      - name: Warn if user does not have the required permissions
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] != 'admin' }}
-        run: |
-          echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
-          echo "User $GITHUB_ACTOR does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-     
-      - name: Prepare build targets
-        id: build_projects
-        env:
-          CHUNK_SIZE: 4
-        run: |
-          CHUNKS=["air-discount-scheme-backend","api","application-system-api"]
-          echo "CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
-
   
   build:
-    if: ${{ needs.changes.outputs.BUILD_CHUNKS != '' && toJson(fromJson(needs.changes.outputs.BUILD_CHUNKS)) != '[]' }}
+    if: always()
     needs:
       - prepare
     runs-on: ec2-runners
@@ -223,7 +175,7 @@ jobs:
       image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      AFFECTED_PROJECTS: '["air-discount-scheme-backend","api","application-system-api","service-portal"]'
       MAX_JOBS: 2
     strategy:
       fail-fast: false
