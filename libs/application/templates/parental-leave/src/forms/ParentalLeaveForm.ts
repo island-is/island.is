@@ -198,7 +198,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
-                  title: parentalLeaveFormMessages.shared.otherParentSubTitle,
+                  title: '',
                   options: (application) => getOtherParentOptions(application),
                   defaultValue: (application: Application) =>
                     getOtherParentOptions(application)[0].value === SPOUSE
@@ -687,6 +687,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsDescription,
                   titleVariant: 'h2',
+                  marginTop: 3,
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
                     return isSelfEmployed === NO
@@ -918,7 +919,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -940,7 +941,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -972,7 +973,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -997,7 +998,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -1016,7 +1017,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -1042,7 +1043,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -1063,7 +1064,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -1094,7 +1095,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
@@ -1109,7 +1110,7 @@ export const ParentalLeaveForm: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
