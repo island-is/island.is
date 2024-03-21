@@ -14,6 +14,7 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import * as kennitala from 'kennitala'
 import {
   Application,
   DefaultEvents,
@@ -33,7 +34,6 @@ import {
   MONTHS,
   fileUploadSharedProps,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
@@ -63,14 +63,83 @@ export const PensionSupplementForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'info',
-          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
+              title:
+                socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
               description:
-                socialInsuranceAdministrationMessage.info.subSectionDescription,
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
               children: [
+                buildTextField({
+                  id: 'applicantInfo.name',
+                  title: socialInsuranceAdministrationMessage.confirm.name,
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const { applicantName } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantName
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.ID',
+                  title:
+                    socialInsuranceAdministrationMessage.confirm.nationalId,
+                  format: '######-####',
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) =>
+                    kennitala.format(application.applicant),
+                }),
+                buildTextField({
+                  id: 'applicantInfo.address',
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantAddress,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const { applicantAddress } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantAddress
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.postcode',
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPostalcode,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const { applicantPostalCode } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantPostalCode
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.municipality',
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantMunicipality,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const { applicantLocality } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantLocality
+                  },
+                }),
                 buildTextField({
                   id: 'applicantInfo.email',
                   title:
@@ -79,10 +148,10 @@ export const PensionSupplementForm: Form = buildForm({
                   variant: 'email',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.emailAddress
+                    const { userProfileEmail } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return userProfileEmail
                   },
                 }),
                 buildPhoneField({
@@ -92,10 +161,9 @@ export const PensionSupplementForm: Form = buildForm({
                       .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.phoneNumber
+                    const { userProfilePhoneNumber } =
+                      getApplicationExternalData(application.externalData)
+                    return userProfilePhoneNumber
                   },
                 }),
               ],
@@ -323,7 +391,7 @@ export const PensionSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [
         buildMultiField({
           id: 'periodField',

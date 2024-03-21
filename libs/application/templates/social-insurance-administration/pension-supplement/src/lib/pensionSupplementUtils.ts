@@ -19,7 +19,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { PensionSupplementAttachments } from '../types'
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicantInfo.phonenumber',
@@ -126,9 +126,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
   }
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const applicantName = getValueViaPath(
     externalData,
     'nationalRegistry.data.fullName',
@@ -137,6 +137,16 @@ export function getApplicationExternalData(
   const applicantNationalId = getValueViaPath(
     externalData,
     'nationalRegistry.data.nationalId',
+  ) as string
+
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
+
+  const userProfilePhoneNumber = getValueViaPath(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
   ) as string
 
   const applicantAddress = getValueViaPath(
@@ -179,7 +189,11 @@ export function getApplicationExternalData(
   return {
     applicantName,
     applicantNationalId,
+    userProfileEmail,
+    userProfilePhoneNumber,
+    applicantPostalCode,
     applicantAddress,
+    applicantLocality,
     applicantMunicipality,
     email,
     bankInfo,
@@ -188,7 +202,7 @@ export function getApplicationExternalData(
   }
 }
 
-export function getApplicationReasonOptions() {
+export const getApplicationReasonOptions = () => {
   const options: Option[] = [
     {
       value: ApplicationReason.MEDICINE_COST,
@@ -223,7 +237,7 @@ export function getApplicationReasonOptions() {
   return options
 }
 
-export function getAttachments(application: Application) {
+export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
     attachmentType: AttachmentTypes,
@@ -312,7 +326,7 @@ export function getAttachments(application: Application) {
 
 // returns awailable years. Available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableYears() {
+export const getAvailableYears = () => {
   const today = new Date()
   const twoYearsBackInTime = subYears(
     today.setMonth(today.getMonth() + 1),
@@ -333,7 +347,7 @@ export function getAvailableYears() {
 
 // returns available months for selected year, since available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableMonths(selectedYear: string) {
+export const getAvailableMonths = (selectedYear: string) => {
   if (!selectedYear) return []
 
   const twoYearsBackInTime = subYears(new Date(), 2)
