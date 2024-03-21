@@ -166,6 +166,7 @@ jobs:
         continue-on-error: true
 
       - name: Install cypress
+        # Should use the cache success to install, and verify additionally
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
 
