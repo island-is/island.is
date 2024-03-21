@@ -50,14 +50,9 @@ export class SocialInsuranceAdministrationClientService {
   async getPayments(
     user: User,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments | null> {
-    /*return await this.paymentPlanApiWithAuth(user)
+    return await this.paymentPlanApiWithAuth(user)
       .apiProtectedV1PaymentPlanLegitimatepaymentsGet()
-      .catch(handle404)*/
-
-    return {
-      nextPayment: 10202,
-      previousPayment: 976,
-    }
+      .catch(handle404)
   }
 
   async getValidYearsForPaymentPlan(user: User): Promise<Array<number>> {
