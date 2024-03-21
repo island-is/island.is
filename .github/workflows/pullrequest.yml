@@ -152,7 +152,7 @@ jobs:
 
       - name: Check generated files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
+      
       - name: Run codegen
         if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
         run: |
@@ -161,7 +161,9 @@ jobs:
           touched_files="$(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache)"
           realpathed_files="$(echo $touched_files | xargs realpath --relative-to $PWD)"
           tar zcvf generated_files.tar.gz $touched_files
-
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+          
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh
 
