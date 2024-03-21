@@ -31,7 +31,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
@@ -59,7 +59,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         file.category === CaseFileCategory.CRIMINAL_RECORD &&
         file.status === 'done',
     ) &&
-    allFilesUploaded
+    allFilesDoneOrError
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
