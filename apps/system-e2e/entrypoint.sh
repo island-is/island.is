@@ -23,7 +23,7 @@ echo "Playwright project: $TEST_PROJECT"
 echo "Playwright version: $(yarn playwright --version)"
 
 TEST_EXIT_CODE=0
-yarn playwright test -c src "$@" || TEST_EXIT_CODE=$?
+yarn playwright test -c src --project="$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?
 
 # Upload results
 if [[ -n "$TEST_RESULTS_S3" ]]; then
@@ -46,4 +46,4 @@ Additionally a web-based overview can be found at
   https://www.tesults.com/digital-iceland/monorepo
 EOF
 
-exit "$TEST_EXIT_CODE"
+exit $TEST_EXIT_CODE
