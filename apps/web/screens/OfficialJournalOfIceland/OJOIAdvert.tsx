@@ -104,7 +104,7 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
               <Box>
                 <Text variant="h5">Skráningardagur</Text>
                 <Text variant="small">
-                  {format(new Date(advert.createdDate), 'dd. MMMM yyyy', {
+                  {format(new Date(advert.signatureDate), 'dd. MMMM yyyy', {
                     locale: is,
                   })}
                 </Text>

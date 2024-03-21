@@ -9,7 +9,7 @@ import {
   Divider,
   Inline,
   Input,
-  Link,
+  LinkV2,
   Select,
   Stack,
   Table as T,
@@ -36,13 +36,14 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import {
   baseUrl,
   categoriesUrl,
-  deildOptions,
   emptyOption,
   findValueOption,
   malaflokkurOptions,
+  mapEntityToOptions,
   OJOIWrapper,
   removeEmptyFromObject,
   searchUrl,
+  sortCategories,
   splitArrayIntoGroups,
   yfirflokkurOptions,
 } from '../../components/OfficialJournalOfIceland'
@@ -69,15 +70,9 @@ const initialState = {
   yfirflokkur: '',
 }
 
-const sortCategories = (cats: typeof malaflokkurOptions) => {
-  return cats.sort((a, b) => {
-    return sortAlpha('label')(a, b)
-  })
-}
-
 const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
   // categories,
-  // departments,
+  departments,
   organizationPage,
   organization,
   namespace,
@@ -116,10 +111,12 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
             ? searchState.stafur.split('').includes(letter)
             : true
         const deildMatch =
-          !initial && searchState.deild ? cat.deild === searchState.deild : true
+          !initial && searchState.deild
+            ? cat.department === searchState.deild
+            : true
         const flokkurMatch =
           !initial && searchState.yfirflokkur
-            ? cat.yfirflokkur === searchState.yfirflokkur
+            ? cat.mainCategory === searchState.yfirflokkur
             : true
 
         if (qMatch && letterMatch && deildMatch && flokkurMatch) {
@@ -223,6 +220,9 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
     updateSearchParams(initialState)
   }
 
+  // const categoriesOptions = mapEntityToOptions(categories)
+  const departmentsOptions = mapEntityToOptions(departments)
+
   return (
     <OJOIWrapper
       pageTitle={'Málaflokkar Stjórnartíðinda'}
@@ -270,9 +270,12 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
               label="Deild"
               size="xs"
               placeholder="Veldu deild"
-              options={[{ ...emptyOption('Allar deildir') }, ...deildOptions]}
+              options={[
+                { ...emptyOption('Allar deildir') },
+                ...departmentsOptions,
+              ]}
               isClearable
-              value={findValueOption(deildOptions, searchState.deild)}
+              value={findValueOption(departmentsOptions, searchState.deild)}
               onChange={(v) => updateSearchState('deild', v?.value ?? '')}
             />
 
@@ -338,14 +341,14 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
                     <T.Row key={group[0].label}>
                       {group.map((cat) => (
                         <T.Data key={cat.label}>
-                          <Link
+                          <LinkV2
                             color="blue400"
                             underline={'normal'}
                             underlineVisibility="always"
                             href={`${searchUrl}?malaflokkur=${cat.value}`}
                           >
                             {cat.label}
-                          </Link>
+                          </LinkV2>
                         </T.Data>
                       ))}
                     </T.Row>

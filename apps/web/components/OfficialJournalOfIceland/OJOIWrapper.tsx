@@ -7,7 +7,7 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   Button,
-  Link,
+  LinkV2,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -17,7 +17,7 @@ import { usePlausiblePageview } from '@island.is/web/hooks'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 import { HeadWithSocialSharing } from '../HeadWithSocialSharing/HeadWithSocialSharing'
-import { OrganizationFooter, OrganizationHeader } from '../Organization'
+import { OrganizationHeader } from '../Organization'
 type WrapperProps = {
   pageTitle: string
   pageDescription?: string
@@ -82,7 +82,7 @@ export const OJOIWrapper = ({
             <>
               {goBackUrl ? (
                 <Box marginBottom={2}>
-                  <Link href={goBackUrl}>
+                  <LinkV2 href={goBackUrl}>
                     <Button
                       preTextIcon="arrowBack"
                       preTextIconType="filled"
@@ -94,7 +94,7 @@ export const OJOIWrapper = ({
                     >
                       Til baka
                     </Button>
-                  </Link>
+                  </LinkV2>
                 </Box>
               ) : null}
 

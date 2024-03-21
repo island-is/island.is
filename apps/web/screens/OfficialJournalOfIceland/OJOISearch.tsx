@@ -2,10 +2,19 @@ import { useEffect, useMemo, useState } from 'react'
 import { Locale } from 'locale'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
 
+import {
+  MinistryOfJusticeAdvert,
+  MinistryOfJusticeAdvertEntity,
+  MinistryOfJusticeAdvertsResponse,
+  MinistryOfJusticeAdvertType,
+  QueryMinistryOfJusticeTypesArgs,
+} from '@island.is/api/schema'
 import {
   Box,
   Button,
+  DatePicker,
   Divider,
   Input,
   Select,
@@ -16,11 +25,12 @@ import { debounceTime } from '@island.is/shared/constants'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
-  MinistryOfJusticeAdvertsResponse,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryMinistryOfJusticeAdvertsArgs,
+  QueryMinistryOfJusticeCategoriesArgs,
+  QueryMinistryOfJusticeDepartmentsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -29,10 +39,9 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   baseUrl,
-  deildOptions,
   emptyOption,
   findValueOption,
-  malaflokkurOptions,
+  mapEntityToOptions,
   OJOIWrapper,
   removeEmptyFromObject,
   searchUrl,
@@ -45,19 +54,30 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
-import { ADVERTS_QUERY } from '../queries/OfficialJournalOfIceland'
+import {
+  ADVERTS_QUERY,
+  CATEGORIES_QUERY,
+  DEPARTMENTS_QUERY,
+  TYPES_QUERY,
+} from '../queries/OfficialJournalOfIceland'
 
 const initialState = {
+  sida: '',
   q: '',
-  deild: '',
-  tegund: '',
-  timabil: '',
-  malaflokkur: '',
-  stofnun: '',
+  deild: '', // department
+  tegund: '', // type
+  timabil: '', // dateFrom - dateTo
+  malaflokkur: '', // category
+  stofnun: '', // involvedParty
+  dagsFra: '',
+  dagsTil: '',
 }
 
 const OJOISearchPage: Screen<OJOISearchProps> = ({
   initialAdverts,
+  categories,
+  departments,
+  types,
   organizationPage,
   organization,
   namespace,
@@ -79,17 +99,66 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
   const [searchState, setSearchState] = useState(initialState)
   const [listView, setListView] = useState(false)
 
+  const [getAdverts] = useLazyQuery<
+    { ministryOfJusticeAdverts: MinistryOfJusticeAdvertsResponse },
+    QueryMinistryOfJusticeAdvertsArgs
+  >(ADVERTS_QUERY, { fetchPolicy: 'no-cache' })
+
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search)
     setSearchState({
+      sida: searchParams.get('sida') ?? '',
       q: searchParams.get('q') ?? '',
       deild: searchParams.get('deild') ?? '',
       tegund: searchParams.get('tegund') ?? '',
       timabil: searchParams.get('timabil') ?? '',
       malaflokkur: searchParams.get('malaflokkur') ?? '',
       stofnun: searchParams.get('stofnun') ?? '',
+      dagsFra: searchParams.get('dagsFra') ?? '',
+      dagsTil: searchParams.get('dagsTil') ?? '',
     })
   }, [])
+
+  useEffect(() => {
+    const isEmpty = !Object.entries(searchState).filter(([_, v]) => !!v).length
+    if (isEmpty) {
+      setAdverts(initialAdverts)
+    } else {
+      getAdverts({
+        variables: {
+          input: {
+            search: searchState.q,
+            page: searchState.sida ? parseInt(searchState.sida) : undefined,
+            department: searchState.deild ? [searchState.deild] : undefined,
+            type: searchState.tegund ? [searchState.tegund] : undefined,
+            category: searchState.malaflokkur
+              ? [searchState.malaflokkur]
+              : undefined,
+            involvedParty: searchState.stofnun
+              ? [searchState.stofnun]
+              : undefined,
+            dateFrom: new Date(searchState.dagsFra) || undefined,
+            dateTo: new Date(searchState.dagsTil) || undefined,
+          },
+        },
+      })
+        .then((res) => {
+          console.log({ res })
+
+          if (res.data) {
+            setAdverts(res.data.ministryOfJusticeAdverts.adverts)
+          } else if (res.error) {
+            setAdverts([])
+            console.error('Error fetching Adverts', res.error)
+          }
+        })
+        .catch((err) => {
+          setAdverts([])
+          console.error('Error fetching Adverts', { err })
+        })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchState])
 
   const breadcrumbItems = [
     {
@@ -122,7 +191,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const updateSearchState = (key: string, value: string) => {
+  const updateSearchState = (key: keyof typeof initialState, value: string) => {
     const newState = {
       ...searchState,
       [key]: value,
@@ -143,6 +212,10 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
     updateSearchParams(initialState)
     setAdverts(initialAdverts)
   }
+
+  const categoriesOptions = mapEntityToOptions(categories)
+  const departmentsOptions = mapEntityToOptions(departments)
+  const typesOptions = mapEntityToOptions(types)
 
   return (
     <OJOIWrapper
@@ -191,10 +264,25 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
               label="Deild"
               size="xs"
               placeholder="Veldu deild"
-              options={[{ ...emptyOption('Allar deildir') }, ...deildOptions]}
+              options={[
+                { ...emptyOption('Allar deildir') },
+                ...departmentsOptions,
+              ]}
               isClearable
-              value={findValueOption(deildOptions, searchState.deild)}
+              isSearchable
+              value={findValueOption(departmentsOptions, searchState.deild)}
               onChange={(v) => updateSearchState('deild', v?.value ?? '')}
+            />
+
+            <Select
+              name="tegund"
+              label="Tegund"
+              size="xs"
+              placeholder="Veldu tegund"
+              options={[{ ...emptyOption('Allar tegundir') }, ...typesOptions]}
+              isClearable
+              value={findValueOption(typesOptions, searchState.tegund)}
+              onChange={(v) => updateSearchState('tegund', v?.value ?? '')}
             />
 
             <Select
@@ -204,14 +292,72 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
               placeholder="Veldu málaflokk"
               options={[
                 { ...emptyOption('Allir flokkar') },
-                ...malaflokkurOptions,
+                ...categoriesOptions,
               ]}
               isClearable
+              isSearchable
               value={findValueOption(
-                malaflokkurOptions,
+                categoriesOptions,
                 searchState.malaflokkur,
               )}
               onChange={(v) => updateSearchState('malaflokkur', v?.value ?? '')}
+            />
+
+            <DatePicker
+              size="xs"
+              locale="is"
+              name="dagsFra"
+              label="Dags. frá"
+              placeholderText="Veldu upphafsdagsetningu"
+              selected={
+                searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
+              }
+              minDate={new Date('1950-01-01')}
+              maxDate={
+                searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
+              }
+              handleChange={(date) =>
+                updateSearchState(
+                  'dagsFra',
+                  date ? date.toISOString().slice(0, 10) : '',
+                )
+              }
+            />
+
+            <DatePicker
+              size="xs"
+              locale="is"
+              name="dagsTil"
+              label="Dags. til"
+              placeholderText="Veldu lokadagsetningu"
+              selected={
+                searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
+              }
+              minDate={
+                searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
+              }
+              maxDate={new Date()}
+              handleChange={(date) =>
+                updateSearchState(
+                  'dagsTil',
+                  date ? date.toISOString().slice(0, 10) : '',
+                )
+              }
+            />
+
+            <Select
+              name="stofnun"
+              label="Stofnun"
+              size="xs"
+              placeholder="Veldu stofnun"
+              options={[
+                { ...emptyOption('Allir stofnanir') },
+                ...categoriesOptions,
+              ]}
+              isClearable
+              isSearchable
+              value={findValueOption(categoriesOptions, searchState.stofnun)}
+              onChange={(v) => updateSearchState('stofnun', v?.value ?? '')}
             />
           </Stack>
         </Box>
@@ -249,7 +395,10 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 }
 
 interface OJOISearchProps {
-  initialAdverts?: MinistryOfJusticeAdvertsResponse['adverts']
+  initialAdverts?: MinistryOfJusticeAdvert[]
+  categories: Array<MinistryOfJusticeAdvertEntity>
+  departments: Array<MinistryOfJusticeAdvertEntity>
+  types: Array<MinistryOfJusticeAdvertType>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -258,6 +407,9 @@ interface OJOISearchProps {
 
 const OJOISearch: Screen<OJOISearchProps> = ({
   initialAdverts,
+  categories,
+  departments,
+  types,
   organizationPage,
   organization,
   namespace,
@@ -266,6 +418,9 @@ const OJOISearch: Screen<OJOISearchProps> = ({
   return (
     <OJOISearchPage
       initialAdverts={initialAdverts}
+      categories={categories}
+      departments={departments}
+      types={types}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -282,6 +437,15 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
       data: { ministryOfJusticeAdverts },
     },
     {
+      data: { ministryOfJusticeCategories },
+    },
+    {
+      data: { ministryOfJusticeDepartments },
+    },
+    {
+      data: { ministryOfJusticeTypes },
+    },
+    {
       data: { getOrganizationPage },
     },
     {
@@ -293,6 +457,30 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
       query: ADVERTS_QUERY,
       variables: {
         input: {
+          search: '',
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
+      query: CATEGORIES_QUERY,
+      variables: {
+        params: {
+          search: '',
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryMinistryOfJusticeDepartmentsArgs>({
+      query: DEPARTMENTS_QUERY,
+      variables: {
+        params: {
+          search: '',
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryMinistryOfJusticeTypesArgs>({
+      query: TYPES_QUERY,
+      variables: {
+        params: {
           search: '',
         },
       },
@@ -338,6 +526,9 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
 
   return {
     initialAdverts: ministryOfJusticeAdverts.adverts,
+    categories: ministryOfJusticeCategories?.categories,
+    departments: ministryOfJusticeDepartments?.departments,
+    types: ministryOfJusticeTypes?.types,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

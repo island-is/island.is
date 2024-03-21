@@ -1,4 +1,9 @@
+import {
+  MinistryOfJusticeAdvertEntity,
+  MinistryOfJusticeAdvertType,
+} from '@island.is/api/schema'
 import { StringOption as Option } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 
 export const baseUrl = '/s/stjornartidindi'
 export const searchUrl = baseUrl + '/leit'
@@ -35,52 +40,64 @@ export const findValueOption = (
   return (value && options.find((opt) => opt.value === value)) || null
 }
 
-export const deildOptions: Array<Option> = [
-  { label: 'A deild', value: 'a-deild' },
-  { label: 'B deild', value: 'b-deild' },
-]
-
-type MalaflokkurOption = Option & {
-  yfirflokkur?: string
-  deild?: string
+type EntityOption = Option & {
+  mainCategory?: string
+  department?: string
 }
 
-export const malaflokkurOptions: Array<MalaflokkurOption> = [
+export const mapEntityToOptions = (
+  entities: Array<MinistryOfJusticeAdvertEntity | MinistryOfJusticeAdvertType>,
+): Array<Option> => {
+  return entities.map((e) => {
+    return {
+      label: e.title,
+      value: e.slug,
+    }
+  })
+}
+
+export const sortCategories = (cats: typeof malaflokkurOptions) => {
+  return cats.sort((a, b) => {
+    return sortAlpha('label')(a, b)
+  })
+}
+
+export const malaflokkurOptions: Array<EntityOption> = [
   {
     label: 'Almannavarnir',
     value: 'almannavarnir',
-    yfirflokkur: 'domstolar',
-    deild: 'a-deild',
+    mainCategory: 'domstolar',
+    department: 'a-deild',
   },
   {
     label: 'Sakamál',
     value: 'sakamal',
-    yfirflokkur: 'domstolar',
-    deild: 'a-deild',
+    mainCategory: 'domstolar',
+    department: 'a-deild',
   },
   {
     label: 'Auðlindir',
     value: 'audlindir',
-    yfirflokkur: 'sjavarutvegur',
-    deild: 'b-deild',
+    mainCategory: 'sjavarutvegur',
+    department: 'b-deild',
   },
   {
     label: 'Dýravernd',
     value: 'dyravernd',
-    yfirflokkur: 'landbunadur',
-    deild: 'b-deild',
+    mainCategory: 'landbunadur',
+    department: 'b-deild',
   },
   {
     label: 'Erfðamál',
     value: 'erfdamal',
-    yfirflokkur: 'malefni-barna',
-    deild: 'a-deild',
+    mainCategory: 'malefni-barna',
+    department: 'a-deild',
   },
   {
     label: 'Atvinnumál',
     value: 'atvinnumal',
-    yfirflokkur: 'landbunadur',
-    deild: 'b-deild',
+    mainCategory: 'landbunadur',
+    department: 'b-deild',
   },
 ]
 

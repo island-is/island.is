@@ -46,7 +46,7 @@ export const OJOISearchGridView = ({
           <Box marginTop={3}>
             <Inline space={1}>
               {ad.categories?.map((cat) => (
-                <Tag key={cat.id} variant="white" outlined disabled>
+                <Tag key={cat.slug} variant="white" outlined disabled>
                   {cat.title}
                 </Tag>
               ))}

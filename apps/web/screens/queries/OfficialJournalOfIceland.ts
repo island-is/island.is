@@ -5,46 +5,21 @@ export const ADVERTS_QUERY = gql`
       adverts {
         id
         department {
-          id
           title
           slug
         }
-        type {
-          id
-          title
-          slug
-          department {
-            id
-            title
-            slug
-          }
-        }
-        status
         title
-        subject
         publicationNumber {
-          number
-          year
           full
         }
-        createdDate
-        updatedDate
-        signatureDate
         publicationDate
         categories {
-          id
           title
           slug
         }
         involvedParty {
-          id
           title
           slug
-        }
-        document {
-          isLegacy
-          html
-          pdfUrl
         }
       }
       paging {
@@ -78,12 +53,8 @@ export const ADVERT_QUERY = gql`
         title
         subject
         publicationNumber {
-          number
-          year
           full
         }
-        createdDate
-        updatedDate
         signatureDate
         publicationDate
         categories {
@@ -108,7 +79,6 @@ export const TYPES_QUERY = gql`
   query AdvertTypes($params: MinistryOfJusticeTypesInput!) {
     ministryOfJusticeTypes(params: $params) {
       types {
-        id
         title
         slug
       }
@@ -130,7 +100,6 @@ export const DEPARTMENTS_QUERY = gql`
   query AdvertDepartments($params: MinistryOfJusticeQueryInput!) {
     ministryOfJusticeDepartments(params: $params) {
       departments {
-        id
         title
         slug
       }
@@ -152,7 +121,6 @@ export const CATEGORIES_QUERY = gql`
   query AdvertCategories($params: MinistryOfJusticeQueryInput!) {
     ministryOfJusticeCategories(params: $params) {
       categories {
-        id
         title
         slug
       }
