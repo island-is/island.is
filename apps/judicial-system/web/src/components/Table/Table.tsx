@@ -6,7 +6,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 
 import { CaseListEntry } from '../../graphql/schema'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
-import { useCaseList } from '../../utils/hooks'
+import { useCase, useCaseList } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, {
   ContextMenuItem,
@@ -71,6 +71,7 @@ const Table: React.FC<TableProps> = (props) => {
     useCaseList()
   const { openCaseInNewTabMenuItem, deleteCaseMenuItem } = useContextMenu()
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
+  const { isTransitioningCase } = useCase()
 
   useMemo(() => {
     if (sortConfig) {
@@ -131,7 +132,7 @@ const Table: React.FC<TableProps> = (props) => {
             key={row.id}
             role="button"
             aria-label="Opna kröfu"
-            aria-disabled={isOpeningCaseId === row.id}
+            aria-disabled={isOpeningCaseId === row.id || isTransitioningCase}
             className={styles.tableRowContainer}
             onClick={() => {
               handleOpenCase(row.id)

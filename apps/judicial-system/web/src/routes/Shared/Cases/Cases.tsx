@@ -304,14 +304,6 @@ export const Cases: React.FC = () => {
                       ]}
                     />
                   ) : (
-                    // <ActiveCases
-                    //   cases={casesAwaitingConfirmation}
-                    //   isDeletingCase={
-                    //     isTransitioningCase || isSendingNotification
-                    //   }
-                    //   onDeleteCase={deleteCase}
-                    //   caseState={CaseState.WAITING_FOR_CONFIRMATION}
-                    // />
                     <motion.div
                       className={styles.infoContainer}
                       initial={{ opacity: 0 }}

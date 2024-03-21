@@ -172,7 +172,6 @@ const useCaseList = () => {
           ? getLimitedAccessCase({ variables: { input: { id } } })
           : getCase({ variables: { input: { id } } })
       }
-
       if (
         isTransitioningCase ||
         isSendingNotification ||
