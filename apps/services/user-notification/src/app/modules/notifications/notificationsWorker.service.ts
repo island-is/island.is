@@ -150,7 +150,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             context: {
               copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
               href:
-                formattedTemplate.clickActionWeb ??
+                formattedTemplate.clickActionUrl ??
                 'https://www.island.is/minarsidur/postholf',
             },
           },
