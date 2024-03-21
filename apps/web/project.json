@@ -103,7 +103,7 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/web"]
     },
-    "e2e":  {
+    "e2e": {
       "executor": "@nx/playwright:playwright",
       "options": {
         "config": "{projectRoot}/playwright.config.ts"
@@ -143,17 +143,13 @@
           "yarn start web"
         ],
         "parallel": true
-      }
-        ,
-        "dependsOn": []
+      },
+      "dependsOn": []
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run web:dev-init",
-          "nx run web:dev-run"
-        ],
+        "commands": ["nx run web:dev-init", "nx run web:dev-run"],
         "parallel": false
       }
     },
