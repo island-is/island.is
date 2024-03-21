@@ -34,7 +34,7 @@ type RepeaterProps = {
       fields: Array<object>
       repeaterButtonText: string
       sumField: string
-      deductionField: string
+      sumField2: string
       fromExternalData?: string
       calcWithShareValue?: boolean
       skipPushRight?: boolean
@@ -77,9 +77,9 @@ export const ReportFieldsRepeater: FC<
     }
 
     const total = values.reduce((acc: number, current: any) => {
-      const deductionValue = valueToNumber(current[props?.deductionField], ',')
+      const sumField2 = valueToNumber(current[props?.sumField2], ',')
       let currentValue = valueToNumber(current[props?.sumField], ',')
-      currentValue = currentValue - deductionValue
+      currentValue = currentValue + sumField2
       const shareValueNumber = valueToNumber(current?.share, '.')
 
       const shareValue = !shareValueNumber ? 0 : shareValueNumber / 100
@@ -245,7 +245,7 @@ export const ReportFieldsRepeater: FC<
 
                 const shouldRecalculateTotal =
                   props.sumField === field.id ||
-                  props.deductionField === field.id
+                  props.sumField2 === field.id
 
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">

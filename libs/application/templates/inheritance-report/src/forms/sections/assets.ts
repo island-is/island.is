@@ -303,7 +303,7 @@ export const assets = buildSection({
                 skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
                 sumField: 'capital',
-                deductionField: 'penaltyInterestRates',
+                sumField2: 'penaltyInterestRates',
               },
             ),
           ],
