@@ -39,6 +39,18 @@ caching mechanism hosted at [https://cache.dev01.devland.is](https://cache.dev01
 - No additional steps are required from the user's end to leverage this caching
   mechanism in existing workflows.
 
+### Modifying caches
+
+First find the cache key you want to change. Find the relevant `Cache for *`
+step and search for `Cache restore from key: <cache-key>`.
+
+```bash
+aws s3 <action> s3://<bucket/<cache-key>
+
+# E.g. delete a cache key
+aws s3 rm --recursive 's3://island-is-github-cache-dev/Linux-abcdefghijlmnopqrstuvwxyz0123456789abcde-files-generated'
+```
+
 ## Authentication
 
 - Authentication is managed through GitHub's secrets, ensuring secure and

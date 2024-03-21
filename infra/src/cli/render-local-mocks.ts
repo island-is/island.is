@@ -101,7 +101,7 @@ export async function runLocalServices(
     logger.warn('Starting proxies in the background')
     processes.push(
       runCommand({
-        command: '$PWD/scripts/run-proxies.sh',
+        command: '$PWD/scripts/run-proxies.sh --force',
         project: 'proxies',
         dryRun,
       }),
@@ -122,7 +122,9 @@ export async function runLocalServices(
     renderedLocalServices.services,
   )) {
     if (dependencies.length > 0 && !dependencies.includes(name)) {
-      logger.info(`Skipping ${name} (not a dependency)`)
+      logger.info(
+        `Skipping dependency ${name} (not included in the dependency list)`,
+      )
       continue
     }
     const chainedCommand = [

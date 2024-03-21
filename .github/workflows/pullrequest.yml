@@ -16,7 +16,14 @@ concurrency:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
-  CYPRESS_CACHE_DIR: ${{ github.workspace }}/.cypress
+
+  # Cypress searches for the Cypress binary in $HOME/.cache/cypress/, even though we set CYPRESS_CACHE_DIR,
+  # so here we set it "back to old" home dir, the same as the default.
+  #
+  # Here's the error message we get if CYPRESS_CACHE_DIR is something else:
+  # > The cypress npm package is installed, but the Cypress binary is missing.
+  # > We expected the binary to be installed here: /github/home/.cache/Cypress/13.0.0/Cypress/Cypress
+  CYPRESS_CACHE_DIR: /github/home/.cypress
 
 jobs:
   prepare:
