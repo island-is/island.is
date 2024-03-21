@@ -254,6 +254,7 @@ export const getApplicationExternalData = (
     applicantPostalCode,
     applicantNationalId,
     applicantAddress,
+    applicantLocality,
     applicantMunicipality,
     hasSpouse,
     isEligible,

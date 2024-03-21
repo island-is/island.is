@@ -92,6 +92,6 @@ export class UserProfileService extends BaseTemplateApiService {
   }
 
   private getIDSLink(application: ApplicationWithAttachments) {
-    return `${this.idsClientConfig.issuer}/app/user-profile/email?continue_onboarding=false&returnUrl=${this.idsClientConfig.redirectUri}/ellilifeyrir/${application.id}`
+    return `${this.idsClientConfig.issuer}/app/user-profile/email?state=update&returnUrl=${this.idsClientConfig.redirectUri}/ellilifeyrir/${application.id}`
   }
 }

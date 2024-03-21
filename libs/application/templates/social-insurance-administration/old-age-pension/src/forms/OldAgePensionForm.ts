@@ -20,7 +20,6 @@ import {
   FormModes,
   FormValue,
   NO,
-  NationalRegistryIndividual,
   YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
@@ -34,7 +33,6 @@ import {
   getAvailableYears,
   isEarlyRetirement,
 } from '../lib/oldAgePensionUtils'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -83,7 +81,7 @@ export const OldAgePensionForm: Form = buildForm({
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
-                  title: oldAgePensionFormMessage.applicant.applicantInfoName,
+                  title: socialInsuranceAdministrationMessage.confirm.name,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
@@ -107,7 +105,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.address',
                   title:
-                    oldAgePensionFormMessage.applicant.applicantInfoAddress,
+                    socialInsuranceAdministrationMessage.info.applicantAddress,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -121,7 +119,8 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.postcode',
                   title:
-                    oldAgePensionFormMessage.applicant.applicantInfoPostalcode,
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPostalcode,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -135,15 +134,16 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.municipality',
                   title:
-                    oldAgePensionFormMessage.applicant
-                      .applicantInfoMunicipality,
+                    socialInsuranceAdministrationMessage.info
+                      .applicantMunicipality,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const { applicantMunicipality } =
-                      getApplicationExternalData(application.externalData)
-                    return applicantMunicipality
+                    const { applicantLocality } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantLocality
                   },
                 }),
                 buildTextField({

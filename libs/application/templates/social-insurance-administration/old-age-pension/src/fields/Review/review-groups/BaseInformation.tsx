@@ -6,7 +6,6 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../lib/oldAgePensionUtils'
-import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -65,7 +64,9 @@ export const BaseInformation = ({
           paddingBottom={3}
         >
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.address)}
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.confirm.address,
+            )}
             value={applicantAddress}
           />
         </GridColumn>
@@ -76,7 +77,7 @@ export const BaseInformation = ({
         >
           <DataValue
             label={formatMessage(
-              oldAgePensionFormMessage.applicant.applicantInfoMunicipality,
+              socialInsuranceAdministrationMessage.confirm.municipality,
             )}
             value={applicantMunicipality}
           />

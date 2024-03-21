@@ -139,14 +139,14 @@ export const transformApplicationToHouseholdSupplementDTO = (
     householdSupplementHousing,
     householdSupplementChildren,
   } = getHSApplicationAnswers(application.answers)
-  const { bankInfo, email } = getHSApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getHSApplicationExternalData(
     application.externalData,
   )
 
   const householdSupplementDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {

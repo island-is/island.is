@@ -488,6 +488,16 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Kennitala',
       description: 'Icelandic ID number',
     },
+    address: {
+      id: 'sia.application:confirm.address',
+      defaultMessage: 'Heimili',
+      description: 'Address',
+    },
+    municipality: {
+      id: 'sia.application:confirm.municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
     submitButton: {
       id: 'sia.application:confirm.submit.button',
       defaultMessage: 'Senda inn umsókn',

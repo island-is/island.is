@@ -19,7 +19,9 @@ export const BaseInformation = ({
   const {
     applicantName,
     applicantNationalId,
-    email,
+    applicantAddress,
+    applicantMunicipality,
+    userProfileEmail,
     spouseName,
     spouseNationalId,
   } = getApplicationExternalData(application.externalData)
@@ -60,13 +62,39 @@ export const BaseInformation = ({
       <GridRow>
         <GridColumn
           span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={3}
+        >
+          <DataValue
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.confirm.address,
+            )}
+            value={applicantAddress}
+          />
+        </GridColumn>
+
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={3}
+        >
+          <DataValue
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.confirm.municipality,
+            )}
+            value={applicantMunicipality}
+          />
+        </GridColumn>
+      </GridRow>
+
+      <GridRow>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
           paddingBottom={[3, 3, 3, 0]}
         >
           <DataValue
             label={formatMessage(
               socialInsuranceAdministrationMessage.info.applicantEmail,
             )}
-            value={email}
+            value={userProfileEmail}
           />
         </GridColumn>
 
