@@ -244,8 +244,7 @@ export const ReportFieldsRepeater: FC<
                 const err = errors && getErrorViaPath(errors, fieldId)
 
                 const shouldRecalculateTotal =
-                  props.sumField === field.id ||
-                  props.sumField2 === field.id
+                  props.sumField === field.id || props.sumField2 === field.id
 
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
