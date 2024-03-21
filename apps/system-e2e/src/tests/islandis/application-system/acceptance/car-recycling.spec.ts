@@ -86,12 +86,12 @@ applicationTest.describe('Car recycling', () => {
       await applicationTest.step('Submit application', async () => {
         await expect(
           page.locator('form').getByRole('paragraph').filter({
-            hasText: 'Afskrá til endurvinnslu',
+            hasText: 'Senda inn umsókn',
           }),
         ).toBeVisible()
         await page
           .getByRole('button', {
-            name: 'Afskrá til endurvinnslu',
+            name: 'Senda inn umsókn',
           })
           .click()
       })
