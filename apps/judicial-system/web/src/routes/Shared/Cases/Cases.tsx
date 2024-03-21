@@ -8,7 +8,6 @@ import {
   capitalize,
   displayFirstPlusRemaining,
   formatDate,
-  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -36,20 +35,19 @@ import {
   ColumnCaseType,
   DefendantInfo,
   PastCasesTable,
-  SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table, {
-  useTable,
-} from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
-  CaseTransition,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useCaseList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
@@ -114,12 +112,11 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
-  const { requestSort, getClassNamesFor, sortConfig } = useTable()
+  const { handleDeleteCase } = useCaseList()
 
-  const { transitionCase, isTransitioningCase, isSendingNotification } =
-    useCase()
+  const { isTransitioningCase, isSendingNotification } = useCase()
 
-  const { data, error, loading, refetch } = useCasesQuery({
+  const { data, error, loading } = useCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -179,19 +176,6 @@ export const Cases: React.FC = () => {
     activeCases,
     pastCases,
   } = useFilter(allActiveCases, allPastCases, user)
-
-  const deleteCase = async (caseToDelete: CaseListEntry) => {
-    if (
-      caseToDelete.state === CaseState.NEW ||
-      caseToDelete.state === CaseState.DRAFT ||
-      caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED ||
-      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
-    ) {
-      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
-      refetch()
-    }
-  }
 
   return (
     <SharedPageLayout>
@@ -356,7 +340,7 @@ export const Cases: React.FC = () => {
               <ActiveCases
                 cases={activeCases}
                 isDeletingCase={isTransitioningCase || isSendingNotification}
-                onDeleteCase={deleteCase}
+                onDeleteCase={handleDeleteCase}
               />
             ) : (
               <div className={styles.infoContainer}>
