@@ -2067,10 +2067,10 @@ export const calculatePruneDate = (application: Application) => {
     return pruneDate
   }
 
-  // Just to be sure that we have some date set for pruneDate
+  // Just to be sure that we have some date set for prune date
   if (!pruneAt) {
     const pruneDate = new Date()
-    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
+    pruneDate.setMonth(pruneDate.getMonth() + 3)
 
     return pruneDate
   }

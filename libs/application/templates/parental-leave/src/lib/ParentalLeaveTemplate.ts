@@ -167,7 +167,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               logMessage: coreHistoryMessages.applicationSent,
             },
           },
-          lifecycle: pruneAfterDays(970),
+          lifecycle: pruneAfterDays(90),
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             throwOnError: true,
