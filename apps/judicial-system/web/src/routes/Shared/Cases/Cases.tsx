@@ -241,48 +241,32 @@ export const Cases: React.FC = () => {
                   ) : casesAwaitingConfirmation.length > 0 ? (
                     <Table
                       thead={[
-                        <Text as="span" fontWeight="regular">
-                          {formatMessage(tables.caseNumber)}
-                        </Text>,
-                        <SortButton
-                          title={capitalize(
+                        {
+                          title: formatMessage(tables.caseNumber),
+                        },
+                        {
+                          title: capitalize(
                             formatMessage(core.defendant, { suffix: 'i' }),
-                          )}
-                          onClick={() => requestSort('defendant')}
-                          sortAsc={
-                            getClassNamesFor('defendant') === 'ascending'
-                          }
-                          sortDes={
-                            getClassNamesFor('defendant') === 'descending'
-                          }
-                          isActive={sortConfig?.column === 'defendant'}
-                          dataTestid="accusedNameSortButton"
-                        />,
-                        <Text as="span" fontWeight="regular">
-                          {formatMessage(m.activeRequests.table.headers.type)}
-                        </Text>,
-                        <SortButton
-                          title={capitalize(
+                          ),
+                          sortable: { isSortable: true, key: 'defendant' },
+                        },
+                        {
+                          title: formatMessage(
+                            m.activeRequests.table.headers.type,
+                          ),
+                        },
+                        {
+                          title: capitalize(
                             formatMessage(tables.created, { suffix: 'i' }),
-                          )}
-                          onClick={() => requestSort('createdAt')}
-                          sortAsc={
-                            getClassNamesFor('createdAt') === 'ascending'
-                          }
-                          sortDes={
-                            getClassNamesFor('createdAt') === 'descending'
-                          }
-                          isActive={sortConfig?.column === 'createdAt'}
-                          dataTestid="createdAtSortButton"
-                        />,
-                        <Text as="span" fontWeight="regular">
-                          {formatMessage(tables.state)}
-                        </Text>,
-                        <Text as="span" fontWeight="regular">
-                          {formatMessage(
+                          ),
+                          sortable: { isSortable: true, key: 'createdAt' },
+                        },
+                        { title: formatMessage(tables.state) },
+                        {
+                          title: formatMessage(
                             m.activeRequests.table.headers.prosecutor,
-                          )}
-                        </Text>,
+                          ),
+                        },
                       ]}
                       data={casesAwaitingConfirmation}
                       contextMenu={{
