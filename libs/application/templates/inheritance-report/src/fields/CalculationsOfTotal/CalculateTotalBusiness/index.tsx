@@ -6,18 +6,24 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../../lib/messages'
+import { valueToNumber } from '../../../lib/utils/helpers'
 
 export const CalculateTotalBusiness: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
   const { answers } = application
+  console.log('answers', answers)
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const [total] = useState(
-    (getValueViaPath<number>(answers, 'business.businessAssets.total') || 0) -
-      (getValueViaPath<number>(answers, 'business.businessDebts.total') || 0),
+  const businessAssets = valueToNumber(
+    getValueViaPath<number>(answers, 'business.businessAssets.total'),
   )
+  const businessDebts = valueToNumber(
+    getValueViaPath<number>(answers, 'business.businessDebts.total'),
+  )
+
+  const [total] = useState(businessAssets - businessDebts)
 
   useEffect(() => {
     setValue('business.businessTotal', total)
