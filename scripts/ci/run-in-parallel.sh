@@ -12,5 +12,7 @@ echo "Running '$AFFECTED_PROJECTS' in parallel of ${MAX_JOBS} for target $1"
 
 IFS=" " read -ra AFFECTED_PROJECTS <<< "$AFFECTED_PROJECTS"
 
+cat libs/clients/national-registry/v2/gen/fetch/index.ts
+
 # This is a helper script to run in parallel a list of provided projects for a specific target
 exec parallel --halt soon,fail=1 --lb -j "$MAX_JOBS" APP={} "$DIR"/"$1".sh ::: "${AFFECTED_PROJECTS[@]}"
