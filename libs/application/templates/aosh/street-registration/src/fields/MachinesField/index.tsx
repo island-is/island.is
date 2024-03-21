@@ -6,7 +6,10 @@ import {
 import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { MachineSelectField } from './MachineSelectField'
-import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
+import {
+  MachinesWithTotalCount,
+  STREET_REGISTRATION_REL,
+} from '@island.is/clients/work-machines'
 import { FindVehicleFormField } from '@island.is/application/ui-fields'
 import { ApolloQueryResult } from '@apollo/client'
 import { useLazyMachineDetailsByRegno } from '../../hooks/useLazyMachineDetails'
@@ -23,10 +26,11 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const createGetMachineDetailsWrapper = (
     getMachineDetailsFunction: (variables: {
       regno: string
+      rel: string
     }) => Promise<ApolloQueryResult<any>>,
   ) => {
     return async (plate: string) => {
-      const variables = { regno: plate }
+      const variables = { regno: plate, rel: STREET_REGISTRATION_REL }
       const result = await getMachineDetailsFunction(variables)
       return result.data.getWorkerMachineByRegno // Adjust based on your query
     }
@@ -40,7 +44,7 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           setSubmitButtonDisabled={props.setSubmitButtonDisabled}
           field={{
             id: 'machine',
-            title: information.labels.pickMachine.title,
+            title: information.labels.pickMachine.sectionTitle,
             description: information.labels.pickMachine.description,
             type: FieldTypes.FIND_VEHICLE,
             component: FieldComponents.FIND_VEHICLE,

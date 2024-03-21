@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'aosh.drm.application:name',
-    defaultMessage: 'Afskráning tækis {value}',
+    defaultMessage: 'Götuskráning tækis {value}',
     description: `Application's name`,
   },
   institutionName: {

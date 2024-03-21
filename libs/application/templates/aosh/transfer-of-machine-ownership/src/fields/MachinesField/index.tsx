@@ -10,7 +10,10 @@ import { FindVehicleFormField } from '@island.is/application/ui-fields'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { useLazyMachineDetailsByRegno } from '../../hooks/useLazyMachineDetails'
 import { ApolloQueryResult } from '@apollo/client'
-import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
+import {
+  MachinesWithTotalCount,
+  OWNER_CHANGE_REL,
+} from '@island.is/clients/work-machines'
 
 export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -23,10 +26,11 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const createGetMachineDetailsWrapper = (
     getMachineDetailsFunction: (variables: {
       regno: string
+      rel: string
     }) => Promise<ApolloQueryResult<any>>,
   ) => {
     return async (plate: string) => {
-      const variables = { regno: plate }
+      const variables = { regno: plate, rel: OWNER_CHANGE_REL }
       const result = await getMachineDetailsFunction(variables)
       return result.data.getWorkerMachineByRegno // Adjust based on your query
     }

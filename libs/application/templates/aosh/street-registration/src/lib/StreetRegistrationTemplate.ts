@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -26,6 +27,8 @@ import set from 'lodash/set'
 import { IdentityApi, UserProfileApi, MachinesApi } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
+import { getChargeItemCodes } from '../utils'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -44,12 +47,12 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.DEREGISTER_MACHINE,
+  type: ApplicationTypes.STREET_REGISTRATION,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.DeregisterMachine,
+  //featureFlag: Features.Street,
   translationNamespaces: [
-    ApplicationConfigurations.DeregisterMachine.translation,
+    ApplicationConfigurations.StreetRegistration.translation,
   ],
   dataSchema: MachineAnswersSchema,
   allowedDelegations: [
@@ -147,6 +150,17 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
+      // [States.PAYMENT]: buildPaymentState({
+      //   organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
+      //   chargeItemCodes: getChargeItemCodes,
+      //   submitTarget: States.COMPLETED,
+      //   onExit: [
+      //     defineTemplateApi({
+      //       action: ApiActions.submitApplication,
+      //       triggerEvent: DefaultEvents.SUBMIT,
+      //     }),
+      //   ],
+      // }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

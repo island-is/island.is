@@ -21,7 +21,7 @@ export const conclusion = {
     },
     accordionTitle: {
       id: 'aosh.drm.application:conclusion.default.accordionTitle',
-      defaultMessage: 'Afskráning þín á tæki hefur verið móttekin!',
+      defaultMessage: 'Pöntun þín á götuskráningu tækis hefur verið staðfest',
       description: 'Conclusion seller accordion title',
     },
     expandableHeader: {
@@ -32,7 +32,7 @@ export const conclusion = {
     expandableDescription: {
       id: 'aosh.drm.application:conclusion.default.expandableDescription',
       defaultMessage:
-        'Afskráning þín á tæki hefur verið móttekin og skráð hjá Vinnueftirlitinu. Þú getur fylgst með stöðu umsóknarinnar í "Mínar síður".',
+        'Framleiðsla skráningarmerkja tekur 3 virka daga. Þegar framleiðslu er lokið koma merkin til Samgöngustofu. Ef valið var að sækja merkin á skoðunarstöð eru merkin send þangað. Sendingartími fer eftir stöð.',
       description: 'Conclusion seller expandable description',
     },
   }),

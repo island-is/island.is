@@ -9,7 +9,19 @@ export type Machine = {
   ownerNumber?: string
 }
 
-export enum Status {
-  TEMPORARY = 'Temporary',
-  PERMANENT = 'Permanent',
+export enum Plate {
+  A = 'A',
+  B = 'B',
+  D = 'D',
+}
+
+export enum AddressDeliveryType {
+  CURRENT = 'CurrentAddress',
+  OTHER = 'OtherAddress',
+}
+
+export type CurrentAddress = {
+  streetAddress?: string
+  postalCode?: string
+  city?: string
 }

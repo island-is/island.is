@@ -1,5 +1,16 @@
 import { z } from 'zod'
 
+export const plateDeliverySchema = z.object({
+  type: z.enum(['CurrentAddress', 'OtherAddress']),
+})
+
+const otherAddressSchema = z.object({
+  address: z.string().optional(),
+  postalCode: z.string().optional(),
+  city: z.string().optional(),
+  recipient: z.string().optional(),
+})
+
 export const MachineAnswersSchema = z.object({
   machine: z.object({
     id: z.string().optional(),
@@ -15,12 +26,35 @@ export const MachineAnswersSchema = z.object({
     index: z.string().optional(),
     id: z.string().min(1),
   }),
-  deregister: z.object({
-    date: z.string(),
-    status: z.enum(['Temporary', 'Permanent']),
-    fateOfMachine: z.string().optional(),
+  licencePlate: z.object({
+    size: z.enum(['A', 'B', 'D']),
   }),
-
+  plateDelivery: plateDeliverySchema
+    .merge(otherAddressSchema)
+    .refine(
+      ({ address, type }) => {
+        return type !== 'OtherAddress' || address !== ''
+      },
+      { path: ['address'] },
+    )
+    .refine(
+      ({ postalCode, type }) => {
+        return type !== 'OtherAddress' || postalCode !== ''
+      },
+      { path: ['postalCode'] },
+    )
+    .refine(
+      ({ city, type }) => {
+        return type !== 'OtherAddress' || city !== ''
+      },
+      { path: ['city'] },
+    )
+    .refine(
+      ({ recipient, type }) => {
+        return type !== 'OtherAddress' || recipient !== ''
+      },
+      { path: ['recipient'] },
+    ),
   approveExternalData: z.boolean(),
 })
 

@@ -12,8 +12,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import {
   MachinesWithTotalCount,
+  STREET_REGISTRATION_REL,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
+import { exrtactUserInfo, mapPlateSize } from './street-registration.utils'
 @Injectable()
 export class StreetRegistrationTemplateService extends BaseTemplateApiService {
   constructor(
@@ -45,6 +47,7 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
+                STREET_REGISTRATION_REL,
               )
             }
             return machine
@@ -60,7 +63,7 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers = application.answers as unknown as StreetRegistrationAnswers
+    const answers = application.answers as StreetRegistrationAnswers
 
     if (auth.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -71,20 +74,24 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
         400,
       )
     }
+
+    const userInfo = exrtactUserInfo(answers, application.externalData)
+    console.log('userInfo', userInfo)
     const machineId = answers.machine.id || answers.pickMachine.id
     if (!machineId) {
       throw new Error('Machine has not been selected')
     }
 
-    // await this.workMachineClientService.StreetRegistration(auth, {
-    //   machineStatusUpdateDto: {
-    //     machineId: machineId,
-    //     delegateNationalId: auth.nationalId,
-    //     ownerNationalId: auth.nationalId,
-    //     status: statusMapping[answers.deregister.status],
-    //     dateOfStatusChange: new Date(answers.deregister.date),
-    //     fateOfMachine: answers.deregister.fateOfMachine,
-    //   },
-    // })
+    await this.workMachineClientService.streetRegistration(auth, {
+      machineId,
+      address: userInfo?.address,
+      city: userInfo?.city,
+      contactPhoneNumber: userInfo?.contactPhoneNumber,
+      postalCode: userInfo?.postalCode,
+      recipient: userInfo?.recipient,
+      delegateNationalId: auth.nationalId,
+      ownerNationalId: auth.nationalId,
+      plateSize: mapPlateSize(answers.licencePlate.size),
+    })
   }
 }

@@ -6,7 +6,10 @@ import {
 import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { MachineSelectField } from './MachineSelectField'
-import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
+import {
+  MachinesWithTotalCount,
+  REQUEST_INSPECTION_REL,
+} from '@island.is/clients/work-machines'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { FindVehicleFormField } from '@island.is/application/ui-fields'
 import { ApolloQueryResult } from '@apollo/client'
@@ -23,10 +26,11 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const createGetMachineDetailsWrapper = (
     getMachineDetailsFunction: (variables: {
       regno: string
+      rel: string
     }) => Promise<ApolloQueryResult<any>>,
   ) => {
     return async (plate: string) => {
-      const variables = { regno: plate }
+      const variables = { regno: plate, rel: REQUEST_INSPECTION_REL }
       const result = await getMachineDetailsFunction(variables)
       return result.data.getWorkerMachineByRegno // Adjust based on your query
     }

@@ -132,12 +132,20 @@ export class WorkMachinesService {
   getDocuments = (user: User, input: GetDocumentsInput): Promise<Blob> =>
     this.machineService.getDocuments(user, input)
 
-  async getMachineDetails(auth: User, id: string): Promise<MachineDto> {
-    return this.machineService.getMachineDetail(auth, id)
+  async getMachineDetails(
+    auth: User,
+    id: string,
+    rel: string,
+  ): Promise<MachineDto> {
+    return this.machineService.getMachineDetail(auth, id, rel)
   }
 
-  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
-    return this.machineService.getMachineByRegno(auth, regNumber)
+  async getMachineByRegno(
+    auth: User,
+    regNumber: string,
+    rel: string,
+  ): Promise<MachineDto> {
+    return this.machineService.getMachineByRegno(auth, regNumber, rel)
   }
 
   async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {

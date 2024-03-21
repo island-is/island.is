@@ -107,7 +107,7 @@ export class WorkMachinesClientService {
       pageSize: 20,
       pageNumber: 1,
     })
-
+    console.log('result', result)
     return {
       machines:
         result?.value?.map((machine) => {
@@ -123,18 +123,26 @@ export class WorkMachinesClientService {
     }
   }
 
-  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
+  async getMachineByRegno(
+    auth: User,
+    regNumber: string,
+    rel: string,
+  ): Promise<MachineDto> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
       searchQuery: regNumber,
     })
 
-    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '')
+    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '', rel)
   }
 
-  async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
+  async getMachineDetail(
+    auth: User,
+    id: string,
+    rel: string,
+  ): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
-
+    console.log('details result', result)
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,
@@ -146,7 +154,7 @@ export class WorkMachinesClientService {
       regNumber: result?.registrationNumber || '',
       supervisorName: result?.supervisorName || '',
       status: result?.status || '',
-      disabled: !result?.links?.some((link) => link?.rel === 'ownerChange'),
+      disabled: !result?.links?.some((link) => link?.rel === rel),
     }
   }
 

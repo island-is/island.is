@@ -1,14 +1,13 @@
 import {
-  buildDateField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
-import { Status } from '../../../shared'
 import { licencePlate } from '../../../lib/messages'
+import { plate110 } from '../../../assets/plates/plate-110-510'
+import { plate200 } from '../../../assets/plates/plate-200-280'
+import { plate155 } from '../../../assets/plates/plate-155-305'
+import { Plate } from '../../../shared'
 
 export const licencePlateSubSection = buildSubSection({
   id: 'licencePlateSubSection',
@@ -19,50 +18,31 @@ export const licencePlateSubSection = buildSubSection({
       title: licencePlate.general.title,
       description: licencePlate.general.description,
       children: [
-        buildDateField({
-          id: 'licencePlate.date',
-          title: licencePlate.labels.date,
-          width: 'half',
-          required: true,
-          minDate: new Date(),
-        }),
         buildRadioField({
-          id: 'licencePlate.status',
-          title: '',
-          width: 'half',
-          defaultValue: Status.TEMPORARY,
+          id: 'licencePlate.size',
+          title: licencePlate.general.subTitle,
+          description: licencePlate.general.subTitleDescription,
+          backgroundColor: 'white',
           options: [
             {
-              value: Status.TEMPORARY,
-              label: licencePlate.labels.temporary,
-              tooltip: licencePlate.labels.temporaryDescription,
+              value: Plate.A,
+              label: licencePlate.labels.plate110,
+              illustration: plate110,
             },
             {
-              value: Status.PERMANENT,
-              label: licencePlate.labels.permanent,
-              tooltip: licencePlate.labels.permanentDescription,
+              value: Plate.B,
+              label: licencePlate.labels.plate200,
+              illustration: plate200,
+            },
+            {
+              value: Plate.D,
+              label: licencePlate.labels.plate155,
+              illustration: plate155,
             },
           ],
-        }),
-        buildTextField({
-          id: 'licencePlate.fateOfMachine',
-          title: licencePlate.labels.fateOfMachine,
+          defaultValue: Plate.A,
+          largeButtons: true,
           width: 'full',
-          variant: 'textarea',
-          required: true,
-          rows: 5,
-        }),
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          title: licencePlate.labels.approveButton,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: licencePlate.labels.approveButton,
-              type: 'primary',
-            },
-          ],
         }),
       ],
     }),

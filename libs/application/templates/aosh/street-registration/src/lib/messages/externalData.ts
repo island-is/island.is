@@ -9,7 +9,7 @@ export const externalData = {
     },
     pageTitle: {
       id: 'aosh.drm.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Afskráning tækis',
+      defaultMessage: 'Götiskráning tækis',
       description: `Application's name`,
     },
     subTitle: {

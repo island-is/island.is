@@ -1,4 +1,4 @@
-import template from './lib/DeregisterMachineTemplate'
+import template from './lib/StreetRegistrationTemplate'
 import { MachineAnswers } from './lib/dataSchema'
 
 export const getFields = () => import('./fields')
