@@ -1,823 +1,98 @@
-name: Monorepo pipeline - build and deploy
-
-on:
-  push:
-    branches:
-      - 'main'
-      - 'release/**'
-      - 'pre-release/**'
-    paths-ignore:
-      - '**/*.md'
-    tags:
-      - docker-build-*
-  workflow_dispatch:
-  create:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
-
-defaults:
-  run:
-    shell: bash
-
-concurrency:
-  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
-  group: push-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
-env:
-  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
-  SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
-  COMPOSE_HTTP_TIMEOUT: 180
-  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
-  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
-  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
-
-jobs:
-  pre-checks:
-    name: Check if job should run
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    env:
-      CREATE_PATTERNS: ^release/
-      PRE_RELEASE_PATTERN: ^pre-release/
-    outputs:
-      GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
-      GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
-      FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
-      PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
-      PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
-    steps:
-      - name: Get git branch
-        id: git-branch
-        run: |
-          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_OUTPUT
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-      - name: Generate deployment branch name
-        id: git-branch-deploy
-        run: |
-          export GIT_BRANCH_DEPLOY=$GIT_BRANCH
-          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-            if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
-              # If event is pull request but branch is not prefixed with feature/
-              GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
-            fi
-            # Avoid too long resource names
-            GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
-          fi
-          echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
-          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
-
-      - name: Check if we want to run workflow
-        id: should-run
-        env:
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-        run: |
-          echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
-          echo "PRE_RELEASE=false" >> $GITHUB_OUTPUT
-
-          if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
-            echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
-
-            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
-            do
-                echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
-                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
-                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
-                  exit 0
-                fi
-            done
-
-            for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
-            do
-                echo "Checking branch against pattern '$pattern'"
-                if [[ "$GIT_BRANCH" =~ $pattern ]]; then
-                  echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
-                  echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
-                  exit 0
-                fi
-            done
-            echo "No pattern matches '$GIT_BRANCH', exiting."
-            exit 0
-          fi
-          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-            if [[ "${{ github.event.action }}" == "labeled" ]]; then
-              echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
-              deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
-            else
-              echo "Action is ${{ github.event.action }}, using labels on PR"
-              deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-            fi
-            if [[ "$deployFeature" == "true" ]]; then
-              echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-            echo "Pull request does not have deploy-feature label, exiting..."
-            exit 0
-          fi
-          for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
-            do
-                echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
-                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
-                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
-                  exit 0
-                fi
-            done
-          echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
-
-  prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 90
-
-    if: needs.pre-checks.outputs.PRE_CHECK
-    needs:
-      - pre-checks
-
-    env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
-      SERVERSIDE_FEATURES_ON: ''
-
-    outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
-      BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
-      IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18.8.0'
-
-      - name: Setup yarn
-        run: npm install -g yarn
-
-      - name: Check node version
-        run: |
-          node -v
-          ls -l `which node`
-
-      - name: Git refs
-        id: git_refs
-        run: |
-          if [[ -n "$GITHUB_BASE_REF" ]]
-          then
-           # a PR
-           GIT_BASE_BRANCH=$GITHUB_BASE_REF
-          else
-           # on main
-           GIT_BASE_BRANCH=main
-          fi
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-          echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
-          echo "Base branch is '${GIT_BASE_BRANCH}'"
-          echo "Branch is '${GIT_BRANCH}'"
-
-      - name: Checking out relevant branches for a pre-release
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
-        run: |
-          echo "Feature Name: $FEATURE_NAME"
-
-          git checkout main
-          git checkout $GITHUB_SHA
-
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-      - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
-        run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
-          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
-          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-
-      - name: Checking out relevant branches for a branch build
-        if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
-        run: |
-          git checkout main
-          git checkout $GITHUB_SHA
-
-      - name: Keep PR run event
-        uses: actions/upload-artifact@v2
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
-        continue-on-error: true
-        with:
-          name: pr-event
-          path: event.json
-          retention-days: 60
-
-      - name: Generate docker image tag
-        id: docker_tags
-        run: |
-          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
-          SHA="${{ github.event.pull_request.head.sha }}"
-          echo "SHA='$SHA' retrieved from event"
-          if [[ "$SHA" == "" ]]; then
-            SHA=$GITHUB_SHA
-            echo "SHA='$SHA', retrived from action environment"
-          fi
-          echo "Using SHA='$SHA' as docker tag sha"
-          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}_${GITHUB_RUN_NUMBER}
-          echo "Docker tag will be ${DOCKER_TAG}"
-          echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
-          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
-          echo "**Monorepo tag:** ${DOCKER_TAG}" >> $GITHUB_STEP_SUMMARY
-
-      - name: Send Slack notification
-        id: slack
-        if: ${{ startsWith( github.env.GIT_BASE_BRANCH, 'release/' ) }}
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          fields: repo,message # selectable (default: repo,message)
-          custom_payload: |
-            {
-              attachments: [{
-                color: 'good',
-                text: `Monorepo Release Tag is: ${process.env.DOCKER_TAG}`,
-              }]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
-
-      - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-        id: git_nx_head
-        name: Preparing HEAD tag
-
-      - name: Calculate cache key for node modules
-        id: calculate_node_modules_hash
-        run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-
-      - name: Calculate cache keys for generated files
-        id: calculate_generated_files_cache_key
-        run: |
-          export HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
-          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        uses: ./.github/actions/cache
-        with:
-          path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
-
-      - name: Preparing BASE tags
-        id: git_nx_base
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        run: |
-          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' && "${{needs.pre-checks.outputs.PRE_RELEASE}}" == 'false' ]]; then
-            export HEAD_REF="$GITHUB_HEAD_REF"
-            export BASE_REF="$GITHUB_BASE_REF"
-            export PR_REF=$GITHUB_SHA
-          else
-            export HEAD_REF="$GIT_BRANCH"
-            export BASE_REF="$GIT_BASE_BRANCH"
-            export PR_REF="not used"
-          fi
-          export WORKFLOW_ID=push
-          export SHELL=/usr/bin/bash
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> $GITHUB_OUTPUT
-
-      - name: Docker login to ECR repo
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Cache for NodeJS dependencies - Docker layer
-        id: cache-deps
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: cache
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
-
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for NodeJS dependencies - Docker layer
-        id: cache-deps-base
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: cache_output
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
-
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-docker-deps.sh
-
-      - name: set BRANCH env var
-        run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
-
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
-          fi
-        env:
-          SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
-
-      - name: Prepare docker build targets
-        id: build_map
-        run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
-          echo "CHUNKS: '$CHUNKS'"
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "BUILD_CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Gather unaffected docker images
-        id: unaffected
-        run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
-          echo "UNAFFECTED=$UNAFFECTED" >> $GITHUB_OUTPUT
-
-      - name: check pre-release
-        if: needs.pre-checks.outputs.PRE_RELEASE == 'true'
-        run: |
-          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
-
-      - name: Prepare deployment targets
-        id: deploy_map
-        if: needs.pre-checks.outputs.PRE_CHECK != 'push'
-        run: |
-          export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
-          echo "CHUNKS: '$CHUNKS'"
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "IMAGES=$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')" >> $GITHUB_OUTPUT
-          fi
-
-  tests:
-    needs:
-      - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 3
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Setup yarn
-        run: npm install -g yarn
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
-
-      - uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: ${{ env.DOCKER_REGISTRY}}
-
-  docker-build:
-    needs:
-      - pre-checks
-      - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
-    if: needs.prepare.outputs.BUILD_CHUNKS
-    env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      PUBLISH: true
-    strategy:
-      fail-fast: false
-      matrix:
-        chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    steps:
-      - name: Gather apps
-        id: gather
-        run: |
-          AFFECTED_PROJECTS=$(echo '${{ matrix.chunk }}' | jq -r '.projects')
-          DOCKER_TYPE=$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')
-          echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
-          echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
-        continue-on-error: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-        if: steps.gather.outcome == 'success'
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-        if: steps.gather.outcome == 'success'
-
-      - name: Setup yarn
-        run: npm install -g yarn
-        if: steps.gather.outcome == 'success'
-
-      - uses: actions/checkout@v3
-        if: steps.gather.outcome == 'success'
-      - name: Cache for generated files
-        id: generated-files-cache
-        if: steps.gather.outcome == 'success'
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        if: steps.gather.outcome == 'success'
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Cache for dependencies Docker layer
-        if: steps.gather.outcome == 'success'
-        id: cache-deps-base
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: cache_output
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
-
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for NodeJS dependencies - Docker layer
-        id: cache-deps
-        if: steps.gather.outcome == 'success'
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: cache
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
-
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
-
-      # needed to run `nx show project` in scripts/ci/_docker.sh - should be refactored.
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Docker login to ECR repo
-        if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Building Docker images
-        continue-on-error: true
-        id: dockerbuild
-        if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
-        env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
-
-      - name: Building Docker images Retry #This only exists until GHA starts supporting this
-        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
-        env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
-
-  helm-docker-build:
-    needs:
-      - prepare
-      - pre-checks
-    #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 5
-    env:
-      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Docker login
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
-      - name: Docker build image
-        working-directory: infra
-        run: |
-          ./scripts/build-docker-container.sh $DOCKER_TAG
-          echo "COMMENT<<EOF" >> $GITHUB_ENV
-          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
-          docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-        env:
-          PUBLISH: 'true'
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
-
-      - name: Retag as latest
-        if: env.GIT_BRANCH == 'main'
-        env:
-          UNAFFECTED: helm-config
-          LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
-          DOCKER_TAG: latest
-        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
-      - name: Comment on PR
-        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const updateComment = require('./.github/actions/update-comment.js')
-            const { COMMENT } = process.env
-            await updateComment({github, context, comment: COMMENT})
-
-  retag-unaffected:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 5
-    if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
-    needs:
-      - pre-checks
-      - docker-build
-      - prepare
-    env:
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
-      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
-
-    steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check docker-build success
-        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-      - uses: actions/checkout@v3
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-      - name: Retag unaffected Docker images
-        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
-  deploy:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
-    needs:
-      - retag-unaffected
-      - pre-checks
-      - prepare
-      - helm-docker-build
-    env:
-      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
-      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Trigger Deployment for service
-        env:
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-        run: |
-          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          curl $SPINNAKER_URL/webhooks/webhook/islandis -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$SPINNAKER_WEBHOOK_TOKEN",
-            "branch": "$GIT_BRANCH_DEPLOY",
-            "parameters": {
-              "docker_tag": "$DOCKER_TAG",
-              "feature_name": "$FEATURE_NAME",
-              "images": "$IMAGES",
-              "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
-            }
-          }
-          BODY
-      - name: Trigger Deployment for IDS-Services
-        env:
-          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-          GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-          GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
-        run: |
-          if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
-          export IDENTITY_SERVER_DOCKER_TAG=main_${IDENTITY_SERVER_HEAD_SHA:0:7}_${IDENTITY_SERVER_RUN_NUMBER}
-          echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
-          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          curl $SPINNAKER_URL/webhooks/webhook/ids-dev -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$SPINNAKER_WEBHOOK_TOKEN",
-            "branch": "$GIT_BRANCH_DEPLOY",
-            "parameters": {
-              "dependency_docker_tag": "$DOCKER_TAG",
-              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG"
-            }
-          }
-          BODY
-  push-success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: ${{ !cancelled() }}
-    needs:
-      - pre-checks
-      - retag-unaffected
-      - deploy
-      - tests
-    steps:
-      - name: Check retag success
-        run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
-      - name: Check deploy success
-        run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Announce success
-        if: needs.pre-checks.outputs.PRE_CHECK
-        run: echo "Build is successful"
-      - name: Announce skipped
-        if: '!needs.pre-checks.outputs.PRE_CHECK'
-        run: echo "Build was skipped"
-
-  failure-notification:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
-    needs:
-      - pre-checks
-      - prepare
-      - docker-build
-      - retag-unaffected
-      - deploy
-    steps:
-      - name: Send Slack notification
-        uses: 8398a7/action-slack@v3
-        with:
-          status: failure
-          icon_emoji: ':broken_heart:'
-          fields: repo,message,commit,author,action,eventName,ref,workflow,took # selectable (default: repo,message)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-
-  scanflags:
-    if: github.ref == 'ref/heads/main'
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Scan & upload main config
-        uses: configcat/scan-repository@v2
-        with:
-          api-user: ${{ secrets.CONFIGCAT_API_USER }}
-          api-pass: ${{ secrets.CONFIGCAT_API_PASS }}
-          config-id: ${{ env.CONFIGCAT_MAIN_CONFIG_ID }}
-      - name: Scan & upload mobile app config
-        uses: configcat/scan-repository@v2
-        with:
-          api-user: ${{ secrets.CONFIGCAT_API_USER }}
-          api-pass: ${{ secrets.CONFIGCAT_API_PASS }}
-          config-id: ${{ env.CONFIGCAT_MOBILE_APP_CONFIG_ID }}
-          sub-folder: apps/native
+# You can use this composite action if you want retry functionality with your
+# caching action. Because composite actions currently do not have the
+# continue-on-error feature we need a second step to check the output of the
+# cache action to determine if it ran successfully.
+#
+# Example:
+#
+# jobs:
+#   my-job:
+#     steps:
+#     - name: Cache node modules
+#       id: node-modules
+#       continue-on-error: true
+#       uses: ./.github/actions/cache
+#       with:
+#         path: node_modules
+#         key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+#     - name: Check cache success
+#       run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+#
+name: 'Cache'
+description: 'Cache with retry'
+inputs:
+  path:
+    description: 'path'
+    required: true
+  key:
+    description: 'key'
+    required: true
+  retry:
+    description: 'retry'
+    required: false
+    default: '2'
+outputs:
+  success:
+    description: 'success'
+    value: ${{ steps.computed_outputs.outputs.success }}
+  cache-hit:
+    description: 'cache-hit'
+    value: ${{ steps.computed_outputs.outputs.cache-hit }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache try number one
+      id: cache_try_number_one
+      uses: island-is/cache@v0.3
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+
+    - name: Give cache server a bit of time to recover
+      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
+      shell: bash
+      run: sleep 10
+
+    - name: Cache try number two
+      id: cache_try_number_two
+      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
+      uses: island-is/cache@v0.3
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+
+    - name: Give cache server a bit of time to recover
+      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+      shell: bash
+      run: sleep 10
+
+    - name: Cache try number three
+      id: cache_try_number_three
+      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+      uses: island-is/cache@v0.3
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+
+    - name: Gather outputs
+      id: computed_outputs
+      if: always()
+      shell: bash
+      run: |
+        if [[ "${{ steps.cache_try_number_one.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_three.outputs.success }}" == "true" ]]
+        then
+          echo "success=true" >> $GITHUB_OUTPUT
+        else
+          echo "success=false" >> $GITHUB_OUTPUT
+        fi
+
+        if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" == "true" ]]
+        then
+          echo "cache-hit=true" >> $GITHUB_OUTPUT
+        else
+          echo "cache-hit=false" >> $GITHUB_OUTPUT
+        fi
