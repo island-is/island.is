@@ -1,8 +1,6 @@
-import { defineMessages, MessageDescriptor } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
-type MessageDir = Record<string, Record<string, MessageDescriptor>>
-
-export const parentalLeaveFormMessages: MessageDir = {
+export const parentalLeaveFormMessages = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
     institution: {
@@ -216,11 +214,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:otherParent.title',
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
-    },
-    otherParentSubTitle: {
-      id: 'pl.application:otherParent.sub.title',
-      defaultMessage: 'Hitt foreldrið',
-      description: 'Other parent',
     },
     otherParentName: {
       id: 'pl.application:otherParent.name',
@@ -896,11 +889,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employerSubSection',
       defaultMessage: 'Breyta eða bæta við vinnuveitanda',
       description: 'Edit or add an employer',
-    },
-    periodReview: {
-      id: 'pl.application:periodReview',
-      defaultMessage: 'Tímabil',
-      description: 'Period',
     },
     editOrAddInfoSection: {
       id: 'pl.application:editOrAddInfoSection',
@@ -1592,6 +1580,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
+    uploadHeader: {
+      id: 'pl.application:fileUpload.upload.title',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
     uploadDescription: {
       id: 'pl.application:fileUpload.upload.description',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
@@ -1903,6 +1896,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Language to use in communication with the Parental Leave Fund',
     },
+    benefits: {
+      id: 'pl.application:review.benefits',
+      defaultMessage: 'Bætur',
+      description: 'Benefits',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -1994,15 +1992,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fela allt',
       description: 'Collapse all',
     },
-    section: {
-      id: 'pl.application:confirmation.section',
-      defaultMessage: 'Samþykkja',
-      description: 'Confirmation',
-    },
     title: {
       id: 'pl.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Review and submit',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
     },
     cancel: {
       id: 'pl.application:confirmation.cancel',
@@ -2015,6 +2008,11 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description:
         'Please review your information before submitting the application.',
+    },
+    submitButton: {
+      id: 'pl.application:confirmation.submit.button',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
     },
   }),
 
@@ -2292,8 +2290,8 @@ export const employerFormMessages = defineMessages({
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'pl.application:inReview.form.title',
-    defaultMessage: 'Fæðingarorlof',
-    description: 'Parental Leave',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: 'Application Overview',
   },
 })
 

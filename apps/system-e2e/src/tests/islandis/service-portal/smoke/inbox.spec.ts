@@ -2,9 +2,6 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { sleep } from '../../../../support/utils'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { label } from '../../../../support/i18n'
-import { messages } from '@island.is/service-portal/documents/messages'
-import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
@@ -36,14 +33,14 @@ test.describe('MS - Pósthólf overview', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       const inputField = page.getByRole('textbox', {
-        name: label(m.searchLabel),
+        name: 'Leit',
       })
       await inputField.click()
       await inputField.type('greiðslukvittun', { delay: 100 })
       await inputField.press('Enter')
 
       const btnClearFilter = page.getByRole('button', {
-        name: label(messages.clearFilters),
+        name: 'Hreinsa síu',
       })
 
       await sleep(500)
@@ -51,7 +48,7 @@ test.describe('MS - Pósthólf overview', () => {
       const docFoundText = page.getByTestId('doc-found-text')
 
       // Assert
-      await expect(docFoundText).toContainText(label(messages.found))
+      await expect(docFoundText).toContainText('skjöl fundust')
       await expect(btnClearFilter).toBeVisible()
     })
 
@@ -60,14 +57,8 @@ test.describe('MS - Pósthólf overview', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       // Act
-      await page
-        .getByRole('button', { name: label(m.openFilter) })
-        .first()
-        .click()
-      await page
-        .getByRole('button', { name: label(messages.institutionLabel) })
-        .first()
-        .click()
+      await page.getByRole('button', { name: 'Opna síu' }).first().click()
+      await page.getByRole('button', { name: 'Stofnun' }).first().click()
       await page.mouse.wheel(0, 50)
 
       // "institution" comes from the api - not translateable
@@ -75,7 +66,7 @@ test.describe('MS - Pósthólf overview', () => {
       await page.getByLabel(institution).click()
 
       // Assert
-      await expect(page.getByRole('main')).toContainText(label(messages.found))
+      await expect(page.getByRole('main')).toContainText('skjöl fundust')
       await expect(
         page
           .getByRole('button', { name: institution })

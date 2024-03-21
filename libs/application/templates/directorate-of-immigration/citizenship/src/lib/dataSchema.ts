@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
+import { error } from './messages'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -164,24 +165,58 @@ const FileDocumentSchema = z.object({
   key: z.string(),
 })
 
-const PassportSchema = z.object({
-  publishDate: z.string().min(1),
-  expirationDate: z.string().min(1),
-  passportNumber: z.string().min(1),
-  passportTypeId: z.string().min(1),
-  countryOfIssuerId: z.string().min(1),
-  attachment: z.array(FileDocumentSchema),
-})
+const PassportSchema = z
+  .object({
+    publishDate: z.string().min(1),
+    expirationDate: z.string().min(1),
+    passportNumber: z.string().min(1),
+    passportTypeId: z.string().min(1),
+    countryOfIssuerId: z.string().min(1),
+    attachment: z.array(FileDocumentSchema),
+  })
+  .refine(
+    ({ expirationDate, publishDate }) => {
+      const to = expirationDate ? new Date(expirationDate).getTime() : null
+      const from = publishDate ? new Date(publishDate).getTime() : null
 
-const ChildrenPassportSchema = z.object({
-  nationalId: z.string().min(1),
-  publishDate: z.string().min(1),
-  expirationDate: z.string().min(1),
-  passportNumber: z.string().min(1),
-  passportTypeId: z.string().min(1),
-  countryOfIssuerId: z.string().min(1),
-  attachment: z.array(FileDocumentSchema).optional(),
-})
+      if (from && to) {
+        return to > from
+      }
+
+      return true
+    },
+    {
+      params: error.passportDateError,
+      path: ['expirationDate'],
+    },
+  )
+
+const ChildrenPassportSchema = z
+  .object({
+    nationalId: z.string().min(1),
+    publishDate: z.string().min(1),
+    expirationDate: z.string().min(1),
+    passportNumber: z.string().min(1),
+    passportTypeId: z.string().min(1),
+    countryOfIssuerId: z.string().min(1),
+    attachment: z.array(FileDocumentSchema).optional(),
+  })
+  .refine(
+    ({ expirationDate, publishDate }) => {
+      const to = expirationDate ? new Date(expirationDate).getTime() : null
+      const from = publishDate ? new Date(publishDate).getTime() : null
+
+      if (from && to) {
+        return to > from
+      }
+
+      return true
+    },
+    {
+      params: error.passportDateError,
+      path: ['expirationDate'],
+    },
+  )
 
 const MaritalStatusSchema = z.object({
   status: z.string().min(1),

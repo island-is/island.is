@@ -15,6 +15,5 @@ query ProsecutorSelectionUsers {
       name
     }
     active
-    canConfirmAppeal
   }
 }

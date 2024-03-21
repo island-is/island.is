@@ -29,6 +29,7 @@ interface Props {
   onChange?: (_: string) => void
   required?: boolean
   readOnly?: boolean
+  calendarStartDay?: number
 }
 
 const df = 'yyyy-MM-dd'
@@ -52,6 +53,7 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   maxYear,
   readOnly,
   onChange = () => undefined,
+  calendarStartDay = 0,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -78,6 +80,7 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
           maxYear={maxYear}
           excludeDates={excludeDates}
           readOnly={readOnly}
+          calendarStartDay={calendarStartDay}
           handleChange={(date) => {
             clearErrors(id)
             const newVal = format(date, df)
