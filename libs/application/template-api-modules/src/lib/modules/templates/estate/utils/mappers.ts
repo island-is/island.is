@@ -103,6 +103,7 @@ export const expandClaims = (
     expandedClaims.push({
       publisher: claim?.publisher ?? '',
       value: claim?.value ?? '',
+      nationalId: claim?.nationalId ?? '',
     })
   })
   return expandedClaims
