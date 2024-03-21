@@ -17111,6 +17111,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prettier@npm:2.6.2":
+  version: 2.6.2
+  resolution: "@types/prettier@npm:2.6.2"
+  checksum: b1b0aadc2a325bcbf0040abd1f75de8cc08dd4a203c43c18dbb209c9e53b3e1c5c72faf82b7868302487f5cd0721c9ec26ee7e3fabd986d8066aba284196bd6d
+  languageName: node
+  linkType: hard
+
 "@types/pretty-hrtime@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/pretty-hrtime@npm:1.0.0"
@@ -32261,6 +32268,7 @@ __metadata:
     "@types/passport-jwt": 3.0.8
     "@types/pdfkit": 0.11.2
     "@types/pg": 8.6.4
+    "@types/prettier": 2.6.2
     "@types/pubsub-js": 1.8.1
     "@types/react": 18.2.14
     "@types/react-csv": 1.1.1
