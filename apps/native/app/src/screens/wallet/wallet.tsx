@@ -147,6 +147,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         if (license.type === GenericLicenseType.Ehic) {
           return showEhic
         }
+        if (license.type === GenericLicenseType.HuntingLicense) {
+          return showHuntingLicense
+        }
         return true
       })
     }
