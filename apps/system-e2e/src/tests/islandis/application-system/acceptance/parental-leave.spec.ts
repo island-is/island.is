@@ -259,7 +259,7 @@ test.describe('Parental leave', () => {
         name: 'Nei',
       })
       .click()
-    await expect(page.getByText('Skrifaðu hér til að leita')).toBeVisible()
+    await expect(page.getByText('Ertu að þiggja bætur?')).toBeVisible()
     await page
       .getByRole('radio', {
         name: 'Nei',
@@ -301,7 +301,7 @@ test.describe('Parental leave', () => {
     // Additional documentation for application
     await expect(
       page.getByRole('heading', {
-        name: 'Staðfesting',
+        name: 'Viðbótargögn með umsókn',
       }),
     ).toBeVisible()
     await proceed()
@@ -341,7 +341,7 @@ test.describe('Parental leave', () => {
         name: 'Upphaf fæðingarorlofs',
       })
       .getByRole('radio', {
-        name: 'Skrifaðu hér til að leita',
+        name: 'Ég vil byrja frá raunverulegum fæðingardegi',
       })
       .click()
     await proceed()
@@ -442,7 +442,7 @@ test.describe('Parental leave', () => {
       .click()
     await page
       .getByRole('region', {
-        name: 'Ég vil byrja frá raunverulegum fæðingardegi',
+        name: 'Notaðu núverandi umsókn frá aðalforeldra',
       })
       .getByRole('radio', {
         name: 'Já',
@@ -569,7 +569,7 @@ test.describe('Parental leave', () => {
         name: 'Nei',
       })
       .click()
-    await expect(page.getByText('Skrifaðu hér til að leita')).toBeVisible()
+    await expect(page.getByText('Ertu að þiggja bætur?')).toBeVisible()
     await page
       .getByRole('radio', {
         name: 'Nei',
@@ -611,7 +611,7 @@ test.describe('Parental leave', () => {
     // Additional documentation for application
     await expect(
       page.getByRole('heading', {
-        name: 'Staðfesting',
+        name: 'Viðbótargögn með umsókn',
       }),
     ).toBeVisible()
     await proceed()
@@ -627,7 +627,7 @@ test.describe('Parental leave', () => {
         name: 'Upphaf fæðingarorlofs',
       })
       .getByRole('radio', {
-        name: 'Skrifaðu hér til að leita',
+        name: 'Ég vil byrja frá raunverulegum fæðingardegi',
       })
       .click()
     await proceed()
@@ -687,7 +687,7 @@ test.describe('Parental leave', () => {
 
     await expect(
       page.getByRole('heading', {
-        name: 'Ég vil byrja frá raunverulegum fæðingardegi',
+        name: 'Til hamingju, hér að neðan eru næstu skref',
       }),
     ).toBeVisible()
     await getEmployerEmailAndApprove(employer, page)
