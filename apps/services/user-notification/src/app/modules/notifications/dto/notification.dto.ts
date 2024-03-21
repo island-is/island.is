@@ -106,6 +106,11 @@ export class RenderedNotificationDto {
   @IsOptional()
   clickAction?: string
 
+  @ApiPropertyOptional({ example: '//inbox/document-uuid' })
+  @IsString()
+  @IsOptional()
+  clickActionUrl?: string
+
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()
   created!: Date
