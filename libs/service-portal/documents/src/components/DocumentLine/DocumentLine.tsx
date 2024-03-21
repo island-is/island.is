@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import {
   Document,
@@ -131,20 +131,12 @@ export const DocumentLine: FC<Props> = ({
       onCompleted: (data) => {
         const docContent = data?.getDocument
         if (asFrame) {
-          navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-            state: {
-              id: documentLine.id,
-              doc: {
-                document: docContent as DocumentDetails,
-                id: documentLine.id,
-                subject: documentLine.subject,
-                sender: documentLine.senderName,
-                downloadUrl: documentLine.url,
-                date: date,
-                img,
-              },
-            },
-          })
+          navigate(
+            DocumentsPaths.ElectronicDocumentSingle.replace(
+              ':id',
+              documentLine.id,
+            ),
+          )
         } else {
           displayPdf(docContent)
           if (onError) {
