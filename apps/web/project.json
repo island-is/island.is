@@ -116,42 +116,37 @@
         "command": "graphql-codegen --config apps/web/codegen.yml"
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn get-secrets web",
-          "echo '#############'",
-          "echo '# ATTENTION #'",
-          "echo '#############'",
-          "echo ''",
-          "echo 'You must manually add these to your .env.secrets file (used for e.g. extract-strings):'",
-          "echo '  CONTENTFUL_HOST '",
-          "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
-          "echo ''"
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["api"]
-    },
-    "dev-run": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "./scripts/run-es-proxy.sh",
-          "yarn nx run api:dev",
-          "yarn start web"
-        ],
-        "parallel": true
-      },
-      "dependsOn": []
-    },
+
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["nx run web:dev-init", "nx run web:dev-run"],
+        "commands": ["nx run web:dev:init", "nx run web:dev:run"],
         "parallel": false
-      }
+      },
+      "configurations": {
+        "init": {
+          "commands": [
+            "yarn get-secrets web",
+            "echo '#############'",
+            "echo '# ATTENTION #'",
+            "echo '#############'",
+            "echo ''",
+            "echo 'You must manually add these to your .env.secrets file (used for e.g. extract-strings):'",
+            "echo '  CONTENTFUL_HOST '",
+            "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
+            "echo ''"
+          ]
+        },
+        "run": {
+          "commands": [
+            "./scripts/run-es-proxy.sh",
+            "nx run api:dev",
+            "nx serve web"
+          ],
+          "parallel": true
+        }
+      },
+      "dependsOn": ["api"]
     },
     "docker-next": {}
   },
