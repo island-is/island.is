@@ -4,8 +4,8 @@ import {
   FlattenedAdrDto,
   FlattenedAdrRightsDto,
 } from '@island.is/clients/license-client'
+import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
-  DEFAULT_LICENSE_ID,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,

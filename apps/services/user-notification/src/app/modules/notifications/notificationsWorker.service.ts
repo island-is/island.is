@@ -212,7 +212,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const formattedTemplate = this.notificationsService.formatArguments(
       message.args,
-      template,
+      // We need to shallow copy the template here so that the
+      // in-memory cache is not modified.
+      {
+        ...template,
+      },
     )
 
     try {

@@ -22,6 +22,7 @@ type AdvancedSettingsProps = Pick<
   | 'supportTokenExchange'
   | 'accessTokenLifetime'
   | 'customClaims'
+  | 'singleSession'
 >
 
 export const AdvancedSettings = ({
@@ -31,6 +32,7 @@ export const AdvancedSettings = ({
   supportTokenExchange,
   accessTokenLifetime,
   customClaims,
+  singleSession,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
@@ -47,6 +49,7 @@ export const AdvancedSettings = ({
     requireConsent,
     supportTokenExchange,
     accessTokenLifetime,
+    singleSession,
     customClaims: customClaimsString,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
@@ -135,6 +138,23 @@ export const AdvancedSettings = ({
             })
           }}
           subLabel={formatMessage(m.supportsTokenExchangeDescription)}
+        />
+        <Checkbox
+          label={formatMessage(m.singleSession)}
+          backgroundColor="blue"
+          large
+          disabled={!isSuperAdmin}
+          defaultChecked={inputValues.singleSession}
+          checked={inputValues.singleSession}
+          name="singleSession"
+          value="true"
+          onChange={(e) => {
+            setInputValues({
+              ...inputValues,
+              singleSession: e.target.checked,
+            })
+          }}
+          subLabel={formatMessage(m.singleSessionDescription)}
         />
         <Stack space={1}>
           <Input

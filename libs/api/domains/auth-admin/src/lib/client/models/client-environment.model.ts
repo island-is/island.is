@@ -70,6 +70,9 @@ export class ClientEnvironment {
   requirePkce!: boolean
 
   @Field(() => Boolean)
+  singleSession!: boolean
+
+  @Field(() => Boolean)
   supportTokenExchange!: boolean
 
   @Field(() => Int)

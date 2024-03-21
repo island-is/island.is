@@ -73,7 +73,10 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
-  condition?: (application: Application) => boolean
+  condition?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => boolean
   dataTestId?: string
 } & (
   | {
@@ -371,6 +374,9 @@ export interface KeyValueField extends BaseField {
   value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {

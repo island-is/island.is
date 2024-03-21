@@ -112,6 +112,33 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverIndictmentCaseToPolice',
         )
         break
+      case MessageType.DELIVER_INDICTMENT_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverIndictmentToPolice',
+        )
+        break
+      case MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE:
+        {
+          const policeCaseMessage = message as PoliceCaseMessage
+          handled = await this.internalDeliveryService.deliver(
+            message.user,
+            policeCaseMessage.caseId,
+            `deliverCaseFilesRecordToPolice/${policeCaseMessage.policeCaseNumber}`,
+          )
+        }
+        break
+      case MessageType.DELIVER_SIGNED_RULING_TO_POLICE:
+        {
+          const policeCaseMessage = message as PoliceCaseMessage
+          handled = await this.internalDeliveryService.deliver(
+            message.user,
+            policeCaseMessage.caseId,
+            'deliverSignedRulingToPolice',
+          )
+        }
+        break
       case MessageType.DELIVER_APPEAL_TO_POLICE:
         handled = await this.internalDeliveryService.deliver(
           message.user,
@@ -265,6 +292,14 @@ export class MessageHandlerService implements OnModuleDestroy {
           message.caseId,
           'notification',
           { type: NotificationType.APPEAL_WITHDRAWN },
+        )
+        break
+      case MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.INDICTMENT_DENIED },
         )
         break
       default:

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsString, IsOptional, IsArray, IsDateString } from 'class-validator'
-import { DelegationType } from '../types/delegationType'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { DelegationScopeDTO } from './delegation-scope.dto'
 
 export class MergedDelegationDTO {
@@ -26,11 +26,11 @@ export class MergedDelegationDTO {
   validTo?: Date | null
 
   @ApiProperty({
-    enum: DelegationType,
-    enumName: 'DelegationType',
+    enum: AuthDelegationType,
+    enumName: 'AuthDelegationType',
     isArray: true,
   })
-  types!: DelegationType[]
+  types!: AuthDelegationType[]
 
   @IsOptional()
   @IsArray()

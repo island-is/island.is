@@ -112,56 +112,6 @@ export const translationStrings = defineMessages({
     defaultMessage: '9 börn',
     description: 'Börn yngri en 18 ára, 9 börn',
   },
-  childSupportCountOptionsNoneLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsNoneLabel',
-    defaultMessage: 'Engu barni',
-    description: 'Fær meðlag greitt með, Engu barni',
-  },
-  childSupportCountOptionsOneLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsOneLabel',
-    defaultMessage: '1 barni',
-    description: 'Fær meðlag greitt með, 1 barni',
-  },
-  childSupportCountOptionsTwoLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsTwoLabel',
-    defaultMessage: '2 börnum',
-    description: 'Fær meðlag greitt með, 2 börnum',
-  },
-  childSupportCountOptionsThreeLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsThreeLabel',
-    defaultMessage: '3 börnum',
-    description: 'Fær meðlag greitt með, 3 börnum',
-  },
-  childSupportCountOptionsFourLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsFourLabel',
-    defaultMessage: '4 börnum',
-    description: 'Fær meðlag greitt með, 4 börnum',
-  },
-  childSupportCountOptionsFiveLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsFiveLabel',
-    defaultMessage: '5 börnum',
-    description: 'Fær meðlag greitt með, 5 börnum',
-  },
-  childSupportCountOptionsSixLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsSixLabel',
-    defaultMessage: '6 börnum',
-    description: 'Fær meðlag greitt með, 6 börnum',
-  },
-  childSupportCountOptionsSevenLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsSevenLabel',
-    defaultMessage: '7 börnum',
-    description: 'Fær meðlag greitt með, 7 börnum',
-  },
-  childSupportCountOptionsEightLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsEightLabel',
-    defaultMessage: '8 börnum',
-    description: 'Fær meðlag greitt með, 8 börnum',
-  },
-  childSupportCountOptionsNineLabel: {
-    id: 'web.pensionCalculator:childSupportCountOptionsNineLabel',
-    defaultMessage: '9 börnum',
-    description: 'Fær meðlag greitt með, 9 börnum',
-  },
   typeOfPeriodIncomeMonthLabel: {
     id: 'web.pensionCalculator:typeOfPeriodIncomeMonthLabel',
     defaultMessage: 'Mánaðartekjur',
@@ -390,20 +340,15 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Fyrsta endurhæfingarmat',
     description: 'Fyrsta 75% endurhæfingarmat',
   },
+  ageOfFirst75DisabilityAssessmentPlaceholder: {
+    id: 'web.pensionCalculator:ageOfFirst75DisabilityAssessmentPlaceholder',
+    defaultMessage: ' ',
+    description: 'Placeholder fyrir Endurhæfingarlífeyrir og Örorkulífeyrir',
+  },
   livingConditionRatioLabel: {
     id: 'web.pensionCalculator:livingConditionRatioLabel',
     defaultMessage: 'Búsetuhlutfall',
     description: 'Búsetuhlutfall',
-  },
-  childSupportCountLabel: {
-    id: 'web.pensionCalculator:childSupportCountLabel',
-    defaultMessage: 'Fær meðlag greitt með',
-    description: 'Fær meðlag greitt með',
-  },
-  childSupportCountPlaceholder: {
-    id: 'web.pensionCalculator:childSupportCountPlaceholder',
-    defaultMessage: 'Veldu fjölda barna',
-    description: 'Fær meðlag greitt með, placeholder',
   },
   childCountLabel: {
     id: 'web.pensionCalculator:childCount',
@@ -680,7 +625,12 @@ export const translationStrings = defineMessages({
   'REIKNH.PERSAFSLTRMEIRA': {
     id: 'web.pensionCalculator:REIKNH.PERSAFSLTRMEIRA',
     defaultMessage: 'Persónuafsláttur af greiðslum TR (nýting skattkorts 22%)',
-    description: 'Niðurstöðuskjár, Persónuafsláttur',
+    description: 'Niðurstöðuskjár, Persónuafsláttur TR meira',
+  },
+  'REIKNH.PERSAFSLTRMINNA': {
+    id: 'web.pensionCalculator:REIKNH.PERSAFSLTRMINNA',
+    defaultMessage: 'Persónuafsláttur af greiðslum TR',
+    description: 'Niðurstöðuskjár, Persónuafsláttur TR minna',
   },
   'REIKNH.SAMTALSTREFTIRSK': {
     id: 'web.pensionCalculator:REIKNH.SAMTALSTREFTIRSK',
@@ -725,7 +675,7 @@ export const translationStrings = defineMessages({
   'REIKNH.PERSAFSLMEIRA': {
     id: 'web.pensionCalculator:REIKNH.PERSAFSLMEIRA',
     defaultMessage: 'Persónuafsláttur (nýting skattkorts 78%)',
-    description: 'Niðurstöðuskjár, Persónuafsláttur (nýting skattkorts 78%)',
+    description: 'Niðurstöðuskjár, Persónuafsláttur meira',
   },
   'REIKNH.SAMTALSEFTIRSK': {
     id: 'web.pensionCalculator:REIKNH.SAMTALSEFTIRSK',
@@ -812,6 +762,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Frádreginn skattur (1. og 2. skattþrep)',
     description: 'Niðurstöðuskjár, Frádreginn skattur (1. og 2. skattþrep)',
   },
+  'REIKNH.FRADRSKATTURTR3': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTURTR3',
+    defaultMessage: 'Frádreginn skattur (1. - 3. skattþrep)',
+    description: 'Niðurstöðuskjár, Frádreginn skattur (1. - 3. skattþrep)',
+  },
   'REIKNH.GRUNNLIFORORKA': {
     id: 'web.pensionCalculator:REIKNH.GRUNNLIFORORKA',
     defaultMessage: 'Örorkulífeyrir',
@@ -831,6 +786,67 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:REIKNH.GRUNNLIFELLISJOM',
     defaultMessage: 'Ellilífeyrir sjómanna',
     description: 'Niðurstöðuskjár, Ellilífeyrir sjómanna',
+  },
+  'REIKNH.FRADRSKATTUR1': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR1',
+    defaultMessage: 'Frádreginn skattur',
+    description: 'Niðurstöðuskjár, Frádreginn skattur',
+  },
+  'REIKNH.BARNALIFEYRIR': {
+    id: 'web.pensionCalculator:REIKNH.BARNALIFEYRIR',
+    defaultMessage: 'Barnalífeyrir (óskattskyldur)',
+    description: 'Niðurstöðuskjár, Barnalífeyrir (óskattskyldur)',
+  },
+  'REIKNH.BENSINSTYRKUR': {
+    id: 'web.pensionCalculator:REIKNH.BENSINSTYRKUR',
+    defaultMessage: 'Bensínstyrkur (óskattskyldur)',
+    description: 'Niðurstöðuskjár, Bensínstyrkur (óskattskyldur)',
+  },
+  'REIKNH.ERLGRUNNLIF': {
+    id: 'web.pensionCalculator:REIKNH.ERLGRUNNLIF',
+    defaultMessage: 'Erlendur grunnlífeyrir, ekki vitað með skatt',
+    description:
+      'Niðurstöðuskjár, Erlendur grunnlífeyrir, ekki vitað með skatt',
+  },
+  'REIKNH.FRADRFJARMTEKSK22': {
+    id: 'web.pensionCalculator:REIKNH.FRADRFJARMTEKSK22',
+    defaultMessage: 'Frádreginn fjármagnstekjuskattur 22%',
+    description: 'Niðurstöðuskjár, Frádreginn fjármagnstekjuskattur 22%',
+  },
+  'REIKNH.FRADRSKATTUR2': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR2',
+    defaultMessage: 'Frádreginn skattur (1. og 2. skattþrep)',
+    description: 'Niðurstöðuskjár, Frádreginn skattur (1. og 2. skattþrep)',
+  },
+  'REIKNH.FRADRSKATTUR3': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR3',
+    defaultMessage: 'Frádreginn skattur (1. - 3. skattþrep)',
+    description: 'Niðurstöðuskjár, Frádreginn skattur (1. - 3. skattþrep)',
+  },
+  'REIKNH.MAEDRAFEDRALAUN': {
+    id: 'web.pensionCalculator:REIKNH.MAEDRAFEDRALAUN',
+    defaultMessage: 'Mæðra- / feðralaun',
+    description: 'Niðurstöðuskjár, Mæðra- / feðralaun',
+  },
+  'REIKNH.MEDLAG': {
+    id: 'web.pensionCalculator:REIKNH.MEDLAG',
+    defaultMessage: 'Meðlag',
+    description: 'Niðurstöðuskjár, Meðlag',
+  },
+  'REIKNH.PERSAFSLMINNA	': {
+    id: 'web.pensionCalculator:REIKNH.PERSAFSLMINNA',
+    defaultMessage: 'Persónuafsláttur',
+    description: 'Niðurstöðuskjár, Persónuafsláttur minna',
+  },
+  'REIKNH.SAMANBBOTAFLOKKUR	': {
+    id: 'web.pensionCalculator:REIKNH.SAMANBBOTAFLOKKUR',
+    defaultMessage: 'Samanburðarbótaflokkur við eldra kerfi',
+    description: 'Niðurstöðuskjár, Samanburðarbótaflokkur við eldra kerfi ',
+  },
+  'REIKNH.UPPBVREKSTURSBIFR': {
+    id: 'web.pensionCalculator:REIKNH.UPPBVREKSTURSBIFR',
+    defaultMessage: 'Uppbót v/reksturs bifreiðar (óskattskyld)',
+    description: 'Niðurstöðuskjár, Uppbót v/reksturs bifreiðar (óskattskyld) ',
   },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',

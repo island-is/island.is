@@ -21,6 +21,8 @@ module.exports = {
     // Axios and Jest aren't best friends right now:
     // https://github.com/axios/axios/issues/5101
     '^axios$': require.resolve('axios'),
+    // PDF viewer external css can be excluded from tests, otherwise will cause an error.
+    '^react-pdf/dist/Page/(.*)$': 'jest-transform-stub',
   },
   /* TODO: Update to latest Jest snapshotFormat
    * By default Nx has kept the older style of Jest Snapshot formats
