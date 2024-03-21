@@ -224,167 +224,43 @@ export const syslumennEmails: Record<
   },
 }
 
-enum SjukratryggingarCategories {
-  // Ferðakostnaður
-  FERDAKOSTNADUR = '5IetjgJbs6lgS5umDC6k17',
-
-  // Heilbrigðisstarfsfólk
-  HEILBRIGDISSTARFSFOLK = '1gYJuVaNKXXi5FXAFrEsCt',
-
-  // Heilbrigðisþjónusta
-  HEILBRIGDISTHJONUSTA = '5Q5c7YkbkHB1SFRTede9xK',
-
-  // Hjálpartæki og næring
-  HJALPARTAEKI_OG_NAERING = '5FHpqHHcLFxUdhvQS64DZJ',
-
-  // Lyf og lyfjakostnaður
-  LYF_OG_LYFJAKOSTNADUR = '1CcMQO8dHqkayO1IZu29P5',
-
-  // Réttindi milli landa
-  RETTINDI_MILLI_LANDA = '47vHdWS9R5VsTXHg5DMeS1',
-
-  // Sjúkradagpeningar
-  SJUKRADAGPENINGAR = 'njVZaaPHKlxconopmbPCf',
-
-  // Slys og sjúklingatrygging
-  SLYS_OG_SJUKLINGATRYGGING = '6o9o2bgfY6hYc4K77nyN4v',
-
-  // Tannlækningar
-  TANNLAEKNINGAR = '5MvO1XYR3iGlYDOg3kgsHD',
-
-  // Vefgáttir
-  VEFGATTIR = '34ELo2Zt3A6ynYdgZx72m',
-
-  // Þjálfun
-  THJALFUN = '2SvNHpvfhViaUTLDMQt0ZI',
-
-  // Önnur þjónusta Sjúkratrygginga
-  ONNUR_THJONUSTA_SJUKRATRYGGINGA = 'vVBHhkPz8AF9BEzLJsoZo',
-
-  // Hjálpartæki
-  HJALPARTAEKI = 'hjalpartaeki',
-
-  // Næring
-  NAERING = 'naering',
-
-  // Slysatrygging
-  SLYSATRYGGING = 'slysatrygging',
-
-  // Sjúklingatrygging
-  SJUKLINGATRYGGING = 'sjuklingatrygging',
-
-  // Hjúkrunarheimili
-  HJUKRUNARHEIMILI = 'hjukrunarheimili',
-
-  // Túlkaþjónusta
-  TULKATHJONUSTA = 'tulkathjonusta',
-}
-
-enum DirectorateOfImmigrationCategories {
-  // ALþjóðleg vernd
-  INTERNATIONAL_PROTECTION = 'vURM4bLHZZefkRTFMMhkW',
-
-  // Dvalarleyfiskort og ferðaskilríki
-  RESIDENCE_PERMIT_CARDS_AND_TRAVEL_DOCUMENTS = '2Z8C7zKJPsAtsbjaClcCAg',
-
-  // Dvalarleyfi - Almenn skilyrði
-  RESIDENCE_PERMIT_GENERAL_CONDITIONS = '5HwuyKorz5r8xmk3UxLE1q',
-
-  // Dvalarleyfi - Tegundir
-  RESIDENCE_PERMIT_TYPES = '3Jrix29x8wFv5X0O7P0KsB',
-
-  // Ferðalög og heimsóknir til Íslands
-  TRAVEL_AND_VISITS_TO_ICELAND = '3jzNnjUIuZAIU2MCwzYi1Q',
-
-  // Ríkisborgararéttur
-  CITIZENSHIP = '2PdX8CTx3uiGFphBbbazzc',
-
-  // Staða umsókna, beiðni um gögn og afgreiðslugjald
-  APPLICATION_STATUS = '7s7yrJ8Nl1YmocagF93QB7',
-
-  // Dvalarleyfi
-  RESIDENCE_PERMIT = 'dvalarleyfi',
-
-  // Aðstoð við sjálfviljuga heimför
-  ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
-}
-
-enum GrindavikCategories {
-  AFKOMA_OG_LAUN = '6WpT21uCInUNJWinVBSHbK',
-  TJON_OG_TRYGGINGAR = '1rYQzjeMo3GGmZ32tbJcdf',
-}
-
-const sjukratryggingarEmails = {
-  [SjukratryggingarCategories.FERDAKOSTNADUR]: 'ferdakostnadur@sjukra.is',
-  [SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK]:
-    'laeknareikningar@sjukra.is',
-  [SjukratryggingarCategories.HEILBRIGDISTHJONUSTA]:
-    'laeknareikningar@sjukra.is',
-  [SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING]: 'hjalpart@sjukra.is',
-  [SjukratryggingarCategories.HJALPARTAEKI]: 'hjalpart@sjukra.is',
-  [SjukratryggingarCategories.NAERING]: 'naering@sjukra.is',
-  [SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR]: 'lyf@sjukra.is',
-  [SjukratryggingarCategories.RETTINDI_MILLI_LANDA]: 'international@sjukra.is',
-  [SjukratryggingarCategories.SJUKRADAGPENINGAR]: 'dagpeningar@sjukra.is',
-  [SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING]: 'slys@sjukra.is',
-  [SjukratryggingarCategories.SLYSATRYGGING]: 'slys@sjukra.is',
-  [SjukratryggingarCategories.SJUKLINGATRYGGING]: 'sjuklingatrygging@sjukra.is',
-  [SjukratryggingarCategories.TANNLAEKNINGAR]: 'tannmal@sjukra.is',
-  [SjukratryggingarCategories.VEFGATTIR]: 'sjukra@sjukra.is',
-  [SjukratryggingarCategories.THJALFUN]: 'thjalfunarmal@sjukra.is',
-  [SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA]:
-    'sjukra@sjukra.is',
-  [SjukratryggingarCategories.HJUKRUNARHEIMILI]: 'hjukrunarheimili@sjukra.is',
-  [SjukratryggingarCategories.TULKATHJONUSTA]: 'laeknareikningar@sjukra.is',
-}
-
-const directorateOfImmigrationEmails = {
-  [DirectorateOfImmigrationCategories.TRAVEL_AND_VISITS_TO_ICELAND]:
-    'aritanir@utl.is',
-  [DirectorateOfImmigrationCategories.CITIZENSHIP]: 'rikisborgararettur@utl.is',
-  [DirectorateOfImmigrationCategories.ASSISTED_VOLUNTARY_RETURN]:
-    'return@utl.is',
-}
-
-const grindavikEmails = {
-  [GrindavikCategories.AFKOMA_OG_LAUN]: 'studningur@vmst.is',
-  [GrindavikCategories.TJON_OG_TRYGGINGAR]: 'nti@nti.is',
-}
-
-const transportAuthorityEmails = {
-  umferd: 'afgreidsla@samgongustofa.is',
-  siglingar: 'sigling@samgongustofa.is',
-}
-const getToAddress = (
+const getEmailList = (
   input: ServiceWebFormsInputWithInstitutionEmailAndConfig,
-): string => {
+): string | string[] => {
   const institutionEmail = input.institutionEmail
   const categoryId = input.category
   const syslumadurId = input.syslumadur
 
-  let toAddress: string = institutionEmail
+  let emailList: string | string[] = institutionEmail
 
   if (syslumadurId) {
-    const emailList = syslumennEmails[syslumadurId as Syslumenn]
+    const syslumennEmailList = syslumennEmails[syslumadurId as Syslumenn]
 
     if (emailList) {
-      toAddress =
-        emailList[categoryId as SyslumennCategories] ??
-        emailList.default ??
+      emailList =
+        syslumennEmailList[categoryId as SyslumennCategories] ??
+        syslumennEmailList.default ??
         institutionEmail
     }
   }
 
-  if (input.config[categoryId as keyof typeof input.config]) {
-    toAddress = input.config[categoryId as keyof typeof input.config]
+  const emailListAccordingToConfig = input.config?.emails?.find(
+    ({ supportCategoryId }) => supportCategoryId === categoryId,
+  )?.emailList
+
+  if (emailListAccordingToConfig) {
+    emailList = emailListAccordingToConfig
   }
 
-  return toAddress
+  return emailList
 }
 
 export const getTemplate = (
   input: ServiceWebFormsInputWithInstitutionEmailAndConfig,
 ): SendMailOptions => {
+  const toName = 'Ísland.is aðstoð'
+  const emailList = getEmailList(input)
+
   return {
     from: {
       name: input.name,
@@ -394,12 +270,15 @@ export const getTemplate = (
       name: input.name,
       address: input.email,
     },
-    to: [
-      {
-        name: 'Ísland.is aðstoð',
-        address: getToAddress(input),
-      },
-    ],
+    to:
+      typeof emailList === 'string'
+        ? [
+            {
+              name: toName,
+              address: emailList,
+            },
+          ]
+        : emailList.map((address) => ({ name: toName, address })),
     subject: input.subject,
     text: input.message,
   }
