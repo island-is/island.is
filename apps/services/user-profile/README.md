@@ -25,7 +25,7 @@ They are a quick alias for running the commands below.
 First, make sure you have docker, then run:
 
 ```bash
-yarn dev-services services-user-profile
+yarn nx run services-user-profile:dev:services
 ```
 
 Then run the migrations:
@@ -37,7 +37,7 @@ yarn nx run services-user-profile:migrate
 You can serve this service locally by running:
 
 ```bash
-yarn start services-user-profile
+yarn nx run services-user-profile:serve
 ```
 
 The OpenAPI specs will now be accessible at
@@ -49,7 +49,7 @@ http://localhost:3366/
 ## Getting started
 
 ```bash
-yarn start services-user-profile
+yarn nx run services-user-profile:serve
 ```
 
 ## Code owners and maintainers

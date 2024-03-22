@@ -27,7 +27,7 @@ This project forms the base for all business applications belonging to island.is
 First, make sure you have docker, then run:
 
 ```bash
-yarn dev-services application-system-api
+yarn nx run application-system-api:dev:services
 ```
 
 Then run the migrations:
@@ -41,7 +41,7 @@ yarn nx run application-system-api:migrate
 You can serve this service locally by running:
 
 ```bash
-yarn start application-system-api
+yarn nx run application-system-api:serve
 ```
 
 ### GraphQL
@@ -50,7 +50,7 @@ Make sure you are serving the GraphQL client as well in order for you to make
 GraphQL calls to this service:
 
 ```bash
-yarn start api
+yarn nx run api:serve
 ```
 
 ### OpenAPI and Swagger
@@ -85,15 +85,15 @@ This app contains the frontend app for the application system
 You can serve this app locally by running:
 
 ```bash
-yarn start application-system-form
+yarn nx run application-system-form:serve
 ```
 
 The only backend apps this app depends on are the GraphQL API and the
 `application-system-api`. Therefore, make sure you run those as well:
 
 ```bash
-yarn start application-system-api
-yarn start api
+yarn nx run application-system-api:serve
+yarn nx run api:serve
 ```
 
 ### Adding a new template

@@ -7,7 +7,7 @@ Elasticsearch. You can run a local instance of Elasticsearch by running the
 following (see the [relevant documentation](./dev-services)):
 
 ```bash
-yarn dev-services services-search-indexer
+yarn nx run services-search-indexer:dev:services
 ```
 
 ## URLs
@@ -23,7 +23,7 @@ yarn dev-services services-search-indexer
 To start the indexer server you run the following command to start a server on `localhost:3333`.
 
 ```bash
-yarn start services-search-indexer
+yarn nx run services-search-indexer:serve
 ```
 
 The indexer server currently has two endpoints:

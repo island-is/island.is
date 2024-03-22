@@ -51,13 +51,13 @@ yarn get-secrets user-notification
 Initialise dependencies:
 
 ```sh
-yarn dev-init services-user-notification
+yarn nx run services-user-notification:dev:init
 ```
 
 ### Start User Notification Service
 
 ```sh
-yarn dev services-user-notification
+yarn nx run services-user-notification:dev:run
 ```
 
 ### User Notification Worker

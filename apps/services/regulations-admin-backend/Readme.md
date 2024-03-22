@@ -5,7 +5,7 @@
 1. Make sure you have Docker, then run
 
    ```bash
-   yarn dev-services regulations-admin-backend
+   yarn nx run regulations-admin-backend:dev:services
    ```
 
 2. Clean the database (skip this step on first install)
@@ -24,5 +24,5 @@
 4. Start the backend service:
 
    ```bash
-   yarn start regulations-admin-backend
+   yarn nx run regulations-admin-backend:serve
    ```

@@ -13,11 +13,11 @@
 First, make sure you have docker, then run:
 
 ```bash
-yarn dev-services judicial-system-backend
+yarn nx run judicial-system-backend:dev:services
 ```
 
 ```bash
-yarn dev-services judicial-system-message-handler
+yarn nx run judicial-system-message-handler:dev:services
 ```
 
 Then run the migrations and seed the database:
@@ -35,7 +35,7 @@ yarn nx run judicial-system-backend:seed
 You can serve this service locally by running:
 
 ```bash
-yarn start judicial-system-backend
+yarn nx run judicial-system-backend:serve
 ```
 
 To enable SMS notifications to an on-call judge provide a password for the SMS
@@ -48,7 +48,7 @@ export COURTS_MOBILE_NUMBERS="{
     mobileNumbers: [<judge mobile number>]
   }
 }"
-yarn start judicial-system-backend
+yarn nx run judicial-system-backend:serve
 ```
 
 Similarly, you can enable electronic signatures of judge rulings by providing a
@@ -61,7 +61,7 @@ via AWS SES turn off email test account and provide an email region:
 ```bash
 export EMAIL_USE_TEST_ACCOUNT=false
 export EMAIL_REGION=eu-west-1
-yarn start judicial-system-backend
+yarn nx run judicial-system-backend:serve
 ```
 
 You need to be authenticated against AWS for this to work.
@@ -117,7 +117,7 @@ yarn nx run judicial-system-backend:migrate/undo
 You can serve this service locally by running:
 
 ```bash
-yarn start judicial-system-api
+yarn nx run judicial-system-api:serve
 ```
 
 To get latest texts from Contentful you need to provide an appropriate value for
@@ -143,7 +143,7 @@ Start the backend locally. Instructions on how to do that can be found [above](#
 Start the application
 
 ```bash
-yarn start judicial-system-web
+yarn nx run judicial-system-web:serve
 ```
 
 Then the project should be running [locally](https://localhost:4200/).
@@ -254,7 +254,7 @@ This service is for access from X-Road.
 You can serve this service locally by running:
 
 ```bash
-yarn start judicial-system-xrd-api
+yarn nx run judicial-system-xrd-api:serve
 ```
 
 ## Robot API
@@ -266,7 +266,7 @@ This service is for access through X-Road.
 You can serve this service locally by running:
 
 ```bash
-yarn start judicial-system-robot-api
+yarn nx run judicial-system-robot-api:serve
 ```
 
 ## Digital Mailbox API
@@ -278,7 +278,7 @@ This service is for access through X-Road.
 You can serve this service locally by running:
 
 ```bash
-yarn start judicial-system-digital-mailbox-api
+yarn nx run judicial-system-digital-mailbox-api:serve
 ```
 
 ## Scheduler
@@ -291,7 +291,7 @@ the only task.
 You can serve this service locally by running:
 
 ```bash
-yarn start judicial-system-scheduler
+yarn nx run judicial-system-scheduler:serve
 ```
 
 ## Message Handler
@@ -311,7 +311,7 @@ yarn dev-services judicial-system-message-handler
 You can serve this service locally by running:
 
 ```bash
-yarn start judicial-system-message-handler
+yarn nx run judicial-system-message-handler:serve
 ```
 
 ## Feature flags
