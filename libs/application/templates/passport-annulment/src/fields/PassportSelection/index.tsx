@@ -36,7 +36,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   } = useFormContext()
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
-  const fieldErros = getErrorViaPath(errors, userPassportRadio)
+  const fieldErrors = getErrorViaPath(errors, userPassportRadio)
   const identityDocumentData = application.externalData.identityDocument
     .data as IdentityDocumentData
 
@@ -85,7 +85,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   return (
     <Box>
       <RadioFormField
-        error={fieldErros}
+        error={fieldErrors}
         application={application}
         field={{
           id: userPassportRadio,
@@ -132,7 +132,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
         </Text>
       )}
       <RadioFormField
-        error={fieldErros}
+        error={fieldErrors}
         application={application}
         field={{
           space: 'smallGutter',
