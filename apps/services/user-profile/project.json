@@ -74,13 +74,6 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/user-profile"]
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/services/user-profile"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -109,25 +102,40 @@
         "cwd": "apps/services/user-profile/"
       }
     },
-    "dev-init": {
+    "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn nx run services-user-profile:dev-services",
-          "yarn nx run services-user-profile:migrate",
-          "yarn nx run services-user-profile:seed"
-        ],
-        "parallel": false
+        "command": "nx run {projectName}:dev:services"
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn start services-user-profile",
-          "scripts/run-xroad-proxy.sh"
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
         ],
-        "parallel": true
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "commands": ["docker-compose up -d"],
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "nx run {projectName}:dev:services",
+            "nx run {projectName}:migrate",
+            "nx run {projectName}:seed"
+          ]
+        },
+        "run": {
+          "commands": [
+            "nx run {projectName}:serve",
+            "scripts/run-xroad-proxy.sh"
+          ],
+          "parallel": true
+        }
       }
     },
     "docker-express": {},
