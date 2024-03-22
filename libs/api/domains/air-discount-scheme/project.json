@@ -22,27 +22,32 @@
         "passWithNoTests": true
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx run clients-air-discount-scheme:codegen/backend-client $NX_OPTIONS",
-          "yarn nx run air-discount-scheme-backend:dev-services",
-          "yarn nx run air-discount-scheme-backend:migrate"
-        ],
-        "parallel": false
-      }
-    },
+
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn start api",
-          "yarn start air-discount-scheme-backend",
-          "scripts/run-soffia-proxy.sh",
-          "scripts/run-xroad-proxy.sh"
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
         ],
-        "parallel": true
+        "parallel": false
+      },
+      "configurations": {
+        "dev-init": {
+          "commands": [
+            "nx run clients-air-discount-scheme:codegen/backend-client",
+            "nx run air-discount-scheme-backend:dev:init"
+          ]
+        },
+        "dev": {
+          "commands": [
+            "nx run api:serve",
+            "nx run air-discount-scheme-backend:serve",
+            "./scripts/run-soffia-proxy.sh",
+            "./scripts/run-xroad-proxy.sh"
+          ],
+          "parallel": true
+        }
       }
     }
   },
