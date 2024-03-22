@@ -152,7 +152,7 @@ jobs:
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-          force-cache-save: ${{ env.NX_AFFECTED_ALL }}
+          force-cache-save: ${{ env.SKIP_GENERATED_CACHE }}
 
       - name: Check generated files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
