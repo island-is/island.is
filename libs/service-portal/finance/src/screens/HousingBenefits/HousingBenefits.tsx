@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridRow,
   Hidden,
+  SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -14,6 +15,7 @@ import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
 import HousingBenefitsTable, {
   ITEMS_ON_PAGE,
 } from '../../components/HousingBenefitPayments/HousingBenefitsTable'
+import { Problem } from '@island.is/react-spa/shared'
 
 const DEFAULT_FROM_DATE = new Date('2017-7-13 14:5:24')
 const DEFAULT_TO_DATE = new Date('2024-12-13 14:5:24')
@@ -46,8 +48,6 @@ const FinanceHousingBenefits = () => {
     setFromDate(new Date())
     setToDate(new Date())
   }
-
-  const totalPages = 1
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
@@ -82,9 +82,16 @@ const FinanceHousingBenefits = () => {
           </GridRow>
         </Hidden>
         <Box marginTop={3}>
-          {data?.housingBenefitPayments && (
-            <HousingBenefitsTable payments={data.housingBenefitPayments} />
+          {error && !loading && <Problem error={error} noBorder={false} />}
+          {loading && !error && (
+            <Box padding={3}>
+              <SkeletonLoader space={1} height={40} repeat={5} />
+            </Box>
           )}
+          {data?.housingBenefitPayments &&
+            data?.housingBenefitPayments.data.length > 0 && (
+              <HousingBenefitsTable payments={data.housingBenefitPayments} />
+            )}
         </Box>
       </Stack>
       <FootNote serviceProviderSlug={'hms'} />
