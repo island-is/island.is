@@ -92,7 +92,7 @@ describe('communicationsService', () => {
         {
           ...fakeServiceWebInput,
           institutionEmail: 'test@email.com',
-          config: {emails: []}
+          config: { emails: [] },
         }
 
       jest
