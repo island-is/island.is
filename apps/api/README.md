@@ -1,20 +1,14 @@
 # API
 
-## Quickstart
+## Quick start
 
-Ensure docker is running, then run the following when running for the first time:
-
-```bash
-yarn dev-init api
-```
-
-To start the app:
+Ensure docker is running, then run the following:
 
 ```bash
 yarn dev api
 ```
 
-These commands are just shorthands for the setup described below.
+This command is simply a shorthand for the setup described below.
 
 ## About
 
@@ -40,7 +34,7 @@ Domain libraries represent and wrap an underlying data model or service. As a ru
 
 They can contain the following exports:
 
-- **typeDefs**: GraphQL schema describing the types, inputs, queries and mutations of the domain.
+- **type definitions**: GraphQL schema describing the types, inputs, queries and mutations of the domain.
 - **resolvers**: Object containing GraphQL resolvers for any fields, queries and mutations as needed by the domain.
 - **services**: The domain can export arbitrary services for other domains. These should be strongly typed and not expose any internals of the domain.
 
