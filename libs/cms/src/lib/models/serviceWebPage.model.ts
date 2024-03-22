@@ -7,21 +7,6 @@ import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 
 @ObjectType()
-class ServiceWebPageEmailConfigItem {
-  @Field(() => String)
-  supportCategoryId!: string
-
-  @CacheField(() => [String])
-  emailList!: string[]
-}
-
-@ObjectType()
-class ServiceWebPageEmailConfig {
-  @CacheField(() => [ServiceWebPageEmailConfigItem])
-  emails!: ServiceWebPageEmailConfigItem[]
-}
-
-@ObjectType()
 export class ServiceWebPage {
   @Field(() => ID)
   id!: string
@@ -37,28 +22,6 @@ export class ServiceWebPage {
 
   @CacheField(() => [FooterItem], { nullable: true })
   footerItems?: Array<FooterItem>
-
-  @CacheField(() => ServiceWebPageEmailConfig, { nullable: true })
-  emailConfig?: ServiceWebPageEmailConfig
-}
-
-const mapServiceWebPageEmailConfig = (
-  emailConfig: IServiceWebPage['fields']['emailConfig'],
-): ServiceWebPageEmailConfig => {
-  const emails = [] as ServiceWebPageEmailConfig['emails']
-
-  for (const { supportCategoryId, emailList } of emailConfig?.emails ?? []) {
-    if (supportCategoryId && Array.isArray(emailList)) {
-      emails.push({
-        emailList,
-        supportCategoryId,
-      })
-    }
-  }
-
-  return {
-    emails,
-  }
 }
 
 export const mapServiceWebPage = ({
@@ -72,7 +35,4 @@ export const mapServiceWebPage = ({
     : null,
   slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
-  emailConfig: fields.emailConfig
-    ? mapServiceWebPageEmailConfig(fields.emailConfig)
-    : { emails: [] },
 })
