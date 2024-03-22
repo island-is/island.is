@@ -4,19 +4,14 @@ This application allows individuals to create general petitions
 
 ## Setup
 
-To setup the docker environment run (this only needs to be run once):
-
-```bash
-yarn dev-init application-templates-general-petition
-```
-
-To start all required services:
+Simply run this command:
 
 ```bash
 yarn dev application-templates-general-petition
 ```
 
-This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
+This template runs within the application system, make sure your setup fulfills
+requirements set by the [Application System](https://docs.devland.is/apps/application-system)
 
 ### Additional setup
 
@@ -24,29 +19,26 @@ There are additional steps required to run this template locally
 
 ### National Registry Provider
 
-Prerequisites
+1. Prerequisites
+    - You have `kubectl` installed (`brew install kubectl`)
+    - You have [AWS Secrets](https://docs.devland.is/development/getting-started#aws-secrets)
+      configured
 
-- You have `kubectl` installed
-  - `brew install kubectl`
-- You have [AWS Secrets](../../../../handbook/repository/aws-secrets.md) configured
+2. Make sure the following environment variables are set:
 
-1. Make sure the following environment variables are set:
+    ```bash
+    SOFFIA_PASS
+    SOFFIA_USER
+    ```
 
-```bash
-SOFFIA_PASS
-SOFFIA_USER
-```
+    A good way to get environment variables is to run `yarn get-secrets service-portal`
 
-- A good way to get environment variables is to run `yarn get-secrets service-portal`
+3. Get `kubeconfig`
+    - Export AWS variables `aws eks update-kubeconfig --name dev-cluster01`
 
-2. Get kubeconfig
-
-- Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
-
-3. Socat Þjóðskrá
-
-- Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
-- Keep this process running while running the project
+4. Port-forward for the national registry (Þjóðskrá)
+    - Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
+    - Keep this process running while running the project
 
 ### Current user companies provider
 

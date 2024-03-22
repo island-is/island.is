@@ -29,38 +29,43 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-petition/src/lib/messages.ts'"
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx run application-system-api:dev-services",
-          "yarn nx run application-system-api:migrate",
-          "yarn nx run services-endorsements-api:migrate",
-          "yarn nx run api:codegen/backend-schema",
-          "yarn nx run application-templates-general-petition:codegen/frontend-client"
-        ],
-        "parallel": false
-      }
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
-          "yarn start application-system-api $NX_OPTIONS &",
-          "yarn start application-system-form $NX_OPTIONS &",
-          "yarn start services-endorsements-api $NX_OPTIONS &",
-          "yarn start api $NX_OPTIONS &"
-        ],
-        "parallel": true
-      }
-    },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/general-petition/codegen.yml"
       },
       "outputs": ["{projectRoot}/src/types/schema.ts"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "dev-init": {
+          "commands": [
+            "nx run application-system-api:dev:init",
+            "nx run application-system-api:init",
+            "nx run services-endorsements-api:init",
+            "nx run api:codegen/backend-schema",
+            "nx run application-templates-general-petition:codegen/frontend-client"
+          ]
+        },
+        "dev": {
+          "commands": [
+            "./scripts/run-soffia-proxy.sh",
+            "nx run application-system-api:serve",
+            "nx run application-system-form:serve",
+            "nx run services-endorsements-api:serve",
+            "nx run api:serve"
+          ],
+          "parallel": true
+        }
+      }
     }
   },
   "tags": ["scope:application-system", "lib:application-system"]
