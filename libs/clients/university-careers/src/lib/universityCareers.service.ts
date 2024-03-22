@@ -71,7 +71,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
     }
   } => {
     switch (type) {
-      case UniversityId.AgriculturalUniversityOfIceland:
+      case UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND:
         return {
           api: this.lbhiApi.withMiddleware(new AuthMiddleware(user as Auth)),
           locales: {
@@ -80,7 +80,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
             studentTrackLocale: LbhiFerillLocale,
           },
         }
-      case UniversityId.BifrostUniversity:
+      case UniversityId.BIFROST_UNIVERSITY:
         return {
           api: this.bifrostApi.withMiddleware(new AuthMiddleware(user as Auth)),
           locales: {
@@ -89,7 +89,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
             studentTrackLocale: BifrostFerillLocale,
           },
         }
-      case UniversityId.HolarUniversity:
+      case UniversityId.HOLAR_UNIVERSITY:
         return {
           api: this.holarApi.withMiddleware(new AuthMiddleware(user as Auth)),
           locales: {
@@ -98,7 +98,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
             studentTrackLocale: HolarFerillLocale,
           },
         }
-      case UniversityId.UniversityOfAkureyri:
+      case UniversityId.UNIVERSITY_OF_AKUREYRI:
         return {
           api: this.unakApi.withMiddleware(new AuthMiddleware(user as Auth)),
           locales: {
@@ -107,7 +107,7 @@ export class UniversityCareersClientService implements UniversityCareerService {
             studentTrackLocale: UnakFerillLocale,
           },
         }
-      case UniversityId.UniversityOfIceland:
+      case UniversityId.UNIVERSITY_OF_ICELAND:
         return {
           api: this.hiApi.withMiddleware(new AuthMiddleware(user as Auth)),
           locales: {

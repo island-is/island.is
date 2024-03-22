@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { StudentTrackTranscript } from './studentTrackTranscript.model'
 import { StudentTrackMetadata } from './studentTrackMetadata'
 import { StudentFile } from './studentFile.model'
+import { StudentTrackTranscript } from './studentTrackTranscript.model'
 
 @ObjectType('UniversityCareersStudentTrack')
 export class StudentTrack {

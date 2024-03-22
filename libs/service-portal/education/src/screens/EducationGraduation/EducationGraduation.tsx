@@ -8,19 +8,43 @@ import {
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
-import { useOrganizations } from '@island.is/service-portal/graphql'
 import { getOrganizationLogoUrl, isDefined } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useStudentInfoQuery } from './EducationGraduation.generated'
+import {
+  UniversityCareersStudentTrackTranscript,
+  UniversityCareersStudentTrackTranscriptError,
+  UniversityCareersUniversityId,
+} from '@island.is/api/schema'
+import { useOrganizations } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
+
+const mapUniversityToOrganization = (
+  university: UniversityCareersUniversityId,
+): OrganizationSlugType | null => {
+  switch (university) {
+    case UniversityCareersUniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND:
+      return 'landbunadarhaskoli-islands'
+    case UniversityCareersUniversityId.HOLAR_UNIVERSITY:
+      return 'holaskoli-haskolinn-a-holum'
+    case UniversityCareersUniversityId.UNIVERSITY_OF_ICELAND:
+      return 'haskoli-islands'
+    case UniversityCareersUniversityId.UNIVERSITY_OF_AKUREYRI:
+      return 'haskolinn-a-akureyri'
+    case UniversityCareersUniversityId.BIFROST_UNIVERSITY:
+      return 'bifrost'
+    default:
+      return null
+  }
+}
 
 export const EducationGraduation = () => {
   useNamespaces('sp.education-graduation')
   const { lang, formatMessage } = useLocale()
 
   const { loading, error, data } = useStudentInfoQuery({
-    errorPolicy: 'all',
     variables: {
       input: {
         locale: lang,
@@ -30,58 +54,32 @@ export const EducationGraduation = () => {
 
   const { data: organizations } = useOrganizations()
 
-  const possibleTracks = data?.universityCareersStudentTrackHistory
+  const tracks: Array<UniversityCareersStudentTrackTranscript> =
+    data?.universityCareersStudentTrackHistory?.trackResults
+      .filter((u) => u.__typename === 'UniversityCareersStudentTrackTranscript')
+      .filter(isDefined)
+      .map((u) => u as UniversityCareersStudentTrackTranscript) ?? []
 
-  const tracks = useMemo(
-    () => [
-      ...(possibleTracks?.agriculturalUniversityOfIceland ?? []),
-      ...(possibleTracks?.universityOfIceland ?? []),
-      ...(possibleTracks?.universityOfAkureyri ?? []),
-      ...(possibleTracks?.bifrostUniversity ?? []),
-      ...(possibleTracks?.holarUniversity ?? []),
-    ],
-    [possibleTracks],
-  )
+  const errors: Array<UniversityCareersStudentTrackTranscriptError> =
+    useMemo(() => {
+      return (
+        data?.universityCareersStudentTrackHistory?.trackResults
+          .filter(
+            (u) =>
+              u.__typename === 'UniversityCareersStudentTrackTranscriptError',
+          )
+          .filter(isDefined)
+          .map((u) => u as UniversityCareersStudentTrackTranscriptError) ?? []
+      )
+    }, [data?.universityCareersStudentTrackHistory.trackResults])
 
   const errorString = useMemo(() => {
-    const mapPathsToIssuerString = (paths?: Array<string | number>) => {
-      const mapPath = (path: string | number) => {
-        if (typeof path === 'number') {
-          return
-        }
-        switch (path) {
-          case 'universityOfIceland':
-            return 'hi fail'
-          case 'universityOfAkureyri':
-            return 'unak fail'
-          case 'bifrostUniversity':
-            return 'bifrost fail'
-          case 'holarUniversity':
-            return 'holar fail'
-          case 'agriculturalUniversityOfIceland':
-            return 'lbhi fail'
-          default:
-            return
-        }
-      }
-      if (!paths) {
-        return
-      }
-
-      return paths.map((p) => mapPath(p)).filter(isDefined)
-    }
-    let issuersArray: Array<string> = []
-    if (error?.graphQLErrors) {
-      error.graphQLErrors.forEach((e) => {
-        const paths = e.path ? [...e.path] : []
-        const mappedPaths = mapPathsToIssuerString(paths)
-        if (mappedPaths) {
-          issuersArray = [...issuersArray, ...mappedPaths]
-        }
-      })
-    }
-    return issuersArray.join(', ')
-  }, [error?.graphQLErrors])
+    return errors
+      .map((e) => mapUniversityToOrganization(e.university))
+      .map((e) => (organizations ?? []).find((o) => o.slug === e)?.title)
+      .filter(isDefined)
+      .join(', ')
+  }, [errors, organizations])
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -96,16 +94,20 @@ export const EducationGraduation = () => {
         serviceProviderSlug={'haskoli-islands'}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
-      {error && !loading && data && (
-        <AlertMessage
-          type="warning"
-          title={'fetch fail'}
-          message={`fetch failed for the following providers; ${errorString}`}
-        />
+      {!!errors.length && !error && !loading && (
+        <Box marginBottom={2}>
+          <AlertMessage
+            type="warning"
+            title={formatMessage(m.couldNotFetchAllItems)}
+            message={formatMessage(m.couldNotFetchAllItemsDetail, {
+              arg: errorString,
+            })}
+          />
+        </Box>
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !error && <CardLoader />}
-      {!loading && !error && !tracks.length && (
+      {!loading && !error && !tracks?.length && !errors?.length && (
         <Box marginTop={8}>
           <Problem
             type="no_data"
@@ -117,8 +119,8 @@ export const EducationGraduation = () => {
         </Box>
       )}
       <Stack space={2}>
-        {!!tracks.length &&
-          tracks.map((item, index) => {
+        {!!tracks?.length &&
+          tracks?.map((item, index) => {
             return (
               <ActionCard
                 key={`education-graduation-${index}`}

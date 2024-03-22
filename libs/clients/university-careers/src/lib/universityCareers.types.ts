@@ -10,11 +10,11 @@ export const schema = z.object({
 })
 
 export enum UniversityId {
-  UniversityOfAkureyri = 'UniversityOfAkureyri',
-  BifrostUniversity = 'BifrostUniversity',
-  HolarUniversity = 'HolarUniversity',
-  AgriculturalUniversityOfIceland = 'AgriculturalUniversityOfIceland',
-  UniversityOfIceland = 'UniversityOfIceland',
+  UNIVERSITY_OF_AKUREYRI = 'UniversityOfAkureyri',
+  BIFROST_UNIVERSITY = 'BifrostUniversity',
+  HOLAR_UNIVERSITY = 'HolarUniversity',
+  AGRICULTURAL_UNIVERSITY_OF_ICELAND = 'AgriculturalUniversityOfIceland',
+  UNIVERSITY_OF_ICELAND = 'UniversityOfIceland',
 }
 
 export interface UniversityCareerService {

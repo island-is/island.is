@@ -1,4 +1,4 @@
-import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import {
@@ -20,7 +20,8 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { StudentInfoInput } from './dto/studentInfo.input'
 import { UniversityCareersService } from './universityCareers.service'
 import { StudentTrackHistory } from './models/studentTrackHistory.model'
-import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
+import { StudentTrackTranscriptResult } from './models/studentTrackTranscriptResult.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -40,75 +41,32 @@ export class UniversityCareersResolver {
     name: 'universityCareersStudentTrackHistory',
   })
   @Audit()
-  async studentTrackHistory(): Promise<StudentTrackHistory | null> {
-    return {}
-  }
-
-  @ResolveField('universityOfIceland', () => [StudentTrackTranscript])
-  @Audit()
-  async resolveUniversityOfIceland(
+  async studentTrackHistory(
     @CurrentUser() user: User,
     @Args('input') input: StudentInfoInput,
-  ) {
-    return this.service.getStudentTrackHistoryByUniversity(
-      user,
-      UniversityId.UniversityOfIceland,
-      input.locale as Locale,
-    )
-  }
+  ): Promise<StudentTrackHistory | null> {
+    const data = (
+      await Promise.all(
+        Object.values(UniversityId).map((u) =>
+          this.service.getStudentTrackHistoryByUniversity(
+            user,
+            u,
+            input.locale as Locale,
+          ),
+        ),
+      )
+    ).filter(isDefined)
 
-  @ResolveField('universityOfAkureyri', () => [StudentTrackTranscript])
-  @Audit()
-  async resolveUNAK(
-    @CurrentUser() user: User,
-    @Args('input') input: StudentInfoInput,
-  ) {
-    return this.service.getStudentTrackHistoryByUniversity(
-      user,
-      UniversityId.UniversityOfAkureyri,
-      input.locale as Locale,
+    let normalizedResults: Array<typeof StudentTrackTranscriptResult> = []
+    data.forEach((result) =>
+      Array.isArray(result)
+        ? (normalizedResults = normalizedResults.concat(result))
+        : normalizedResults.push(result),
     )
-  }
 
-  @ResolveField('bifrostUniversity', () => [StudentTrackTranscript])
-  @Audit()
-  async resvoleBifrostUniversity(
-    @CurrentUser() user: User,
-    @Args('input') input: StudentInfoInput,
-  ) {
-    return this.service.getStudentTrackHistoryByUniversity(
-      user,
-      UniversityId.BifrostUniversity,
-      input.locale as Locale,
-    )
-  }
-
-  @ResolveField('holarUniversity', () => [StudentTrackTranscript])
-  @Audit()
-  async resolveHolar(
-    @CurrentUser() user: User,
-    @Args('input') input: StudentInfoInput,
-  ) {
-    return this.service.getStudentTrackHistoryByUniversity(
-      user,
-      UniversityId.HolarUniversity,
-      input.locale as Locale,
-    )
-  }
-
-  @ResolveField('agriculturalUniversityOfIceland', () => [
-    StudentTrackTranscript,
-  ])
-  @Audit()
-  async resolveAgriculturalUniversityOfIceland(
-    @CurrentUser() user: User,
-    @Args('input') input: StudentInfoInput,
-  ) {
-    return this.service.getStudentTrackHistoryByUniversity(
-      user,
-      UniversityId.AgriculturalUniversityOfIceland,
-      input.locale as Locale,
-    )
+    return {
+      trackResults: normalizedResults,
+    }
   }
 
   @Query(() => StudentTrack, {
@@ -124,7 +82,7 @@ export class UniversityCareersResolver {
     }
     const data = await this.service.getStudentTrack(
       user,
-      input.universityId ?? UniversityId.UniversityOfIceland,
+      input.universityId ?? UniversityId.UNIVERSITY_OF_ICELAND,
       input.trackNumber,
       input.locale as Locale,
     )

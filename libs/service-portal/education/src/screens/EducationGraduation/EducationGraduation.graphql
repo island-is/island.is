@@ -14,21 +14,28 @@ fragment Transcript on UniversityCareersStudentTrackTranscript {
 }
 
 query studentInfo($input: UniversityCareersStudentInfoInput!) {
-  universityCareersStudentTrackHistory {
-    universityOfIceland(input: $input) {
-      ...Transcript
-    }
-    universityOfAkureyri(input: $input) {
-      ...Transcript
-    }
-    bifrostUniversity(input: $input) {
-      ...Transcript
-    }
-    holarUniversity(input: $input) {
-      ...Transcript
-    }
-    agriculturalUniversityOfIceland(input: $input) {
-      ...Transcript
+  universityCareersStudentTrackHistory(input: $input) {
+    __typename
+    trackResults {
+      ... on UniversityCareersStudentTrackTranscript {
+        name
+        nationalId
+        graduationDate
+        trackNumber
+        institution {
+          id
+          displayName
+        }
+        school
+        faculty
+        studyProgram
+        degree
+      }
+      ... on UniversityCareersStudentTrackTranscriptError {
+        __typename
+        university
+        error
+      }
     }
   }
 }

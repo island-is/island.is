@@ -2,13 +2,16 @@ import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
+  StudentTrackDto,
   UniversityCareersClientService,
   UniversityId,
 } from '@island.is/clients/university-careers'
 import { isDefined } from '@island.is/shared/utils'
 import { Locale } from '@island.is/shared/types'
 import { mapToStudent } from './mapper'
+import { StudentTrackTranscriptError } from './models/studentTrackTranscriptError.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class UniversityCareersService {
@@ -21,14 +24,21 @@ export class UniversityCareersService {
     user: User,
     university: UniversityId,
     locale: Locale,
-  ): Promise<Array<StudentTrackTranscript> | null> {
-    const data = await this.universityCareers.getStudentTrackHistory(
-      user,
-      university,
-      locale,
-    )
+  ): Promise<
+    Array<StudentTrackTranscript> | StudentTrackTranscriptError | null
+  > {
+    const data: Array<StudentTrackDto> | StudentTrackTranscriptError | null =
+      await this.universityCareers
+        .getStudentTrackHistory(user, university, locale)
+        .catch((e: Error | FetchError) => {
+          return { university, error: JSON.stringify(e) }
+        })
 
-    return data?.map((d) => mapToStudent(d)).filter(isDefined) ?? null
+    if (Array.isArray(data)) {
+      return data.map((d) => mapToStudent(d)).filter(isDefined)
+    }
+
+    return data
   }
 
   async getStudentTrack(
