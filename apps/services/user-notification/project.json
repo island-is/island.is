@@ -92,13 +92,6 @@
         "passWithNoTests": true
       }
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d --build",
-        "cwd": "apps/services/user-notification"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -123,18 +116,33 @@
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn nx run services-user-notification:dev-services",
-          "yarn nx run services-user-notification:migrate"
-        ],
         "parallel": false
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start services-user-notification"],
-        "parallel": true
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d --build",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "yarn nx run services-user-notification:dev:services",
+            "yarn nx run services-user-notification:migrate"
+          ]
+        },
+        "run": {
+          "commands": ["nx run services-user-notification:serve"],
+          "parallel": true
+        }
       }
     },
     "docker-express": {}
