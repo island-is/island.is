@@ -123,27 +123,27 @@ export const business = buildSection({
               {
                 fields: [
                   {
-                    title: m.debtsCreditorName.defaultMessage,
+                    title: m.debtsCreditorName,
                     id: 'businessDebt',
                   },
                   {
-                    title: m.creditorsNationalId.defaultMessage,
+                    title: m.creditorsNationalId,
                     id: 'nationalId',
                     format: '######-####',
                   },
                   {
-                    title: m.debtsLoanIdentity.defaultMessage,
+                    title: m.debtsLoanIdentity,
                     id: 'loanIdentity',
                   },
                   {
-                    title: m.debtsBalance.defaultMessage,
+                    title: m.debtsBalance,
                     id: 'debtValue',
                     required: true,
                     currency: true,
                     width: 'half',
                   },
                 ],
-                repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
+                repeaterButtonText: m.debtsRepeaterButton,
                 sumField: 'debtValue',
               },
             ),

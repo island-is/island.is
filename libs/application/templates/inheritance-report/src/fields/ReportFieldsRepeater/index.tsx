@@ -76,11 +76,15 @@ export const ReportFieldsRepeater: FC<
       return
     }
 
-    const total = values.reduce((acc: number, current: any) => {
+    const total = values.reduce((acc: number, current: any, index: number) => {
       const sumField2 = valueToNumber(current[props?.sumField2], ',')
       let currentValue = valueToNumber(current[props?.sumField], ',')
       currentValue = currentValue + sumField2
       const shareValueNumber = valueToNumber(current?.share, '.')
+
+      if (id === 'assets.bankAccounts.data') {
+        setValue(`${id}[${index}].bankAccountTotal`, currentValue)
+      }
 
       const shareValue = !shareValueNumber ? 0 : shareValueNumber / 100
 
@@ -256,7 +260,7 @@ export const ReportFieldsRepeater: FC<
                       }
                       marginBottom={2}
                     >
-                      {field.sectionTitle}
+                      {formatMessage(field.sectionTitle)}
                     </Text>
                   </GridColumn>
                 ) : (
@@ -330,7 +334,7 @@ export const ReportFieldsRepeater: FC<
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
-                        label={field.title}
+                        label={formatMessage(field.title) ?? ''}
                         placeholder={field.placeholder}
                         options={relations}
                       />
@@ -343,7 +347,7 @@ export const ReportFieldsRepeater: FC<
                           calculateTotal()
                           setIndex(fieldIndex)
                         }}
-                        label={field.title}
+                        label={formatMessage(field.title) ?? ''}
                       />
                     ) : (
                       <InputController
@@ -353,7 +357,7 @@ export const ReportFieldsRepeater: FC<
                           repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={field.title}
+                        label={formatMessage(field.title)}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}
@@ -391,7 +395,7 @@ export const ReportFieldsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
       {!!fields.length && props.sumField && (
