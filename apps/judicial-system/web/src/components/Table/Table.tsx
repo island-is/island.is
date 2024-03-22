@@ -1,12 +1,19 @@
-import React, { ReactNode, useMemo } from 'react'
+import React, { ReactNode, useContext, useMemo } from 'react'
+import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
+import parseISO from 'date-fns/parseISO'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 
-import { CaseListEntry } from '../../graphql/schema'
+import { CaseListEntry, CaseState } from '../../graphql/schema'
+import MobileCase from '../../routes/Shared/Cases/MobileCase'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
-import { useCase, useCaseList } from '../../utils/hooks'
+import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, {
   ContextMenuItem,
@@ -15,7 +22,9 @@ import ContextMenu, {
   useContextMenu,
 } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
+import { UserContext } from '../UserProvider/UserProvider'
 import SortButton from './SortButton/SortButton'
+import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
 interface TableProps {
@@ -72,6 +81,9 @@ const Table: React.FC<TableProps> = (props) => {
   const { openCaseInNewTabMenuItem, deleteCaseMenuItem } = useContextMenu()
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
   const { isTransitioningCase } = useCase()
+  const { width } = useViewport()
+  const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   useMemo(() => {
     if (sortConfig) {
@@ -101,7 +113,37 @@ const Table: React.FC<TableProps> = (props) => {
     }
   }, [data, sortConfig])
 
-  return (
+  return width < theme.breakpoints.md ? (
+    <>
+      {data.map((theCase: CaseListEntry) => (
+        <Box marginTop={2} key={theCase.id}>
+          <MobileCase
+            onClick={() => handleOpenCase(theCase.id)}
+            theCase={theCase}
+            isCourtRole={isDistrictCourtUser(user)}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
+          >
+            {theCase.state &&
+              theCase.state === CaseState.WAITING_FOR_CONFIRMATION && (
+                <Text fontWeight="medium" variant="small">
+                  {`${formatMessage(core.prosecutorPerson)}: ${
+                    theCase.prosecutor?.name
+                  }`}
+                </Text>
+              )}
+            {theCase.courtDate && (
+              <Text fontWeight="medium" variant="small">
+                {`${formatMessage(strings.hearing)} ${formatDate(
+                  parseISO(theCase.courtDate),
+                  'd.M.y',
+                )} kl. ${formatDate(parseISO(theCase.courtDate), 'kk:mm')}`}
+              </Text>
+            )}
+          </MobileCase>
+        </Box>
+      ))}
+    </>
+  ) : (
     <table className={styles.table}>
       <thead className={styles.thead}>
         <tr>

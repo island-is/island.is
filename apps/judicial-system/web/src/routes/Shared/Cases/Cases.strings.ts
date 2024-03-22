@@ -71,7 +71,6 @@ export const cases = {
           description:
             'Notaður sem titill fyrir tegund dálk í lista yfir mál í vinnslu.',
         },
-
         date: {
           id: 'judicial.system.core:cases.active_requests.table.headers.date',
           defaultMessage: 'Stofnað/Fyrirtaka',
@@ -81,12 +80,6 @@ export const cases = {
         created: {
           id: 'judicial.system.core:cases.active_requests.table.headers.created',
           defaultMessage: 'Stofnað',
-          description:
-            'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
-        },
-        hearing: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.hearing',
-          defaultMessage: 'Fyrirtaka',
           description:
             'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
         },

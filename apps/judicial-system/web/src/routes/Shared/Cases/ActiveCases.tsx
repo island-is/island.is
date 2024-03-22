@@ -32,6 +32,7 @@ import {
   ColumnCaseType,
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { table as tableStrings } from '@island.is/judicial-system-web/src/components/Table/Table.strings'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
@@ -146,12 +147,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               )}
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
-                {`${formatMessage(
-                  m.activeRequests.table.headers.hearing,
-                )} ${format(parseISO(theCase.courtDate), 'd.M.y')} kl. ${format(
+                {`${formatMessage(tableStrings.hearing)} ${format(
                   parseISO(theCase.courtDate),
-                  'kk:mm',
-                )}`}
+                  'd.M.y',
+                )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
               </Text>
             )}
           </MobileCase>
@@ -204,11 +203,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </th>
             <th className={styles.th}>
               <SortButton
-                title={capitalize(
-                  formatMessage(m.activeRequests.table.headers.hearing, {
-                    suffix: 'i',
-                  }),
-                )}
+                title={capitalize(formatMessage(tableStrings.hearing))}
                 onClick={() => requestSort('courtDate')}
                 sortAsc={getClassNamesFor('courtDate') === 'ascending'}
                 sortDes={getClassNamesFor('courtDate') === 'descending'}

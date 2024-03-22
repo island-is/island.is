@@ -8,6 +8,7 @@ import {
   capitalize,
   displayFirstPlusRemaining,
   formatDate,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -35,19 +36,20 @@ import {
   ColumnCaseType,
   DefendantInfo,
   PastCasesTable,
+  SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table, {
+  useTable,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
+  CaseTransition,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
-  useCaseList,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
@@ -112,11 +114,12 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
-  const { handleDeleteCase } = useCaseList()
+  const { requestSort, getClassNamesFor, sortConfig } = useTable()
 
-  const { isTransitioningCase, isSendingNotification } = useCase()
+  const { transitionCase, isTransitioningCase, isSendingNotification } =
+    useCase()
 
-  const { data, error, loading } = useCasesQuery({
+  const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -177,6 +180,19 @@ export const Cases: React.FC = () => {
     pastCases,
   } = useFilter(allActiveCases, allPastCases, user)
 
+  const deleteCase = async (caseToDelete: CaseListEntry) => {
+    if (
+      caseToDelete.state === CaseState.NEW ||
+      caseToDelete.state === CaseState.DRAFT ||
+      caseToDelete.state === CaseState.SUBMITTED ||
+      caseToDelete.state === CaseState.RECEIVED ||
+      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
+      refetch()
+    }
+  }
+
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
@@ -220,7 +236,7 @@ export const Cases: React.FC = () => {
               />
               <AnimatePresence initial={false}>
                 <Box marginBottom={[5, 5, 12]}>
-                  {loading || isFiltering ? (
+                  {/* {loading || isFiltering ? (
                     <TableSkeleton />
                   ) : casesAwaitingConfirmation.length > 0 ? (
                     <Table
@@ -254,10 +270,7 @@ export const Cases: React.FC = () => {
                       ]}
                       data={casesAwaitingConfirmation}
                       contextMenu={{
-                        menuItems: [
-                          PrebuiltMenuItems.openCaseInNewTab,
-                          PrebuiltMenuItems.deleteCase,
-                        ],
+                        menuItems: [PrebuiltMenuItems.openCaseInNewTab],
                       }}
                       columns={[
                         {
@@ -304,6 +317,14 @@ export const Cases: React.FC = () => {
                       ]}
                     />
                   ) : (
+                    // <ActiveCases
+                    //   cases={casesAwaitingConfirmation}
+                    //   isDeletingCase={
+                    //     isTransitioningCase || isSendingNotification
+                    //   }
+                    //   onDeleteCase={deleteCase}
+                    //   caseState={CaseState.WAITING_FOR_CONFIRMATION}
+                    // />
                     <motion.div
                       className={styles.infoContainer}
                       initial={{ opacity: 0 }}
@@ -322,7 +343,7 @@ export const Cases: React.FC = () => {
                         )}
                       />
                     </motion.div>
-                  )}
+                  )} */}
                 </Box>
               </AnimatePresence>
             </>
@@ -335,7 +356,7 @@ export const Cases: React.FC = () => {
               <ActiveCases
                 cases={activeCases}
                 isDeletingCase={isTransitioningCase || isSendingNotification}
-                onDeleteCase={handleDeleteCase}
+                onDeleteCase={deleteCase}
               />
             ) : (
               <div className={styles.infoContainer}>
