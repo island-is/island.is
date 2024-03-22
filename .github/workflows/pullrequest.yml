@@ -155,7 +155,12 @@ jobs:
           force-cache-save: ${{ env.SKIP_GENERATED_CACHE }}
 
       - name: Check generated files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
+        run: |
+          if [[ "${SKIP_GENERATED_CACHE}" == "true" ]]; then
+            echo "SKIP_GENERATED_CACHE=${SKIP_GENERATED_CACHE}", forcing failure.
+            exit 1
+          fi
+          [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1
 
       - name: Run codegen
         if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
