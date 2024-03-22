@@ -31,16 +31,16 @@ export class SocialInsuranceService {
 
   async getPayments(user: User): Promise<Payments | undefined> {
     const [payments, years] = await Promise.all([
-      this.socialInsuranceApi.getPayments(user).catch(handle404),
+      this.socialInsuranceApi.getPayments(user),
       this.socialInsuranceApi.getValidYearsForPaymentPlan(user),
     ])
 
-    if (!payments || !years) {
+    if (!payments) {
       return undefined
     }
 
     //if no data
-    if (!payments.nextPayment && !payments.previousPayment && !years) {
+    if (!payments.nextPayment && !payments.previousPayment) {
       return undefined
     }
 
