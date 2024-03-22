@@ -21,11 +21,11 @@ const SERVICE_PORTAL_SCOPES = [
   UserProfileScope.read,
   UserProfileScope.write,
   AuthScope.actorDelegations,
-  AuthScope.delegations, //
-  AuthScope.consents, //
+  AuthScope.delegations,
+  AuthScope.consents,
   NationalRegistryScope.individuals,
   EndorsementsScope.main,
-  DocumentsScope.main, //
+  DocumentsScope.main,
   EndorsementsScope.admin,
   ApiScope.assets,
   ApiScope.education,

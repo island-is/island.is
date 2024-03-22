@@ -253,7 +253,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       title: item.fyrirsogn,
       applicationDeadlineFrom: item.umsoknarfrestur_fra,
       applicationDeadlineTo: item.umsoknarfrestur_til,
-      // intro,
+      intro,
       fieldOfWork: item.starfssvid,
       institutionName: item.stofnunHeiti,
       institutionReferenceIdentifier:
@@ -265,10 +265,10 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       contacts,
       jobPercentage: item.starfshlutfall,
       applicationHref: item.weblink?.url,
-      // qualificationRequirements,
-      // tasksAndResponsibilities,
-      // description,
-      // salaryTerms,
+      qualificationRequirements,
+      tasksAndResponsibilities,
+      description,
+      salaryTerms,
       plainTextIntro: documentToPlainTextString(intro.document),
     }
   }

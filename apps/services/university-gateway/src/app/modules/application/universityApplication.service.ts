@@ -133,40 +133,40 @@ export class UniversityApplicationService {
 
     // Create application in University DB
     let applicationExternalId: string | undefined
-    // if (university.nationalId === UniversityNationalIds.REYKJAVIK_UNIVERSITY) {
-    //   try {
-    //     applicationExternalId =
-    //       await this.reykjavikUniversityClient.createApplication(applicationObj)
-    //   } catch (e) {
-    //     await this.applicationModel.destroy({
-    //       where: {
-    //         id: applicationDto.applicationId,
-    //       },
-    //     })
-    //     throw new Error(
-    //       `Failed to create application in Reykjavik University DB`,
-    //     )
-    //   }
-    // } else if (
-    //   university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
-    // ) {
-    //   // TODO need to perform for all Uglu universities
-    //   try {
-    //     const response = await this.universityOfIcelandClient.createApplication(
-    //       applicationObj,
-    //     )
-    //     applicationExternalId = response.id
-    //   } catch (e) {
-    //     await this.applicationModel.destroy({
-    //       where: {
-    //         id: applicationDto.applicationId,
-    //       },
-    //     })
-    //     throw new Error(
-    //       `Failed to create application in University of Iceland DB - ${e}`,
-    //     )
-    //   }
-    // }
+    if (university.nationalId === UniversityNationalIds.REYKJAVIK_UNIVERSITY) {
+      try {
+        applicationExternalId =
+          await this.reykjavikUniversityClient.createApplication(applicationObj)
+      } catch (e) {
+        await this.applicationModel.destroy({
+          where: {
+            id: applicationDto.applicationId,
+          },
+        })
+        throw new Error(
+          `Failed to create application in Reykjavik University DB`,
+        )
+      }
+    } else if (
+      university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
+    ) {
+      // TODO need to perform for all Uglu universities
+      try {
+        const response = await this.universityOfIcelandClient.createApplication(
+          applicationObj,
+        )
+        applicationExternalId = response.id
+      } catch (e) {
+        await this.applicationModel.destroy({
+          where: {
+            id: applicationDto.applicationId,
+          },
+        })
+        throw new Error(
+          `Failed to create application in University of Iceland DB - ${e}`,
+        )
+      }
+    }
 
     // Update the application externalId
     if (applicationExternalId) {

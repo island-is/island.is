@@ -453,13 +453,6 @@ export class Program extends ProgramBase {
   })
   allowThirdLevelQualification!: boolean
 
-  // @ApiProperty({
-  //   description: 'List of courses that belong to this program',
-  //   type: [ProgramCourse],
-  // })
-  // @HasMany(() => ProgramCourse)
-  // courses!: ProgramCourse[]
-
   @ApiProperty({
     description:
       'Extra application fields that should be displayed in the application for the program',
