@@ -51,6 +51,14 @@
         "runtimeArgs": ["--no-experimental-fetch", "--trace-deprecation"]
       }
     },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/services/university-gateway"],
+      "options": {
+        "jestConfig": "apps/services/university-gateway/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
@@ -64,13 +72,6 @@
       "options": {
         "buildTarget": "services-university-gateway:build",
         "args": ["--job", "worker"]
-      }
-    },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/services/university-gateway"
       }
     },
     "codegen/backend-schema": {
@@ -108,33 +109,34 @@
         "cwd": "apps/services/university-gateway"
       }
     },
-    "docker-express": {},
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn dev-services services-university-gateway",
-          "yarn nx run services-university-gateway:migrate",
-          "yarn nx run services-university-gateway:seed"
-        ],
-        "parallel": false
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start services-university-gateway"],
-        "parallel": true
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "dev-services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "nx run services-university-gateway:dev:services",
+            "nx run services-university-gateway:migrate",
+            "nx run services-university-gateway:seed"
+          ]
+        },
+        "run": {
+          "commands": ["nx run services-university-gateway:serve"],
+          "parallel": true
+        }
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/services/university-gateway"],
-      "options": {
-        "jestConfig": "apps/services/university-gateway/jest.config.ts",
-        "passWithNoTests": true
-      }
-    }
+    "docker-express": {}
   },
   "tags": ["scope:nest"]
 }
