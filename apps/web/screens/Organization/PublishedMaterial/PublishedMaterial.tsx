@@ -1,5 +1,9 @@
-import { useQuery } from '@apollo/client'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useDebounce } from 'react-use'
 import isEqual from 'lodash/isEqual'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
+
 import {
   Box,
   Button,
@@ -12,16 +16,16 @@ import {
   Inline,
   LoadingDots,
   NavigationItem,
-  StringOption as Option,
   Select,
+  StringOption as Option,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  FilterTag,
   getThemeConfig,
   OrganizationWrapper,
   Webreader,
-  FilterTag,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -40,9 +44,7 @@ import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { useRouter } from 'next/router'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useDebounce } from 'react-use'
+
 import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -52,8 +54,8 @@ import {
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
 import {
-  getFilterCategories,
   extractFilterTags,
+  getFilterCategories,
   getGenericTagGroupHierarchy,
   getInitialParameters,
 } from './utils'
@@ -116,6 +118,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
+
+  const pathWithoutQueryParams = router.asPath.split('?')[0]
+
   const { activeLocale } = useI18n()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -124,12 +129,12 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       title: primaryLink?.text,
       href: primaryLink?.url,
       active:
-        primaryLink?.url === router.asPath ||
-        childrenLinks.some((link) => link.url === router.asPath),
+        primaryLink?.url === pathWithoutQueryParams ||
+        childrenLinks.some((link) => link.url === pathWithoutQueryParams),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === router.asPath,
+        active: url === pathWithoutQueryParams,
       })),
     }),
   )
@@ -146,7 +151,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       input: {
         lang: activeLocale,
         organizationSlug,
-        tags: [],
+        tags: [] as string[],
         page: page,
         searchString: searchValue,
         size: ASSETS_PER_PAGE,
@@ -234,11 +239,12 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           input: {
             lang: activeLocale,
             organizationSlug,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
             tags: selectedCategories,
             page: 1,
-            searchString: searchValue,
+            searchString:
+              searchValue[searchValue.length - 1] === '´'
+                ? searchValue.slice(0, searchValue.length - 1)
+                : searchValue,
             size: ASSETS_PER_PAGE,
             tagGroups: getGenericTagGroupHierarchy(filterCategories),
             sort: selectedOrderOption,
