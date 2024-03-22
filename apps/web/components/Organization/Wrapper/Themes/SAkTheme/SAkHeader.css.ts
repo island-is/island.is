@@ -72,6 +72,7 @@ export const headerBgImageWrapper = style({
   maxWidth: 1440,
   margin: '0 auto',
   position: 'relative',
+  pointerEvents: 'none'
 })
 
 export const headerBgImage = style({
