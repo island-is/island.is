@@ -29,7 +29,7 @@ export const BaseInformation = ({
     <ReviewGroup
       isLast
       isEditable={editable}
-      editAction={() => goToScreen?.('applicantInfo')}
+      editAction={() => goToScreen?.('applicant')}
     >
       {applicantName !== '' && (
         <GridRow>

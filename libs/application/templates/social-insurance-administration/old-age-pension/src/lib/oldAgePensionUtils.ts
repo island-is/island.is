@@ -53,7 +53,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const applicantPhonenumber = getValueViaPath(
     answers,
-    'applicantInfo.phonenumber',
+    'applicant.phoneNumber',
   ) as string
 
   // If foreign residence is found then this is always true

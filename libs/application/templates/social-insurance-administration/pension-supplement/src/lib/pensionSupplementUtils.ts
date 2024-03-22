@@ -22,7 +22,7 @@ import { PensionSupplementAttachments } from '../types'
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
     answers,
-    'applicantInfo.phonenumber',
+    'applicant.phoneNumber',
   ) as string
 
   const applicationReason = getValueViaPath(

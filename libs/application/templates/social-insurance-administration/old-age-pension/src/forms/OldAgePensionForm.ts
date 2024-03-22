@@ -4,7 +4,6 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
-  buildPhoneField,
   buildRadioField,
   buildRepeater,
   buildSection,
@@ -22,7 +21,6 @@ import {
   NO,
   YES,
 } from '@island.is/application/types'
-import * as kennitala from 'kennitala'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -42,7 +40,10 @@ import {
   getYesNoOptions,
   getTaxOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
   BankAccountType,
@@ -70,112 +71,7 @@ export const OldAgePensionForm: Form = buildForm({
         buildSubSection({
           id: 'info',
           title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
-          children: [
-            buildMultiField({
-              id: 'applicantInfo',
-              title:
-                socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
-              description:
-                socialInsuranceAdministrationMessage.info
-                  .infoSubSectionDescription,
-              children: [
-                buildTextField({
-                  id: 'applicantInfo.name',
-                  title: socialInsuranceAdministrationMessage.confirm.name,
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const { applicantName } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return applicantName
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.ID',
-                  title:
-                    socialInsuranceAdministrationMessage.confirm.nationalId,
-                  format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) =>
-                    kennitala.format(application.applicant),
-                }),
-                buildTextField({
-                  id: 'applicantInfo.address',
-                  title:
-                    socialInsuranceAdministrationMessage.info.applicantAddress,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const { applicantAddress } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return applicantAddress
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.postcode',
-                  title:
-                    socialInsuranceAdministrationMessage.info
-                      .applicantPostalcode,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const { applicantPostalCode } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return applicantPostalCode
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.municipality',
-                  title:
-                    socialInsuranceAdministrationMessage.info
-                      .applicantMunicipality,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const { applicantLocality } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return applicantLocality
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.email',
-                  title:
-                    socialInsuranceAdministrationMessage.info.applicantEmail,
-                  width: 'half',
-                  variant: 'email',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const { userProfileEmail } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return userProfileEmail
-                  },
-                }),
-                buildPhoneField({
-                  id: 'applicantInfo.phonenumber',
-                  title:
-                    socialInsuranceAdministrationMessage.info
-                      .applicantPhonenumber,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const { userProfilePhoneNumber } =
-                      getApplicationExternalData(application.externalData)
-                    return userProfilePhoneNumber
-                  },
-                }),
-              ],
-            }),
-          ],
+          children: [applicantInformationMultiField({ emailRequired: false })],
         }),
         buildSubSection({
           id: 'payment',
