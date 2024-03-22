@@ -236,7 +236,7 @@ export const Cases: React.FC = () => {
               />
               <AnimatePresence initial={false}>
                 <Box marginBottom={[5, 5, 12]}>
-                  {/* {loading || isFiltering ? (
+                  {loading || isFiltering ? (
                     <TableSkeleton />
                   ) : casesAwaitingConfirmation.length > 0 ? (
                     <Table
@@ -343,7 +343,7 @@ export const Cases: React.FC = () => {
                         )}
                       />
                     </motion.div>
-                  )} */}
+                  )}
                 </Box>
               </AnimatePresence>
             </>
