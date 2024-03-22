@@ -42,11 +42,28 @@
         "buildTarget": "services-search-indexer:build"
       }
     },
-    "dev-services": {
+
+    "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose -f docker-compose.yml up -d --build",
-        "cwd": "apps/services/search-indexer/dev-services"
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "commands": ["docker-compose up -d --build"],
+          "cwd": "{projectRoot}/dev-services"
+        },
+        "init": {
+          "commands": ["nx run {projectName}:dev:services"]
+        },
+        "run": {
+          "commands": ["echo 'Nothing to run/start for {projectName}'"],
+          "parallel": true
+        }
       }
     },
     "migrate": {
