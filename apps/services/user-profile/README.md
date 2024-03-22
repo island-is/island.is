@@ -2,15 +2,19 @@
 
 ## About
 
-A service that is responsible for providing and storing User profile info. With the users National Registration id stores contact info and preferred locale. Additional responsibility is a verification process of email and mobile phone.
-The user-profile table is not prepopulated with everyone in Iceland, therefore due to multiple onboarding-flows the user-profile can be created under a variety of circumstances, you will see the findOrCreateUserProfile method a variety of places in this project's code.
+A service that is responsible for providing and storing User profile info. With
+the users National Registration id stores contact info and preferred locale.
+Additional responsibility is a verification process of email and mobile phone.
+The user-profile table is not pre-populated with everyone in Iceland, therefore
+due to multiple onboarding-flows the user-profile can be created under a
+variety of circumstances, you will see the `findOrCreateUserProfile` method a
+variety of places in this project's code.
 
-## Quickstart
+## Quick start
 
-Simply run these two commands:
+Simply run:
 
-```
-yarn dev-init services-user-profile
+```bash
 yarn dev services-user-profile
 ```
 
@@ -36,7 +40,7 @@ You can serve this service locally by running:
 yarn start services-user-profile
 ```
 
-Api open api specs will now be accessible at
+The OpenAPI specs will now be accessible at
 
 ```bash
 http://localhost:3366/
