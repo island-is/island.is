@@ -1,13 +1,12 @@
 import {
   Alert,
-  EmptyListSmall,
+  EmptyList,
   Heading,
   Link,
   LinkText,
   Skeleton,
   Typography,
 } from '@ui'
-import React from 'react'
 import { SafeAreaView, ScrollView, View, Image } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -48,25 +47,23 @@ const { getNavigationOptions, useNavigationOptions } =
 const SkeletonItem = () => {
   const theme = useTheme()
   return (
-    <View>
-      <Skeleton
-        active
-        backgroundColor={{
-          dark: theme.shades.dark.shade300,
-          light: theme.color.blue100,
-        }}
-        overlayColor={{
-          dark: theme.shades.dark.shade200,
-          light: theme.color.blue200,
-        }}
-        overlayOpacity={1}
-        height={104}
-        style={{
-          borderRadius: 16,
-          marginBottom: theme.spacing[2],
-        }}
-      />
-    </View>
+    <Skeleton
+      active
+      backgroundColor={{
+        dark: theme.shades.dark.shade300,
+        light: theme.color.blue100,
+      }}
+      overlayColor={{
+        dark: theme.shades.dark.shade200,
+        light: theme.color.blue200,
+      }}
+      overlayOpacity={1}
+      height={104}
+      style={{
+        borderRadius: 16,
+        marginBottom: theme.spacing[2],
+      }}
+    />
   )
 }
 
@@ -74,7 +71,8 @@ const Empty = () => {
   const theme = useTheme()
   return (
     <View style={{ marginBottom: theme.spacing[4] }}>
-      <EmptyListSmall
+      <EmptyList
+        small
         title={
           <FormattedMessage
             id="airDiscount.emptyListTitle"
@@ -185,7 +183,7 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
                 message={intl.formatMessage({
                   id: 'airDiscount.alertDescription',
                 })}
-                hasBorder={true}
+                hasBorder
               />
             </AlertWrapper>
 
@@ -197,29 +195,24 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
             </Typography>
             {data?.airDiscountSchemeDiscounts
               ?.filter(
-                (discount) =>
-                  !(
-                    discount.user.fund?.used === 0 &&
-                    discount.user.fund.credit === 0
-                  ),
+                ({ user }) =>
+                  !(user.fund?.used === 0 && user.fund.credit === 0),
               )
-              .map((discount) => {
-                return (
-                  <AirDiscountCard
-                    key={`loftbru-item-${discount.discountCode}`}
-                    name={discount.user.name}
-                    code={discount.discountCode}
-                    credit={discount.user.fund?.credit}
-                    text={intl.formatMessage(
-                      { id: 'airDiscount.remainingFares' },
-                      {
-                        remaining: discount.user.fund?.credit,
-                        total: discount.user.fund?.total,
-                      },
-                    )}
-                  />
-                )
-              })}
+              .map(({ discountCode, user }) => (
+                <AirDiscountCard
+                  key={`loftbru-item-${discountCode}`}
+                  name={user.name}
+                  code={discountCode}
+                  credit={user.fund?.credit}
+                  text={intl.formatMessage(
+                    { id: 'airDiscount.remainingFares' },
+                    {
+                      remaining: user.fund?.credit,
+                      total: user.fund?.total,
+                    },
+                  )}
+                />
+              ))}
           </View>
         )}
         {connectionCodes && connectionCodes.length > 0 && (

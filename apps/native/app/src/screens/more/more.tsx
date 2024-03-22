@@ -92,7 +92,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo(`/family`)}
             icon={
               <Image
-                source={familyIcon as any}
+                source={familyIcon}
                 style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
@@ -103,7 +103,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo(`/vehicles`)}
             icon={
               <Image
-                source={vehicleIcon as any}
+                source={vehicleIcon}
                 style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
@@ -114,7 +114,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo(`/assets`)}
             icon={
               <Image
-                source={assetsIcon as any}
+                source={assetsIcon}
                 style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
@@ -126,7 +126,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
               onPress={() => navigateTo(`/finance`)}
               icon={
                 <Image
-                  source={financeIcon as any}
+                  source={financeIcon}
                   style={{ width: 24, height: 24 }}
                   resizeMode="contain"
                 />
@@ -139,7 +139,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
               onPress={() => navigateTo(`/air-discount`)}
               icon={
                 <Image
-                  source={airplaneIcon as any}
+                  source={airplaneIcon}
                   style={{ width: 24, height: 24 }}
                   resizeMode="contain"
                 />

@@ -58,24 +58,24 @@ interface HeadingProps {
   title: React.ReactNode
   description: React.ReactNode
   image: React.ReactNode
+  small?: boolean
 }
 
-export function EmptyList({ title, description, image }: HeadingProps) {
+export function EmptyList({ title, description, image, small }: HeadingProps) {
+  if (small) {
+    return (
+      <HostWithBorder>
+        <Title>{title}</Title>
+        <Description>{description}</Description>
+        <View>{image}</View>
+      </HostWithBorder>
+    )
+  }
   return (
     <Host>
       <ImageWrap>{image}</ImageWrap>
       <Title>{title}</Title>
       <Description>{description}</Description>
     </Host>
-  )
-}
-
-export function EmptyListSmall({ title, description, image }: HeadingProps) {
-  return (
-    <HostWithBorder>
-      <Title>{title}</Title>
-      <Description>{description}</Description>
-      <View>{image}</View>
-    </HostWithBorder>
   )
 }
