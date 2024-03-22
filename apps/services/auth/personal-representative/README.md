@@ -22,7 +22,7 @@ personal representative and the represented person.
 ### Example of connections
 
 | **Personal representative** | **Represented person** | **Rights**             |
-| --------------------------- | ---------------------- | -----------------------|
+| --------------------------- | ---------------------- | ---------------------- |
 | 1122334459                  | 1223455569             | health-data,           |
 |                             |                        | personal-data,         |
 |                             |                        | limited-financial-data |
