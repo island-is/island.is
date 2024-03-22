@@ -810,10 +810,12 @@ const getActiveNavigationItemTitle = (
   navigationItems: NavigationItem[],
   clientUrl: string,
 ) => {
-  const clientUrlWithoutHashOrQueryParams = clientUrl.split('?')[0].split('#')[0]
+  const clientUrlWithoutHashOrQueryParams = clientUrl
+    .split('?')[0]
+    .split('#')[0]
 
   for (const item of navigationItems) {
-    if ( clientUrlWithoutHashOrQueryParams === item.href ) {
+    if (clientUrlWithoutHashOrQueryParams === item.href) {
       return item.title
     }
     for (const childItem of item.items ?? []) {
