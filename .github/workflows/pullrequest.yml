@@ -574,7 +574,7 @@ jobs:
   success:
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ vars.EC2_IMAGE }}
     if: always()
     needs:
       - prepare
@@ -585,9 +585,6 @@ jobs:
       - formatting
       - e2e
       - build
-    runs-on: ec2-runners
-    container:
-      image: ${{ vars.EC2_IMAGE }}
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
