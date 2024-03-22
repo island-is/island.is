@@ -158,7 +158,7 @@ jobs:
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
+        if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
