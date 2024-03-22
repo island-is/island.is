@@ -5,7 +5,7 @@
 This app is for users to mark their car for recycling and getting info about
 where to leave the car.
 
-Recycling companies that receives the physical car can login to deregister it.
+Recycling companies that receives the physical car can login to de-register it.
 
 The recycling fund can then see a list of recycled cars.
 
@@ -44,6 +44,16 @@ export NEXTAUTH_URL=http://localhost:4200/app/skilavottord/api/auth
 
 ### Web
 
+#### Quick start (frontend)
+
+Simply run
+
+```bash
+yarn dev skilavottord-ws
+```
+
+#### Manually (frontend)
+
 To run locally:
 
 ```bash
@@ -52,22 +62,27 @@ yarn start skilavottord-web
 
 Navigate to:
 
-- [localhost:4200/app/skilavottord/deregister-vehicle](http://localhost:4200/app/skilavottord/deregister-vehicle)
-- [localhost:4200/app/skilavottord/recycled-vehicles](http://localhost:4200/app/skilavottord/recycled-vehicles)
+- [Vehicle de-registration](http://localhost:4200/app/skilavottord/deregister-vehicle)
+- [Vehicle registration](http://localhost:4200/app/skilavottord/recycled-vehicles)
 
 ### Backend
 
+#### Quick start (backend)
+
+Simply run
+
+```bash
+yarn dev skilavottord-ws
+```
+
+#### Manually (backend)
+
 First, make sure you have docker.
 
-Then from the root folder go to
+Then from the root folder run:
 
 ```bash
 cd apps/skilavottord/ws
-```
-
-and run
-
-```bash
 docker-compose up
 ```
 
@@ -75,13 +90,7 @@ Then run migrations and seed the database:
 
 ```bash
 yarn nx run skilavottord-ws:migrate/undo
-```
-
-```bash
 yarn nx run skilavottord-ws:migrate
-```
-
-```bash
 yarn nx run skilavottord-ws:seed:all
 ```
 
@@ -93,27 +102,26 @@ yarn start skilavottord-ws
 
 ### GraphQL playground
 
-Visit
-[localhost:3333/app/skilavottord/api/graphql](http://localhost:3333/app/skilavottord/api/graphql)
+Visit [the GraphQL playground](http://localhost:3333/app/skilavottord/api/graphql)
 
 ## Application
 
 ### Company frontend
 
 URL:
-[https://island.is/app/skilavottord/deregister-vehicle](https://island.is/app/skilavottord/deregister-vehicle)
+[Vehicle de-registration](https://island.is/app/skilavottord/deregister-vehicle)
 
 If users are registered as an employee of a recycling company, they can log in
-here to deregister vehicles that citizens have marked for recycling.
+here to de-register vehicles that citizens have marked for recycling.
 
 ### Fund frontend
 
 URL:
-[https://island.is/app/skilavottord/recycled-vehicles](https://island.is/app/skilavottord/recycled-vehicles)
+[Vehicle registration](https://island.is/app/skilavottord/recycled-vehicles)
 
-If users are registered as an employee of Fjársýsla ríkisins, they can log in
+If users are registered as an employee of national treasury, they can log in
 here to see a list of all vehicles that has completed the process of being
-deregistered and recycled.
+de-registered and recycled.
 
 This page also lists all available recycling companies.
 
