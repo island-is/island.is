@@ -94,7 +94,7 @@
       "configurations": {
         "services": {
           "command": "docker-compose up -d",
-          "cwd": "apps/services/documents"
+          "cwd": "{projectRoot}"
         },
         "init": {
           "commands": ["nx run {projectName}:dev:services"]

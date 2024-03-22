@@ -42,7 +42,33 @@
         "buildTarget": "services-search-indexer:build"
       }
     },
-
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateElastic.ts --run-migrations",
+          "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateKibana.ts --run-migrations"
+        ],
+        "cwd": "{projectRoot}",
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/search-indexer/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/services/search-indexer/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/services/search-indexer"]
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
@@ -65,33 +91,6 @@
           "parallel": true
         }
       }
-    },
-    "migrate": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateElastic.ts --run-migrations",
-          "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateKibana.ts --run-migrations"
-        ],
-        "cwd": "apps/services/search-indexer",
-        "parallel": false
-      }
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/search-indexer/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "apps/services/search-indexer/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "outputs": ["{workspaceRoot}/coverage/apps/services/search-indexer"]
     },
     "docker-express": {}
   },
