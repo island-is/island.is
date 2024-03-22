@@ -56,7 +56,7 @@ Declaring a new route for the service portal involves a few steps:
 - Declare a path for the route
 - Declare a route in the master navigation
 - Implement the route based on the user's authorization scope and return it so
-it gets rendered into the navigation.
+  it gets rendered into the navigation.
 
 #### Declaring a path for a library
 

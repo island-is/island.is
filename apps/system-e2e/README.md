@@ -256,7 +256,7 @@ Now that you are set up. You need to run a couple of commands.
     and `api`. Replace with the services you want to test.
 
 - In the output you will see a docker output it will look something like this:
-  
+
   ```bash
   docker run -it --rm -p ...
   ```
