@@ -89,18 +89,26 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/portals/admin/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["yarn get-secrets portals-admin"],
-        "parallel": false
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start portals-admin"],
-        "parallel": true
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "init": {
+          "commands": ["yarn get-secrets {projectName}"]
+        },
+        "run": {
+          "commands": [
+            "./scripts/run-xroad-proxy.sh",
+            "nx run {projectName}:serve"
+          ],
+          "parallel": true
+        }
       }
     },
     "docker-static": {}
