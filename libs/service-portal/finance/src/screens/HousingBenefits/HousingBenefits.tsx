@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   DatePicker,
@@ -10,15 +10,37 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { FootNote, m } from '@island.is/service-portal/core'
 
-import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
+import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
+import HousingBenefitsTable, {
+  ITEMS_ON_PAGE,
+} from '../../components/HousingBenefitPayments/HousingBenefitsTable'
+
+const DEFAULT_FROM_DATE = new Date('2017-7-13 14:5:24')
+const DEFAULT_TO_DATE = new Date('2024-12-13 14:5:24')
 
 const FinanceHousingBenefits = () => {
   useNamespaces('sp.finance-housing-benefits')
 
-  const [page, setPage] = useState(1)
-  const [fromDate, setFromDate] = useState<Date>()
-  const [toDate, setToDate] = useState<Date>()
+  const [fromDate, setFromDate] = useState<Date>(DEFAULT_FROM_DATE)
+  const [toDate, setToDate] = useState<Date>(DEFAULT_TO_DATE)
   const { formatMessage } = useLocale()
+
+  const [loadHousingPayments, { data, loading, called, error }] =
+    useGetHousingBenefitsListLazyQuery()
+
+  useEffect(() => {
+    if (toDate && fromDate) {
+      loadHousingPayments({
+        variables: {
+          input: {
+            dateFrom: fromDate.toISOString(),
+            dateTo: toDate.toISOString(),
+            limit: ITEMS_ON_PAGE,
+          },
+        },
+      })
+    }
+  }, [toDate, fromDate])
 
   function clearAllFilters() {
     setFromDate(new Date())
@@ -60,7 +82,9 @@ const FinanceHousingBenefits = () => {
           </GridRow>
         </Hidden>
         <Box marginTop={3}>
-          <FinanceTransactionsTable recordsArray={[]} />
+          {data?.housingBenefitPayments && (
+            <HousingBenefitsTable payments={data.housingBenefitPayments} />
+          )}
         </Box>
       </Stack>
       <FootNote serviceProviderSlug={'hms'} />

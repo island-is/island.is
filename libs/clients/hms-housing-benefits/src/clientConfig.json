@@ -9,36 +9,49 @@
     "/api/v{version}/Payment/paymenthistory": {
       "post": {
         "tags": ["Payment"],
-        "summary": "Retrieves information about payment history for all payments for logged in individual in the Husbot system.",
+        "summary": "Retrieves information about payment history for all payments for logged in individual in the Husbot system with pagination.",
         "parameters": [
           {
             "name": "dateFrom",
             "in": "query",
             "description": "Date from which the payment history is retrieved",
             "style": "form",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "description": "Date to which the payment history is retrieved",
             "style": "form",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "The value of `startCursor` from the previous response pageInfo to query the previous page of `limit` number of data items.",
+            "style": "form",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "The value of `endCursor` from the response to query the next page of `limit` number of data items.",
+            "style": "form",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limits the number of results in a request.",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32", "default": 10 }
           },
           {
             "name": "version",
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -47,26 +60,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaymentsReturnModel"
-                  }
+                  "$ref": "#/components/schemas/PaymentsReturnModelPaginationResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaymentsReturnModel"
-                  }
+                  "$ref": "#/components/schemas/PaymentsReturnModelPaginationResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaymentsReturnModel"
-                  }
+                  "$ref": "#/components/schemas/PaymentsReturnModelPaginationResponse"
                 }
               }
             }
@@ -75,19 +79,13 @@
             "description": "No Content",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/NoContent"
-                }
+                "schema": { "$ref": "#/components/schemas/NoContent" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NoContent"
-                }
+                "schema": { "$ref": "#/components/schemas/NoContent" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NoContent"
-                }
+                "schema": { "$ref": "#/components/schemas/NoContent" }
               }
             }
           },
@@ -95,19 +93,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotFound"
-                }
+                "schema": { "$ref": "#/components/schemas/NotFound" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotFound"
-                }
+                "schema": { "$ref": "#/components/schemas/NotFound" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotFound"
-                }
+                "schema": { "$ref": "#/components/schemas/NotFound" }
               }
             }
           },
@@ -115,19 +107,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
+                "schema": { "$ref": "#/components/schemas/BadRequest" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
+                "schema": { "$ref": "#/components/schemas/BadRequest" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
+                "schema": { "$ref": "#/components/schemas/BadRequest" }
               }
             }
           }
@@ -167,6 +153,16 @@
             "format": "int32",
             "readOnly": true
           }
+        },
+        "additionalProperties": false
+      },
+      "PageInfo": {
+        "type": "object",
+        "properties": {
+          "hasPreviousPage": { "type": "boolean" },
+          "hasNextPage": { "type": "boolean" },
+          "startCursor": { "type": "string", "nullable": true },
+          "endCursor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -291,6 +287,19 @@
         },
         "additionalProperties": false,
         "description": "Payment Number from Housing benefit System."
+      },
+      "PaymentsReturnModelPaginationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PaymentsReturnModel" },
+            "nullable": true
+          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -302,9 +311,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

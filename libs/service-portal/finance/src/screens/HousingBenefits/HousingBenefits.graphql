@@ -1,0 +1,34 @@
+query GetHousingBenefitsList($input: HousingBenefitPaymentsInput!) {
+  housingBenefitPayments(input: $input) {
+    data {
+      nr
+      nationalId
+      name
+      address
+      noDays
+      dateCalculation
+      month
+      dateTransfer
+      transactionType
+      calculationType
+      paymentActual
+      bankAccountMerged
+      paidOfDebt
+      paymentBeforeDebt
+      benefit
+      reductionIncome
+      reductionAssets
+      reductionHousingCost
+      totalIncome
+      remainDebt
+      paymentOrigin
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}

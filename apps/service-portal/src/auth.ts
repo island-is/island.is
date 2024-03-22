@@ -5,6 +5,7 @@ import {
   AuthScope,
   DocumentsScope,
   EndorsementsScope,
+  HmsScope,
   NationalRegistryScope,
   NotificationsScope,
   UserProfileScope,
@@ -53,6 +54,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.signatureCollection,
   NotificationsScope.read,
   NotificationsScope.write,
+  HmsScope.housingBenefits, // TODO: Remove from here.
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'
