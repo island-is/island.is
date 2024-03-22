@@ -1,20 +1,14 @@
 # Web
 
-## Quickstart
+## Quick start
 
-Ensure docker is running, then run the following when running for the first time:
-
-```bash
-yarn dev-init web
-```
-
-To start the app:
+Ensure docker is running, then run the following:
 
 ```bash
-yarn dev web
+yarn dev api
 ```
 
-These commands are just shorthands for the setup described below.
+This command is simply a shorthand for the setup described below.
 
 ## About
 
@@ -44,26 +38,26 @@ The recommended approach to running Elasticsearch on your machine depends on wha
 
 If you want to work on the `cms` or `content-search` domains such as add models or alter Elasticsearch queries it's recommended you run Elasticsearch locally you can find further instructions on how to achieve this under [search-indexer dev-services section.](https://docs.devland.is/apps/services/search-indexer/dev-services)
 
-If you just want to run the API to have access to real data you can run the Elasticsearch proxy server, this gives you access to the elasticsearch instance of the dev environment (this is prefered since the proxy uses less resources than the local instance of Elasticsearch).
+If you just want to run the API to have access to real data you can run the Elasticsearch proxy server, this gives you access to the Elasticsearch instance of the dev environment (this is preferred since the proxy uses less resources than the local instance of Elasticsearch).
 
-To access elasticsearch instance from dev environment:
+To access Elasticsearch instance from dev environment:
 
-1. Login here https://island-is.awsapps.com/start#/ (Contact devops if you need access)
-2. Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
-3. Paste env variables into terminal
+1. Login [here](https://island-is.awsapps.com/start#/) (Contact DevOps if you need access)
+2. Copy environment variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
+3. Paste environment variables into terminal
 4. Run `./scripts/run-es-proxy.sh` from island.is root
 5. You have success if you see `Forwarding from 0.0.0.0:9200 -> 9200` in terminal
 
 Caveats:
 
-- **You need to have docker/podman installed and running**
-- **You have to refresh your AWS env variables every 8 hours**
+- **You need to have `docker`/`podman` installed and running**
+- **You have to refresh your AWS environment variables every 8 hours**
 
 ```bash
 yarn start api
 ```
 
-You must have env variables for the `cms` and `content-search` domains for the website to work as expected.
+You must have environment variables for the `cms` and `content-search` domains for the website to work as expected.
 
 These are:
 
