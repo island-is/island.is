@@ -68,13 +68,6 @@
         "passWithNoTests": true
       }
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/services/regulations-admin-backend"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -117,22 +110,38 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/regulations-admin-backend/src/app/messages/**/*.ts'"
       }
     },
-    "dev-init": {
+    "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn nx run regulations-admin-backend:migrate",
-          "yarn nx run regulations-admin-backend:seed/undo",
-          "yarn nx run regulations-admin-backend:seed"
-        ],
-        "parallel": false
+        "command": "nx run {projectName}:dev:services"
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start regulations-admin-backend"],
-        "parallel": true
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "nx run {projectName}:dev:services",
+            "nx run {projectName}:migrate",
+            "nx run {projectName}:seed/undo",
+            "nx run {projectName}:seed"
+          ]
+        },
+        "run": {
+          "commands": ["nx serve {projectName}"],
+          "parallel": true
+        }
       }
     }
   },
