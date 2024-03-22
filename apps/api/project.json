@@ -67,8 +67,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "nx run {projectName}:dev:services",
-        "cwd": "{projectRoot}"
+        "command": "nx run {projectName}:dev:services"
       }
     },
     "dev": {
