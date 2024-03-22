@@ -23,6 +23,13 @@
         "{workspaceRoot}/coverage/libs/api/domains/endorsement-system"
       ]
     },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
@@ -47,13 +54,6 @@
           "parallel": true
         }
       }
-    },
-    "codegen/backend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      },
-      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "implicitDependencies": ["services-endorsements-api"],
