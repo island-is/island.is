@@ -10,7 +10,8 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { CaseListEntry, CaseState } from '../../graphql/schema'
+import { CaseListEntry, CaseState, CaseTransition } from '../../graphql/schema'
+import { useCasesQuery } from '../../routes/Shared/Cases/cases.generated'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
@@ -40,6 +41,7 @@ interface TableProps {
   contextMenu?: {
     menuItems: MenuItems
   }
+  onDeleteCase?: (theCase: CaseListEntry) => void
 }
 
 export const useTable = () => {
@@ -75,7 +77,7 @@ export const useTable = () => {
 }
 
 const Table: React.FC<TableProps> = (props) => {
-  const { thead, data, columns, contextMenu } = props
+  const { thead, data, columns, contextMenu, onDeleteCase } = props
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
   const { openCaseInNewTabMenuItem, deleteCaseMenuItem } = useContextMenu()
@@ -198,8 +200,9 @@ const Table: React.FC<TableProps> = (props) => {
                       items={contextMenu.menuItems.map((item) =>
                         item === PrebuiltMenuItems.openCaseInNewTab
                           ? openCaseInNewTabMenuItem(row.id)
-                          : item === PrebuiltMenuItems.deleteCase
-                          ? deleteCaseMenuItem(row)
+                          : item === PrebuiltMenuItems.deleteCase &&
+                            onDeleteCase
+                          ? deleteCaseMenuItem(row, onDeleteCase)
                           : (item as ContextMenuItem),
                       )}
                       disclosure={

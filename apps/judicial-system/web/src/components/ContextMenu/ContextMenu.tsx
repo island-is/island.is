@@ -13,10 +13,10 @@ import {
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
+import { CaseListEntry } from '../../graphql/schema'
 import { useCaseList } from '../../utils/hooks'
 import { contextMenu as strings } from './ContextMenu.strings'
 import * as styles from './ContextMenu.css'
-import { CaseListEntry } from '../../graphql/schema'
 
 export interface ContextMenuItem {
   href?: string
@@ -50,7 +50,7 @@ interface ContextMenuProps {
 }
 
 export const useContextMenu = () => {
-  const { handleOpenCase, handleDeleteCase } = useCaseList()
+  const { handleOpenCase } = useCaseList()
   const { formatMessage } = useIntl()
 
   const openCaseInNewTabMenuItem = (id: string): ContextMenuItem => {
@@ -61,7 +61,10 @@ export const useContextMenu = () => {
     }
   }
 
-  const deleteCaseMenuItem = (caseToDelete: CaseListEntry): ContextMenuItem => {
+  const deleteCaseMenuItem = (
+    caseToDelete: CaseListEntry,
+    handleDeleteCase: (theCase: CaseListEntry) => void,
+  ): ContextMenuItem => {
     return {
       title: formatMessage(strings.deleteCase),
       onClick: () => handleDeleteCase(caseToDelete),

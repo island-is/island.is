@@ -25,7 +25,6 @@ import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
   CaseAppealState,
-  CaseListEntry,
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -34,7 +33,6 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { findFirstInvalidStep } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
 import useCase from '../useCase'
-import { useCasesQuery } from '@island.is/judicial-system-web/src/routes/Shared/Cases/cases.generated'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
@@ -46,13 +44,8 @@ const useCaseList = () => {
 
   const { user, limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase, isSendingNotification } =
-    useCase()
+  const { isTransitioningCase, isSendingNotification } = useCase()
   const router = useRouter()
-  const { refetch } = useCasesQuery({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
 
   const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
     fetchPolicy: 'no-cache',
@@ -194,19 +187,6 @@ const useCaseList = () => {
     ],
   )
 
-  const handleDeleteCase = async (caseToDelete: CaseListEntry) => {
-    if (
-      caseToDelete.state === CaseState.NEW ||
-      caseToDelete.state === CaseState.DRAFT ||
-      caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED ||
-      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
-    ) {
-      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
-      refetch()
-    }
-  }
-
   const LoadingIndicator = () => {
     return (
       <motion.div
@@ -225,7 +205,6 @@ const useCaseList = () => {
     showLoading: clickedCase[1],
     handleOpenCase,
     LoadingIndicator,
-    handleDeleteCase,
   }
 }
 

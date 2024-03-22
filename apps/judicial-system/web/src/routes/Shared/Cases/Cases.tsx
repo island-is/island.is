@@ -270,7 +270,10 @@ export const Cases: React.FC = () => {
                       ]}
                       data={casesAwaitingConfirmation}
                       contextMenu={{
-                        menuItems: [PrebuiltMenuItems.openCaseInNewTab],
+                        menuItems: [
+                          PrebuiltMenuItems.openCaseInNewTab,
+                          PrebuiltMenuItems.deleteCase,
+                        ],
                       }}
                       columns={[
                         {
@@ -315,16 +318,9 @@ export const Cases: React.FC = () => {
                           ),
                         },
                       ]}
+                      onDeleteCase={deleteCase}
                     />
                   ) : (
-                    // <ActiveCases
-                    //   cases={casesAwaitingConfirmation}
-                    //   isDeletingCase={
-                    //     isTransitioningCase || isSendingNotification
-                    //   }
-                    //   onDeleteCase={deleteCase}
-                    //   caseState={CaseState.WAITING_FOR_CONFIRMATION}
-                    // />
                     <motion.div
                       className={styles.infoContainer}
                       initial={{ opacity: 0 }}
