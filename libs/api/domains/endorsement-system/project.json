@@ -23,24 +23,29 @@
         "{workspaceRoot}/coverage/libs/api/domains/endorsement-system"
       ]
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx run services-endorsements-api:dev-init $NX_OPTIONS",
-          "yarn nx run api-domains-endorsement-system:codegen/backend-client $NX_OPTIONS"
-        ],
-        "parallel": false
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn nx run services-endorsements-api:dev $NX_OPTIONS &",
-          "yarn start api $NX_OPTIONS &"
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
         ],
-        "parallel": true
+        "parallel": false
+      },
+      "configurations": {
+        "init": {
+          "commands": [
+            "nx run services-endorsements-api:dev:init",
+            "nx run api-domains-endorsement-system:codegen/backend-client"
+          ]
+        },
+        "run": {
+          "commands": [
+            "nx run services-endorsements-api:dev",
+            "nx run api:dev"
+          ],
+          "parallel": true
+        }
       }
     },
     "codegen/backend-client": {
