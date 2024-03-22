@@ -200,14 +200,14 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     personalAllowanceUsage,
     taxLevel,
   } = getASFTEApplicationAnswers(application.answers)
-  const { bankInfo, email } = getASFTEApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getASFTEApplicationExternalData(
     application.externalData,
   )
 
   const additionalSupportForTheElderlyDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {

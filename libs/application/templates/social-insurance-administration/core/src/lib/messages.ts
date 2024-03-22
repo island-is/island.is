@@ -50,8 +50,8 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     contactInfoTitle: {
       id: 'sia.application:prerequisites.contact.info.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
+      defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+      description: 'My information on My pages Ísland.is',
     },
     skraInformationTitle: {
       id: 'sia.application:prerequisites.national.registry.title',
@@ -61,9 +61,9 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     contactInfoDescription: {
       id: 'sia.application:prerequisites.contact.info.description',
       defaultMessage:
-        'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður hjá Ísland.is.',
+        'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
       description:
-        'Information regarding email address and phone number is retrieved from My Pages at Island.is.',
+        'Information about your telephone number and email address to facilitate the application process.',
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.title',
@@ -111,24 +111,12 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Upplýsingar um þig',
       description: 'Information about you',
     },
-    subSectionTitle: {
-      id: 'sia.application:info.sub.section.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
-    },
     infoSubSectionDescription: {
       id: 'sia.application:applicant.info.sub.section.description#markdown',
       defaultMessage:
         'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður TR. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
       description:
         'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
-    },
-    subSectionDescription: {
-      id: 'sia.application:info.sub.section.description',
-      defaultMessage:
-        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
-      description:
-        'Email address and phone number is retrieved from the Social Insurance Administration. If the phone number is incorrect or missing you can register the correct one below.',
     },
     applicantEmail: {
       id: 'sia.application:info.applicant.email',
