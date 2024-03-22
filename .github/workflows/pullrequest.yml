@@ -90,7 +90,7 @@ jobs:
         id: calculate_generated_files_cache_key
         run: |
           export HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated-02
+          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
 
@@ -152,6 +152,7 @@ jobs:
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
+          force-cache-save: ${{ env.NX_AFFECTED_ALL }}
 
       - name: Check generated files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
