@@ -63,8 +63,6 @@ export const getServerSidePropsWrapper: (
 
         const clientLocale = getLocaleFromPath(path)
 
-
-
         const apolloClient = initApollo({}, clientLocale, ctx)
 
         path = path
@@ -114,11 +112,19 @@ export const getServerSidePropsWrapper: (
               },
             }
           } else if (page) {
-            let url = linkResolver(page.type as LinkType, [page.slug], clientLocale).href
-            
+            let url = linkResolver(
+              page.type as LinkType,
+              [page.slug],
+              clientLocale,
+            ).href
+
             if (!url) {
               // Fallback to using default language if page isn't present in another language
-              url = linkResolver(page.type as LinkType, [page.slug], defaultLanguage).href
+              url = linkResolver(
+                page.type as LinkType,
+                [page.slug],
+                defaultLanguage,
+              ).href
             }
 
             return {
