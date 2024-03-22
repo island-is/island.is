@@ -12,7 +12,6 @@ export const CalculateTotalBusiness: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
   const { answers } = application
-  console.log('answers', answers)
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
