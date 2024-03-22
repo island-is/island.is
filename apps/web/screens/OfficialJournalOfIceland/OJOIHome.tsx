@@ -3,6 +3,10 @@ import { Locale } from 'locale'
 import NextLink from 'next/link'
 
 import {
+  MinistryOfJusticeAdvertMainCategory,
+  QueryMinistryOfJusticeMainCategoriesArgs,
+} from '@island.is/api/schema'
+import {
   ArrowLink,
   Box,
   Breadcrumbs,
@@ -31,7 +35,6 @@ import {
   OJOIHomeIntro,
   OJOIWrapper,
   searchUrl,
-  yfirflokkurOptions,
 } from '../../components/OfficialJournalOfIceland'
 import { Screen } from '../../types'
 import {
@@ -39,8 +42,10 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
+import { MAIN_CATEGORIES_QUERY } from '../queries/OfficialJournalOfIceland'
 
 const OJOIHomePage: Screen<OJOIHomeProps> = ({
+  mainCategories,
   organizationPage,
   organization,
   namespace,
@@ -146,7 +151,7 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
             </Box>
 
             <GridRow>
-              {yfirflokkurOptions.map((y, i) => (
+              {mainCategories?.map((y, i) => (
                 <GridColumn
                   key={i}
                   span={['1/1', '1/2', '1/2', '1/3', '1/4']}
@@ -154,9 +159,9 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
                   paddingBottom={4}
                 >
                   <CategoryCard
-                    href={`${categoriesUrl}?yfirflokkur=${y.value}`}
-                    heading={y.label}
-                    text={y.cardDescription ?? ''}
+                    href={`${categoriesUrl}?yfirflokkur=${y.slug}`}
+                    heading={y.title}
+                    text={y.description ?? ''}
                   />
                 </GridColumn>
               ))}
@@ -179,6 +184,7 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
 }
 
 interface OJOIHomeProps {
+  mainCategories?: MinistryOfJusticeAdvertMainCategory[]
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -186,6 +192,7 @@ interface OJOIHomeProps {
 }
 
 const OJOIHome: Screen<OJOIHomeProps> = ({
+  mainCategories,
   organizationPage,
   organization,
   namespace,
@@ -193,6 +200,7 @@ const OJOIHome: Screen<OJOIHomeProps> = ({
 }) => {
   return (
     <OJOIHomePage
+      mainCategories={mainCategories}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -206,6 +214,9 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
+      data: { ministryOfJusticeMainCategories },
+    },
+    {
       data: { getOrganizationPage },
     },
     {
@@ -213,6 +224,14 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<Query, QueryMinistryOfJusticeMainCategoriesArgs>({
+      query: MAIN_CATEGORIES_QUERY,
+      variables: {
+        params: {
+          search: '',
+        },
+      },
+    }),
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -253,6 +272,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
+    mainCategories: ministryOfJusticeMainCategories.mainCategories,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

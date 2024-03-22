@@ -1,5 +1,7 @@
 import {
+  MinistryOfJusticeAdvertCategory,
   MinistryOfJusticeAdvertEntity,
+  MinistryOfJusticeAdvertMainCategory,
   MinistryOfJusticeAdvertType,
 } from '@island.is/api/schema'
 import { StringOption as Option } from '@island.is/island-ui/core'
@@ -40,14 +42,22 @@ export const findValueOption = (
   return (value && options.find((opt) => opt.value === value)) || null
 }
 
-type EntityOption = Option & {
+export type EntityOption = Option & {
   mainCategory?: string
   department?: string
 }
 
 export const mapEntityToOptions = (
-  entities: Array<MinistryOfJusticeAdvertEntity | MinistryOfJusticeAdvertType>,
-): Array<Option> => {
+  entities?: Array<
+    | MinistryOfJusticeAdvertEntity
+    | MinistryOfJusticeAdvertType
+    | MinistryOfJusticeAdvertCategory
+    | MinistryOfJusticeAdvertMainCategory
+  >,
+): EntityOption[] => {
+  if (!entities) {
+    return []
+  }
   return entities.map((e) => {
     return {
       label: e.title,
@@ -56,86 +66,8 @@ export const mapEntityToOptions = (
   })
 }
 
-export const sortCategories = (cats: typeof malaflokkurOptions) => {
+export const sortCategories = (cats: EntityOption[]) => {
   return cats.sort((a, b) => {
-    return sortAlpha('label')(a, b)
+    return sortAlpha('title')(a, b)
   })
 }
-
-export const malaflokkurOptions: Array<EntityOption> = [
-  {
-    label: 'Almannavarnir',
-    value: 'almannavarnir',
-    mainCategory: 'domstolar',
-    department: 'a-deild',
-  },
-  {
-    label: 'Sakamál',
-    value: 'sakamal',
-    mainCategory: 'domstolar',
-    department: 'a-deild',
-  },
-  {
-    label: 'Auðlindir',
-    value: 'audlindir',
-    mainCategory: 'sjavarutvegur',
-    department: 'b-deild',
-  },
-  {
-    label: 'Dýravernd',
-    value: 'dyravernd',
-    mainCategory: 'landbunadur',
-    department: 'b-deild',
-  },
-  {
-    label: 'Erfðamál',
-    value: 'erfdamal',
-    mainCategory: 'malefni-barna',
-    department: 'a-deild',
-  },
-  {
-    label: 'Atvinnumál',
-    value: 'atvinnumal',
-    mainCategory: 'landbunadur',
-    department: 'b-deild',
-  },
-]
-
-type YfirflokkurOption = Option & {
-  cardDescription: string
-}
-
-export const yfirflokkurOptions: Array<YfirflokkurOption> = [
-  {
-    label: 'Dómstólar og réttarfar',
-    value: 'domstolar',
-    cardDescription:
-      'Hæstiréttur, lögmenn, lögreglumál, lögfræði, kjaradómur, refsilög, hegningarög, dómsmál og landsdómur.',
-  },
-  {
-    label: 'Sjávarútvegur, fiskveiðar og fiskirækt',
-    value: 'sjavarutvegur',
-    cardDescription: 'Sjávarútvegur, Veiði - friðun, fiskeldi og hafnarmál.',
-  },
-  {
-    label: 'Landbúnaður',
-    value: 'landbunadur',
-    cardDescription: 'Fóður, hross, hundar, dýravernd og landbúnaður.',
-  },
-  {
-    label: 'Umhverfismál',
-    value: 'umhverfismal',
-    cardDescription:
-      'Þjóðgarðar, þjóðlendur, umhverfismál, þingvellir, náttúrurannsóknir og náttúrurvernd.',
-  },
-  {
-    label: 'Málefni barna',
-    value: 'malefni-barna',
-    cardDescription: 'Barnavernd.',
-  },
-  {
-    label: 'Hugverka- og einkaréttindi',
-    value: 'hugverkarettindi',
-    cardDescription: 'Höfundarréttur, vörumerki, persónuvernd og einkaleyfi.',
-  },
-]

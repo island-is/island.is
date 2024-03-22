@@ -17,16 +17,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
-import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  MinistryOfJusticeAdvertCategory,
   MinistryOfJusticeAdvertEntity,
+  MinistryOfJusticeAdvertMainCategory,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryMinistryOfJusticeCategoriesArgs,
   QueryMinistryOfJusticeDepartmentsArgs,
+  QueryMinistryOfJusticeMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -37,15 +39,14 @@ import {
   baseUrl,
   categoriesUrl,
   emptyOption,
+  EntityOption,
   findValueOption,
-  malaflokkurOptions,
   mapEntityToOptions,
   OJOIWrapper,
   removeEmptyFromObject,
   searchUrl,
   sortCategories,
   splitArrayIntoGroups,
-  yfirflokkurOptions,
 } from '../../components/OfficialJournalOfIceland'
 import { Screen } from '../../types'
 import {
@@ -56,11 +57,12 @@ import {
 import {
   CATEGORIES_QUERY,
   DEPARTMENTS_QUERY,
+  MAIN_CATEGORIES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
 
 type MalaflokkarType = Array<{
   letter: string
-  categories: typeof malaflokkurOptions
+  categories: EntityOption[]
 }>
 
 const initialState = {
@@ -71,7 +73,8 @@ const initialState = {
 }
 
 const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
-  // categories,
+  mainCategories,
+  categories,
   departments,
   organizationPage,
   organization,
@@ -91,10 +94,12 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 
   const [searchState, setSearchState] = useState(initialState)
 
+  const categoriesOptions = mapEntityToOptions(categories)
+
   const sortedCategories = useMemo(() => {
-    return sortCategories(malaflokkurOptions)
+    return sortCategories(categoriesOptions)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [malaflokkurOptions])
+  }, [categoriesOptions])
 
   const filterCategories = useCallback(
     (initial?: boolean) => {
@@ -139,7 +144,7 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortedCategories])
 
-  const [categories, setCategories] = useState(initialCategories)
+  const [activeCategories, setCategories] = useState(initialCategories)
 
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search)
@@ -220,8 +225,8 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
     updateSearchParams(initialState)
   }
 
-  // const categoriesOptions = mapEntityToOptions(categories)
   const departmentsOptions = mapEntityToOptions(departments)
+  const mainCategoriesOptions = mapEntityToOptions(mainCategories)
 
   return (
     <OJOIWrapper
@@ -286,11 +291,11 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
               placeholder="Veldu yfirflokk"
               options={[
                 { ...emptyOption('Allir flokkar') },
-                ...yfirflokkurOptions,
+                ...mainCategoriesOptions,
               ]}
               isClearable
               value={findValueOption(
-                yfirflokkurOptions,
+                mainCategoriesOptions,
                 searchState.yfirflokkur,
               )}
               onChange={(v) => updateSearchState('yfirflokkur', v?.value ?? '')}
@@ -312,7 +317,7 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
               variant={
                 searchState.stafur.includes(c.letter)
                   ? 'blue'
-                  : !categories.find((cat) => cat.letter === c.letter)
+                  : !activeCategories.find((cat) => cat.letter === c.letter)
                   ? 'disabled'
                   : 'white'
               }
@@ -324,10 +329,10 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
             </Tag>
           ))}
         </Inline>
-        {categories.length === 0 ? (
+        {activeCategories.length === 0 ? (
           <p>Ekkert fannst fyrir þessi leitarskilyrði</p>
         ) : (
-          categories.map((c) => {
+          activeCategories.map((c) => {
             const groups = splitArrayIntoGroups(c.categories, 3)
             return (
               <T.Table key={c.letter}>
@@ -364,8 +369,9 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 }
 
 interface OJOICategoriesProps {
-  categories: Array<MinistryOfJusticeAdvertEntity>
-  departments: Array<MinistryOfJusticeAdvertEntity>
+  mainCategories?: MinistryOfJusticeAdvertMainCategory[]
+  categories?: Array<MinistryOfJusticeAdvertCategory>
+  departments?: Array<MinistryOfJusticeAdvertEntity>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -373,6 +379,7 @@ interface OJOICategoriesProps {
 }
 
 const OJOICategories: Screen<OJOICategoriesProps> = ({
+  mainCategories,
   departments,
   categories,
   organizationPage,
@@ -382,6 +389,7 @@ const OJOICategories: Screen<OJOICategoriesProps> = ({
 }) => {
   return (
     <OJOICategoriesPage
+      mainCategories={mainCategories}
       categories={categories}
       departments={departments}
       namespace={namespace}
@@ -397,6 +405,9 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
+      data: { ministryOfJusticeMainCategories },
+    },
+    {
       data: { ministryOfJusticeCategories },
     },
     {
@@ -410,6 +421,14 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<Query, QueryMinistryOfJusticeMainCategoriesArgs>({
+      query: MAIN_CATEGORIES_QUERY,
+      variables: {
+        params: {
+          search: '',
+        },
+      },
+    }),
     apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
@@ -468,6 +487,7 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
+    mainCategories: ministryOfJusticeMainCategories?.mainCategories,
     categories: ministryOfJusticeCategories?.categories,
     departments: ministryOfJusticeDepartments?.departments,
     organizationPage: getOrganizationPage,

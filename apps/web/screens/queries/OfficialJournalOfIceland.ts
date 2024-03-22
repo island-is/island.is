@@ -123,6 +123,57 @@ export const CATEGORIES_QUERY = gql`
       categories {
         title
         slug
+        mainCategory {
+          title
+          slug
+        }
+        department {
+          title
+          slug
+        }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+      }
+    }
+  }
+`
+
+export const INVOLVED_PARTIES_QUERY = gql`
+  query AdvertInvolvedParties($params: MinistryOfJusticeQueryInput!) {
+    ministryOfJusticeInvolvedParties(params: $params) {
+      involvedParties {
+        title
+        slug
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+      }
+    }
+  }
+`
+
+export const MAIN_CATEGORIES_QUERY = gql`
+  query AdvertMainCategories($params: MinistryOfJusticeQueryInput!) {
+    ministryOfJusticeMainCategories(params: $params) {
+      mainCategories {
+        title
+        slug
+        description
       }
       paging {
         page
