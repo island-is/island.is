@@ -112,7 +112,7 @@ import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
-import { ChartDataByExternalJsonProviderDataLoader } from './loaders/chartDataByExternalJsonProvider.loader'
+import { ChartDataByExternalJsonProviderDataLoader, ChartDataByExternalJsonProviderDataLoaderType } from './loaders/chartDataByExternalJsonProvider.loader'
 import { Loader } from '@island.is/nest/dataloader'
 import { Chart } from './models/chart.model'
 
@@ -799,7 +799,7 @@ export class FeaturedEventsResolver {
 export class ChartResolver {
   constructor(
     @Loader(ChartDataByExternalJsonProviderDataLoader)
-    private readonly externalJsonService: ChartDataByExternalJsonProviderDataLoader,
+    private readonly externalJsonService: ChartDataByExternalJsonProviderDataLoaderType,
     private readonly externalCsvService: StatisticsClientService,
   ) {}
 
@@ -829,11 +829,11 @@ export class ChartResolver {
       }
 
       // TODO: add new field so we don't need to stringify
-      if (dataSourceType === ChartDataSourceType.ExternalJson) {
+      if (dataSourceType === ChartDataSourceType.ExternalJson && component.dataSource?.externalJsonProvider) {
         return JSON.stringify(
           // TODO: figure out how to call the load method here
           // TODO: perhaps input is wrong here
-          await this.externalJsonService.load(input),
+          await this.externalJsonService.load({...input, externalJsonProvider: component.dataSource.externalJsonProvider }),
         )
       }
 
