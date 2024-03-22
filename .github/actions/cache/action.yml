@@ -31,10 +31,10 @@ inputs:
     description: 'retry'
     required: false
     default: '2'
-  force-cache-save:
-    description: 'force cache save regardless of cache hit.'
-    required: false
-    default: 'false'
+  # force-cache-save:
+  #   description: 'force cache save regardless of cache hit.'
+  #   required: false
+  #   default: 'false'
 outputs:
   success:
     description: 'success'
@@ -47,11 +47,11 @@ runs:
   steps:
     - name: Cache try number one
       id: cache_try_number_one
-      uses: island-is/cache@v0.4
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        force-cache-save: ${{ inputs.force-cache-save }}
+        # force-cache-save: ${{ inputs.force-cache-save }}
 
     - name: Give cache server a bit of time to recover
       if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
@@ -61,11 +61,11 @@ runs:
     - name: Cache try number two
       id: cache_try_number_two
       if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
-      uses: island-is/cache@v0.4
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        force-cache-save: ${{ inputs.force-cache-save }}
+        # force-cache-save: ${{ inputs.force-cache-save }}
 
     - name: Give cache server a bit of time to recover
       if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
@@ -75,11 +75,11 @@ runs:
     - name: Cache try number three
       id: cache_try_number_three
       if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
-      uses: island-is/cache@v0.4
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        force-cache-save: ${{ inputs.force-cache-save }}
+        # force-cache-save: ${{ inputs.force-cache-save }}
 
     - name: Gather outputs
       id: computed_outputs
