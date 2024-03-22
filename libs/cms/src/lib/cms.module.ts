@@ -22,6 +22,7 @@ import { OrganizationLinkByReferenceIdLoader } from './loaders/organizationLinkB
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
 import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
+import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
@@ -41,6 +42,7 @@ import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLin
     OrganizationLinkByReferenceIdLoader,
     OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
+    OrganizationTitleEnByReferenceIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
