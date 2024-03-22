@@ -113,12 +113,6 @@
         "cwd": "apps/services/user-notification/"
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "parallel": false
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {

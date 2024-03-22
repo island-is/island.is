@@ -110,12 +110,6 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/regulations-admin-backend/src/app/messages/**/*.ts'"
       }
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx run {projectName}:dev:services"
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {

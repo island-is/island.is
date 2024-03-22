@@ -119,7 +119,7 @@
         "parallel": false
       },
       "configurations": {
-        "dev-services": {
+        "services": {
           "command": "docker-compose up -d",
           "cwd": "{projectRoot}"
         },
