@@ -59,10 +59,10 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
-  const userCanSendCaseToCourt =
+  const userCanSendCaseToCourt = Boolean(
     user?.canConfirmIndictment &&
-    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
-
+      workingCase.state === CaseState.WAITING_FOR_CONFIRMATION,
+  )
   const handleTransition = async (transitionType: CaseTransition) => {
     const caseTransitioned = await transitionCase(
       workingCase.id,
