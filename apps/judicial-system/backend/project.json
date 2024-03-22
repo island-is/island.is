@@ -65,13 +65,6 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/backend"]
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/judicial-system/backend"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -107,13 +100,37 @@
         "cwd": "apps/judicial-system/backend"
       }
     },
-    "docker-express": {},
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
       }
-    }
+    },
+
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": ["nx run {projectName}:dev:services"]
+        },
+        "run": {
+          "commands": ["echo 'Nothing to run/start for {projectName}'"],
+          "parallel": true
+        }
+      }
+    },
+    "docker-express": {}
   },
   "tags": ["scope:judicial-system-api"]
 }

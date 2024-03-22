@@ -64,12 +64,6 @@
         "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
       }
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx run {projectName}:dev:services"
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {

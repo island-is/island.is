@@ -33,13 +33,13 @@
         "parallel": false
       },
       "configurations": {
-        "dev-init": {
+        "init": {
           "commands": [
             "nx run clients-air-discount-scheme:codegen/backend-client",
             "nx run air-discount-scheme-backend:dev:init"
           ]
         },
-        "dev": {
+        "run": {
           "commands": [
             "nx run api:serve",
             "nx run air-discount-scheme-backend:serve",

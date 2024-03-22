@@ -46,7 +46,7 @@
         "parallel": false
       },
       "configurations": {
-        "dev-init": {
+        "init": {
           "commands": [
             "nx run application-system-api:dev:init",
             "nx run application-system-api:init",
@@ -55,7 +55,7 @@
             "nx run application-templates-general-petition:codegen/frontend-client"
           ]
         },
-        "dev": {
+        "run": {
           "commands": [
             "./scripts/run-soffia-proxy.sh",
             "nx run application-system-api:serve",
