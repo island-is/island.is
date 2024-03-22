@@ -486,11 +486,13 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
       - name: Setup yarn
         run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -540,6 +542,7 @@ jobs:
           node-version: '18'
       - name: Setup yarn
         run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
