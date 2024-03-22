@@ -19,5 +19,6 @@ test.describe('Case list test', () => {
     const page = await context.newPage()
     await page.goto('/krofur')
     await expect(page).toHaveURL('/krofur')
+    await page.getByRole('button', { name: 'Nýtt mál' }).isVisible()
   })
 })
