@@ -4,11 +4,13 @@ import {
   wildcard,
 } from '../../../../support/wire-mocks'
 import { HttpMethod, Response } from '@anev/ts-mountebank'
+import { EinstaklingsupplysingarToJSON } from '@island.is/clients/national-registry-v2'
 import {
   Base,
   Labor,
   NationalRegistry,
 } from '../../../../../../../infra/src/dsl/xroad'
+import { PostParentalLeaveResponseToJSON } from '@island.is/clients/vmst'
 import formatISO from 'date-fns/formatISO'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
