@@ -58,7 +58,7 @@ export const extractFilterTags = (filterCategories: FilterCategory[]) => {
       const data = filterCategory.filters.find(
         ({ value }) => value === selection,
       ) ?? { label: selection, value: selection }
-      
+
       filterTags.push({ ...data, category: filterCategory.id })
     }),
   )
