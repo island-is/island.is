@@ -215,7 +215,7 @@ export const getAttachments = (application: Application) => {
 
 // returns available years. Available period is
 // 3 months back in time and 6 months in the future.
-export const getAvailableYears= () => {
+export const getAvailableYears = () => {
   const threeMonthsBackInTime = subMonths(new Date(), 3).getFullYear()
   const sixMonthsInTheFuture = addMonths(new Date(), 6).getFullYear()
 
