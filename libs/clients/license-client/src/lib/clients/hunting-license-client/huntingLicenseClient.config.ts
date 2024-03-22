@@ -12,7 +12,7 @@ export const HuntingDigitalLicenseClientConfig = defineConfig<
   name: `HuntingDigitalLicenseClientConfig`,
   schema,
   load: (env) => ({
-    apiKey: env.required(`VE_PKPASS_API_KEY`, ''),
+    apiKey: env.required(`UST_PKPASS_API_KEY`, ''),
     apiUrl: env.required(
       'SMART_SOLUTIONS_API_URL',
       'https://smartpages-api-dev.smartsolutions.is/graphql',
