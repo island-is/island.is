@@ -8,54 +8,49 @@ import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { OccupationalLicensesV2Service } from './occupationalLicensesV2.service'
 import { LicenseInput } from './dto/licenseInput.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { LicensesCollection } from './models/licenseCollectionResponse.model'
+import { LicenseCollection } from './models/licenseCollection.model'
 import { getLicenseTypeByIdPrefix } from './utils'
 import { LicenseResponse } from './models/licenseResponse.model'
-import { License } from './models/license.model'
+import { LicenseResult } from './models/licenseResult.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Scopes(ApiScope.internal)
-@Resolver(() => LicensesCollection)
+@Resolver(() => LicenseCollection)
 export class OccupationalLicensesV2Resolver {
   constructor(
     private readonly service: OccupationalLicensesV2Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Query(() => LicensesCollection, {
+  @Query(() => LicenseCollection, {
     name: 'occupationalLicensesV2',
     nullable: true,
   })
   @Audit()
-  async occupationalLicensesV2(): Promise<LicensesCollection | null> {
-    return {}
-  }
-
-  @ResolveField('education', () => [License], { nullable: true })
-  async educationLicense(
+  async occupationalLicensesV2(
     @CurrentUser() user: User,
-  ): Promise<Array<License> | null> {
-    return this.service.getEducationLicenses(user)
-  }
+  ): Promise<LicenseCollection | null> {
+    const data = await Promise.all([
+      this.service.getHealthDirectorateLicenses(user),
+      this.service.getEducationLicenses(user),
+      this.service.getDistrictCommissionerLicenses(user),
+    ])
 
-  @ResolveField('health', () => [License], { nullable: true })
-  async healthLicense(
-    @CurrentUser() user: User,
-  ): Promise<Array<License> | null> {
-    return this.service.getHealthDirectorateLicenses(user)
-  }
+    let normalizedResults: Array<typeof LicenseResult> = []
+    data.filter(isDefined).forEach((result) => {
+      Array.isArray(result)
+        ? (normalizedResults = normalizedResults.concat(result))
+        : normalizedResults.push(result)
+    })
 
-  @ResolveField('districtCommissioners', () => [License], {
-    nullable: true,
-  })
-  async districtCommissionersLicense(
-    @CurrentUser() user: User,
-  ): Promise<Array<License> | null> {
-    return this.service.getDistrictCommissionerLicenses(user)
+    return {
+      licenses: normalizedResults,
+    }
   }
 
   @Query(() => LicenseResponse, {

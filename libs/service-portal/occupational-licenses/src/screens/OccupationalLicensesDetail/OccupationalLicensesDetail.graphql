@@ -1,9 +1,9 @@
 query getOccupationalLicenseById($input: OccupationalLicensesV2LicenseInput!) {
   occupationalLicenseV2(input: $input) {
     __typename
-    type
     license {
       __typename
+      type
       licenseId
       profession
       licenseHolderName

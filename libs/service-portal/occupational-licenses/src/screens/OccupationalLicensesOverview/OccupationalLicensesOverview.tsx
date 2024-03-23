@@ -1,4 +1,3 @@
-import { getGraphQLErrorsFromResult } from '@apollo/client/utilities'
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
@@ -7,7 +6,6 @@ import {
   FootNote,
   IntroHeader,
   m,
-  mapGqlErrorPaths,
 } from '@island.is/service-portal/core'
 import { useOrganizations } from '@island.is/service-portal/graphql'
 import { isDefined } from '@island.is/shared/utils'
@@ -16,6 +14,27 @@ import { LicenceActionCard } from '../../components/LicenceActionCard'
 import { olMessage } from '../../lib/messages'
 import { OccupationalLicensesPaths } from '../../lib/paths'
 import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
+import {
+  OccupationalLicenseV2,
+  OccupationalLicensesV2Error,
+  OccupationalLicenseV2LicenseType,
+} from '@island.is/api/schema'
+import { OrganizationSlugType } from '@island.is/shared/constants'
+
+const mapLicenseTypeToOrganization = (
+  type: OccupationalLicenseV2LicenseType,
+): OrganizationSlugType | undefined => {
+  switch (type) {
+    case OccupationalLicenseV2LicenseType.EDUCATION:
+      return 'menntamalastofnun'
+    case OccupationalLicenseV2LicenseType.HEALTH_DIRECTORATE:
+      return 'landlaeknir'
+    case OccupationalLicenseV2LicenseType.DISTRICT_COMMISSIONERS:
+      return 'syslumenn'
+    default:
+      return undefined
+  }
+}
 
 export const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({
@@ -25,41 +44,28 @@ export const OccupationalLicensesOverview = () => {
   const { formatMessage, formatDateFns } = useLocale()
   useNamespaces('sp.occupational-licenses')
 
-  const licenses = useMemo(
-    () => [
-      ...(data?.occupationalLicensesV2?.districtCommissioners ?? []),
-      ...(data?.occupationalLicensesV2?.education ?? []),
-      ...(data?.occupationalLicensesV2?.health ?? []),
-    ],
-    [data?.occupationalLicensesV2],
-  )
+  const licenses =
+    data?.occupationalLicensesV2?.licenses
+      .filter((l) => l.__typename === 'OccupationalLicenseV2')
+      .filter(isDefined)
+      .map((l) => l as OccupationalLicenseV2) ?? []
+
+  const errors = useMemo(() => {
+    return (
+      data?.occupationalLicensesV2?.licenses
+        .filter((l) => l.__typename === 'OccupationalLicensesV2Error')
+        .filter(isDefined)
+        .map((l) => l as OccupationalLicensesV2Error) ?? []
+    )
+  }, [data?.occupationalLicensesV2?.licenses])
 
   const errorString = useMemo(() => {
-    if (error) {
-      const errors = mapGqlErrorPaths(error, [
-        'education',
-        'districtCommissioners',
-        'health',
-      ])
-
-      return errors
-        .map((e) => {
-          switch (e) {
-            case 'education':
-              return formatMessage(olMessage.education)
-            case 'districtCommissioners':
-              return formatMessage(olMessage.districtCommissioners)
-            case 'health':
-              return formatMessage(olMessage.health)
-            default:
-              return undefined
-          }
-        })
-        .filter(isDefined)
-        .join(', ')
-    }
-    return
-  }, [formatMessage, error])
+    return errors
+      .map((e) => mapLicenseTypeToOrganization(e.type))
+      .map((e) => (organizations ?? []).find((o) => o.slug === e)?.title)
+      .filter(isDefined)
+      .join(', ')
+  }, [errors, organizations])
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -68,8 +74,8 @@ export const OccupationalLicensesOverview = () => {
         intro={formatMessage(m.occupationalLicensesDescription)}
       />
 
-      {error && !data && !loading && <Problem error={error} noBorder={false} />}
-      {error && !loading && data && (
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && !!errors.length && (
         <AlertMessage
           type="warning"
           title={formatMessage(olMessage.fetchOverviewError)}

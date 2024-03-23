@@ -1,32 +1,21 @@
-import {
-  Field,
-  registerEnumType,
-  GraphQLISODateTime,
-  ObjectType,
-} from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { GenericField } from './genericField.model'
+import { StatusV2 } from './licenseStatus.model'
+import { LicenseType } from './licenseType.model'
 
-export enum OccupationalLicenseStatusV2 {
-  VALID = 'valid',
-  INVALID = 'invalid',
-  LIMITED = 'limited',
-  IN_PROGRESS = 'in-progress',
-  REVOKED = 'revoked',
-  WAIVED = 'waived',
-  UNKNOWN = 'unknown',
-}
-
-registerEnumType(OccupationalLicenseStatusV2, {
-  name: 'OccupationalLicenseStatusV2',
-})
-
-@ObjectType()
+@ObjectType('OccupationalLicenseV2')
 export class License {
   @Field()
   licenseId!: string
 
   @Field()
   licenseNumber!: string
+
+  @Field(() => LicenseType)
+  type!: LicenseType
+
+  @Field({ nullable: true })
+  legalEntityId?: string
 
   @Field({ nullable: true })
   issuer?: string
@@ -55,8 +44,8 @@ export class License {
   @Field({ nullable: true })
   title?: string
 
-  @Field(() => OccupationalLicenseStatusV2)
-  status!: OccupationalLicenseStatusV2
+  @Field(() => StatusV2)
+  status!: StatusV2
 
   @Field(() => [GenericField], { nullable: true })
   genericFields?: Array<GenericField>

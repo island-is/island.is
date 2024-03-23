@@ -4,9 +4,12 @@ import capitalize from 'lodash/capitalize'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
 import { DistrictCommissionersLicensesService } from '@island.is/clients/district-commissioners-licenses'
-import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
+import {
+  HealthDirectorateClientService,
+  HealthDirectorateLicenseToPractice,
+} from '@island.is/clients/health-directorate'
 import { OrganizationSlugType } from '@island.is/shared/constants'
-import { License, OccupationalLicenseStatusV2 } from './models/license.model'
+import { License } from './models/license.model'
 import { isDefined } from '@island.is/shared/utils'
 import { MMSApi } from '@island.is/clients/mms'
 import { info } from 'kennitala'
@@ -17,15 +20,17 @@ import {
   mapDistrictCommissionersLicenseStatusToStatus,
 } from './utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import {
-  LicenseResponse,
-  OccupationalLicenseV2LicenseResponseType,
-} from './models/licenseResponse.model'
+import { LicenseResponse } from './models/licenseResponse.model'
 import { LinkType } from './models/link'
 import {
   CmsTranslationsService,
   TranslationsDict,
 } from '@island.is/cms-translations'
+import { LicenseType } from './models/licenseType.model'
+import { LicenseResponse as MMSLicenseResponse } from '@island.is/clients/mms'
+import { StatusV2 } from './models/licenseStatus.model'
+import { LicenseError } from './models/licenseError.model'
+import { FetchError } from '@island.is/clients/middlewares'
 
 const namespaceId = 'service.portal'
 
@@ -39,35 +44,49 @@ export class OccupationalLicensesV2Service {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly cmsTranslationsService: CmsTranslationsService,
   ) {}
-  async getDistrictCommissionerLicenses(user: User): Promise<License[] | null> {
-    const licenses = await this.dcService.getLicenses(user)
+  async getDistrictCommissionerLicenses(
+    user: User,
+  ): Promise<Array<License> | LicenseError | null> {
+    const licenses = await this.dcService
+      .getLicenses(user)
+      .catch((e: Error | FetchError) => {
+        return {
+          type: LicenseType.DISTRICT_COMMISSIONERS,
+          error: JSON.stringify(e),
+        }
+      })
 
     if (!licenses) {
       return []
     }
 
-    const data: Array<License> =
-      licenses
-        ?.map((l) => {
-          if (!l || !l.status || !l.title || !l.validFrom) {
-            return
-          }
-          return {
-            licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
-            licenseNumber: l.id,
-            issuer: l.issuerId,
-            issuerTitle: l.issuerTitle,
-            profession: l.title,
-            permit: l.title,
-            dateOfBirth: info(user.nationalId).birthday,
-            validFrom: l.validFrom,
-            title: l.title,
-            status: mapDistrictCommissionersLicenseStatusToStatus(l.status),
-          }
-        })
-        .filter(isDefined) ?? []
+    if (Array.isArray(licenses)) {
+      const data: Array<License> =
+        licenses
+          ?.map((l) => {
+            if (!l || !l.status || !l.title || !l.validFrom) {
+              return
+            }
+            return {
+              licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
+              licenseNumber: l.id,
+              type: LicenseType.DISTRICT_COMMISSIONERS,
+              issuer: l.issuerId,
+              issuerTitle: l.issuerTitle,
+              profession: l.title,
+              permit: l.title,
+              dateOfBirth: info(user.nationalId).birthday,
+              validFrom: l.validFrom,
+              title: l.title,
+              status: mapDistrictCommissionersLicenseStatusToStatus(l.status),
+            }
+          })
+          .filter(isDefined) ?? []
 
-    return data
+      return data
+    }
+
+    return licenses
   }
   async getDistrictCommissionerLicenseById(
     user: User,
@@ -84,12 +103,12 @@ export class OccupationalLicensesV2Service {
     }
 
     return {
-      type: OccupationalLicenseV2LicenseResponseType.DISTRICT_COMMISSIONERS,
       license: {
         licenseId: addLicenseTypePrefix(
           license.licenseInfo.id,
           'DistrictCommissioners',
         ),
+        type: LicenseType.DISTRICT_COMMISSIONERS,
         licenseHolderName: license.holderName,
         licenseNumber: license.licenseInfo.id,
         issuer: license.licenseInfo.issuerId,
@@ -114,102 +133,70 @@ export class OccupationalLicensesV2Service {
 
   async getHealthDirectorateLicenses(
     @CurrentUser() user: User,
-  ): Promise<Array<License> | null> {
-    const licenses =
-      await this.healthService.getHealthDirectorateLicenseToPractice(user)
+  ): Promise<Array<License> | LicenseError | null> {
+    const licenses = await this.healthService
+      .getHealthDirectorateLicenseToPractice(user)
+      .catch((e: Error | FetchError) => {
+        return {
+          type: LicenseType.HEALTH_DIRECTORATE,
+          error: JSON.stringify(e),
+        }
+      })
 
-    const issuer: OrganizationSlugType = 'landlaeknir'
+    if (Array.isArray(licenses)) {
+      return (
+        licenses
+          ?.map((l) => this.mapHealthDirectorateLicense(l))
+          .filter(isDefined) ?? []
+      )
+    }
 
-    return (
-      licenses
-        ?.map((l) => {
-          let status: OccupationalLicenseStatusV2
-          switch (l.status) {
-            case 'LIMITED':
-              status = OccupationalLicenseStatusV2.LIMITED
-              break
-            case 'VALID':
-              status = OccupationalLicenseStatusV2.VALID
-              break
-            case 'REVOKED':
-              status = OccupationalLicenseStatusV2.REVOKED
-              break
-            case 'WAIVED':
-              status = OccupationalLicenseStatusV2.WAIVED
-              break
-            case 'INVALID':
-              status = OccupationalLicenseStatusV2.INVALID
-              break
-            default:
-              status = OccupationalLicenseStatusV2.UNKNOWN
-          }
-          return {
-            licenseId: addLicenseTypePrefix(l.licenseNumber, 'Health'),
-            licenseNumber: l.licenseNumber,
-            legalEntityId: l.legalEntityId,
-            issuer: issuer,
-            profession: l.profession,
-            permit: l.practice,
-            licenseHolderName: l.licenseHolderName,
-            licenseHolderNationalId: l.licenseHolderNationalId,
-            dateOfBirth: info(l.licenseHolderNationalId).birthday,
-            validFrom: l.validFrom,
-            title: `${l.profession} - ${l.practice}`,
-            status,
-          }
-        })
-        .filter(isDefined) ?? []
-    )
+    return licenses
   }
 
   async getHealthDirectorateLicenseById(
     @CurrentUser() user: User,
     id: string,
   ): Promise<LicenseResponse | null> {
-    const licenses = await this.getHealthDirectorateLicenses(user)
+    const licenses =
+      await this.healthService.getHealthDirectorateLicenseToPractice(user)
 
-    const license = licenses?.find((l) => l.licenseNumber === id) ?? null
+    if (!licenses) {
+      return null
+    }
+
+    const license = licenses.find((l) => l.licenseNumber === id)
+
     if (!license) {
       return null
     }
 
     return {
-      license,
-      type: OccupationalLicenseV2LicenseResponseType.HEALTH_DIRECTORATE,
+      license: this.mapHealthDirectorateLicense(license),
     }
   }
 
   async getEducationLicenses(
     @CurrentUser() user: User,
-  ): Promise<License[] | null> {
-    const licenses = await this.mmsApi.getLicenses(user.nationalId)
-
-    const issuer: OrganizationSlugType = 'haskoli-islands'
-
-    const data: Array<License> =
-      licenses
-        .map((l) => {
+  ): Promise<Array<License> | LicenseError | null> {
+    const licenses: Array<MMSLicenseResponse> | LicenseError | null =
+      await this.mmsApi
+        .getLicenses(user.nationalId)
+        .catch((e: Error | FetchError) => {
           return {
-            licenseId: addLicenseTypePrefix(l.id, 'Education'),
-            licenseNumber: l.id,
-            issuer: issuer,
-            issuerTitle: l.issuer,
-            profession: capitalize(l.type),
-            permit: capitalize(l.type),
-            licenseHolderName: l.fullName,
-            licenseHolderNationalId: l.nationalId,
-            dateOfBirth: info(l.nationalId).birthday,
-            validFrom: new Date(l.issued),
-            title: capitalize(l.type),
-            status:
-              new Date(l.issued) < new Date()
-                ? OccupationalLicenseStatusV2.VALID
-                : OccupationalLicenseStatusV2.INVALID,
+            type: LicenseType.EDUCATION,
+            error: JSON.stringify(e),
           }
         })
-        .filter(isDefined) ?? []
 
-    return data
+    if (Array.isArray(licenses)) {
+      const data: Array<License> =
+        licenses.map((l) => this.mapEducationLicense(l)).filter(isDefined) ?? []
+
+      return data
+    }
+
+    return licenses
   }
 
   async getEducationLicenseById(
@@ -217,9 +204,13 @@ export class OccupationalLicensesV2Service {
     locale: Locale,
     id: string,
   ): Promise<LicenseResponse | null> {
-    const licenses = await this.getEducationLicenses(user)
+    const data = await this.mmsApi.getLicenses(user.nationalId)
 
-    const license = licenses?.find((l) => l.licenseNumber === id) ?? null
+    if (!data) {
+      return null
+    }
+
+    const license = data.find((l) => l.id === id)
 
     if (!license) {
       return null
@@ -229,15 +220,77 @@ export class OccupationalLicensesV2Service {
       await this.cmsTranslationsService.getTranslations([namespaceId], locale)
 
     return {
-      license,
-      type: OccupationalLicenseV2LicenseResponseType.EDUCATION,
+      license: this.mapEducationLicense(license),
       actions: [
         {
           type: LinkType.FILE,
           text: namespace?.['service.portal:fetch-license'],
-          url: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${license.licenseId}`,
+          url: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${license.id}`,
         },
       ],
+    }
+  }
+
+  mapHealthDirectorateLicense = (
+    data: HealthDirectorateLicenseToPractice,
+  ): License => {
+    let status: StatusV2
+    switch (data.status) {
+      case 'LIMITED':
+        status = StatusV2.LIMITED
+        break
+      case 'VALID':
+        status = StatusV2.VALID
+        break
+      case 'REVOKED':
+        status = StatusV2.REVOKED
+        break
+      case 'WAIVED':
+        status = StatusV2.WAIVED
+        break
+      case 'INVALID':
+        status = StatusV2.INVALID
+        break
+      default:
+        status = StatusV2.UNKNOWN
+    }
+
+    const organization: OrganizationSlugType = 'landlaeknir'
+
+    return {
+      licenseId: addLicenseTypePrefix(data.licenseNumber, 'Health'),
+      licenseNumber: data.licenseNumber,
+      type: LicenseType.HEALTH_DIRECTORATE,
+      legalEntityId: data.legalEntityId,
+      issuer: organization,
+      profession: data.profession,
+      permit: data.practice,
+      licenseHolderName: data.licenseHolderName,
+      licenseHolderNationalId: data.licenseHolderNationalId,
+      dateOfBirth: info(data.licenseHolderNationalId).birthday,
+      validFrom: data.validFrom,
+      title: `${data.profession} - ${data.practice}`,
+      status,
+    }
+  }
+
+  mapEducationLicense = (data: MMSLicenseResponse) => {
+    const issuer: OrganizationSlugType = 'haskoli-islands'
+    return {
+      licenseId: addLicenseTypePrefix(data.id, 'Education'),
+      licenseNumber: data.id,
+      type: LicenseType.EDUCATION,
+      issuer,
+      issuerTitle: data.issuer,
+      profession: capitalize(data.type),
+      permit: capitalize(data.type),
+      licenseHolderName: data.fullName,
+      licenseHolderNationalId: data.nationalId,
+      dateOfBirth: info(data.nationalId).birthday,
+      validFrom: new Date(data.issued),
+      title: capitalize(data.type),
+      status:
+        new Date(data.issued) < new Date() ? StatusV2.VALID : StatusV2.INVALID,
     }
   }
 }

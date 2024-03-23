@@ -1,25 +1,27 @@
 query getOccupationalLicenses {
   occupationalLicensesV2 {
-    districtCommissioners {
-      licenseId
-      issuer
-      validFrom
-      status
-      title
-    }
-    education {
-      licenseId
-      issuer
-      validFrom
-      status
-      title
-    }
-    health {
-      licenseId
-      issuer
-      validFrom
-      status
-      title
+    __typename
+    licenses {
+      ... on OccupationalLicenseV2 {
+        __typename
+        licenseId
+        licenseNumber
+        legalEntityId
+        issuer
+        type
+        issuerTitle
+        profession
+        licenseHolderNationalId
+        dateOfBirth
+        validFrom
+        title
+        status
+      }
+      ... on OccupationalLicensesV2Error {
+        __typename
+        type
+        error
+      }
     }
   }
 }
