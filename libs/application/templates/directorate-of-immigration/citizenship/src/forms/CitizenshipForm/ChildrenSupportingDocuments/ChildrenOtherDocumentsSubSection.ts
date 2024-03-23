@@ -4,6 +4,7 @@ import {
   buildDescriptionField,
   buildCustomField,
   buildFileUploadField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
@@ -122,7 +123,13 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               const hasOtherParent =
                 thisChild && !!thisChild.otherParent ? true : false
 
-              return hasOtherParent
+              const customAddedParent = getValueViaPath(
+                answers,
+                `selectedChildrenExtraData[${index}].otherParentName`,
+                '',
+              ) as string
+
+              return hasOtherParent || !!customAddedParent
             },
           }),
           buildFileUploadField({

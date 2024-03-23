@@ -18,6 +18,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
+import { CreateBarcodeResult } from './dto/CreateBarcodeResult.dto'
 import { GeneratePkPassInput } from './dto/GeneratePkPass.input'
 import { GenericPkPass } from './dto/GenericPkPass.dto'
 import { GenericPkPassQrCode } from './dto/GenericPkPassQrCode.dto'
@@ -72,11 +73,11 @@ export class LicenseServiceResolver {
     )
   }
 
-  @ResolveField('barcode', () => String, { nullable: true })
+  @ResolveField('barcode', () => CreateBarcodeResult, { nullable: true })
   async createBarcode(
     @CurrentUser() user: User,
     @Parent() genericUserLicense: GenericUserLicense,
-  ): Promise<string | null> {
+  ): Promise<CreateBarcodeResult | null> {
     if (!user.scope.includes(LicenseApiScope.licensesBarcode)) {
       throw new ForbiddenException(
         'User does not have permission to create barcode',
