@@ -1,17 +1,7 @@
-import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
-import differenceInDays from 'date-fns/differenceInDays'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import getDaysInMonth from 'date-fns/getDaysInMonth'
-import isSameMonth from 'date-fns/isSameMonth'
-import isThisMonth from 'date-fns/isThisMonth'
-import parseISO from 'date-fns/parseISO'
-import round from 'lodash/round'
-
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 import {
   Application,
+  ApplicationLifecycle,
   ExternalData,
   Field,
   FormValue,
@@ -19,9 +9,36 @@ import {
   PendingAction,
   RepeaterProps,
 } from '@island.is/application/types'
-
+import { FormatMessage } from '@island.is/localization'
+import { dateFormat } from '@island.is/shared/constants'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import format from 'date-fns/format'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
+import isSameMonth from 'date-fns/isSameMonth'
+import isThisMonth from 'date-fns/isThisMonth'
+import parseISO from 'date-fns/parseISO'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
+import round from 'lodash/round'
+import { MessageDescriptor } from 'react-intl'
+import {
+  additionalSingleParentMonths,
+  daysInMonth,
+  defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
+  multipleBirthsDefaultDays,
+} from '../config'
 import {
   ADOPTION,
+  AttachmentLabel,
+  AttachmentTypes,
   MANUAL,
   NO,
   OTHER_NO_CHILDREN_FOUND,
@@ -36,36 +53,22 @@ import {
   StartDateOptions,
   States,
   TransferRightsOption,
+  UnEmployedBenefitTypes,
   YES,
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
-
-import { FormatMessage } from '@island.is/localization'
-import { dateFormat } from '@island.is/shared/constants'
-import format from 'date-fns/format'
-import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
-import isEqual from 'date-fns/isEqual'
-import subDays from 'date-fns/subDays'
-import subMonths from 'date-fns/subMonths'
-import { MessageDescriptor } from 'react-intl'
-import {
-  additionalSingleParentMonths,
-  daysInMonth,
-  defaultMonths,
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-  multipleBirthsDefaultDays,
-} from '../config'
 import {
   calculatePeriodLength,
   daysToMonths,
   monthsToDays,
 } from '../lib/directorateOfLabour.utils'
+import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
 import {
+  Attachments,
   ChildInformation,
   EmployerRow,
+  FileUpload,
   Files,
   OtherParentObj,
   Period,
@@ -1964,4 +1967,113 @@ export const getConclusionScreenSteps = (
   }
 
   return steps
+}
+
+export const getAttachments = (application: Application) => {
+  const getAttachmentDetails = (
+    attachmentsArr: Files[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers } = application
+  const {
+    isSelfEmployed,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    unemploymentBenefits,
+    otherParent,
+    noChildrenFoundTypeOfApplication,
+    employerLastSixMonths,
+    isNotStillEmployed,
+    commonFiles,
+  } = getApplicationAnswers(answers)
+
+  const attachments: Attachments[] = []
+
+  const fileUpload = answers.fileUpload as FileUpload
+
+  if (isSelfEmployed === YES) {
+    getAttachmentDetails(
+      fileUpload?.selfEmployedFile,
+      AttachmentTypes.SELF_EMPLOYED,
+    )
+  }
+  if (applicationType === PARENTAL_GRANT_STUDENTS) {
+    getAttachmentDetails(fileUpload?.studentFile, AttachmentTypes.STUDENT)
+  }
+  if (
+    isSelfEmployed === NO &&
+    isReceivingUnemploymentBenefits === YES &&
+    (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+      unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance)
+  ) {
+    getAttachmentDetails(fileUpload?.benefitsFile, AttachmentTypes.BENEFITS)
+  }
+  if (otherParent === SINGLE) {
+    getAttachmentDetails(
+      fileUpload?.singleParent,
+      AttachmentTypes.SINGLE_PARENT,
+    )
+  }
+  if (isParentWithoutBirthParent(answers)) {
+    getAttachmentDetails(
+      fileUpload?.parentWithoutBirthParent,
+      AttachmentTypes.PARENT_WITHOUT_BIRTH_PARENT,
+    )
+  }
+  if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
+    getAttachmentDetails(
+      fileUpload?.permanentFosterCare,
+      AttachmentTypes.PERMANENT_FOSTER_CARE,
+    )
+  }
+  if (noChildrenFoundTypeOfApplication === ADOPTION) {
+    getAttachmentDetails(fileUpload?.adoption, AttachmentTypes.ADOPTION)
+  }
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isNotStillEmployed
+  ) {
+    getAttachmentDetails(
+      fileUpload?.employmentTerminationCertificateFile,
+      AttachmentTypes.EMPLOYMENT_TERMINATION_CERTIFICATE,
+    )
+  }
+  if (commonFiles.length > 0) {
+    getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
+  }
+
+  return attachments
+}
+
+export const calculatePruneDate = (application: Application) => {
+  const { pruneAt } = application as unknown as ApplicationLifecycle
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+  // If date of birth is set then we use that date + 2 years as prune date
+  if (dateOfBirth?.data?.dateOfBirth) {
+    const pruneDate = new Date(dateOfBirth.data.dateOfBirth)
+    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
+
+    return pruneDate
+  }
+
+  // Just to be sure that we have some date set for prune date
+  if (!pruneAt) {
+    const pruneDate = new Date()
+    pruneDate.setMonth(pruneDate.getMonth() + 3)
+
+    return pruneDate
+  }
+
+  return pruneAt
 }

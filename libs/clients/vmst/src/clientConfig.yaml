@@ -573,6 +573,8 @@ components:
           nullable: true
         language:
           type: string
+        otherParentBlocked:
+          type: boolean
     PaymentInfo:
       type: object
       additionalProperties: false

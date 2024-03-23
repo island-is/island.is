@@ -1,3 +1,6 @@
+import { MessageDescriptor } from 'react-intl'
+import * as m from '../messages'
+
 export const TWENTY_FOUR_HOURS_IN_MS = 24 * 3600 * 1000
 
 export enum States {
@@ -15,6 +18,14 @@ export enum PreemptiveRight {
   PRE_PURCHASE_RIGHT = 'forkaupsrettur',
   PRE_LEASE_RIGHT = 'forleigurettur',
 }
+
+export const preemptiveRightLabels: Record<PreemptiveRight, MessageDescriptor> =
+  {
+    [PreemptiveRight.PURCHASE_RIGHT]: m.application.overview.purchaseRight,
+    [PreemptiveRight.PRE_PURCHASE_RIGHT]:
+      m.application.overview.prePurchaseRight,
+    [PreemptiveRight.PRE_LEASE_RIGHT]: m.application.overview.preLeaseRight,
+  }
 
 export const loanProviders = [
   'Landsbankinn hf.',

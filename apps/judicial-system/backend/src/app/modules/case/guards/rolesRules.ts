@@ -47,6 +47,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'requestDriversLicenseSuspension',
   'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
+  'indictmentDeniedExplanation',
 ]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
@@ -80,6 +81,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'accusedAppealAnnouncement',
   'prosecutorAppealDecision',
   'prosecutorAppealAnnouncement',
+  'rulingSignatureDate',
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',
@@ -179,6 +181,7 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
     CaseTransition.WITHDRAW_APPEAL,
+    CaseTransition.DENY_INDICTMENT,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -192,6 +195,14 @@ export const prosecutorTransitionRule: RolesRule = {
     if (
       isIndictmentCase(theCase.type) &&
       request.body.transition === CaseTransition.APPEAL
+    ) {
+      return false
+    }
+
+    if (
+      !isIndictmentCase(theCase.type) &&
+      (request.body.transition === CaseTransition.DENY_INDICTMENT ||
+        request.body.transition === CaseTransition.ASK_FOR_CONFIRMATION)
     ) {
       return false
     }
@@ -299,6 +310,8 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
   dtoFieldValues: [
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
   ],
@@ -310,20 +323,15 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny certain transactions on non indictment cases
-    if (
-      !isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.ACCEPT
-    ) {
-      return false
-    }
-
     // Deny certain transitions on indictment cases
     if (
       isIndictmentCase(theCase.type) &&
-      [CaseTransition.REOPEN, CaseTransition.RECEIVE_APPEAL].includes(
-        request.body.transition,
-      )
+      [
+        CaseTransition.REJECT,
+        CaseTransition.DISMISS,
+        CaseTransition.REOPEN,
+        CaseTransition.RECEIVE_APPEAL,
+      ].includes(request.body.transition)
     ) {
       return false
     }

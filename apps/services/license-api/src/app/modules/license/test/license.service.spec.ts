@@ -1,33 +1,72 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Test } from '@nestjs/testing'
-import { LicenseService } from '../license.service'
 import {
-  LicenseId,
-  LicenseUpdateType,
-  PASS_TEMPLATE_IDS,
-} from '../license.types'
+  BaseLicenseUpdateClient,
+  LicenseType,
+  LicenseUpdateClientService,
+} from '@island.is/clients/license-client'
 import {
+  Pass,
   PassDataInput,
   Result,
-  Pass,
   RevokePassData,
-  VerifyPassData,
   SmartSolutionsApi,
+  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
-import { VerifyInputData } from '../dto/verifyLicense.input'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
+import {
+  BarcodeData,
+  BarcodeService,
+  LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
+  LicenseConfig,
+  TOKEN_EXPIRED_ERROR,
+} from '@island.is/services/license'
 import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import {
-  BaseLicenseUpdateClient,
-  LicenseUpdateClientService,
-} from '@island.is/clients/license-client'
+import { ConfigType } from '@nestjs/config'
+import { Test } from '@nestjs/testing'
+import { Cache } from 'cache-manager'
+import * as faker from 'faker'
 
+import ShortUniqueId from 'short-unique-id'
+import { BARCODE_EXPIRE_TIME_IN_SEC } from '@island.is/services/license'
+import { VerifyInputData } from '../dto/verifyLicense.input'
+import { LicenseService } from '../license.service'
+import {
+  LicenseId,
+  LicenseUpdateType,
+  PASS_TEMPLATE_IDS,
+} from '../license.types'
+
+const { randomUUID } = new ShortUniqueId({ length: 16 })
+const cacheStore = new Map<string, unknown>()
 const licenseIds = Object.values(LicenseId)
+
+const createCacheData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
+  nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
+  licenseType: getLicenseType(licenseId),
+  extraData: {
+    name: faker.name.firstName(),
+    nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
+  },
+})
+
+const getLicenseType = (id: LicenseId) => {
+  switch (id) {
+    case LicenseId.DRIVING_LICENSE:
+      return LicenseType.DrivingLicense
+    case LicenseId.DISABILITY_LICENSE:
+      return LicenseType.DisabilityLicense
+    case LicenseId.FIREARM_LICENSE:
+      return LicenseType.FirearmLicense
+    case LicenseId.HUNTING_LICENSE:
+      return LicenseType.HuntingLicense
+  }
+}
 
 @Injectable()
 export class MockUpdateClient extends BaseLicenseUpdateClient {
@@ -37,6 +76,7 @@ export class MockUpdateClient extends BaseLicenseUpdateClient {
   ) {
     super(logger, smartApi)
   }
+
   pushUpdate = (inputData: PassDataInput, nationalId: string) => {
     if (nationalId === 'success') {
       return Promise.resolve<Result<Pass | undefined>>({
@@ -185,16 +225,31 @@ export class MockUpdateClient extends BaseLicenseUpdateClient {
 
 describe('LicenseService', () => {
   let licenseService: LicenseService
+  let barcodeService: BarcodeService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [LicenseConfig],
+        }),
+      ],
       providers: [
         LicenseService,
+        BarcodeService,
         {
           provide: LOGGER_PROVIDER,
           useClass: jest.fn(() => ({
             debug: () => ({}),
             error: () => ({}),
+          })),
+        },
+        {
+          provide: LICENSE_SERVICE_CACHE_MANAGER_PROVIDER,
+          useClass: jest.fn(() => ({
+            get: (key: string) => cacheStore.get(key),
+            set: (key: string, value: unknown) => cacheStore.set(key, value),
           })),
         },
         {
@@ -221,10 +276,23 @@ describe('LicenseService', () => {
           }),
           inject: [LOGGER_PROVIDER, SmartSolutionsApi],
         },
+        {
+          provide: BarcodeService,
+          useFactory: () => {
+            return new BarcodeService(
+              {
+                barcodeSecretKey: 'secret',
+              } as ConfigType<typeof LicenseConfig>,
+              cacheStore as unknown as Cache,
+            )
+          },
+          inject: [LicenseConfig.KEY],
+        },
       ],
     }).compile()
 
     licenseService = moduleRef.get<LicenseService>(LicenseService)
+    barcodeService = moduleRef.get<BarcodeService>(BarcodeService)
   })
 
   describe.each(licenseIds)('given %s license type id', (licenseId) => {
@@ -245,6 +313,80 @@ describe('LicenseService', () => {
           valid: true,
         })
       })
+
+      it(`should verify barcodeData as token for the ${licenseId} license`, async () => {
+        // Act
+        const code = randomUUID()
+        const data =
+          licenseId === LicenseId.DRIVING_LICENSE
+            ? createCacheData(licenseId)
+            : undefined
+
+        // Create token
+        const token = await barcodeService.createToken({
+          v: '1',
+          t: getLicenseType(licenseId),
+          c: code,
+        })
+
+        if (data) {
+          // Put data in cache
+          await barcodeService.setCache(code, data)
+        }
+
+        const result = await licenseService.verifyLicense({
+          barcodeData: token.token,
+        })
+
+        // Assert
+        // Only driver's license is able to get extra data from the token for now
+        if (licenseId !== LicenseId.DRIVING_LICENSE) {
+          expect(result).toMatchObject({
+            valid: false,
+          })
+        } else {
+          expect(result).toMatchObject({
+            valid: true,
+            passIdentity: {
+              nationalId: data?.nationalId,
+              name: data?.extraData?.name,
+            },
+          })
+        }
+      })
+
+      it(`should fail to verify barcodeData token because of token expire time for the ${licenseId} license`, async () => {
+        jest.useFakeTimers({
+          advanceTimers: true,
+        })
+
+        // Act
+        const code = randomUUID()
+        const data = createCacheData(licenseId)
+
+        // Create token
+        const token = await barcodeService.createToken({
+          v: '1',
+          t: getLicenseType(licenseId),
+          c: code,
+        })
+
+        // Put data in cache
+        await barcodeService.setCache(code, data)
+
+        // Let the token expire
+        jest.advanceTimersByTime(BARCODE_EXPIRE_TIME_IN_SEC * 1000)
+
+        // Assert
+        const result = await licenseService.verifyLicense({
+          barcodeData: token.token,
+        })
+
+        expect(result).toEqual({
+          valid: false,
+        })
+      })
+
       it(`should fail to verify the ${licenseId}  license`, async () => {
         //act
         const result = await licenseService.verifyLicense({

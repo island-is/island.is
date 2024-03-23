@@ -12,6 +12,8 @@ export enum AnswerOption {
   NO = 'no',
 }
 
+export const MINIMUM_WEEKDAYS = 10
+
 export enum Routes {
   TEST = 'test',
   REQUIREMENTS = 'requirements',
@@ -103,7 +105,7 @@ export const INITIAL_ANSWERS = {
   },
   [Routes.PUBLISHING]: {
     date: '',
-    fastTrack: AnswerOption.NO,
+    fastTrack: '',
     contentCategories: [],
     communicationChannels: [],
     message: '',

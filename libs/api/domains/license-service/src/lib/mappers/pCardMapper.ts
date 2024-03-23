@@ -1,13 +1,13 @@
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
-  DEFAULT_LICENSE_ID,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
   GenericLicenseMapper,
   GenericUserLicensePayload,
 } from '../licenceService.type'
+import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 import { Staediskortamal } from '@island.is/clients/p-card'

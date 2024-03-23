@@ -1,11 +1,9 @@
-import React from 'react'
 import {
   addArray,
   formatDate,
   IntroHeader,
   m,
   MENNTAMALASTOFNUN_SLUG,
-  NotFound,
   SortableTable,
 } from '@island.is/service-portal/core'
 import {
@@ -20,8 +18,8 @@ import { useParams } from 'react-router-dom'
 import { useGetInnaPeriodsQuery } from '../SecondarySchoolCareer/Periods.generated'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { tagSelector } from '../../utils/tagSelector'
-import { defineMessage } from 'react-intl'
 import { edMessage } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -53,6 +51,7 @@ export const EducationGraduationDetail = () => {
 
   const queryLoading = loading || loadingDiplomas
   const queryError = error || errorDiplomas
+
   if (queryLoading) {
     return (
       <Box marginBottom={6}>
@@ -64,18 +63,6 @@ export const EducationGraduationDetail = () => {
       </Box>
     )
   }
-
-  if ((!periodArray.length && !queryLoading) || queryError) {
-    return (
-      <NotFound
-        title={defineMessage({
-          id: 'sp.education-secondary-school:not-found',
-          defaultMessage: 'Engin gögn fundust',
-        })}
-      />
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -108,8 +95,20 @@ export const EducationGraduationDetail = () => {
           </Box>
         </GridColumn>
       </GridRow> */}
-
-      {!loading &&
+      {queryError && !queryLoading && (
+        <Problem error={queryError} noBorder={false} />
+      )}
+      {!queryError && !queryLoading && !periodArray.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!queryLoading &&
+        !queryError &&
         periodArray?.map((item, i) => (
           <Box key={i} marginTop={i > 0 ? 6 : 1}>
             <SortableTable

@@ -39,6 +39,7 @@ import {
   ShipRegistry,
   DistrictCommissioners,
   DirectorateOfImmigration,
+  Hunting,
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
@@ -222,6 +223,11 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      HUNTING_LICENSE_PASS_TEMPLATE_ID: {
+        dev: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        staging: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        prod: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba',
+      },
       XROAD_RSK_PROCURING_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -234,6 +240,17 @@ export const serviceSetup = (services: {
         ]),
       },
       APOLLO_CACHE_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      LICENSE_SERVICE_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         ]),
@@ -357,10 +374,13 @@ export const serviceSetup = (services: {
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
       WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY:
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
+      LICENSE_SERVICE_BARCODE_SECRET_KEY:
+        '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
     })
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
+      Hunting,
       Firearm,
       Disability,
       Base,
