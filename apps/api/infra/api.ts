@@ -229,9 +229,15 @@ export const serviceSetup = (services: {
         prod: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba',
       },
       XROAD_RSK_PROCURING_REDIS_NODES: {
-        dev: json(['redis-applications.internal:6379']),
-        staging: json(['redis-applications.internal:6379']),
-        prod: json(['redis-applications.internal:6379']),
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
       },
       APOLLO_CACHE_REDIS_NODES: {
         dev: json([
