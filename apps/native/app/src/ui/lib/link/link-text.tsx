@@ -1,20 +1,24 @@
 import React from 'react'
-import styled from 'styled-components/native'
-import { font } from '../../utils/font'
+import styled, { useTheme } from 'styled-components/native'
+import { Typography } from '../typography/typography'
 
-const Host = styled.Text`
-  ${font({
-    fontWeight: '600',
-    lineHeight: 20,
-    fontSize: 16,
-  })}
-  color: ${(props) => props.theme.color.blue400};
+const Host = styled.View`
+  border-bottom-width: 1px;
+  border-bottom-color: ${(props) => props.theme.color.blue400};
+  margin-bottom: 1px;
 `
 
 interface LinkTextProps {
-  children: string
+  children: string | React.ReactNode
 }
 
 export function LinkText({ children }: LinkTextProps) {
-  return <Host>{children}</Host>
+  const theme = useTheme()
+  return (
+    <Host>
+      <Typography variant="heading5" color={theme.color.blue400}>
+        {children}
+      </Typography>
+    </Host>
+  )
 }
