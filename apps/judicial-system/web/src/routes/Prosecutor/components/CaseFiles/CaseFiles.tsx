@@ -59,15 +59,14 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   })
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
-    useState<boolean>(false)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const {
     uploadFiles,
-    allFilesDoneOrError,
+    allFilesUploaded,
     addUploadFile,
     addUploadFiles,
     updateUploadFile,
@@ -133,7 +132,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [uploadFiles, formatMessage])
 
-  const stepIsValid = !isUploadingPoliceCaseFiles && allFilesDoneOrError
+  const stepIsValid = !isUploading && allFilesUploaded
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
@@ -165,11 +164,11 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
       return
     }
 
-    setIsUploadingPoliceCaseFiles(true)
+    setIsUploading(true)
 
     await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
 
-    setIsUploadingPoliceCaseFiles(false)
+    setIsUploading(false)
   }
 
   const removeFileCB = (file: TUploadFile) => {
@@ -233,7 +232,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               onRemove={(file) => handleRemove(file, removeFileCB)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
-              disabled={isUploadingPoliceCaseFiles}
+              disabled={isUploading}
               showFileSize
             />
           </ContentBlock>

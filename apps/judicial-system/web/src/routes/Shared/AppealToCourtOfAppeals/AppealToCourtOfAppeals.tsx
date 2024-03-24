@@ -36,6 +36,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
 
@@ -46,16 +47,15 @@ const AppealToCourtOfAppeals = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
-  const {
-    uploadFiles,
-    allFilesDoneOrError,
-    someFilesError,
-    addUploadFiles,
-    removeUploadFile,
-    updateUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
+  const [uploadState, setUploadState] = useState<UploadFileState>({
+    isUploading: false,
+    error: false,
+  })
+
+  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionCase } = useCase()
 
   const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
@@ -69,31 +69,49 @@ const AppealToCourtOfAppeals = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => file.percent === 0),
+  const newUploadFiles = uploadFiles.filter((file) => {
+    return (
+      workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
+      undefined
+    )
+  })
+  const isStepValid = newUploadFiles.length > 0 || uploadState.error
+
+  const handleNextButtonClick = useCallback(
+    async (isRetry: boolean) => {
+      setUploadState({ isUploading: true, error: false })
+
+      const uploadSuccess = await handleUpload(
+        newUploadFiles.filter((uf) =>
+          isRetry ? uf.status === 'error' : !uf.key,
+        ),
+        updateUploadFile,
+      )
+
+      if (!uploadSuccess) {
+        setUploadState({ isUploading: false, error: true })
+        return
+      }
+
+      const caseTransitioned = await transitionCase(
+        workingCase.id,
+        CaseTransition.APPEAL,
+      )
+
+      if (caseTransitioned) {
+        setVisibleModal('APPEAL_SENT')
+      }
+
+      setUploadState({ isUploading: false, error: false })
+    },
+    [
+      handleUpload,
+      newUploadFiles,
+      transitionCase,
       updateUploadFile,
-    )
-
-    if (!allSucceeded) {
-      return
-    }
-
-    const caseTransitioned = await transitionCase(
       workingCase.id,
-      CaseTransition.APPEAL,
-    )
-
-    if (caseTransitioned) {
-      setVisibleModal('APPEAL_SENT')
-    }
-  }, [
-    handleUpload,
-    transitionCase,
-    updateUploadFile,
-    uploadFiles,
-    workingCase.id,
-  ])
+    ],
+  )
 
   const handleRemoveFile = (file: UploadFile) => {
     if (file.key) {
@@ -101,10 +119,16 @@ const AppealToCourtOfAppeals = () => {
     } else {
       removeUploadFile(file)
     }
+
+    setUploadState({ isUploading: false, error: false })
   }
 
   const handleChange = (files: File[], type: CaseFileCategory) => {
-    addUploadFiles(files, type, 'done')
+    setUploadState({ isUploading: false, error: false })
+    addUploadFiles(files, type, undefined, {
+      status: 'done',
+      percent: 0,
+    })
   }
 
   return (
@@ -136,7 +160,7 @@ const AppealToCourtOfAppeals = () => {
             required
           />
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            fileList={newUploadFiles.filter(
               (file) => file.category === appealBriefType,
             )}
             accept={'application/pdf'}
@@ -149,8 +173,10 @@ const AppealToCourtOfAppeals = () => {
             onRemove={(file) => {
               handleRemoveFile(file)
             }}
-            hideIcons={!allFilesDoneOrError}
-            disabled={!allFilesDoneOrError}
+            hideIcons={newUploadFiles
+              .filter((file) => file.category === appealBriefType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
           />
         </Box>
         <Box
@@ -168,7 +194,7 @@ const AppealToCourtOfAppeals = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            fileList={newUploadFiles.filter(
               (file) => file.category === appealCaseFilesType,
             )}
             accept={'application/pdf'}
@@ -179,8 +205,10 @@ const AppealToCourtOfAppeals = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
-            hideIcons={!allFilesDoneOrError}
-            disabled={!allFilesDoneOrError}
+            hideIcons={newUploadFiles
+              .filter((file) => file.category === appealCaseFilesType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
           />
         </Box>
         {isProsecutionUser(user) && (
@@ -192,16 +220,16 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => handleNextButtonClick(uploadState.error)}
           nextButtonText={formatMessage(
-            someFilesError
+            uploadState.error
               ? strings.uploadFailedNextButtonText
               : strings.nextButtonText,
           )}
-          nextIsDisabled={updateUploadFile.length === 0 || isTransitioningCase}
-          nextIsLoading={!allFilesDoneOrError || isTransitioningCase}
+          nextIsDisabled={!isStepValid}
+          nextIsLoading={uploadState.isUploading}
           nextButtonIcon={undefined}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          nextButtonColorScheme={uploadState.error ? 'destructive' : 'default'}
         />
       </FormContentContainer>
       {visibleModal === 'APPEAL_SENT' && (

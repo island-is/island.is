@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { toast, UploadFile, UploadFileStatus } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile,
@@ -78,11 +78,9 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
     setUploadFiles(files?.map(mapCaseFileToUploadFile) ?? [])
   }, [files])
 
-  const allFilesDoneOrError = uploadFiles.every(
+  const allFilesUploaded = uploadFiles.every(
     (file) => file.status === 'done' || file.status === 'error',
   )
-
-  const someFilesError = uploadFiles.some((file) => file.status === 'error')
 
   const addUploadFile = (file: TUploadFile) =>
     setUploadFiles((previous) => [file, ...previous])
@@ -90,22 +88,27 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
   const addUploadFiles = (
     files: File[],
     category?: CaseFileCategory,
-    status?: UploadFileStatus,
     policeCaseNumber?: string,
+    /**
+     * Use this to overwrite default file attributes, f.x.
+     * if you want to set a custom status or percent.
+     **/
+    overwriteDefaultFileAttributes?: Partial<TUploadFile>,
   ) => {
     // We generate an id for each file so that we find the file again when
     // updating the file's progress and onRetry.
     // Also we cannot spread File since it contains read-only properties.
     const uploadFiles: TUploadFile[] = files.map((file) => ({
-      id: `${file.name}-${uuid()}`,
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      percent: 0,
-      status,
-      category,
-      policeCaseNumber,
-      originalFileObj: file,
+      id: overwriteDefaultFileAttributes?.id ?? `${file.name}-${uuid()}`,
+      name: overwriteDefaultFileAttributes?.name ?? file.name,
+      type: overwriteDefaultFileAttributes?.type ?? file.type,
+      size: overwriteDefaultFileAttributes?.size ?? file.size,
+      percent: overwriteDefaultFileAttributes?.percent ?? 1,
+      status: overwriteDefaultFileAttributes?.status ?? 'uploading',
+      category: overwriteDefaultFileAttributes?.category ?? category,
+      policeCaseNumber:
+        overwriteDefaultFileAttributes?.policeCaseNumber ?? policeCaseNumber,
+      originalFileObj: overwriteDefaultFileAttributes?.originalFileObj ?? file,
     }))
 
     setUploadFiles((previous) => [...uploadFiles, ...previous])
@@ -127,8 +130,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
 
   return {
     uploadFiles,
-    allFilesDoneOrError,
-    someFilesError,
+    allFilesUploaded,
     addUploadFile,
     addUploadFiles,
     updateUploadFile,
@@ -243,6 +245,7 @@ const useS3Upload = (caseId: string) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
         : createPresignedPost
+      const filesUploaded = []
 
       const getPresignedPost = async (file: TUploadFile) => {
         const { data } = await mutation({
@@ -267,14 +270,12 @@ const useS3Upload = (caseId: string) => {
         return presignedPost
       }
 
-      const promises = files.map(async (file, idx) => {
+      for (const file of files) {
         try {
-          updateFile({ ...file, status: 'uploading' })
-
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            updateFile({ ...file, percent })
+            updateFile({ ...file, percent, status: 'uploading' })
           })
 
           const newFileId = await addFileToCaseState({
@@ -293,18 +294,14 @@ const useS3Upload = (caseId: string) => {
             newFileId,
           )
 
-          return true
+          filesUploaded.push(file)
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
-          updateFile({ ...file, percent: 0, status: 'error' })
-
-          return false
+          updateFile({ ...file, status: 'error' })
         }
-      })
+      }
 
-      return Promise.all(promises).then((results) =>
-        results.every((result) => result),
-      )
+      return filesUploaded.length === files.length
     },
     [
       limitedAccess,

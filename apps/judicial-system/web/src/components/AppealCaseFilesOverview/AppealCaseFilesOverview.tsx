@@ -52,38 +52,38 @@ const AppealCaseFilesOverview = () => {
       setAllFiles(
         workingCase.caseFiles.filter((caseFile) => {
           return (
-            caseFile.category &&
-            ((workingCase.prosecutorPostponedAppealDate &&
-              [
-                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-              ].includes(caseFile.category)) ||
-              (workingCase.prosecutorStatementDate &&
+            (caseFile.category &&
+              ((workingCase.prosecutorPostponedAppealDate &&
                 [
-                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+                  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+                  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
                 ].includes(caseFile.category)) ||
-              (workingCase.accusedPostponedAppealDate &&
+                (workingCase.prosecutorStatementDate &&
+                  [
+                    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+                    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+                  ].includes(caseFile.category)) ||
+                (workingCase.accusedPostponedAppealDate &&
+                  [
+                    CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+                    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+                  ].includes(caseFile.category)) ||
+                (workingCase.defendantStatementDate &&
+                  [
+                    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+                    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+                  ].includes(caseFile.category)) ||
                 [
-                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              (workingCase.defendantStatementDate &&
-                [
-                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              [
-                CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-              ].includes(caseFile.category) ||
-              ((workingCase.appealState === CaseAppealState.COMPLETED ||
-                isCourtOfAppealsUser(user)) &&
-                caseFile.category === CaseFileCategory.APPEAL_RULING) ||
-              (((workingCase.appealState === CaseAppealState.COMPLETED &&
-                isDefenceUser(user)) ||
-                isCourtOfAppealsUser(user)) &&
-                caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD))
+                  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+                  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+                ].includes(caseFile.category) ||
+                ((workingCase.appealState === CaseAppealState.COMPLETED ||
+                  isCourtOfAppealsUser(user)) &&
+                  [CaseFileCategory.APPEAL_RULING].includes(
+                    caseFile.category,
+                  )))) ||
+            (caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD &&
+              (isCourtOfAppealsUser(user) || isDefenceUser(user)))
           )
         }),
       )

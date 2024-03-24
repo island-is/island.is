@@ -37,6 +37,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 import { strings } from './AppealCaseFiles.strings'
 
@@ -47,16 +48,15 @@ const AppealFiles = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
-  const {
-    uploadFiles,
-    allFilesDoneOrError,
-    someFilesError,
-    addUploadFiles,
-    removeUploadFile,
-    updateUploadFile,
-  } = useUploadFiles()
+  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
+
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
+  const [uploadState, setUploadState] = useState<UploadFileState>({
+    isUploading: false,
+    error: false,
+  })
 
   const appealCaseFilesType = isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
@@ -80,26 +80,45 @@ const AppealFiles = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => !file.key),
-      updateUploadFile,
+  const newUploadFiles = uploadFiles.filter((file) => {
+    return (
+      workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
+      undefined
     )
+  })
 
-    if (!allSucceeded) {
-      return
-    }
+  const handleNextButtonClick = useCallback(
+    async (isRetry: boolean) => {
+      setUploadState({ isUploading: true, error: false })
 
-    sendNotification(workingCase.id, NotificationType.APPEAL_CASE_FILES_UPDATED)
+      const uploadSuccess = await handleUpload(
+        newUploadFiles.filter((uf) =>
+          isRetry ? uf.status === 'error' : !uf.key,
+        ),
+        updateUploadFile,
+      )
 
-    setVisibleModal(true)
-  }, [
-    handleUpload,
-    uploadFiles,
-    sendNotification,
-    updateUploadFile,
-    workingCase.id,
-  ])
+      if (!uploadSuccess) {
+        setUploadState({ isUploading: false, error: true })
+        return
+      }
+
+      await sendNotification(
+        workingCase.id,
+        NotificationType.APPEAL_CASE_FILES_UPDATED,
+      )
+
+      setVisibleModal(true)
+      setUploadState({ isUploading: false, error: false })
+    },
+    [
+      handleUpload,
+      newUploadFiles,
+      sendNotification,
+      updateUploadFile,
+      workingCase.id,
+    ],
+  )
 
   const handleRemoveFile = (file: UploadFile) => {
     if (file.key) {
@@ -107,10 +126,16 @@ const AppealFiles = () => {
     } else {
       removeUploadFile(file)
     }
+
+    setUploadState({ isUploading: false, error: false })
   }
 
   const handleChange = (files: File[], type: CaseFileCategory) => {
-    addUploadFiles(files, type, 'done')
+    setUploadState({ isUploading: false, error: false })
+    addUploadFiles(files, type, undefined, {
+      status: 'done',
+      percent: 0,
+    })
   }
 
   return (
@@ -168,7 +193,7 @@ const AppealFiles = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            fileList={newUploadFiles.filter(
               (file) =>
                 file.category &&
                 caseFilesTypesToDisplay.includes(file.category),
@@ -183,8 +208,10 @@ const AppealFiles = () => {
               handleChange(files, appealCaseFilesType)
             }}
             onRemove={(file) => handleRemoveFile(file)}
-            hideIcons={!allFilesDoneOrError}
-            disabled={!allFilesDoneOrError}
+            hideIcons={newUploadFiles
+              .filter((file) => file.category === appealCaseFilesType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
           />
         </Box>
         {isProsecutionUser(user) && (
@@ -196,16 +223,16 @@ const AppealFiles = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => handleNextButtonClick(uploadState.error)}
           nextButtonText={formatMessage(
-            someFilesError
+            uploadState.error
               ? strings.uploadFailedNextButtonText
               : strings.nextButtonText,
           )}
           nextButtonIcon={undefined}
-          nextIsLoading={!allFilesDoneOrError}
-          nextIsDisabled={uploadFiles.length === 0}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          nextIsLoading={uploadState.isUploading}
+          nextIsDisabled={newUploadFiles.length === 0}
+          nextButtonColorScheme={uploadState.error ? 'destructive' : 'default'}
         />
       </FormContentContainer>
       {visibleModal === true && (

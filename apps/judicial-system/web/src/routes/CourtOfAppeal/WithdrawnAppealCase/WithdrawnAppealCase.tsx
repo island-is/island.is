@@ -28,7 +28,7 @@ const WithdrawnAppealCase = () => {
   const router = useRouter()
   const {
     uploadFiles,
-    allFilesDoneOrError,
+    allFilesUploaded,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
@@ -37,7 +37,7 @@ const WithdrawnAppealCase = () => {
     workingCase.id,
   )
 
-  const isStepValid = allFilesDoneOrError && workingCase.appealCaseNumber
+  const isStepValid = allFilesUploaded && workingCase.appealCaseNumber
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>

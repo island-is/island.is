@@ -662,15 +662,14 @@ export const SignedVerdictOverview: React.FC = () => {
               judgeName={workingCase.judge?.name}
             />
           </Box>
-          {workingCase.appealState === CaseAppealState.COMPLETED &&
-            workingCase.appealConclusion && (
-              <Box marginBottom={6}>
-                <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
-                  conclusionText={workingCase.appealConclusion}
-                />
-              </Box>
-            )}
+          {workingCase.appealConclusion && (
+            <Box marginBottom={6}>
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
+                conclusionText={workingCase.appealConclusion}
+              />
+            </Box>
+          )}
           <Box marginBottom={5}>
             <AppealCaseFilesOverview />
           </Box>
