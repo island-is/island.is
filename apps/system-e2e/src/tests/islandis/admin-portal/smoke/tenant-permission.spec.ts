@@ -41,7 +41,7 @@ test.describe('Admin portal permission', () => {
       if (disabled) {
         await expect(page.getByTestId(dataTestId)).toBeDisabled()
       } else {
-        await expect(page.getByTestId(dataTestId)).toBeEnabled()
+        await expect(page.getByTestId(dataTestId)).not.toBeDisabled()
       }
     }
 
@@ -90,9 +90,9 @@ test.describe('Admin portal permission', () => {
 
       // Assert - Icelandic input is visible and english is not
       await expect(page.locator(isDisplayNameInput)).toBeVisible()
-      await expect(page.locator(enDisplayNameInput)).toBeHidden()
+      await expect(page.locator(enDisplayNameInput)).not.toBeVisible()
       await expect(page.locator(isDescriptionInput)).toBeVisible()
-      await expect(page.locator(enDescriptionInput)).toBeHidden()
+      await expect(page.locator(enDescriptionInput)).not.toBeVisible()
 
       // Assert - save button is disabled
       await buttonSaveTest(title)
@@ -107,9 +107,9 @@ test.describe('Admin portal permission', () => {
       await page.getByRole('tab', { name: 'English' }).click()
 
       // Assert - inputs visibility is switched
-      await expect(page.locator(isDisplayNameInput)).toBeHidden()
+      await expect(page.locator(isDisplayNameInput)).not.toBeVisible()
       await expect(page.locator(enDisplayNameInput)).toBeVisible()
-      await expect(page.locator(isDescriptionInput)).toBeHidden()
+      await expect(page.locator(isDescriptionInput)).not.toBeVisible()
       await expect(page.locator(enDescriptionInput)).toBeVisible()
 
       // Assert - save button is enabled

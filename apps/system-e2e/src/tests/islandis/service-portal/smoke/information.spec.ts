@@ -1,6 +1,9 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
+import { m } from '@island.is/service-portal/core/messages'
+import { spmm } from '@island.is/service-portal/information/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -27,10 +30,12 @@ test.describe('MS - Mínar upplýsingar', () => {
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
 
     // Act
-    const element = page.getByText('Kennitala').first()
+    const element = page.getByText(label(m.natreg)).first()
 
     // Assert
-    await expect(page.getByRole('heading', { name: 'Mín gögn' })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: label(m.myInfo) }),
+    ).toBeVisible()
     await expect(element).toBeVisible()
   })
 
@@ -42,9 +47,11 @@ test.describe('MS - Mínar upplýsingar', () => {
     )
 
     // Act
-    const title1 = page.getByText('Mín skráning')
-    const title2 = page.getByText('Grunnupplýsingar')
-    const link = page.getByRole('link', { name: 'Breyta í Þjóðskrá' }).first()
+    const title1 = page.getByText(label(m.myRegistration))
+    const title2 = page.getByText(label(m.baseInfo))
+    const link = page
+      .getByRole('link', { name: label(spmm.changeInNationalReg) })
+      .first()
 
     // Assert
     await expect(title1).toBeVisible()
@@ -56,17 +63,17 @@ test.describe('MS - Mínar upplýsingar', () => {
     const page = await context.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
-    await page.waitForLoadState('load')
+    await page.waitForLoadState('networkidle')
 
     // Act
     const babyButton = page
-      .locator(`role=button[name="${'Skoða upplýsingar'}"]`)
+      .locator(`role=button[name="${label(spmm.seeInfo)}"]`)
       .last()
 
     await babyButton.click()
 
     const registrationButton = page
-      .locator(`role=button[name="${'Gera athugasemd við skráningu'}"]`)
+      .locator(`role=button[name="${label(spmm.childRegisterModalButton)}"]`)
       .first()
 
     // Assert

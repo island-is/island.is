@@ -1,6 +1,8 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
+import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
@@ -30,11 +32,11 @@ test.describe('Work licenses', () => {
     await test.step('Renders the page', async () => {
       // Arrange
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
-      await page.waitForLoadState('load')
+      await page.waitForLoadState('networkidle')
 
       // Act
       const headline = page.getByRole('heading', {
-        name: 'Starfsleyfi',
+        name: label(m.educationLicense),
       })
       const licenseRenewLink = page
         .locator(`[data-testid="action-card-cta"]`)
