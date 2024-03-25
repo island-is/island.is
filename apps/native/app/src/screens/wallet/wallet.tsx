@@ -7,7 +7,6 @@ import {
   FlatList,
   Image,
   ListRenderItemInfo,
-  Platform,
   RefreshControl,
   View,
 } from 'react-native'

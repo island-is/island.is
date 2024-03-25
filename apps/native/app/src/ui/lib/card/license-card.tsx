@@ -289,7 +289,8 @@ export function LicenseCard({
   const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
   const textColor = theme.shades.light.foreground
   const showBarcodeView =
-    (barcode && barcode?.value) || (barcode?.loading && !barcode?.value)
+    status === 'VALID' &&
+    ((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
 
   return (
     <Host>
