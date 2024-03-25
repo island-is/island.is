@@ -1,3 +1,4 @@
+import { ServiceWebPage } from '@island.is/cms'
 import { Field, HideField, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
 
@@ -42,6 +43,8 @@ export class ServiceWebFormsInput {
   lang?: string = 'is-IS'
 }
 
-export type ServiceWebFormsInputWithInstitutionEmail = ServiceWebFormsInput & {
-  institutionEmail: string
-}
+export type ServiceWebFormsInputWithInstitutionEmailAndConfig =
+  ServiceWebFormsInput & {
+    institutionEmail: string
+    config: ServiceWebPage['emailConfig']
+  }
