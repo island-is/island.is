@@ -75,7 +75,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const isMobile = width < theme.breakpoints.md
   return (
     <>
-      <Box className={styles.tabList}>
+      <Box printHidden className={styles.tabList}>
         {items?.map((item, index) => (
           <FocusableBox
             component={LinkResolver}
@@ -119,7 +119,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
             <GridRow>
               {(!!activeItem.description || !!activeItemChildren?.length) && (
                 <GridColumn span="6/8">
-                  <Box className={styles.description}>
+                  <Box printHidden className={styles.description}>
                     {(activeItemChildren?.length ?? 0) > 1 && (
                       <Inline>
                         {activeItemChildren?.map((itemChild, ii) => (

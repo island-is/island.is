@@ -1,21 +1,30 @@
 import { useEffect, useState } from 'react'
 import {
   Box,
+  Button,
   DatePicker,
   GridColumn,
   GridRow,
   Hidden,
+  Inline,
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FootNote, m } from '@island.is/service-portal/core'
+import {
+  DownloadFileButtons,
+  FootNote,
+  m,
+} from '@island.is/service-portal/core'
 
 import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
 import HousingBenefitsTable, {
   ITEMS_ON_PAGE,
 } from '../../components/HousingBenefitPayments/HousingBenefitsTable'
 import { Problem } from '@island.is/react-spa/shared'
+import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import { exportHousingBenefitFiles } from '../../utils/filesHousingBenefits'
 
 const DEFAULT_FROM_DATE = new Date('2017-7-13 14:5:24')
 const DEFAULT_TO_DATE = new Date('2024-12-13 14:5:24')
@@ -79,6 +88,44 @@ const FinanceHousingBenefits = () => {
                 selected={toDate}
               />
             </GridColumn>
+            <GridColumn
+              span={['1/1', '7/9', '6/9', '5/9', '5/9']}
+              paddingTop={[1, 1, 2, 0, 0]}
+            >
+              {data?.housingBenefitPayments?.data &&
+                data.housingBenefitPayments.data.length > 0 && (
+                  <Box display="flex" height="full" alignItems="flexEnd">
+                    <Inline space={2}>
+                      <Button
+                        colorScheme="default"
+                        icon="print"
+                        iconType="filled"
+                        onClick={() => window.print()}
+                        preTextIconType="filled"
+                        size="default"
+                        type="button"
+                        variant="utility"
+                      >
+                        {formatMessage(m.print)}
+                      </Button>
+                      <DropdownExport
+                        onGetCSV={() =>
+                          exportHousingBenefitFiles(
+                            data.housingBenefitPayments?.data ?? [],
+                            'csv',
+                          )
+                        }
+                        onGetExcel={() =>
+                          exportHousingBenefitFiles(
+                            data.housingBenefitPayments?.data ?? [],
+                            'xlsx',
+                          )
+                        }
+                      />
+                    </Inline>
+                  </Box>
+                )}
+            </GridColumn>
           </GridRow>
         </Hidden>
         <Box marginTop={3}>
@@ -88,8 +135,8 @@ const FinanceHousingBenefits = () => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {data?.housingBenefitPayments &&
-            data?.housingBenefitPayments.data.length > 0 && (
+          {data?.housingBenefitPayments?.data &&
+            data.housingBenefitPayments.data.length > 0 && (
               <HousingBenefitsTable payments={data.housingBenefitPayments} />
             )}
         </Box>
