@@ -172,13 +172,13 @@ export interface RealEstate {
   total: number
 }
 
-export interface otherassetsData {
+export interface OtherAssetsData {
   otherAssets: string
   otherAssetsValue: string
   taxFreeInheritance: number
 }
 export interface OtherAssets {
-  data: otherassetsData[]
+  data: OtherAssetsData[]
   total: number
 }
 

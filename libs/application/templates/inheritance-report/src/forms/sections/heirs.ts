@@ -159,7 +159,7 @@ export const heirs = buildSection({
                     id: 'relation',
                   },
                   {
-                    // sectionTitle: m.heirShare.defaultMessage,
+                    // sectionTitle: m.heirShare,
                     title: m.heirsInheritanceRate.defaultMessage,
                     id: 'heirsPercentage',
                   },

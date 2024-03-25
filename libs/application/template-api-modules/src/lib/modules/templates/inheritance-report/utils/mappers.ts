@@ -257,7 +257,7 @@ export const expandAnswers = (
       hadSeparateProperty: answers?.spouse?.hadSeparateProperty,
       spouseTotalDeduction: answers?.spouse?.spouseTotalDeduction ?? 0,
       spouseTotalSeparateProperty:
-        answers?.spouse?.spouseTotalSeparateProperty ?? 0,
+        answers?.spouse?.spouseTotalSeparateProperty ?? '',
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',

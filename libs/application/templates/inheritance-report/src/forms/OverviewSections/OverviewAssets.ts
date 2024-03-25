@@ -14,6 +14,7 @@ import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../../lib/messages'
 import { ClaimsData, EstateAssets, StocksData } from '../../types'
+import { valueToNumber } from '../../lib/utils/helpers'
 
 export const overviewAssets = [
   buildDescriptionField({
@@ -203,11 +204,13 @@ export const overviewAssets = [
               : formatBankInfo(account.propertyNumber ?? ''),
             description: [
               `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
-                account.propertyValuation ?? '0',
+                String(valueToNumber(account.propertyValuation)),
               )}`,
               `${
                 m.bankAccountPenaltyInterestRates.defaultMessage
-              }: ${formatCurrency(account.exchangeRateOrInterest ?? '0')}`,
+              }: ${formatCurrency(
+                String(valueToNumber(account.exchangeRateOrInterest)),
+              )}`,
               `${m.bankAccountForeign.defaultMessage}: ${
                 isForeign ? m.yes.defaultMessage : m.no.defaultMessage
               }`,
