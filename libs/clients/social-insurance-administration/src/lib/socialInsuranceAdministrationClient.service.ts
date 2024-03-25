@@ -1,19 +1,20 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  ApplicationApi,
+  ApiProtectedV1PensionCalculatorPostRequest,
   ApplicantApi,
+  ApplicationApi,
   GeneralApi,
   PaymentPlanApi,
+  PensionCalculatorApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
-  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
-  PensionCalculatorApi,
-  ApiProtectedV1PensionCalculatorPostRequest,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '../../gen/fetch'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -46,18 +47,20 @@ export class SocialInsuranceAdministrationClientService {
     })
   }
 
-  getPayments(
+  async getPayments(
     user: User,
-  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments> {
-    return this.paymentPlanApiWithAuth(
-      user,
-    ).apiProtectedV1PaymentPlanLegitimatepaymentsGet()
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments | null> {
+    return await this.paymentPlanApiWithAuth(user)
+      .apiProtectedV1PaymentPlanLegitimatepaymentsGet()
+      .catch(handle404)
   }
 
-  getValidYearsForPaymentPlan(user: User): Promise<Array<number>> {
-    return this.paymentPlanApiWithAuth(
-      user,
-    ).apiProtectedV1PaymentPlanValidyearsGet()
+  async getValidYearsForPaymentPlan(user: User): Promise<Array<number>> {
+    return (
+      (await this.paymentPlanApiWithAuth(user)
+        .apiProtectedV1PaymentPlanValidyearsGet()
+        .catch(handle404)) ?? []
+    )
   }
 
   sendApplication(

@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../../lib/messages'
+import { valueToNumber } from '../../../lib/utils/helpers'
 
 export const CalculateTotalAssets: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -14,21 +15,39 @@ export const CalculateTotalAssets: FC<
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const money = getValueViaPath<string>(answers, 'assets.money.value') || '0'
-  const inventoryValue =
-    getValueViaPath<string>(answers, 'assets.inventory.value') || '0'
-
-  const [total] = useState(
-    (getValueViaPath<number>(answers, 'assets.otherAssets.total') || 0) +
-      parseInt(money) +
-      parseInt(inventoryValue) +
-      (getValueViaPath<number>(answers, 'assets.claims.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.bankAccounts.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.inventory.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.vehicles.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.realEstate.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.guns.total') || 0),
+  const moneyTotal = valueToNumber(
+    getValueViaPath<number>(answers, 'assets.money.value') || 0,
   )
+  const claimsTotal =
+    getValueViaPath<number>(answers, 'assets.claims.total') || 0
+  const bankAccountsTotal =
+    getValueViaPath<number>(answers, 'assets.bankAccounts.total') || 0
+  const inventoryTotal = valueToNumber(
+    getValueViaPath<number>(answers, 'assets.inventory.value') || 0,
+  )
+  const vehiclesTotal =
+    getValueViaPath<number>(answers, 'assets.vehicles.total') || 0
+  const stocksTotal =
+    getValueViaPath<number>(answers, 'assets.stocks.total') || 0
+  const otherAssetsTotal = valueToNumber(
+    getValueViaPath<number>(answers, 'assets.otherAssets.value') || 0,
+  )
+  const realEstateTotal =
+    getValueViaPath<number>(answers, 'assets.realEstate.total') || 0
+  const gunsTotal = getValueViaPath<number>(answers, 'assets.guns.total') || 0
+
+  const acc =
+    moneyTotal +
+    claimsTotal +
+    bankAccountsTotal +
+    inventoryTotal +
+    vehiclesTotal +
+    stocksTotal +
+    otherAssetsTotal +
+    realEstateTotal +
+    gunsTotal
+
+  const [total] = useState(acc)
 
   useEffect(() => {
     setValue('assets.assetsTotal', total)
