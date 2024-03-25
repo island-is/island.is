@@ -6,8 +6,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
-import { format as formatNationalId } from 'kennitala'
-import { isEstateInfo } from '../../lib/utils/isEstateInfo'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 
 export const deceased = buildSection({

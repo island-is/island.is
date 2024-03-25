@@ -241,7 +241,7 @@ export const ReportFieldsRepeater: FC<
       // Since there are not an infinite amount of fields
       // this while(values) loop will terminate when the itemIndex
       // goes out of bounds (resulting in getValues → undefined)
-      let values = {}
+      const values = {}
       while (values) {
         const fieldIndex = `${id}[${itemIndex}]`
         const values = getValues(fieldIndex)

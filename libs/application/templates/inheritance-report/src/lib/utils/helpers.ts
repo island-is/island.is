@@ -1,5 +1,5 @@
 import { Application, FormValue } from '@island.is/application/types'
-import { EstateInfo, InheritanceReportInfo } from '@island.is/clients/syslumenn'
+import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
@@ -20,7 +20,7 @@ export const getEstateDataFromApplication = (
 ): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
-  let estateData = (
+  const estateData = (
     application.externalData.syslumennOnEntry?.data as {
       inheritanceReportInfos?: Array<InheritanceReportInfo>
     }
