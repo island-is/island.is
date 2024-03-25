@@ -149,8 +149,14 @@ export const inheritanceReportSchema = z.object({
       .optional(),
     otherAssets: z
       .object({
-        info: z.string().optional(),
-        value: z.string().optional(),
+        data: z
+          .object({
+            info: z.string().optional(),
+            value: z.string().optional(),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
       .optional(),
     assetsTotal: z.number().optional(),
