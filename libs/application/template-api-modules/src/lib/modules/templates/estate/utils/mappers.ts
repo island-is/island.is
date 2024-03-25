@@ -189,3 +189,18 @@ export const expandStocks = (
 
   return expandedStocks
 }
+
+export const expandOtherAssets = (
+  otherAssets: UploadData['otherAssets'],
+): UploadData['otherAssets'] => {
+  const expandedOtherAssets: UploadData['otherAssets'] = []
+
+  otherAssets.filter(filterEmptyObjects).forEach((otherAsset) => {
+    expandedOtherAssets.push({
+      info: otherAsset.info ?? '',
+      value: otherAsset.value ?? '',
+    })
+  })
+
+  return expandedOtherAssets
+}

@@ -375,36 +375,48 @@ export const overviewAssetsAndDebts = [
     titleVariant: 'h3',
     space: 'gutter',
   }),
-  buildDescriptionField({
-    id: 'overviewOtherAssets',
-    title: m.otherAssetsText,
-    description: (application: Application) =>
-      getValueViaPath<string>(application.answers, 'otherAssets.info'),
-    titleVariant: 'h4',
-    space: 'gutter',
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'otherAssets.info') !== '',
-  }),
-  buildDescriptionField({
-    id: 'overviewOtherAssetsValue',
-    title: m.otherAssetsValue,
-    description: (application: Application) => {
-      const value =
-        getValueViaPath<string>(application.answers, 'otherAssets.value') ?? '0'
-      return formatCurrency(value === '' ? '0' : value)
+  buildCustomField(
+    {
+      title: '',
+      id: 'otherAssetsCards',
+      component: 'Cards',
+      doesNotRequireAnswer: true,
     },
+    {
+      cards: ({ answers }: Application) => {
+        console.log('answers', answers)
+        return ((answers as unknown as EstateSchema).otherAssets ?? []).map(
+          (otherAsset) => {
+            console.log('otherAsset', otherAsset)
+            return {
+              title: otherAsset.info,
+              description: [
+                `${m.otherAssetsValue.defaultMessage}: ${formatCurrency(
+                  otherAsset.value ?? '0',
+                )}`,
+              ],
+            }
+          },
+        )
+      },
+    },
+  ),
+  buildDescriptionField({
+    id: 'otherAssetsTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['otherAssets']>(
+        answers,
+        'otherAssets',
+        'value',
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['otherAssets']>(
+        answers,
+        'otherAssets',
+        'value',
+      ),
     titleVariant: 'h4',
-    marginBottom: 'gutter',
-    space: 'gutter',
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'otherAssets.value') !== '',
-  }),
-  buildCustomField({
-    id: 'otherAssetsNotFilledOut',
-    title: '',
-    component: 'NotFilledOut',
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'otherAssets.value') === '',
   }),
   buildDividerField({}),
   buildDescriptionField({
