@@ -1,10 +1,9 @@
 import { Answer, Application } from '@island.is/application/types'
-import { getApplicationAnswers } from '../parentalLeaveUtils'
+import { getApplicationAnswers, isValidEmail } from '../parentalLeaveUtils'
 import isEmpty from 'lodash/isEmpty'
 import { buildError } from './utils'
 import { AnswerValidationConstants, NO } from '../../constants'
 import { errorMessages } from '../messages'
-import { isValidEmail } from '../isValidEmail'
 import { coreErrorMessages } from '@island.is/application/core'
 const { EMPLOYER } = AnswerValidationConstants
 
