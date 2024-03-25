@@ -56,7 +56,7 @@ export class EducationController {
     const documentResponse = await this.universitiesApi.getStudentTrackPdf(
       authUser,
       parseInt(trackNumber),
-      UniversityId.UniversityOfIceland,
+      UniversityId.UNIVERSITY_OF_ICELAND,
       lang as Locale,
     )
 
