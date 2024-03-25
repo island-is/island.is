@@ -86,6 +86,8 @@ const Ruling = () => {
             ? `\n${formatMessage(ruling.autofill, {
                 judgeName: workingCase.judge?.name,
               })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
             : undefined,
           conclusion: isAcceptingCaseDecision(workingCase.decision)
             ? workingCase.demands

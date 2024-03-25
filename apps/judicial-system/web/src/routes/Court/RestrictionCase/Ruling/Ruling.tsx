@@ -159,6 +159,8 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
             ? `\n${formatMessage(ruling.autofill, {
                 judgeName: workingCase.judge?.name,
               })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
             : undefined,
           conclusion:
             workingCase.decision &&
