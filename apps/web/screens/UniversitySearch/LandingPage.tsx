@@ -59,13 +59,15 @@ const LandingPage: Screen<LandingPageProps> = ({
   useEffect(() => {
     const newArray = [...universities]
     newArray.sort((x, y) => {
-      const titleX = x.contentfulTitle || ''
-      const titleY = y.contentfulTitle || ''
-      return titleX.localeCompare(titleY)
+      const titleX =
+        locale === 'is' ? x.contentfulTitle || '' : x.contentfulTitleEn || ''
+      const titleY =
+        locale === 'is' ? y.contentfulTitle || '' : y.contentfulTitleEn || ''
+      return titleX.localeCompare(titleY, locale)
     })
 
     setSortedUniversities(newArray)
-  }, [universities])
+  }, [universities, locale])
   const [searchTerm, setSearchTerm] = useState('')
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -133,7 +135,9 @@ const LandingPage: Screen<LandingPageProps> = ({
                               }
                             >
                               <Text color="blueberry600">
-                                {university.contentfulTitle}
+                                {locale === 'is'
+                                  ? university.contentfulTitle || ''
+                                  : university.contentfulTitleEn || ''}
                               </Text>
                             </LinkV2>
                           </Box>
@@ -174,7 +178,9 @@ const LandingPage: Screen<LandingPageProps> = ({
                         }
                       >
                         <Text color="blueberry600">
-                          {university.contentfulTitle}
+                          {locale === 'is'
+                            ? university.contentfulTitle || ''
+                            : university.contentfulTitleEn || ''}
                         </Text>
                       </LinkV2>
                     </Box>

@@ -43,6 +43,7 @@ export const ComponentRegistry = {
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
+  AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
 }
 
 export const ButtonRegistry = {
