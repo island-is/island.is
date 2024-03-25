@@ -19,7 +19,6 @@ export class UltravioletRadiationLatestMeasurementService
     const data = await this.clientService.getLatestMeasurement()
     const measurement = data.body?.dataLatest ?? {}
     if (!isValidMeasurement(measurement)) {
-      // TODO: check what these values are
       return {
         statistics: [],
       }
@@ -27,7 +26,7 @@ export class UltravioletRadiationLatestMeasurementService
     return {
       statistics: [
         {
-          header: measurement.time,
+          header: String(Date.parse(measurement.time)),
           headerType: 'date',
           statisticsForHeader: [
             {

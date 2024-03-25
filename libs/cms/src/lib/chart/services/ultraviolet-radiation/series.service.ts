@@ -23,7 +23,8 @@ export class UltravioletRadiationSeriesService
         data.body?.dataAll
           ?.filter(isValidMeasurement)
           .map(({ time, uvVal }) => ({
-            header: time,
+            uvVal, // TODO: perhaps add this automatically in the chart.service.ts file
+            header: String(Date.parse(time)),
             headerType: 'date',
             statisticsForHeader: [
               {

@@ -1,4 +1,5 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import flatten from 'lodash/flatten'
 import { ChartDataSourceType } from 'api-cms-domain'
 import { StatisticsClientService } from '@island.is/clients/statistics'
 import { Loader } from '@island.is/nest/dataloader'
@@ -25,43 +26,51 @@ export class ChartResolver {
     @Loader(ChartDataByExternalJsonProviderDataLoader)
     externalJsonService: ChartDataByExternalJsonProviderDataLoaderType,
   ): Promise<string | undefined> {
-    // TODO: handle more than one component
-    for (const component of chart.components) {
-      const dataSourceType = component.dataSource?.dataSourceType
+    const responses = await Promise.all(
+      chart.components.map((component) => {
+        return (async () => {
+          const dataSourceType = component.dataSource?.dataSourceType
 
-      const input = {
-        dateFrom: chart.dateFrom ? new Date(chart.dateFrom) : undefined,
-        dateTo: chart.dateTo ? new Date(chart.dateTo) : undefined,
-        numberOfDataPoints: chart.numberOfDataPoints,
-        interval: chart.interval,
-        sourceDataKeys: [component.sourceDataKey],
-      }
+          const input = {
+            dateFrom: chart.dateFrom ? new Date(chart.dateFrom) : undefined,
+            dateTo: chart.dateTo ? new Date(chart.dateTo) : undefined,
+            numberOfDataPoints: chart.numberOfDataPoints,
+            interval: chart.interval,
+            sourceDataKeys: [component.sourceDataKey],
+          }
 
-      if (dataSourceType === ChartDataSourceType.ExternalCsv) {
-        const csvUrl = component.dataSource?.externalCsvProviderUrl
-        if (!csvUrl) {
-          return ''
-        }
-        const statistics = (
-          await this.externalCsvService.getMultipleStatistics(input, [csvUrl])
-        ).statistics
-        return !statistics?.length ? '' : JSON.stringify(statistics)
-      }
+          if (dataSourceType === ChartDataSourceType.ExternalCsv) {
+            const csvUrl = component.dataSource?.externalCsvProviderUrl
+            if (!csvUrl) {
+              return []
+            }
+            return (
+              await this.externalCsvService.getMultipleStatistics(input, [
+                csvUrl,
+              ])
+            ).statistics
+          }
 
-      if (
-        dataSourceType === ChartDataSourceType.ExternalJson &&
-        component.dataSource?.externalJsonProvider
-      ) {
-        const statistics = (
-          await externalJsonService.load({
-            ...input,
-            externalJsonProvider: component.dataSource.externalJsonProvider,
-          })
-        ).statistics
-        return !statistics?.length ? '' : JSON.stringify(statistics)
-      }
+          if (
+            dataSourceType === ChartDataSourceType.ExternalJson &&
+            component.dataSource?.externalJsonProvider
+          ) {
+            return (
+              await externalJsonService.load({
+                ...input,
+                externalJsonProvider: component.dataSource.externalJsonProvider,
+              })
+            ).statistics
+          }
 
-      return chart.sourceData
-    }
+          return component.dataSource?.internalJson?.statistics ?? []
+        })()
+      }),
+    )
+    const sourceData = flatten(
+      responses.filter((item) => Array.isArray(item) && item.length > 0),
+    )
+
+    return sourceData.length > 0 ? JSON.stringify(sourceData) : ''
   }
 }
