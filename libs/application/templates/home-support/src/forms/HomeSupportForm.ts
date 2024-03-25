@@ -149,12 +149,23 @@ export const HomeSupportForm: Form = buildForm({
               },
             }),
             buildKeyValueField({
+              label: m.application.doctor.healthCenterText,
+              value: ({ externalData }) =>
+                (externalData.currentHealthcenter?.data as CurrentHealthCenter)
+                  ?.healthCenter,
+              condition: (_, externalData) => {
+                const data = externalData.currentHealthcenter
+                  ?.data as CurrentHealthCenter
+                return !data?.doctor && !!data?.healthCenter
+              },
+            }),
+            buildKeyValueField({
               label: '',
               value: m.application.doctor.notFoundText,
               condition: (_, externalData) => {
-                return !(
-                  externalData.currentHealthcenter?.data as CurrentHealthCenter
-                )?.doctor
+                const data = externalData.currentHealthcenter
+                  ?.data as CurrentHealthCenter
+                return !data?.doctor && !data?.healthCenter
               },
             }),
             buildDescriptionField({

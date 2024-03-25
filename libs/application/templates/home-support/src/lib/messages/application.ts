@@ -79,6 +79,11 @@ export const application = {
       defaultMessage: 'Færðu þjónustu nú þegar?',
       description: 'Receives service title',
     },
+    healthCenterText: {
+      id: 'hst.application:doctor.healthCenter.text',
+      defaultMessage: 'Heilsugæslustöð',
+      description: 'Health center text',
+    },
     doesReceiveServiceText: {
       id: 'hst.application:doctor.receives.service.yes',
       defaultMessage: 'Já, ég fæ ákveðna þjónustu hjá mínu sveitarfélagi',
