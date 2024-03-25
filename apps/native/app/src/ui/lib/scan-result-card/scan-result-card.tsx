@@ -1,8 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ActivityIndicator, Image, ImageSourcePropType } from 'react-native'
+import { ActivityIndicator, ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
+import { GenericLicenseType } from '../../../graphql/types/schema'
 import { formatNationalId } from '../../../lib/format-national-id'
+import { isIos } from '../../../utils/devices'
+import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import success from '../../assets/card/checkmark.png'
@@ -15,7 +18,6 @@ import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import { font } from '../../utils'
-import { GenericLicenseType } from '../../../graphql/types/schema'
 
 const Host = styled.View<{ backgroundColor: string }>`
   border-radius: 16px;
@@ -174,8 +176,7 @@ interface ScanResultCardProps {
   title?: string
   nationalId?: string
   name?: string
-  licenseNumber?: string
-  photo?: string
+  picture?: string | null
   data?: Array<{ key: string; value: string }>
   hasNoData?: boolean
   type: ScanResultCardType
@@ -247,7 +248,7 @@ export function ScanResultCard({
   loading,
   nationalId,
   name,
-  photo,
+  picture,
   data,
   hasNoData = false,
   type,
@@ -308,20 +309,11 @@ export function ScanResultCard({
                 <>
                   <Value style={{ marginBottom: 16 }}>{errorMessage}</Value>
                   <Copy>
-                    <Bold>Android</Bold>
-                    {'  '}
                     <Normal>
                       {intl.formatMessage({
-                        id: 'licenseScannerResult.androidHelp',
-                      })}
-                    </Normal>
-                  </Copy>
-                  <Copy>
-                    <Bold>iOS</Bold>
-                    {'  '}
-                    <Normal>
-                      {intl.formatMessage({
-                        id: 'licenseScannerResult.iosHelp',
+                        id: `licenseScannerResult.${
+                          isIos ? 'ios' : 'android'
+                        }Help`,
                       })}
                     </Normal>
                   </Copy>
@@ -341,9 +333,9 @@ export function ScanResultCard({
               <Placeholder
                 style={{ width: 79, height: 109, marginRight: 32 }}
               />
-            ) : photo ? (
-              <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
-            ) : null}
+            ) : (
+              picture && <Photo source={{ uri: prefixBase64(picture) }} />
+            )}
             <Left>
               <LabelGroup>
                 <Label>
@@ -367,18 +359,16 @@ export function ScanResultCard({
                   <Value>{formatNationalId(nationalId)}</Value>
                 )}
               </LabelGroup>
-              {data?.map(({ key, value }) => {
-                return (
-                  <LabelGroup key={key}>
-                    <Label>{key}</Label>
-                    {loading ? (
-                      <Placeholder style={{ width: 120 }} />
-                    ) : (
-                      <Value>{value}</Value>
-                    )}
-                  </LabelGroup>
-                )
-              })}
+              {data?.map(({ key, value }) => (
+                <LabelGroup key={key}>
+                  <Label>{key}</Label>
+                  {loading ? (
+                    <Placeholder style={{ width: 120 }} />
+                  ) : (
+                    <Value>{value}</Value>
+                  )}
+                </LabelGroup>
+              ))}
             </Left>
           </Content>
         </>

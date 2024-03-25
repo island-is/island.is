@@ -1,18 +1,21 @@
 import { ScanResultCard, SupportedGenericLicenseTypes } from '@ui'
-import React from 'react'
 import { useIntl } from 'react-intl'
-import { View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
+import styled from 'styled-components/native'
 import {
   VerifyLicenseBarcodeError,
   VerifyLicenseBarcodeMutation,
 } from '../../graphql/types/schema'
 import { StackRegistry } from '../../utils/component-registry'
-import { LicenseScanResult } from './scan-results/license-scan-result'
+
+const Host = styled.View`
+  flex: 1;
+  padding: ${({ theme }) => theme.spacing[2]}px;
+`
 
 interface LicenseScanDetailScreenProps {
   verifyLicenseBarcode: VerifyLicenseBarcodeMutation['verifyLicenseBarcode']
@@ -34,22 +37,20 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
   })
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      {error ? (
-        <ScanResultCard
-          type={type ?? SupportedGenericLicenseTypes.Unknown}
-          isExpired={isExpired}
-          error={!!error}
-          errorMessage={intl.formatMessage({
-            id: isExpired
-              ? 'licenseScanDetail.barcodeExpired'
-              : 'licenseScanDetail.errorUnknown',
-          })}
-        />
-      ) : (
-        <LicenseScanResult data={data} type={type} />
-      )}
-    </View>
+    <Host>
+      <ScanResultCard
+        isExpired={isExpired}
+        error={!!error}
+        errorMessage={intl.formatMessage({
+          id: isExpired
+            ? 'licenseScanDetail.barcodeExpired'
+            : 'licenseScanner.errorUnknown',
+        })}
+        {...data}
+        hasNoData={!data?.nationalId}
+        type={type ?? SupportedGenericLicenseTypes.Unknown}
+      />
+    </Host>
   )
 }
 

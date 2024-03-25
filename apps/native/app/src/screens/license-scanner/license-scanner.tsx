@@ -18,7 +18,10 @@ import {
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import flashligth from '../../assets/icons/flashlight.png'
-import { useVerifyLicenseBarcodeMutation } from '../../graphql/types/schema'
+import {
+  useVerifyLicenseBarcodeMutation,
+  VerifyLicenseBarcodeError,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { isAndroid, isIos } from '../../utils/devices'
@@ -44,6 +47,14 @@ const FlashLight = styled.View`
 const FlashImg = styled.Image`
   height: 32px;
   width: 32px;
+`
+
+const BubbleWrapper = styled.View`
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  align-items: center;
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -141,20 +152,16 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   }, [])
 
   useEffect(() => {
-    if (
-      data?.verifyLicenseBarcode?.error ||
-      data?.verifyLicenseBarcode.valid === false ||
-      error
-    ) {
-      setInvalid(true)
-    } else if (data?.verifyLicenseBarcode) {
+    if (data?.verifyLicenseBarcode) {
       setInvalid(false)
       setActive(false)
 
       Navigation.push(componentId, {
         component: {
           name: ComponentRegistry.LicenseScanDetailScreen,
-          passProps: data.verifyLicenseBarcode,
+          passProps: {
+            verifyLicenseBarcode: data.verifyLicenseBarcode,
+          },
           options: {
             topBar: {
               visible: true,
@@ -197,6 +204,30 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     prepareRatio()
   }
 
+  const getBubbleMessage = () => {
+    if (!isDefined(hasPermission)) {
+      return 'licenseScanner.awaitingPermission'
+    } else if (!hasPermission) {
+      return 'licenseScanner.noCameraAccess'
+    } else if (error) {
+      return 'licenseScanner.errorNetwork'
+    } else if (
+      data?.verifyLicenseBarcode?.error === VerifyLicenseBarcodeError.Error
+    ) {
+      return 'licenseScanner.errorUnknown'
+    } else if (invalid) {
+      return 'licenseScanner.invalidBarcode'
+    }
+
+    return 'licenseScanner.helperMessage'
+  }
+
+  const renderBubble = () => (
+    <BubbleWrapper>
+      <Bubble>{intl.formatMessage({ id: getBubbleMessage() })}</Bubble>
+    </BubbleWrapper>
+  )
+
   if (isSimulator) {
     return (
       <View
@@ -219,6 +250,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
             })
           }}
         />
+        {renderBubble()}
       </View>
     )
   }
@@ -245,25 +277,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           style={[StyleSheet.absoluteFillObject, { marginHorizontal: padding }]}
         />
       )}
-      <View
-        style={{
-          position: 'absolute',
-          top: 64,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-        }}
-      >
-        <Bubble>
-          {!isDefined(hasPermission)
-            ? intl.formatMessage({ id: 'licenseScanner.awaitingPermission' })
-            : !hasPermission
-            ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })
-            : invalid
-            ? intl.formatMessage({ id: 'licenseScannerDetail.invalidBarcode' })
-            : intl.formatMessage({ id: 'licenseScanner.helperMessage' })}
-        </Bubble>
-      </View>
+      {renderBubble()}
       <BottomRight>
         <TouchableOpacity onPress={onFlashlightPress}>
           <FlashLight>
