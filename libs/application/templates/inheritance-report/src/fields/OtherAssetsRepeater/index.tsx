@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState, useCallback } from 'react'
+import { FC, useState, useCallback, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -66,6 +66,10 @@ export const OtherAssetsRepeater: FC<
     setTotal(total)
   }, [getValues, id, setValue])
 
+  useEffect(() => {
+    calculateTotal()
+  }, [calculateTotal])
+
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
@@ -90,7 +94,7 @@ export const OtherAssetsRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box position="absolute" className={styles.removeFieldButton}>
+            <Box position="absolute" className={styles.removeFieldButtonSingle}>
               <Button
                 variant="ghost"
                 size="small"
@@ -109,7 +113,6 @@ export const OtherAssetsRepeater: FC<
 
                 return (
                   <DoubleColumnRow
-                    pushRight
                     span={
                       field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']
                     }

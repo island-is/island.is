@@ -545,12 +545,12 @@ export const assets = buildSection({
                   {
                     title: m.otherAssetsText,
                     id: 'info',
-                    placeholder: m.otherAssetsPlaceholder,
                     required: true,
                   },
                   {
                     title: m.otherAssetsValue,
                     id: 'value',
+                    required: true,
                     currency: true,
                   },
                 ],
