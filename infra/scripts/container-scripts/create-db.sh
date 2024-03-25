@@ -81,7 +81,7 @@ PGPASSWORD=$(node secrets get "$PGPASSWORD_KEY")
 export PGPASSWORD
 
 echo "Creating database if it doesn't exist."
-psql -c "CREATE DATABASE $DB_NAME" || true
+psql -c "CREATE DATABASE $DB_NAME" -w || true
 
 # Determine if $DB_USER is a read-only user and adjust DB_PASSWORD_KEY for the write user accordingly
 if [[ "$DB_USER" == *"_read" ]]; then
