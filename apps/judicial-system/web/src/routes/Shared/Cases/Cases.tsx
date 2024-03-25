@@ -37,9 +37,7 @@ import {
   PastCasesTable,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table, {
-  useTable,
-} from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -112,7 +110,6 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
-  const { requestSort, getClassNamesFor, sortConfig } = useTable()
 
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
