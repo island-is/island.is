@@ -20,6 +20,9 @@ export class ChartComponent {
   @Field()
   sourceDataKey!: string
 
+  @Field(() => Number, { nullable: true })
+  interval?: number
+
   @Field(() => String, { nullable: true })
   stackId?: string
 
@@ -41,5 +44,6 @@ export const mapChartComponent = ({
     dataSource: fields.chartDataSource
       ? mapChartDataSource(fields.chartDataSource)
       : null,
+    interval: fields.interval ? Number(fields.interval) : undefined,
   }
 }
