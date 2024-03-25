@@ -6,6 +6,10 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:title',
     defaultMessage: 'Skjalaveita',
   },
+  overview: {
+    id: 'portals-admin.document-provider:overview',
+    defaultMessage: 'Yfirlit',
+  },
   documentProviders: {
     id: 'portals-admin.document-provider:document-providers',
     defaultMessage: 'Skjalaveitur',
@@ -13,6 +17,10 @@ export const m = defineMessages({
   documentProviderSingle: {
     id: 'portals-admin.document-provider:document-provider-single',
     defaultMessage: 'Skjalaveitandi',
+  },
+  paper: {
+    id: 'portals-admin.document-provider:paper',
+    defaultMessage: 'Pappír',
   },
   MyCategories: {
     id: 'portals-admin.document-provider:my-categories',
@@ -750,5 +758,126 @@ export const m = defineMessages({
   statisticsBoxNetworkError: {
     id: 'portals-admin.document-provider:statistics-box-network-error',
     defaultMessage: 'Ekki tókst að sækja tölfræði',
+  },
+
+  // Paper
+  paperTitle: {
+    id: 'portals-admin.document-provider:paper-title',
+    defaultMessage: 'Pappírslistinn',
+  },
+  paperDescription: {
+    id: 'portals-admin.document-provider:paper-description',
+    defaultMessage:
+      'Listi yfir einstaklinga og fyrirtæki sem vilja fá send skjöl á pappír.',
+  },
+  paperOrigin: {
+    id: 'portals-admin.document-provider:paper-origin',
+    defaultMessage: 'Uppruni',
+  },
+  paperBooleanTitle: {
+    id: 'portals-admin.document-provider:paper-boolean-title',
+    defaultMessage: 'Pappír',
+  },
+  paperUpdated: {
+    id: 'portals-admin.document-provider:paper-updated',
+    defaultMessage: 'Uppfært',
+  },
+  active: {
+    id: 'portals-admin.document-provider:paper-active',
+    defaultMessage: 'Virkur',
+  },
+  inactive: {
+    id: 'portals-admin.document-provider:paper-inactive',
+    defaultMessage: 'Óvirkur',
+  },
+  yes: {
+    id: 'portals-admin.document-provider:paper-yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'portals-admin.document-provider:paper-no',
+    defaultMessage: 'Nei',
+  },
+
+  // Categories
+  catAndTypeName: {
+    id: 'portals-admin.document-provider:category-types-name',
+    defaultMessage: 'Flokkar og Tegundir',
+  },
+  catAndTypeTitle: {
+    id: 'portals-admin.document-provider:category-types-title',
+    defaultMessage: 'Flokkar og tegundir erinda',
+  },
+  catAndTypeDescription: {
+    id: 'portals-admin.document-provider:category-types-description',
+    defaultMessage: 'Flokkar og tegundir erinda í pósthólfi á Ísland.is',
+  },
+  change: {
+    id: 'portals-admin.document-provider:change',
+    defaultMessage: 'Breyta',
+  },
+
+  categories: {
+    id: 'portals-admin.document-provider:categories',
+    defaultMessage: 'Flokkar',
+  },
+  categoryP: {
+    id: 'portals-admin.document-provider:category-participle',
+    defaultMessage: 'flokki',
+  },
+  types: {
+    id: 'portals-admin.document-provider:types',
+    defaultMessage: 'Tegundir',
+  },
+  typeP: {
+    id: 'portals-admin.document-provider:type-participle',
+    defaultMessage: 'tegund',
+  },
+  add: {
+    id: 'portals-admin.document-provider:add-new',
+    defaultMessage: 'Bæta við {add}',
+  },
+
+  close: {
+    id: 'portals-admin.document-provider:close',
+    defaultMessage: 'Loka',
+  },
+  cancel: {
+    id: 'portals-admin.document-provider:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  save: {
+    id: 'portals-admin.document-provider:save',
+    defaultMessage: 'Vista',
+  },
+  modalTitleType: {
+    id: 'portals-admin.document-provider:modal-title-type',
+    defaultMessage: 'Bæta við nýrri tegund',
+  },
+  modalTitleCategory: {
+    id: 'portals-admin.document-provider:modal-title-category',
+    defaultMessage: 'Bæta við nýjum flokki',
+  },
+  modalTitleTypeChange: {
+    id: 'portals-admin.document-provider:modal-title-type-change',
+    defaultMessage: 'Breyta tegund',
+  },
+  modalTitleCategoryChange: {
+    id: 'portals-admin.document-provider:modal-title-category-change',
+    defaultMessage: 'Breyta flokki',
+  },
+  name: {
+    id: 'portals-admin.document-provider:name',
+    defaultMessage: 'Nafn',
+  },
+
+  saved: {
+    id: 'portals-admin.document-provider:save-success',
+    defaultMessage: 'Vistað',
+  },
+
+  error: {
+    id: 'portals-admin.document-provider:save-error',
+    defaultMessage: 'Villa',
   },
 })

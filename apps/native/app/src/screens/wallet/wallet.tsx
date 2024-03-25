@@ -144,17 +144,17 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         if (license.type === GenericLicenseType.PCard) {
           return showPCard
         }
-        if (license.type === GenericLicenseType.HuntingLicense) {
-          return showHuntingLicense
-        }
         if (license.type === GenericLicenseType.Ehic) {
           return showEhic
+        }
+        if (license.type === GenericLicenseType.HuntingLicense) {
+          return showHuntingLicense
         }
         return true
       })
     }
     return []
-  }, [res, showDisability, showPCard, showEhic])
+  }, [res, showDisability, showPCard, showEhic, showHuntingLicense])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
