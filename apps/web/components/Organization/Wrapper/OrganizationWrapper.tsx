@@ -90,10 +90,6 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import {
-  TryggingastofnunFooter,
-  TryggingastofnunHeader,
-} from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
@@ -134,12 +130,7 @@ interface HeaderProps {
 
 const darkThemes = ['hms']
 
-const blueberryThemes = [
-  'sjukratryggingar',
-  'rikislogmadur',
-  'tryggingastofnun',
-  'nti',
-]
+const blueberryThemes = ['sjukratryggingar', 'rikislogmadur', 'nti']
 
 const lightThemes = [
   'digital_iceland',
@@ -299,13 +290,6 @@ export const OrganizationHeader: React.FC<
     case 'fjarsysla-rikisins':
       return (
         <FjarsyslaRikisinsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'tryggingastofnun':
-      return (
-        <TryggingastofnunHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
@@ -825,12 +809,16 @@ const getActiveNavigationItemTitle = (
   navigationItems: NavigationItem[],
   clientUrl: string,
 ) => {
+  const clientUrlWithoutHashOrQueryParams = clientUrl
+    .split('?')[0]
+    .split('#')[0]
+
   for (const item of navigationItems) {
-    if (clientUrl === item.href) {
+    if (clientUrlWithoutHashOrQueryParams === item.href) {
       return item.title
     }
     for (const childItem of item.items ?? []) {
-      if (clientUrl === childItem.href) {
+      if (clientUrlWithoutHashOrQueryParams === childItem.href) {
         return childItem.title
       }
     }

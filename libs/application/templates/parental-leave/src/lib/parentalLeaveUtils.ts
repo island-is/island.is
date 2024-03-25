@@ -1,6 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 import {
   Application,
+  ApplicationLifecycle,
   ExternalData,
   Field,
   FormValue,
@@ -73,6 +74,7 @@ import {
   Period,
   PersonInformation,
   PregnancyStatusAndRightsResults,
+  SelectOption,
   VMSTPeriod,
   YesOrNo,
 } from '../types'
@@ -2052,4 +2054,35 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
+}
+
+export const calculatePruneDate = (application: Application) => {
+  const { pruneAt } = application as unknown as ApplicationLifecycle
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+  // If date of birth is set then we use that date + 2 years as prune date
+  if (dateOfBirth?.data?.dateOfBirth) {
+    const pruneDate = new Date(dateOfBirth.data.dateOfBirth)
+    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
+
+    return pruneDate
+  }
+
+  // Just to be sure that we have some date set for prune date
+  if (!pruneAt) {
+    const pruneDate = new Date()
+    pruneDate.setMonth(pruneDate.getMonth() + 3)
+
+    return pruneDate
+  }
+
+  return pruneAt
+}
+
+export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
+  if (id === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === id)?.label
 }

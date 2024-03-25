@@ -114,9 +114,9 @@ export const mapPensionCalculationInput = (
     yearOfBirth:
       typeof input.birthYear === 'number'
         ? input.birthYear >= 1952
-          ? 1
-          : 2
-        : 1,
+          ? 2
+          : 1
+        : 2,
     typeOfPeriodIncome: input.typeOfPeriodIncome
       ? periodIncomeTypeMapping[input.typeOfPeriodIncome]
       : input.typeOfPeriodIncome,

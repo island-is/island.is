@@ -1,5 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Advert, AdvertEntity, AdvertType } from './advert.model'
+import {
+  Advert,
+  AdvertCategory,
+  AdvertEntity,
+  AdvertMainCategory,
+  AdvertType,
+} from './advert.model'
 import { AdvertPaging } from './advert-paging.model'
 
 @ObjectType('MinistryOfJusticeAdvertsTypeResponse')
@@ -11,10 +17,19 @@ export class AdvertTypeResponse {
   paging!: AdvertPaging
 }
 
+@ObjectType('MinistryOfJusticeAdvertsMainCategoriesResponse')
+export class AdvertMainCategoriesResponse {
+  @Field(() => [AdvertMainCategory])
+  mainCategories!: AdvertMainCategory[]
+
+  @Field(() => AdvertPaging)
+  paging!: AdvertPaging
+}
+
 @ObjectType('MinistryOfJusticeAdvertsCategoryResponse')
 export class AdvertCategoryResponse {
-  @Field(() => [AdvertEntity])
-  categories!: AdvertEntity[]
+  @Field(() => [AdvertCategory])
+  categories!: AdvertCategory[]
 
   @Field(() => AdvertPaging)
   paging!: AdvertPaging
@@ -24,6 +39,15 @@ export class AdvertCategoryResponse {
 export class AdvertDepartmentResponse {
   @Field(() => [AdvertEntity])
   departments!: AdvertEntity[]
+
+  @Field(() => AdvertPaging)
+  paging!: AdvertPaging
+}
+
+@ObjectType('MinistryOfJusticeAdvertsInvolvedPartiesResponse')
+export class AdvertInvolvedPartiesResponse {
+  @Field(() => [AdvertEntity])
+  involvedParties!: AdvertEntity[]
 
   @Field(() => AdvertPaging)
   paging!: AdvertPaging

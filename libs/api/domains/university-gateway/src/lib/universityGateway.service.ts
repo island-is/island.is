@@ -21,6 +21,7 @@ import {
   ProgramStatus,
 } from '@island.is/university-gateway'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { convertHtmlToContentfulRichText } from './utils'
 
 @Injectable()
 export class UniversityGatewayApi {
@@ -85,6 +86,17 @@ export class UniversityGatewayApi {
       id: input.id,
     })
 
+    const [descriptionHtmlEn, descriptionHtmlIs] = await Promise.all([
+      convertHtmlToContentfulRichText(
+        item.descriptionEn ?? '',
+        'descriptionHtmlEn',
+      ),
+      convertHtmlToContentfulRichText(
+        item.descriptionIs ?? '',
+        'descriptionHtmlIs',
+      ),
+    ])
+
     return {
       id: item.id,
       externalId: item.externalId,
@@ -108,6 +120,8 @@ export class UniversityGatewayApi {
       degreeAbbreviation: item.degreeAbbreviation,
       credits: item.credits,
       descriptionIs: item.descriptionIs,
+      descriptionHtmlEn,
+      descriptionHtmlIs,
       descriptionEn: item.descriptionEn,
       durationInYears: item.durationInYears,
       costPerYear: item.costPerYear,

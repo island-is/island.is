@@ -21,9 +21,9 @@ export const strings = defineMessages({
       'Notaður sem texti á hætta við takka í modal til að opna mál aftur eftir úrskurð.',
   },
   reopenCaseText: {
-    id: 'judicial.system.core:reopen_modal.reopen_case_text',
+    id: 'judicial.system.core:reopen_modal.reopen_case_text_v2',
     defaultMessage:
-      'Með því að halda áfram fellur núverandi undirritun úr gildi og dómari þarf að undirrita aftur eftir leiðréttingu.',
+      'Að lokinni lagfæringu er hægt að velja að undirrita leiðréttan úrskurð.',
     description:
       'Notaður sem texti í modal til að opna mál aftur eftir úrskurð.',
   },

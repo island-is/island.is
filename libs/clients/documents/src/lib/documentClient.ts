@@ -20,15 +20,10 @@ import { MessageActionDTO } from './models/MessageActionDTO'
 import { BulkMailActionDTO } from './models/BulkMailActionDTO'
 import { DocumentPageInput } from './models/DocumentPageInput'
 import { DocumentPageNumberRes } from './models/DocumentPageNumberRes'
+import { ConfigType } from '@nestjs/config'
+import { DocumentClientConfig } from './documentClient.config'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
-
-export interface DocumentClientConfig {
-  basePath: string
-  clientId: string
-  clientSecret: string
-  tokenUrl: string
-}
 
 @Injectable()
 export class DocumentClient {
@@ -37,8 +32,8 @@ export class DocumentClient {
 
   constructor(
     private httpService: HttpService,
-    @Inject(DOCUMENT_CLIENT_CONFIG)
-    private clientConfig: DocumentClientConfig,
+    @Inject(DocumentClientConfig.KEY)
+    private clientConfig: ConfigType<typeof DocumentClientConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
