@@ -97,6 +97,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showPassport = useFeatureFlag('isPassportEnabled', false)
   const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false)
   const showPCard = useFeatureFlag('isPCardEnabled', false)
+  const showEhic = useFeatureFlag('isEhicEnabled', false)
 
   // Query list of licenses
   const res = useListLicensesQuery({
@@ -110,6 +111,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           GenericLicenseType.FirearmLicense,
           showDisability ? GenericLicenseType.DisabilityLicense : null,
           showPCard ? GenericLicenseType.PCard : null,
+          showEhic ? GenericLicenseType.Ehic : null,
         ].filter(Boolean) as GenericLicenseType[],
       },
     },
@@ -140,11 +142,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         if (license.type === GenericLicenseType.PCard) {
           return showPCard
         }
+        if (license.type === GenericLicenseType.Ehic) {
+          return showEhic
+        }
         return true
       })
     }
     return []
-  }, [res, showDisability, showPCard])
+  }, [res, showDisability, showPCard, showEhic])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
