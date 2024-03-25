@@ -90,7 +90,6 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import { TryggingastofnunFooter } from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {

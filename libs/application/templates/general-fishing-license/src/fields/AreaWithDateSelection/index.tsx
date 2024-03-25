@@ -100,8 +100,8 @@ export const AreaWithDateSelection: FC<
           options={licenseAreas?.map(
             (o) =>
               ({
-                label: o.description,
-                value: o.key,
+                label: o.description || '',
+                value: o.key || '',
               } || []),
           )}
         />
