@@ -22,14 +22,14 @@ import { OrganizationTitleByReferenceIdLoader } from './loaders/organizationTitl
 import { OrganizationLinkByReferenceIdLoader } from './loaders/organizationLinkByKey.loader'
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
-import { StatisticsClientModule } from '@island.is/clients/statistics'
+import { ChartModule } from './chart/chart.module'
 
 @Module({
   imports: [
     HttpModule,
     TerminusModule,
     PowerBiConfig.registerOptional(),
-    StatisticsClientModule,
+    ChartModule,
   ],
   providers: [
     CmsResolver,
