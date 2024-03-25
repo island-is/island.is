@@ -5,6 +5,7 @@ import {
   ChartDataOutput,
   ChartDataSourceExternalJsonProviderService,
 } from '../../types'
+import { isValidMeasurement } from './utils'
 
 @Injectable()
 export class UltravioletRadiationLatestMeasurementService
@@ -16,8 +17,8 @@ export class UltravioletRadiationLatestMeasurementService
 
   async getChartData(_: ChartDataInput): Promise<ChartDataOutput> {
     const data = await this.clientService.getLatestMeasurement()
-    const { uvVal, time } = data.body?.dataLatest ?? {}
-    if (typeof uvVal !== 'number' || !time) {
+    const measurement = data.body?.dataLatest ?? {}
+    if (!isValidMeasurement(measurement)) {
       // TODO: check what these values are
       return {
         statistics: [],
@@ -26,12 +27,12 @@ export class UltravioletRadiationLatestMeasurementService
     return {
       statistics: [
         {
-          header: time,
+          header: measurement.time,
           headerType: 'date',
           statisticsForHeader: [
             {
               key: 'uvVal',
-              value: uvVal,
+              value: measurement.uvVal,
             },
           ],
         },

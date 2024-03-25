@@ -5,6 +5,7 @@ import {
   ChartDataOutput,
   ChartDataSourceExternalJsonProviderService,
 } from '../../types'
+import { isValidMeasurement } from './utils'
 
 @Injectable()
 export class UltravioletRadiationSeriesService
@@ -19,16 +20,18 @@ export class UltravioletRadiationSeriesService
     // TODO: check out how the data looks
     return {
       statistics:
-        data?.dataAll?.map(({ time, uvVal }) => ({
-          header: time,
-          headerType: 'date',
-          statisticsForHeader: [
-            {
-              key: 'uvVal',
-              value: uvVal,
-            },
-          ],
-        })) ?? [],
+        data.body?.dataAll
+          ?.filter(isValidMeasurement)
+          .map(({ time, uvVal }) => ({
+            header: time,
+            headerType: 'date',
+            statisticsForHeader: [
+              {
+                key: 'uvVal',
+                value: uvVal,
+              },
+            ],
+          })) ?? [],
     }
   }
 }
