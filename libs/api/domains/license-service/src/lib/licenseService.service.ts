@@ -488,22 +488,7 @@ export class LicenseServiceService {
       )
     }
 
-    if (
-      !licenseService.verifyPkPassDeprecated ||
-      !licenseService.verifyPkPass
-    ) {
-      const missingMethodMsg =
-        'License client has no verifyPkPass nor verifyPkPassDeprecated implementation'
-      this.logger.error(missingMethodMsg, {
-        passTemplateId,
-      })
-
-      throw new BadRequestException(
-        `${missingMethodMsg}, passTemplateId: ${passTemplateId}`,
-      )
-    }
-
-    if (licenseService?.verifyPkPassDeprecated) {
+    if (licenseService.verifyPkPassDeprecated) {
       const verification = await licenseService.verifyPkPassDeprecated(data)
 
       if (!verification.ok) {
@@ -515,17 +500,31 @@ export class LicenseServiceService {
       return verification.data
     }
 
-    const verifyPkPassRes = await licenseService.verifyPkPass(data)
+    if (licenseService.verifyPkPass) {
+      const verifyPkPassRes = await licenseService.verifyPkPass(data)
 
-    if (!verifyPkPassRes.ok) {
-      throw new InternalServerErrorException(`Unable to verify pkpass for user`)
+      if (!verifyPkPassRes.ok) {
+        throw new InternalServerErrorException(
+          `Unable to verify pkpass for user`,
+        )
+      }
+
+      return {
+        valid: verifyPkPassRes.data.valid,
+        // Make sure to return the data as a string to be backwards compatible
+        data: JSON.stringify(verifyPkPassRes.data.data),
+      }
     }
 
-    return {
-      valid: verifyPkPassRes.data.valid,
-      // Make sure to return the data as a string to be backwards compatible
-      data: JSON.stringify(verifyPkPassRes.data.data),
-    }
+    const missingMethodMsg =
+      'License client has no verifyPkPass nor verifyPkPassDeprecated implementation'
+    this.logger.error(missingMethodMsg, {
+      passTemplateId,
+    })
+
+    throw new BadRequestException(
+      `${missingMethodMsg}, passTemplateId: ${passTemplateId}`,
+    )
   }
 
   async createBarcode(
