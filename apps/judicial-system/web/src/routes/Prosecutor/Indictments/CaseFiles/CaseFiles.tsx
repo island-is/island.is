@@ -60,6 +60,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         file.status === 'done',
     ) &&
     allFilesUploaded
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
