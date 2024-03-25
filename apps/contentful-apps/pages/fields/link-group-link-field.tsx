@@ -165,17 +165,20 @@ const LinkGroupLinkField = () => {
     })
   }
 
-  if (!linkContentType) {
+  const selectableContentTypes =
+    subpageContentType && linkContentType
+      ? [subpageContentType, linkContentType]
+      : linkContentType
+      ? [linkContentType]
+      : []
+
+  if (!subpageContentType) {
     return (
       <Flex paddingTop="spacingM" justifyContent="center">
         <Spinner />
       </Flex>
     )
   }
-
-  const selectableContentTypes = subpageContentType
-    ? [subpageContentType, linkContentType]
-    : [linkContentType]
 
   if (sdk.ids.field === 'primaryLink') {
     return (
@@ -187,7 +190,7 @@ const LinkGroupLinkField = () => {
         parameters={{
           instance: {
             showCreateEntityAction: true,
-            showLinkEntityAction: selectableContentTypes.length > 1,
+            showLinkEntityAction: true,
           },
         }}
         renderCustomActions={(props) => (
@@ -213,7 +216,7 @@ const LinkGroupLinkField = () => {
       parameters={{
         instance: {
           showCreateEntityAction: true,
-          showLinkEntityAction: selectableContentTypes.length > 1,
+          showLinkEntityAction: true,
         },
       }}
       renderCustomActions={(props) => (

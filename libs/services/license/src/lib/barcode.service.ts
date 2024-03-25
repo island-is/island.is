@@ -9,7 +9,7 @@ import { sign, VerifyOptions, verify } from 'jsonwebtoken'
 import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
 import { LicenseConfig } from './license.config'
 
-const BARCODE_EXPIRE_TIME_IN_SEC = 60
+export const BARCODE_EXPIRE_TIME_IN_SEC = 60
 export const TOKEN_EXPIRED_ERROR = 'TokenExpiredError'
 /**
  * License token data used to generate a license token
