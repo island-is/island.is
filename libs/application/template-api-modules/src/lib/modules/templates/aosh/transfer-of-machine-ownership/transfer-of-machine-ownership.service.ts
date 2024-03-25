@@ -28,7 +28,6 @@ import { generateApplicationRejectedSms } from './smsGenerators/applicationRejec
 import {
   ChangeMachineOwner,
   MachinesWithTotalCount,
-  OWNER_CHANGE_REL,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
@@ -63,7 +62,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
-                OWNER_CHANGE_REL,
+                'ownerChange',
               )
             }
             return machine

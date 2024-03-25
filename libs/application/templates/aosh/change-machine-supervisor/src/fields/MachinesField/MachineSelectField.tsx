@@ -15,10 +15,7 @@ import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyMachineDetails } from '../../hooks/useLazyMachineDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  CHANGE_MACHINE_SUPERVISOR_REL,
-  MachineDto,
-} from '@island.is/clients/work-machines'
+import { MachineDto } from '@island.is/clients/work-machines'
 
 interface MachineSearchFieldProps {
   currentMachineList: MachineDto[]
@@ -51,7 +48,7 @@ export const MachineSelectField: FC<
     async (id: string) => {
       const { data } = await getMachineDetails({
         id: id,
-        rel: CHANGE_MACHINE_SUPERVISOR_REL,
+        rel: 'supervisorChange',
       })
       return data
     },

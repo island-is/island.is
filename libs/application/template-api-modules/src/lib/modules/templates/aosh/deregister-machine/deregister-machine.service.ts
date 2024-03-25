@@ -12,7 +12,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import {
-  DEREGISTER_MACHINE_REL,
   MachinesWithTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
@@ -47,7 +46,7 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
-                DEREGISTER_MACHINE_REL,
+                'changeStatus',
               )
             }
             return machine

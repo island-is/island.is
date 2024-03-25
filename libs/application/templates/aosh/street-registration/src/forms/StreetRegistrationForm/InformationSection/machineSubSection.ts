@@ -4,6 +4,8 @@ import {
   buildTextField,
   buildDateField,
   buildSubSection,
+  buildDividerField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedMachine } from '../../../utils/getSelectedMachine'
@@ -114,6 +116,25 @@ export const machineSubSection = buildSubSection({
             return minDate
           },
           defaultValue: new Date().toISOString().substring(0, 10),
+        }),
+        buildDividerField({
+          title: information.general.dividerTitle,
+        }),
+        buildTextField({
+          id: 'contact.name',
+          title: information.labels.contact.name,
+          width: 'half',
+        }),
+        buildPhoneField({
+          id: 'contact.phone',
+          title: information.labels.contact.phone,
+          width: 'half',
+        }),
+        buildTextField({
+          id: 'contact.email',
+          title: information.labels.contact.email,
+          width: 'half',
+          variant: 'email',
         }),
       ],
     }),

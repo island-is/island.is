@@ -18,6 +18,11 @@ export const information = {
         'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
       description: 'Description of information page',
     },
+    dividerTitle: {
+      id: 'aosh.drm.application:information.general.deviderTitle',
+      defaultMessage: 'Tengiliðaupplýsingar',
+      description: 'Title of information devider',
+    },
   }),
   labels: {
     pickMachine: defineMessages({
@@ -28,13 +33,13 @@ export const information = {
       },
       title: {
         id: 'aosh.drm.application:information.labels.pickMachine.title',
-        defaultMessage: 'Veldu tæki til eigendaskipta',
+        defaultMessage: 'Veldu tæki',
         description: 'Pick machine title',
       },
       description: {
         id: 'aosh.drm.application:information.labels.pickMachine.description',
         defaultMessage:
-          'Hér að neðan er listi yfir vélar og tæki í þinni eigu. Veldu það tæki sem þú vilt selja',
+          'Hér að neðan er listi yfir vélar og tæki í þinni eigu.',
         description: 'Pick machine description',
       },
       vehicle: {
@@ -176,52 +181,21 @@ export const information = {
         description: 'Machine error message',
       },
     }),
-    supervisor: defineMessages({
-      title: {
-        id: 'aosh.drm.application:information.labels.supervisor.title',
-        defaultMessage: 'Umráðamaður',
-        description: 'Operator title',
-      },
-      description: {
-        id: 'aosh.drm.application:information.labels.supervisor.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
-        description: 'Operator description',
-      },
-      nationalId: {
-        id: 'aosh.drm.application:information.labels.supervisor.nationalId',
-        defaultMessage: 'Kennitala umráðamanns',
-        description: 'Operator national ID label',
-      },
+    contact: defineMessages({
       name: {
-        id: 'aosh.drm.application:information.labels.supervisor.name',
-        defaultMessage: 'Nafn umráðamanns',
-        description: 'Operator name label',
+        id: 'aosh.drm.application:information.labels.contact.name',
+        defaultMessage: 'Nafn',
+        description: 'Contact name label',
       },
       email: {
-        id: 'aosh.drm.application:information.labels.supervisor.email',
+        id: 'aosh.drm.application:information.labels.contact.email',
         defaultMessage: 'Netfang',
-        description: 'Operator email label',
+        description: 'Contact email label',
       },
       phone: {
-        id: 'aosh.drm.application:information.labels.supervisor.phone',
+        id: 'aosh.drm.application:information.labels.contact.phone',
         defaultMessage: 'Gsm númer',
-        description: 'Operator phone number label',
-      },
-      remove: {
-        id: 'aosh.drm.application:information.labels.supervisor.remove',
-        defaultMessage: 'Fjarlægja umráðamann',
-        description: 'Operator remove label',
-      },
-      add: {
-        id: 'aosh.drm.application:information.labels.supervisor.add',
-        defaultMessage: 'Bæta við umráðamanni',
-        description: 'Operator add label',
-      },
-      identicalError: {
-        id: 'aosh.drm.application:information.labels.supervisor.identicalError',
-        defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
-        description: 'operator identical error',
+        description: 'Contact phone number label',
       },
     }),
   },

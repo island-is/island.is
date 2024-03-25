@@ -36,16 +36,16 @@ export const exrtactUserInfo = (
     address: CurrentAddress
     name: string
   }
-  const userProfile = externalData?.userProfile?.data as UserProfile
+
   switch (answers.plateDelivery.type) {
     case AddressDeliveryType.CURRENT:
       return {
         city: currentAddress.address.city,
         postalCode: Number(currentAddress.address.postalCode),
         address: currentAddress.address.streetAddress,
-        contactPhoneNumber: cleanPhoneNumber(
-          userProfile.mobilePhoneNumber || '',
-        ),
+        contactPhoneNumber: cleanPhoneNumber(answers.contact.phone || ''),
+        contactName: answers.contact.name,
+        contactEmail: answers.contact.email,
         recipient: currentAddress.name,
       }
     case AddressDeliveryType.OTHER:
@@ -53,9 +53,9 @@ export const exrtactUserInfo = (
         city: answers.plateDelivery.city,
         postalCode: Number(answers.plateDelivery?.postalCode),
         address: answers.plateDelivery.address,
-        contactPhoneNumber: cleanPhoneNumber(
-          userProfile.mobilePhoneNumber || '',
-        ),
+        contactPhoneNumber: cleanPhoneNumber(answers.contact.phone || ''),
+        contactName: answers.contact.name,
+        contactEmail: answers.contact.email,
         recipient: answers.plateDelivery.recipient,
       }
   }

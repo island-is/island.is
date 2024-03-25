@@ -22,6 +22,11 @@ export const MachineAnswersSchema = z.object({
     regNumber: z.string().optional(),
     ownerNumber: z.string().optional(),
   }),
+  contact: z.object({
+    name: z.string().min(1),
+    email: z.string().email().min(1),
+    phone: z.string(),
+  }),
   pickMachine: z.object({
     index: z.string().optional(),
     id: z.string().min(1),

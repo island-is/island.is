@@ -296,7 +296,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   return (
     <Box>
       <Box display="flex" alignItems="center">
-        <Box marginRight={2}>
+        <Box flexGrow={1} marginRight={2}>
           <InputController
             id={`${field.id}.permno`}
             name={`${field.id}.permno`}

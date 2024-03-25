@@ -52,9 +52,3 @@ export type MachinesWithTotalCount = {
   machines: MachineDto[]
   totalCount: number
 }
-
-export const OWNER_CHANGE_REL = 'ownerChange'
-export const STREET_REGISTRATION_REL = 'registerForTraffic'
-export const REQUEST_INSPECTION_REL = 'requestInspection'
-export const DEREGISTER_MACHINE_REL = 'changeStatus'
-export const CHANGE_MACHINE_SUPERVISOR_REL = 'supervisorChange'

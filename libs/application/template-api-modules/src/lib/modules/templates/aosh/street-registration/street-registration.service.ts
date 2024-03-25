@@ -12,7 +12,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import {
   MachinesWithTotalCount,
-  STREET_REGISTRATION_REL,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 import { exrtactUserInfo, mapPlateSize } from './street-registration.utils'
@@ -47,7 +46,7 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
-                STREET_REGISTRATION_REL,
+                'registerForTraffic',
               )
             }
             return machine
@@ -87,6 +86,8 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
       address: userInfo?.address,
       city: userInfo?.city,
       contactPhoneNumber: userInfo?.contactPhoneNumber,
+      contactEmail: userInfo?.contactEmail,
+      contactName: userInfo?.contactName,
       postalCode: userInfo?.postalCode,
       recipient: userInfo?.recipient,
       delegateNationalId: auth.nationalId,

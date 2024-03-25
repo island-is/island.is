@@ -17,7 +17,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import {
-  CHANGE_MACHINE_SUPERVISOR_REL,
   MachinesWithTotalCount,
   SupervisorChange,
   WorkMachinesClientService,
@@ -53,7 +52,7 @@ export class ChangeMachineSupervisorTemplateService extends BaseTemplateApiServi
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
-                CHANGE_MACHINE_SUPERVISOR_REL,
+                'supervisorChange',
               )
             }
             return machine
