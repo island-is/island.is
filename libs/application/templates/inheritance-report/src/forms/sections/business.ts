@@ -11,88 +11,12 @@ import {
 import { Application } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import { Buisness, BuisnessAssetsData, BuisnessDebtData } from '../../types'
+import { Buisness, BuisnessDebtData } from '../../types'
 
 export const business = buildSection({
   id: 'business',
   title: m.business,
   children: [
-    buildSubSection({
-      id: 'businessAssets',
-      title: m.businessAssets,
-      children: [
-        buildMultiField({
-          id: 'businessAssets',
-          title: m.businessTitle,
-          description: m.businessDescription,
-          children: [
-            buildDescriptionField({
-              id: 'businessAssetsTitle',
-              title: m.businessAssets,
-              description: m.businessAssetsDescription,
-              titleVariant: 'h3',
-            }),
-            buildDescriptionField({
-              id: 'business.businessAssets.total',
-              title: '',
-            }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'business.businessAssets.data',
-                doesNotRequireAnswer: true,
-                component: 'BusinessAssetsRepeater',
-              },
-              {
-                assetFields: [
-                  {
-                    title: '',
-                    id: 'assetType',
-                  },
-                  {
-                    title: m.businessAsset.defaultMessage,
-                    id: 'businessAsset',
-                  },
-                  {
-                    title: m.moneyValue.defaultMessage,
-                    id: 'businessAssetValue',
-                    required: true,
-                    currency: true,
-                    width: 'half',
-                  },
-                ],
-                estateFields: [
-                  {
-                    title: '',
-                    id: 'assetType',
-                  },
-                  {
-                    title: m.assetNumber.defaultMessage,
-                    id: 'assetNumber',
-                    placeholder: 'F1234567',
-                  },
-                  {
-                    title: m.assetAddress.defaultMessage,
-                    id: 'description',
-                    backgroundColor: 'white',
-                    readOnly: true,
-                  },
-                  {
-                    title: m.propertyValuationOnDeath.defaultMessage,
-                    id: 'businessAssetValue',
-                    required: true,
-                    currency: true,
-                  },
-                ],
-                repeaterButtonText:
-                  m.businessAssetRepeaterButton.defaultMessage,
-                sumField: 'businessAssetValue',
-              },
-            ),
-          ],
-        }),
-      ],
-    }),
     buildSubSection({
       id: 'businessDebts',
       title: m.businessDebtsTitle,
@@ -122,27 +46,27 @@ export const business = buildSection({
               {
                 fields: [
                   {
-                    title: m.debtsCreditorName.defaultMessage,
+                    title: m.debtsCreditorName,
                     id: 'businessDebt',
                   },
                   {
-                    title: m.creditorsNationalId.defaultMessage,
+                    title: m.creditorsNationalId,
                     id: 'nationalId',
                     format: '######-####',
                   },
                   {
-                    title: m.debtsLoanIdentity.defaultMessage,
+                    title: m.debtsLoanIdentity,
                     id: 'loanIdentity',
                   },
                   {
-                    title: m.debtsBalance.defaultMessage,
+                    title: m.debtsBalance,
                     id: 'debtValue',
                     required: true,
                     currency: true,
                     width: 'half',
                   },
                 ],
-                repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
+                repeaterButtonText: m.debtsRepeaterButton,
                 sumField: 'debtValue',
               },
             ),
@@ -158,55 +82,6 @@ export const business = buildSection({
           id: 'businessOverview',
           title: m.businessOverview,
           children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewBusinessAssets',
-              title: m.businessAssets,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'buisnessAssetsCards',
-                component: 'Cards',
-                doesNotRequireAnswer: true,
-              },
-              {
-                cards: ({ answers }: Application) => {
-                  const buisnessProperty = (
-                    answers.business as unknown as Buisness
-                  ).businessAssets.data
-                  return (
-                    buisnessProperty.map((asset: BuisnessAssetsData) => ({
-                      title: asset.businessAsset || asset.description,
-                      description: [
-                        asset.assetNumber &&
-                          m.assetNumber.defaultMessage +
-                            ': ' +
-                            asset.assetNumber,
-                        m.businessAssetAmount.defaultMessage +
-                          ': ' +
-                          (asset.businessAssetValue
-                            ? formatCurrency(asset.businessAssetValue)
-                            : '0 kr.'),
-                      ],
-                    })) ?? []
-                  )
-                },
-              },
-            ),
-            buildKeyValueField({
-              label: m.totalAmount,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(
-                    getValueViaPath(answers, 'business.businessAssets.total'),
-                  ),
-                ),
-            }),
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewBusinessDebts',

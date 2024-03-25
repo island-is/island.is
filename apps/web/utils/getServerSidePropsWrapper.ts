@@ -2,7 +2,7 @@ import type { GetServerSideProps } from 'next'
 import { ApolloQueryResult, NormalizedCacheObject } from '@apollo/client'
 
 import { logger } from '@island.is/logging'
-
+import { defaultLanguage } from '@island.is/shared/constants'
 import initApollo from '../graphql/client'
 import { GetUrlQuery, GetUrlQueryVariables } from '../graphql/schema'
 import { linkResolver, LinkType } from '../hooks'
@@ -62,6 +62,7 @@ export const getServerSidePropsWrapper: (
         }
 
         const clientLocale = getLocaleFromPath(path)
+
         const apolloClient = initApollo({}, clientLocale, ctx)
 
         path = path
@@ -111,7 +112,21 @@ export const getServerSidePropsWrapper: (
               },
             }
           } else if (page) {
-            const url = linkResolver(page.type as LinkType, [page.slug]).href
+            let url = linkResolver(
+              page.type as LinkType,
+              [page.slug],
+              clientLocale,
+            ).href
+
+            if (!url) {
+              // Fallback to using default language if page isn't present in another language
+              url = linkResolver(
+                page.type as LinkType,
+                [page.slug],
+                defaultLanguage,
+              ).href
+            }
+
             return {
               redirect: {
                 destination: url,
