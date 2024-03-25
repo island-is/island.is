@@ -47,6 +47,8 @@ const PaymentPlan = () => {
     return
   }, [yearOptions, selectedYear])
 
+  const noPaymentHistory = yearOptions?.length === 0
+
   return (
     <Box>
       <IntroHeader
@@ -63,7 +65,13 @@ const PaymentPlan = () => {
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
       ) : !error && !loading && !data?.socialInsurancePayments ? (
-        <Problem type="no_data" noBorder={false} />
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(coreMessages.noData)}
+          message={formatMessage(coreMessages.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
       ) : (
         <>
           <Box>
@@ -91,11 +99,20 @@ const PaymentPlan = () => {
               />
               <Divider />
             </Stack>
+
             <Text marginTop={[2, 2, 6]} marginBottom={2} variant="h5">
               {formatMessage(coreMessages.period)}
             </Text>
 
-            {!selectedYear && (
+            {noPaymentHistory && !loading && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(m.noPaymentHistoryFound)}
+                message={formatMessage(coreMessages.noDataFoundDetail)}
+              />
+            )}
+            {noPaymentHistory && loading && (
               <Box printHidden marginBottom={3}>
                 <SkeletonLoader height={48} width={226} />
               </Box>
@@ -122,7 +139,9 @@ const PaymentPlan = () => {
                 </GridContainer>
               </Box>
             )}
-            <PaymentGroupTable selectedYear={selectedYear?.value} />
+            {!noPaymentHistory && !loading && (
+              <PaymentGroupTable selectedYear={selectedYear?.value} />
+            )}
           </Box>
           <Box>
             <Text variant="small" marginTop={5} marginBottom={2}>

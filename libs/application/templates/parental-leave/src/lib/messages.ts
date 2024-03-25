@@ -215,11 +215,6 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
     },
-    otherParentSubTitle: {
-      id: 'pl.application:otherParent.sub.title',
-      defaultMessage: 'Hitt foreldrið',
-      description: 'Other parent',
-    },
     otherParentName: {
       id: 'pl.application:otherParent.name',
       defaultMessage: 'Nafn hins foreldrisins',
@@ -1585,6 +1580,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
+    uploadHeader: {
+      id: 'pl.application:fileUpload.upload.title',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
     uploadDescription: {
       id: 'pl.application:fileUpload.upload.description',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
@@ -2290,8 +2290,8 @@ export const employerFormMessages = defineMessages({
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'pl.application:inReview.form.title',
-    defaultMessage: 'Fæðingarorlof',
-    description: 'Parental Leave',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: 'Application Overview',
   },
 })
 

@@ -1,4 +1,5 @@
 import { applyCase } from 'beygla'
+import { PDFFont, PDFPage } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 
@@ -254,6 +255,35 @@ export const drawTextWithEllipsis = (
       width = doc.widthOfString(text)
     }
     doc.text(text + ellipsis, x, y)
+  }
+}
+
+export const drawTextWithEllipsisPDFKit = (
+  doc: PDFPage,
+  text: string,
+  font: { type: PDFFont; size: number },
+  x: number,
+  y: number,
+  maxWidth: number,
+) => {
+  const ellipsis = '...'
+  let width = font.type.widthOfTextAtSize(text, font.size)
+  if (width <= maxWidth) {
+    doc.drawText(text, { x, y, font: font.type, size: font.size })
+  } else {
+    while (
+      width >
+      maxWidth - font.type.widthOfTextAtSize(ellipsis, font.size)
+    ) {
+      text = text.slice(0, -1)
+      width = font.type.widthOfTextAtSize(text, font.size)
+    }
+    doc.drawText(text + ellipsis, {
+      x,
+      y,
+      font: font.type,
+      size: font.size,
+    })
   }
 }
 
