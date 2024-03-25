@@ -16,12 +16,10 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
   requestCourtDate,
-  ruling,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
@@ -41,10 +39,6 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   UploadState,
   useCourtUpload,
