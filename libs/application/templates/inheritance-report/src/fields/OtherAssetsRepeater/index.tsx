@@ -29,10 +29,7 @@ type OtherAssetsRepeaterProps = {
 export const OtherAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & OtherAssetsRepeaterProps>
 > = ({ application, field, errors }) => {
-  const { answers } = application
   const { id, props } = field
-
-  console.log('answers', answers)
 
   const getDefaultValue = (
     fieldName: keyof InheritanceReportAsset,

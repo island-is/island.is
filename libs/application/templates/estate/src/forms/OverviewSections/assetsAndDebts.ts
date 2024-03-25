@@ -383,11 +383,9 @@ export const overviewAssetsAndDebts = [
       doesNotRequireAnswer: true,
     },
     {
-      cards: ({ answers }: Application) => {
-        console.log('answers', answers)
-        return ((answers as unknown as EstateSchema).otherAssets ?? []).map(
+      cards: ({ answers }: Application) =>
+        ((answers as unknown as EstateSchema).otherAssets ?? []).map(
           (otherAsset) => {
-            console.log('otherAsset', otherAsset)
             return {
               title: otherAsset.info,
               description: [
@@ -397,8 +395,7 @@ export const overviewAssetsAndDebts = [
               ],
             }
           },
-        )
-      },
+        ),
     },
   ),
   buildDescriptionField({
