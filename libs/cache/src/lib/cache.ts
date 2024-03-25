@@ -112,8 +112,6 @@ export const createCache = (options: Options) =>
 
 export const createRedisApolloCache = (options: Options) => {
   return new KeyvAdapter(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     new Keyv({ store: new KeyvRedis(createRedisCluster(options)) }),
     {
       disableBatchReads: true,

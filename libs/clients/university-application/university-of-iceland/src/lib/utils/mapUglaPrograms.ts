@@ -97,13 +97,11 @@ const mapOptions = (
   field: InlineResponse2002ExtraApplicationFields,
 ): string | undefined => {
   const type = field.fieldType as FieldType
-  // console.log('ahh', program?.simenntunarstodvar)
-  return JSON.stringify(program?.simenntunarstodvar) ?? undefined
   // More fields can be added here
-  // switch (type) {
-  //   case FieldType.TESTING_SITE:
-  //     return JSON.stringify(program?.simenntunarstodvar) ?? undefined
-  //   default:
-  //     return undefined
-  // }
+  switch (type) {
+    case FieldType.TESTING_SITE:
+      return JSON.stringify(program?.simenntunarstodvar) ?? undefined
+    default:
+      return undefined
+  }
 }

@@ -23,7 +23,6 @@ export enum DefaultEvents {
   SUBMIT = 'SUBMIT',
   ABORT = 'ABORT',
   EDIT = 'EDIT',
-  TEST = 'TEST',
 }
 
 export type ReadWriteValues =

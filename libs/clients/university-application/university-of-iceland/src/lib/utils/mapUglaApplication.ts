@@ -8,8 +8,7 @@ export const mapUglaApplication = (
   const uglaApplication: ApplicationsPostRequest = {
     inlineObject: {
       guid: application.id,
-      kennitala: '0101302989',
-      // .replace('**', ''), //**REMOVE_PII: 0101302989**
+      kennitala: application.applicant.nationalId,
 
       simi: application.applicant.phone,
 
@@ -24,7 +23,7 @@ export const mapUglaApplication = (
       undanthaga:
         application.educationOption === ApplicationTypes.EXEMPTION
           ? 'true'
-          : 'false', // TODO connect to choice in application
+          : 'false',
 
       leidbeiningarFylgigognLesid: 'false', // TODO done when extraApplicationFields are connected
 

@@ -121,42 +121,6 @@ export const ModeOfDeliverySubSection = buildSubSection({
               })
           },
         }),
-        // buildSelectField({
-        //   id: `${Routes.MODEOFDELIVERYINFORMATION}.location`,
-        //   title: '',
-        //   options: (application, field) => {
-        //     const programAnswer = getValueViaPath(
-        //       application.answers,
-        //       `${Routes.PROGRAMINFORMATION}.program`,
-        //     ) as string | undefined
-        //     const programList = getValueViaPath(
-        //       application.externalData,
-        //       'programs.data',
-        //     ) as Array<Program>
-
-        //     if (!programAnswer) {
-        //       return []
-        //     }
-
-        //     const optionsJSON = programList.filter(
-        //       (program) => program.id === programAnswer,
-        //     )[0].extraApplicationFields[0].options // TODO change to .filter((extraField) => extraField.fieldType === FieldType.TESTING_SITE).options
-        //     console.log('optionsJSON', optionsJSON && JSON.parse(optionsJSON))
-
-        //     const JSONList = (optionsJSON && JSON.parse(optionsJSON)) || []
-
-        //     return (
-        //       // (optionsJSON &&
-        //       //   JSON.parse(optionsJSON).map((i: string) => {
-        //       //     return {
-        //       //       label: i,
-        //       //       value: i,
-        //       //     }
-        //       //   })) ||
-        //       []
-        //     )
-        //   },
-        // }),
       ],
     }),
   ],

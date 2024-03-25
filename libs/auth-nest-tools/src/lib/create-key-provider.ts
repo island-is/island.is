@@ -87,8 +87,7 @@ const createMultiIssuerKeyProvider = ({
       return callback(null)
     }
 
-    const a = decodedJwtToken.payload as any
-    const issuer = a.iss
+    const issuer = decodedJwtToken.payload.iss
     const client = clients.get(issuer)
 
     if (!client) {
