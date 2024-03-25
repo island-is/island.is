@@ -1,46 +1,51 @@
 import { useEffect, useState } from 'react'
 import {
-  Note,
-  Paragraph,
+  ChartDataSourceConfiguration,
+  ChartDataSourceExternalJsonProvider,
+  ChartDataSourceType,
+} from 'api-cms-domain'
+import { FieldExtensionSDK } from '@contentful/app-sdk'
+import {
+  Box,
   Flex,
   FormControl,
   Select,
-  Box,
   TextInput,
 } from '@contentful/f36-components'
 import { JsonEditor } from '@contentful/field-editor-json'
+import { useSDK } from '@contentful/react-apps-toolkit'
 
-import { ChartDataSourceType } from 'api-cms-domain'
+type FieldValue = ChartDataSourceConfiguration
 
-import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-
-const sourceDataTypeOptions = [
-  { label: 'CSV', value: 'csv' },
-  { label: 'API', value: 'api' },
-  { label: 'JSON', value: 'json' },
-] as const
-
-const sourceDataTypeValues = sourceDataTypeOptions.map((option) => option.value)
-
-interface FieldValue {
-  sourceDataType?: typeof sourceDataTypeOptions[number]['value']
-  sourceDataOrigin?: string
-}
+const dataSourceTypeOptions = Object.values(ChartDataSourceType).map(
+  (option) => ({
+    label: option.replace(/([A-Z])/g, ' $1').trim(),
+    value: option,
+  }),
+)
+const externalJsonProviderOptions = Object.values(
+  ChartDataSourceExternalJsonProvider,
+).map((option) => ({
+  label: option.replace(/([A-Z])/g, ' $1').trim(),
+  value: option,
+}))
 
 const ChartDataSourceConfigurationField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
-  const cma = useCMA()
 
   useEffect(() => {
     sdk.window.startAutoResizer()
-  }, [])
+  }, [sdk.window])
 
   const [fieldValue, setFieldValue] = useState<FieldValue>(
-    sdk.field.getValue() || {
-      sourceDataType: 'csv',
-      sourceDataValue: '',
-    },
+    sdk.field.getValue() ||
+      ({
+        dataSourceType: ChartDataSourceType.InternalJson,
+        externalCsvProviderUrl: '',
+        externalJsonProvider:
+          ChartDataSourceExternalJsonProvider.UltravioletRadiationLatest,
+        internalJson: { statistics: [] },
+      } as FieldValue),
   )
 
   const updateFieldValue = <T extends keyof FieldValue>(
@@ -64,19 +69,20 @@ const ChartDataSourceConfigurationField = () => {
         <Select
           onChange={(event) => {
             updateFieldValue(
-              'sourceDataType',
-              event.target.value as FieldValue['sourceDataType'],
+              'dataSourceType',
+              event.target.value as FieldValue['dataSourceType'],
             )
           }}
+          value={fieldValue.dataSourceType}
         >
-          {sourceDataTypeOptions.map((option) => (
+          {dataSourceTypeOptions.map((option) => (
             <Select.Option key={option.value} value={option.value}>
               {option.label}
             </Select.Option>
           ))}
         </Select>
       </Box>
-      {fieldValue.sourceDataType === 'csv' && (
+      {fieldValue.dataSourceType === ChartDataSourceType.ExternalCsv && (
         <Box>
           <FormControl.Label>CSV url</FormControl.Label>
           <TextInput />
@@ -86,20 +92,30 @@ const ChartDataSourceConfigurationField = () => {
           </FormControl.HelpText>
         </Box>
       )}
-      {fieldValue.sourceDataType === 'api' && (
+      {fieldValue.dataSourceType === ChartDataSourceType.ExternalJson && (
         <Box>
           <FormControl.Label>
             Choose which API provides the data
           </FormControl.Label>
-          {/* ChartDataSourceType */}
-          {/* TODO: create select and iterate over shared enum here */}
+          <Select
+            onChange={(event) => {
+              updateFieldValue(
+                'externalJsonProvider',
+                event.target.value as FieldValue['externalJsonProvider'],
+              )
+            }}
+            value={fieldValue.externalJsonProvider}
+          >
+            {externalJsonProviderOptions.map((option) => (
+              <Select.Option key={option.value} value={option.value}>
+                {option.label}
+              </Select.Option>
+            ))}
+          </Select>
         </Box>
       )}
-      {fieldValue.sourceDataType === 'json' && (
+      {fieldValue.dataSourceType === ChartDataSourceType.InternalJson && (
         <Box>
-          <FormControl.Label>
-            Choose which API provides the data
-          </FormControl.Label>
           <JsonEditor
             field={{
               getIsDisabled() {

@@ -12,6 +12,8 @@ import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
+// TODO: create ChartNumberBox field resolver
+
 @Resolver(() => Chart)
 @CacheControl(defaultCache)
 export class ChartResolver {
@@ -23,6 +25,7 @@ export class ChartResolver {
     @Loader(ChartDataByExternalJsonProviderDataLoader)
     externalJsonService: ChartDataByExternalJsonProviderDataLoaderType,
   ): Promise<string | undefined> {
+    // TODO: handle more than one component
     for (const component of chart.components) {
       const dataSourceType = component.dataSource?.dataSourceType
 

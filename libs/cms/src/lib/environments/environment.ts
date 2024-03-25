@@ -95,6 +95,8 @@ export default {
     'chart',
     'chartComponent',
     'featuredEvents',
+    'chartDataSource',
+    'chartNumberBox',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

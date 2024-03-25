@@ -68,7 +68,7 @@ const mapChartDataSourceConfiguration = (
 
   if (
     configuration?.dataSourceType &&
-    Object.values(ChartDataSource).includes(configuration.dataSourceType)
+    Object.values(ChartDataSourceType).includes(configuration.dataSourceType)
   ) {
     dataSourceType = configuration.dataSourceType
   }
