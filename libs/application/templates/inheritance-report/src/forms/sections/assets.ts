@@ -329,8 +329,6 @@ export const assets = buildSection({
                 ],
                 assetKey: 'bankAccounts',
                 calcWithShareValue: false,
-                skipPushRight: true,
-                repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
                 fromExternalData: 'bankAccounts',
                 skipPushRight: false,
                 repeaterButtonText: m.bankAccountRepeaterButton,
