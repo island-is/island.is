@@ -30,8 +30,27 @@ const config = {
   region: 'eu-west-1',
 }
 
+const requiredEnvVars = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN'];
+
+const checkEnvVariables = () => {
+  let allEnvVarsSet = true;
+  requiredEnvVars.forEach(varName => {
+      if (!process.env[varName]) {
+          logger.error(`Error: The environment variable ${varName} is not set.`);
+          allEnvVarsSet = false;
+      }
+  });
+  return allEnvVarsSet;
+};
+
 const ssm = new AWS.SSM(config)
 yargs(hideBin(process.argv))
+  .middleware(argv => {
+    if (!checkEnvVariables()) {
+      logger.error('Exiting due to missing environment variables.');
+      process.exit(1);
+    }
+  })
   .command(
     'get-all-required-secrets',
     'get all required secrets from all charts',
@@ -77,7 +96,11 @@ yargs(hideBin(process.argv))
 
       const { Parameter } = await ssm.getParameter(parameterInput).promise()
       if (Parameter) {
-        return logger.info(Parameter.Value)
+        if (Parameter.Value && Parameter.Value.length > 0) {
+          console.log(Parameter.Value)
+        } else {
+          logger.error('Failed to get secret')
+        }
       }
     },
   )
