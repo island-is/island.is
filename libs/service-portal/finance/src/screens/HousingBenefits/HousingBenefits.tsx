@@ -11,18 +11,13 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  DownloadFileButtons,
-  FootNote,
-  m,
-} from '@island.is/service-portal/core'
+import { FootNote, m } from '@island.is/service-portal/core'
 
 import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
 import HousingBenefitsTable, {
   ITEMS_ON_PAGE,
 } from '../../components/HousingBenefitPayments/HousingBenefitsTable'
 import { Problem } from '@island.is/react-spa/shared'
-import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportHousingBenefitFiles } from '../../utils/filesHousingBenefits'
 
@@ -36,7 +31,7 @@ const FinanceHousingBenefits = () => {
   const [toDate, setToDate] = useState<Date>(DEFAULT_TO_DATE)
   const { formatMessage } = useLocale()
 
-  const [loadHousingPayments, { data, loading, called, error }] =
+  const [loadHousingPayments, { data, loading, error }] =
     useGetHousingBenefitsListLazyQuery()
 
   useEffect(() => {
@@ -52,11 +47,6 @@ const FinanceHousingBenefits = () => {
       })
     }
   }, [toDate, fromDate])
-
-  function clearAllFilters() {
-    setFromDate(new Date())
-    setToDate(new Date())
-  }
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
