@@ -129,7 +129,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
       [States.COMPLETED]: {
