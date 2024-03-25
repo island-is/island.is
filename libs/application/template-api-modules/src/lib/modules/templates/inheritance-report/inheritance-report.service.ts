@@ -66,10 +66,13 @@ export class InheritanceReportService extends BaseTemplateApiService {
             ? new Date(Date.parse(inheritanceReportInfo.dateOfDeath))
             : inheritanceReportInfo.dateOfDeath ?? new Date()
 
-        return new Promise<void>(async (resolve) => {
-          inheritanceReportInfo.inheritanceTax =
-            await this.syslumennService.getInheritanceTax(new Date())
-          resolve()
+        return new Promise<void>((resolve) => {
+          this.syslumennService
+            .getInheritanceTax(new Date())
+            .then((inheritanceTax) => {
+              inheritanceReportInfo.inheritanceTax = inheritanceTax
+              resolve()
+            })
         })
       }),
     )
