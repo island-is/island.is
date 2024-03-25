@@ -19,7 +19,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -66,7 +66,8 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
     caseId: workingCase.id,
   })
 
-  const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
+  const showTrafficViolationCaseFiles =
+    isTrafficViolationIndictment(workingCase)
 
   const cf = workingCase.caseFiles
 

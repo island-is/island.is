@@ -17,6 +17,7 @@ import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
 import { YES } from '../lib/constants'
 import { applicationInfo } from './sections/applicationInfo'
+import { preSelection } from './sections/preSelection'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -25,6 +26,7 @@ export const form: Form = buildForm({
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
+    preSelection,
     deceased,
     dataCollection,
     applicationInfo,
