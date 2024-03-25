@@ -8,7 +8,6 @@ import {
   capitalize,
   displayFirstPlusRemaining,
   formatDate,
-  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -36,7 +35,6 @@ import {
   ColumnCaseType,
   DefendantInfo,
   PastCasesTable,
-  SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
