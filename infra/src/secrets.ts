@@ -30,29 +30,44 @@ const config = {
   region: 'eu-west-1',
 }
 
-const requiredEnvVars = [
-  'AWS_ACCESS_KEY_ID',
-  'AWS_SECRET_ACCESS_KEY',
-  'AWS_SESSION_TOKEN',
-]
+const requiredEnvVars = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN'];
 
-const checkEnvVariables = () => {
-  let allEnvVarsSet = true
-  requiredEnvVars.forEach((varName) => {
-    if (!process.env[varName]) {
-      logger.error(`Error: The environment variable ${varName} is not set.`)
-      allEnvVarsSet = false
-    }
-  })
-  return allEnvVarsSet
+const envRequirementExcludedCommands = ['get-all-required-secrets']
+
+const checkEnvVariables = (argv: any) => {
+  let allEnvVarsSet = true;
+
+  if (envRequirementExcludedCommands.includes(argv["_"][0])) {
+    return allEnvVarsSet;
+  }
+
+  requiredEnvVars.forEach(varName => {
+      if (!process.env[varName]) {
+          logger.error(`Error: The environment variable ${varName} is not set.`);
+          allEnvVarsSet = false;
+      }
+  });
+  return allEnvVarsSet;
+};
+
+const requireSingleCommand = (argv: any) => {
+  if (argv["_"].length !== 1) {
+    return false;
+  }
+  return true;
 }
 
 const ssm = new AWS.SSM(config)
 yargs(hideBin(process.argv))
-  .middleware((argv) => {
-    if (!checkEnvVariables()) {
-      logger.error('Exiting due to missing environment variables.')
-      process.exit(1)
+  .middleware(argv => {
+
+    if (!requireSingleCommand(argv)) {
+      logger.error(`Error: Expected exactly one command. Got ${argv["_"].length} commands.`);
+      process.exit(1);
+    }
+    if (!checkEnvVariables(argv)) {
+      logger.error('Exiting due to missing environment variables.');
+      process.exit(1);
     }
   })
   .command(
