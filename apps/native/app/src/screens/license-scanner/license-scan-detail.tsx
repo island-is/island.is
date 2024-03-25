@@ -45,7 +45,7 @@ const DisabilityTemplateIds = [
 
 const HuntingLicenseTemplateIds = [
   '1da72d52-a93a-4d0f-8463-1933a2bd210b',
-  'd4ecf781-3764-4063-a4e1-9c3e17cebfba',
+  '5f42f942-d8d6-40bf-a186-5a9e12619d9f',
 ]
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
