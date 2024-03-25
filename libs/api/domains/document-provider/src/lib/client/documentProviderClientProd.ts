@@ -13,6 +13,12 @@ import {
   TestResult,
   Statistics,
 } from './models'
+import { PaperMailInput, PaperMailResponse } from './models/paperMail'
+import {
+  DocumentProvidedCategory,
+  DocumentProvidedType,
+  DocumentTypeAndCategory,
+} from './models/documentTypes'
 
 interface StatisticPayload {
   [key: string]: any
@@ -64,7 +70,11 @@ export class DocumentProviderClientProd {
     return response.data
   }
 
-  private async postRequest<T>(requestRoute: string, body?: any): Promise<T> {
+  private async postRequest<T>(
+    requestRoute: string,
+    body?: any,
+    update?: boolean,
+  ): Promise<T> {
     await this.rehydrateToken()
     const config: AxiosRequestConfig = {
       headers: {
@@ -75,7 +85,7 @@ export class DocumentProviderClientProd {
     const response: {
       data: T
     } = await lastValueFrom(
-      this.httpService.post(
+      this.httpService[update ? 'put' : 'post'](
         `${this.clientConfig.basePath}${requestRoute}`,
         body ?? null,
         config,
@@ -130,5 +140,53 @@ export class DocumentProviderClientProd {
     }
 
     return await this.postRequest<Statistics>(requestRoute, payload)
+  }
+
+  // Paper
+  getPaperMailList(input?: PaperMailInput): Promise<PaperMailResponse> {
+    const requestRoute = `/api/DocumentProvider/paper?pageSize=${
+      input?.pageSize ?? 10
+    }&page=${input?.page ?? 1}`
+    return this.getRequest(requestRoute)
+  }
+
+  // Types
+  getDocumentProvidedTypes(): Promise<DocumentProvidedType[]> {
+    const requestRoute = '/api/DocumentProvider/types'
+    return this.getRequest(requestRoute)
+  }
+
+  postDocumentProvidedType(
+    input: DocumentTypeAndCategory,
+  ): Promise<DocumentProvidedType> {
+    const requestRoute = '/api/DocumentProvider/types'
+    return this.postRequest(requestRoute, input)
+  }
+
+  putDocumentProvidedType(
+    input: DocumentProvidedType,
+  ): Promise<DocumentProvidedType> {
+    const requestRoute = `/api/DocumentProvider/types/${input.messageTypeId}`
+    return this.postRequest(requestRoute, input, true)
+  }
+
+  // Categories
+  getDocumentProvidedCategories(): Promise<DocumentProvidedCategory[]> {
+    const requestRoute = '/api/DocumentProvider/categories'
+    return this.getRequest(requestRoute)
+  }
+
+  postDocumentProvidedCategory(
+    input: DocumentTypeAndCategory,
+  ): Promise<DocumentProvidedCategory> {
+    const requestRoute = '/api/DocumentProvider/categories'
+    return this.postRequest(requestRoute, input)
+  }
+
+  putDocumentProvidedCategory(
+    input: DocumentProvidedCategory,
+  ): Promise<DocumentProvidedCategory> {
+    const requestRoute = `/api/DocumentProvider/categories/${input.categoryId}`
+    return this.postRequest(requestRoute, input, true)
   }
 }
