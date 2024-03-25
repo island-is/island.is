@@ -3,6 +3,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 export enum LinkType {
   FILE = 'file',
   LINK = 'link',
+  DOCUMENT = 'document',
 }
 
 registerEnumType(LinkType, { name: 'OccupationalLicensesV2LinkType' })

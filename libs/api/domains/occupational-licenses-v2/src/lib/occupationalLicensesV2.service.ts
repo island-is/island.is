@@ -122,7 +122,12 @@ export class OccupationalLicensesV2Service {
         genericFields: license.extraFields ?? [],
       },
       actions: license.actions?.map((a) => ({
-        type: a.type === 'file' ? LinkType.FILE : LinkType.LINK,
+        type:
+          a.type === 'file'
+            ? LinkType.FILE
+            : a.type === 'document'
+            ? LinkType.DOCUMENT
+            : LinkType.LINK,
         text: a.title,
         url: a.url,
       })),

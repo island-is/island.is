@@ -8,6 +8,7 @@ import {
   formSubmit,
   LinkButton,
 } from '@island.is/service-portal/core'
+import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { olMessage as om } from '../../lib/messages'
 import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
@@ -77,9 +78,20 @@ const OccupationalLicenseDetail = () => {
                     <LinkButton
                       key={`button-link-${index}`}
                       variant="button"
-                      to={a.url}
+                      to={
+                        a.type === OccupationalLicensesV2LinkType.DOCUMENT
+                          ? DocumentsPaths.ElectronicDocumentSingle.replace(
+                              ':id',
+                              a.url,
+                            )
+                          : a.url
+                      }
                       text={a.text}
-                      icon="open"
+                      icon={
+                        a.type === OccupationalLicensesV2LinkType.DOCUMENT
+                          ? 'mailOpen'
+                          : 'open'
+                      }
                     />
                   )
                 })}

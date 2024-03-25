@@ -1,7 +1,7 @@
 import { Adgerd } from '../../../gen/fetch'
 
 export interface DistrictCommissionersLicenseActionDto {
-  type: 'link' | 'file'
+  type: 'link' | 'file' | 'document'
   title: string
   url: string
 }
@@ -13,13 +13,16 @@ export const mapLicenseActionDto = (
     return null
   }
 
-  let type: 'link' | 'file' | 'unknown'
+  let type: 'link' | 'file' | 'document' | 'unknown'
   switch (action.tegund) {
     case 'file':
       type = 'file'
       break
     case 'link':
       type = 'link'
+      break
+    case 'postholf':
+      type = 'document'
       break
     default:
       type = 'unknown'
