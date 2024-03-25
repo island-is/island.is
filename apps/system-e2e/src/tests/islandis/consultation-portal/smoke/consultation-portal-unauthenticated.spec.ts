@@ -38,7 +38,7 @@ test.describe('Consultation portal unathenticated', () => {
 
     await page.getByTestId('subscriptions-btn').click()
     await expect(page.getByTestId('subscriptions-title')).toBeVisible()
-    await expect(page.getByTestId('tab-content')).toBeHidden()
+    await expect(page.getByTestId('tab-content')).not.toBeVisible()
     await expect(page.getByTestId('action-card')).toBeVisible()
     page
       .getByRole('button', {
@@ -55,7 +55,7 @@ test.describe('Consultation portal unathenticated', () => {
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
 
     await page.getByTestId('subscriptions-btn').click()
-    await expect(page.getByTestId('tab-content')).toBeHidden()
+    await expect(page.getByTestId('tab-content')).not.toBeVisible()
 
     page
       .getByRole('link', {
@@ -63,7 +63,7 @@ test.describe('Consultation portal unathenticated', () => {
       })
       .click()
     await page.waitForURL(`**/minaraskriftir`)
-    await expect(page.getByTestId('tab-content')).toBeHidden()
+    await expect(page.getByTestId('tab-content')).not.toBeVisible()
     await page.waitForURL(authLink)
 
     await page.close()
