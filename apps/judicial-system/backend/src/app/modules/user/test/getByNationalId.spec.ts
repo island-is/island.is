@@ -62,7 +62,7 @@ describe('UserController - Get by national id', () => {
         email: '',
         role: UserRole.ADMIN,
         active: true,
-        canConfirmAppeal: false,
+        canConfirmIndictment: false,
       })
     })
   })
