@@ -42,13 +42,11 @@ test.describe('Front page', () => {
       await expect(lifeEventsCards).toHaveCountGreaterThan(3)
       const lifeEventHandles = await lifeEventsCards.elementHandles()
       const lifeEventUrls = await Promise.all(
-        lifeEventHandles.map(
-          async (item) => (await item.getAttribute('href')) ?? '',
-        ),
+        lifeEventHandles.map((item) => item.getAttribute('href')),
       )
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url)
+        const result = await page.goto(url!)
         await expect(
           page.getByRole('link', { name: 'island.is logo' }),
         ).toBeVisible()
@@ -139,6 +137,6 @@ test.describe('Front page', () => {
       .getByTestId('icon-close')
       .click()
     await expect(page.getByTestId('home-heading')).toBeVisible()
-    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeHidden()
+    await expect(page.getByRole('dialog', { name: 'Menu' })).not.toBeVisible()
   })
 })

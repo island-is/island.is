@@ -90,6 +90,17 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/air-discount', async (passProps) => {
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.AirDiscountScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {

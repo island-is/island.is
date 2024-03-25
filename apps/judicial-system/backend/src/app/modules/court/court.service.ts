@@ -437,6 +437,10 @@ export class CourtService {
             'Participant with id: **********',
           )
           .replace(/\) gegn(.*?)'/g, ') gegn **********')
+          .replace(
+            /defendant with IdNumber = \d{10}/g,
+            'defendant with IdNumber = **********',
+          )
 
         this.eventService.postErrorEvent(
           'Failed to update case with defendant',

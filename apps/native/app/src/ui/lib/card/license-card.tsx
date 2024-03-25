@@ -13,6 +13,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { screenWidth } from '../../../utils/dimensions'
+import { isString } from '../../../utils/is-string'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import IconStatusNonVerified from '../../assets/card/danger.png'
@@ -22,6 +23,7 @@ import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
 import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
 import BackgroundPCardLicense from '../../assets/card/p-card.png'
 import BackgroundPassport from '../../assets/card/passport-bg.png'
+import LogoEhic from '../../assets/card/sjukratryggingar.png'
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
@@ -191,6 +193,12 @@ const LicenseCardPresets: Record<LicenseType, CardPreset> = {
       overlay: '#EEF4E7',
     },
   },
+  Ehic: {
+    title: 'Evrópska sjúkratryggingakortið',
+    logo: LogoEhic,
+    backgroundImage: BackgroundPassport,
+    backgroundColor: '#E2EDFF',
+  },
   DisabilityLicense: {
     title: 'Örorkuskírteini',
     logo: DisabilityLicenseLogo,
@@ -212,12 +220,6 @@ const LicenseCardPresets: Record<LicenseType, CardPreset> = {
     logo: LogoRegistersIceland,
     backgroundImage: BackgroundPassport,
     backgroundColor: '#fff',
-  },
-  Ehic: {
-    title: 'Evrópukort',
-    logo: LogoCoatOfArms,
-    backgroundImage: BackgroundPassport,
-    backgroundColor: '#E2EDFF',
   },
 }
 
@@ -330,7 +332,7 @@ export function LicenseCard({
         </Content>
         {logo && (
           <ImgWrap>
-            {typeof logo === 'string' ? (
+            {isString(logo) ? (
               <Base64Image source={{ uri: logo }} />
             ) : (
               <Image source={logo} />
