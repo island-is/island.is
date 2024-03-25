@@ -58,6 +58,49 @@ export class NotificationsService {
     private readonly notificationModel: typeof Notification,
   ) {}
 
+  async getOrganizationTitle(senderId: string, locale: string): Promise<string> {
+
+    // return if cache has valid response
+    const cacheKey = `org-${senderId}-${locale}`
+    const cachedOrganization = await this.getFromCache(cacheKey)
+    if (cachedOrganization) {
+      this.logger.info(`cache hit for: ${cacheKey}`)
+      return cachedOrganization as string
+    }
+    
+    const mappedLocale = this.mapLocale(locale)
+    const contentfulOrganizationQuery = {
+      query: `{
+        organizationCollection(where: {kennitala: "${senderId}"},locale: "${mappedLocale}") {
+          items {
+            title
+            kennitala
+          }
+        }
+      }`,
+    }
+
+    const res = await axios
+      .post(CONTENTFUL_GQL_ENDPOINT, contentfulOrganizationQuery, {
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((response) => {
+        return response.data
+      })
+      .catch((error) => {
+        if (error.response) {
+          throw new BadRequestException(error.response.data)
+        } else {
+          throw new BadRequestException('Bad Request')
+        }
+      })
+    // console.log("resss",res.data.organizationCollection.items[0])
+    return res.data.organizationCollection.items[0].title
+  }
+
   private async formatAndMapNotification(
     notification: Notification,
     templateId: string,
@@ -71,19 +114,32 @@ export class NotificationsService {
       }
 
       // dis is de spot
+      const organizationArg = notification.args.find(
+        (arg) => arg.key === 'organization',
+      )
       // if senderId is set and args contains organization, fetch organizationtitle from senderId
-      if (notification.senderId && notification.args) {
-        const organizationArg = notification.args.find(
-          (arg) => arg.key === 'organization',
-        )
-        if (organizationArg) {
-          const organizationTitle = 'YouCanFlyBobby'
-          // const organizationTitle = await this.getOrganizationTitle(
-          //   notification.senderId,
-          //   organizationArg.value,
-          // )
-          organizationArg.value = organizationTitle
+      if (notification.senderId && organizationArg) {
+        try {
+            // const organizationTitle = 'Bobby can fly'
+            const organizationTitle = await this.getOrganizationTitle(
+              notification.senderId,
+              locale
+            )
+            if (organizationTitle) {
+              console.log("found a org title",organizationTitle)
+              organizationArg.value = organizationTitle
+
+            } else {
+              this.logger.warn('title not found for ...........', {senderId:notification.senderId,locale:locale})
+            }
+            // organizationArg.value = organizationTitle
+           
+          
+        } catch (error) {
+          this.logger.error('error...........', {senderId:notification.senderId,locale:locale})
+
         }
+        
       }
 
       // Format the template with arguments from the notification
