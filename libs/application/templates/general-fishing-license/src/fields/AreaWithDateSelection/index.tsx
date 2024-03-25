@@ -72,7 +72,7 @@ export const AreaWithDateSelection: FC<
       '',
     ) as string
     // If only one option is available, preselect that option
-    if (areas && areas.length === 1) {
+    if (areas && areas.length === 1 && areas[0].key) {
       setSelectedArea(areas[0].key)
       setValue(AREA_FIELD_ID, areas[0].key)
     } else if (areas?.find((a) => a.key === initialArea)) {
