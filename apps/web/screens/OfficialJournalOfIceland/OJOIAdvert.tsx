@@ -121,29 +121,37 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
             </Stack>
           </Box>
 
-          <Box
-            background="blueberry100"
-            padding={[2, 2, 3]}
-            borderRadius="large"
-          >
-            <Stack space={[1, 1, 2]}>
-              <Box href="/" component={Link}>
-                <Button
-                  variant="text"
-                  as="span"
-                  icon="download"
-                  iconType="outline"
-                  size="small"
-                >
-                  Sækja PDF
-                </Button>
-              </Box>
-            </Stack>
-          </Box>
+          {advert.document.pdfUrl && (
+            <Box
+              background="blueberry100"
+              padding={[2, 2, 3]}
+              borderRadius="large"
+            >
+              <Stack space={[1, 1, 2]}>
+                <Box href={advert.document.pdfUrl} component={Link}>
+                  <Button
+                    variant="text"
+                    as="span"
+                    icon="download"
+                    iconType="outline"
+                    size="small"
+                  >
+                    Sækja PDF
+                  </Button>
+                </Box>
+              </Stack>
+            </Box>
+          )}
         </Stack>
       }
     >
       <OJOIAdvertDisplay
+        advertNumber={advert.publicationNumber.full}
+        signatureDate={format(new Date(advert.signatureDate), 'dd. MMMM yyyy', {
+          locale: is,
+        })}
+        advertType={advert.type.title}
+        advertSubject={advert.subject}
         advertText={advert.document.html}
         isLegacy={advert.document.isLegacy ?? false}
       />

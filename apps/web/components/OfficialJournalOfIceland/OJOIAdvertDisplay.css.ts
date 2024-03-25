@@ -6,7 +6,7 @@ const { color, typography, border } = theme
 
 export const bodyText = style({})
 const global = regulationContentStyling(bodyText)
-
+/*
 global('table', {
   border: `0 !important`, // Override TinyMCE
 })
@@ -442,3 +442,4 @@ global('span[data-legacy-indenter]::after', {
   right: 0,
   borderLeft: 0,
 })
+*/

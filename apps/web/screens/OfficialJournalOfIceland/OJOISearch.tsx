@@ -123,32 +123,23 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
     })
   }, [])
 
-  useEffect(() => {
-    const isEmpty = !Object.entries(searchState).filter(([_, v]) => !!v).length
-    if (isEmpty) {
-      setAdverts(initialAdverts)
-    } else {
+  const fetchAdverts = useMemo(() => {
+    return debounce((state: typeof initialState) => {
       getAdverts({
         variables: {
           input: {
-            search: searchState.q,
-            page: searchState.sida ? parseInt(searchState.sida) : undefined,
-            department: searchState.deild ? [searchState.deild] : undefined,
-            type: searchState.tegund ? [searchState.tegund] : undefined,
-            category: searchState.malaflokkur
-              ? [searchState.malaflokkur]
-              : undefined,
-            involvedParty: searchState.stofnun
-              ? [searchState.stofnun]
-              : undefined,
-            dateFrom: new Date(searchState.dagsFra) || undefined,
-            dateTo: new Date(searchState.dagsTil) || undefined,
+            search: state.q,
+            page: state.sida ? parseInt(state.sida) : undefined,
+            department: state.deild ? [state.deild] : undefined,
+            type: state.tegund ? [state.tegund] : undefined,
+            category: state.malaflokkur ? [state.malaflokkur] : undefined,
+            involvedParty: state.stofnun ? [state.stofnun] : undefined,
+            dateFrom: state.dagsFra ? new Date(state.dagsFra) : undefined,
+            dateTo: state.dagsTil ? new Date(state.dagsTil) : undefined,
           },
         },
       })
         .then((res) => {
-          console.log({ res })
-
           if (res.data) {
             setAdverts(res.data.ministryOfJusticeAdverts.adverts)
           } else if (res.error) {
@@ -160,6 +151,16 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
           setAdverts([])
           console.error('Error fetching Adverts', { err })
         })
+    }, debounceTime.search)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const isEmpty = !Object.entries(searchState).filter(([_, v]) => !!v).length
+    if (isEmpty) {
+      setAdverts(initialAdverts)
+    } else {
+      fetchAdverts(searchState)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchState])
@@ -202,13 +203,6 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
     }
     setSearchState(newState)
     updateSearchParams(newState)
-
-    // TODO: implement search
-    if (key === 'q' && value) {
-      setAdverts([])
-    } else {
-      setAdverts(initialAdverts)
-    }
   }
 
   const resetFilter = () => {
