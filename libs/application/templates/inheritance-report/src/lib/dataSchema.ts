@@ -96,7 +96,8 @@ export const inheritanceReportSchema = z.object({
           .object({
             foreignBankAccount: z.array(z.enum([YES])).optional(),
             accountNumber: z.string().refine((v) => v),
-            balance: z.string().refine((v) => v),
+            penaltyInterestRates: z.string().refine((v) => v),
+            capital: z.string().refine((v) => v),
           })
           .array()
           .optional(),
@@ -266,9 +267,44 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            businessAsset: z.string(),
-            businessAssetValue: z.string().refine((v) => v),
+            assetType: z.enum(['asset', 'estate']),
+            assetNumber: z.string().optional(),
+            description: z.string().optional(),
+            businessAsset: z.string().optional(),
+            businessAssetValue: z.string().optional(),
           })
+          .refine(
+            ({ assetType, assetNumber }) => {
+              if (assetType === 'estate') {
+                return isValidString(assetNumber)
+              }
+
+              return true
+            },
+            {
+              path: ['assetNumber'],
+            },
+          )
+          .refine(
+            ({ businessAssetValue }) => {
+              return businessAssetValue !== ''
+            },
+            {
+              path: ['businessAssetValue'],
+            },
+          )
+          .refine(
+            ({ assetType, description }) => {
+              if (assetType === 'estate') {
+                return isValidString(description)
+              }
+
+              return true
+            },
+            {
+              path: ['description'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -452,7 +488,7 @@ export const inheritanceReportSchema = z.object({
       wasInCohabitation: z.string().optional(),
       hadSeparateProperty: z.string().optional(),
       spouseTotalDeduction: z.number().optional(),
-      spouseTotalSeparateProperty: z.number().optional(),
+      spouseTotalSeparateProperty: z.string().optional(),
     })
     .refine(
       ({ wasInCohabitation }) => {
@@ -477,7 +513,7 @@ export const inheritanceReportSchema = z.object({
     .refine(
       ({ hadSeparateProperty, spouseTotalSeparateProperty }) => {
         if (hadSeparateProperty && [YES].includes(hadSeparateProperty)) {
-          return spouseTotalSeparateProperty && spouseTotalSeparateProperty > 0
+          return spouseTotalSeparateProperty !== ''
         }
 
         return true

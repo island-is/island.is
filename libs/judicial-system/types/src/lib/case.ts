@@ -84,6 +84,7 @@ export interface CrimeSceneMap {
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
+  WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
   ACCEPTED = 'ACCEPTED',
@@ -101,6 +102,7 @@ export enum CaseAppealState {
 
 export enum CaseTransition {
   OPEN = 'OPEN',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
@@ -113,6 +115,7 @@ export enum CaseTransition {
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -122,6 +125,7 @@ export enum CaseLegalProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
+  _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
@@ -265,3 +269,7 @@ export const prosecutorCanSelectDefenderForInvestigationCase = (
       ].includes(type),
   )
 }
+
+export type IndictmentConfirmation =
+  | { actor: string; institution: string; date: Date }
+  | undefined

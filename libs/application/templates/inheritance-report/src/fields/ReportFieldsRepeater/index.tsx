@@ -23,6 +23,8 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
+import { valueToNumber } from '../../lib/utils/helpers'
+import NumberInput from '../../components/NumberInput'
 
 type RepeaterProps = {
   field: {
@@ -32,6 +34,7 @@ type RepeaterProps = {
       fields: Array<object>
       repeaterButtonText: string
       sumField: string
+      sumField2: string
       fromExternalData?: string
       calcWithShareValue?: boolean
       skipPushRight?: boolean
@@ -73,23 +76,26 @@ export const ReportFieldsRepeater: FC<
       return
     }
 
-    const total = values.reduce((acc: number, current: any) => {
-      const propertyValuationNumber = parseInt(current[props.sumField], 10)
-      const shareValueNumber = parseInt(current?.share, 10)
+    const total = values.reduce((acc: number, current: any, index: number) => {
+      const sumField2 = valueToNumber(current[props?.sumField2], ',')
+      let currentValue = valueToNumber(current[props?.sumField], ',')
+      currentValue = currentValue + sumField2
+      const shareValueNumber = valueToNumber(current?.share, '.')
 
-      const propertyValuation = isNaN(propertyValuationNumber)
-        ? 0
-        : propertyValuationNumber
-      const shareValue = isNaN(shareValueNumber) ? 0 : shareValueNumber / 100
+      if (id === 'assets.bankAccounts.data') {
+        setValue(`${id}[${index}].bankAccountTotal`, currentValue)
+      }
 
-      // TODO: check how precise are these calculations need to be
+      const shareValue = !shareValueNumber ? 0 : shareValueNumber / 100
+
       return (
         Number(acc) +
         (props?.calcWithShareValue
-          ? Math.floor(propertyValuation * shareValue)
-          : propertyValuation)
+          ? Math.round(currentValue * shareValue)
+          : currentValue)
       )
     }, 0)
+
     const addTotal = id.replace('data', 'total')
     setValue(addTotal, total)
 
@@ -241,6 +247,9 @@ export const ReportFieldsRepeater: FC<
                 const fieldId = `${fieldIndex}.${field.id}`
                 const err = errors && getErrorViaPath(errors, fieldId)
 
+                const shouldRecalculateTotal =
+                  props.sumField === field.id || props.sumField2 === field.id
+
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
                     <Text
@@ -251,7 +260,7 @@ export const ReportFieldsRepeater: FC<
                       }
                       marginBottom={2}
                     >
-                      {field.sectionTitle}
+                      {formatMessage(field.sectionTitle)}
                     </Text>
                   </GridColumn>
                 ) : (
@@ -325,9 +334,20 @@ export const ReportFieldsRepeater: FC<
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
-                        label={field.title}
+                        label={formatMessage(field.title) ?? ''}
                         placeholder={field.placeholder}
                         options={relations}
+                      />
+                    ) : field.id === 'rateOfExchange' ? (
+                      <NumberInput
+                        name={`${fieldIndex}.${field.id}`}
+                        placeholder={field.placeholder}
+                        onAfterChange={() => {
+                          updateValue(fieldIndex)
+                          calculateTotal()
+                          setIndex(fieldIndex)
+                        }}
+                        label={formatMessage(field.title) ?? ''}
                       />
                     ) : (
                       <InputController
@@ -337,7 +357,7 @@ export const ReportFieldsRepeater: FC<
                           repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={field.title}
+                        label={formatMessage(field.title)}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}
@@ -352,7 +372,7 @@ export const ReportFieldsRepeater: FC<
                             updateValue(fieldIndex)
                           }
 
-                          if (props.sumField === field.id) {
+                          if (shouldRecalculateTotal) {
                             calculateTotal()
                           }
 
@@ -375,7 +395,7 @@ export const ReportFieldsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
       {!!fields.length && props.sumField && (

@@ -377,6 +377,7 @@ export const transformApplicationToParentalLeaveDTO = (
     isReceivingUnemploymentBenefits,
     employerLastSixMonths,
     language,
+    otherParentRightOfAccess,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -445,6 +446,7 @@ export const transformApplicationToParentalLeaveDTO = (
         : undefined,
     type,
     language: language === Languages.EN ? language : undefined, // Only send language if EN
+    otherParentBlocked: otherParentRightOfAccess === NO ? true : false,
   }
 }
 

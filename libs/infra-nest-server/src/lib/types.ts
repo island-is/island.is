@@ -66,6 +66,11 @@ export type RunServerOptions = {
    * Otherwise an object can be provided to override specific options.
    */
   healthCheck?: boolean | HealthCheckOptions
+
+  /**
+   * Hook to run before app is initialized.
+   */
+  beforeAppInit?: () => Promise<void>
 }
 
 export interface InfraNestServer {
