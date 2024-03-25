@@ -30,12 +30,6 @@ const config = {
   region: 'eu-west-1',
 }
 
-const requiredEnvVars = [
-  'AWS_ACCESS_KEY_ID',
-  'AWS_SECRET_ACCESS_KEY',
-  'AWS_SESSION_TOKEN',
-]
-
 const requireSingleCommand = (argv: any) => {
   if (argv['_'].length !== 1) {
     return false

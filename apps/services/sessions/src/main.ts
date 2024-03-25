@@ -26,4 +26,3 @@ if (job === 'worker') {
     enableVersioning: true,
   })
 }
-// Deploy

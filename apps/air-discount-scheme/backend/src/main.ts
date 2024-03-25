@@ -10,4 +10,3 @@ bootstrap({
   swaggerPath: 'api/swagger',
   openApi,
 })
-// Deploy
