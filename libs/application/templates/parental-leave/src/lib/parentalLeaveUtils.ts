@@ -1,4 +1,4 @@
-import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ApplicationLifecycle,
