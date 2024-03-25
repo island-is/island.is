@@ -171,6 +171,7 @@ import {
   HolarUniversityCareerClientConfig,
   BifrostUniversityCareerClientConfig,
 } from '@island.is/clients/university-careers'
+import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 
 const environment = getConfig
 
@@ -344,6 +345,7 @@ const environment = getConfig
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsLoansClientConfig,
+        HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
         RegulationsAdminClientConfig,
