@@ -15,8 +15,10 @@ import { usePensionFund as usePensionFundOptions } from '../../../hooks/usePensi
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../../hooks/usePrivatePensionFund'
 import { useUnion as useUnionOptions } from '../../../hooks/useUnion'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { getSelectOptionLabel } from '../../../lib/parentalLeaveClientUtils'
-import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getSelectOptionLabel,
+} from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
 
 export const Payments = ({
