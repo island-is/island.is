@@ -172,19 +172,19 @@ export interface RealEstate {
   total: number
 }
 
-export interface otherassetsData {
+export interface OtherAssetsData {
   otherAssets: string
   otherAssetsValue: string
   taxFreeInheritance: number
 }
 export interface OtherAssets {
-  data: otherassetsData[]
+  data: OtherAssetsData[]
   total: number
 }
 
 export interface BankAccountsData {
   capital: string
-  penalityInterestRates: string
+  penaltyInterestRates: string
   accountNumber: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
