@@ -53,38 +53,13 @@ import {
 import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-    isCaseUpToDate,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer } = useCase()
+
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-
-  const initialize = useCallback(() => {
-    setAndSendCaseToServer(
-      [
-        {
-          ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
-            : isAcceptingCaseDecision(workingCase.decision)
-            ? workingCase.parentCase.ruling
-            : undefined,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
-
-  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
