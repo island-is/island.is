@@ -17,9 +17,15 @@ import { getLicenseTypeByIdPrefix } from './utils'
 import { LicenseResponse } from './models/licenseResponse.model'
 import { LicenseResult } from './models/licenseResult.model'
 import { isDefined } from '@island.is/shared/utils'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, IdsAuthGuard)
+@UseGuards(IdsUserGuard, IdsAuthGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal)
+@FeatureFlag(Features.occupationalLicensesV2)
 @Resolver(() => LicenseCollection)
 export class OccupationalLicensesV2Resolver {
   constructor(
