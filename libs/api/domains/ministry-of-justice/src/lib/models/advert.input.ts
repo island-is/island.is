@@ -13,6 +13,27 @@ registerEnumType(JournalSignatureBodyTypeEnum, {
 export class AdvertsInput {
   @Field(() => String, { nullable: true })
   search?: string
+
+  @Field(() => Number, { nullable: true })
+  page?: number
+
+  @Field(() => [String], { nullable: true })
+  department?: string[]
+
+  @Field(() => [String], { nullable: true })
+  type?: string[]
+
+  @Field(() => [String], { nullable: true })
+  category?: string[]
+
+  @Field(() => [String], { nullable: true })
+  involvedParty?: string[]
+
+  @Field(() => Date, { nullable: true })
+  dateFrom?: string
+
+  @Field(() => Date, { nullable: true })
+  dateTo?: string
 }
 
 @InputType('MinistryOfJusticeTypesInput')
