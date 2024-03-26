@@ -1,7 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 
-import { Box, Hidden, Link, Text, TextProps } from '@island.is/island-ui/core'
+import {
+  Box,
+  Hidden,
+  Link,
+  ResponsiveSpace,
+  Text,
+  TextProps,
+} from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
 
 import * as styles from './DefaultHeader.css'
 
@@ -9,8 +18,10 @@ export interface DefaultHeaderProps {
   fullWidth?: boolean
   image?: string
   background?: string
+  mobileBackground?: string | null
   title: string
   underTitle?: string
+  titleSectionPaddingLeft?: ResponsiveSpace
   logo?: string
   logoHref?: string
   titleColor?: TextProps['color']
@@ -28,6 +39,7 @@ export const DefaultHeader: React.FC<
   fullWidth,
   image,
   background,
+  mobileBackground,
   title,
   underTitle,
   logo,
@@ -39,11 +51,18 @@ export const DefaultHeader: React.FC<
   imageObjectPosition = 'center',
   className,
   logoAltText,
+  titleSectionPaddingLeft,
 }) => {
+  const { width } = useWindowSize()
   const imageProvided = !!image
   const logoProvided = !!logo
-
   const LinkWrapper = logoHref ? Link : Box
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.lg)
+  }, [width])
 
   return (
     <>
@@ -67,7 +86,7 @@ export const DefaultHeader: React.FC<
       <div
         className={cn({ [styles.gridContainerWidth]: !fullWidth })}
         style={{
-          background: background,
+          background: isMobile ? mobileBackground || background : background,
         }}
       >
         <div
@@ -108,7 +127,10 @@ export const DefaultHeader: React.FC<
                   </LinkWrapper>
                 </Hidden>
               )}
-              <div className={styles.title}>
+              <Box
+                className={styles.title}
+                paddingLeft={!isMobile ? titleSectionPaddingLeft : 0}
+              >
                 <Text variant="h1" as="h1" color={titleColor}>
                   {title}
                 </Text>
@@ -117,7 +139,7 @@ export const DefaultHeader: React.FC<
                     {underTitle}
                   </Text>
                 )}
-              </div>
+              </Box>
             </div>
           </div>
           {imageProvided && (
