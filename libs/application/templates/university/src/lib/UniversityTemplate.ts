@@ -22,9 +22,10 @@ import { ApiActions } from '../shared'
 import { UniversitySchema } from './dataSchema'
 import {
   UserProfileApi,
-  NationalRegistryIndividualApi,
+  NationalRegistryUserApi,
   UniversityApi,
   ProgramApi,
+  InnaApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -36,6 +37,7 @@ const template: ApplicationTemplate<
   name: applicationMessage.name,
   institution: applicationMessage.institutionName,
   translationNamespaces: [ApplicationConfigurations.University.translation],
+  initialQueryParameter: 'program',
   dataSchema: UniversitySchema,
   featureFlag: Features.university,
   stateMachineConfig: {
@@ -76,10 +78,11 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryIndividualApi,
+                NationalRegistryUserApi,
                 UserProfileApi,
                 UniversityApi,
                 ProgramApi,
+                InnaApi,
               ],
             },
           ],
@@ -99,7 +102,7 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.paymentStarted,
+                logMessage: coreHistoryMessages.applicationAssigned,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
+import { ApplicationTypes, ModeOfDelivery } from '@island.is/university-gateway'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -37,24 +38,35 @@ const ProgramSchema = z.object({
   universityName: z.string(),
   program: z.string(),
   programName: z.string(),
-  modeOfDelivery: z.string().optional(), //z.enum(['Online', 'OnSite']), // TODO have dyncamic or static or just have a string?
   examLocation: z.string().optional(), // TODO make conditional requirement if the mode of delivery Online is chosen
+})
+
+export const EducationNotFinishedSchema = z.object({
+  school: z.string(),
+  degreeLevel: z.string(),
+  moreDetails: z.string().optional(),
+})
+
+export const ExemptionEducationSchema = z.object({
+  degreeAttachments: z.array(FileDocumentSchema).optional(), // TODO not optional
+  moreDetails: z.string().optional(),
 })
 
 export const RepeateableEducationDetailsSchema = z
   .object({
-    school: z.string(),
-    degreeLevel: z.string(),
+    school: z.string().optional(),
+    degreeLevel: z.string().optional(),
     degreeMajor: z.string().optional(),
     finishedUnits: z.string().optional(),
     averageGrade: z.string().optional(),
-    degreeCountry: z.string(),
-    beginningDate: z.string(),
-    endDate: z.string(),
-    degreeFinished: z.array(z.enum([YES])).optional(),
+    degreeCountry: z.string().optional(),
+    beginningDate: z.string().optional(),
+    endDate: z.string().optional(),
+    degreeFinished: z.string().optional(),
     moreDetails: z.string().optional(),
-    degreeAttachments: z.array(FileDocumentSchema),
+    degreeAttachments: z.array(FileDocumentSchema).optional(),
     wasRemoved: z.string(),
+    readOnly: z.string(),
   })
   .refine(
     ({ wasRemoved, school }) => {
@@ -101,6 +113,13 @@ export const RepeateableEducationDetailsSchema = z
     },
   )
 
+const EducationDetailsSchema = z.object({
+  finishedDetails: z.array(RepeateableEducationDetailsSchema).optional(),
+  exemptionDetails: ExemptionEducationSchema.optional(),
+  notFinishedDetails: EducationNotFinishedSchema.optional(),
+  thirdLevelDetails: RepeateableEducationDetailsSchema.optional(),
+})
+
 const otherDocumentsSchema = z.object({
   degreeAttachments: FileDocumentSchema.optional(),
 })
@@ -109,11 +128,21 @@ export const UniversitySchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
   programInformation: ProgramSchema,
-  modeOfDeliveryInformation: z.string().optional(),
+  modeOfDeliveryInformation: z.enum([
+    ModeOfDelivery.ONLINE,
+    ModeOfDelivery.ON_SITE,
+    ModeOfDelivery.MIXED,
+    ModeOfDelivery.REMOTE,
+  ]),
   educationOptions: z
-    .enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
+    .enum([
+      ApplicationTypes.DIPLOMA,
+      ApplicationTypes.EXEMPTION,
+      ApplicationTypes.NOTFINISHED,
+      ApplicationTypes.THIRDLEVEL,
+    ])
     .optional(),
-  educationDetails: z.array(RepeateableEducationDetailsSchema),
+  educationDetails: EducationDetailsSchema,
   otherDocuments: otherDocumentsSchema.optional(),
 })
 

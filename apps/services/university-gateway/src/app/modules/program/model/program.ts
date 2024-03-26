@@ -319,6 +319,9 @@ export class ProgramBase extends Model<
   @UpdatedAt
   readonly modified!: CreationOptional<Date>
 }
+/*
+  This Model is for program information that are passed into the application, it doesn't need all the values passed to the Program model or ProgramBase so a new model was created with the necessary information
+*/
 
 @Table({
   tableName: 'program',
@@ -449,13 +452,6 @@ export class Program extends ProgramBase {
     allowNull: false,
   })
   allowThirdLevelQualification!: boolean
-
-  @ApiProperty({
-    description: 'List of courses that belong to this program',
-    type: [ProgramCourse],
-  })
-  @HasMany(() => ProgramCourse)
-  courses!: ProgramCourse[]
 
   @ApiProperty({
     description:
