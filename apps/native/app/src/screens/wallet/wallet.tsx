@@ -157,7 +157,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       })
     }
     return []
-  }, [res, showDisability, showPCard, showEhic])
+  }, [res, showDisability, showPCard, showEhic, showHuntingLicense])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
