@@ -1,4 +1,4 @@
-const urlSafeBase64 = /^[A-Z0-9_\-]*$/i
+const urlSafeBase64 = /^[A-Z0-9_-]*$/i
 
 export const isBase64 = (str: string) => urlSafeBase64.test(str)
 
