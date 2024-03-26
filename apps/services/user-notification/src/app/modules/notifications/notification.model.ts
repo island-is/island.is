@@ -7,7 +7,6 @@ import {
   PrimaryKey,
   CreatedAt,
   UpdatedAt,
-  Index,
 } from 'sequelize-typescript'
 import {
   CreationOptional,
@@ -36,7 +35,6 @@ export class Notification extends Model<
   })
   id!: CreationOptional<number>
 
-  @Index // Adding an index
   @Column({
     type: DataType.UUID,
     unique: true, // Adding the unique constraint
@@ -44,7 +42,6 @@ export class Notification extends Model<
   })
   messageId!: string
 
-  @Index // Adding an index
   @Column({
     type: DataType.STRING,
     allowNull: false,
