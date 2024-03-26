@@ -197,8 +197,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           <View style={{ paddingHorizontal: 16 }}>
             <Skeleton
               active
-              backgroundColor={theme.color.blue100}
-              overlayColor={theme.color.blue200}
+              backgroundColor={{
+                dark: theme.shades.dark.shade300,
+                light: theme.color.blue100,
+              }}
+              overlayColor={{
+                dark: theme.shades.dark.shade200,
+                light: theme.color.blue200,
+              }}
               overlayOpacity={1}
               height={111}
               style={{
@@ -223,12 +229,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const keyExtractor = useCallback((item: FlatListItem, index: number) => {
     const fallback = String(index)
-    if (item.__typename === 'GenericUserLicense') {
+    const type = item.__typename
+
+    if (type === 'GenericUserLicense') {
       return item.license.type ?? fallback
-    }
-    if (item.__typename === 'IdentityDocumentModel') {
+    } else if (type === 'IdentityDocumentModel') {
       return item.number ?? fallback
     }
+
     return (item as { id: string })?.id ?? fallback
   }, [])
 

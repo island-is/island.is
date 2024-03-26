@@ -136,6 +136,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   })
 
   const data = res.data?.genericLicense ?? item
+  const fields = data?.payload?.data ?? []
+  const pkPassAllowed =
+    data?.license?.pkpass &&
+    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
+  const allowLicenseBarcode = pkPassAllowed && !data?.payload?.metadata?.expired
+  const licenseType = data?.license?.type
 
   const onAddPkPass = async () => {
     const { canAddPasses, addPass } = Platform.select({
@@ -252,18 +258,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     }
   }
 
-  const fields = data?.payload?.data ?? []
-  const hasPkpass = data?.license?.pkpass
-  const hasValidPkpass =
-    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
-
-  const pkPassAllowed = hasPkpass && hasValidPkpass
-  // Extra spacing for barcode
-  const extraBarcodeSpacing =
-    pkPassAllowed && data?.barcode?.token
-      ? BARCODE_HEIGHT + LICENSE_CARD_ROW_GAP
-      : 0
-
   const expirationTimeCallback = useCallback(() => {
     void res.refetch()
   }, [])
@@ -280,8 +274,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     }
   }, [data?.barcode?.exp])
 
-  const licenseType = data?.license?.type
-
   return (
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
@@ -296,7 +288,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           }
           date={new Date(Number(data?.fetch?.updated))}
           status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
-          {...(pkPassAllowed && {
+          {...(allowLicenseBarcode && {
             barcode: {
               value: data?.barcode?.token,
               loading: res.loading && !data?.barcode,
@@ -308,7 +300,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       </LicenseCardWrapper>
       <Information
         contentInset={{ bottom: 162 }}
-        topSpacing={extraBarcodeSpacing}
+        topSpacing={
+          allowLicenseBarcode && data?.barcode?.token
+            ? BARCODE_HEIGHT + LICENSE_CARD_ROW_GAP
+            : 0
+        }
       >
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
           {/* Show info alert if PCard */}
