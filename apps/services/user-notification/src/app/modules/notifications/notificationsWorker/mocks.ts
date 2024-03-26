@@ -3,6 +3,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Features } from '@island.is/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
+import { HnippTemplate } from '../dto/hnippTemplate.response'
 
 export const mockFullName = 'mockFullName'
 
@@ -53,6 +54,16 @@ export const userWithFeatureFlagDisabled: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+}
+
+export const mockHnippTemplate: HnippTemplate = {
+  templateId: 'HNIPP.DEMO.ID',
+  notificationTitle: 'Demo title ',
+  notificationBody: 'Demo body {{arg1}}',
+  notificationDataCopy: 'Demo data copy',
+  clickAction: 'Demo click action {{arg2}}',
+  category: 'Demo category',
+  args: ['arg1', 'arg2'],
 }
 
 const userProfiles = [

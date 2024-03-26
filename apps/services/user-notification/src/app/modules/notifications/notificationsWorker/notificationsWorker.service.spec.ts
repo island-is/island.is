@@ -19,6 +19,7 @@ import {
   MockDelegationsService,
   MockFeatureFlagService,
   mockFullName,
+  mockHnippTemplate,
   MockNationalRegistryV3ClientService,
   MockV2UsersApi,
   userWithDelegations,
@@ -30,6 +31,7 @@ import {
 import { wait } from './helpers'
 import { Notification } from '../notification.model'
 import { FIREBASE_PROVIDER } from '../../../../constants'
+import { NotificationsService } from '../notifications.service'
 
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
@@ -38,6 +40,7 @@ describe('NotificationsWorkerService', () => {
   let emailService: EmailService
   let queue: QueueService
   let notificationModel: typeof Notification
+  let notificationsService: NotificationsService
 
   const insideWorkingHours = new Date(2021, 1, 1, 10, 0, 0)
 
@@ -76,6 +79,7 @@ describe('NotificationsWorkerService', () => {
     emailService = app.get<EmailService>(EmailService)
     queue = app.get<QueueService>(getQueueServiceToken('notifications'))
     notificationModel = app.get(getModelToken(Notification))
+    notificationsService = app.get<NotificationsService>(NotificationsService)
   })
 
   beforeEach(async () => {
@@ -88,6 +92,10 @@ describe('NotificationsWorkerService', () => {
     jest
       .spyOn(notificationDispatch, 'sendPushNotification')
       .mockReturnValue(Promise.resolve())
+
+    jest
+      .spyOn(notificationsService, 'getTemplate')
+      .mockReturnValue(Promise.resolve(mockHnippTemplate))
   })
 
   afterAll(async () => {
@@ -101,7 +109,7 @@ describe('NotificationsWorkerService', () => {
   const addToQueue = async (recipient: string) => {
     await queue.add({
       recipient,
-      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+      templateId: mockHnippTemplate.templateId,
       args: [{ key: 'organization', value: 'Test Crew' }],
     })
 
