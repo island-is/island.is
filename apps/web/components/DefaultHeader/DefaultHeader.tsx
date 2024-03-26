@@ -18,7 +18,7 @@ export interface DefaultHeaderProps {
   fullWidth?: boolean
   image?: string
   background?: string
-  mobileBackground?: string
+  mobileBackground?: string | null
   title: string
   underTitle?: string
   titleSectionPaddingLeft?: ResponsiveSpace

@@ -17,6 +17,7 @@ import {
   Navigation,
   NavigationItem,
   ProfileCard,
+  ResponsiveSpace,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -442,7 +443,8 @@ export const OrganizationHeader: React.FC<
           }
           logoAltText={logoAltText}
           titleSectionPaddingLeft={
-            organizationPage.themeProperties.titleSectionPaddingLeft
+            organizationPage.themeProperties
+              .titleSectionPaddingLeft as ResponsiveSpace
           }
           mobileBackground={
             organizationPage.themeProperties.mobileBackgroundColor
