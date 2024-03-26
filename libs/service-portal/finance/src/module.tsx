@@ -93,6 +93,7 @@ export const financeModule: PortalModule = {
       path: FinancePaths.FinancePaymentsHousingBenefits,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceHousingBenefits />,
+      key: 'HousingBenefits',
     },
     {
       name: m.financeLoans,
