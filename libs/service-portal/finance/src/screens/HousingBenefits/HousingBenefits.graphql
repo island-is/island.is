@@ -27,8 +27,6 @@ query GetHousingBenefitsList($input: HousingBenefitPaymentsInput!) {
     pageInfo {
       hasNextPage
       hasPreviousPage
-      startCursor
-      endCursor
     }
   }
 }

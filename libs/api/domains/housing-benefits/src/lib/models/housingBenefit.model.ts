@@ -1,5 +1,14 @@
-import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+
+@ObjectType()
+export class HousingBenefitPageInfo {
+  @Field({ nullable: true })
+  hasNextPage!: boolean
+
+  @Field({ nullable: true })
+  hasPreviousPage?: boolean
+}
 
 @ObjectType()
 export class HousingBenefitPayment {
@@ -68,6 +77,13 @@ export class HousingBenefitPayment {
 }
 
 @ObjectType('HousingBenefitPayments')
-export class HousingBenefitPaymentsResponse extends PaginatedResponse(
-  HousingBenefitPayment,
-) {}
+export class HousingBenefitPaymentsResponse {
+  @CacheField(() => [HousingBenefitPayment])
+  data!: HousingBenefitPayment[]
+
+  @Field()
+  totalCount!: number
+
+  @CacheField(() => HousingBenefitPageInfo)
+  pageInfo!: HousingBenefitPageInfo
+}

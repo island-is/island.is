@@ -25,8 +25,6 @@ export class HmsHousingBenefitsClientService {
       pageInfo: {
         ...res.pageInfo,
         hasNextPage: !!res.pageInfo?.hasNextPage,
-        startCursor: res.pageInfo?.startCursor ?? undefined,
-        endCursor: res.pageInfo?.endCursor ?? undefined,
       },
       data:
         res.data?.map((item) => ({

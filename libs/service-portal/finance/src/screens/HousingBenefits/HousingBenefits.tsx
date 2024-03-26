@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroller'
 import {
   Box,
   Button,
@@ -14,71 +13,37 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { FootNote, m } from '@island.is/service-portal/core'
 
-import { useGetHousingBenefitsListQuery } from './HousingBenefits.generated'
-import HousingBenefitsTable from '../../components/HousingBenefitPayments/HousingBenefitsTable'
+import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
+import HousingBenefitsTable, {
+  ITEMS_ON_PAGE,
+} from '../../components/HousingBenefitPayments/HousingBenefitsTable'
 import { Problem } from '@island.is/react-spa/shared'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportHousingBenefitFiles } from '../../utils/filesHousingBenefits'
-
-export const ITEMS_ON_PAGE = 10
 
 const FinanceHousingBenefits = () => {
   useNamespaces('sp.finance-housing-benefits')
 
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
+  const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
-  const [loadingMore, setLoadingMore] = useState(false)
+
+  const [loadHousingPayments, { data, loading, error }] =
+    useGetHousingBenefitsListLazyQuery()
 
   useEffect(() => {
-    if (toDate && fromDate) {
-      loadMore('', true)
-    }
-  }, [toDate, fromDate])
-
-  const { data, loading, error, fetchMore } = useGetHousingBenefitsListQuery({
-    variables: {
-      input: {
-        limit: ITEMS_ON_PAGE,
-        before: '',
-        after: '',
-      },
-    },
-  })
-
-  const loadMore = (cursor: string, restart = false) => {
-    if (loadingMore || !data || error) return
-    setLoadingMore(true)
-    fetchMore({
+    loadHousingPayments({
       variables: {
         input: {
           dateFrom: fromDate ? fromDate.toISOString() : undefined,
           dateTo: toDate ? toDate.toISOString() : undefined,
-          limit: ITEMS_ON_PAGE,
-          ...(cursor && { after: cursor }),
+          pageSize: ITEMS_ON_PAGE,
+          pageNumber: page,
         },
       },
-      updateQuery: (prevResult, { fetchMoreResult }) => {
-        if (
-          fetchMoreResult?.housingBenefitPayments?.data.length &&
-          prevResult?.housingBenefitPayments?.data.length
-        ) {
-          if (restart) {
-            fetchMoreResult.housingBenefitPayments.data = [
-              ...fetchMoreResult.housingBenefitPayments.data,
-            ]
-          } else {
-            fetchMoreResult.housingBenefitPayments.data = [
-              ...prevResult.housingBenefitPayments.data,
-              ...fetchMoreResult.housingBenefitPayments.data,
-            ]
-          }
-          return fetchMoreResult
-        }
-        return prevResult
-      },
-    }).finally(() => setLoadingMore(false))
-  }
+    })
+  }, [toDate, fromDate, page])
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
@@ -157,66 +122,13 @@ const FinanceHousingBenefits = () => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {/* {data?.housingBenefitPayments?.data &&
-            data.housingBenefitPayments.data.length > 0 && (
-              <>
-                <HousingBenefitsTable payments={data.housingBenefitPayments} />
-                {loadingMore && (
-                  <Box paddingTop={1}>
-                    <SkeletonLoader space={1} height={40} repeat={2} />
-                  </Box>
-                )}
-                {data?.housingBenefitPayments?.pageInfo.hasNextPage ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    marginTop={4}
-                    justifyContent="center"
-                  >
-                    <Button
-                      onClick={() =>
-                        loadMore(
-                          data?.housingBenefitPayments?.pageInfo.endCursor ??
-                            '',
-                        )
-                      }
-                      variant="ghost"
-                      size="small"
-                    >
-                      {`${formatMessage(m.fetchMore)} ${
-                        data?.housingBenefitPayments?.data?.length ?? 0
-                      }/${data?.housingBenefitPayments?.totalCount ?? 1}`}
-                    </Button>
-                  </Box>
-                ) : undefined}
-              </>
-            )} */}
-
           {data?.housingBenefitPayments?.data &&
             data.housingBenefitPayments.data.length > 0 && (
-              <>
-                <InfiniteScroll
-                  pageStart={0}
-                  loadMore={() =>
-                    loadMore(
-                      data?.housingBenefitPayments?.pageInfo.endCursor ?? '',
-                    )
-                  }
-                  hasMore={
-                    !loadingMore &&
-                    data?.housingBenefitPayments.pageInfo.hasNextPage
-                  }
-                >
-                  <HousingBenefitsTable
-                    payments={data.housingBenefitPayments}
-                  />
-                </InfiniteScroll>
-                {loadingMore && (
-                  <Box paddingTop={2}>
-                    <SkeletonLoader space={1} height={40} repeat={4} />
-                  </Box>
-                )}
-              </>
+              <HousingBenefitsTable
+                setPage={setPage}
+                page={page}
+                payments={data.housingBenefitPayments}
+              />
             )}
         </Box>
       </Stack>

@@ -26,25 +26,18 @@
             "schema": { "type": "string", "format": "date-time" }
           },
           {
-            "name": "before",
+            "name": "pageNumber",
             "in": "query",
-            "description": "The value of `startCursor` from the previous response pageInfo to query the previous page of `limit` number of data items.",
+            "description": "The number of page",
             "style": "form",
-            "schema": { "type": "string" }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
-            "name": "after",
-            "in": "query",
-            "description": "The value of `endCursor` from the response to query the next page of `limit` number of data items.",
-            "style": "form",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
             "description": "Limits the number of results in a request.",
             "style": "form",
-            "schema": { "type": "integer", "format": "int32", "default": 10 }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "version",
@@ -160,9 +153,7 @@
         "type": "object",
         "properties": {
           "hasPreviousPage": { "type": "boolean" },
-          "hasNextPage": { "type": "boolean" },
-          "startCursor": { "type": "string", "nullable": true },
-          "endCursor": { "type": "string", "nullable": true }
+          "hasNextPage": { "type": "boolean" }
         },
         "additionalProperties": false
       },
