@@ -31,7 +31,6 @@ const mockHnippTemplate: HnippTemplate = {
   clickAction: 'Demo click action {{arg2}}',
   category: 'Demo category',
   args: ['arg1', 'arg2'],
-  senderId: '1234567890',
 }
 
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
@@ -83,8 +82,8 @@ describe('NotificationsService', () => {
 
   it('should get template', async () => {
     jest
-      .spyOn(service, 'getTemplates')
-      .mockImplementation(() => Promise.resolve(mockTemplates))
+      .spyOn(service, 'getTemplate')
+      .mockImplementation(() => Promise.resolve(mockHnippTemplate))
     const template = await service.getTemplate(mockHnippTemplate.templateId)
     expect(template).toBeInstanceOf(Object)
   })

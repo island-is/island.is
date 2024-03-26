@@ -24,7 +24,5 @@ export class HnippTemplate {
 
   @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]
-
-  // @ApiProperty({ example: '1234567890' })
-  // senderId!: string
+  
 }

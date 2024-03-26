@@ -33,7 +33,7 @@ import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-// @UseInterceptors(CacheInterceptor)
+@UseInterceptors(CacheInterceptor)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -100,17 +100,6 @@ export class NotificationsController {
     return await this.notificationsService.getTemplates(locale)
   }
 
-  ///////////////////////////////////////////////////////
-  // @UseInterceptors()
-  @Get('/orgname')
-  @Version('1')
-  async orgname(
-    @Query('senderId') senderId: string,
-    @Query('locale') locale: string,
-  ): Promise<any> {
-    return await this.notificationsService.getOrganizationTitle(senderId,locale)
-  }
-///////////////////////////////////////////////////////
 
   @Documentation({
     summary: 'Fetches a single notification template',
@@ -166,12 +155,11 @@ export class NotificationsController {
     this.logger.info('Message queued', {
       messageId: id,
       ...records,
-      templateId: body.templateId,
-      recipient: body.recipient,
+      ...body
     })
 
     return {
-      id,
+      id
     }
   }
 }

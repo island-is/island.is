@@ -58,47 +58,97 @@ export class NotificationsService {
     private readonly notificationModel: typeof Notification,
   ) {}
 
-  async getOrganizationTitle(senderId: string, locale: string): Promise<string> {
-
-    // return if cache has valid response
-    const cacheKey = `org-${senderId}-${locale}`
-    const cachedOrganization = await this.getFromCache(cacheKey)
-    if (cachedOrganization) {
-      this.logger.info(`cache hit for: ${cacheKey}`)
-      return cachedOrganization as string
-    }
-    
-    const mappedLocale = this.mapLocale(locale)
-    const contentfulOrganizationQuery = {
-      query: `{
-        organizationCollection(where: {kennitala: "${senderId}"},locale: "${mappedLocale}") {
-          items {
-            title
-            kennitala
-          }
-        }
-      }`,
-    }
-
-    const res = await axios
-      .post(CONTENTFUL_GQL_ENDPOINT, contentfulOrganizationQuery, {
-        headers: {
-          'content-type': 'application/json',
-          authorization: `Bearer ${ACCESS_TOKEN}`,
+  async performGraphQLRequest(query: string) {
+    try {
+      const response = await axios.post(
+        CONTENTFUL_GQL_ENDPOINT,
+        { query },
+        {
+          headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
         },
-      })
-      .then((response) => {
-        return response.data
-      })
-      .catch((error) => {
-        if (error.response) {
-          throw new BadRequestException(error.response.data)
-        } else {
-          throw new BadRequestException('Bad Request')
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new BadRequestException(error.response.data);
+      } else {
+        this.logger.error('GraphQL Request Failed', { error });
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
+  // async getOrganizationTitle(senderId: string, locale: string): Promise<string> {
+
+  //   // return if cache has valid response
+  //   const cacheKey = `org-${senderId}-${locale}`
+  //   const cachedOrganization = await this.getFromCache(cacheKey)
+  //   if (cachedOrganization) {
+  //     this.logger.info(`cache hit for: ${cacheKey}`)
+  //     return cachedOrganization as string
+  //   }
+    
+  //   const mappedLocale = this.mapLocale(locale)
+  //   const contentfulOrganizationQuery = {
+  //     query: `{
+  //       organizationCollection(where: {kennitala: "${senderId}"},locale: "${mappedLocale}") {
+  //         items {
+  //           title
+  //           kennitala
+  //         }
+  //       }
+  //     }`,
+  //   }
+
+  //   const res = await axios
+  //     .post(CONTENTFUL_GQL_ENDPOINT, contentfulOrganizationQuery, {
+  //       headers: {
+  //         'content-type': 'application/json',
+  //         authorization: `Bearer ${ACCESS_TOKEN}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       return response.data
+  //     })
+  //     .catch((error) => {
+  //       if (error.response) {
+  //         throw new BadRequestException(error.response.data)
+  //       } else {
+  //         throw new BadRequestException('Bad Request')
+  //       }
+  //     })
+  //   // console.log("resss",res.data.organizationCollection.items[0])
+  //   return res.data.organizationCollection.items[0].title
+  // }
+  async getOrganizationTitle(senderId: string, locale: string): Promise<string> {
+    const mappedLocale = this.mapLocale(locale);
+    const cacheKey = `org-${senderId}-${mappedLocale}`;
+    let cachedOrganization = await this.cacheManager.get<string>(cacheKey)
+    if (cachedOrganization) {
+      this.logger.info(`Cache hit for: ${cacheKey}`); // needddded ?
+      return cachedOrganization;
+    }
+
+    const contentfulOrganizationQuery = `{
+      organizationCollection(where: {kennitala: "${senderId}"}, locale: "${mappedLocale}") {
+        items {
+          title
         }
-      })
-    // console.log("resss",res.data.organizationCollection.items[0])
-    return res.data.organizationCollection.items[0].title
+      }
+    }`;
+
+    const res = await this.performGraphQLRequest(contentfulOrganizationQuery);
+    const organizationTitle = res.data.organizationCollection.items[0]?.title;
+
+    if (!organizationTitle) {
+      throw new NotFoundException(`Organization title not found for ID: ${senderId}`);
+    }
+
+    await this.cacheManager.set(cacheKey, organizationTitle) //this.addToCache(cacheKey, organizationTitle);
+    return organizationTitle;
   }
 
   private async formatAndMapNotification(
@@ -168,29 +218,81 @@ export class NotificationsService {
     }
   }
 
-  async addToCache(key: string, item: object) {
-    return await this.cacheManager.set(key, item)
-  }
+  // async addToCache(key: string, item: object) {
+  //   return await this.cacheManager.set(key, item)
+  // }
 
-  async getFromCache(key: string) {
-    return await this.cacheManager.get(key)
-  }
+  // async getFromCache(key: string) {
+  //   return await this.cacheManager.get(key)
+  // }
 
   mapLocale(locale?: string | null | undefined): string {
     return locale === 'en' ? locale : 'is-IS'
   }
 
-  async getTemplates(
-    locale?: string | null | undefined,
-  ): Promise<HnippTemplate[]> {
-    const mappedLocale = this.mapLocale(locale)
+  // async getTemplates(
+  //   locale?: string | null | undefined,
+  // ): Promise<HnippTemplate[]> {
+  //   const mappedLocale = this.mapLocale(locale)
 
-    this.logger.info(
-      'Fetching templates from Contentful GQL for locale: ' + mappedLocale,
-    )
+  //   this.logger.info(
+  //     'Fetching templates from Contentful GQL for locale: ' + mappedLocale,
+  //   )
 
-    const contentfulHnippTemplatesQuery = {
-      query: `{
+  //   const contentfulHnippTemplatesQuery = {
+  //     query: `{
+  //     hnippTemplateCollection(locale: "${mappedLocale}") {
+  //       items {
+  //         templateId
+  //         notificationTitle
+  //         notificationBody
+  //         notificationDataCopy
+  //         clickAction
+  //         clickActionWeb
+  //         category
+  //         args
+  //       }
+  //     }
+  //   }`,
+  //   }
+
+  //   const res = await axios
+  //     .post(CONTENTFUL_GQL_ENDPOINT, contentfulHnippTemplatesQuery, {
+  //       headers: {
+  //         'content-type': 'application/json',
+  //         authorization: `Bearer ${ACCESS_TOKEN}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       for (const item of response.data.data.hnippTemplateCollection.items) {
+  //         // contentful returns null for empty arrays
+  //         if (item.args == null) item.args = []
+  //       }
+  //       return response.data
+  //     })
+  //     .catch((error) => {
+  //       if (error.response) {
+  //         throw new BadRequestException(error.response.data)
+  //       } else {
+  //         throw new BadRequestException('Bad Request')
+  //       }
+  //     })
+  //   return res.data.hnippTemplateCollection.items
+  // }
+
+  async getTemplates(locale?: string | null | undefined): Promise<HnippTemplate[]> {
+    const mappedLocale = this.mapLocale(locale);
+    const cacheKey = `templates-${mappedLocale}`;
+    
+    // Try to retrieve the templates from cache first
+    let cachedTemplates = await this.cacheManager.get<HnippTemplate[]>(cacheKey);
+    if (cachedTemplates) {
+      this.logger.info(`Cache hit for templates: ${cacheKey}`);
+      return cachedTemplates;
+    }
+  
+    // GraphQL query to fetch all templates for the specified locale
+    const contentfulTemplatesQuery = `{
       hnippTemplateCollection(locale: "${mappedLocale}") {
         items {
           templateId
@@ -203,59 +305,97 @@ export class NotificationsService {
           args
         }
       }
-    }`,
-    }
-
-    const res = await axios
-      .post(CONTENTFUL_GQL_ENDPOINT, contentfulHnippTemplatesQuery, {
-        headers: {
-          'content-type': 'application/json',
-          authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
-      .then((response) => {
-        for (const item of response.data.data.hnippTemplateCollection.items) {
-          // contentful returns null for empty arrays
-          if (item.args == null) item.args = []
-        }
-        return response.data
-      })
-      .catch((error) => {
-        if (error.response) {
-          throw new BadRequestException(error.response.data)
-        } else {
-          throw new BadRequestException('Bad Request')
-        }
-      })
-    return res.data.hnippTemplateCollection.items
-  }
-
-  async getTemplate(
-    templateId: string,
-    locale?: string | null | undefined,
-  ): Promise<HnippTemplate> {
-    locale = this.mapLocale(locale)
-    //check cache
-    const cacheKey = `${templateId}-${locale}`
-    const cachedTemplate = await this.getFromCache(cacheKey)
-
-    if (cachedTemplate) {
-      this.logger.info(`cache hit for: ${cacheKey}`)
-
-      return cachedTemplate as HnippTemplate
-    }
-
+    }`;
+  
     try {
-      for (const template of await this.getTemplates(locale)) {
-        if (template.templateId == templateId) {
-          await this.addToCache(cacheKey, template)
-          return template
+      const res = await this.performGraphQLRequest(contentfulTemplatesQuery);
+      const templates = res.data.hnippTemplateCollection.items;
+  
+      if (templates.length === 0) {
+        this.logger.warn(`No templates found for locale: ${mappedLocale}`);
+        return [];
+      }
+  
+      // Cache the fetched templates before returning
+      await this.cacheManager.set(cacheKey, templates);
+      return templates;
+    } catch (error) {
+      this.logger.error('Error fetching templates:', { locale, error });
+      throw error; // Rethrow the caught error
+    }
+  }
+  
+
+  // async getTemplate(
+  //   templateId: string,
+  //   locale?: string | null | undefined,
+  // ): Promise<HnippTemplate> {
+  //   locale = this.mapLocale(locale)
+  //   //check cache
+  //   const cacheKey = `${templateId}-${locale}`
+  //   const cachedTemplate = await this.cacheManager.get<HnippTemplate>(cacheKey)
+
+  //   if (cachedTemplate) {
+  //     this.logger.info(`cache hit for: ${cacheKey}`)
+
+  //     return cachedTemplate as HnippTemplate
+  //   }
+
+  //   try {
+  //     for (const template of await this.getTemplates(locale)) {
+  //       if (template.templateId == templateId) {
+  //         await this.addToCache(cacheKey, template)
+  //         return template
+  //       }
+  //     }
+
+  //     throw new NotFoundException(`Template: ${templateId} not found`)
+  //   } catch {
+  //     throw new NotFoundException(`Template: ${templateId} not found`)
+  //   }
+  // }
+
+  async getTemplate(templateId: string, locale?: string | null | undefined): Promise<HnippTemplate> {
+    const mappedLocale = this.mapLocale(locale);
+    const cacheKey = `template-${templateId}-${mappedLocale}`;
+    
+    // Try to retrieve the template from cache first
+    let cachedTemplate = await this.cacheManager.get<HnippTemplate>(cacheKey);
+    if (cachedTemplate) {
+      this.logger.info(`Cache hit for template: ${cacheKey}`);
+      return cachedTemplate;
+    }
+  
+    // Query to fetch a specific template by templateId
+    const contentfulTemplateQuery = `{
+      hnippTemplateCollection(where: {templateId: "${templateId}"}, locale: "${mappedLocale}") {
+        items {
+          templateId
+          notificationTitle
+          notificationBody
+          notificationDataCopy
+          clickAction
+          clickActionWeb
+          category
+          args
         }
       }
-
-      throw new NotFoundException(`Template: ${templateId} not found`)
-    } catch {
-      throw new NotFoundException(`Template: ${templateId} not found`)
+    }`;
+  
+    try {
+      const res = await this.performGraphQLRequest(contentfulTemplateQuery);
+      const template = res.data.hnippTemplateCollection.items.length > 0 ? res.data.hnippTemplateCollection.items[0] : null;
+      
+      if (!template) {
+        throw new NotFoundException(`Template not found for ID: ${templateId}`);
+      }
+  
+      // Cache the fetched template before returning
+      await this.cacheManager.set(cacheKey, template);
+      return template;
+    } catch (error) {
+      this.logger.error('Error fetching template:', { templateId, error });
+      throw error; // Rethrow the caught error
     }
   }
 
