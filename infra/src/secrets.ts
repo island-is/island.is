@@ -95,7 +95,7 @@ yargs(hideBin(process.argv))
         if (Parameter.Value && Parameter.Value.length > 0) {
           console.log(Parameter.Value)
         } else {
-          logger.error('Failed to get secret')
+          logger.error('Failed to get secret', {'error': Parameter.SourceResult})
         }
       }
     },
