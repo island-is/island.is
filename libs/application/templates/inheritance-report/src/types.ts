@@ -173,8 +173,8 @@ export interface RealEstate {
 }
 
 export interface OtherAssetsData {
-  otherAssets: string
-  otherAssetsValue: string
+  info: string
+  value: string
   taxFreeInheritance: number
 }
 export interface OtherAssets {

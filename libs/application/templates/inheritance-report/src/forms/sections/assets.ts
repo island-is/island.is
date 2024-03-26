@@ -529,32 +529,34 @@ export const assets = buildSection({
               description: m.otherAssetsDescription,
               titleVariant: 'h3',
             }),
-            buildTextField({
-              id: 'assets.otherAssets.info',
-              title: m.otherAssetsText,
-              placeholder: m.otherAssetsPlaceholder,
-              variant: 'textarea',
-              rows: 7,
-              defaultValue: (application: Application) => {
-                return (
-                  getEstateDataFromApplication(application)
-                    ?.inheritanceReportInfo?.otherAssets?.[0]?.description ?? ''
-                )
-              },
+            buildDescriptionField({
+              id: 'assets.otherAssets.total',
+              title: '',
             }),
-            buildTextField({
-              id: 'assets.otherAssets.value',
-              title: m.otherAssetsValue,
-              width: 'half',
-              variant: 'currency',
-              defaultValue: (application: Application) => {
-                return (
-                  getEstateDataFromApplication(application)
-                    ?.inheritanceReportInfo?.otherAssets?.[0]
-                    ?.propertyValuation ?? '0'
-                )
+            buildCustomField(
+              {
+                title: '',
+                id: 'assets.otherAssets.data',
+                component: 'OtherAssetsRepeater',
+                doesNotRequireAnswer: true,
               },
-            }),
+              {
+                fields: [
+                  {
+                    title: m.otherAssetsText,
+                    id: 'info',
+                    required: true,
+                  },
+                  {
+                    title: m.otherAssetsValue,
+                    id: 'value',
+                    required: true,
+                    currency: true,
+                  },
+                ],
+                repeaterButtonText: m.otherAssetRepeaterButton,
+              },
+            ),
           ],
         }),
       ],
