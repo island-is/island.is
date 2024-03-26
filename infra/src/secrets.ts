@@ -30,7 +30,6 @@ const config = {
   region: 'eu-west-1',
 }
 
-
 const ssm = new AWS.SSM(config)
 yargs(hideBin(process.argv))
   .command(
