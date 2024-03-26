@@ -14,6 +14,7 @@ import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../../lib/messages'
 import { ClaimsData, EstateAssets, StocksData } from '../../types'
+import { valueToNumber } from '../../lib/utils/helpers'
 
 export const overviewAssets = [
   buildDescriptionField({
@@ -35,7 +36,7 @@ export const overviewAssets = [
         const realEstateAssets = (answers.assets as unknown as EstateAssets)
           ?.realEstate?.data
 
-        return (realEstateAssets ?? []).map((asset: any) => {
+        return (realEstateAssets ?? []).map((asset) => {
           const propertyValuation = parseFloat(asset.propertyValuation)
           const propertyShare = parseFloat(asset.share)
 
@@ -83,7 +84,7 @@ export const overviewAssets = [
         const vehicleAssets = (answers.assets as unknown as EstateAssets)
           .vehicles.data
         return (
-          vehicleAssets.map((asset: any) => ({
+          vehicleAssets.map((asset) => ({
             title: asset.description,
             description: [
               `${m.vehicleNumberLabel.defaultMessage}: ${asset.assetNumber}`,
@@ -125,7 +126,7 @@ export const overviewAssets = [
       cards: ({ answers }: Application) => {
         const gunAssets = (answers.assets as unknown as EstateAssets).guns.data
         return (
-          gunAssets.map((asset: any) => ({
+          gunAssets.map((asset) => ({
             title: asset.description,
             description: [
               `${m.gunNumber.defaultMessage}: ${asset.assetNumber}`,
@@ -199,15 +200,17 @@ export const overviewAssets = [
 
           return {
             title: isForeign
-              ? account.accountNumber
-              : formatBankInfo(account.accountNumber ?? ''),
+              ? account.propertyNumber
+              : formatBankInfo(account.propertyNumber ?? ''),
             description: [
               `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
-                account.capital ?? '0',
+                String(valueToNumber(account.propertyValuation)),
               )}`,
               `${
                 m.bankAccountPenaltyInterestRates.defaultMessage
-              }: ${formatCurrency(account.penalityInterestRates ?? '0')}`,
+              }: ${formatCurrency(
+                String(valueToNumber(account.exchangeRateOrInterest)),
+              )}`,
               `${m.bankAccountForeign.defaultMessage}: ${
                 isForeign ? m.yes.defaultMessage : m.no.defaultMessage
               }`,
