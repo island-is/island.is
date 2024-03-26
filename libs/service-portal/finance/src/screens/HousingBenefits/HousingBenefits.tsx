@@ -32,12 +32,17 @@ const FinanceHousingBenefits = () => {
   const [loadHousingPayments, { data, loading, error }] =
     useGetHousingBenefitsListLazyQuery()
 
+  const resetCal = () => {
+    setFromDate(undefined)
+    setToDate(undefined)
+  }
+
   useEffect(() => {
     loadHousingPayments({
       variables: {
         input: {
-          dateFrom: fromDate ? fromDate.toISOString() : undefined,
-          dateTo: toDate ? toDate.toISOString() : undefined,
+          dateFrom: toDate && fromDate ? fromDate.toISOString() : undefined,
+          dateTo: toDate && fromDate ? toDate.toISOString() : undefined,
           pageSize: ITEMS_ON_PAGE,
           pageNumber: page,
         },
@@ -83,18 +88,6 @@ const FinanceHousingBenefits = () => {
                 data.housingBenefitPayments.data.length > 0 && (
                   <Box display="flex" height="full" alignItems="flexEnd">
                     <Inline space={2}>
-                      <Button
-                        colorScheme="default"
-                        icon="print"
-                        iconType="filled"
-                        onClick={() => window.print()}
-                        preTextIconType="filled"
-                        size="default"
-                        type="button"
-                        variant="utility"
-                      >
-                        {formatMessage(m.print)}
-                      </Button>
                       <DropdownExport
                         onGetCSV={() =>
                           exportHousingBenefitFiles(
@@ -108,7 +101,25 @@ const FinanceHousingBenefits = () => {
                             'xlsx',
                           )
                         }
+                        dropdownItems={[
+                          {
+                            title: formatMessage(m.clearFilter),
+                            onClick: () => resetCal(),
+                          },
+                        ]}
                       />
+                      <Button
+                        colorScheme="default"
+                        icon="print"
+                        iconType="filled"
+                        onClick={() => window.print()}
+                        preTextIconType="filled"
+                        size="default"
+                        type="button"
+                        variant="utility"
+                      >
+                        {formatMessage(m.print)}
+                      </Button>
                     </Inline>
                   </Box>
                 )}
@@ -116,6 +127,16 @@ const FinanceHousingBenefits = () => {
           </GridRow>
         </Hidden>
         <Box marginTop={3}>
+          {!error && !loading && !data?.housingBenefitPayments && (
+            <Problem
+              type="no_data"
+              title={formatMessage(m.noData)}
+              message={formatMessage(m.noTransactionFound)}
+              titleSize="h3"
+              noBorder={false}
+              tag={undefined}
+            />
+          )}
           {error && !loading && <Problem error={error} noBorder={false} />}
           {loading && !error && (
             <Box padding={3}>

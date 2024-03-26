@@ -4,6 +4,7 @@ import {
   ApiVversionPaymentPaymenthistoryPostRequest,
   PaymentApi,
 } from '../../gen/fetch'
+import { handle204 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class HmsHousingBenefitsClientService {
@@ -16,9 +17,11 @@ export class HmsHousingBenefitsClientService {
     user: User,
     input: ApiVversionPaymentPaymenthistoryPostRequest,
   ) {
-    const res = await this.apiWithAuth(
-      user,
-    ).apiVversionPaymentPaymenthistoryPost(input)
+    const res = await handle204(
+      this.apiWithAuth(user).apiVversionPaymentPaymenthistoryPostRaw(input),
+    )
+
+    if (!res) return null
     return {
       ...res,
       totalCount: res.totalCount ?? 0,
