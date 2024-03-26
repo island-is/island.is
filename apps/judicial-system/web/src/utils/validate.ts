@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness, isTrafficViolationCase } from './stepHelper'
+import { isBusiness, isTrafficViolationIndictment } from './stepHelper'
 
 export type Validation =
   | 'empty'
@@ -486,7 +486,7 @@ export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
     workingCase.caseFiles?.some(
       (file) => file.category === CaseFileCategory.COVER_LETTER,
     ) &&
-      (isTrafficViolationCase(workingCase) ||
+      (isTrafficViolationIndictment(workingCase) ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.INDICTMENT,
         )) &&
