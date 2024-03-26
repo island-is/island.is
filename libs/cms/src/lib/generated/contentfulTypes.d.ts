@@ -3509,6 +3509,9 @@ export interface IServiceWebPageFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
