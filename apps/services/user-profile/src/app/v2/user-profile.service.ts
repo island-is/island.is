@@ -21,7 +21,9 @@ import { ClientType } from '../types/ClientType'
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
 
-export const MIGRATION_DATE = new Date('2022-01-01')
+export const MIGRATION_DATE = new Date(
+  process.env.USER_PROFILE_MIGRATION_DATE ?? '2022-01-01',
+)
 
 @Injectable()
 export class UserProfileService {
