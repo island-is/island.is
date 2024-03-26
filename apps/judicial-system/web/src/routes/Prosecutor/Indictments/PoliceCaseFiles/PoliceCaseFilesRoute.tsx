@@ -65,7 +65,7 @@ const UploadFilesToPoliceCase: React.FC<
   const { formatMessage } = useIntl()
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
     addUploadFile,
     addUploadFiles,
     updateUploadFile,
@@ -83,7 +83,8 @@ const UploadFilesToPoliceCase: React.FC<
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
+    useState<boolean>(false)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
@@ -98,8 +99,8 @@ const UploadFilesToPoliceCase: React.FC<
   }, [uploadFiles, formatMessage])
 
   useEffect(() => {
-    setAllUploaded(allFilesUploaded && !isUploading)
-  }, [allFilesUploaded, isUploading, setAllUploaded])
+    setAllUploaded(allFilesDoneOrError && !isUploadingPoliceCaseFiles)
+  }, [allFilesDoneOrError, isUploadingPoliceCaseFiles, setAllUploaded])
 
   useEffect(() => {
     if (caseOrigin !== CaseOrigin.LOKE) {
@@ -225,11 +226,11 @@ const UploadFilesToPoliceCase: React.FC<
         }
       })
 
-    setIsUploading(true)
+    setIsUploadingPoliceCaseFiles(true)
 
     await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
 
-    setIsUploading(false)
+    setIsUploadingPoliceCaseFiles(false)
   }
 
   return (
@@ -248,7 +249,12 @@ const UploadFilesToPoliceCase: React.FC<
         buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
         onChange={(files) =>
           handleUpload(
-            addUploadFiles(files, CaseFileCategory.CASE_FILE, policeCaseNumber),
+            addUploadFiles(
+              files,
+              CaseFileCategory.CASE_FILE,
+              undefined,
+              policeCaseNumber,
+            ),
             updateUploadFile,
           )
         }
