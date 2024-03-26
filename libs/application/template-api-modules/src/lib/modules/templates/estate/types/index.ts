@@ -84,6 +84,7 @@ type InfoValueField = {
 type Claim = {
   publisher?: string
   value?: string | number
+  nationalId?: string
 }
 
 type Deceased = {

@@ -1,6 +1,36 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Pre-data collection
+  preDataCollectionHeading: {
+    id: 'ir.application:preDataCollectionHeading',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Heading for pre-collection',
+  },
+  preDataCollectionInfo: {
+    id: 'ir.application:preDataCollectionInfo',
+    defaultMessage:
+      'Til þess að geta hafið umsókn þarf fyrst að sækja til sýslumanns hvort viðkomandi eigi einhver dánarbú á skrá.',
+    description: 'Info for pre-collection',
+  },
+  preDataCollectionTitle: {
+    id: 'ir.application:preDataCollectionTitle',
+    defaultMessage: 'Upplýsingar um dánarbú',
+    description: 'Title of provider for pre-collection',
+  },
+
+  preDataCollectionDescription: {
+    id: 'ir.application:preDataCollectionDescription',
+    defaultMessage: 'Sóttar verða upplýsingar frá sýslumanni um dánarbú',
+    description: 'Description of provider for pre-collection',
+  },
+
+  preDataCollectionChooseEstateSelectTitle: {
+    id: 'ir.application:preDataCollectionChooseEstateSelectTitle',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Title for pre-collection of data',
+  },
+
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
