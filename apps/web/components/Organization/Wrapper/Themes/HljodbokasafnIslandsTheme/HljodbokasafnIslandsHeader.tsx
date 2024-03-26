@@ -54,6 +54,9 @@ const HljodbokasafnIslandsHeader: React.FC<
       logoHref={linkResolver('organizationpage', [organizationPage.slug]).href}
       className={styles.gridContainer}
       logoAltText={logoAltText}
+      titleSectionPaddingLeft={
+        organizationPage.themeProperties.titleSectionPaddingLeft
+      }
     />
   )
 }

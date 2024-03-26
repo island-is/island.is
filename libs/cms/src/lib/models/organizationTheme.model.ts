@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 interface IOrganizationTheme {
   gradientStartColor?: string
@@ -12,6 +12,7 @@ interface IOrganizationTheme {
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
   imageObjectPosition?: 'left' | 'center' | 'right'
+  titleSectionPaddingLeft?: number
 }
 
 @ObjectType()
@@ -45,6 +46,9 @@ export class OrganizationTheme {
 
   @Field(() => String, { nullable: true })
   imageObjectPosition?: string
+
+  @Field(() => Int, { nullable: true })
+  titleSectionPaddingLeft?: number
 }
 
 export const mapOrganizationTheme = (
@@ -67,5 +71,6 @@ export const mapOrganizationTheme = (
     imageIsFullHeight: theme.imageIsFullHeight ?? true,
     imageObjectFit: theme.imageObjectFit ?? 'cover',
     imageObjectPosition: theme.imageObjectPosition ?? 'center',
+    titleSectionPaddingLeft: theme.titleSectionPaddingLeft,
   }
 }
