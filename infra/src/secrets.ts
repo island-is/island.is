@@ -30,23 +30,9 @@ const config = {
   region: 'eu-west-1',
 }
 
-const requireSingleCommand = (argv: any) => {
-  if (argv['_'].length !== 1) {
-    return false
-  }
-  return true
-}
 
 const ssm = new AWS.SSM(config)
 yargs(hideBin(process.argv))
-  .middleware((argv) => {
-    if (!requireSingleCommand(argv)) {
-      logger.error(
-        `Error: Expected exactly one command. Got ${argv['_'].length} commands.`,
-      )
-      process.exit(1)
-    }
-  })
   .command(
     'get-all-required-secrets',
     'get all required secrets from all charts',
