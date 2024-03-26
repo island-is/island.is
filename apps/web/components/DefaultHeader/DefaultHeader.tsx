@@ -1,7 +1,14 @@
 import React from 'react'
 import cn from 'classnames'
 
-import { Box, Hidden, Link, Text, TextProps } from '@island.is/island-ui/core'
+import {
+  Box,
+  Hidden,
+  Link,
+  ResponsiveSpace,
+  Text,
+  TextProps,
+} from '@island.is/island-ui/core'
 
 import * as styles from './DefaultHeader.css'
 
@@ -11,6 +18,7 @@ export interface DefaultHeaderProps {
   background?: string
   title: string
   underTitle?: string
+  titleSectionPaddingLeft?: ResponsiveSpace
   logo?: string
   logoHref?: string
   titleColor?: TextProps['color']
@@ -39,6 +47,7 @@ export const DefaultHeader: React.FC<
   imageObjectPosition = 'center',
   className,
   logoAltText,
+  titleSectionPaddingLeft,
 }) => {
   const imageProvided = !!image
   const logoProvided = !!logo
@@ -108,7 +117,10 @@ export const DefaultHeader: React.FC<
                   </LinkWrapper>
                 </Hidden>
               )}
-              <div className={styles.title}>
+              <Box
+                className={styles.title}
+                paddingLeft={titleSectionPaddingLeft}
+              >
                 <Text variant="h1" as="h1" color={titleColor}>
                   {title}
                 </Text>
@@ -117,7 +129,7 @@ export const DefaultHeader: React.FC<
                     {underTitle}
                   </Text>
                 )}
-              </div>
+              </Box>
             </div>
           </div>
           {imageProvided && (

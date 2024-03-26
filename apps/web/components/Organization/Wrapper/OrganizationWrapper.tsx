@@ -441,6 +441,9 @@ export const OrganizationHeader: React.FC<
               : 'center'
           }
           logoAltText={logoAltText}
+          titleSectionPaddingLeft={
+            organizationPage.themeProperties.titleSectionPaddingLeft
+          }
         />
       )
   }

@@ -64,6 +64,9 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
               ? 'right'
               : 'center'
           }
+          titleSectionPaddingLeft={
+            projectPage.themeProperties?.titleSectionPaddingLeft
+          }
         />
       )
     default: {

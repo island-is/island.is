@@ -54,6 +54,9 @@ const VinnueftilitidHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         }
         className={styles.gridContainer}
         logoAltText={logoAltText}
+        titleSectionPaddingLeft={
+          organizationPage.themeProperties.titleSectionPaddingLeft
+        }
       />
     </div>
   )
