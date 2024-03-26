@@ -5,3 +5,8 @@ export const removeFieldButton = style({
   top: theme.spacing['8'],
   right: -theme.spacing['6'],
 })
+
+export const removeFieldButtonSingle = style({
+  top: theme.spacing['3'],
+  right: -theme.spacing['6'],
+})

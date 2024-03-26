@@ -42,6 +42,7 @@ export class CaseInterceptor implements NestInterceptor {
             userRole: user.role,
           })
         }
+
         return data
       }),
     )

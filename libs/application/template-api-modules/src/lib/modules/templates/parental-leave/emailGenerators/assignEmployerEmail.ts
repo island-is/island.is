@@ -92,20 +92,6 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
         {
           component: 'Copy',
           context: {
-            copy: `Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
-            small: true,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
-            copy: assignLink,
-            small: true,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
             copy: `Athugið: Ef upp kemur 404 villa hefur umsækjandi breytt umsókninni og sent nýja, þér ætti að hafa borist nýr póstur.`,
             small: true,
           },

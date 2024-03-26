@@ -42,6 +42,7 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
   'notificationDataCopy',
   'clickAction',
   'clickActionWeb',
+  'clickActionUrl',
 ]
 
 /**
@@ -161,6 +162,7 @@ export class NotificationsService {
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
         clickAction: formattedTemplate.clickAction,
+        clickActionUrl: formattedTemplate.clickActionUrl,
         created: notification.created,
         updated: notification.updated,
         read: notification.read,
@@ -195,6 +197,7 @@ export class NotificationsService {
           notificationDataCopy
           clickAction
           clickActionWeb
+          clickActionUrl
           category
           args
         }

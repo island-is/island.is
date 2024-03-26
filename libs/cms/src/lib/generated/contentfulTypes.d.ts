@@ -576,6 +576,9 @@ export interface IChartFields {
 
   /** X Axis Format */
   xAxisFormat?: string | undefined
+
+  /** Custom Style Config */
+  customStyleConfig?: Record<string, any> | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -3195,6 +3198,9 @@ export interface IProjectPageFields {
   /** Sidebar */
   sidebar: boolean
 
+  /** Sidebar Frontpage Link */
+  sidebarFrontpageLink: boolean
+
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
 
@@ -3500,6 +3506,9 @@ export interface IServiceWebPageFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {

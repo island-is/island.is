@@ -42,9 +42,11 @@ export enum CourtDocumentType {
   RVVI = 'RVVI', // Vistunarseðill
   RVUL = 'RVUL', // Úrskurður Landsréttar
   RVDO = 'RVDO', // Dómur
+  RVAS = 'RVAS', // Ákæra
+  RVMG = 'RVMG', // Málsgögn
 }
 
-function getChapter(category?: string): number | undefined {
+const getChapter = (category?: string): number | undefined => {
   if (!category) {
     return undefined
   }

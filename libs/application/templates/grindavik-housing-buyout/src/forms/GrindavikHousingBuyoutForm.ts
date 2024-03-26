@@ -1,23 +1,30 @@
 import {
   buildCheckboxField,
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
   buildKeyValueField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildStaticTableField,
   buildSubmitField,
   buildTableRepeaterField,
+  coreMessages,
 } from '@island.is/application/core'
-import { Form, FormModes, YES } from '@island.is/application/types'
 import {
-  applicantInformationMessages,
-  applicantInformationMultiField,
-} from '@island.is/application/ui-forms'
+  Comparators,
+  Form,
+  FormModes,
+  NO,
+  YES,
+} from '@island.is/application/types'
+import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
 import {
+  formatBankInfo,
   formatCurrency,
   formatPhoneNumber,
   removeCountryCode,
@@ -33,8 +40,20 @@ import {
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../assets/Logo'
+import addMonths from 'date-fns/addMonths'
+import {
+  OTHER_PROVIDER,
+  PreemptiveRight,
+  loanProviders,
+  preemptiveRightLabels,
+} from '../lib/constants'
+import format from 'date-fns/format'
+import { applicantInformationMultiField } from '../sections'
 
-const banks = ['Arion banki', 'Landsbankinn', 'Íslandsbanki']
+const loanProvidersOptions = [
+  ...loanProviders.map((x) => ({ label: x, value: x })),
+  { label: m.application.loanStatus.otherOrganization, value: OTHER_PROVIDER },
+]
 
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
@@ -45,7 +64,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
     buildSection({
       id: 'applicantInfoSection',
       title: m.application.applicant.sectionTitle,
-      children: [applicantInformationMultiField()],
+      children: [applicantInformationMultiField],
     }),
     buildSection({
       id: 'propertyInformationSection',
@@ -83,6 +102,25 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 ]
               },
             }),
+            buildDescriptionField({
+              id: 'dateTitle',
+              title: m.application.propertyInformation.deliveryDateTitle,
+              titleVariant: 'h3',
+              marginTop: [4, 6],
+              marginBottom: 1,
+              description:
+                m.application.propertyInformation.deliveryDateDescription,
+            }),
+            buildDateField({
+              id: 'deliveryDate',
+              defaultValue: '',
+              title: m.application.propertyInformation.deliveryDateLabel,
+              required: true,
+              minDate: addMonths(new Date(), 1),
+              maxDate: addMonths(new Date(), 4),
+              placeholder:
+                m.application.propertyInformation.deliveryDatePlaceholder,
+            }),
           ],
         }),
       ],
@@ -117,9 +155,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           id: 'loanStatusMultiField',
           title: m.application.loanStatus.sectionTitle,
           description: m.application.loanStatus.addLoanDescription,
+          space: [4, 6],
           children: [
             buildTableRepeaterField({
-              id: 'loans',
+              id: 'loanProviders.loans',
               marginTop: 2,
               title: '',
               addItemButtonText: m.application.loanStatus.addNewLoan,
@@ -128,7 +167,19 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 provider: {
                   component: 'select',
                   label: m.application.loanStatus.loanProvider,
-                  options: banks.map((bank) => ({ value: bank, label: bank })),
+                  options: loanProvidersOptions,
+                },
+                otherProvider: {
+                  component: 'input',
+                  label: m.application.loanStatus.otherLoanProvider,
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      (activeField &&
+                        activeField.provider === OTHER_PROVIDER) ??
+                      false
+                    )
+                  },
                 },
                 status: {
                   component: 'input',
@@ -139,14 +190,28 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               table: {
                 format: {
                   status: (v) => formatCurrency(v),
+                  provider: (v) =>
+                    v === OTHER_PROVIDER
+                      ? m.application.loanStatus.otherOrganization
+                          .defaultMessage
+                      : v,
                 },
               },
             }),
-            buildDescriptionField({
-              id: 'loanStatusAdditionalInfo',
+            buildCheckboxField({
+              id: 'loanProviders.hasNoLoans',
               title: '',
-              marginTop: [4, 6],
-              description: m.application.loanStatus.additionalInfo,
+              condition: (answers) => {
+                const loans = (answers as GrindavikHousingBuyout)?.loanProviders
+                  ?.loans
+                return !loans || loans.length === 0
+              },
+              options: [
+                {
+                  label: m.application.loanStatus.checkboxText,
+                  value: YES,
+                },
+              ],
             }),
           ],
         }),
@@ -173,12 +238,8 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 m.application.results.tableValue,
               ],
               rows: (application) => {
-                const {
-                  fireInsuranceValue,
-                  buyoutPrice,
-                  totalLoans,
-                  closingPayment,
-                } = calculateBuyoutPrice(application)
+                const { fireInsuranceValue, buyoutPrice, totalLoans } =
+                  calculateBuyoutPrice(application)
                 return [
                   [
                     m.application.results.fireAssessment,
@@ -192,19 +253,19 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                     m.application.results.totalLoan,
                     formatCurrency((-totalLoans).toString()),
                   ],
-                  [
-                    m.application.results.closingPayment,
-                    formatCurrency((-closingPayment).toString()),
-                  ],
                 ]
               },
               summary: (application) => {
-                const { result, buyoutPriceWithLoans } =
+                const { result, closingPayment, buyoutPriceWithLoans } =
                   calculateBuyoutPrice(application)
                 return [
                   {
                     label: m.application.results.payment,
                     value: formatCurrency(result.toString()),
+                  },
+                  {
+                    label: m.application.results.closingPayment,
+                    value: formatCurrency(closingPayment.toString()),
                   },
                   {
                     label: m.application.results.total,
@@ -217,6 +278,81 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               id: 'infoText',
               title: '',
               description: m.application.results.infoText,
+            }),
+            buildCheckboxField({
+              id: 'confirmLoanTakeover',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  label: m.application.results.confirmLoanTakeover,
+                  value: YES,
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'sellerStatement',
+      title: m.application.sellerStatement.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'sellerStatementMultiField',
+          title: m.application.sellerStatement.sectionTitle,
+          children: [
+            buildDescriptionField({
+              id: 'sellerStatementText',
+              title: '',
+              description: m.application.sellerStatement.text,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'preemptiveRight',
+      title: m.application.preemptiveRight.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'preemptiveRightsMultiField',
+          title: m.application.preemptiveRight.sectionTitle,
+          description: m.application.preemptiveRight.description,
+          children: [
+            buildRadioField({
+              id: 'preemptiveRight.preemptiveRightWish',
+              title: m.application.overview.checkboxText,
+              width: 'half',
+              required: true,
+              options: [
+                { label: coreMessages.radioYes, value: YES },
+                { label: coreMessages.radioNo, value: NO },
+              ],
+            }),
+            buildCheckboxField({
+              id: 'preemptiveRight.preemptiveRightType',
+              title: m.application.overview.preemptiveRightTypeTitle,
+              condition: {
+                questionId: 'preemptiveRight.preemptiveRightWish',
+                isMultiCheck: false,
+                value: YES,
+                comparator: Comparators.EQUALS,
+              },
+              options: [
+                {
+                  label: m.application.overview.purchaseRight,
+                  value: PreemptiveRight.PURCHASE_RIGHT,
+                },
+                {
+                  label: m.application.overview.prePurchaseRight,
+                  value: PreemptiveRight.PRE_PURCHASE_RIGHT,
+                },
+                {
+                  label: m.application.overview.preLeaseRight,
+                  value: PreemptiveRight.PRE_LEASE_RIGHT,
+                },
+              ],
             }),
           ],
         }),
@@ -272,6 +408,14 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                   ),
                 ),
             }),
+            buildKeyValueField({
+              label: m.application.applicant.bankInfo,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                formatBankInfo(
+                  (answers as GrindavikHousingBuyout).applicantBankInfo,
+                ),
+            }),
             buildDividerField({}),
 
             // Additional owners
@@ -315,6 +459,14 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 return formatCurrency(total.toString())
               },
             }),
+            buildKeyValueField({
+              label: m.application.propertyInformation.deliveryDateTitle,
+              colSpan: ['1/1', '6/12'],
+              value: ({ answers }) => {
+                const date = (answers as GrindavikHousingBuyout).deliveryDate
+                return format(new Date(date), 'dd.MM.yyyy')
+              },
+            }),
             buildDividerField({}),
 
             // Calculation
@@ -340,15 +492,48 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
                 return formatCurrency(buyoutPriceWithLoans.toString())
               },
             }),
+            buildKeyValueField({
+              label: m.application.results.confirmLoanTakeover,
+              colSpan: ['1/1', '6/12'],
+              value: ({ answers }) => {
+                return (
+                  answers as GrindavikHousingBuyout
+                ).confirmLoanTakeover?.includes(YES)
+                  ? coreMessages.radioYes
+                  : coreMessages.radioNo
+              },
+            }),
             buildDividerField({}),
 
-            buildCheckboxField({
-              id: 'userConfirmation',
-              title: '',
-              defaultValue: [],
-              options: [
-                { label: m.application.overview.checkboxText, value: YES },
-              ],
+            // Preemptive right
+            buildDescriptionField({
+              id: 'preemptiveRightOverview',
+              title: m.application.preemptiveRight.sectionTitle,
+              titleVariant: 'h3',
+            }),
+            buildKeyValueField({
+              label: m.application.overview.checkboxText,
+              colSpan: ['1/1', '6/12'],
+              value: ({ answers }) => {
+                return (answers as GrindavikHousingBuyout).preemptiveRight
+                  .preemptiveRightWish === YES
+                  ? coreMessages.radioYes
+                  : coreMessages.radioNo
+              },
+            }),
+            buildKeyValueField({
+              label: m.application.overview.preemptiveRightsLabel,
+              colSpan: ['1/1', '6/12'],
+              condition: (answers) => {
+                const rights = (answers as GrindavikHousingBuyout)
+                  .preemptiveRight?.preemptiveRightType
+                return (rights && rights.length > 0) ?? false
+              },
+              value: ({ answers }) => {
+                const rights = (answers as GrindavikHousingBuyout)
+                  .preemptiveRight.preemptiveRightType
+                return rights?.map((right) => preemptiveRightLabels[right])
+              },
             }),
 
             buildSubmitField({

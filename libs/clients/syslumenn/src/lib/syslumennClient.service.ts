@@ -23,6 +23,8 @@ import {
   TemporaryEventLicence,
   VehicleRegistration,
   RegistryPerson,
+  InheritanceTax,
+  InheritanceReportInfo,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -45,6 +47,8 @@ import {
   mapMasterLicence,
   mapVehicle,
   mapDepartedToRegistryPerson,
+  mapInheritanceTax,
+  mapEstateToInheritanceReportInfo,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -54,6 +58,7 @@ import {
   VirkLeyfiGetRequest,
   VedbandayfirlitReguverkiSvarSkeyti,
   VedbondTegundAndlags,
+  Skilabod,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -264,6 +269,7 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
+
     const response = await api.syslMottakaGognPost(payload).catch((e) => {
       throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
     })
@@ -274,6 +280,27 @@ export class SyslumennService {
     }
 
     return mapDataUploadResponse(response)
+  }
+
+  async uploadDataPreemptiveErrorCheck(
+    persons: Person[],
+    attachments: Attachment[] | undefined,
+    extraData: { [key: string]: string },
+    uploadDataName: string,
+    uploadDataId?: string,
+  ): Promise<Skilabod> {
+    const { id, api } = await this.createApi()
+
+    const payload = constructUploadDataObject(
+      id,
+      persons,
+      attachments,
+      extraData,
+      uploadDataName,
+      uploadDataId,
+    )
+
+    return api.syslMottakaVilluprofaGognPost(payload)
   }
 
   async getCertificateInfo(
@@ -471,6 +498,31 @@ export class SyslumennService {
     })
 
     return mapDepartedToRegistryPerson(res)
+  }
+
+  async getInheritanceTax(dateOfDeath: Date): Promise<InheritanceTax> {
+    const { id, api } = await this.createApi()
+    const res = await api.erfdafjarskatturGet({
+      audkenni: id,
+      danardagur: dateOfDeath,
+    })
+
+    return mapInheritanceTax(res)
+  }
+
+  async getEstateInfoForInheritanceReport(
+    nationalId: string,
+  ): Promise<Array<InheritanceReportInfo>> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarUrDanarbuiErfdafjarskattPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+
+    const { yfirlit: overView } = res
+    return (overView ?? []).map(mapEstateToInheritanceReportInfo)
   }
 
   async changeEstateRegistrant(

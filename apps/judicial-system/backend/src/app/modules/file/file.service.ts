@@ -18,9 +18,12 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseState,
+  completedCaseStates,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
+import { formatConfirmedIndictmentKey } from '../../formatters/formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -222,12 +225,28 @@ export class FileService {
     })
   }
 
-  async getCaseFileSignedUrl(file: CaseFile): Promise<SignedUrl> {
+  async getCaseFileSignedUrl(
+    theCase: Case,
+    file: CaseFile,
+  ): Promise<SignedUrl> {
     if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    const exists = await this.awsS3Service.objectExists(file.key)
+    let key = file.key
+
+    if (
+      file.category === CaseFileCategory.INDICTMENT &&
+      [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        ...completedCaseStates,
+      ].includes(theCase.state)
+    ) {
+      key = formatConfirmedIndictmentKey(key)
+    }
+
+    const exists = await this.awsS3Service.objectExists(key)
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
@@ -236,7 +255,7 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    return this.awsS3Service.getSignedUrl(file.key)
+    return this.awsS3Service.getSignedUrl(key)
   }
 
   async deleteCaseFile(
@@ -352,7 +371,7 @@ export class FileService {
     })
   }
 
-  async archive(file: CaseFile): Promise<boolean> {
+  async archive(theCase: Case, file: CaseFile): Promise<boolean> {
     if (
       !file.key ||
       !file.key.startsWith('indictments/') ||
@@ -369,6 +388,24 @@ export class FileService {
       .then((newKey) =>
         this.fileModel.update({ key: newKey }, { where: { id: file.id } }),
       )
+      .then(async () => {
+        if (
+          file.category === CaseFileCategory.INDICTMENT &&
+          [
+            CaseState.SUBMITTED,
+            CaseState.RECEIVED,
+            ...completedCaseStates,
+          ].includes(theCase.state)
+        ) {
+          return this.awsS3Service.copyObject(
+            formatConfirmedIndictmentKey(file.key),
+            formatConfirmedIndictmentKey(file.key).replace(
+              'indictments/',
+              'indictments/completed/',
+            ) ?? '',
+          )
+        }
+      })
       .then(() => {
         // Fire and forget, no need to wait for the result
         this.tryDeleteFileFromS3(file)

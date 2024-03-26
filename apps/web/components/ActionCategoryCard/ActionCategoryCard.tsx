@@ -11,6 +11,7 @@ import {
   Hyphen,
   IconMapIcon,
   Inline,
+  LinkV2,
   Tag,
   TagProps,
   Text,
@@ -39,6 +40,7 @@ export type CTAProps = {
   icon?: IconMapIcon
   iconType?: 'filled' | 'outline'
   onClick?: () => void
+  href?: string
   disabled?: boolean
 }
 
@@ -141,17 +143,34 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
             flexDirection="row"
           >
             <Box>
-              <Button
-                {...(cta.buttonType ?? { variant: cta.variant })}
-                size={cta.size}
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
-                iconType={cta.iconType}
-                nowrap
-              >
-                {cta.label}
-              </Button>
+              {cta.href ? (
+                <LinkV2 href={cta.href} newTab={true}>
+                  <Button
+                    {...(cta.buttonType ?? { variant: cta.variant })}
+                    size={cta.size}
+                    fluid
+                    disabled={cta.disabled}
+                    icon={cta.icon}
+                    iconType={cta.iconType}
+                    nowrap
+                  >
+                    {cta.label}
+                  </Button>
+                </LinkV2>
+              ) : (
+                <Button
+                  {...(cta.buttonType ?? { variant: cta.variant })}
+                  size={cta.size}
+                  fluid
+                  onClick={cta.onClick}
+                  disabled={cta.disabled}
+                  icon={cta.icon}
+                  iconType={cta.iconType}
+                  nowrap
+                >
+                  {cta.label}
+                </Button>
+              )}
             </Box>
           </Box>
         )

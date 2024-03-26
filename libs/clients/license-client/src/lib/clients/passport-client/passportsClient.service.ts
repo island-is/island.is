@@ -2,18 +2,19 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { LicenseClient, Result } from '../../licenseClient.type'
+import { LicenseClient, LicenseType, Result } from '../../licenseClient.type'
 import { FetchError } from '@island.is/clients/middlewares'
 import { PassportsService, Passport } from '@island.is/clients/passports'
 
 @Injectable()
-export class PassportsClient implements LicenseClient<Passport> {
+export class PassportsClient implements LicenseClient<LicenseType.Passport> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private passportService: PassportsService,
   ) {}
 
   clientSupportsPkPass = false
+  type = LicenseType.Passport
 
   async getLicenses(user: User): Promise<Result<Array<Passport>>> {
     try {
