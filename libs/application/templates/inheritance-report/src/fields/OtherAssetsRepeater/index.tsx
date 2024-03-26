@@ -107,6 +107,7 @@ export const OtherAssetsRepeater: FC<
               {props.fields.map((field: any) => {
                 const fieldId = `${fieldIndex}.${field.id}`
                 const err = errors && getErrorViaPath(errors, fieldId)
+                const defaultValue = getDefaultValue(field, mainIndex)
 
                 return (
                   <DoubleColumnRow
@@ -122,7 +123,7 @@ export const OtherAssetsRepeater: FC<
                       defaultValue={
                         repeaterField[field.id]
                           ? repeaterField[field.id]
-                          : getDefaultValue(field.id, mainIndex)
+                          : defaultValue
                       }
                       format={field.format}
                       label={formatMessage(field.title)}
