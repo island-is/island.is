@@ -14,6 +14,7 @@ import { ExpirationProgressBar } from '../../../components/progress-bar/expirati
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { screenWidth } from '../../../utils/dimensions'
 import { isString } from '../../../utils/is-string'
+import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import IconStatusNonVerified from '../../assets/card/danger.png'
@@ -334,7 +335,7 @@ export function LicenseCard({
         {logo && (
           <ImgWrap>
             {isString(logo) ? (
-              <Base64Image source={{ uri: logo }} />
+              <Base64Image source={{ uri: prefixBase64(logo) }} />
             ) : (
               <Image source={logo} />
             )}

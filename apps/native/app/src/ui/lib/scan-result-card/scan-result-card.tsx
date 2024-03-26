@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ActivityIndicator, ImageSourcePropType } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { formatNationalId } from '../../../lib/format-national-id'
 import { isIos } from '../../../utils/devices'
@@ -124,7 +124,7 @@ const Photo = styled.Image`
   width: 79px;
   height: 109px;
   background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
+  border-radius: ${({ theme: { border } }) => border.radius.large};
   margin-right: 32px;
 `
 
@@ -196,7 +196,7 @@ const ScanResultCardPresets: Record<
   {
     title: string
     logo: ImageSourcePropType
-    backgroundImage: ImageSourcePropType
+    backgroundImage?: ImageSourcePropType
     backgroundColor?: string
   }
 > = {
@@ -233,8 +233,6 @@ const ScanResultCardPresets: Record<
   Unknown: {
     title: 'Ekki þekkt',
     logo: LogoCoatOfArms,
-    backgroundImage: BackgroundDriversLicense,
-    backgroundColor: '#F5E4EC',
   },
 }
 
@@ -254,19 +252,21 @@ export function ScanResultCard({
   type,
 }: ScanResultCardProps) {
   const intl = useIntl()
+  const theme = useTheme()
 
   const preset = type
     ? ScanResultCardPresets[type]
-    : ScanResultCardPresets.DriversLicense
-
+    : ScanResultCardPresets.Unknown
   const cardTitle = title ?? preset?.title
   const backgroundImage = preset?.backgroundImage
-  const backgroundColor = preset?.backgroundColor ?? '#F5E4EC'
+  const backgroundColor = preset?.backgroundColor ?? theme.color.blue100
   const logo = preset?.logo
 
   return (
     <Host backgroundColor={backgroundColor}>
-      <Background source={backgroundImage} resizeMode="stretch" />
+      {backgroundImage && (
+        <Background source={backgroundImage} resizeMode="stretch" />
+      )}
       <Header hasNoData={hasNoData}>
         <Detail>
           <Title>{cardTitle}</Title>
