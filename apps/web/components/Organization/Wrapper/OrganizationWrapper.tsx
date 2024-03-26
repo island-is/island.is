@@ -17,6 +17,7 @@ import {
   Navigation,
   NavigationItem,
   ProfileCard,
+  ResponsiveSpace,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -90,7 +91,6 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import { TryggingastofnunFooter } from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
@@ -426,6 +426,13 @@ export const OrganizationHeader: React.FC<
               : 'center'
           }
           logoAltText={logoAltText}
+          titleSectionPaddingLeft={
+            organizationPage.themeProperties
+              .titleSectionPaddingLeft as ResponsiveSpace
+          }
+          mobileBackground={
+            organizationPage.themeProperties.mobileBackgroundColor
+          }
         />
       )
   }
@@ -810,12 +817,16 @@ const getActiveNavigationItemTitle = (
   navigationItems: NavigationItem[],
   clientUrl: string,
 ) => {
+  const clientUrlWithoutHashOrQueryParams = clientUrl
+    .split('?')[0]
+    .split('#')[0]
+
   for (const item of navigationItems) {
-    if (clientUrl === item.href) {
+    if (clientUrlWithoutHashOrQueryParams === item.href) {
       return item.title
     }
     for (const childItem of item.items ?? []) {
-      if (clientUrl === childItem.href) {
+      if (clientUrlWithoutHashOrQueryParams === childItem.href) {
         return childItem.title
       }
     }

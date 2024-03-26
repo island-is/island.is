@@ -15,8 +15,10 @@ import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
 import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
+import LogoEnvironmentAgency from '../../assets/card/ust.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
+import BackgroundHuntingCard from '../../assets/card/veidikort.png'
 import { font } from '../../utils'
 
 const Host = styled.View<{ backgroundColor: string }>`
@@ -229,6 +231,12 @@ const ScanResultCardPresets: Record<
     logo: DisabilityLicenseLogo,
     backgroundImage: DisabilityLicenseBg,
     backgroundColor: '#C5D5C8',
+  },
+  HuntingLicense: {
+    title: 'Veiðikort',
+    logo: LogoEnvironmentAgency,
+    backgroundImage: BackgroundHuntingCard,
+    backgroundColor: '#E2EDFF',
   },
   Unknown: {
     title: 'Ekki þekkt',
