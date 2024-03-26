@@ -69,6 +69,7 @@ export const OverviewLinksSlice: React.FC<
                           url={image?.url + '?w=774&fm=webp&q=80'}
                           thumbnail={image?.url + '?w=50&fm=webp&q=80'}
                           {...image}
+                          title=""
                         />
                       </Box>
                     </GridColumn>
