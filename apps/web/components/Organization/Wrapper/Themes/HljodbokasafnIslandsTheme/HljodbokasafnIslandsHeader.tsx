@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 
+import { ResponsiveSpace } from '@island.is/island-ui/core'
 import { DefaultHeader, DefaultHeaderProps } from '@island.is/web/components'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
@@ -55,7 +56,8 @@ const HljodbokasafnIslandsHeader: React.FC<
       className={styles.gridContainer}
       logoAltText={logoAltText}
       titleSectionPaddingLeft={
-        organizationPage.themeProperties.titleSectionPaddingLeft
+        organizationPage.themeProperties
+          .titleSectionPaddingLeft as ResponsiveSpace
       }
       mobileBackground={organizationPage.themeProperties.mobileBackgroundColor}
     />
