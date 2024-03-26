@@ -4,26 +4,20 @@ import { OccupationalLicensesPaths } from './lib/paths'
 import { olMessage as ol } from './lib/messages'
 import { ApiScope } from '@island.is/auth/scopes'
 
-const EducationalDetailScreen = lazy(
-  () => import('./screens/v1/EducationalDetail/EducationalDetail'),
+const EducationalDetailScreen = lazy(() =>
+  import('./screens/v1/EducationalDetail/EducationalDetail'),
 )
 
-const HealthDirectorateDetailScreen = lazy(
-  () => import('./screens/v1/HealthDirectorateDetail/HealthDirectorateDetail'),
+const HealthDirectorateDetailScreen = lazy(() =>
+  import('./screens/v1/HealthDirectorateDetail/HealthDirectorateDetail'),
 )
 
-const OccupationalLicensesDetailScreen = lazy(
-  () =>
-    import(
-      './screens/v2/OccupationalLicensesDetail/OccupationalLicensesDetail'
-    ),
+const OccupationalLicensesDetailScreen = lazy(() =>
+  import('./screens/v2/OccupationalLicensesDetail/OccupationalLicensesDetail'),
 )
 
-const OccupationalLicensesOverviewScreen = lazy(
-  () =>
-    import(
-      './screens/OccupationalLicensesOverview/OccupationalLicensesOverview'
-    ),
+const OccupationalLicensesOverviewScreen = lazy(() =>
+  import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
 )
 
 export const occupationalLicensesModule: PortalModule = {
