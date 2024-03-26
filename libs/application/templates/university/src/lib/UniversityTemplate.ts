@@ -105,10 +105,6 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationAssigned,
                 onEvent: DefaultEvents.SUBMIT,
               },
-              {
-                logMessage: 'PRUFA',
-                onEvent: DefaultEvents.TEST,
-              },
             ],
           },
           progress: 0.25,
