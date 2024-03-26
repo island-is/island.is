@@ -74,6 +74,7 @@ import {
   Period,
   PersonInformation,
   PregnancyStatusAndRightsResults,
+  SelectOption,
   VMSTPeriod,
   YesOrNo,
 } from '../types'
@@ -2076,4 +2077,12 @@ export const calculatePruneDate = (application: Application) => {
   }
 
   return pruneAt
+}
+
+export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
+  if (id === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === id)?.label
 }

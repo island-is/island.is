@@ -43,6 +43,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
+      UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY',
       RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',

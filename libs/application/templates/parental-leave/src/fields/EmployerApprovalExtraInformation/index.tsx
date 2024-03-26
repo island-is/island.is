@@ -8,8 +8,10 @@ import { DataValue } from '@island.is/application/ui-components'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
-import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getSelectOptionLabel,
+} from '../../lib/parentalLeaveUtils'
 
 interface ScreenProps {
   application: Application
