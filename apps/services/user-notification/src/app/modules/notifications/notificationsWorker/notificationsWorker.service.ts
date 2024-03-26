@@ -336,23 +336,30 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         // If the message is not on behalf of anyone, we look up delegations for the recipient and add messages to the queue for each delegation
         if (!message.onBehalfOf) {
-          const delegations =
-            await this.delegationsApi.delegationsControllerGetDelegationRecords(
-              {
-                xQueryFromNationalId: message.recipient,
-                scope: DocumentsScope.main,
-              },
-            )
+          // don't fail if we can't get delegations
+          try {
+            const delegations =
+              await this.delegationsApi.delegationsControllerGetDelegationRecords(
+                {
+                  xQueryFromNationalId: message.recipient,
+                  scope: DocumentsScope.main,
+                },
+              )
 
-          await Promise.all(
-            delegations.data.map((delegation) =>
-              this.queue.add({
-                ...message,
-                recipient: delegation.toNationalId,
-                onBehalfOf: message.recipient,
-              }),
-            ),
-          )
+            await Promise.all(
+              delegations.data.map((delegation) =>
+                this.queue.add({
+                  ...message,
+                  recipient: delegation.toNationalId,
+                  onBehalfOf: message.recipient,
+                }),
+              ),
+            )
+          } catch (error) {
+            this.logger.error('Error adding delegations to message queue', {
+              error,
+            })
+          }
 
           // Only send push notifications for the main recipient
           notificationPromises.push(
