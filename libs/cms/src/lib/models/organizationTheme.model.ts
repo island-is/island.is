@@ -5,6 +5,7 @@ interface IOrganizationTheme {
   gradientEndColor?: string
   useGradientColor?: boolean
   backgroundColor?: string
+  mobileBackgroundColor?: string
   darkText?: boolean
   fullWidth?: boolean
   textColor?: string
@@ -28,6 +29,9 @@ export class OrganizationTheme {
 
   @Field(() => String, { nullable: true })
   backgroundColor?: string
+
+  @Field(() => String, { nullable: true })
+  mobileBackgroundColor?: string
 
   @Field(() => Boolean, { nullable: true })
   fullWidth?: boolean
@@ -65,6 +69,7 @@ export const mapOrganizationTheme = (
     gradientEndColor: theme.gradientEndColor ?? '',
     useGradientColor: !theme.useGradientColor ? false : true,
     backgroundColor: theme.backgroundColor ?? '',
+    mobileBackgroundColor: theme.mobileBackgroundColor ?? '',
     fullWidth: !theme.fullWidth ? false : true,
     textColor,
     imagePadding: theme.imagePadding || '0px',

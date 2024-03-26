@@ -57,6 +57,7 @@ const HljodbokasafnIslandsHeader: React.FC<
       titleSectionPaddingLeft={
         organizationPage.themeProperties.titleSectionPaddingLeft
       }
+      mobileBackground={organizationPage.themeProperties.mobileBackgroundColor}
     />
   )
 }
