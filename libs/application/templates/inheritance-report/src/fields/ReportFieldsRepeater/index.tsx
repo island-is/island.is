@@ -23,13 +23,17 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
-import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import {
+  getDeceasedHadAssets,
+  getEstateDataFromApplication,
+} from '../../lib/utils/helpers'
 import {
   InheritanceReportAsset,
   InheritanceReportInfo,
 } from '@island.is/clients/syslumenn'
 import { valueToNumber } from '../../lib/utils/helpers'
 import NumberInput from '../../components/NumberInput'
+import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
   field: {
@@ -55,6 +59,8 @@ export const ReportFieldsRepeater: FC<
   const { answers, externalData } = application
 
   const { id, props } = field
+
+  const deceasedHadAssets = getDeceasedHadAssets(application)
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
@@ -427,6 +433,7 @@ export const ReportFieldsRepeater: FC<
                 )
               })}
             </GridRow>
+            {deceasedHadAssets && <DeceasedShare id={fieldIndex} />}
           </Box>
         )
       })}

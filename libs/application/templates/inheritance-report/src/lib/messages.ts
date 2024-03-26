@@ -1019,6 +1019,11 @@ export const m = defineMessages({
     defaultMessage: 'Séreign hins látna',
     description: '',
   },
+  share: {
+    id: 'ir.application:share',
+    defaultMessage: 'Séreign',
+    description: '',
+  },
   spousesShareDescription: {
     id: 'ir.application:spousesShareDescription',
     defaultMessage:

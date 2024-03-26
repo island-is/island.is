@@ -16,6 +16,8 @@ const initialMapper = <T>(element: T) => {
     enabled: true,
     propertyValuation: '0',
     share: '0',
+    deceasedShare: '0',
+    deceasedShareEnabled: [],
   }
 }
 
@@ -118,6 +120,8 @@ export const expandAnswers = (
             assetNumber: gun.assetNumber ?? '',
             description: gun.description ?? '',
             propertyValuation: gun.propertyValuation ?? '',
+            deceasedShare: gun.deceasedShare ?? '',
+            deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
           }
         }),
         total: answers.assets.guns?.total ?? 0,
@@ -146,6 +150,8 @@ export const expandAnswers = (
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
             share: realEstate.share ?? '0',
+            deceasedShare: realEstate.deceasedShare ?? '0',
+            deceasedShareEnabled: realEstate.deceasedShareEnabled ?? [],
           }
         }),
         total: answers.assets.realEstate?.total ?? 0,
@@ -168,6 +174,8 @@ export const expandAnswers = (
             assetNumber: vehicle.assetNumber ?? '',
             description: vehicle.description ?? '',
             propertyValuation: vehicle.propertyValuation ?? '',
+            deceasedShare: vehicle.deceasedShare ?? '0',
+            deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
           }
         }),
         total: answers.assets.vehicles?.total ?? 0,

@@ -18,6 +18,8 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
           description: z.string(),
           propertyValuation: z.string(),
           ...(withShare ? { share: z.string() } : {}),
+          deceasedShare: z.string().optional(),
+          deceasedShareEnabled: z.array(z.enum([YES])).optional(),
         })
         .refine(
           ({ propertyValuation }) => {

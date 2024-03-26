@@ -1,8 +1,10 @@
+import { getValueViaPath } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
+import { YES } from '../constants'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -83,3 +85,8 @@ export const isValidRealEstate = (value: string) => {
 
   return lotRegex.test(value) || houseRegex.test(value)
 }
+
+export const getDeceasedHadAssets = (application: Application): boolean =>
+  application?.answers &&
+  getValueViaPath(application.answers, 'deceasedHadAssets') === YES &&
+  getValueViaPath(application.answers, 'deceasedWasMarried') === YES
