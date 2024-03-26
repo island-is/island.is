@@ -21,7 +21,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as strings from './CaseFiles.strings'
 
@@ -40,7 +40,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     workingCase.id,
   )
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const isTrafficViolationCaseCheck = isTrafficViolationIndictment(workingCase)
 
   const stepIsValid =
     uploadFiles.some(

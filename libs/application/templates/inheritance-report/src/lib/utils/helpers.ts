@@ -1,5 +1,5 @@
 import { Application, FormValue } from '@island.is/application/types'
-import { EstateInfo } from '@island.is/clients/syslumenn'
+import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
@@ -17,27 +17,19 @@ export const isValidString = (string: string | undefined) =>
 
 export const getEstateDataFromApplication = (
   application: Application<FormValue>,
-): { estate?: EstateInfo } => {
+): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
-  let estateData = (
+  const estateData = (
     application.externalData.syslumennOnEntry?.data as {
-      estates?: Array<EstateInfo>
+      inheritanceReportInfos?: Array<InheritanceReportInfo>
     }
-  ).estates?.find((estate) => estate.caseNumber === selectedEstate)
-
-  // TODO: remove singular estate property when legacy applications
-  //       have cleared out of the system
-  if (!estateData) {
-    estateData = (
-      application.externalData.syslumennOnEntry?.data as {
-        estate: EstateInfo
-      }
-    ).estate
-  }
+  ).inheritanceReportInfos?.find(
+    (estate) => estate.caseNumber === selectedEstate,
+  )
 
   return {
-    estate: estateData,
+    inheritanceReportInfo: estateData,
   }
 }
 
@@ -86,8 +78,8 @@ export const valueToNumber = (value: unknown, delimiter = '.'): number => {
 }
 
 export const isValidRealEstate = (value: string) => {
-  const lotRegex = /^[Ll]\d{6}$/
-  const houseRegex = /^[Ff]\d{7}$/
+  const lotRegex = /^[Ll]{0,1}\d{6}$/
+  const houseRegex = /^[Ff]{0,1}\d{7}$/
 
   return lotRegex.test(value) || houseRegex.test(value)
 }
