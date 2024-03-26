@@ -24,15 +24,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateNotificationDto } from './dto/createNotification.dto'
 import { CreateNotificationResponse } from './dto/createNotification.response'
-
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 import { HnippTemplate } from './dto/hnippTemplate.response'
-
 import { NotificationsService } from './notifications.service'
-
 import { Locale } from './locale.enum'
-
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
@@ -44,41 +40,41 @@ export class NotificationsController {
     @InjectQueue('notifications') private queue: QueueService,
   ) {}
 
-  // redirecting legacy endpoint to new one with fixed values
-  @ApiBody({
-    schema: {
-      type: 'object',
-      oneOf: [{ $ref: getSchemaPath(CreateNotificationDto) }],
-    },
-  })
-  @ApiOkResponse({ type: CreateNotificationResponse })
-  @ApiOperation({ deprecated: true })
-  @HttpCode(201)
-  @Post()
-  @Version(VERSION_NEUTRAL)
-  async createDeprecatedNotification(
-    @Body() body: CreateNotificationDto,
-  ): Promise<CreateNotificationResponse> {
-    this.logger.info('Creating notification', {
-      recipient: body.recipient,
-      organization: body.organization,
-      documentId: body.documentId,
-    })
-    return this.createHnippNotification({
-      recipient: body.recipient,
-      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: body.organization,
-        },
-        {
-          key: 'documentId',
-          value: body.documentId,
-        },
-      ],
-    })
-  }
+  // // redirecting legacy endpoint to new one with fixed values ... TIME TO THROW AWAY ?
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     oneOf: [{ $ref: getSchemaPath(CreateNotificationDto) }],
+  //   },
+  // })
+  // @ApiOkResponse({ type: CreateNotificationResponse })
+  // @ApiOperation({ deprecated: true })
+  // @HttpCode(201)
+  // @Post()
+  // @Version(VERSION_NEUTRAL)
+  // async createDeprecatedNotification(
+  //   @Body() body: CreateNotificationDto,
+  // ): Promise<CreateNotificationResponse> {
+  //   this.logger.info('Creating notification', {
+  //     recipient: body.recipient,
+  //     organization: body.organization,
+  //     documentId: body.documentId,
+  //   })
+  //   return this.createHnippNotification({
+  //     recipient: body.recipient,
+  //     templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+  //     args: [
+  //       {
+  //         key: 'organization',
+  //         value: body.organization,
+  //       },
+  //       {
+  //         key: 'documentId',
+  //         value: body.documentId,
+  //       },
+  //     ],
+  //   })
+  // }
 
   @Documentation({
     summary: 'Fetches all notification templates',
@@ -146,18 +142,14 @@ export class NotificationsController {
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
     await this.notificationsService.validate(body.templateId, body.args)
-
     const id = await this.queue.add(body)
-
-    const records: Record<string, string> = {}
-
+    const flattenedArgs: Record<string, string> = {}
     for (const arg of body.args) {
-      records[arg.key] = arg.value
+      flattenedArgs[arg.key] = arg.value
     }
-
     this.logger.info('Message queued', {
       messageId: id,
-      ...records,
+      ...flattenedArgs,
       ...body
     })
 

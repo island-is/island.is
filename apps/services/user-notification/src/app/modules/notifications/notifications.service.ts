@@ -244,6 +244,7 @@ export class NotificationsService {
           notificationDataCopy
           clickAction
           clickActionWeb
+          clickActionUrl
           category
           args
         }
