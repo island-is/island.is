@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 
 import {
@@ -9,6 +9,8 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
 
 import * as styles from './DefaultHeader.css'
 
@@ -16,6 +18,7 @@ export interface DefaultHeaderProps {
   fullWidth?: boolean
   image?: string
   background?: string
+  mobileBackground?: string
   title: string
   underTitle?: string
   titleSectionPaddingLeft?: ResponsiveSpace
@@ -36,6 +39,7 @@ export const DefaultHeader: React.FC<
   fullWidth,
   image,
   background,
+  mobileBackground,
   title,
   underTitle,
   logo,
@@ -49,10 +53,16 @@ export const DefaultHeader: React.FC<
   logoAltText,
   titleSectionPaddingLeft,
 }) => {
+  const { width } = useWindowSize()
   const imageProvided = !!image
   const logoProvided = !!logo
-
   const LinkWrapper = logoHref ? Link : Box
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.lg)
+  }, [width])
 
   return (
     <>
@@ -76,7 +86,7 @@ export const DefaultHeader: React.FC<
       <div
         className={cn({ [styles.gridContainerWidth]: !fullWidth })}
         style={{
-          background: background,
+          background: isMobile ? mobileBackground || background : background,
         }}
       >
         <div
@@ -119,7 +129,7 @@ export const DefaultHeader: React.FC<
               )}
               <Box
                 className={styles.title}
-                paddingLeft={titleSectionPaddingLeft}
+                paddingLeft={!isMobile ? titleSectionPaddingLeft : 0}
               >
                 <Text variant="h1" as="h1" color={titleColor}>
                   {title}

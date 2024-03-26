@@ -57,6 +57,9 @@ const VinnueftilitidHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         titleSectionPaddingLeft={
           organizationPage.themeProperties.titleSectionPaddingLeft
         }
+        mobileBackground={
+          organizationPage.themeProperties.mobileBackgroundColor
+        }
       />
     </div>
   )

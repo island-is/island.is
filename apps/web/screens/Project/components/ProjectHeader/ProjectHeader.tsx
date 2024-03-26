@@ -67,6 +67,7 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
           titleSectionPaddingLeft={
             projectPage.themeProperties?.titleSectionPaddingLeft
           }
+          mobileBackground={projectPage.themeProperties?.mobileBackgroundColor}
         />
       )
     default: {
