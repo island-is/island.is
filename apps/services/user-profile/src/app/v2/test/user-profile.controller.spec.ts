@@ -17,6 +17,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { ClientType } from '../../types/ClientType'
 import { MIGRATION_DATE } from '../user-profile.service'
 import subMonths from 'date-fns/subMonths'
+import addMonths from 'date-fns/addMonths'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -148,6 +149,7 @@ describe('UserProfileController', () => {
         mobilePhoneNumberVerified: false,
         documentNotifications: true,
         needsNudge: null,
+        isRestricted: true,
       })
     })
 
@@ -172,6 +174,31 @@ describe('UserProfileController', () => {
         mobilePhoneNumberVerified: false,
         documentNotifications: true,
         needsNudge: null,
+      })
+    })
+
+    it('GET /v2/user/.national-id should return 200 with the UserProfileDto with the email and phone when client type is thirdParty and last nudge is more recent then the migration date', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        lastNudge: addMonths(MIGRATION_DATE, 1),
+      })
+
+      const res = await server
+        .get(`/v2/users/.national-id?clientType=${ClientType.THIRD_PARTY}`)
+        .set('X-Param-National-Id', testUserProfile.nationalId)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: false,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: null,
+        isRestricted: false,
       })
     })
   })

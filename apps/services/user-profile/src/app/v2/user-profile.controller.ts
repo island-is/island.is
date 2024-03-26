@@ -62,11 +62,6 @@ export class UserProfileController {
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('National id is not valid')
     }
-    const userProfile = await this.userProfileService.findById(nationalId)
-
-    return this.userProfileService.filterByClientTypeAndRestrictionDate(
-      clientType,
-      userProfile,
-    )
+    return this.userProfileService.findById(nationalId, false, clientType)
   }
 }

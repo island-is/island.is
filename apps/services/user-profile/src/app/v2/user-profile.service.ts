@@ -39,6 +39,7 @@ export class UserProfileService {
   async findById(
     nationalId: string,
     useMaster = false,
+    clientType: ClientType = ClientType.THIRD_PARTY,
   ): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
       where: { nationalId },
@@ -46,7 +47,7 @@ export class UserProfileService {
     })
 
     if (!userProfile) {
-      return {
+      return this.filterByClientTypeAndRestrictionDate(clientType, {
         nationalId,
         email: null,
         mobilePhoneNumber: null,
@@ -58,10 +59,10 @@ export class UserProfileService {
         emailNotifications: true,
         lastNudge: null,
         isRestricted: false,
-      }
+      })
     }
 
-    return {
+    return this.filterByClientTypeAndRestrictionDate(clientType, {
       nationalId: userProfile.nationalId,
       email: userProfile.email,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
@@ -73,7 +74,7 @@ export class UserProfileService {
       emailNotifications: userProfile.emailNotifications,
       lastNudge: userProfile.lastNudge,
       isRestricted: false,
-    }
+    })
   }
 
   async patch(
@@ -239,7 +240,7 @@ export class UserProfileService {
       }
     })
 
-    return this.findById(nationalId, true)
+    return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
 
   async createEmailVerification({
@@ -387,14 +388,14 @@ export class UserProfileService {
     clientType: ClientType,
     userProfile: UserProfileDto,
   ): UserProfileDto {
-    if (
-      MIGRATION_DATE > userProfile.lastNudge &&
-      clientType === ClientType.THIRD_PARTY
-    ) {
+    if (MIGRATION_DATE > userProfile.lastNudge) {
       userProfile = {
         ...userProfile,
-        email: null,
-        mobilePhoneNumber: null,
+        email: clientType === ClientType.THIRD_PARTY ? null : userProfile.email,
+        mobilePhoneNumber:
+          clientType === ClientType.THIRD_PARTY
+            ? null
+            : userProfile.mobilePhoneNumber,
         isRestricted: true,
       }
     }

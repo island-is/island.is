@@ -173,6 +173,37 @@ describe('MeUserProfileController', () => {
       })
     })
 
+    it('should return 200 with userprofile and isRestricted set to true', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        lastNudge: subMonths(MIGRATION_DATE, 1),
+        nextNudge: subMonths(new Date(), 1),
+      })
+      // Act
+      const res = await server.get(
+        `/v2/me?clientType=${ClientType.FIRST_PARTY}`,
+      )
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        locale: null,
+        documentNotifications: true,
+        needsNudge: true,
+        isRestricted: true,
+      })
+    })
+
     const currentDate = new Date()
     const expiredDate = subMonths(new Date(), NUDGE_INTERVAL + 1)
 

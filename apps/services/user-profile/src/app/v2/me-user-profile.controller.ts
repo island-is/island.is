@@ -66,12 +66,7 @@ export class MeUserProfileController {
     @CurrentUser() user: User,
     @Query('clientType') clientType: ClientType = ClientType.THIRD_PARTY,
   ): Promise<UserProfileDto> {
-    const userProfile = await this.userProfileService.findById(user.nationalId)
-
-    return this.userProfileService.filterByClientTypeAndRestrictionDate(
-      clientType,
-      userProfile,
-    )
+    return this.userProfileService.findById(user.nationalId, false, clientType)
   }
 
   @Patch()
