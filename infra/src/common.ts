@@ -91,8 +91,7 @@ export class Logger {
       error: 40,
     }
     if (l2l[level] >= l2l[this.logLevel]) {
-      return console.error
-      // return console[level]
+      return console[level]
     }
     return () => {}
   }

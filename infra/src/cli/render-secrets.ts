@@ -71,7 +71,7 @@ export const renderSecrets = async (service: string) => {
     const escapedValue = (value ?? '')
       .replace(/\n/g, '\\n')
       .replace(/"/g, '\\"')
-    console.log(`export ${key}='${escapedValue}'`)
+    logger.debug(`export ${key}='${escapedValue}'`)
   })
   return envMap
 }

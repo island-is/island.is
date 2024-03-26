@@ -2,7 +2,6 @@
 set -euo pipefail
 
 ROOT=$(git rev-parse --show-toplevel)
-. "$ROOT/scripts/utils.sh"
 env_secret_file="$ROOT/.env.secret"
 
 function show-help() {
@@ -21,10 +20,8 @@ function get-secrets {
   echo "Fetching secret environment variables for '$*'"
 
   pre=$(wc -l "$env_secret_file")
-  debug "Project '$*' has $pre secrets before render-secrets"
   ts-node --dir "$ROOT"/infra "$ROOT"/infra/src/cli/cli render-secrets --service="$*" >>"$env_secret_file"
   post=$(wc -l "$env_secret_file")
-  debug "Project '$*' has $post secrets after render-secrets"
 
   if [ "$pre" == "$post" ]; then
     echo "No secrets found for project '$*'"
