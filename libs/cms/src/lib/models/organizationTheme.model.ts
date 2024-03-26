@@ -1,10 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 interface IOrganizationTheme {
   gradientStartColor?: string
   gradientEndColor?: string
   useGradientColor?: boolean
   backgroundColor?: string
+  mobileBackgroundColor?: string
   darkText?: boolean
   fullWidth?: boolean
   textColor?: string
@@ -12,6 +13,7 @@ interface IOrganizationTheme {
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
   imageObjectPosition?: 'left' | 'center' | 'right'
+  titleSectionPaddingLeft?: number
 }
 
 @ObjectType()
@@ -27,6 +29,9 @@ export class OrganizationTheme {
 
   @Field(() => String, { nullable: true })
   backgroundColor?: string
+
+  @Field(() => String, { nullable: true })
+  mobileBackgroundColor?: string
 
   @Field(() => Boolean, { nullable: true })
   fullWidth?: boolean
@@ -45,6 +50,9 @@ export class OrganizationTheme {
 
   @Field(() => String, { nullable: true })
   imageObjectPosition?: string
+
+  @Field(() => Int, { nullable: true })
+  titleSectionPaddingLeft?: number
 }
 
 export const mapOrganizationTheme = (
@@ -61,11 +69,13 @@ export const mapOrganizationTheme = (
     gradientEndColor: theme.gradientEndColor ?? '',
     useGradientColor: !theme.useGradientColor ? false : true,
     backgroundColor: theme.backgroundColor ?? '',
+    mobileBackgroundColor: theme.mobileBackgroundColor ?? '',
     fullWidth: !theme.fullWidth ? false : true,
     textColor,
     imagePadding: theme.imagePadding || '0px',
     imageIsFullHeight: theme.imageIsFullHeight ?? true,
     imageObjectFit: theme.imageObjectFit ?? 'cover',
     imageObjectPosition: theme.imageObjectPosition ?? 'center',
+    titleSectionPaddingLeft: theme.titleSectionPaddingLeft,
   }
 }
