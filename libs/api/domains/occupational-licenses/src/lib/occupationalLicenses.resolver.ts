@@ -7,7 +7,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { OccupationalLicensesService } from './occupationalLicenses.service'
 import { OccupationalLicenseResponse } from './models/occupationalLicense.model'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -25,6 +25,7 @@ export class OccupationalLicensesResolver {
     name: 'occupationalLicenses',
     nullable: true,
   })
+  @Directive('@deprecated(reason: "Will be removed shortly")')
   @Audit()
   async occupationalLicenses(@CurrentUser() user: User) {
     return await this.occupationalLicensesApi.getOccupationalLicenses(user)
@@ -34,6 +35,7 @@ export class OccupationalLicensesResolver {
     name: 'occupationalLicensesHealthDirectorateLicense',
     nullable: true,
   })
+  @Directive('@deprecated(reason: "Will be removed shortly")')
   @FeatureFlag(Features.occupationalLicensesHealthDirectorate)
   @Audit()
   async getHealthDirectorateLicenseById(
@@ -50,6 +52,7 @@ export class OccupationalLicensesResolver {
     name: 'occupationalLicensesEducationalLicense',
     nullable: true,
   })
+  @Directive('@deprecated(reason: "Will be removed shortly")')
   @Audit()
   async getEducationalLicenseById(
     @CurrentUser() user: User,

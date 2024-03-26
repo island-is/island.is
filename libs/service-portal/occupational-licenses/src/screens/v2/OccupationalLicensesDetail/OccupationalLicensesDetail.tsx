@@ -10,7 +10,7 @@ import {
 } from '@island.is/service-portal/core'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { olMessage as om } from '../../lib/messages'
+import { olMessage as om } from '../../../lib/messages'
 import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { OrganizationSlugType } from '@island.is/shared/constants'

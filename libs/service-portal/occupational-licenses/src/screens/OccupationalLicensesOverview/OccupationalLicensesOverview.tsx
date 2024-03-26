@@ -1,115 +1,42 @@
-import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { Problem } from '@island.is/react-spa/shared'
-import {
-  CardLoader,
-  FootNote,
-  IntroHeader,
-  m,
-} from '@island.is/service-portal/core'
-import { useOrganizations } from '@island.is/service-portal/graphql'
-import { isDefined } from '@island.is/shared/utils'
-import { useMemo } from 'react'
-import { LicenceActionCard } from '../../components/LicenceActionCard'
-import { olMessage } from '../../lib/messages'
-import { OccupationalLicensesPaths } from '../../lib/paths'
-import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
-import {
-  OccupationalLicenseV2,
-  OccupationalLicensesV2Error,
-  OccupationalLicenseV2LicenseType,
-} from '@island.is/api/schema'
-import { OrganizationSlugType } from '@island.is/shared/constants'
+import { Features } from '@island.is/feature-flags'
 
-const mapLicenseTypeToOrganization = (
-  type: OccupationalLicenseV2LicenseType,
-): OrganizationSlugType | undefined => {
-  switch (type) {
-    case OccupationalLicenseV2LicenseType.EDUCATION:
-      return 'menntamalastofnun'
-    case OccupationalLicenseV2LicenseType.HEALTH_DIRECTORATE:
-      return 'landlaeknir'
-    case OccupationalLicenseV2LicenseType.DISTRICT_COMMISSIONERS:
-      return 'syslumenn'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
+import OverviewV1 from '../v1/OccupationalLicensesOverview/OccupationalLicensesOverviewV1'
+import OverviewV2 from '../v2/OccupationalLicensesOverview/OccupationalLicensesOverview'
+import { CardLoader } from '@island.is/service-portal/core'
+
+export type VersionType = 'v1' | 'v2' | 'initial'
+
+const OccupationalLicensesOverview = () => {
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [version, setVersion] = useState<VersionType>('initial')
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.occupationalLicensesV2,
+        false,
+      )
+
+      if (ffEnabled) {
+        setVersion('v2')
+      } else {
+        setVersion('v1')
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  switch (version) {
+    case 'v1':
+      return <OverviewV1 />
+    case 'v2':
+      return <OverviewV2 />
     default:
-      return undefined
+      return <CardLoader />
   }
-}
-
-export const OccupationalLicensesOverview = () => {
-  const { data, loading, error } = useGetOccupationalLicensesQuery({
-    errorPolicy: 'all',
-  })
-  const { data: organizations } = useOrganizations()
-  const { formatMessage, formatDateFns } = useLocale()
-  useNamespaces('sp.occupational-licenses')
-
-  const licenses =
-    data?.occupationalLicensesV2?.licenses
-      .filter((l) => l.__typename === 'OccupationalLicenseV2')
-      .filter(isDefined)
-      .map((l) => l as OccupationalLicenseV2) ?? []
-
-  const errors = useMemo(() => {
-    return (
-      data?.occupationalLicensesV2?.licenses
-        .filter((l) => l.__typename === 'OccupationalLicensesV2Error')
-        .filter(isDefined)
-        .map((l) => l as OccupationalLicensesV2Error) ?? []
-    )
-  }, [data?.occupationalLicensesV2?.licenses])
-
-  const errorString = useMemo(() => {
-    return errors
-      .map((e) => mapLicenseTypeToOrganization(e.type))
-      .map((e) => (organizations ?? []).find((o) => o.slug === e)?.title)
-      .filter(isDefined)
-      .join(', ')
-  }, [errors, organizations])
-
-  return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.occupationaLicenses}
-        intro={formatMessage(m.occupationalLicensesDescription)}
-      />
-
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && !!errors.length && (
-        <AlertMessage
-          type="warning"
-          title={formatMessage(olMessage.fetchOverviewError)}
-          message={formatMessage(olMessage.fetchOverviewErrorDetail, {
-            arg: errorString,
-          })}
-        />
-      )}
-
-      <Box marginTop={6}>
-        {loading && !error && <CardLoader />}
-        <Stack space={2}>
-          {licenses.map((license, index) => {
-            const image = organizations.find((o) => o.slug === license.issuer)
-              ?.logo?.url
-            return (
-              <LicenceActionCard
-                key={index}
-                title={license.title ?? ''}
-                validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
-                url={OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
-                  ':id',
-                  license.licenseId,
-                )}
-                image={image}
-                status={license.status}
-              />
-            )
-          })}
-        </Stack>
-      </Box>
-      <FootNote serviceProviderSlug={'syslumenn'} />
-    </Box>
-  )
 }
 
 export default OccupationalLicensesOverview

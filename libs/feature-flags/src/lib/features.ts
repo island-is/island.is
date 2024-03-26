@@ -55,6 +55,9 @@ export enum Features {
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
 
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
