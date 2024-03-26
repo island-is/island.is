@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsBoolean,
+  IsDate,
   IsEmail,
   IsEnum,
   IsOptional,
@@ -8,7 +9,6 @@ import {
 } from 'class-validator'
 
 import { Locale } from '../../user-profile/types/localeTypes'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class UserProfileDto {
   @ApiProperty()
@@ -55,4 +55,12 @@ export class UserProfileDto {
   @ApiProperty()
   @IsBoolean()
   emailNotifications!: boolean
+
+  @ApiProperty()
+  @IsDate()
+  readonly lastNudge!: Date
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly isRestricted?: boolean
 }

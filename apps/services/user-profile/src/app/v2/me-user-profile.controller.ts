@@ -25,8 +25,8 @@ import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-import { NudgeType } from '../types/nudge-type'
 import { PostNudgeDto } from './dto/post-nudge.dto'
+import { ClientType } from '../types/ClientType'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -49,12 +49,29 @@ export class MeUserProfileController {
   @Documentation({
     description: 'Get user profile for the current user.',
     response: { status: 200, type: UserProfileDto },
+    request: {
+      query: {
+        clientType: {
+          required: false,
+          description: 'Client type',
+          enum: ClientType,
+        },
+      },
+    },
   })
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })
-  findUserProfile(@CurrentUser() user: User): Promise<UserProfileDto> {
-    return this.userProfileService.findById(user.nationalId)
+  async findUserProfile(
+    @CurrentUser() user: User,
+    @Query('clientType') clientType: ClientType = ClientType.THIRD_PARTY,
+  ): Promise<UserProfileDto> {
+    const userProfile = await this.userProfileService.findById(user.nationalId)
+
+    return this.userProfileService.filterByClientTypeAndRestrictionDate(
+      clientType,
+      userProfile,
+    )
   }
 
   @Patch()

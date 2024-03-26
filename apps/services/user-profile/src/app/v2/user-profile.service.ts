@@ -16,9 +16,12 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { ClientType } from '../types/ClientType'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
+
+export const MIGRATION_DATE = new Date('2022-01-01')
 
 @Injectable()
 export class UserProfileService {
@@ -51,6 +54,8 @@ export class UserProfileService {
         documentNotifications: true,
         needsNudge: null,
         emailNotifications: true,
+        lastNudge: null,
+        isRestricted: false,
       }
     }
 
@@ -64,6 +69,8 @@ export class UserProfileService {
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
       emailNotifications: userProfile.emailNotifications,
+      lastNudge: userProfile.lastNudge,
+      isRestricted: false,
     }
   }
 
@@ -372,5 +379,24 @@ export class UserProfileService {
       mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
       audkenniSimNumber.replace(/-/g, '').slice(-7)
     )
+  }
+
+  filterByClientTypeAndRestrictionDate(
+    clientType: ClientType,
+    userProfile: UserProfileDto,
+  ): UserProfileDto {
+    if (
+      MIGRATION_DATE > userProfile.lastNudge &&
+      clientType === ClientType.THIRD_PARTY
+    ) {
+      userProfile = {
+        ...userProfile,
+        email: null,
+        mobilePhoneNumber: null,
+        isRestricted: true,
+      }
+    }
+
+    return userProfile
   }
 }
