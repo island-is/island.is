@@ -31,6 +31,9 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 
 import { NotificationsService } from './notifications.service'
 
+import { Locale } from './locale.enum'
+
+
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
 @UseInterceptors(CacheInterceptor)
@@ -84,9 +87,9 @@ export class NotificationsController {
     request: {
       query: {
         locale: {
+          enum: Locale,
           required: false,
-          type: 'string',
-          example: 'is-IS',
+          example: Locale.IS,
         },
       },
     },
@@ -94,9 +97,9 @@ export class NotificationsController {
   @Get('/templates')
   @Version('1')
   async getNotificationTemplates(
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale = Locale.IS
   ): Promise<HnippTemplate[]> {
-    this.logger.info(`Fetching hnipp template for locale: ${locale}`)
+    this.logger.info(`Fetching hnipp templates for locale: ${locale}`)
     return await this.notificationsService.getTemplates(locale)
   }
 
@@ -108,9 +111,9 @@ export class NotificationsController {
     request: {
       query: {
         locale: {
+          enum: Locale,
           required: false,
-          type: 'string',
-          example: 'is-IS',
+          example: Locale.IS,
         },
       },
       params: {
@@ -127,7 +130,7 @@ export class NotificationsController {
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale = Locale.IS
   ): Promise<HnippTemplate> {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
