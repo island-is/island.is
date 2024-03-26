@@ -2049,7 +2049,7 @@ export const getAttachments = (application: Application) => {
       AttachmentTypes.EMPLOYMENT_TERMINATION_CERTIFICATE,
     )
   }
-  if (commonFiles.length > 0) {
+  if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
   }
 
