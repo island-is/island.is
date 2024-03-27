@@ -154,9 +154,6 @@ const Background = styled.Image`
   background-color: #e2c4d1;
 `
 
-const Bold = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-`
 const Normal = styled.Text``
 
 const Copy = styled.Text`
@@ -184,14 +181,14 @@ interface ScanResultCardProps {
   type: ScanResultCardType
 }
 
-export enum SupportedGenericLicenseTypes {
-  DriversLicense = GenericLicenseType.DriversLicense,
-  AdrLicense = GenericLicenseType.AdrLicense,
-  MachineLicense = GenericLicenseType.MachineLicense,
-  FirearmLicense = GenericLicenseType.FirearmLicense,
-  DisabilityLicense = GenericLicenseType.DisabilityLicense,
-  Unknown = 'Unknown',
-}
+export type SupportedGenericLicenseTypes =
+  | GenericLicenseType.DriversLicense
+  | GenericLicenseType.AdrLicense
+  | GenericLicenseType.MachineLicense
+  | GenericLicenseType.FirearmLicense
+  | GenericLicenseType.DisabilityLicense
+  | GenericLicenseType.HuntingLicense
+  | 'Unknown'
 
 const ScanResultCardPresets: Record<
   SupportedGenericLicenseTypes,

@@ -2,10 +2,8 @@ import { boolean, text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import {
-  ScanResultCard,
-  SupportedGenericLicenseTypes,
-} from './scan-result-card'
+import { GenericLicenseType } from '../../../graphql/types/schema'
+import { ScanResultCard } from './scan-result-card'
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1 }}>{children}</View>
@@ -29,7 +27,7 @@ storiesOf('Scan Result Card', module)
           errorMessage={errorMessage}
           name={name}
           nationalId={nationalId}
-          type={SupportedGenericLicenseTypes.DriversLicense}
+          type={GenericLicenseType.DriversLicense}
         />
       </View>
     )
