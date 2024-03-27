@@ -333,7 +333,7 @@ export class VerificationService {
             {
               component: 'Copy',
               context: {
-                copy: 'Þetta er öryggiskóði til staðfestingar á netfangi, hann eyðist sjálfkrafa eftir 5 mínútur. Vinsamlegst hunsaðu póstinn ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
+                copy: 'Þetta er öryggiskóði til staðfestingar á netfangi, hann eyðist sjálfkrafa eftir 5 mínútur. Vinsamlegast hunsaðu póstinn ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
               },
             },
             {
