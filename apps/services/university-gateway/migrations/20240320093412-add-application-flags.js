@@ -9,7 +9,7 @@ module.exports = {
           'application_period_open',
           {
             type: Sequelize.BOOLEAN,
-            defaultValue: false,
+            defaultValue: true,
             allowNull: false,
           },
           {
