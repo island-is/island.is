@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
-  HvinApi,
+  HvinApi, RekUniITAPICustomModelsHvinActiveProgram,
   RekUniITAPICustomModelsHvinApplicantGenderEnum,
   RekUniITAPICustomModelsHvinNewApplicationModeOfDeliveryEnum,
   RekUniITAPICustomModelsHvinNewApplicationStartingSemesterSeasonEnum,
@@ -99,6 +99,8 @@ export class ReykjavikUniversityApplicationClient {
               options: undefined, //TODO missing in api
             }),
           ),
+          applicationPeriodOpen: this.mapApplicationPeriodOpen(program),
+          applicationInUniversityGateway: false, //TODO missing in api
         })
       } catch (e) {
         logger.error(
@@ -254,5 +256,10 @@ export class ReykjavikUniversityApplicationClient {
         )
       }
     }
+  }
+
+  mapApplicationPeriodOpen(program: RekUniITAPICustomModelsHvinActiveProgram): boolean {
+    if (!program.applicationStartDate || !program.applicationEndDate) return false;
+    return (new Date() > program.applicationStartDate && new Date() < program.applicationEndDate);
   }
 }

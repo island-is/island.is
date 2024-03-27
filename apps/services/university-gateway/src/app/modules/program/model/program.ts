@@ -460,4 +460,26 @@ export class Program extends ProgramBase {
   })
   @HasMany(() => ProgramExtraApplicationField)
   extraApplicationFields?: ProgramExtraApplicationField[]
+
+  @ApiProperty({
+    description:
+      'Whether the application period for the program is open and applications can be submitted',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  applicationPeriodOpen!: boolean
+
+  @ApiProperty({
+    description:
+      'Whether applications for the program should be submitted via University Gateway or the application portals of each university',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  applicationInUniversityGateway!: boolean
 }

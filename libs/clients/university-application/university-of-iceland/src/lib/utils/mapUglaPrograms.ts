@@ -65,24 +65,15 @@ export const mapUglaPrograms = (
           program.modeOfDelivery?.map((m) => {
             return mapStringToEnum(m, ModeOfDelivery)
           }) || [],
-        extraApplicationFields: program.extraApplicationFields?.map(
-          (field) => ({
-            externalId: '', //TODO missing in api
-            nameIs: field.nameIs || '',
-            nameEn: field.nameEn || '',
-            descriptionIs: field.descriptionIs,
-            descriptionEn: field.descriptionEn,
-            required: field.required || false,
-            fieldType: field.fieldType as unknown as FieldType,
-            uploadAcceptedFileType: field.uploadAcceptedFileType,
-            options: mapOptions(program, field),
-          }),
-        ),
+        extraApplicationFields: mapExtraApplicationFields(program),
         specializations: program.kjorsvid?.map((k) => ({
           externalId: k.id?.toString() || '',
           nameIs: k.heiti || '',
           nameEn: k.heitiEn || '',
         })),
+        applicationPeriodOpen: mapApplicationPeriodOpen(program),
+        applicationInUniversityGateway: program.canApplyOnHaskolanam || true,
+
       })
     } catch (e) {
       logError(program.externalId || '', e)
@@ -91,6 +82,46 @@ export const mapUglaPrograms = (
 
   return mappedRes
 }
+
+const mapApplicationPeriodOpen = (
+  program: InlineResponse2002Data
+): boolean => {
+  if (!program.applicationStartDate || !program.applicationEndDate) return false;
+  return new Date() > program.applicationStartDate && new Date() < program.applicationEndDate;
+}
+
+const mapExtraApplicationFields = (
+  program: InlineResponse2002Data
+): IProgram['extraApplicationFields'] => {
+  let fields = program.extraApplicationFields?.map((field) => ({
+    externalId: '', //TODO missing in api
+    nameIs: field.nameIs || '',
+    nameEn: field.nameEn || '',
+    descriptionIs: field.descriptionIs,
+    descriptionEn: field.descriptionEn,
+    required: field.required || false,
+    fieldType: field.fieldType as unknown as FieldType,
+    uploadAcceptedFileType: field.uploadAcceptedFileType,
+    options: mapOptions(program, field),
+  })) || []
+
+  if (program.mustPickExamVenue) {
+    fields.push({
+      externalId: '', //TODO missing in the api
+      nameIs: 'Prófstaður',
+      nameEn: 'Exam venue',
+      required: true,
+      descriptionIs: undefined,
+      descriptionEn: undefined,
+      fieldType: FieldType.TESTING_SITE,
+      uploadAcceptedFileType: undefined,
+      options: JSON.stringify(program?.simenntunarstodvar) ?? undefined
+    })
+  }
+
+  return fields;
+}
+
 
 const mapOptions = (
   program: InlineResponse2002Data,

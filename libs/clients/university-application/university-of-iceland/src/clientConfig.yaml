@@ -113,6 +113,10 @@ paths:
                           type: 'string'
                         costInformationEn:
                           type: 'string'
+                        mustPickExamVenue:
+                          type: 'boolean'
+                        canApplyOnHaskolanam:
+                          type: 'boolean'
                         extraApplicationSettings:
                           type: 'object'
                           properties:
@@ -170,22 +174,20 @@ paths:
                               required:
                                 type: 'boolean'
                         extraApplicationTexts:
-                          type: 'array'
-                          items:
-                            type: 'object'
-                            properties:
-                              toptextIs:
-                                type: 'string'
-                              sociallifeIs:
-                                type: 'string'
-                              forYouIs:
-                                type: 'string'
-                              exchangeStudyIs:
-                                type: 'string'
-                              workIs:
-                                type: 'string'
-                              aboutIs:
-                                type: 'string'
+                          type: 'object'
+                          properties:
+                            toptextIs:
+                              type: 'string'
+                            sociallifeIs:
+                              type: 'string'
+                            forYouIs:
+                              type: 'string'
+                            exchangeStudyIs:
+                              type: 'string'
+                            workIs:
+                              type: 'string'
+                            aboutIs:
+                              type: 'string'
                         kjorsvid:
                           type: 'array'
                           items:
