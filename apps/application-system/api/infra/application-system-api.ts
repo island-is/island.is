@@ -111,6 +111,7 @@ export const workerSetup =
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  appSystemForm: ServiceBuilder<'application-system-form'>
   skilavottordWs: ServiceBuilder<'skilavottord-ws'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
@@ -126,6 +127,9 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      APPLICATION_SYSTEM_FORM_URL: ref(
+        (h) => `http://${h.svc(services.appSystemForm)}`,
+      ),
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',

@@ -69,11 +69,6 @@ const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const documentsService = serviceDocumentsSetup()
-const appSystemApi = appSystemApiSetup({
-  documentsService,
-  servicesEndorsementApi: endorsement,
-  skilavottordWs,
-})
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
@@ -91,9 +86,15 @@ const sessionsWorker = sessionsWorkerSetup()
 
 const authAdminApi = authAdminApiSetup()
 
+const appSystemForm = appSystemFormSetup()
+const appSystemApi = appSystemApiSetup({
+  documentsService,
+  servicesEndorsementApi: endorsement,
+  appSystemForm,
+})
+
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
-
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -107,7 +108,6 @@ const api = apiSetup({
   universityGatewayApi: universityGatewayService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
-const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
