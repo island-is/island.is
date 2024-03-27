@@ -1,4 +1,5 @@
 import React, { forwardRef, ReactElement } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { Menu, MenuButton, MenuItem, useMenuState } from 'reakit/Menu'
 
@@ -12,19 +13,31 @@ import {
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
+import { CaseListEntry } from '../../graphql/schema'
+import { useCaseList } from '../../utils/hooks'
+import { contextMenu as strings } from './ContextMenu.strings'
 import * as styles from './ContextMenu.css'
+
+export interface ContextMenuItem {
+  href?: string
+  onClick?: () => void
+  title: string
+  icon?: IconMapIcon
+}
+
+export enum PrebuiltMenuItems {
+  openCaseInNewTab = 'openCaseInNewTab',
+  deleteCase = 'deleteCase',
+}
+
+export type MenuItems = (ContextMenuItem | PrebuiltMenuItems)[]
 
 interface ContextMenuProps {
   // Aria label for menu
   menuLabel: string
 
   // Menu items
-  items: {
-    href?: string
-    onClick?: () => void
-    title: string
-    icon?: IconMapIcon
-  }[]
+  items: ContextMenuItem[]
 
   // Text in the menu button
   title?: string
@@ -34,6 +47,35 @@ interface ContextMenuProps {
 
   // Space between menu and button
   offset?: [string | number, string | number]
+}
+
+export const useContextMenu = () => {
+  const { handleOpenCase } = useCaseList()
+  const { formatMessage } = useIntl()
+
+  const openCaseInNewTabMenuItem = (id: string): ContextMenuItem => {
+    return {
+      title: formatMessage(strings.openInNewTab),
+      onClick: () => handleOpenCase(id, true),
+      icon: 'open' as IconMapIcon,
+    }
+  }
+
+  const deleteCaseMenuItem = (
+    caseToDelete: CaseListEntry,
+    handleDeleteCase: (theCase: CaseListEntry) => void,
+  ): ContextMenuItem => {
+    return {
+      title: formatMessage(strings.deleteCase),
+      onClick: () => handleDeleteCase(caseToDelete),
+      icon: 'trash' as IconMapIcon,
+    }
+  }
+
+  return {
+    openCaseInNewTabMenuItem,
+    deleteCaseMenuItem,
+  }
 }
 
 const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(

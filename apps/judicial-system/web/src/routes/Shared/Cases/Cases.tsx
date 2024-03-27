@@ -2,9 +2,13 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  displayFirstPlusRemaining,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDistrictCourtUser,
@@ -23,12 +27,17 @@ import {
   PageHeader,
   SectionHeading,
   SharedPageLayout,
+  TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { PrebuiltMenuItems } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
+  ColumnCaseType,
+  DefendantInfo,
   PastCasesTable,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -44,11 +53,12 @@ import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-const CreateCaseButton: React.FC<
-  React.PropsWithChildren<{
-    user: User
-  }>
-> = ({ user }) => {
+interface CreateCaseButtonProps {
+  user: User
+}
+
+const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
+  const { user } = props
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
@@ -96,7 +106,7 @@ const CreateCaseButton: React.FC<
   )
 }
 
-export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
@@ -224,13 +234,86 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
                   {loading || isFiltering ? (
                     <TableSkeleton />
                   ) : casesAwaitingConfirmation.length > 0 ? (
-                    <ActiveCases
-                      cases={casesAwaitingConfirmation}
-                      isDeletingCase={
-                        isTransitioningCase || isSendingNotification
-                      }
+                    <Table
+                      thead={[
+                        {
+                          title: formatMessage(tables.caseNumber),
+                        },
+                        {
+                          title: capitalize(
+                            formatMessage(core.defendant, { suffix: 'i' }),
+                          ),
+                          sortable: { isSortable: true, key: 'defendant' },
+                        },
+                        {
+                          title: formatMessage(
+                            m.activeRequests.table.headers.type,
+                          ),
+                        },
+                        {
+                          title: capitalize(
+                            formatMessage(tables.created, { suffix: 'i' }),
+                          ),
+                          sortable: { isSortable: true, key: 'createdAt' },
+                        },
+                        { title: formatMessage(tables.state) },
+                        {
+                          title: formatMessage(
+                            m.activeRequests.table.headers.prosecutor,
+                          ),
+                        },
+                      ]}
+                      data={casesAwaitingConfirmation}
+                      contextMenu={{
+                        menuItems: [
+                          PrebuiltMenuItems.openCaseInNewTab,
+                          PrebuiltMenuItems.deleteCase,
+                        ],
+                      }}
+                      columns={[
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <Text
+                              as="span"
+                              title={row.policeCaseNumbers?.join(', ')}
+                            >
+                              {displayFirstPlusRemaining(
+                                row.policeCaseNumbers,
+                              ) || '-'}
+                            </Text>
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <DefendantInfo defendants={row.defendants} />
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <ColumnCaseType type={row.type} />
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <Text as="span">
+                              {formatDate(row.created, 'd.M.y')}
+                            </Text>
+                          ),
+                        },
+                        {
+                          cell: () => (
+                            <TagCaseState
+                              caseState={CaseState.WAITING_FOR_CONFIRMATION}
+                            />
+                          ),
+                        },
+                        {
+                          cell: (row: CaseListEntry) => (
+                            <Text as="span">{row.prosecutor?.name}</Text>
+                          ),
+                        },
+                      ]}
                       onDeleteCase={deleteCase}
-                      caseState={CaseState.WAITING_FOR_CONFIRMATION}
                     />
                   ) : (
                     <motion.div

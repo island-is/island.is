@@ -11,6 +11,7 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  CaseTransition,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
@@ -164,7 +165,6 @@ const useCaseList = () => {
           ? getLimitedAccessCase({ variables: { input: { id } } })
           : getCase({ variables: { input: { id } } })
       }
-
       if (
         isTransitioningCase ||
         isSendingNotification ||
@@ -194,12 +194,6 @@ const useCaseList = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: theme.spacing[3],
-        }}
       >
         <LoadingDots single />
       </motion.div>
