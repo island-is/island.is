@@ -105,7 +105,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     } else {
       /* User that requires waiting period, should not be allowed to continue */
       const buildError = buildValidationError(`${FORMER_INSURANCE}`)
-      return buildError('')
+      return buildError('User needs to wait for the waiting period')
     }
 
     return undefined

@@ -53,7 +53,7 @@ const devConfig = {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
     healthInsuranceV2: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
       xRoadProviderId:
         process.env.XROAD_HEALTH_INSURANCE_ID ??
         'IS-DEV/GOV/10007/SJUKRA-Protected',
@@ -67,7 +67,7 @@ const devConfig = {
       username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
       XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
     },
     userProfile: {
       serviceBasePath: 'http://localhost:3366',
