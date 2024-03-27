@@ -36,6 +36,8 @@ import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
+import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
+import { OccupationalLicensesV2Module } from '@island.is/api/domains/occupational-licenses-v2'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
@@ -51,7 +53,6 @@ import { MinistryOfJusticeModule } from '@island.is/api/domains/ministry-of-just
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
-import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
 import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
@@ -252,6 +253,7 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
+    OccupationalLicensesV2Module,
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     DmrClientModule,

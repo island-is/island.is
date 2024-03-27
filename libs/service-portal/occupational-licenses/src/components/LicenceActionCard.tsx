@@ -2,43 +2,48 @@ import { FormatMessage, useLocale } from '@island.is/localization'
 import { ActionCard } from '@island.is/service-portal/core'
 import { olMessage as ol } from '../lib/messages'
 import { m } from '@island.is/service-portal/core'
-import { OccupationalLicenseStatus } from '@island.is/api/schema'
+import { OccupationalLicenseStatusV2 } from '@island.is/api/schema'
 import { TagVariant } from '@island.is/island-ui/core'
 
 type LicenseActionCardProps = {
-  type?: string
+  title?: string
   validFrom?: string | Date
   url?: string
   image?: string
-  status: OccupationalLicenseStatus
+  status: OccupationalLicenseStatusV2
 }
 
 const getTagProps = (
-  status: OccupationalLicenseStatus,
+  status: OccupationalLicenseStatusV2,
   formatMessage: FormatMessage,
 ): { label: string; variant: TagVariant | undefined } => {
   switch (status) {
-    case OccupationalLicenseStatus.valid:
+    case OccupationalLicenseStatusV2.VALID:
       return {
         label: formatMessage(ol.validLicense),
         variant: 'blue',
       }
-    case OccupationalLicenseStatus.limited:
+    case OccupationalLicenseStatusV2.LIMITED:
       return {
         label: formatMessage(ol.validWithLimitationsLicense),
         variant: 'yellow',
       }
-    case OccupationalLicenseStatus.revoked:
+    case OccupationalLicenseStatusV2.IN_PROGRESS:
+      return {
+        label: formatMessage(ol.inProgressLicense),
+        variant: 'yellow',
+      }
+    case OccupationalLicenseStatusV2.REVOKED:
       return {
         label: formatMessage(ol.revokedLicense),
         variant: 'red',
       }
-    case OccupationalLicenseStatus.waived:
+    case OccupationalLicenseStatusV2.WAIVED:
       return {
         label: formatMessage(ol.waivedLicense),
         variant: 'red',
       }
-    case OccupationalLicenseStatus.error:
+    case OccupationalLicenseStatusV2.INVALID:
       return {
         label: formatMessage(ol.invalidLicense),
         variant: 'red',
@@ -52,7 +57,7 @@ const getTagProps = (
 }
 
 export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
-  type,
+  title,
   validFrom,
   url,
   image,
@@ -64,7 +69,7 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
   return (
     <ActionCard
       capitalizeHeading={true}
-      heading={type}
+      heading={title}
       text={`${formatMessage(ol.dayOfPublication)}: ${validFrom}`}
       tag={{
         label,
