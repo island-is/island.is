@@ -141,6 +141,10 @@ export const heirs = buildSection({
               id: 'heirs.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'heirs.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',

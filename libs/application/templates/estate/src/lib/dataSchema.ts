@@ -376,25 +376,26 @@ export const estateSchema = z.object({
   // is: Aðrar eignir
   otherAssets: z
     .object({
-      info: z.string(),
-      value: z.string(),
+      info: z.string().optional(),
+      value: z.string().optional(),
     })
     .refine(
-      ({ info, value }) => {
-        return info !== '' ? value !== '' : true
-      },
-      {
-        path: ['value'],
-      },
-    )
-    .refine(
-      ({ info, value }) => {
-        return value !== '' ? isValidString(info) : true
+      ({ info }) => {
+        return !!info
       },
       {
         path: ['info'],
       },
     )
+    .refine(
+      ({ value }) => {
+        return !!value
+      },
+      {
+        path: ['value'],
+      },
+    )
+    .array()
     .optional(),
 
   // is: Skuldir
