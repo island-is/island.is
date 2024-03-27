@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql'
 
-export enum StatusV2 {
+export enum Status {
   VALID = 'valid',
   INVALID = 'invalid',
   LIMITED = 'limited',
@@ -10,6 +10,6 @@ export enum StatusV2 {
   UNKNOWN = 'unknown',
 }
 
-registerEnumType(StatusV2, {
-  name: 'OccupationalLicenseStatusV2',
+registerEnumType(Status, {
+  name: 'OccupationalLicenseV2Status',
 })
