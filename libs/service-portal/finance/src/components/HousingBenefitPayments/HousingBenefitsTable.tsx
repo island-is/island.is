@@ -1,16 +1,19 @@
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import capitalize from 'lodash/capitalize'
 import {
   m,
   amountFormat,
   formatDate,
   NestedTable,
+  displayMonthOrYear,
 } from '@island.is/service-portal/core'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { m as messages } from '../../lib/messages'
 import { HousingBenefitPayments } from '@island.is/api/schema'
+import { HousingBenefitsFooter } from './HousingBenefitFooter'
 
-export const ITEMS_ON_PAGE = 10
+export const ITEMS_ON_PAGE = 12
 
 interface Props {
   payments: HousingBenefitPayments
@@ -19,7 +22,7 @@ interface Props {
 }
 
 const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const recordsArray = payments.data
 
@@ -48,8 +51,12 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
               key={record.nr}
               data={[
                 { value: formatDate(record.dateTransfer) },
-                { value: record.month ?? '' },
-                { value: amountFormat(record.benefit) },
+                {
+                  value: record.month
+                    ? capitalize(displayMonthOrYear(record.month, lang))
+                    : '',
+                },
+                { value: amountFormat(record.paymentBeforeDebt) },
                 { value: amountFormat(record.paidOfDebt) },
                 { value: amountFormat(record.paymentActual) },
                 { value: amountFormat(record.remainDebt), align: 'right' },
@@ -106,6 +113,7 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
             </ExpandRow>
           ))}
         </T.Body>
+        <HousingBenefitsFooter paymentArray={payments.data ?? []} />
       </T.Table>
       {totalPages > 0 ? (
         <Box paddingTop={8}>

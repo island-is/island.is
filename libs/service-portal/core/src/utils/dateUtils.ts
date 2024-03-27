@@ -1,4 +1,6 @@
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import { Locale } from '@island.is/shared/types'
 
 // Takes in date on format 'yyymmdd' and returns Date object
 export const dateParse = (startDate: string) => {
@@ -46,4 +48,12 @@ export const icelandLocalTime = (date?: string) => {
   })
 
   return formattedTime
+}
+
+export const displayMonthOrYear = (date: string, l: Locale) => {
+  const locale = l === 'is' ? is : undefined
+  if (date.includes('-')) {
+    return format(new Date(date), 'MMMM yyyy', { locale })
+  }
+  return format(new Date(date), 'yyyy', { locale })
 }

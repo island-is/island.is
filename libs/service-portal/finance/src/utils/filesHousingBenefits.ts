@@ -10,7 +10,7 @@ export const exportHousingBenefitFiles = async (
   const paymentsArray = payments.map((item) => [
     item.dateTransfer ? formatDate(item.dateTransfer) : '',
     item.month ?? '',
-    amountFormat(item.benefit),
+    amountFormat(item.paymentBeforeDebt),
     amountFormat(item.paidOfDebt),
     amountFormat(item.paymentActual),
     amountFormat(item.remainDebt),
