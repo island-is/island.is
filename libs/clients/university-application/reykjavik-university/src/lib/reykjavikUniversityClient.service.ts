@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
-  HvinApi, RekUniITAPICustomModelsHvinActiveProgram,
+  HvinApi,
+  RekUniITAPICustomModelsHvinActiveProgram,
   RekUniITAPICustomModelsHvinApplicantGenderEnum,
   RekUniITAPICustomModelsHvinNewApplicationModeOfDeliveryEnum,
   RekUniITAPICustomModelsHvinNewApplicationStartingSemesterSeasonEnum,
@@ -258,8 +259,14 @@ export class ReykjavikUniversityApplicationClient {
     }
   }
 
-  mapApplicationPeriodOpen(program: RekUniITAPICustomModelsHvinActiveProgram): boolean {
-    if (!program.applicationStartDate || !program.applicationEndDate) return false;
-    return (new Date() > program.applicationStartDate && new Date() < program.applicationEndDate);
+  mapApplicationPeriodOpen(
+    program: RekUniITAPICustomModelsHvinActiveProgram,
+  ): boolean {
+    if (!program.applicationStartDate || !program.applicationEndDate)
+      return false
+    return (
+      new Date() > program.applicationStartDate &&
+      new Date() < program.applicationEndDate
+    )
   }
 }

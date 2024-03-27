@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.addColumn(
           'program',
@@ -27,26 +27,24 @@ module.exports = {
           {
             transaction: t,
           },
-        )
-      ]);
-    });
+        ),
+      ])
+    })
   },
 
   //Down will most likely result in loss of data as we are casting from FLOAT to INTEGER
   down(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.removeColumn(
-          'program',
-          'application_period_open',
-          { transaction: t },
-        ),
+        queryInterface.removeColumn('program', 'application_period_open', {
+          transaction: t,
+        }),
         queryInterface.removeColumn(
           'program',
           'application_in_university_gateway',
           { transaction: t },
-        )
-      ]);
-    });
+        ),
+      ])
+    })
   },
 }
