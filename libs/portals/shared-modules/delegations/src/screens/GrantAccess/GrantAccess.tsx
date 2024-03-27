@@ -1,11 +1,12 @@
-import { Problem } from '@island.is/react-spa/shared'
-import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
+import * as kennitala from 'kennitala'
+import get from 'lodash/get'
+import React, { useEffect, useState } from 'react'
+import { defineMessage } from 'react-intl'
 import { Control, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { defineMessage } from 'react-intl'
-import * as kennitala from 'kennitala'
 
+import { useUserInfo } from '@island.is/auth/react'
 import {
   Box,
   Input,
@@ -15,14 +16,14 @@ import {
   SkeletonLoader,
   useBreakpoint,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { IntroHeader } from '@island.is/portals/core'
+import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
+import { Problem } from '@island.is/react-spa/shared'
 import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { IntroHeader } from '@island.is/portals/core'
-import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserInfo } from '@island.is/auth/react'
 
 import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { IdentityCard } from '../../components/IdentityCard/IdentityCard'
@@ -34,6 +35,7 @@ import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
 } from './GrantAccess.generated'
+
 import * as styles from './GrantAccess.css'
 
 const GrantAccess = () => {
@@ -101,14 +103,15 @@ const GrantAccess = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const value = e.target.value.replace('-', '').trim()
-    if (value.length === 10 && kennitala.isValid(value)) {
-      if (kennitala.isCompany(value)) {
-        setName(value)
-      } else {
-        getIdentity({
-          variables: { input: { nationalId: value } },
-        })
-      }
+    if (
+      value.length === 10 &&
+      kennitala.isValid(value) &&
+      !kennitala.isCompany(value) &&
+      value !== userInfo.profile.nationalId
+    ) {
+      getIdentity({
+        variables: { input: { nationalId: value } },
+      })
     } else {
       setName('')
     }
@@ -192,11 +195,20 @@ const GrantAccess = () => {
                       },
                       validate: {
                         value: (value: number) => {
+                          const valueAsString = value.toString()
                           if (
-                            value.toString().length === 10 &&
+                            valueAsString.length === 10 &&
                             !kennitala.isValid(value)
                           ) {
                             return formatMessage(m.grantInvalidSsn)
+                          }
+
+                          if (valueAsString === userInfo.profile.nationalId) {
+                            return formatMessage(m.grantSameSsn)
+                          }
+
+                          if (kennitala.isCompany(valueAsString)) {
+                            return formatMessage(m.grantCompanySsn)
                           }
                         },
                       },
