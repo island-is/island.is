@@ -262,6 +262,7 @@ export class UserIdentitiesService {
     const actor = await this.findSubject(toNationalId, audkenniProvider)
 
     if (!actor) {
+      // TODO: should we rather throw an exception?
       return null
     }
 
@@ -276,13 +277,12 @@ export class UserIdentitiesService {
           where: { type: actorSubjectIdType, value: actor.subjectId },
         },
       ],
-      useMaster: true,
     })
 
     if (delegation) {
       return delegation.subjectId
     } else {
-      return await this.autoProvisionDelegation(fromNationalId, toNationalId)
+      return await this.autoProvisionDelegation(fromNationalId, actor)
     }
   }
 
@@ -295,20 +295,14 @@ export class UserIdentitiesService {
         providerName: provider,
         providerSubjectId: `IS-${nationalId}`,
       },
-      useMaster: true,
     })
   }
 
   private async autoProvisionDelegation(
     fromNationalId: string,
-    toNationalId: string,
+    actor: UserIdentity,
   ): Promise<string> {
     const subjectId = this.generateSubjectId()
-
-    const actor = await this.findSubject(toNationalId, audkenniProvider)
-    if (actor == null) {
-      throw new BadRequestException('No actor found for provided nationalId.')
-    }
 
     const delegation: UserIdentityDto = {
       subjectId,
@@ -321,8 +315,8 @@ export class UserIdentitiesService {
           type: actorSubjectIdType,
           value: actor.subjectId,
           valueType: 'http://www.w3.org/2001/XMLSchema#string',
-          issuer: 'delegationdb',
-          originalIssuer: 'delegationdb',
+          issuer: 'delegationindex',
+          originalIssuer: 'delegationindex',
         },
       ], // claims will be updated when the delegation is used
     }
