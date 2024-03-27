@@ -26,7 +26,7 @@ import {
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
-import { QueryGetNewsArgs } from '@island.is/api/schema'
+import { LifeEventPage, QueryGetNewsArgs } from '@island.is/api/schema'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { Locale } from 'locale'
 import { watsonConfig } from './config'
@@ -81,7 +81,8 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         <LifeEventsSection
           heading={n('lifeEventsTitle')}
           headingId="life-events-title"
-          items={page?.lifeEvents ?? []}
+          items={(page?.lifeEvents as LifeEventPage[]) ?? []}
+          seeMoreText={n('seeMoreLifeEvents')}
         />
       </Box>
       <Box
