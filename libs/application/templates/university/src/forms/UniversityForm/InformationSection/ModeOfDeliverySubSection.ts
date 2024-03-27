@@ -105,10 +105,6 @@ export const ModeOfDeliverySubSection = buildSubSection({
                     extraParam = ''
                     break
                 }
-                console.log(
-                  'deliveryMethod.modeOfDelivery',
-                  deliveryMethod.modeOfDelivery,
-                )
                 return {
                   label:
                     information.labels.modeOfDeliverySection[
