@@ -22,7 +22,7 @@ import { ButtonRegistry } from '../component-registry'
 import { handleQuickAction } from '../quick-actions'
 import { handleNotificationResponse } from './setup-notifications'
 
-let backgroundAppLockTimeout: NodeJS.Timeout
+let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
