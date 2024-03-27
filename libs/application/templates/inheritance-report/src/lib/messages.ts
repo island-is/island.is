@@ -319,6 +319,11 @@ export const m = defineMessages({
       'Ef hinn látni átti ekki peninga sem varðveittir eru utan fjármálastofnana vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
+  otherAssetRepeaterButton: {
+    id: 'ir.application:otherAssetRepeaterButton',
+    defaultMessage: 'Bæta við eign',
+    description: '',
+  },
   continueWithoutOtherAssets: {
     id: 'ir.application:continueWithoutOtherAssets',
     defaultMessage:
