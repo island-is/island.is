@@ -93,7 +93,6 @@ export const input = recipe({
     },
     textarea: {
       true: {
-        ...mixins.textarea,
         resize: 'vertical',
       },
     },
