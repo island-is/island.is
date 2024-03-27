@@ -13,7 +13,7 @@ import {
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
-
+import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 @Module({
   imports: [
     AuthModule.register({
@@ -31,6 +31,7 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
         FeatureFlagConfig,
         UserProfileClientConfig,
         IdsClientConfig,
+        AuthDelegationApiClientConfig,
       ],
     }),
 

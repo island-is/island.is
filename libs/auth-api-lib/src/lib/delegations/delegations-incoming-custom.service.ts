@@ -293,7 +293,7 @@ export class DelegationsIncomingCustomService {
       )
 
       // We do not want to fail the whole request if we cannot get the live status from delegations.
-      // Therefore we return all delegations as alive delegations.
+      // Therefore, we return all delegations as alive delegations.
       return {
         aliveDelegations: delegations,
         deceasedDelegations: [],

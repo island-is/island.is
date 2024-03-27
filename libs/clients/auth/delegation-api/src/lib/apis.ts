@@ -5,6 +5,8 @@ import {
   MeDelegationsApi,
   MeLoginRestrictionsApi,
   ScopesApi,
+  DelegationIndexApi,
+  DelegationsApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './api-configuration'
 
@@ -14,6 +16,8 @@ export const exportedApis = [
   DomainsApi,
   ClientsApi,
   ScopesApi,
+  DelegationIndexApi,
+  DelegationsApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => new Api(configuration),

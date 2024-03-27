@@ -1,5 +1,5 @@
 import { Controller, Get, Headers, Query, UseGuards } from '@nestjs/common'
-import { ApiSecurity } from '@nestjs/swagger'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   DelegationsIndexService,
@@ -21,6 +21,7 @@ const namespace = '@island.is/auth/delegation-api/delegations'
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.delegationIndex)
 @ApiSecurity('ias', [AuthScope.delegationIndex])
+@ApiTags('delegations')
 @Controller({
   path: 'delegations',
   version: ['1'],
@@ -36,7 +37,7 @@ export class DelegationsController {
   @Documentation({
     description:
       'Fetch delegations from specific national id and scope from delegation index',
-    response: { status: 200, type: [PaginatedDelegationRecordDTO] },
+    response: { status: 200, type: PaginatedDelegationRecordDTO },
     request: {
       header: {
         'X-Query-From-National-Id': {
