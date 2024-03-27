@@ -85,7 +85,7 @@ export class NotificationsService {
 
   async getOrganizationTitle(senderId: string, locale: Locale = Locale.IS): Promise<string> {
     const cacheKey = `org-${senderId}-${locale}`;
-    let cachedOrganization = await this.cacheManager.get<string>(cacheKey)
+    const cachedOrganization = await this.cacheManager.get<string>(cacheKey)
     if (cachedOrganization) {
       this.logger.info(`Cache hit for: ${cacheKey}`);
       return cachedOrganization;
@@ -181,7 +181,7 @@ export class NotificationsService {
     const cacheKey = `templates-${locale}`;
     
     // Try to retrieve the templates from cache first
-    let cachedTemplates = await this.cacheManager.get<HnippTemplate[]>(cacheKey);
+    const cachedTemplates = await this.cacheManager.get<HnippTemplate[]>(cacheKey);
     if (cachedTemplates) {
       this.logger.info(`Cache hit for templates: ${cacheKey}`);
       return cachedTemplates;
@@ -228,7 +228,7 @@ export class NotificationsService {
     const cacheKey = `template-${templateId}-${locale}`;
     
     // Try to retrieve the template from cache first
-    let cachedTemplate = await this.cacheManager.get<HnippTemplate>(cacheKey);
+    const cachedTemplate = await this.cacheManager.get<HnippTemplate>(cacheKey);
     if (cachedTemplate) {
       this.logger.info(`Cache hit for template: ${cacheKey}`);
       return cachedTemplate;
