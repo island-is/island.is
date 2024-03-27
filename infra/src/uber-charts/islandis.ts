@@ -56,7 +56,7 @@ import {
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
-  cleanupSetup as sessionsCleanupWorkerSetup
+  cleanupSetup as sessionsCleanupWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
