@@ -2465,7 +2465,6 @@ services-sessions-cleanup:
     - 'node'
   enabled: true
   env:
-    CLEANUP_RETENTION_IN_MONTHS: '12'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions_cleanup'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
