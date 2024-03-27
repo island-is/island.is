@@ -13,7 +13,7 @@ import { DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: User

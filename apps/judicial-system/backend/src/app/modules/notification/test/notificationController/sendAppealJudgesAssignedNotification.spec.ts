@@ -8,7 +8,7 @@ import { createTestingNotificationModule } from '../createTestingNotificationMod
 import { Case } from '../../../case'
 import { SendNotificationResponse } from '../../models/sendNotification.response'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: SendNotificationResponse
