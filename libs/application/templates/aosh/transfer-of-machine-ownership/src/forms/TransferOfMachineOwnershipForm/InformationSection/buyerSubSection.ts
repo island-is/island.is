@@ -3,6 +3,7 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
@@ -33,6 +34,19 @@ export const buyerSubSection = buildSubSection({
           title: information.labels.buyer.phone,
           width: 'half',
           required: true,
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: 'Halda afram',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: 'SUBMIT',
+              name: 'Halda afram',
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

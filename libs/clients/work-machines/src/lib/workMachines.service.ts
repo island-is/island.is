@@ -139,6 +139,8 @@ export class WorkMachinesClientService {
       regNumber: result?.registrationNumber || '',
       supervisorName: result?.supervisorName || '',
       status: result?.status || '',
+      paymentRequiredForOwnerChange:
+        result?.paymentRequiredForOwnerChange || false,
       disabled: !result?.links?.some((link) => link?.rel === 'ownerChange'),
     }
   }
