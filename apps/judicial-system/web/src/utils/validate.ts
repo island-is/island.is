@@ -92,7 +92,7 @@ const getRegexByValidation = (validation: Validation) => {
     }
     case 'vehicle-registration-number': {
       return {
-        regex: new RegExp(/^[A-Z]{2}[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
+        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
         errorMessage: 'Dæmi: AB123',
       }
     }
