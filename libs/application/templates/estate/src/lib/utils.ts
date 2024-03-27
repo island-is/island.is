@@ -160,3 +160,24 @@ export const isValidRealEstate = (value: string) => {
 
   return lotRegex.test(value) || houseRegex.test(value)
 }
+
+/**
+ * Returns zero if value is not a number or number string
+ * @param value
+ * @returns number
+ */
+export const valueToNumber = (value: unknown, delimiter = '.'): number => {
+  if (typeof value === 'number') {
+    return value
+  }
+
+  if (typeof value === 'string' && value.length > 0) {
+    const regex = new RegExp(`[^${delimiter}\\d]+`, 'g')
+    const regex2 = new RegExp(`(?<=\\${delimiter}.*)\\${delimiter}`, 'g')
+
+    const parsed = value.replace(regex, '').replace(regex2, '')
+    return parseFloat(parsed.replace(delimiter, '.'))
+  }
+
+  return 0
+}

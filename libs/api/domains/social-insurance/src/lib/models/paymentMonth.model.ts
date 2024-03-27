@@ -6,5 +6,5 @@ export class PaymentMonth {
   monthIndex!: number
 
   @Field(() => Int)
-  amount?: number
+  amount!: number
 }

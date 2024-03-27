@@ -74,6 +74,7 @@ import {
   Period,
   PersonInformation,
   PregnancyStatusAndRightsResults,
+  SelectOption,
   VMSTPeriod,
   YesOrNo,
 } from '../types'
@@ -2048,7 +2049,7 @@ export const getAttachments = (application: Application) => {
       AttachmentTypes.EMPLOYMENT_TERMINATION_CERTIFICATE,
     )
   }
-  if (commonFiles.length > 0) {
+  if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
   }
 
@@ -2076,4 +2077,12 @@ export const calculatePruneDate = (application: Application) => {
   }
 
   return pruneAt
+}
+
+export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
+  if (id === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === id)?.label
 }
