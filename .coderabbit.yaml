@@ -5,7 +5,7 @@ reviews:
   high_level_summary: true
   poem: false
   review_status: true
-  collapse_walkthrough: true
+  collapse_walkthrough: false
   path_instructions:
     - path: 'apps/services/**/*'
       instructions: |
