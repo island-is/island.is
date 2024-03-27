@@ -24,11 +24,14 @@ export class StatisticsClientService {
     private logger: Logger,
   ) {}
 
-  async getMultipleStatistics(query: GetStatisticsQuery) {
+  async getMultipleStatistics(
+    query: GetStatisticsQuery,
+    sourceDataPaths?: string[],
+  ) {
     try {
       const sourceData = await getStatisticsFromSource(
         this.fetch,
-        this.config?.sourceDataPaths?.split(','),
+        sourceDataPaths || this.config?.sourceDataPaths?.split(','),
       )
 
       const statistics = await _getMultipleStatistics(query, sourceData)

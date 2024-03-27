@@ -95,6 +95,8 @@ export default {
     'chart',
     'chartComponent',
     'featuredEvents',
+    'chartDataSource',
+    'chartNumberBox',
     'bigBulletList',
     'iconBullet',
     'numberBulletSection',

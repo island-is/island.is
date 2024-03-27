@@ -4,6 +4,8 @@ import pick from 'lodash/pick'
 import { SystemMetadata } from '@island.is/shared/types'
 
 import { IChartNumberBox } from '../generated/contentfulTypes'
+import { ChartDataSource, mapChartDataSource } from './chartDataSource.model'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class ChartNumberBox {
@@ -30,6 +32,9 @@ export class ChartNumberBox {
 
   @Field({ nullable: true })
   numberBoxDate?: string
+
+  @CacheField(() => ChartDataSource, { nullable: true })
+  dataSource?: ChartDataSource | null
 }
 
 export const mapChartNumberBox = ({
@@ -48,5 +53,8 @@ export const mapChartNumberBox = ({
       'displayChangeYearOverYear',
     ]),
     numberBoxDate: fields.numberBoxDate ?? undefined,
+    dataSource: fields.chartDataSource
+      ? mapChartDataSource(fields.chartDataSource)
+      : null,
   }
 }

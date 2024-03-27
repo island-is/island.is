@@ -1,5 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-import pick from 'lodash/pick'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
 import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
@@ -56,6 +55,9 @@ export class Chart {
 
   @Field({ nullable: true })
   customStyleConfig?: string
+
+  @Field(() => Int, { nullable: true })
+  interval?: number
 }
 
 export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
@@ -81,5 +83,6 @@ export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
     customStyleConfig: fields.customStyleConfig
       ? JSON.stringify(fields.customStyleConfig)
       : undefined,
+    interval: fields.interval,
   }
 }

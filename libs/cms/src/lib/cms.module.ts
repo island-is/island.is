@@ -22,11 +22,17 @@ import { OrganizationTitleByReferenceIdLoader } from './loaders/organizationTitl
 import { OrganizationLinkByReferenceIdLoader } from './loaders/organizationLinkByKey.loader'
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
+import { ChartModule } from './chart/chart.module'
 import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
 import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
 
 @Module({
-  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
+  imports: [
+    HttpModule,
+    TerminusModule,
+    PowerBiConfig.registerOptional(),
+    ChartModule,
+  ],
   providers: [
     CmsResolver,
     ArticleResolver,

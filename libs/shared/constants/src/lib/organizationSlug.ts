@@ -31,3 +31,4 @@ export type OrganizationSlugType =
   | 'vegagerdin'
   | 'landlaeknir'
   | 'hugverkastofan'
+  | 'geislavarnir-rikisins'

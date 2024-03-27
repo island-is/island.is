@@ -75,7 +75,7 @@ export const formatPercentageForPresentation = (
 export const createTickFormatter =
   (activeLocale: Locale, xAxisValueType?: string, xAxisFormat?: string) =>
   (value: unknown) => {
-    // Date is the default is value type is undefined
+    // Date is the default if value type is undefined
     if (!xAxisValueType || xAxisValueType === 'date') {
       return formatDate(activeLocale, value as Date, xAxisFormat || undefined)
     } else if (xAxisValueType === 'number') {
