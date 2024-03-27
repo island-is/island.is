@@ -36,17 +36,17 @@ export class UserProfileController {
   @Documentation({
     description: 'Get user profile for given nationalId.',
     request: {
-      query: {
-        clientType: {
-          required: true,
-          description: 'Client type',
-          enum: ClientType,
-        },
-      },
       header: {
         'X-Param-National-Id': {
           required: true,
           description: 'National id of the user to find',
+        },
+      },
+      query: {
+        clientType: {
+          required: false,
+          description: 'Client type',
+          enum: ClientType,
         },
       },
     },

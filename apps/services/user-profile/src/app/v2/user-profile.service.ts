@@ -47,34 +47,40 @@ export class UserProfileService {
     })
 
     if (!userProfile) {
-      return this.filterByClientTypeAndRestrictionDate(clientType, {
-        nationalId,
-        email: null,
-        mobilePhoneNumber: null,
-        locale: null,
-        mobilePhoneNumberVerified: false,
-        emailVerified: false,
-        documentNotifications: true,
-        needsNudge: null,
-        emailNotifications: true,
-        lastNudge: null,
-        isRestricted: false,
-      })
+      return this.filterByClientTypeAndRestrictionDate(
+        clientType,
+        {
+          nationalId,
+          email: null,
+          mobilePhoneNumber: null,
+          locale: null,
+          mobilePhoneNumberVerified: false,
+          emailVerified: false,
+          documentNotifications: true,
+          needsNudge: null,
+          emailNotifications: true,
+          isRestricted: false,
+        },
+        null,
+      )
     }
 
-    return this.filterByClientTypeAndRestrictionDate(clientType, {
-      nationalId: userProfile.nationalId,
-      email: userProfile.email,
-      mobilePhoneNumber: userProfile.mobilePhoneNumber,
-      locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
-      documentNotifications: userProfile.documentNotifications,
-      needsNudge: this.checkNeedsNudge(userProfile),
-      emailNotifications: userProfile.emailNotifications,
-      lastNudge: userProfile.lastNudge,
-      isRestricted: false,
-    })
+    return this.filterByClientTypeAndRestrictionDate(
+      clientType,
+      {
+        nationalId: userProfile.nationalId,
+        email: userProfile.email,
+        mobilePhoneNumber: userProfile.mobilePhoneNumber,
+        locale: userProfile.locale,
+        mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+        emailVerified: userProfile.emailVerified,
+        documentNotifications: userProfile.documentNotifications,
+        needsNudge: this.checkNeedsNudge(userProfile),
+        emailNotifications: userProfile.emailNotifications,
+        isRestricted: false,
+      },
+      userProfile.lastNudge,
+    )
   }
 
   async patch(
@@ -387,8 +393,9 @@ export class UserProfileService {
   filterByClientTypeAndRestrictionDate(
     clientType: ClientType,
     userProfile: UserProfileDto,
+    lastNudge: Date | null,
   ): UserProfileDto {
-    if (MIGRATION_DATE > userProfile.lastNudge) {
+    if (MIGRATION_DATE > lastNudge) {
       userProfile = {
         ...userProfile,
         email: clientType === ClientType.THIRD_PARTY ? null : userProfile.email,

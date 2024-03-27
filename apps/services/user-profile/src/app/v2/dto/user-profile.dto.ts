@@ -57,10 +57,6 @@ export class UserProfileDto {
   emailNotifications!: boolean
 
   @ApiProperty()
-  @IsDate()
-  readonly lastNudge!: Date
-
-  @ApiProperty()
   @IsBoolean()
   readonly isRestricted?: boolean
 }
