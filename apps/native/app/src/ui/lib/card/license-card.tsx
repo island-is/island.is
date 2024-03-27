@@ -250,7 +250,7 @@ type StatusStyles = {
   [key: string]: StatusStyle
 }
 
-interface LicenceCardProps {
+interface LicenseCardProps {
   status: 'VALID' | 'NOT_VALID'
   title?: string
   date?: Date | string
@@ -276,7 +276,7 @@ export function LicenseCard({
   type,
   barcode,
   ...props
-}: LicenceCardProps) {
+}: LicenseCardProps) {
   const theme = useTheme()
   const barcodeWidth = screenWidth - theme.spacing[3] * 2
   const intl = useIntl()
