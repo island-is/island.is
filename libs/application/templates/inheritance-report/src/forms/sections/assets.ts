@@ -8,7 +8,10 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { overviewAssets } from '../OverviewSections/OverviewAssets'
-import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  shouldShowDeceasedShareField,
+} from '../../lib/utils/helpers'
 import { Application } from '@island.is/application/types'
 
 export const assets = buildSection({
@@ -133,6 +136,7 @@ export const assets = buildSection({
             }),
             buildCustomField({
               title: '',
+              condition: shouldShowDeceasedShareField,
               id: 'assets.inventory',
               doesNotRequireAnswer: true,
               component: 'DeceasedShareField',
@@ -518,6 +522,7 @@ export const assets = buildSection({
             }),
             buildCustomField({
               title: '',
+              condition: shouldShowDeceasedShareField,
               id: 'assets.money',
               doesNotRequireAnswer: true,
               component: 'DeceasedShareField',

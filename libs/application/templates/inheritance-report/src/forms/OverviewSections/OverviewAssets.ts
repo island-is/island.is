@@ -19,7 +19,11 @@ import {
   OtherAssetsData,
   StocksData,
 } from '../../types'
-import { hasYes, valueToNumber } from '../../lib/utils/helpers'
+import {
+  hasYes,
+  shouldShowDeceasedShareField,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 
 export const overviewAssets = [
   buildDescriptionField({
@@ -55,7 +59,7 @@ export const overviewAssets = [
             m.propertyShare.defaultMessage + `: ${propertyShare}%`,
           ]
 
-          const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+          const deceasedShare = valueToNumber(asset.deceasedShare)
 
           if (hasYes(asset.deceasedShareEnabled)) {
             description.push(
@@ -109,7 +113,7 @@ export const overviewAssets = [
                   : '0 kr.'),
             ]
 
-            const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+            const deceasedShare = valueToNumber(asset.deceasedShare)
 
             if (hasYes(asset.deceasedShareEnabled)) {
               description.push(
@@ -163,7 +167,7 @@ export const overviewAssets = [
                   : '0 kr.'),
             ]
 
-            const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+            const deceasedShare = valueToNumber(asset.deceasedShare)
 
             if (hasYes(asset.deceasedShareEnabled)) {
               description.push(
@@ -215,6 +219,18 @@ export const overviewAssets = [
       return formatCurrency(String(total))
     },
   }),
+  buildKeyValueField({
+    label: m.deceasedShare,
+    display: 'flex',
+    condition: shouldShowDeceasedShareField,
+    value: ({ answers }) => {
+      const deceasedShare = getValueViaPath(
+        answers,
+        'assets.inventory.deceasedShare',
+      )
+      return `${deceasedShare}%`
+    },
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewBanks',
@@ -251,7 +267,7 @@ export const overviewAssets = [
             }`,
           ]
 
-          const deceasedShare = valueToNumber(account.deceasedShareEnabled)
+          const deceasedShare = valueToNumber(account.deceasedShare)
 
           if (hasYes(account.deceasedShareEnabled)) {
             description.push(
@@ -303,7 +319,7 @@ export const overviewAssets = [
                 (asset.value ? formatCurrency(asset.value) : '0 kr.'),
             ]
 
-            const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+            const deceasedShare = valueToNumber(asset.deceasedShare)
 
             if (hasYes(asset.deceasedShareEnabled)) {
               description.push(
@@ -364,7 +380,7 @@ export const overviewAssets = [
               )}`,
             ]
 
-            const deceasedShare = valueToNumber(stock.deceasedShareEnabled)
+            const deceasedShare = valueToNumber(stock.deceasedShare)
 
             if (hasYes(stock.deceasedShareEnabled)) {
               description.push(
@@ -417,6 +433,18 @@ export const overviewAssets = [
       return formatCurrency(String(total))
     },
   }),
+  buildKeyValueField({
+    label: m.deceasedShare,
+    display: 'flex',
+    condition: shouldShowDeceasedShareField,
+    value: ({ answers }) => {
+      const deceasedShare = getValueViaPath(
+        answers,
+        'assets.money.deceasedShare',
+      )
+      return `${deceasedShare}%`
+    },
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewOtherAssets',
@@ -444,7 +472,7 @@ export const overviewAssets = [
               )}`,
             ]
 
-            const deceasedShare = valueToNumber(otherAsset.deceasedShareEnabled)
+            const deceasedShare = valueToNumber(otherAsset.deceasedShare)
 
             if (hasYes(otherAsset.deceasedShareEnabled)) {
               description.push(

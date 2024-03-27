@@ -93,3 +93,7 @@ export const getDeceasedHadAssets = (application: Application): boolean =>
 
 export const hasYes = (arr?: string[]) =>
   Array.isArray(arr) && arr.includes(YES)
+
+export const shouldShowDeceasedShareField = (answers: FormValue) =>
+  getValueViaPath(answers, 'deceasedHadAssets') === YES &&
+  getValueViaPath(answers, 'deceasedWasMarried') === YES
