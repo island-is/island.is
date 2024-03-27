@@ -23,7 +23,7 @@ import { buttonsMsgs } from '../lib/messages'
 import {} from '@island.is/regulations/web'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { useEditDraftReducer, StateInputs } from './reducer'
-import { stepsBase } from './makeFields'
+import { makePublishImpact, stepsBase } from './makeFields'
 import {
   isDraftErrorFree,
   isDraftLocked,
@@ -31,6 +31,7 @@ import {
 } from './validations'
 import { toast } from 'react-toastify'
 import { findRegulationType } from '../utils/guessers'
+import { Mutation, MutationPostSaveRegulationArgs } from '@island.is/api/schema'
 
 // ---------------------------------------------------------------------------
 
@@ -63,6 +64,30 @@ const DELETE_DRAFT_REGULATION_MUTATION = gql`
   mutation DeleteDraftRegulationMutation($input: DeleteDraftRegulationInput!) {
     deleteDraftRegulation(input: $input) {
       id
+    }
+  }
+`
+const PUBLISH_DRAFT_REGULATION_MUTATION = gql`
+  mutation PublishDraftRegulationMutation($input: UiRegulationPublishInput!) {
+    postSaveRegulation(input: $input) {
+      success
+      code
+      message
+      errors {
+        field
+        code
+        message
+      }
+      data {
+        id
+        regulationId
+        regulation {
+          id
+        }
+        original {
+          id
+        }
+      }
     }
   }
 `
@@ -112,6 +137,10 @@ const useMakeDraftingState = (inputs: StateInputs) => {
   const [updateDraftRegulationById] = useMutation(
     UPDATE_DRAFT_REGULATION_MUTATION,
   )
+  const [publishDraftRegulation] = useMutation<
+    Mutation,
+    MutationPostSaveRegulationArgs
+  >(PUBLISH_DRAFT_REGULATION_MUTATION)
 
   return useMemo(() => {
     const { draft, step } = state
@@ -144,6 +173,40 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               draftingStatus: newStatus || draft.draftingStatus,
               signedDocumentUrl: draft.signedDocumentUrl.value,
             },
+          },
+        },
+      })
+        .then((res) => {
+          if (res.errors && res.errors.length > 1) {
+            throw res.errors[0]
+          }
+          return { success: true, error: undefined }
+        })
+        .catch((error) => {
+          return { success: false, error: error as Error }
+        })
+
+    const publishDraft = () =>
+      publishDraftRegulation({
+        variables: {
+          input: {
+            text: draft.text.value,
+            title: draft.title.value,
+            type: draft.type.value || '',
+            name: draft.name.value || '',
+            status: 'migrated',
+            signatureDate: draft.signatureDate.value
+              ? toISODate(draft.signatureDate.value)
+              : '',
+            effectiveDate: draft.effectiveDate.value
+              ? toISODate(draft.effectiveDate.value)
+              : '',
+            publishedDate: draft.idealPublishDate.value
+              ? toISODate(draft.idealPublishDate.value)
+              : '',
+            lawChapters: draft.lawChapters.value,
+            ministryName: draft.ministry.value,
+            impacts: makePublishImpact(draft.impacts),
           },
         },
       })
@@ -353,13 +416,17 @@ const useMakeDraftingState = (inputs: StateInputs) => {
       publish:
         state.isEditor &&
         // only offer publish from "publish" step
+
         state.step.name === StepNames.publish
           ? async () => {
               if (!isDraftPublishable(state)) {
                 return false
               }
               dispatch({ type: 'SAVING_STATUS' })
-              await saveDraftStatus('published').then(({ success, error }) => {
+              await publishDraft().then((res) => {
+                const { error, ...response } = res
+                console.log('response', response)
+                console.log('error', error)
                 if (error) {
                   dispatch({
                     type: 'SAVING_STATUS_DONE',

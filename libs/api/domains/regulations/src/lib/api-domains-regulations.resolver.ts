@@ -1,11 +1,21 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
-import { RegulationsService } from '@island.is/clients/regulations'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+
+import {
+  RegulationsService,
+  RegulationsPublishService,
+} from '@island.is/clients/regulations'
 import {
   RegulationSearchResults,
   RegulationYears,
-  RegulationListItem,
 } from '@island.is/regulations/web'
 import {
   Regulation,
@@ -22,12 +32,18 @@ import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInp
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { PresignedPostResults } from '@island.is/regulations/admin'
+import { UiRegulationPublishInput } from './dto/saveRegulationPublish.input'
+import { UpdateRegulation } from './models/updateRegulation.model'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class RegulationsResolver {
-  constructor(private regulationsService: RegulationsService) {}
+  constructor(
+    private regulationsService: RegulationsService,
+    private regulationsPublishService: RegulationsPublishService,
+  ) {}
 
   @Mutation(() => graphqlTypeJson)
   createPresignedPost(
@@ -112,6 +128,17 @@ export class RegulationsResolver {
     return this.regulationsService.getRegulationsLawChapters(
       input.tree ?? (input.slugs ? false : true),
       input.slugs,
+    )
+  }
+
+  @Mutation(() => UpdateRegulation)
+  postSaveRegulation(
+    @Args('input') input: UiRegulationPublishInput,
+    @CurrentUser() user: User,
+  ): Promise<UpdateRegulation | null> {
+    return this.regulationsPublishService.postRegulationSave(
+      input,
+      user.nationalId,
     )
   }
 }
