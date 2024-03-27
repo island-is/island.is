@@ -36,7 +36,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionIdentityDocumentTitle: {
-    id: 'cr.application:dataCollection.dataCollectionIdentityDocumentTitle',
+    id: 'paa.application:dataCollection.dataCollectionIdentityDocumentTitle',
     defaultMessage: 'Skilríkjaskrá',
     description: 'Identity document provider title',
   },
@@ -140,7 +140,7 @@ export const m = defineMessages({
   },
   commentTitle: {
     id: 'paa.application:personalInfo.commentTitle',
-    defaultMessage: 'Hvað og hvenær glataðist vegabréfið',
+    defaultMessage: 'Hvar og hvenær glataðist vegabréfið',
     description: 'Some description',
   },
   commentPlaceholder: {
@@ -215,13 +215,29 @@ export const m = defineMessages({
   },
   applicationComplete: {
     id: 'paa.application:complete',
-    defaultMessage: 'Tilkynning móttekin',
+    defaultMessage: 'Vegabréf tilkynnt',
     description: 'Some description',
   },
   applicationCompleteDescriptionText: {
     id: 'paa.application:complete.descriptionText',
     defaultMessage:
       'Tilkynning um glatað vegabréf fyrir **{name}** hefur verið móttekin.',
+    description: 'Some description',
+  },
+  applicationCompleteAlertTitle: {
+    id: 'paa.application:applicationCompleteAlertTitle',
+    defaultMessage: 'Tilkynning um glatað vegabréf móttekin',
+    description: 'Some description',
+  },
+  applicationCompleteNextSteps: {
+    id: 'paa.application:applicationCompleteNextSteps',
+    defaultMessage: 'Næstu skref',
+    description: 'Some description',
+  },
+  applicationCompleteNextStepsMessage: {
+    id: 'paa.application:applicationCompleteNextStepsMessage',
+    defaultMessage:
+      'Tilkynning um glatað vegabréf hefur verið móttekin og verður skoðuð.',
     description: 'Some description',
   },
 })

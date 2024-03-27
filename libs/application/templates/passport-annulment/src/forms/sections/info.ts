@@ -43,6 +43,7 @@ export const info = buildMultiField({
       width: 'half',
       largeButtons: false,
       space: 'containerGutter',
+      defaultValue: 'lost',
       options: () => [
         {
           value: 'lost',
@@ -54,12 +55,18 @@ export const info = buildMultiField({
         },
       ],
     }),
+    buildDescriptionField({
+      id: 'space',
+      title: m.commentTitle,
+      titleVariant: 'h5',
+      space: 'containerGutter',
+    }),
     buildTextField({
       id: 'comment',
-      title: m.commentTitle,
+      title: '',
       variant: 'textarea',
-      doesNotRequireAnswer: true,
       placeholder: m.commentPlaceholder,
+      backgroundColor: 'white',
       rows: 7,
     }),
   ],
