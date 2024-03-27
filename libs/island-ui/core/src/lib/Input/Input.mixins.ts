@@ -200,6 +200,9 @@ export const optionDescriptionSizes = {
 export const inputPlaceholder = {
   color: theme.color.dark300,
   fontWeight: theme.typography.light,
+
+  // Firefox applies 0.54 opacity to placeholder text. This disables that.
+  opacity: 1,
 }
 
 export const placeholder = {
