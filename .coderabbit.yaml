@@ -1,4 +1,4 @@
-language: "ja"
+language: 'ja'
 early_access: true
 reviews:
   request_changes_workflow: true
@@ -7,43 +7,43 @@ reviews:
   review_status: true
   collapse_walkthrough: true
   path_instructions:
-    - path: "apps/services/**/*"
+    - path: 'apps/services/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
         - NestJS architecture, including modules, services, and controllers.
         - Dependency injection patterns and service encapsulation.
         - Integration and unit testing coverage and practices."
-    - path: "apps/**/*"
+    - path: 'apps/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
         - NextJS best practices, including file structure, API routes, and static generation methods.
         - Efficient state management and server-side rendering techniques.
         - Optimal use of TypeScript for component and utility type safety."
-    - path: "libs/services/**/*"
+    - path: 'libs/services/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
         - Shared services and modules that can be utilized across NestJS apps.
         - Proper implementation of NestJS providers, including custom providers.
         - Adherence to NestJS module encapsulation and isolation principles."
-    - path: "libs/shared/**/*"
+    - path: 'libs/shared/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
          - Cross-application utility functions, types, and constants.
          - TypeScript best practices to ensure type safety and reusability.
          - Documentation and examples for library consumers."
-    - path: "libs/**/*"
+    - path: 'libs/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
         - Reusability of components and hooks across different NextJS apps.
         - TypeScript usage for defining props and exporting types.
         - Effective tree-shaking and bundling practices."
-    - path: "scripts/**/*"
+    - path: 'scripts/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
         - Script efficiency, readability, and maintainability.
         - Usage of environmental variables and configuration files for flexibility.
         - Integration with NX workspace utilities and commands."
-    - path: "infra/src/dsl/**/*"
+    - path: 'infra/src/dsl/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
         - The clarity and expressiveness of the DSL syntax.
@@ -55,6 +55,6 @@ reviews:
     labels:
       - ai-review
     base_branches:
-      - "main"
+      - 'main'
 chat:
   auto_reply: true
