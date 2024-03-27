@@ -36,14 +36,9 @@ describe('NotificationsController', () => {
           },
         },
         {
-          provide: QueueService,
-          useValue: {
-            add: jest.fn(),
-          },
-        },
-        {
+            // Assuming this is the correct token based on your controller's constructor
             provide: 'IslandIsMessageQueue/QueueService/notifications',
-            useValue: { add: jest.fn() },
+            useValue: { add: jest.fn().mockResolvedValue('mockQueueId') },
           },
         {
             provide: CacheInterceptor,
@@ -54,8 +49,8 @@ describe('NotificationsController', () => {
 
     controller = module.get<NotificationsController>(NotificationsController);
     notificationsService = module.get<NotificationsService>(NotificationsService);
-    queueService = module.get<QueueService>(QueueService);
-  });
+    queueService = module.get('IslandIsMessageQueue/QueueService/notifications');
+});
 
   // Individual tests go here
   describe('getNotificationTemplates', () => {
