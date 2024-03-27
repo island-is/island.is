@@ -75,6 +75,16 @@
         "args": ["--job", "worker"]
       }
     },
+    "cleanup": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-sessions:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/sessions/cleanup"
+        },
+        "args": ["--job", "cleanup"]
+      }
+    },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
