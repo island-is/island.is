@@ -1,4 +1,4 @@
-import { Alert, Platform } from 'react-native'
+import { Alert } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
@@ -13,6 +13,7 @@ import create, { State } from 'zustand/vanilla'
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../contexts/i18n-provider'
 import { client } from '../graphql/client'
+import { isAndroid } from '../utils/devices'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { preferencesStore } from './preferences-store'
 
@@ -42,8 +43,7 @@ interface AuthStore extends State {
 
 const getAppAuthConfig = () => {
   const config = getConfig()
-  const android =
-    Platform.OS === 'android' && !config.isTestingApp ? '.auth' : ''
+  const android = isAndroid && !config.isTestingApp ? '.auth' : ''
   return {
     issuer: config.idsIssuer,
     clientId: config.idsClientId,
@@ -123,6 +123,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         externalUserAgent: 'yes',
       },
     })
+
     if (authorizeResult) {
       await Keychain.setGenericPassword(
         KEYCHAIN_AUTH_KEY,

@@ -1,8 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ActivityIndicator } from 'react-native'
-import styled from 'styled-components/native'
+import { ActivityIndicator, ImageSourcePropType } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { GenericLicenseType } from '../../../graphql/types/schema'
 import { formatNationalId } from '../../../lib/format-national-id'
+import { isIos } from '../../../utils/devices'
+import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import success from '../../assets/card/checkmark.png'
@@ -123,7 +126,7 @@ const Photo = styled.Image`
   width: 79px;
   height: 109px;
   background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
+  border-radius: ${({ theme: { border } }) => border.radius.large};
   margin-right: 32px;
 `
 
@@ -151,9 +154,6 @@ const Background = styled.Image`
   background-color: #e2c4d1;
 `
 
-const Bold = styled.Text`
-  font-family: 'IBMPlexSans-SemiBold';
-`
 const Normal = styled.Text``
 
 const Copy = styled.Text`
@@ -167,7 +167,7 @@ const Copy = styled.Text`
 `
 
 interface ScanResultCardProps {
-  loading: boolean
+  loading?: boolean
   error?: boolean
   valid?: boolean
   isExpired?: boolean
@@ -175,14 +175,30 @@ interface ScanResultCardProps {
   title?: string
   nationalId?: string
   name?: string
-  licenseNumber?: string
-  photo?: string
+  picture?: string | null
   data?: Array<{ key: string; value: string }>
   hasNoData?: boolean
   type: ScanResultCardType
 }
 
-const ScanResultCardPresets = {
+export type SupportedGenericLicenseTypes =
+  | GenericLicenseType.DriversLicense
+  | GenericLicenseType.AdrLicense
+  | GenericLicenseType.MachineLicense
+  | GenericLicenseType.FirearmLicense
+  | GenericLicenseType.DisabilityLicense
+  | GenericLicenseType.HuntingLicense
+  | 'Unknown'
+
+const ScanResultCardPresets: Record<
+  SupportedGenericLicenseTypes,
+  {
+    title: string
+    logo: ImageSourcePropType
+    backgroundImage?: ImageSourcePropType
+    backgroundColor?: string
+  }
+> = {
   DriversLicense: {
     title: 'Ökuskírteini (IS)',
     logo: LogoCoatOfArms,
@@ -222,41 +238,40 @@ const ScanResultCardPresets = {
   Unknown: {
     title: 'Ekki þekkt',
     logo: LogoCoatOfArms,
-    backgroundImage: BackgroundDriversLicense,
-    backgroundColor: '#F5E4EC',
   },
 }
 
 export type ScanResultCardType = keyof typeof ScanResultCardPresets
 
-export function ScanResultCard(props: ScanResultCardProps) {
-  const {
-    error,
-    errorMessage,
-    title,
-    isExpired,
-    loading,
-    nationalId,
-    name,
-    photo,
-    data,
-    hasNoData = false,
-    type,
-  } = props
+export function ScanResultCard({
+  error,
+  errorMessage,
+  title,
+  isExpired,
+  loading,
+  nationalId,
+  name,
+  picture,
+  data,
+  hasNoData = false,
+  type,
+}: ScanResultCardProps) {
   const intl = useIntl()
+  const theme = useTheme()
 
   const preset = type
     ? ScanResultCardPresets[type]
-    : ScanResultCardPresets.DriversLicense
-
+    : ScanResultCardPresets.Unknown
   const cardTitle = title ?? preset?.title
   const backgroundImage = preset?.backgroundImage
-  const backgroundColor = preset?.backgroundColor ?? '#F5E4EC'
+  const backgroundColor = preset?.backgroundColor ?? theme.color.blue100
   const logo = preset?.logo
 
   return (
     <Host backgroundColor={backgroundColor}>
-      <Background source={backgroundImage} resizeMode="stretch" />
+      {backgroundImage && (
+        <Background source={backgroundImage} resizeMode="stretch" />
+      )}
       <Header hasNoData={hasNoData}>
         <Detail>
           <Title>{cardTitle}</Title>
@@ -299,20 +314,11 @@ export function ScanResultCard(props: ScanResultCardProps) {
                 <>
                   <Value style={{ marginBottom: 16 }}>{errorMessage}</Value>
                   <Copy>
-                    <Bold>Android</Bold>
-                    {'  '}
                     <Normal>
                       {intl.formatMessage({
-                        id: 'licenseScannerResult.androidHelp',
-                      })}
-                    </Normal>
-                  </Copy>
-                  <Copy>
-                    <Bold>iOS</Bold>
-                    {'  '}
-                    <Normal>
-                      {intl.formatMessage({
-                        id: 'licenseScannerResult.iosHelp',
+                        id: `licenseScannerResult.${
+                          isIos ? 'ios' : 'android'
+                        }Help`,
                       })}
                     </Normal>
                   </Copy>
@@ -332,9 +338,9 @@ export function ScanResultCard(props: ScanResultCardProps) {
               <Placeholder
                 style={{ width: 79, height: 109, marginRight: 32 }}
               />
-            ) : photo ? (
-              <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
-            ) : null}
+            ) : (
+              picture && <Photo source={{ uri: prefixBase64(picture) }} />
+            )}
             <Left>
               <LabelGroup>
                 <Label>
@@ -358,18 +364,16 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   <Value>{formatNationalId(nationalId)}</Value>
                 )}
               </LabelGroup>
-              {data?.map(({ key, value }) => {
-                return (
-                  <LabelGroup key={key}>
-                    <Label>{key}</Label>
-                    {loading ? (
-                      <Placeholder style={{ width: 120 }} />
-                    ) : (
-                      <Value>{value}</Value>
-                    )}
-                  </LabelGroup>
-                )
-              })}
+              {data?.map(({ key, value }) => (
+                <LabelGroup key={key}>
+                  <Label>{key}</Label>
+                  {loading ? (
+                    <Placeholder style={{ width: 120 }} />
+                  ) : (
+                    <Value>{value}</Value>
+                  )}
+                </LabelGroup>
+              ))}
             </Left>
           </Content>
         </>
