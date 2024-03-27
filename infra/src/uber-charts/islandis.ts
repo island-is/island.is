@@ -108,7 +108,7 @@ const api = apiSetup({
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
-const web = webSetup({ api: api })
+const web = webSetup({ api: api, graphql: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
 const contentfulApps = contentfulAppsSetup()

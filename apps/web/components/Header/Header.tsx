@@ -1,4 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { FC, useContext } from 'react'
+
 import {
   Box,
   ButtonTypes,
@@ -13,14 +15,14 @@ import {
   Logo,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
+import { webMenuButtonClicked } from '@island.is/plausible'
 import { FixedNav, SearchInput } from '@island.is/web/components'
-import { LoginButton } from './LoginButton'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
-import React, { FC, useContext } from 'react'
+
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
-import { webMenuButtonClicked } from '@island.is/plausible'
+import { LoginButton } from './LoginButton'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -29,6 +31,7 @@ interface HeaderProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   megaMenuData
+  organizationSearchFilter?: string
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -38,6 +41,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   buttonColorScheme = 'default',
   megaMenuData,
   languageToggleQueryParams,
+  organizationSearchFilter,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -92,6 +96,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                           placeholder={t.searchPlaceholder}
                           autocomplete={true}
                           autosuggest={true}
+                          organization={organizationSearchFilter}
                         />
                       </Box>
                     )}
@@ -114,6 +119,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                         {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
                         onMenuOpen={webMenuButtonClicked}
+                        organizationSearchFilter={organizationSearchFilter}
                       />
                     </Box>
                   </Box>
