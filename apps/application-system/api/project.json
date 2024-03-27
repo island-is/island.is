@@ -124,13 +124,6 @@
         "args": ["--job", "worker"]
       }
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/application-system/api"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -159,32 +152,43 @@
         "cwd": "apps/application-system/api"
       }
     },
-    "docker-express": {},
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn get-secrets application-system-api",
-          "yarn nx run application-system-api:dev-services",
-          "yarn nx run application-system-api:migrate",
-          "yarn nx codegen/backend-schema api",
-          "yarn nx run services-user-profile:dev-init"
-        ],
-        "parallel": false
-      }
-    },
+
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn nx run api:dev",
-          "yarn nx run services-user-profile:dev",
-          "yarn start application-system-api",
-          "scripts/run-soffia-proxy.sh"
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
         ],
-        "parallel": true
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "nx run api:codegen/backend-schema",
+            "nx run api:dev:init",
+            "nx run services-user-profile:dev:init",
+            "yarn get-secrets {projectName}",
+            "nx run {projectName}:dev:services",
+            "nx run {projectName}:migrate"
+          ]
+        },
+        "run": {
+          "commands": [
+            "nx run api:dev",
+            "nx run services-user-profile:dev",
+            "nx run {projectName}:serve",
+            "./scripts/run-soffia-proxy.sh"
+          ],
+          "parallel": true
+        }
       }
-    }
+    },
+    "docker-express": {}
   },
   "tags": ["scope:application-system-api"]
 }

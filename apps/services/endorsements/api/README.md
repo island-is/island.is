@@ -4,12 +4,11 @@
 
 This service manages endorsement lists within island.is.
 
-## Quickstart
+## Quick start
 
-Simply run these two commands:
+Simply run this command:
 
-```
-yarn dev-init services-endorsements-api
+```bash
 yarn dev services-endorsements-api
 ```
 
@@ -21,8 +20,8 @@ To run the API locally make sure you:
 
 - Have [Docker](https://www.docker.com/products/docker-desktop) running
 - Fulfill all prerequisites listed in:
-- - [Getting started section at docs.devland.is](https://docs.devland.is/)
-- - [AWS secrets section at docs.devland.is](https://docs.devland.is/repository/)
+- - [Getting started section in our docs](https://docs.devland.is/development/getting-started)
+- - [AWS secrets section at our](https://docs.devland.is/repository/)
 
 ### Optional
 
@@ -31,7 +30,7 @@ To run the API locally make sure you:
 ### Initialize the application
 
 ```bash
-yarn dev-init services-endorsements-api
+yarn nx run services-endorsements-api:dev:init
 ```
 
 ## Run locally
@@ -45,25 +44,22 @@ aws sso login
 Then run application using this command
 
 ```bash
-yarn dev services-endorsements-api
+yarn nx run services-endorsements-api:dev:run
 ```
 
-And go to localhost once project is ready and started
+The application should now be available [locally](http://localhost:4246/).
+
+After making changes to the module code, re-initialise app to auto-generate code
+for swagger, OpenAPI, fetch client etc.
 
 ```bash
-http://localhost:4246/
-```
-
-After making changes to the module code, re-initalize app to autogenerate code for swagger, openapi, fetch client etc.
-
-```bash
-yarn dev-init services-endorsements-api
+yarn nx run services-endorsements-api:dev:init
 ```
 
 ## Run tests
 
 ```bash
-yarn test services-endorsements-api --skip-nx-cache
+yarn test services-endorsements-api
 ```
 
 ## Code owners and maintainers

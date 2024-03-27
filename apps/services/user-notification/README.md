@@ -24,7 +24,15 @@ sequenceDiagram
     User-Notification-Worker->>User email: sends e-mail
 ```
 
-## Running the project:
+## Running the project
+
+### Quick start
+
+Simply run:
+
+```bash
+yarn dev user-notification
+```
 
 ### Initial Setup
 
@@ -40,22 +48,22 @@ Get secrets:
 yarn get-secrets user-notification
 ```
 
-Initalize dependencies:
+Initialise dependencies:
 
 ```sh
-yarn dev-init services-user-notification
+yarn nx run services-user-notification:dev:init
 ```
 
 ### Start User Notification Service
 
 ```sh
-yarn dev services-user-notification
+yarn nx run services-user-notification:dev:run
 ```
 
 ### User Notification Worker
 
-This worker gets messages from the queue and saves to database and sends via push and email.
-Start a worker with this command:
+This worker gets messages from the queue and saves to database and sends via
+push and email. Start a worker with this command:
 
 ```sh
 yarn nx run services-user-notification:worker

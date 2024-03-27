@@ -52,11 +52,27 @@
         "passWithNoTests": true
       }
     },
-    "dev-services": {
+    "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/judicial-system/message-handler"
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": ["nx run {projectName}:dev:services"]
+        },
+        "run": {
+          "commands": ["echo 'Nothing to run/start for {projectName}'"],
+          "parallel": true
+        }
       }
     },
     "docker-express": {}

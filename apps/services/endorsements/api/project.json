@@ -66,34 +66,36 @@
         "passWithNoTests": true
       }
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d --build",
-        "cwd": "apps/services/endorsements/api"
-      }
-    },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn get-secrets services-endorsements-api",
-          "yarn nx run services-endorsements-api:dev-services $NX_OPTIONS",
-          "echo \"Waiting for databases to start...\" && sleep 2",
-          "yarn nx run services-endorsements-api:migrate $NX_OPTIONS"
-        ],
-        "parallel": false
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "./scripts/run-xroad-proxy.sh",
-          "./scripts/run-soffia-proxy.sh",
-          "yarn start services-endorsements-api $NX_OPTIONS"
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
         ],
-        "parallel": true
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d --build",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "yarn get-secrets services-endorsements-api",
+            "nx run services-endorsements-api:dev:services",
+            "echo \"Waiting for databases to start...\" && sleep 2",
+            "nx run services-endorsements-api:migrate"
+          ]
+        },
+        "run": {
+          "commands": [
+            "./scripts/run-xroad-proxy.sh",
+            "./scripts/run-soffia-proxy.sh",
+            "nx run services-endorsements-api:serve"
+          ],
+          "parallel": true
+        }
       }
     },
     "codegen/backend-schema": {

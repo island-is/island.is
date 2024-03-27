@@ -87,14 +87,6 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
     },
-    "docker-express": {},
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/services/auth/ids-api"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -130,37 +122,63 @@
     "ids-get-secrets": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn get-secrets services-auth-ids-api services-user-profile services-sessions"
-        ],
-        "parallel": false
+        "command": "nx run {projectName}:dev:secrets"
       }
     },
     "ids-dev-init": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn nx run services-auth-ids-api:dev-services",
-          "yarn nx run services-user-profile:dev-services",
-          "echo \"Waiting for databases to start...\" && sleep 4",
-          "yarn nx run services-auth-ids-api:migrate",
-          "yarn nx run services-auth-ids-api:seed",
-          "yarn nx run services-user-profile:migrate",
-          "yarn nx run services-user-profile:seed"
-        ],
-        "parallel": false
+        "command": "nx run {projectName}:dev:init"
       }
     },
     "ids-dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "IDENTITY_SERVER_ISSUER_URL=https://localhost:5001 NODE_TLS_REJECT_UNAUTHORIZED=0 yarn start services-auth-ids-api",
-          "IDENTITY_SERVER_ISSUER_URL=https://localhost:5001 NODE_TLS_REJECT_UNAUTHORIZED=0 yarn start services-user-profile"
-        ],
-        "parallel": true
+        "command": "nx run {projectName}:dev:run"
       }
-    }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "secrets": {
+          "commands": [
+            "yarn get-secrets {projectName} services-user-profile services-sessions"
+          ]
+        },
+        "init": {
+          "commands": [
+            "nx run services-user-profile:init",
+            "nx run {projectName}:secrets",
+            "nx run {projectName}:dev:services",
+            "echo \"Waiting for databases to start...\" && sleep 4",
+            "nx run {projectName}:migrate",
+            "nx run {projectName}:seed",
+            "echo 'export IDENTITY_SERVER_ISSUER_URL=https://localhost:5001' >> ./.env.{projectName}",
+            "echo 'export NODE_TLS_REJECT_UNAUTHORIZED=0' >> ./.env.{projectName}"
+          ]
+        },
+        "run": {
+          "commands": [
+            "./scripts/run-db-proxy.sh",
+            ". ./.env.{projectName} &&  nx run {projectName}:serve",
+            ". ./.env.{projectName} &&  nx run services-user-profile:serve"
+          ],
+          "parallel": true
+        }
+      }
+    },
+    "docker-express": {}
   },
   "tags": ["scope:auth-api"]
 }

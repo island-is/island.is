@@ -60,14 +60,6 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/reference-backend"]
     },
-    "docker-express": {},
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/reference-backend"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -88,7 +80,31 @@
         "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/reference-backend"
       }
-    }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": ["nx run {projectName}:dev:services"]
+        },
+        "run": {
+          "commands": ["echo 'Nothing to run/start for {projectName}'"],
+          "parallel": true
+        }
+      }
+    },
+    "docker-express": {}
   },
   "tags": ["scope:nest"]
 }

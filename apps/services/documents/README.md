@@ -2,14 +2,23 @@
 
 ## About
 
-A service that is responsible for providing and storing documents and document providers info.
+A service that is responsible for providing and storing documents and document
+providers info.
+
+### Quick start
+
+Simply run this command:
+
+```bash
+yarn dev services-documents
+```
 
 ### Initial setup
 
 First, make sure you have docker, then run:
 
 ```bash
-yarn dev-services services-documents
+yarn nx run services-documents:dev:services
 ```
 
 Then run the migrations:
@@ -24,11 +33,7 @@ You can serve this service locally by running:
 yarn start services-documents
 ```
 
-Api open api specs will now be accessible at
-
-```bash
-http://localhost:3369/swagger/#/default
-```
+The OpenAPI specs will now be accessible [locally](http://localhost:3369/swagger/#/default)
 
 ## Getting started
 

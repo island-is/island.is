@@ -73,13 +73,6 @@
         "passWithNoTests": true
       }
     },
-    "dev-services": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker-compose up -d",
-        "cwd": "apps/icelandic-names-registry/backend"
-      }
-    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -106,6 +99,29 @@
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
         "cwd": "apps/icelandic-names-registry/backend"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "command": "docker-compose up -d",
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": ["nx run {projectName}:dev:services"]
+        },
+        "run": {
+          "commands": ["echo 'Nothing to run/start for {projectName}'"],
+          "parallel": true
+        }
       }
     },
     "docker-express": {}

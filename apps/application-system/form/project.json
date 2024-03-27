@@ -98,24 +98,29 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn get-secrets application-system-form",
-          "yarn nx run application-system-api:dev-init"
-        ],
-        "parallel": false
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn nx run application-system-api:dev",
-          "yarn start application-system-form"
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
         ],
-        "parallel": true
+        "parallel": false
+      },
+      "configurations": {
+        "init": {
+          "commands": [
+            "nx run application-system-api:dev:init",
+            "yarn get-secrets {projectName}"
+          ]
+        },
+        "run": {
+          "commands": [
+            "nx run application-system-api:dev",
+            "nx run {projectName}:serve"
+          ],
+          "parallel": true
+        }
       }
     },
     "docker-static": {}

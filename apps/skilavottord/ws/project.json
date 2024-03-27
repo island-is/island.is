@@ -102,24 +102,34 @@
         "cwd": "apps/skilavottord/ws"
       }
     },
-    "dev-init": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn get-secrets skilavottord skilavottord-ws",
-          "echo 'export NEXTAUTH_URL=http://localhost:4200/app/skilavottord/api/auth' >> .env.secret",
-          "yarn nx run skilavottord-ws:migrate/undo",
-          "yarn nx run skilavottord-ws:migrate",
-          "yarn nx run skilavottord-ws:seed"
-        ],
-        "parallel": false
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start skilavottord-ws"],
-        "parallel": true
+        "commands": [
+          "nx run {projectName}:dev:init",
+          "nx run {projectName}:dev:run"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "services": {
+          "commands": ["docker-compose up -d"],
+          "cwd": "{projectRoot}"
+        },
+        "init": {
+          "commands": [
+            "yarn get-secrets skilavottord {projectName}",
+            "echo 'export NEXTAUTH_URL=http://localhost:4200/app/skilavottord/api/auth' >> .env.{projectName}",
+            "nx run {projectName}:dev:services",
+            "nx run {projectName}:migrate/undo",
+            "nx run {projectName}:migrate",
+            "nx run {projectName}:seed"
+          ]
+        },
+        "run": {
+          "commands": [". ./.env.{projectName} && nx run {projectName}:serve"],
+          "parallel": true
+        }
       }
     },
     "docker-express": {}
