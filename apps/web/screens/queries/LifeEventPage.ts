@@ -35,16 +35,21 @@ export const GET_LIFE_EVENTS_QUERY = gql`
     getLifeEvents(input: $input) {
       id
       title
+      shortTitle
       slug
-      intro
-      thumbnail {
+      tinyThumbnail {
         url
         title
       }
-      image {
-        url
+      featured {
         title
+        attention
+        thing {
+          slug
+          type
+        }
       }
+      seeMoreText
     }
   }
 `
