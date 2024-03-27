@@ -473,7 +473,6 @@ export const isCourtOfAppealRulingStepFieldsValid = (
 }
 
 export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
-  console.log('workingCase.caseFiles', workingCase.caseFiles)
   return Boolean(
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
       (workingCase.appealRulingDecision ===
