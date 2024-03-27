@@ -3,10 +3,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { UniversityApplication } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
-import {
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { SelectController } from '@island.is/shared/form-fields'
 import { UniversityExternalData } from '../../types'
 import { Program } from '@island.is/clients/university-gateway-api'
 import { information } from '../../lib/messages'
@@ -15,6 +12,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useLazyUniversityQuery } from '../../hooks/useGetUniversityInformation'
 import { UniversityGatewayUniversity } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
+import { ModeOfDelivery } from '@island.is/university-gateway'
 
 export const ProgramSelection: FC<FieldBaseProps> = ({
   application,
@@ -23,44 +21,65 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
 }) => {
   const answers = application.answers as UniversityApplication
   const externalData = application.externalData
-
-  const { formatMessage, lang } = useLocale()
-
-  const { setValue } = useFormContext()
-
   const universities = externalData.universities
     .data as Array<UniversityExternalData>
   const programs = externalData.programs.data as Array<Program>
+  const sortedProgramsDeepCopy = JSON.parse(
+    JSON.stringify(programs),
+  ) as Array<Program>
 
+  const { formatMessage, lang } = useLocale()
+  const { setValue } = useFormContext()
+
+  const preChosenProgram = getValueViaPath(answers, `initialQuery`, '')
   const programAnswer = getValueViaPath(
     answers,
     `${Routes.PROGRAMINFORMATION}.program`,
+    '',
   )
-
   const universityAnswer = getValueViaPath(
     answers,
     `${Routes.PROGRAMINFORMATION}.university`,
+    '',
   )
 
-  const [chosenProgram, setChosenProgram] = useState(programAnswer)
-  const [chosenUniversity, setChosenUniversity] = useState(universityAnswer)
+  const [chosenProgram, setChosenProgram] = useState<string>()
+  const [chosenUniversity, setChosenUniversity] = useState<string>()
   const [loadingUniversities, setLoadingUniversities] = useState(true)
+  const [loadingPreAnswer, setLoadingPreAnswer] = useState(true)
   const [contentfulUniversities, setContentfulUniversities] = useState<
     Array<UniversityGatewayUniversity>
   >([])
+
+  useEffect(() => {
+    //Get university information from contentful
+    getUniversityInformationCallback().then((response) => {
+      setContentfulUniversities(response.universityGatewayUniversities)
+      setLoadingUniversities(false)
+    })
+
+    //We have a predetermined choice and no answer already in application
+    if (preChosenProgram && programAnswer === '' && universityAnswer === '') {
+      setChosenProgram(preChosenProgram)
+      const programUniversityId = programs.find(
+        (x) => x.id === preChosenProgram,
+      )?.universityId
+      setChosenUniversity(
+        universities.find((x) => x.id === programUniversityId)?.id || '',
+      )
+    } else {
+      // Otherwise apply the answers we already have
+      setChosenProgram(programAnswer)
+      setChosenUniversity(universityAnswer)
+    }
+    setLoadingPreAnswer(false)
+  }, [])
 
   const getUniversities = useLazyUniversityQuery()
   const getUniversityInformationCallback = useCallback(async () => {
     const { data } = await getUniversities({})
     return data
   }, [getUniversities])
-
-  useEffect(() => {
-    getUniversityInformationCallback().then((response) => {
-      setContentfulUniversities(response.universityGatewayUniversities)
-      setLoadingUniversities(false)
-    })
-  }, [])
 
   const ChooseUniversity = (value: string) => {
     setChosenUniversity(value)
@@ -72,25 +91,38 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
   }
 
   const ChooseProgram = (value: string) => {
-    const programInfo = programs.filter(
+    const chosenProgram = programs.find(
       (program) => program.universityId === chosenUniversity,
-    )[0]
+    )
+
     const extra =
-      lang === 'is'
-        ? programInfo.specializationNameEn
-          ? ` - ${programInfo.specializationNameEn}`
+      lang === 'is' && chosenProgram
+        ? chosenProgram.specializationNameIs
+          ? ` - ${formatMessage(
+              information.labels.programSelection.specilizationLabel,
+            )}: ${chosenProgram.specializationNameIs}`
           : ''
-        : programInfo.specializationNameEn
-        ? ` - ${programInfo.specializationNameEn}`
+        : chosenProgram && chosenProgram.specializationNameEn
+        ? ` - ${formatMessage(
+            information.labels.programSelection.specilizationLabel,
+          )}: ${chosenProgram.specializationNameEn}`
         : ''
     const programName = `${
-      lang === 'is' ? programInfo.nameIs : programInfo.nameEn
+      lang === 'is' && chosenProgram
+        ? chosenProgram.nameIs
+        : chosenProgram && chosenProgram.nameEn
     }${extra}`
     setChosenProgram(value)
+    if (
+      chosenProgram?.modeOfDelivery &&
+      chosenProgram?.modeOfDelivery.length <= 1
+    ) {
+      setValue(`modeOfDeliveryInformation`, ModeOfDelivery.ON_SITE)
+    }
     setValue(`${Routes.PROGRAMINFORMATION}.programName`, programName)
   }
 
-  return !loadingUniversities ? (
+  return !loadingUniversities && !loadingPreAnswer ? (
     <Box>
       <Box marginTop={2}>
         <SelectController
@@ -121,16 +153,26 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
             )}
             defaultValue={chosenProgram}
             onSelect={(value) => ChooseProgram(value.value as string)}
-            options={programs
+            options={sortedProgramsDeepCopy
+              .sort((x, y) => {
+                if (lang === 'is' && x.nameIs > y.nameIs) return 1
+                else if (lang === 'en' && x.nameEn > y.nameEn) return 1
+                else return -1
+              })
               .filter((program) => program.universityId === chosenUniversity)
               .map((program) => {
                 const extra =
                   lang === 'is'
-                    ? program.specializationNameEn
-                      ? ` - ${program.specializationNameEn}`
+                    ? program.specializationNameIs
+                      ? ` - ${formatMessage(
+                          information.labels.programSelection
+                            .specilizationLabel,
+                        )}: ${program.specializationNameIs}`
                       : ''
                     : program.specializationNameEn
-                    ? ` - ${program.specializationNameEn}`
+                    ? ` - ${formatMessage(
+                        information.labels.programSelection.specilizationLabel,
+                      )}: ${program.specializationNameEn}`
                     : ''
                 return {
                   label: `${

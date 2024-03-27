@@ -73,6 +73,7 @@ export class UniversityOfIcelandApplicationClient {
     const response = await this.applicationApi.applicationsPost(
       mappedApplication,
     )
+
     return response
   }
 

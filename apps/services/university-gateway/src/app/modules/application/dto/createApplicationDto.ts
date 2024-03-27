@@ -1,4 +1,4 @@
-import { ModeOfDelivery } from '@island.is/university-gateway'
+import { ModeOfDelivery, ApplicationTypes } from '@island.is/university-gateway'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsArray,
@@ -96,20 +96,94 @@ class CreateApplicationApplicantDto {
   phone!: string
 }
 
+class CreateApplicationFileDto {
+  @IsString()
+  @ApiProperty({
+    description: 'File name',
+    example: 'cv.txt',
+  })
+  fileName!: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Base 64 for file',
+    example: '',
+  })
+  base64!: string
+}
+
 class CreateApplicationEducationDto {
   @IsString()
+  @ApiPropertyOptional()
   @ApiProperty({
     description: 'School name',
     example: 'Menntaskólinn í Reykjavík',
   })
-  schoolName!: string
+  schoolName?: string
 
   @IsString()
+  @ApiPropertyOptional()
   @ApiProperty({
     description: 'Degree type name',
     example: 'Stúdentspróf',
   })
-  degree!: string
+  degree?: string
+
+  @IsString()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'Degree name',
+    example: 'Félagsfræðibraut',
+  })
+  degreeName?: string
+
+  @IsString()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'Degree country',
+    example: 'Ísland',
+  })
+  degreeCountry?: string
+
+  @IsString()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'Finished units',
+    example: '180',
+  })
+  finishedUnits?: string
+
+  @IsString()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'Degree start date',
+    example: '27.05.2022',
+  })
+  degreeStartDate?: string
+
+  @IsString()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'Degree end date',
+    example: '27.05.2022',
+  })
+  degreeEndDate?: string
+
+  @IsString()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'More details about education',
+    example: 'Will be finishing in October',
+  })
+  moreDetails?: string
+
+  @IsArray()
+  @ApiPropertyOptional()
+  @ApiProperty({
+    description: 'List of education degree attachments',
+    type: [CreateApplicationFileDto],
+  })
+  degreeAttachments?: CreateApplicationFileDto[]
 }
 
 class CreateApplicationWorkExperienceDto {
@@ -196,6 +270,14 @@ export class CreateApplicationDto {
     example: 'IS',
   })
   preferredLanguage?: string
+
+  @IsEnum(ApplicationTypes)
+  @ApiPropertyOptional({
+    description: 'The chosen type of former education chosen',
+    example: ApplicationTypes.DIPLOMA,
+    enum: ApplicationTypes,
+  })
+  educationOption!: ApplicationTypes
 
   @IsArray()
   @ApiProperty({
