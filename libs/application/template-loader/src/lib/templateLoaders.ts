@@ -151,6 +151,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/energy-funds'),
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>
     import('@island.is/application/templates/healthcare-license-certificate'),
+  [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: () =>
+    import('@island.is/application/templates/healthcare-work-permit'),
   [ApplicationTypes.PENSION_SUPPLEMENT]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/pension-supplement'
