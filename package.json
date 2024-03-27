@@ -267,7 +267,7 @@
     "remark-parse": "9.0.0",
     "rosetta": "1.0.0",
     "rxjs": "7.8.1",
-    "sanitize-html": "2.10.0",
+    "sanitize-html": "2.12.1",
     "sequelize": "6.19.0",
     "sequelize-replace-enum-postgres": "1.6.0",
     "sequelize-typescript": "2.1.3",
