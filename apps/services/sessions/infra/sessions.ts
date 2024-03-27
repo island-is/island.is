@@ -92,7 +92,6 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
     .image(imageName)
-    .env({ CLEANUP_RETENTION_IN_MONTHS: '12' })
     .command('node')
     .args('main.js', '--job=cleanup')
     .resources({

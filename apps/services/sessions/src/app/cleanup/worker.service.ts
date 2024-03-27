@@ -5,10 +5,11 @@ import { Op } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { environment } from '../../environments'
 import { Session } from '../sessions/session.model'
 
 import type { Logger } from '@island.is/logging'
+
+const RETENTION_IN_MONTHS = 12
 export class SessionsCleanupService {
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -33,7 +34,7 @@ export class SessionsCleanupService {
     const filter = {
       where: {
         timestamp: {
-          [Op.lt]: subMonths(new Date(), environment.cleanup.retentionInMonths),
+          [Op.lt]: subMonths(new Date(), RETENTION_IN_MONTHS),
         },
       },
     }
