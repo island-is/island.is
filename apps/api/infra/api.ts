@@ -44,6 +44,7 @@ import {
   SocialInsuranceAdministration,
   IntellectualProperties,
   Inna,
+  UniversityCareers,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -412,6 +413,7 @@ export const serviceSetup = (services: {
       ChargeFjsV2,
       EnergyFunds,
       UniversityOfIceland,
+      UniversityCareers,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,

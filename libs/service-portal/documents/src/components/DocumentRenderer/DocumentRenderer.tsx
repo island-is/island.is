@@ -1,6 +1,5 @@
-import { DocumentDetails } from '@island.is/api/schema'
 import { HtmlDocument } from './HTMLDocument'
-import { PdfDocWithModal, PdfDocument } from './PdfDocument'
+import { PdfDocWithModal } from './PdfDocument'
 import { UrlDocument } from './UrlDocment'
 import NoPDF from '../NoPDF/NoPDF'
 import { messages } from '../../utils/messages'

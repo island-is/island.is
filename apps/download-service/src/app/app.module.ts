@@ -31,9 +31,13 @@ import {
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
 import {
-  UniversityOfIcelandClientConfig,
-  UniversityOfIcelandClientModule,
-} from '@island.is/clients/university-of-iceland'
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  UniversityCareersClientModule,
+  UniversityOfAkureyriCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
 import {
   RegulationsClientConfig,
   RegulationsClientModule,
@@ -69,10 +73,10 @@ import {
     DocumentsClientModule,
     FinanceClientModule,
     VehiclesClientModule,
-    UniversityOfIcelandClientModule,
     RegulationsAdminClientModule,
     RegulationsClientModule,
     WorkMachinesClientModule,
+    UniversityCareersClientModule,
     MMSClientModule,
     RightsPortalClientModule,
     ConfigModule.forRoot({
@@ -82,7 +86,11 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
-        UniversityOfIcelandClientConfig,
+        UniversityOfIcelandCareerClientConfig,
+        AgriculturalUniversityOfIcelandCareerClientConfig,
+        UniversityOfAkureyriCareerClientConfig,
+        HolarUniversityCareerClientConfig,
+        BifrostUniversityCareerClientConfig,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         WorkMachinesClientConfig,

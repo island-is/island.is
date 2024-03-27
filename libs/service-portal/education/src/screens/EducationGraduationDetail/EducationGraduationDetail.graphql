@@ -1,0 +1,30 @@
+query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
+  universityCareersStudentTrack(input: $input) {
+    transcript {
+      degree
+      faculty
+      graduationDate
+      institution {
+        id
+        displayName
+      }
+      name
+      nationalId
+      school
+      studyProgram
+      trackNumber
+    }
+    files {
+      type
+      locale
+      displayName
+      fileName
+    }
+    metadata {
+      description
+      footer
+      unconfirmedData
+    }
+    downloadServiceURL
+  }
+}

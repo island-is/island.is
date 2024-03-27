@@ -1,0 +1,41 @@
+fragment Transcript on UniversityCareersStudentTrackTranscript {
+  name
+  nationalId
+  graduationDate
+  trackNumber
+  institution {
+    id
+    displayName
+  }
+  school
+  faculty
+  studyProgram
+  degree
+}
+
+query studentInfo($input: UniversityCareersStudentInfoInput!) {
+  universityCareersStudentTrackHistory(input: $input) {
+    __typename
+    trackResults {
+      ... on UniversityCareersStudentTrackTranscript {
+        name
+        nationalId
+        graduationDate
+        trackNumber
+        institution {
+          id
+          displayName
+        }
+        school
+        faculty
+        studyProgram
+        degree
+      }
+      ... on UniversityCareersStudentTrackTranscriptError {
+        __typename
+        university
+        error
+      }
+    }
+  }
+}

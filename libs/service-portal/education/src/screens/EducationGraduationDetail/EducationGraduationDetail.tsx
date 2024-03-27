@@ -1,4 +1,3 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
 import {
@@ -13,60 +12,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
-  ErrorScreen,
   formatDate,
   formSubmit,
   IntroHeader,
   m,
-  UNI_HI_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { Query } from '@island.is/api/schema'
-import { gql, useQuery } from '@apollo/client'
 import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
+import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
-
-const GetStudentInfoQuery = gql`
-  query universityOfIcelandStudentInfo(
-    $input: UniversityOfIcelandStudentInfoInput!
-  ) {
-    universityOfIcelandStudentInfo(input: $input) {
-      track(input: $input) {
-        transcript {
-          degree
-          faculty
-          graduationDate
-          institution {
-            id
-            displayName
-          }
-          name
-          nationalId
-          school
-          studyProgram
-          trackNumber
-        }
-        files {
-          type
-          locale
-          displayName
-          fileName
-        }
-        body {
-          description
-          footer
-          unconfirmedData
-        }
-        downloadServiceURL
-      }
-    }
-  }
-`
-
 type UseParams = {
   id: string
 }
@@ -76,7 +31,7 @@ export const EducationGraduationDetail = () => {
   const { id } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(GetStudentInfoQuery, {
+  const { data, loading, error } = useStudentTrackQuery({
     variables: {
       input: {
         trackNumber: parseInt(id),
@@ -85,11 +40,11 @@ export const EducationGraduationDetail = () => {
     },
   })
 
-  const studentInfo = data?.universityOfIcelandStudentInfo?.track?.transcript
-  const text = data?.universityOfIcelandStudentInfo?.track?.body
-  const files = data?.universityOfIcelandStudentInfo?.track?.files
+  const studentInfo = data?.universityCareersStudentTrack.transcript
+  const text = data?.universityCareersStudentTrack.metadata
+  const files = data?.universityCareersStudentTrack.files
   const downloadServiceURL =
-    data?.universityOfIcelandStudentInfo?.track?.downloadServiceURL
+    data?.universityCareersStudentTrack.downloadServiceURL
 
   const graduationDate = studentInfo
     ? formatDate(studentInfo?.graduationDate)
@@ -102,7 +57,7 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={m.educationGraduation}
         intro={text?.description || ''}
-        serviceProviderSlug={UNI_HI_SLUG}
+        serviceProviderSlug={'haskoli-islands'}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>
