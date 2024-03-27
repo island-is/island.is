@@ -52,8 +52,6 @@ reviews:
   auto_review:
     enabled: true
     drafts: false
-    labels:
-      - ai-review
     base_branches:
       - "main"
 chat:
