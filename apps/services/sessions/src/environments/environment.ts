@@ -13,5 +13,10 @@ export default {
         process.env.IDENTITY_SERVER_ISSUER_URL!
       : 'https://identity-server.dev01.devland.is',
   },
+  cleanup: {
+    retentionInMonths: process.env.CLEANUP_RETENTION_IN_MONTHS
+      ? Number(process.env.CLEANUP_RETENTION_IN_MONTHS)
+      : 12,
+  },
   port: 3333,
 }
