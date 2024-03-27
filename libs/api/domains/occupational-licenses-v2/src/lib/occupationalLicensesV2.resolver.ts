@@ -24,6 +24,7 @@ import {
 } from '@island.is/nest/feature-flags'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard, FeatureFlagGuard)
+@Audit({ namespace: '@island.is/api/occupational-licenses-v2' })
 @Scopes(ApiScope.internal)
 @FeatureFlag(Features.occupationalLicensesV2)
 @Resolver(() => LicenseCollection)
@@ -63,6 +64,7 @@ export class OccupationalLicensesV2Resolver {
     name: 'occupationalLicenseV2',
     nullable: true,
   })
+  @Audit()
   async license(
     @CurrentUser() user: User,
     @Args('input') input: LicenseInput,
