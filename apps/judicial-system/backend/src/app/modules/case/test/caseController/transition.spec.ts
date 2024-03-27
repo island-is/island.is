@@ -43,7 +43,7 @@ type GivenWhenThen = (
 describe('CaseController - Transition', () => {
   const date = randomDate()
   const userId = uuid()
-  const defaultUser = { id: userId, canConfirmAppeal: false } as User
+  const defaultUser = { id: userId, canConfirmIndictment: false } as User
 
   let mockMessageService: MessageService
   let transaction: Transaction
@@ -78,7 +78,10 @@ describe('CaseController - Transition', () => {
       try {
         then.result = await caseController.transition(
           caseId,
-          { ...defaultUser, canConfirmAppeal: isIndictmentCase(theCase.type) },
+          {
+            ...defaultUser,
+            canConfirmIndictment: isIndictmentCase(theCase.type),
+          },
           theCase,
           transition,
         )
@@ -191,7 +194,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.ARCHIVE_CASE_FILE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: caseFileId1,
@@ -200,7 +203,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.ARCHIVE_CASE_FILE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: caseFileId2,
@@ -209,7 +212,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.ARCHIVE_CASE_FILES_RECORD,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   policeCaseNumber,
@@ -218,7 +221,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_RULING_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -226,7 +229,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -239,7 +242,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -247,7 +250,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.ARCHIVE_CASE_FILE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: caseFileId1,
@@ -256,7 +259,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.ARCHIVE_CASE_FILE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: caseFileId2,
@@ -267,7 +270,7 @@ describe('CaseController - Transition', () => {
                         type: MessageType.ARCHIVE_CASE_FILES_RECORD,
                         user: {
                           ...defaultUser,
-                          canConfirmAppeal: isIndictmentCase(theCase.type),
+                          canConfirmIndictment: isIndictmentCase(theCase.type),
                         },
                         caseId,
                         policeCaseNumber,
@@ -286,7 +289,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -303,7 +306,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -311,7 +314,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -319,7 +322,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   policeCaseNumber,
@@ -336,7 +339,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -344,7 +347,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -352,7 +355,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: caseFileId1,
@@ -361,7 +364,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_TO_POLICE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -377,7 +380,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -394,7 +397,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -527,7 +530,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: prosecutorAppealBriefId,
@@ -536,7 +539,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: prosecutorAppealBriefCaseFileId1,
@@ -545,7 +548,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: prosecutorAppealBriefCaseFileId2,
@@ -554,7 +557,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -571,7 +574,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -588,7 +591,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_CASE_FILE_TO_COURT,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                   caseFileId: appealRulingId,
@@ -597,7 +600,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },
@@ -605,7 +608,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.DELIVER_APPEAL_TO_POLICE,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId: theCase.id,
                 },
@@ -622,7 +625,7 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
                   user: {
                     ...defaultUser,
-                    canConfirmAppeal: isIndictmentCase(theCase.type),
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
                 },

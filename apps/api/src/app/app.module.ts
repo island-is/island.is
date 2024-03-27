@@ -164,6 +164,7 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
 import { HealthController } from './health.controller'
 import { DocumentClientConfig } from '@island.is/clients/documents'
+import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 
 const environment = getConfig
 
@@ -337,6 +338,7 @@ const environment = getConfig
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsLoansClientConfig,
+        HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
         RegulationsAdminClientConfig,

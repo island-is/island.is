@@ -71,7 +71,7 @@ export class UserService {
           email: '',
           role: UserRole.ADMIN,
           active: true,
-          canConfirmAppeal: false,
+          canConfirmIndictment: false,
           ...admin,
         } as User
       }

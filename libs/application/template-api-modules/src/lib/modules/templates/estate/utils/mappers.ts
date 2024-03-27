@@ -103,6 +103,7 @@ export const expandClaims = (
     expandedClaims.push({
       publisher: claim?.publisher ?? '',
       value: claim?.value ?? '',
+      nationalId: claim?.nationalId ?? '',
     })
   })
   return expandedClaims
@@ -187,4 +188,19 @@ export const expandStocks = (
   })
 
   return expandedStocks
+}
+
+export const expandOtherAssets = (
+  otherAssets: UploadData['otherAssets'],
+): UploadData['otherAssets'] => {
+  const expandedOtherAssets: UploadData['otherAssets'] = []
+
+  otherAssets.filter(filterEmptyObjects).forEach((otherAsset) => {
+    expandedOtherAssets.push({
+      info: otherAsset.info ?? '',
+      value: otherAsset.value ?? '',
+    })
+  })
+
+  return expandedOtherAssets
 }
