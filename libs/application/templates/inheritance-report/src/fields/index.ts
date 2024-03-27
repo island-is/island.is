@@ -14,4 +14,5 @@ export { CalculateTotalAssets } from './CalculationsOfTotal/CalculateTotalAssets
 export { CalculateTotalDebts } from './CalculationsOfTotal/CalculateTotalDebts'
 export { CalculateTotalBusiness } from './CalculationsOfTotal/CalculateTotalBusiness'
 export { CalculateFuneralCost } from './CalculationsOfTotal/CalculateFuneralCost'
+export { CalculateShare } from './CalculateShare'
 export { Cards } from './Cards'

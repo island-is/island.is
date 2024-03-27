@@ -13,6 +13,7 @@ import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
+import { valueToNumber } from '../../lib/utils/helpers'
 
 export const DeceasedShare = ({
   id,
@@ -26,16 +27,21 @@ export const DeceasedShare = ({
   const checkboxFieldName = `${id}.deceasedShareEnabled`
   const inputFieldName = `${id}.deceasedShare`
 
-  const watchedField = watch(checkboxFieldName)
-  const hasError = getErrorViaPath(errors, `${id}.deceasedShare`)
+  const watchedCheckboxField = watch(checkboxFieldName)
+  const watchedInputField = watch(inputFieldName)
 
-  const checked = watchedField?.[0] === YES
+  const hasError = getErrorViaPath(errors, `${id}.deceasedShare`)
+  const checked = watchedCheckboxField?.[0] === YES
 
   useEffect(() => {
     if (!checked) {
       setValue(inputFieldName, '0')
+    } else {
+      if (valueToNumber(watchedInputField) > 0) {
+        console.log('watchedInputField', watchedInputField)
+      }
     }
-  }, [checked, inputFieldName, setValue])
+  }, [checked, inputFieldName, setValue, watchedInputField])
 
   return (
     <Box
@@ -59,7 +65,7 @@ export const DeceasedShare = ({
               split="1/2"
               large={false}
               id={checkboxFieldName}
-              defaultValue={watchedField}
+              defaultValue={watchedCheckboxField}
               options={[
                 {
                   label: formatMessage(m.share),
@@ -80,9 +86,9 @@ export const DeceasedShare = ({
         <GridColumn span={['1/1', '1/2']}>
           <ShareInput
             name={inputFieldName}
-            onAfterChange={(val) => {
-              setValue(inputFieldName, String(val))
-            }}
+            // onAfterChange={(val) => {
+            //   setValue(inputFieldName, String(val))
+            // }}
             errorMessage={hasError}
             disabled={!checked}
             label={formatMessage(m.deceasedShare)}

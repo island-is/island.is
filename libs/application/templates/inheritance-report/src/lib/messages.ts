@@ -1088,9 +1088,19 @@ export const m = defineMessages({
     defaultMessage: 'Eign til skipta og erfingjar',
     description: '',
   },
+  propertyForExchangeAlternative: {
+    id: 'ir.application:propertyForExchangeAlternative',
+    defaultMessage: 'Eign til skipta',
+    description: '',
+  },
   totalDeduction: {
     id: 'ir.application:totalDeduction',
     defaultMessage: 'Samtals frádráttur (búshluti maka)',
+    description: '',
+  },
+  totalDeductionAlternative: {
+    id: 'ir.application:totalDeductionAlternative',
+    defaultMessage: 'Samtals frádráttur',
     description: '',
   },
   netProperty: {

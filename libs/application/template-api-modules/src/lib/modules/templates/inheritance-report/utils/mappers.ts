@@ -18,6 +18,7 @@ const initialMapper = <T>(element: T) => {
     share: '0',
     deceasedShare: '0',
     deceasedShareEnabled: [],
+    deceasedShareAmount: 0,
   }
 }
 
@@ -102,6 +103,7 @@ export const expandAnswers = (
             foreignBankAccount: account?.foreignBankAccount ?? [],
             deceasedShare: account.deceasedShare ?? '',
             deceasedShareEnabled: account.deceasedShareEnabled ?? [],
+            deceasedShareAmount: account.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -114,6 +116,7 @@ export const expandAnswers = (
             propertyValuation: claim.propertyValuation ?? '',
             deceasedShare: claim.deceasedShare ?? '',
             deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
+            deceasedShareAmount: claim.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -126,6 +129,7 @@ export const expandAnswers = (
             propertyValuation: gun.propertyValuation ?? '',
             deceasedShare: gun.deceasedShare ?? '',
             deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
+            deceasedShareAmount: gun.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.guns?.total ?? 0,
@@ -136,12 +140,14 @@ export const expandAnswers = (
         deceasedShare: answers.assets.inventory?.deceasedShare ?? '',
         deceasedShareEnabled:
           answers.assets.inventory?.deceasedShareEnabled ?? [],
+        deceasedShareAmount: answers.assets.inventory?.deceasedShareAmount ?? 0,
       },
       money: {
         info: answers.assets.money?.info ?? '',
         value: answers.assets.money?.value ?? '',
         deceasedShare: answers.assets.money?.deceasedShare ?? '',
         deceasedShareEnabled: answers.assets.money?.deceasedShareEnabled ?? [],
+        deceasedShareAmount: answers.assets.money?.deceasedShareAmount ?? 0,
       },
       otherAssets: {
         data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
@@ -150,6 +156,7 @@ export const expandAnswers = (
             value: otherAsset?.value ?? '',
             deceasedShare: otherAsset?.deceasedShare ?? '',
             deceasedShareEnabled: otherAsset?.deceasedShareEnabled ?? [],
+            deceasedShareAmount: otherAsset?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.otherAssets?.total ?? 0,
@@ -163,6 +170,7 @@ export const expandAnswers = (
             share: realEstate.share ?? '0',
             deceasedShare: realEstate.deceasedShare ?? '0',
             deceasedShareEnabled: realEstate.deceasedShareEnabled ?? [],
+            deceasedShareAmount: realEstate.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.realEstate?.total ?? 0,
@@ -177,6 +185,7 @@ export const expandAnswers = (
             value: stock.value ?? '',
             deceasedShare: stock?.deceasedShare ?? '',
             deceasedShareEnabled: stock?.deceasedShareEnabled ?? [],
+            deceasedShareAmount: stock?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.stocks?.total ?? 0,
@@ -189,6 +198,7 @@ export const expandAnswers = (
             propertyValuation: vehicle.propertyValuation ?? '',
             deceasedShare: vehicle.deceasedShare ?? '0',
             deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
+            deceasedShareAmount: vehicle?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.vehicles?.total ?? 0,

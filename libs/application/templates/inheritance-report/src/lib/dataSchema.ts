@@ -13,6 +13,7 @@ import { m } from './messages'
 const deceasedShare = {
   deceasedShare: z.string().optional(),
   deceasedShareEnabled: z.array(z.enum([YES])).optional(),
+  deceasedShareAmount: z.number().optional(),
 }
 
 const validateDeceasedShare = ({
