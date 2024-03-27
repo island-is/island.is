@@ -7,17 +7,19 @@ import {
 } from '@island.is/island-ui/core'
 import ShareInput from '../ShareInput'
 import { useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useFormState } from 'react-hook-form'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
+import { getErrorViaPath } from '@island.is/application/core'
 
 export const DeceasedShare = ({
   id,
 }: {
   id: string
 } & GridColumnProps) => {
+  const { errors } = useFormState()
   const { setValue, watch } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -25,6 +27,7 @@ export const DeceasedShare = ({
   const inputFieldName = `${id}.deceasedShare`
 
   const watchedField = watch(checkboxFieldName)
+  const hasError = getErrorViaPath(errors, `${id}.deceasedShare`)
 
   const checked = watchedField?.[0] === YES
 
@@ -80,8 +83,9 @@ export const DeceasedShare = ({
             onAfterChange={(val) => {
               setValue(inputFieldName, String(val))
             }}
+            errorMessage={hasError}
             disabled={!checked}
-            label="Hlutfall séreignar"
+            label={formatMessage(m.deceasedShare)}
           />
         </GridColumn>
       </GridRow>

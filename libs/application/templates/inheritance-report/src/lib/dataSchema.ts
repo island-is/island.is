@@ -6,12 +6,31 @@ import {
   isValidEmail,
   isValidPhoneNumber,
   isValidString,
+  valueToNumber,
 } from './utils/helpers'
 import { m } from './messages'
 
 const deceasedShare = {
   deceasedShare: z.string().optional(),
   deceasedShareEnabled: z.array(z.enum([YES])).optional(),
+}
+
+const validateDeceasedShare = ({
+  deceasedShare,
+  deceasedShareEnabled,
+}: {
+  deceasedShare: string | undefined
+  deceasedShareEnabled: 'Yes'[] | undefined
+}) => {
+  if (
+    Array.isArray(deceasedShareEnabled) &&
+    deceasedShareEnabled.includes(YES)
+  ) {
+    const value = valueToNumber(deceasedShare)
+    return value > 0 && value <= 100
+  }
+
+  return true
 }
 
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
@@ -65,6 +84,17 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
             path: ['description'],
           },
         )
+        .refine(
+          ({ deceasedShare, deceasedShareEnabled }) => {
+            return validateDeceasedShare({
+              deceasedShare,
+              deceasedShareEnabled,
+            })
+          },
+          {
+            path: ['deceasedShare'],
+          },
+        )
         .array()
         .optional(),
       total: z.number().optional(),
@@ -95,6 +125,17 @@ export const inheritanceReportSchema = z.object({
         value: z.string().optional(),
         ...deceasedShare,
       })
+      .refine(
+        ({ deceasedShare, deceasedShareEnabled }) => {
+          return validateDeceasedShare({
+            deceasedShare,
+            deceasedShareEnabled,
+          })
+        },
+        {
+          path: ['deceasedShare'],
+        },
+      )
       .optional(),
     bankAccounts: z
       .object({
@@ -106,6 +147,17 @@ export const inheritanceReportSchema = z.object({
             exchangeRateOrInterest: z.string().refine((v) => v),
             ...deceasedShare,
           })
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -130,6 +182,17 @@ export const inheritanceReportSchema = z.object({
               path: ['assetNumber'],
             },
           )
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -146,6 +209,17 @@ export const inheritanceReportSchema = z.object({
             value: z.string().refine((v) => v),
             ...deceasedShare,
           })
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -157,6 +231,17 @@ export const inheritanceReportSchema = z.object({
         value: z.string().optional(),
         ...deceasedShare,
       })
+      .refine(
+        ({ deceasedShare, deceasedShareEnabled }) => {
+          return validateDeceasedShare({
+            deceasedShare,
+            deceasedShareEnabled,
+          })
+        },
+        {
+          path: ['deceasedShare'],
+        },
+      )
       .optional(),
     otherAssets: z
       .object({
@@ -180,6 +265,17 @@ export const inheritanceReportSchema = z.object({
             },
             {
               path: ['value'],
+            },
+          )
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
             },
           )
           .array()

@@ -90,3 +90,6 @@ export const getDeceasedHadAssets = (application: Application): boolean =>
   application?.answers &&
   getValueViaPath(application.answers, 'deceasedHadAssets') === YES &&
   getValueViaPath(application.answers, 'deceasedWasMarried') === YES
+
+export const hasYes = (arr?: string[]) =>
+  Array.isArray(arr) && arr.includes(YES)

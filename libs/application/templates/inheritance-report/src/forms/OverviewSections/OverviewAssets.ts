@@ -19,7 +19,7 @@ import {
   OtherAssetsData,
   StocksData,
 } from '../../types'
-import { valueToNumber } from '../../lib/utils/helpers'
+import { hasYes, valueToNumber } from '../../lib/utils/helpers'
 
 export const overviewAssets = [
   buildDescriptionField({
@@ -45,17 +45,27 @@ export const overviewAssets = [
           const propertyValuation = parseFloat(asset.propertyValuation)
           const propertyShare = parseFloat(asset.share)
 
+          const description = [
+            `${m.assetNumber.defaultMessage}: ${asset.assetNumber}`,
+            m.realEstateEstimation.defaultMessage +
+              ': ' +
+              (propertyValuation
+                ? formatCurrency(String(propertyValuation))
+                : '0 kr.'),
+            m.propertyShare.defaultMessage + `: ${propertyShare}%`,
+          ]
+
+          const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+
+          if (hasYes(asset.deceasedShareEnabled)) {
+            description.push(
+              m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
+            )
+          }
+
           return {
             title: asset.description,
-            description: [
-              `${m.assetNumber.defaultMessage}: ${asset.assetNumber}`,
-              m.realEstateEstimation.defaultMessage +
-                ': ' +
-                (propertyValuation
-                  ? formatCurrency(String(propertyValuation))
-                  : '0 kr.'),
-              m.propertyShare.defaultMessage + `: ${propertyShare}%`,
-            ],
+            description,
           }
         })
       },
@@ -89,17 +99,29 @@ export const overviewAssets = [
         const vehicleAssets = (answers.assets as unknown as EstateAssets)
           .vehicles.data
         return (
-          vehicleAssets.map((asset) => ({
-            title: asset.description,
-            description: [
+          vehicleAssets.map((asset) => {
+            const description = [
               `${m.vehicleNumberLabel.defaultMessage}: ${asset.assetNumber}`,
               m.vehicleValuation.defaultMessage +
                 ': ' +
                 (asset.propertyValuation
                   ? formatCurrency(asset.propertyValuation)
                   : '0 kr.'),
-            ],
-          })) ?? []
+            ]
+
+            const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+
+            if (hasYes(asset.deceasedShareEnabled)) {
+              description.push(
+                m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
+              )
+            }
+
+            return {
+              title: asset.description,
+              description,
+            }
+          }) ?? []
         )
       },
     },
@@ -131,17 +153,29 @@ export const overviewAssets = [
       cards: ({ answers }: Application) => {
         const gunAssets = (answers.assets as unknown as EstateAssets).guns.data
         return (
-          gunAssets.map((asset) => ({
-            title: asset.description,
-            description: [
+          gunAssets.map((asset) => {
+            const description = [
               `${m.gunNumber.defaultMessage}: ${asset.assetNumber}`,
               m.gunValuation.defaultMessage +
                 ': ' +
                 (asset.propertyValuation
                   ? formatCurrency(asset.propertyValuation)
                   : '0 kr.'),
-            ],
-          })) ?? []
+            ]
+
+            const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+
+            if (hasYes(asset.deceasedShareEnabled)) {
+              description.push(
+                m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
+              )
+            }
+
+            return {
+              title: asset.description,
+              description,
+            }
+          }) ?? []
         )
       },
     },
@@ -203,23 +237,34 @@ export const overviewAssets = [
         ).map((account) => {
           const isForeign = account.foreignBankAccount?.length
 
+          const description = [
+            `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
+              String(valueToNumber(account.propertyValuation)),
+            )}`,
+            `${
+              m.bankAccountPenaltyInterestRates.defaultMessage
+            }: ${formatCurrency(
+              String(valueToNumber(account.exchangeRateOrInterest)),
+            )}`,
+            `${m.bankAccountForeign.defaultMessage}: ${
+              isForeign ? m.yes.defaultMessage : m.no.defaultMessage
+            }`,
+          ]
+
+          const deceasedShare = valueToNumber(account.deceasedShareEnabled)
+
+          if (hasYes(account.deceasedShareEnabled)) {
+            description.push(
+              m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
+            )
+          }
+
           return {
+            titleRequired: false,
             title: isForeign
               ? account.propertyNumber
               : formatBankInfo(account.propertyNumber ?? ''),
-            description: [
-              `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
-                String(valueToNumber(account.propertyValuation)),
-              )}`,
-              `${
-                m.bankAccountPenaltyInterestRates.defaultMessage
-              }: ${formatCurrency(
-                String(valueToNumber(account.exchangeRateOrInterest)),
-              )}`,
-              `${m.bankAccountForeign.defaultMessage}: ${
-                isForeign ? m.yes.defaultMessage : m.no.defaultMessage
-              }`,
-            ],
+            description,
           }
         }),
     },
@@ -251,15 +296,27 @@ export const overviewAssets = [
       cards: ({ answers }: Application) => {
         const claims = (answers.assets as unknown as EstateAssets).claims.data
         return (
-          claims.map((asset: ClaimsData) => ({
-            title: asset.issuer,
-            titleRequired: false,
-            description: [
+          claims.map((asset: ClaimsData) => {
+            const description = [
               m.claimsAmount.defaultMessage +
                 ': ' +
                 (asset.value ? formatCurrency(asset.value) : '0 kr.'),
-            ],
-          })) ?? []
+            ]
+
+            const deceasedShare = valueToNumber(asset.deceasedShareEnabled)
+
+            if (hasYes(asset.deceasedShareEnabled)) {
+              description.push(
+                m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
+              )
+            }
+
+            return {
+              title: asset.issuer,
+              titleRequired: false,
+              description,
+            }
+          }) ?? []
         )
       },
     },
@@ -291,10 +348,8 @@ export const overviewAssets = [
       cards: ({ answers }: Application) => {
         const stocks = (answers.assets as unknown as EstateAssets).stocks.data
         return (
-          stocks.map((stock: StocksData) => ({
-            title: stock.organization,
-            titleRequired: false,
-            description: [
+          stocks.map((stock: StocksData) => {
+            const description = [
               `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
                 stock.nationalId ?? '',
               )}`,
@@ -307,8 +362,22 @@ export const overviewAssets = [
               `${m.stocksValue.defaultMessage}: ${formatCurrency(
                 stock.value ?? '0',
               )}`,
-            ],
-          })) ?? []
+            ]
+
+            const deceasedShare = valueToNumber(stock.deceasedShareEnabled)
+
+            if (hasYes(stock.deceasedShareEnabled)) {
+              description.push(
+                m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
+              )
+            }
+
+            return {
+              title: stock.organization,
+              titleRequired: false,
+              description,
+            }
+          }) ?? []
         )
       },
     },
@@ -368,14 +437,26 @@ export const overviewAssets = [
         const otherAssets = (answers.assets as unknown as EstateAssets)
           .otherAssets.data
         return (
-          otherAssets.map((otherAsset: OtherAssetsData) => ({
-            title: otherAsset.info,
-            description: [
+          otherAssets.map((otherAsset: OtherAssetsData) => {
+            const description = [
               `${m.otherAssetsValue.defaultMessage}: ${formatCurrency(
                 otherAsset.value ?? '0',
               )}`,
-            ],
-          })) ?? []
+            ]
+
+            const deceasedShare = valueToNumber(otherAsset.deceasedShareEnabled)
+
+            if (hasYes(otherAsset.deceasedShareEnabled)) {
+              description.push(
+                m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
+              )
+            }
+
+            return {
+              title: otherAsset.info,
+              description,
+            }
+          }) ?? []
         )
       },
     },
