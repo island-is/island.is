@@ -3,15 +3,11 @@ import {
   buildSubSection,
   buildRadioField,
   getValueViaPath,
-  buildSelectField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
 import { FormValue } from '@island.is/application/types'
-import {
-  Program,
-  ProgramModeOfDeliveryModeOfDeliveryEnum,
-} from '@island.is/clients/university-gateway-api'
+import { Program } from '@island.is/clients/university-gateway-api'
 
 export const ModeOfDeliverySubSection = buildSubSection({
   id: Routes.MODEOFDELIVERYINFORMATION,
@@ -85,22 +81,22 @@ export const ModeOfDeliverySubSection = buildSubSection({
               .modeOfDelivery.map((deliveryMethod) => {
                 let extraParam
                 switch (deliveryMethod.modeOfDelivery) {
-                  case ProgramModeOfDeliveryModeOfDeliveryEnum.ON_SITE:
+                  case 'ON_SITE':
                     extraParam =
                       information.labels.modeOfDeliverySection.ON_SITE_EXTRA
 
                     break
-                  case ProgramModeOfDeliveryModeOfDeliveryEnum.ONLINE:
+                  case 'ONLINE':
                     extraParam =
                       information.labels.modeOfDeliverySection.ONLINE_EXTRA
 
                     break
-                  case ProgramModeOfDeliveryModeOfDeliveryEnum.MIXED:
+                  case 'MIXED':
                     extraParam =
                       information.labels.modeOfDeliverySection.MIXED_EXTRA
 
                     break
-                  case ProgramModeOfDeliveryModeOfDeliveryEnum.REMOTE:
+                  case 'REMOTE':
                     extraParam =
                       information.labels.modeOfDeliverySection.REMOTE_EXTRA
 
@@ -109,6 +105,10 @@ export const ModeOfDeliverySubSection = buildSubSection({
                     extraParam = ''
                     break
                 }
+                console.log(
+                  'deliveryMethod.modeOfDelivery',
+                  deliveryMethod.modeOfDelivery,
+                )
                 return {
                   label:
                     information.labels.modeOfDeliverySection[

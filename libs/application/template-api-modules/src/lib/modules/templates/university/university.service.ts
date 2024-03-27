@@ -211,7 +211,7 @@ export class UniversityService extends BaseTemplateApiService {
           universityId: answers.programInformation.university,
           programId: answers.programInformation.program,
           modeOfDelivery: mapStringToEnum(
-            answers.modeOfDeliveryInformation,
+            answers.modeOfDeliveryInformation.chosenMode,
             CreateApplicationDtoModeOfDeliveryEnum,
           ),
           applicant: user,

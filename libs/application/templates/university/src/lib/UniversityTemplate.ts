@@ -16,9 +16,9 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application, application as applicationMessage } from './messages'
+import { application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { ApiActions, CustomActions } from '../shared'
+import { ApiActions } from '../shared'
 import { UniversitySchema } from './dataSchema'
 import {
   UserProfileApi,

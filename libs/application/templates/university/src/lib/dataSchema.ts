@@ -121,19 +121,24 @@ const EducationDetailsSchema = z.object({
 })
 
 const otherDocumentsSchema = z.object({
-  degreeAttachments: FileDocumentSchema.optional(),
+  attachments: z.array(FileDocumentSchema).optional(),
+})
+
+const modeOfDeliverInformationSchema = z.object({
+  chosenMode: z.enum([
+    ModeOfDelivery.ONLINE,
+    ModeOfDelivery.ON_SITE,
+    ModeOfDelivery.MIXED,
+    ModeOfDelivery.REMOTE,
+  ]),
+  location: z.string().optional(),
 })
 
 export const UniversitySchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
   programInformation: ProgramSchema,
-  modeOfDeliveryInformation: z.enum([
-    ModeOfDelivery.ONLINE,
-    ModeOfDelivery.ON_SITE,
-    ModeOfDelivery.MIXED,
-    ModeOfDelivery.REMOTE,
-  ]),
+  modeOfDeliveryInformation: modeOfDeliverInformationSchema,
   educationOptions: z
     .enum([
       ApplicationTypes.DIPLOMA,
@@ -143,7 +148,7 @@ export const UniversitySchema = z.object({
     ])
     .optional(),
   educationDetails: EducationDetailsSchema,
-  otherDocuments: otherDocumentsSchema.optional(),
+  otherDocuments: z.array(otherDocumentsSchema).optional(),
 })
 
 export type UniversityApplication = z.TypeOf<typeof UniversitySchema>

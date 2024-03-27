@@ -7,12 +7,14 @@ import {
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
 import { getChosenProgram } from '../../../utils/getChosenProgram'
+import { UniversityAnswers } from '../../..'
 
 export const OtherDocumentsSection = buildSubSection({
   id: Routes.OTHERDOCUMENTS,
   title: information.labels.otherDocumentsSection.sectionTitle,
   condition: (formValue, externalData) => {
-    const chosenProgram = getChosenProgram(externalData, formValue)
+    const answers = formValue as UniversityAnswers
+    const chosenProgram = getChosenProgram(externalData, answers)
     return (
       !!chosenProgram &&
       chosenProgram.extraApplicationFields &&

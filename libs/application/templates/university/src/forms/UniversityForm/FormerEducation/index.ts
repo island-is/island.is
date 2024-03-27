@@ -4,7 +4,7 @@ import { EducationOptionsSubSection } from './EducationOptions'
 import { FinishedEducationSubSection } from './EducationDetails/FinishedEducation'
 import { NotFinishedEducationSubSection } from './EducationDetails/NotFinishedEducation'
 import { ThirdLevelEducationSubSection } from './EducationDetails/ThirdLevelEducation'
-import { ExemptionSubSection } from './EducationDetails/Exemtion'
+import { ExemptionSubSection } from './EducationDetails/Exemption'
 import { OtherDocumentsSection } from './OtherDocuments'
 
 export const FormerEducationSection = buildSection({

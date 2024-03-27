@@ -30,9 +30,10 @@ export const OtherDocuments: FC<FieldBaseProps> = ({
     return (
       <Box marginTop={1} marginBottom={2}>
         <FileUploadController
-          id={field.id}
+          id={`${field.id}[${index}].attachments`}
           key={index}
           application={application}
+          multiple={false}
           header={lang === 'is' ? uploadField.nameIs : uploadField.nameEn}
           description={
             lang === 'is' && uploadField.descriptionIs

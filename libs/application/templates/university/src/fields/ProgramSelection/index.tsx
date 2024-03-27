@@ -12,7 +12,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useLazyUniversityQuery } from '../../hooks/useGetUniversityInformation'
 import { UniversityGatewayUniversity } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
-import { useGetProgramQuery } from '../../hooks/useGetProgramQuery'
 import { ModeOfDelivery } from '@island.is/university-gateway'
 
 export const ProgramSelection: FC<FieldBaseProps> = ({

@@ -63,7 +63,10 @@ export const EducationDetails: FC<FieldBaseProps> = ({
         ...educationList.filter((x) => x.readOnly === 'false'),
       ]
       setEducationList(combinedLists)
-    } else if (educationOptionAnswer === ApplicationTypes.DIPLOMA) {
+    } else if (
+      educationOptionAnswer === ApplicationTypes.DIPLOMA &&
+      educationList.length === 0
+    ) {
       handleAdd()
     }
   }, [])
