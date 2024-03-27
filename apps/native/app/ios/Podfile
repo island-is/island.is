@@ -93,5 +93,13 @@ target 'IslandApp' do
         end
       end
     end
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if target.to_s === 'React-Codegen' or target.to_s === 'FBReactNativeSpec'
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        end
+     end
+    end
   end
 end
