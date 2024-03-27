@@ -12,11 +12,11 @@ export class PaymentGroup {
   name!: string
 
   @Field(() => Int)
-  totalYearCumulativeAmount?: number
+  totalYearCumulativeAmount!: number
 
   @Field(() => [Payment])
-  payments?: Array<Payment>
+  payments!: Array<Payment>
 
   @Field(() => [PaymentMonth])
-  monthlyPaymentHistory?: Array<PaymentMonth>
+  monthlyPaymentHistory!: Array<PaymentMonth>
 }
