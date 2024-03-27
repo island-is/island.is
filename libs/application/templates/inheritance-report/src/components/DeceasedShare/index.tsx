@@ -1,15 +1,12 @@
-import cn from 'classnames'
 import {
   GridColumnProps,
   GridColumn,
-  Checkbox,
-  Text,
   GridRow,
   Box,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import ShareInput from '../ShareInput'
-import { useState } from 'react'
-import * as styles from '../../fields/styles.css'
+import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
@@ -21,12 +18,21 @@ export const DeceasedShare = ({
 }: {
   id: string
 } & GridColumnProps) => {
-  const [checked, setChecked] = useState(false)
-  const { setValue } = useFormContext()
+  const { setValue, watch } = useFormContext()
   const { formatMessage } = useLocale()
 
   const checkboxFieldName = `${id}.deceasedShareEnabled`
   const inputFieldName = `${id}.deceasedShare`
+
+  const watchedField = watch(checkboxFieldName)
+
+  const checked = watchedField?.[0] === YES
+
+  useEffect(() => {
+    if (!checked) {
+      setValue(inputFieldName, '0')
+    }
+  }, [checked, inputFieldName, setValue])
 
   return (
     <Box
@@ -38,17 +44,35 @@ export const DeceasedShare = ({
     >
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={[2, 0]}>
-          <CheckboxController
-            name={checkboxFieldName}
-            large={false}
-            id={checkboxFieldName}
-            options={[
-              {
-                label: formatMessage(m.share),
-                value: YES,
-              },
-            ]}
-          />
+          <Box
+            display="flex"
+            alignItems="center"
+            flexDirection="row"
+            flexWrap="wrap"
+            height="full"
+          >
+            <CheckboxController
+              name={checkboxFieldName}
+              split="1/2"
+              large={false}
+              id={checkboxFieldName}
+              defaultValue={watchedField}
+              options={[
+                {
+                  label: formatMessage(m.share),
+                  value: YES,
+                },
+              ]}
+              spacing={0}
+            />
+            <Box marginLeft={1} paddingTop={1}>
+              <Tooltip
+                text={formatMessage(m.hadSeparateProperty)}
+                placement="bottom"
+                iconSize="medium"
+              />
+            </Box>
+          </Box>
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
           <ShareInput

@@ -9,6 +9,11 @@ import {
 } from './utils/helpers'
 import { m } from './messages'
 
+const deceasedShare = {
+  deceasedShare: z.string().optional(),
+  deceasedShareEnabled: z.array(z.enum([YES])).optional(),
+}
+
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
   z
     .object({
@@ -18,8 +23,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
           description: z.string(),
           propertyValuation: z.string(),
           ...(withShare ? { share: z.string() } : {}),
-          deceasedShare: z.string().optional(),
-          deceasedShareEnabled: z.array(z.enum([YES])).optional(),
+          ...deceasedShare,
         })
         .refine(
           ({ propertyValuation }) => {
@@ -89,6 +93,7 @@ export const inheritanceReportSchema = z.object({
       .object({
         info: z.string().optional(),
         value: z.string().optional(),
+        ...deceasedShare,
       })
       .optional(),
     bankAccounts: z
@@ -99,6 +104,7 @@ export const inheritanceReportSchema = z.object({
             assetNumber: z.string().refine((v) => v),
             propertyValuation: z.string().refine((v) => v),
             exchangeRateOrInterest: z.string().refine((v) => v),
+            ...deceasedShare,
           })
           .array()
           .optional(),
@@ -112,6 +118,7 @@ export const inheritanceReportSchema = z.object({
             description: z.string(),
             assetNumber: z.string(),
             propertyValuation: z.string().refine((v) => v),
+            ...deceasedShare,
           })
           .refine(
             ({ assetNumber }) => {
@@ -137,6 +144,7 @@ export const inheritanceReportSchema = z.object({
             amount: z.string(),
             exchangeRateOrInterest: z.string(),
             value: z.string().refine((v) => v),
+            ...deceasedShare,
           })
           .array()
           .optional(),
@@ -147,6 +155,7 @@ export const inheritanceReportSchema = z.object({
       .object({
         info: z.string().optional(),
         value: z.string().optional(),
+        ...deceasedShare,
       })
       .optional(),
     otherAssets: z
@@ -155,6 +164,7 @@ export const inheritanceReportSchema = z.object({
           .object({
             info: z.string().optional(),
             value: z.string().optional(),
+            ...deceasedShare,
           })
           .refine(
             ({ info }) => {

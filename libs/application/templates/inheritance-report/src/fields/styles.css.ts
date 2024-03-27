@@ -23,7 +23,8 @@ export const removeFieldButton = style({
   right: 0,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      top: theme.spacing['9'],
+      // top: theme.spacing['9'],
+      top: theme.spacing['3'],
       right: -theme.spacing['6'],
     },
   },

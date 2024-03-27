@@ -100,6 +100,8 @@ export const expandAnswers = (
             propertyValuation: account.propertyValuation ?? '',
             exchangeRateOrInterest: account.exchangeRateOrInterest ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
+            deceasedShare: account.deceasedShare ?? '',
+            deceasedShareEnabled: account.deceasedShareEnabled ?? [],
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -110,6 +112,8 @@ export const expandAnswers = (
             assetNumber: claim.assetNumber ?? '',
             description: claim.description ?? '',
             propertyValuation: claim.propertyValuation ?? '',
+            deceasedShare: claim.deceasedShare ?? '',
+            deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -129,16 +133,23 @@ export const expandAnswers = (
       inventory: {
         info: answers.assets.inventory?.info ?? '',
         value: answers.assets.inventory?.value ?? '',
+        deceasedShare: answers.assets.inventory?.deceasedShare ?? '',
+        deceasedShareEnabled:
+          answers.assets.inventory?.deceasedShareEnabled ?? [],
       },
       money: {
         info: answers.assets.money?.info ?? '',
         value: answers.assets.money?.value ?? '',
+        deceasedShare: answers.assets.money?.deceasedShare ?? '',
+        deceasedShareEnabled: answers.assets.money?.deceasedShareEnabled ?? [],
       },
       otherAssets: {
         data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
           return {
             info: otherAsset?.info ?? '',
             value: otherAsset?.value ?? '',
+            deceasedShare: otherAsset?.deceasedShare ?? '',
+            deceasedShareEnabled: otherAsset?.deceasedShareEnabled ?? [],
           }
         }),
         total: answers.assets.otherAssets?.total ?? 0,
@@ -164,6 +175,8 @@ export const expandAnswers = (
             description: stock.description ?? '',
             exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',
+            deceasedShare: stock?.deceasedShare ?? '',
+            deceasedShareEnabled: stock?.deceasedShareEnabled ?? [],
           }
         }),
         total: answers.assets.stocks?.total ?? 0,

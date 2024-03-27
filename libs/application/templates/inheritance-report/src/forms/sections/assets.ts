@@ -131,6 +131,12 @@ export const assets = buildSection({
               },
               variant: 'currency',
             }),
+            buildCustomField({
+              title: '',
+              id: 'assets.inventory',
+              doesNotRequireAnswer: true,
+              component: 'DeceasedShareField',
+            }),
           ],
         }),
       ],
@@ -509,6 +515,12 @@ export const assets = buildSection({
                     ?.propertyValuation ?? '0'
                 )
               },
+            }),
+            buildCustomField({
+              title: '',
+              id: 'assets.money',
+              doesNotRequireAnswer: true,
+              component: 'DeceasedShareField',
             }),
           ],
         }),

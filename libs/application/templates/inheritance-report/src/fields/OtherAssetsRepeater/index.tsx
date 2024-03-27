@@ -12,10 +12,12 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
+  getDeceasedHadAssets,
   getEstateDataFromApplication,
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
+import DeceasedShare from '../../components/DeceasedShare'
 
 type OtherAssetsRepeaterProps = {
   field: {
@@ -30,6 +32,8 @@ export const OtherAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & OtherAssetsRepeaterProps>
 > = ({ application, field, errors }) => {
   const { id, props } = field
+
+  const deceasedHadAssets = getDeceasedHadAssets(application)
 
   const getDefaultValue = (
     fieldName: keyof InheritanceReportAsset,
@@ -148,6 +152,7 @@ export const OtherAssetsRepeater: FC<
                 )
               })}
             </GridRow>
+            {deceasedHadAssets && <DeceasedShare id={fieldIndex} />}
           </Box>
         )
       })}

@@ -35,7 +35,7 @@ export const deceased = buildSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'space1',
           space: 'gutter',
           title: '',
         }),
@@ -60,7 +60,7 @@ export const deceased = buildSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'space2',
           space: 'gutter',
           title: '',
         }),
@@ -76,7 +76,7 @@ export const deceased = buildSection({
           ],
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'space3',
           space: 'gutter',
           title: '',
         }),
