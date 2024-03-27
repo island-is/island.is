@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   DataUploadResponse,
-  EstateInfo,
   Person,
   PersonType,
   SyslumennService,
@@ -44,19 +43,43 @@ export class InheritanceReportService extends BaseTemplateApiService {
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
-    const [relationOptions, estateResponse] = await Promise.all([
+    const [relationOptions, inheritanceReportInfos] = await Promise.all([
       this.syslumennService.getEstateRelations(),
       // Get estate info from syslumenn or fakedata depending on application.applicant
-      application.applicant.startsWith('010130') &&
+      application.applicant.startsWith('110130') &&
       application.applicant.endsWith('2399')
-        ? [getFakeData()]
-        : this.syslumennService.getEstateInfo(application.applicant),
+        ? [
+            getFakeData('2022-14-14', 'Gervimaður Útlönd', '0101307789'),
+            getFakeData('2020-15-04', 'Gervimaður Danmörk', '0101302479'),
+          ]
+        : this.syslumennService.getEstateInfoForInheritanceReport(
+            application.applicant,
+          ),
     ])
-    const estate = estateTransformer(estateResponse[0])
+
+    // Loop through all inheritanceReportInfos and attach inheritanceTax to each
+    await Promise.all(
+      inheritanceReportInfos.map(async (inheritanceReportInfo) => {
+        // The dateOfDeath is marked as Date as per the openapi spec but is actually a string when received
+        const inheritanceDate =
+          typeof inheritanceReportInfo.dateOfDeath === 'string'
+            ? new Date(Date.parse(inheritanceReportInfo.dateOfDeath))
+            : inheritanceReportInfo.dateOfDeath ?? new Date()
+
+        return new Promise<void>((resolve) => {
+          this.syslumennService
+            .getInheritanceTax(new Date())
+            .then((inheritanceTax) => {
+              inheritanceReportInfo.inheritanceTax = inheritanceTax
+              resolve()
+            })
+        })
+      }),
+    )
 
     return {
       success: true,
-      estate,
+      inheritanceReportInfos,
       relationOptions: relationOptions.relations,
     }
   }

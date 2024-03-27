@@ -9,6 +9,7 @@ import {
   expandClaims,
   expandDebts,
   expandEstateMembers,
+  expandOtherAssets,
   expandStocks,
   trueOrHasYes,
 } from './mappers'
@@ -92,10 +93,7 @@ export const generateRawUploadData = (
       ssn: answers.applicant.nationalId,
       autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
-    otherAssets: {
-      info: answers.otherAssets?.info ?? '',
-      value: answers.otherAssets?.value ?? '',
-    },
+    otherAssets: expandOtherAssets(answers.otherAssets ?? []),
     stocks: expandStocks(answers.stocks ?? []),
     vehicles: expandAssetFrames(processedVehicles),
     estateWithoutAssetsInfo: {
