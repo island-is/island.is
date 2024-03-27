@@ -14,6 +14,10 @@ import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { getModelToken } from '@nestjs/sequelize'
+import { ClientType } from '../../types/ClientType'
+import { MIGRATION_DATE } from '../user-profile.service'
+import subMonths from 'date-fns/subMonths'
+import addMonths from 'date-fns/addMonths'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -124,12 +128,15 @@ describe('UserProfileController', () => {
       })
     })
 
-    it('GET /v2/user/.national-id should return 200 with the UserProfileDto when the User Profile exists in db', async () => {
+    it('GET /v2/user/.national-id should return 200 with the UserProfileDto with email and phone number when client type is firstParty', async () => {
       // Arrange
-      await fixtureFactory.createUserProfile(testUserProfile)
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        lastNudge: subMonths(MIGRATION_DATE, 1),
+      })
 
       const res = await server
-        .get('/v2/users/.national-id')
+        .get(`/v2/users/.national-id?clientType=${ClientType.FIRST_PARTY}`)
         .set('X-Param-National-Id', testUserProfile.nationalId)
 
       // Assert
@@ -142,6 +149,56 @@ describe('UserProfileController', () => {
         mobilePhoneNumberVerified: false,
         documentNotifications: true,
         needsNudge: null,
+        isRestricted: true,
+      })
+    })
+
+    it('GET /v2/user/.national-id should return 200 with the UserProfileDto without email and phone when client type is thirdParty', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        lastNudge: subMonths(MIGRATION_DATE, 1),
+      })
+
+      const res = await server
+        .get(`/v2/users/.national-id?clientType=${ClientType.THIRD_PARTY}`)
+        .set('X-Param-National-Id', testUserProfile.nationalId)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: null,
+        emailVerified: false,
+        mobilePhoneNumber: null,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: null,
+      })
+    })
+
+    it('GET /v2/user/.national-id should return 200 with the UserProfileDto with the email and phone when client type is thirdParty and last nudge is more recent then the migration date', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        lastNudge: addMonths(MIGRATION_DATE, 1),
+      })
+
+      const res = await server
+        .get(`/v2/users/.national-id?clientType=${ClientType.THIRD_PARTY}`)
+        .set('X-Param-National-Id', testUserProfile.nationalId)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: false,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: null,
+        isRestricted: false,
       })
     })
   })

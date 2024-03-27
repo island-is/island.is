@@ -16,9 +16,14 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { ClientType } from '../types/ClientType'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
+
+export const MIGRATION_DATE = new Date(
+  process.env.USER_PROFILE_MIGRATION_DATE ?? '2022-01-01',
+)
 
 @Injectable()
 export class UserProfileService {
@@ -34,6 +39,7 @@ export class UserProfileService {
   async findById(
     nationalId: string,
     useMaster = false,
+    clientType: ClientType = ClientType.THIRD_PARTY,
   ): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
       where: { nationalId },
@@ -41,30 +47,40 @@ export class UserProfileService {
     })
 
     if (!userProfile) {
-      return {
-        nationalId,
-        email: null,
-        mobilePhoneNumber: null,
-        locale: null,
-        mobilePhoneNumberVerified: false,
-        emailVerified: false,
-        documentNotifications: true,
-        needsNudge: null,
-        emailNotifications: true,
-      }
+      return this.filterByClientTypeAndRestrictionDate(
+        clientType,
+        {
+          nationalId,
+          email: null,
+          mobilePhoneNumber: null,
+          locale: null,
+          mobilePhoneNumberVerified: false,
+          emailVerified: false,
+          documentNotifications: true,
+          needsNudge: null,
+          emailNotifications: true,
+          isRestricted: false,
+        },
+        null,
+      )
     }
 
-    return {
-      nationalId: userProfile.nationalId,
-      email: userProfile.email,
-      mobilePhoneNumber: userProfile.mobilePhoneNumber,
-      locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
-      documentNotifications: userProfile.documentNotifications,
-      needsNudge: this.checkNeedsNudge(userProfile),
-      emailNotifications: userProfile.emailNotifications,
-    }
+    return this.filterByClientTypeAndRestrictionDate(
+      clientType,
+      {
+        nationalId: userProfile.nationalId,
+        email: userProfile.email,
+        mobilePhoneNumber: userProfile.mobilePhoneNumber,
+        locale: userProfile.locale,
+        mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+        emailVerified: userProfile.emailVerified,
+        documentNotifications: userProfile.documentNotifications,
+        needsNudge: this.checkNeedsNudge(userProfile),
+        emailNotifications: userProfile.emailNotifications,
+        isRestricted: false,
+      },
+      userProfile.lastNudge,
+    )
   }
 
   async patch(
@@ -234,7 +250,7 @@ export class UserProfileService {
       }
     })
 
-    return this.findById(nationalId, true)
+    return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
 
   async createEmailVerification({
@@ -374,5 +390,25 @@ export class UserProfileService {
       mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
       audkenniSimNumber.replace(/-/g, '').slice(-7)
     )
+  }
+
+  filterByClientTypeAndRestrictionDate(
+    clientType: ClientType,
+    userProfile: UserProfileDto,
+    lastNudge: Date | null,
+  ): UserProfileDto {
+    if (MIGRATION_DATE > lastNudge) {
+      userProfile = {
+        ...userProfile,
+        email: clientType === ClientType.THIRD_PARTY ? null : userProfile.email,
+        mobilePhoneNumber:
+          clientType === ClientType.THIRD_PARTY
+            ? null
+            : userProfile.mobilePhoneNumber,
+        isRestricted: true,
+      }
+    }
+
+    return userProfile
   }
 }
