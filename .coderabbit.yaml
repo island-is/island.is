@@ -1,4 +1,4 @@
-language: 'ja'
+language: 'en'
 early_access: true
 reviews:
   request_changes_workflow: true
