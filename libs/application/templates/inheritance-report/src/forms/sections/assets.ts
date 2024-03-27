@@ -445,7 +445,7 @@ export const assets = buildSection({
                   },
                   {
                     title: m.stocksNationalId,
-                    id: 'assetNumber',
+                    id: 'nationalId',
                     format: '######-####',
                   },
                   {

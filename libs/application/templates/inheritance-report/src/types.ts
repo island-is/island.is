@@ -123,6 +123,7 @@ export interface Money extends DeceasedShare {
 
 export interface ClaimsData extends DeceasedShare {
   value: string
+  description: string
   issuer: string
   nationalId: string
   taxFreeInheritance: number
@@ -135,10 +136,12 @@ export interface Claims {
 
 export interface StocksData extends DeceasedShare {
   value: string
+  amount: string
   faceValue: string
   nationalId: string
   organization: string
   rateOfExchange: string
+  exchangeRateOrInterest: string
   taxFreeInheritance: number
 }
 
@@ -192,6 +195,7 @@ export interface OtherAssets {
 export interface BankAccountsData extends DeceasedShare {
   exchangeRateOrInterest: string
   propertyNumber: string
+  assetNumber: string
   propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number

@@ -278,8 +278,8 @@ export const overviewAssets = [
           return {
             titleRequired: false,
             title: isForeign
-              ? account.propertyNumber
-              : formatBankInfo(account.propertyNumber ?? ''),
+              ? account.assetNumber
+              : formatBankInfo(account.assetNumber ?? ''),
             description,
           }
         }),
@@ -328,7 +328,7 @@ export const overviewAssets = [
             }
 
             return {
-              title: asset.issuer,
+              title: asset.description,
               titleRequired: false,
               description,
             }
@@ -370,10 +370,10 @@ export const overviewAssets = [
                 stock.nationalId ?? '',
               )}`,
               `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
-                stock.faceValue ?? '0',
+                stock.amount ?? '0',
               )}`,
               `${m.stocksRateOfChange.defaultMessage}: ${
-                stock.rateOfExchange?.replace('.', ',') ?? '0'
+                stock.exchangeRateOrInterest?.replace('.', ',') ?? '0'
               }`,
               `${m.stocksValue.defaultMessage}: ${formatCurrency(
                 stock.value ?? '0',

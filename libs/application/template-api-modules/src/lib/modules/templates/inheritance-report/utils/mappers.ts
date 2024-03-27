@@ -171,7 +171,7 @@ export const expandAnswers = (
         data: (answers.assets.stocks?.data ?? []).map((stock) => {
           return {
             amount: stock.amount ?? '',
-            assetNumber: stock.assetNumber ?? '',
+            nationalId: stock.nationalId ?? '',
             description: stock.description ?? '',
             exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',

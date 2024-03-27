@@ -203,12 +203,23 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             description: z.string(),
-            assetNumber: z.string(),
+            nationalId: z.string(),
             amount: z.string(),
             exchangeRateOrInterest: z.string(),
             value: z.string().refine((v) => v),
             ...deceasedShare,
           })
+          .refine(
+            ({ nationalId }) => {
+              return nationalId === ''
+                ? true
+                : nationalId && kennitala.isValid(nationalId)
+            },
+            {
+              params: m.errorNationalIdIncorrect,
+              path: ['nationalId'],
+            },
+          )
           .refine(
             ({ deceasedShare, deceasedShareEnabled }) => {
               return validateDeceasedShare({
