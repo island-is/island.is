@@ -396,6 +396,33 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('deliver sigend ruling to police', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_SIGNED_RULING_TO_POLICE,
+        user,
+        caseId,
+      })
+    })
+
+    it('should deliver sigend ruling to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverSignedRulingToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('deliver appeal to police', () => {
     let then: Then
 

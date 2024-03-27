@@ -77,7 +77,13 @@ yargs(hideBin(process.argv))
 
       const { Parameter } = await ssm.getParameter(parameterInput).promise()
       if (Parameter) {
-        return logger.info(Parameter.Value)
+        if (Parameter.Value && Parameter.Value.length > 0) {
+          console.log(Parameter.Value)
+        } else {
+          logger.error('Failed to get secret', {
+            error: Parameter.SourceResult,
+          })
+        }
       }
     },
   )

@@ -23,6 +23,8 @@ import { OrganizationLinkByReferenceIdLoader } from './loaders/organizationLinkB
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
 import { ChartModule } from './chart/chart.module'
+import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
+import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
 
 @Module({
   imports: [
@@ -46,7 +48,9 @@ import { ChartModule } from './chart/chart.module'
     OrganizationLogoLoader,
     OrganizationLogoByReferenceIdLoader,
     OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
+    OrganizationTitleEnByReferenceIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
@@ -58,6 +62,7 @@ import { ChartModule } from './chart/chart.module'
     OrganizationLogoLoader,
     OrganizationLogoByReferenceIdLoader,
     OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
     CmsElasticsearchService,
   ],

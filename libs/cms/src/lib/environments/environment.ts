@@ -97,6 +97,10 @@ export default {
     'featuredEvents',
     'chartDataSource',
     'chartNumberBox',
+    'bigBulletList',
+    'iconBullet',
+    'numberBulletSection',
+    'numberBullet',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],
