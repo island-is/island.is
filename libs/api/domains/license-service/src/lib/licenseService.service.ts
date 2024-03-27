@@ -264,6 +264,7 @@ export class LicenseServiceService {
         licenseUserData.pkpassStatus = licenseService.clientSupportsPkPass
           ? (licenseService.licenseIsValidForPkPass?.(
               lp.rawData,
+              user,
             ) as unknown as GenericUserLicensePkPassStatus) ??
             GenericUserLicensePkPassStatus.Unknown
           : GenericUserLicensePkPassStatus.NotAvailable
