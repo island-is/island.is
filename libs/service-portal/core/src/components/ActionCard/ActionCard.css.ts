@@ -22,6 +22,12 @@ export const avatar = style({
   }),
 })
 
+export const circleImg = style({
+  width: '28px',
+  height: 'auto',
+  display: 'flex',
+})
+
 export const button = style({
   ...themeUtils.responsiveStyle({
     sm: {

@@ -10,11 +10,11 @@ export const notificationMapper = (
     sent: notification.created,
     created: notification.created,
     updated: notification.updated,
-    // status: "read",
+    read: notification.read,
+    seen: notification.seen,
   },
   sender: {
-    name: '',
-    logo: '',
+    id: notification.senderId,
   },
   recipient: {
     nationalId: undefined,

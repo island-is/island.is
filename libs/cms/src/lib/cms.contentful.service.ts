@@ -174,36 +174,26 @@ export class CmsContentfulService {
   }
 
   async getOrganizationLogos(
-    organizationTitles: string[],
-    searchByKey?: boolean,
+    organizationFields: string[],
+    searchByField: keyof types.IOrganizationFields,
   ): Promise<Array<string | null>> {
-    const fieldParam = searchByKey
-      ? 'fields.referenceIdentifier[in]'
-      : 'fields.title[in]'
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.logo,fields.title,fields.referenceIdentifier',
-      [fieldParam]: organizationTitles.join(','),
+      select: `fields.logo,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationFields.join(','),
     }
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationFields>(null, params)
       .catch(errorHandler('getOrganizationsLogo'))
 
-    return organizationTitles.map((title) => {
+    return organizationFields.map((title) => {
       if (!result.items) {
         return null
       } else {
-        let organization
-        if (searchByKey) {
-          organization = result.items.find(
-            (item) => item.fields.referenceIdentifier === title,
-          )
-        } else {
-          organization = result.items.find(
-            (item) => item.fields.title === title,
-          )
-        }
+        const organization = result.items.find(
+          (item) => item.fields[searchByField] === title,
+        )
 
         const image = organization?.fields.logo
           ? mapImage(organization?.fields.logo)

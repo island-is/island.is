@@ -94,6 +94,10 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -105,6 +109,7 @@ const api = apiSetup({
   sessionsApi: sessionsService,
   authAdminApi,
   universityGatewayApi: universityGatewayService,
+  userNotificationService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -122,10 +127,6 @@ const storybook = storybookSetup({})
 
 const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
-})
-
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
 })
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
@@ -249,9 +250,10 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
-  userNotificationService,
-  userNotificationWorkerService,
-  userNotificationCleanupWorkerService,
+  // REMEMBER TO UNCOMMENT THESE LINES BEFORE MERGING ON MAIN
+  // userNotificationService,
+  // userNotificationWorkerService,
+  // userNotificationCleanupWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,

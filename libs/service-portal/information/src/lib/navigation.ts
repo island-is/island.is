@@ -69,6 +69,10 @@ export const informationNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.notifications,
+      path: InformationPaths.Notifications,
+    },
   ],
   description: m.userInfoDescription,
 }

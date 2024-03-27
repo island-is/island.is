@@ -25,7 +25,7 @@ type ActionCardProps = {
   secondaryText?: string
   eyebrow?: string
   loading?: boolean
-  backgroundColor?: 'white' | 'blue' | 'red'
+  backgroundColor?: 'white' | 'blue' | 'red' | 'blueberry'
   tag?: {
     label: string
     variant?: TagVariant
@@ -43,6 +43,7 @@ type ActionCardProps = {
     disabled?: boolean
     centered?: boolean
     hide?: boolean
+    callback?: () => void
   }
   secondaryCta?: {
     label: string
@@ -54,8 +55,9 @@ type ActionCardProps = {
     centered?: boolean
   }
   image?: {
-    type: 'avatar' | 'image' | 'logo'
+    type: 'avatar' | 'image' | 'logo' | 'circle'
     url?: string
+    active?: boolean
   }
   translateLabel?: 'yes' | 'no'
 }
@@ -96,6 +98,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       ? 'white'
       : backgroundColor === 'red'
       ? 'red100'
+      : backgroundColor === 'blueberry'
+      ? 'blueberry100'
       : 'blue100'
 
   const renderImage = () => {
@@ -138,6 +142,22 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           borderRadius="circle"
         >
           <img className={styles.avatar} src={image.url} alt="action-card" />
+        </Box>
+      )
+    }
+    if (image.type === 'circle') {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+          background={image.active ? 'white' : 'blue100'}
+          className={styles.avatar}
+        >
+          <img className={styles.circleImg} src={image.url} alt="action-card" />
         </Box>
       )
     }
@@ -249,7 +269,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {!cta.hide && (
             <Box dataTestId="action-card-cta" marginLeft={[0, 3]}>
               {cta.url ? (
-                <LinkResolver href={cta.url}>
+                <LinkResolver callback={cta.callback} href={cta.url}>
                   <Button
                     icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                     colorScheme="default"
@@ -257,6 +277,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     size="small"
                     type="span"
                     unfocusable
+                    as="span"
                     variant="text"
                   >
                     {cta.label}

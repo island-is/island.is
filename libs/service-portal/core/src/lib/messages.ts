@@ -483,6 +483,14 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  notifications: {
+    id: 'service.portal:notifications',
+    defaultMessage: 'Tilkynningar',
+  },
+  notificationsViewAll: {
+    id: 'service.portal:notifications-view-all',
+    defaultMessage: 'Sjá allar tilkynningar',
+  },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
     defaultMessage: 'Skoða nánar',

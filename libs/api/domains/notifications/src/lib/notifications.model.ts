@@ -3,20 +3,10 @@ import {
   GraphQLISODateTime,
   ID,
   ObjectType,
-  registerEnumType,
   Int,
   InputType,
 } from '@nestjs/graphql'
-import {
-  PageInfoDto,
-  PaginatedResponse,
-  PaginationInput,
-} from '@island.is/nest/pagination'
-// import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
-
-// registerEnumType(RenderedNotificationDtoStatusEnum, {
-//   name: 'NotificationStatus',
-// })
+import { PaginatedResponse, PaginationInput } from '@island.is/nest/pagination'
 
 @ObjectType()
 export class NotificationMetadata {
@@ -29,20 +19,20 @@ export class NotificationMetadata {
   @Field(() => GraphQLISODateTime, { nullable: true })
   created?: Date
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  read?: Date
+  @Field({ nullable: true })
+  read?: boolean
 
-  // @Field(() => RenderedNotificationDtoStatusEnum)
-  // status!: RenderedNotificationDtoStatusEnum
+  @Field({ nullable: true })
+  seen?: boolean
 }
 
 @ObjectType()
 export class NotificationSender {
-  @Field()
-  name!: string
+  @Field({ nullable: true })
+  id?: string
 
   @Field({ nullable: true })
-  logo?: string
+  logoUrl?: string
 }
 
 @ObjectType()
@@ -97,6 +87,9 @@ export class NotificationsInput extends PaginationInput() {}
 export class NotificationsResponse extends PaginatedResponse(Notification) {
   @Field(() => Int, { nullable: true })
   unreadCount?: number
+
+  @Field(() => Int, { nullable: true })
+  unseenCount?: number
 }
 
 @ObjectType()
@@ -115,4 +108,22 @@ export class MarkNotificationReadInput {
 export class MarkNotificationReadResponse {
   @Field(() => Notification)
   data!: Notification
+}
+
+@ObjectType()
+export class NotificationsMarkAllAsSeenResponse {
+  @Field()
+  success!: boolean
+}
+
+@ObjectType()
+export class NotificationsUnreadCount {
+  @Field(() => Int)
+  unreadCount!: number
+}
+
+@ObjectType()
+export class NotificationsUnseenCount {
+  @Field(() => Int)
+  unseenCount!: number
 }
