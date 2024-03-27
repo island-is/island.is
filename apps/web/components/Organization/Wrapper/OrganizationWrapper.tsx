@@ -147,6 +147,7 @@ const lightThemes = [
   'rettindagaesla-fatlads-folks',
   'vinnueftirlitid',
   'hljodbokasafn-islands',
+  'stjornartidindi',
 ]
 
 export const getThemeConfig = (
@@ -394,6 +395,8 @@ export const OrganizationHeader: React.FC<
           logoAltText={logoAltText}
         />
       )
+    case 'stjornartidindi':
+      return null
     default:
       return (
         <DefaultHeader
