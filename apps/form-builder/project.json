@@ -1,0 +1,108 @@
+{
+  "name": "form-builder",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/form-builder",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/form-builder"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/form-builder"
+        },
+        "production": {}
+      }
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/form-builder",
+        "main": "apps/form-builder/server.ts",
+        "tsConfig": "apps/form-builder/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "form-builder:build",
+        "dev": true,
+        "customServerTarget": "form-builder:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "form-builder:build:development",
+          "dev": true,
+          "customServerTarget": "form-builder:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "form-builder:build:production",
+          "dev": false,
+          "customServerTarget": "form-builder:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "form-builder:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "form-builder:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "form-builder:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "form-builder:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/form-builder/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/form-builder/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "docker-next": {}
+  },
+  "tags": []
+}
