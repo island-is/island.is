@@ -2,9 +2,6 @@ import { expect, test as base, Page } from '@playwright/test'
 import { disableI18n } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { createApplication } from '../../../../support/application'
-import { label } from '../../../../support/i18n'
-import { m as messages } from '@island.is/application/templates/no-debt-certificate'
-import { switchUser } from '../../../../support/login'
 
 const homeUrl = '/umsoknir/skuldleysisvottord'
 
@@ -60,10 +57,12 @@ applicationTest.describe('Data protection complaint application', () => {
         'Verify confirmation and success',
         async () => {
           await expect(
-            page.getByRole('region').getByText(label(messages.confirmation)),
+            page.getByRole('region').getByText('Staðfesting'),
           ).toBeVisible()
           await expect(
-            page.getByRole('heading', { name: label(messages.successTitle) }),
+            page.getByRole('heading', {
+              name: 'Umsókn þín um skuldleysisvottorð hefur verið staðfest',
+            }),
           ).toBeVisible()
         },
       )

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euxo pipefail
 
+APP="${1:-$APP}"
+TARGET="${2:-${TARGET:-test}}"
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
 : "${DD_ENV:=ci}"
@@ -9,6 +11,12 @@ set -euxo pipefail
 : "${DD_SERVICE:=${APP:-"unit-test"}}"
 : "${DD_API_KEY:='<set-api-key>'}"
 : "${NODE_OPTIONS:=}"
+
+# Exit gracefully if the target is not defined
+if [ -z "$(nx show projects --projects "$APP" --with-target "$TARGET")" ]; then
+  echo "Project $APP has no target $TARGET"
+  exit 0
+fi
 
 # Default to big old-space, and more options for testing, but allow overriding
 NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
