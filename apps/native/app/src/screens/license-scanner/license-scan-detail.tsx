@@ -48,7 +48,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
         })}
         {...data}
         hasNoData={!data?.nationalId}
-        type={type ?? SupportedGenericLicenseTypes.Unknown}
+        type={type ?? 'Unknown'}
       />
     </Host>
   )
