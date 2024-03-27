@@ -29,4 +29,5 @@ export class HnippTemplate {
 
   @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]
+  
 }

@@ -13,6 +13,8 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
+import { Locale } from '../locale.enum'
+
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
   @ApiPropertyOptional({
@@ -20,7 +22,7 @@ export class ExtendedPaginationDto extends PaginationDto {
     type: 'string',
   })
   @IsString()
-  locale!: string
+  locale!: Locale
 }
 
 class ArgItem {

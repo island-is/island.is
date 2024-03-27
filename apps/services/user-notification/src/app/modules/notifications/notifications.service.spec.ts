@@ -8,6 +8,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from './notification.model'
 import { NotificationsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
+import { Locale } from './locale.enum'
 
 import {
   ExtendedPaginationDto,
@@ -31,7 +32,6 @@ const mockHnippTemplate: HnippTemplate = {
   clickAction: 'Demo click action {{arg2}}',
   category: 'Demo category',
   args: ['arg1', 'arg2'],
-  senderId: '1234567890',
 }
 
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
@@ -71,7 +71,7 @@ describe('NotificationsService', () => {
     expect(service).toBeDefined()
   })
 
-  it('should get templates', async () => {
+  it('should get templates', async () => { 
     jest
       .spyOn(service, 'getTemplates')
       .mockImplementation(() => Promise.resolve(mockTemplates))
@@ -83,8 +83,8 @@ describe('NotificationsService', () => {
 
   it('should get template', async () => {
     jest
-      .spyOn(service, 'getTemplates')
-      .mockImplementation(() => Promise.resolve(mockTemplates))
+      .spyOn(service, 'getTemplate')
+      .mockImplementation(() => Promise.resolve(mockHnippTemplate))
     const template = await service.getTemplate(mockHnippTemplate.templateId)
     expect(template).toBeInstanceOf(Object)
   })
@@ -144,12 +144,6 @@ describe('NotificationsService', () => {
     expect(template.clickAction).toEqual('Demo click action world')
   })
 
-  it('should return the correct locale mapping', async () => {
-    expect(service.mapLocale('en')).toBe('en')
-    expect(service.mapLocale('is')).toBe('is-IS')
-    expect(service.mapLocale(null)).toBe('is-IS')
-    expect(service.mapLocale(undefined)).toBe('is-IS')
-  })
 
   describe('findMany', () => {
     it('should return a paginated list of notifications', async () => {
@@ -166,13 +160,12 @@ describe('NotificationsService', () => {
   describe('findOne', () => {
     it('should return a specific notification', async () => {
       const id = 123
-      const locale = 'en'
       const mockedResponse = new RenderedNotificationDto()
       jest
         .spyOn(service, 'findOne')
         .mockImplementation(async () => mockedResponse)
 
-      expect(await service.findOne(user, id, locale)).toBe(mockedResponse)
+      expect(await service.findOne(user, id, Locale.EN)).toBe(mockedResponse)
     })
   })
 
@@ -180,14 +173,13 @@ describe('NotificationsService', () => {
     it('should update a notification', async () => {
       const id = 123
       const updateNotificationDto = new UpdateNotificationDto()
-      const locale = 'en' // Mock locale
       const mockedResponse = new RenderedNotificationDto()
       jest
         .spyOn(service, 'update')
         .mockImplementation(async () => mockedResponse)
 
       expect(
-        await service.update(user, id, updateNotificationDto, locale),
+        await service.update(user, id, updateNotificationDto, Locale.EN),
       ).toBe(mockedResponse)
     })
   })

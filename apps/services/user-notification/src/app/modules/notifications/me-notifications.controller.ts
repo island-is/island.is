@@ -30,6 +30,9 @@ import {
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
+import { Locale } from './locale.enum'
+
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(NotificationsScope.read)
 @ApiSecurity('oauth2', [NotificationsScope.read])
@@ -45,6 +48,15 @@ export class MeNotificationsController {
   @Documentation({
     summary: 'Returns a paginated list of current user notifications',
     response: { status: HttpStatus.OK, type: PaginatedNotificationDto },
+    request: {
+      query: {
+        locale: {
+          enum: Locale,
+          required: false,
+          example: Locale.IS,
+        },
+      },
+    },
   })
   findMany(
     @CurrentUser() user: User,
@@ -79,11 +91,20 @@ export class MeNotificationsController {
   @Documentation({
     summary: 'Returns current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
+    request: {
+      query: {
+        locale: {
+          enum: Locale,
+          required: false,
+          example: Locale.IS,
+        },
+      },
+    },
   })
   findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale = Locale.IS
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.findOne(user, id, locale)
   }
@@ -102,6 +123,15 @@ export class MeNotificationsController {
   @Documentation({
     summary: 'Updates current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
+    request: {
+      query: {
+        locale: {
+          enum: Locale,
+          required: false,
+          example: Locale.IS,
+        },
+      },
+    },
   })
   @Patch(':id')
   @Scopes(NotificationsScope.write)
@@ -110,7 +140,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale = Locale.IS
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.update(
       user,

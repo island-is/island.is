@@ -20,8 +20,7 @@ const mockHnippTemplate: HnippTemplate = {
   notificationDataCopy: 'Demo data copy',
   clickAction: '//demo/{{arg2}}',
   category: 'DEMO',
-  args: ['arg1', 'arg2'],
-  senderId: '1234567890',
+  args: ['arg1', 'arg2']
 }
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 
@@ -49,6 +48,8 @@ const mockProfile: UserProfile = {
   emailStatus: 'VERIFIED',
   mobileStatus: 'VERIFIED',
   lastNudge: new Date(),
+  emailNotifications: true,
+  nextNudge: new Date(),
 }
 
 describe('MessageProcessorService', () => {

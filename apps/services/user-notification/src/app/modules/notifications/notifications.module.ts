@@ -33,7 +33,7 @@ import {
     SequelizeModule.forFeature([Notification]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
-      max: 100, // 100 items max
+      max: 1000, // 1000 items max
     }),
     LoggingModule,
     CmsTranslationsModule,
