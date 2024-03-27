@@ -100,7 +100,7 @@ export const size = styleVariants({
     }),
   },
   utility: {
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 1.333333,
     ...themeUtils.responsiveStyle({
       md: {
@@ -111,7 +111,7 @@ export const size = styleVariants({
     }),
   },
   textSmall: {
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 1.25,
     ...themeUtils.responsiveStyle({
       md: {
