@@ -24,7 +24,8 @@
     "build-storybook": "build-storybook",
     "nx:codegen": "yarn run -T nx run native-app:codegen/frontend-client",
     "nx:lint": "yarn run -T nx run native-app:lint",
-    "nx:build": "yarn run -T nx run native-app:build"
+    "nx:build": "yarn run -T nx run native-app:build",
+    "prerequisites": "yarn nx:codegen && yarn typecheck && yarn nx:lint"
   },
   "dependencies": {
     "@apollo/client": "3.7.7",
