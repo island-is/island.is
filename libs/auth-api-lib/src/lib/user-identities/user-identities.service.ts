@@ -1,14 +1,21 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Claim } from './models/claim.model'
-import { Sequelize } from 'sequelize-typescript'
-import { UserIdentity } from './models/user-identity.model'
-import { UserIdentityDto } from './dto/user-identity.dto'
-import { ClaimDto } from './dto/claim.dto'
+import { randomBytes } from 'crypto'
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { ClaimDto } from './dto/claim.dto'
+import { UserIdentityDto } from './dto/user-identity.dto'
+import { Claim } from './models/claim.model'
+import { UserIdentity } from './models/user-identity.model'
+
+import type { Logger } from '@island.is/logging'
+
+const audkenniProvider = 'audkenni'
+const delegationProvider = 'delegation'
+const actorSubjectIdType = 'actorSubjectId'
 @Injectable()
 export class UserIdentitiesService {
   constructor(
@@ -246,5 +253,86 @@ export class UserIdentitiesService {
     })
 
     return claims
+  }
+
+  async findOrCreateSubjectId(
+    fromNationalId: string,
+    toNationalId: string,
+  ): Promise<string | null> {
+    const actor = await this.findSubject(toNationalId, audkenniProvider)
+
+    if (!actor) {
+      return null
+    }
+
+    const delegation = await this.userIdentityModel.findOne({
+      where: {
+        providerName: delegationProvider,
+        providerSubjectId: `IS-${fromNationalId}`,
+      },
+      include: [
+        {
+          model: Claim,
+          where: { type: actorSubjectIdType, value: actor.subjectId },
+        },
+      ],
+      useMaster: true,
+    })
+
+    if (delegation) {
+      return delegation.subjectId
+    } else {
+      return await this.autoProvisionDelegation(fromNationalId, toNationalId)
+    }
+  }
+
+  private findSubject(
+    nationalId: string,
+    provider: string,
+  ): Promise<UserIdentity | null> {
+    return this.userIdentityModel.findOne({
+      where: {
+        providerName: provider,
+        providerSubjectId: `IS-${nationalId}`,
+      },
+      useMaster: true,
+    })
+  }
+
+  private async autoProvisionDelegation(
+    fromNationalId: string,
+    toNationalId: string,
+  ): Promise<string> {
+    const subjectId = this.generateSubjectId()
+
+    const actor = await this.findSubject(toNationalId, audkenniProvider)
+    if (actor == null) {
+      throw new BadRequestException('No actor found for provided nationalId.')
+    }
+
+    const delegation: UserIdentityDto = {
+      subjectId,
+      name: '-', // the name column should not be in use anywhere
+      providerName: delegationProvider,
+      providerSubjectId: `IS-${fromNationalId}`,
+      active: true,
+      claims: [
+        {
+          type: actorSubjectIdType,
+          value: actor.subjectId,
+          valueType: 'http://www.w3.org/2001/XMLSchema#string',
+          issuer: 'delegationdb',
+          originalIssuer: 'delegationdb',
+        },
+      ], // claims will be updated when the delegation is used
+    }
+
+    await this.create(delegation)
+
+    return subjectId
+  }
+
+  private generateSubjectId(): string {
+    return randomBytes(32).toString('hex').toUpperCase()
   }
 }
