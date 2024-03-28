@@ -243,4 +243,70 @@ export const m = defineMessages({
     id: 'sp.finance-loans:no-result-message',
     defaultMessage: 'Engar lánafærslur fundust innan þessa skilyrða',
   },
+
+  hbRentMonth: {
+    id: 'sp.finance-housing-benefits:rental-month',
+    defaultMessage: 'Leigumánuður',
+  },
+  hbPaymentBeforeDebt: {
+    id: 'sp.finance-housing-benefits:payment-before-debt',
+    defaultMessage: 'Greiðsla fyrir skuld',
+  },
+  hbDebtPaidOff: {
+    id: 'sp.finance-housing-benefits:paid-off',
+    defaultMessage: 'Greitt af skuld',
+  },
+  hbPaidOut: {
+    id: 'sp.finance-housing-benefits:paid-out',
+    defaultMessage: 'Greitt út',
+  },
+  hbDebtStatus: {
+    id: 'sp.finance-housing-benefits:debt-status',
+    defaultMessage: 'Staða skuldar',
+  },
+
+  hbNumberOfDays: {
+    id: 'sp.finance-housing-benefits:number-of-days',
+    defaultMessage: 'Fjöldi daga',
+  },
+  hbPaymentNumber: {
+    id: 'sp.finance-housing-benefits:payment-number',
+    defaultMessage: 'Greiðslunúmer',
+  },
+  hbTotalIncome: {
+    id: 'sp.finance-housing-benefits:total-income',
+    defaultMessage: 'Heildartekjur',
+  },
+  hbName: {
+    id: 'sp.finance-housing-benefits:name',
+    defaultMessage: 'Nafn',
+  },
+  hbBenefit: {
+    id: 'sp.finance-housing-benefits:benefit',
+    defaultMessage: 'Grunnur réttinda',
+  },
+  hbBanknumber: {
+    id: 'sp.finance-housing-benefits:bank-number',
+    defaultMessage: 'Banka nr.',
+  },
+  hbReductionIncome: {
+    id: 'sp.finance-housing-benefits:reduction-income',
+    defaultMessage: 'Skerðing vegna tekna',
+  },
+  hbDateOfBankTransfer: {
+    id: 'sp.finance-housing-benefits:date-of-bank-transfer',
+    defaultMessage: 'Dagsetning millifærslu',
+  },
+  hbReductionHousingCost: {
+    id: 'sp.finance-housing-benefits:reduction-housing-cost',
+    defaultMessage: 'Skerðing vegna húsnæðiskostnaðar',
+  },
+  hbTypeOfCalculation: {
+    id: 'sp.finance-housing-benefits:calculation-type',
+    defaultMessage: 'Tegund útreikn.',
+  },
+  hbReductionAssets: {
+    id: 'sp.finance-housing-benefits:reduction-assets',
+    defaultMessage: 'Skerðing vegna eigna',
+  },
 })

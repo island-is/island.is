@@ -35,19 +35,30 @@ export const financeNavigation: PortalNavigationItem = {
     },
     {
       name: m.financePayments,
-      description: m.financeBillsDescription,
       serviceProvider: 'fjarsysla-rikisins',
       serviceProviderTooltip: m.financeTooltip,
       displayServiceProviderLogo: true,
-      path: FinancePaths.FinanceBills,
-    },
-    {
-      name: m.financeSchedules,
-      description: m.financeSchedulesDescription,
-      serviceProvider: 'fjarsysla-rikisins',
-      serviceProviderTooltip: m.financeTooltip,
-      displayServiceProviderLogo: true,
-      path: FinancePaths.FinanceSchedule,
+      path: FinancePaths.FinancePayments,
+      children: [
+        {
+          name: m.financeBills,
+          description: m.financeBillsDescription,
+          path: FinancePaths.FinancePaymentsBills,
+        },
+        {
+          name: m.financeSchedules,
+          description: m.financeSchedulesDescription,
+          path: FinancePaths.FinancePaymentsSchedule,
+        },
+        {
+          name: m.financeHousingBenefits,
+          description: m.financeHousingBenefitsDesc,
+          path: FinancePaths.FinancePaymentsHousingBenefits,
+          serviceProviderTooltip: m.hmsHousingBenefitsTooltip,
+          serviceProvider: 'hms',
+          displayServiceProviderLogo: true,
+        },
+      ],
     },
     {
       name: m.financeClaims,
