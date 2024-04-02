@@ -73,6 +73,7 @@ export type CreateDelegationIndexRecord = Optional<
     | 'type'
     | 'validTo'
     | 'customDelegationScopes'
+    | 'subjectId'
   >,
   | 'fromNationalId'
   | 'toNationalId'
@@ -80,6 +81,7 @@ export type CreateDelegationIndexRecord = Optional<
   | 'type'
   | 'validTo'
   | 'customDelegationScopes'
+  | 'subjectId'
 >
 
 export type CreatePersonalRepresentativeScopePermission = {

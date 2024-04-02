@@ -461,4 +461,46 @@ describe('DelegationsIndexService', () => {
       })
     })
   })
+
+  describe('SubjectId', () => {
+    const testCase = indexingTestCases.custom
+
+    beforeAll(async () => setup(testCase))
+
+    afterEach(async () => {
+      // remove all data
+      await delegationIndexMetaModel.destroy({ where: {} })
+      await delegationIndexModel.destroy({ where: {} })
+    })
+
+    it('should reuse subjectId from delegations with same fromNationalId and toNationalId', async () => {
+      const fromNationalId = testCase.customDelegations[0].fromNationalId
+      const subjectId = 'subjectId'
+
+      // Arrange
+      await factory.createDelegationIndexRecord({
+        fromNationalId,
+        toNationalId: user.nationalId,
+        provider: AuthDelegationType.Custom,
+        type: AuthDelegationType.Custom,
+        subjectId,
+        validTo: new Date(new Date().getTime() + 1000 * 60 * 60 * 24),
+        customDelegationScopes: ['custom-scope'],
+      })
+
+      // Act
+      await delegationIndexService.indexDelegations(user)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: user.nationalId,
+          fromNationalId,
+          subjectId,
+        },
+      })
+
+      expect(delegations.length).toEqual(2)
+    })
+  })
 })

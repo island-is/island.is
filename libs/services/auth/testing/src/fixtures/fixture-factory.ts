@@ -498,6 +498,7 @@ export class FixtureFactory {
     type,
     customDelegationScopes,
     validTo,
+    subjectId,
   }: CreateDelegationIndexRecord) {
     return this.get(DelegationIndex).create({
       fromNationalId: fromNationalId ?? createNationalId(),
@@ -506,6 +507,7 @@ export class FixtureFactory {
       type: type ?? AuthDelegationType.Custom,
       customDelegationScopes,
       validTo,
+      subjectId,
     })
   }
 }
