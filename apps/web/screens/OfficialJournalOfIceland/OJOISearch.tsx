@@ -10,7 +10,7 @@ import {
   MinistryOfJusticeAdvertEntity,
   MinistryOfJusticeAdvertsResponse,
   MinistryOfJusticeAdvertType,
-  QueryMinistryOfJusticeInvolvedPartiesArgs,
+  QueryMinistryOfJusticeInstitutionsArgs,
   QueryMinistryOfJusticeTypesArgs,
 } from '@island.is/api/schema'
 import {
@@ -60,7 +60,7 @@ import {
   ADVERTS_QUERY,
   CATEGORIES_QUERY,
   DEPARTMENTS_QUERY,
-  INVOLVED_PARTIES_QUERY,
+  INSTITUTIONS_QUERY,
   TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
 
@@ -81,7 +81,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
   categories,
   departments,
   types,
-  involvedParties,
+  institutions,
   organizationPage,
   organization,
   namespace,
@@ -214,7 +214,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
   const categoriesOptions = mapEntityToOptions(categories)
   const departmentsOptions = mapEntityToOptions(departments)
   const typesOptions = mapEntityToOptions(types)
-  const involvedPartiesOptions = mapEntityToOptions(involvedParties)
+  const institutionsOptions = mapEntityToOptions(institutions)
 
   return (
     <OJOIWrapper
@@ -351,14 +351,11 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
               placeholder="Veldu stofnun"
               options={[
                 { ...emptyOption('Allir stofnanir') },
-                ...involvedPartiesOptions,
+                ...institutionsOptions,
               ]}
               isClearable
               isSearchable
-              value={findValueOption(
-                involvedPartiesOptions,
-                searchState.stofnun,
-              )}
+              value={findValueOption(institutionsOptions, searchState.stofnun)}
               onChange={(v) => updateSearchState('stofnun', v?.value ?? '')}
             />
           </Stack>
@@ -401,7 +398,7 @@ interface OJOISearchProps {
   categories?: Array<MinistryOfJusticeAdvertCategory>
   departments?: Array<MinistryOfJusticeAdvertEntity>
   types?: Array<MinistryOfJusticeAdvertType>
-  involvedParties?: Array<MinistryOfJusticeAdvertEntity>
+  institutions?: Array<MinistryOfJusticeAdvertEntity>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -413,7 +410,7 @@ const OJOISearch: Screen<OJOISearchProps> = ({
   categories,
   departments,
   types,
-  involvedParties,
+  institutions,
   organizationPage,
   organization,
   namespace,
@@ -425,7 +422,7 @@ const OJOISearch: Screen<OJOISearchProps> = ({
       categories={categories}
       departments={departments}
       types={types}
-      involvedParties={involvedParties}
+      institutions={institutions}
       namespace={namespace}
       organizationPage={organizationPage}
       organization={organization}
@@ -451,7 +448,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
       data: { ministryOfJusticeTypes },
     },
     {
-      data: { ministryOfJusticeInvolvedParties },
+      data: { ministryOfJusticeInstitutions },
     },
     {
       data: { getOrganizationPage },
@@ -493,8 +490,8 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryMinistryOfJusticeInvolvedPartiesArgs>({
-      query: INVOLVED_PARTIES_QUERY,
+    apolloClient.query<Query, QueryMinistryOfJusticeInstitutionsArgs>({
+      query: INSTITUTIONS_QUERY,
       variables: {
         params: {
           search: '',
@@ -545,7 +542,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     categories: ministryOfJusticeCategories?.categories,
     departments: ministryOfJusticeDepartments?.departments,
     types: ministryOfJusticeTypes?.types,
-    involvedParties: ministryOfJusticeInvolvedParties?.involvedParties,
+    institutions: ministryOfJusticeInstitutions?.institutions,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

@@ -146,10 +146,10 @@ export const CATEGORIES_QUERY = gql`
   }
 `
 
-export const INVOLVED_PARTIES_QUERY = gql`
-  query AdvertInvolvedParties($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeInvolvedParties(params: $params) {
-      involvedParties {
+export const INSTITUTIONS_QUERY = gql`
+  query AdvertInstitutions($params: MinistryOfJusticeQueryInput!) {
+    ministryOfJusticeInstitutions(params: $params) {
+      institutions {
         title
         slug
       }
