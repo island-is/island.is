@@ -18,13 +18,13 @@ export type ButtonWidth = 'normal' | 'fluid' | 'fixed'
 export interface ButtonProps {
   disabled?: boolean
   onClick?:
-    | ((
-        event: React.MouseEvent<
-          HTMLButtonElement | HTMLAnchorElement,
-          MouseEvent
-        >,
-      ) => void)
-    | undefined
+  | ((
+    event: React.MouseEvent<
+      HTMLButtonElement | HTMLAnchorElement,
+      MouseEvent
+    >,
+  ) => void)
+  | undefined
   variant?: ButtonVariant
   size?: ButtonSize
   width?: ButtonWidth
@@ -43,6 +43,9 @@ export interface ButtonProps {
   id?: string
 }
 
+/**
+ * @deprecated
+ */
 export const Button = forwardRef<
   HTMLAnchorElement & HTMLButtonElement,
   ButtonProps

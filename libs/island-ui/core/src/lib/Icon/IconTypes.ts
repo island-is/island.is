@@ -1,2 +1,5 @@
 import { IconTypes } from './Icon'
-export type IconTypesDeprecated = IconTypes
+/**
+ * @deprecated
+ */
+export type { IconTypes as IconTypesDeprecated }

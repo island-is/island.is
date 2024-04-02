@@ -12,6 +12,9 @@ interface BreadcrumbsProps {
   separatorColor?: Colors
 }
 
+/**
+ * @deprecated
+ */
 export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
   label = 'breadcrumb',
   color = 'blue400',
@@ -39,4 +42,4 @@ export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
   )
 }
 
-export const BreadcrumbsDeprecated = Breadcrumbs
+export { Breadcrumbs as BreadcrumbsDeprecated }
