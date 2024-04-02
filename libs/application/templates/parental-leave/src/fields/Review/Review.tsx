@@ -39,10 +39,6 @@ import { Periods } from './review-groups/Periods'
 import { PersonalAllowance } from './review-groups/PersonalAllowance'
 import { SpousePersonalAllowance } from './review-groups/SpousePersonalAllowance'
 import { Comment } from './review-groups/Comment'
-import { Employment } from './review-groups/Employment'
-import { Periods } from './review-groups/Periods'
-import { useLocale } from '@island.is/localization'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 
 interface ReviewScreenProps {
   application: Application
