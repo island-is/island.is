@@ -170,3 +170,8 @@ export interface EmployerRow {
   companyNationalRegistryId?: string
   stillEmployed?: YesOrNo
 }
+
+export type SelectOption = {
+  label: string
+  value: string
+}

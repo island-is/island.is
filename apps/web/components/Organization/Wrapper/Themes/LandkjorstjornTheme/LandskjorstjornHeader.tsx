@@ -96,7 +96,7 @@ const LandskjorstjornHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                   linkResolver('organizationpage', [organizationPage.slug]).href
                 }
               >
-                <Text variant="h1" color="white">
+                <Text variant="h1" as="h1" color="white">
                   {organizationPage.title}
                 </Text>
               </Link>

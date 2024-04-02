@@ -47,7 +47,7 @@ export const business = buildSection({
                 fields: [
                   {
                     title: m.debtsCreditorName,
-                    id: 'businessDebt',
+                    id: 'description',
                   },
                   {
                     title: m.creditorsNationalId,
@@ -56,18 +56,19 @@ export const business = buildSection({
                   },
                   {
                     title: m.debtsLoanIdentity,
-                    id: 'loanIdentity',
+                    id: 'assetNumber',
                   },
                   {
                     title: m.debtsBalance,
-                    id: 'debtValue',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                     width: 'half',
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton,
-                sumField: 'debtValue',
+                fromExternalData: 'debtsInBusiness',
+                sumField: 'propertyValuation',
               },
             ),
           ],

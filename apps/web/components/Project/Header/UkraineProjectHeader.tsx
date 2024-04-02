@@ -35,7 +35,7 @@ export const UkraineProjectHeader = ({
               Ísland.is
             </Text>
             <Link href={linkResolver('projectpage', [projectPage.slug]).href}>
-              <Text variant="h1" color="white" marginTop={2}>
+              <Text variant="h1" as="h1" color="white" marginTop={2}>
                 {projectPage.title}
               </Text>
             </Link>
