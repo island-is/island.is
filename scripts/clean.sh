@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-CLEAN_DRY=false
+CLEAN_DRY="${DRY:-false}"
 CLEAN_DIST=false
 CLEAN_CACHES=false
 CLEAN_YARN=false
@@ -17,7 +17,7 @@ log() {
 # Allow never being passed arguments
 # shellcheck disable=SC2120
 dry() {
-  [[ $# -gt 0 ]] && log "$*"
+  [[ $# -eq 0 ]] || log "$*"
   if [[ "$CLEAN_DRY" == "true" ]]; then
     return 0
   fi
@@ -85,8 +85,7 @@ clean_generated() {
     -o -name "fragmentTypes.json" \
     \) "$(dry && echo -print || echo -delete)"
 
-  # shellcheck disable=SC2046
-  find . -not -path "./.cache/*" -type d \( -path '*/gen/fetch' \) -exec $(dry && echo 'echo') rm -rf '{}' +
+  find . -not -path "./.cache/*" -type d \( -path '*/gen/fetch' \) -exec "$(dry && echo 'echo' || echo '')" rm -rf '{}' +
 }
 
 clean_caches() {
