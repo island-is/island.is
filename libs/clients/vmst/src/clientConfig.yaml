@@ -548,7 +548,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Period'
-        applicationComment:    
+        applicationComment:
           type: string
           nullable: true
         employers:
