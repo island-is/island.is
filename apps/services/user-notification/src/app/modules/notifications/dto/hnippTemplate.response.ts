@@ -13,11 +13,15 @@ export class HnippTemplate {
   @ApiProperty({ example: 'Some extra text ...' })
   notificationDataCopy?: string
 
-  // DEPRECATED - LEGACY SUPPORT
+  /**
+   * @deprecated Legacy support
+   */
   @ApiProperty({ example: '//inbox/{{documentId}}' })
   clickAction?: string
 
-  // DEPRECATED - WILL BE REMOVED
+  /**
+   * @deprecated Will be removed
+   */
   @ApiProperty({ example: 'https://island.is/minarsidur/postholf' })
   clickActionWeb?: string
 
