@@ -25,12 +25,7 @@ export interface ContextMenuItem {
   icon?: IconMapIcon
 }
 
-export enum PrebuiltMenuItems {
-  openCaseInNewTab = 'openCaseInNewTab',
-  deleteCase = 'deleteCase',
-}
-
-export type MenuItems = (ContextMenuItem | PrebuiltMenuItems)[]
+export type MenuItems = ContextMenuItem[]
 
 interface ContextMenuProps {
   // Aria label for menu

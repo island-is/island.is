@@ -30,7 +30,7 @@ import {
   TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { PrebuiltMenuItems } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   DefendantInfo,
@@ -110,6 +110,7 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
+  const { deleteCaseMenuItem } = useContextMenu()
 
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
@@ -264,11 +265,8 @@ export const Cases: React.FC = () => {
                         },
                       ]}
                       data={casesAwaitingConfirmation}
-                      contextMenu={{
-                        menuItems: [
-                          PrebuiltMenuItems.openCaseInNewTab,
-                          PrebuiltMenuItems.deleteCase,
-                        ],
+                      generateContextMenuItems={(row: CaseListEntry) => {
+                        return [deleteCaseMenuItem(row, deleteCase)]
                       }}
                       columns={[
                         {
@@ -313,7 +311,6 @@ export const Cases: React.FC = () => {
                           ),
                         },
                       ]}
-                      onDeleteCase={deleteCase}
                     />
                   ) : (
                     <motion.div

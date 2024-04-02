@@ -17,8 +17,6 @@ import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, {
   ContextMenuItem,
-  type MenuItems,
-  PrebuiltMenuItems,
   useContextMenu,
 } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
@@ -37,10 +35,8 @@ interface TableProps {
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
-  contextMenu?: {
-    menuItems: MenuItems
-  }
-  onDeleteCase?: (theCase: CaseListEntry) => void
+  generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
+  renderContextMenu?: (row: CaseListEntry) => ReactNode
 }
 
 export const useTable = () => {
@@ -76,12 +72,12 @@ export const useTable = () => {
 }
 
 const Table: React.FC<TableProps> = (props) => {
-  const { thead, data, columns, contextMenu, onDeleteCase } = props
+  const { thead, data, columns, generateContextMenuItems } = props
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
-  const { openCaseInNewTabMenuItem, deleteCaseMenuItem } = useContextMenu()
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
   const { isTransitioningCase } = useCase()
+  const { openCaseInNewTabMenuItem } = useContextMenu()
   const { width } = useViewport()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -166,7 +162,7 @@ const Table: React.FC<TableProps> = (props) => {
               )}
             </th>
           ))}
-          {contextMenu && <th className={styles.th} />}
+          {generateContextMenuItems && <th className={styles.th} />}
         </tr>
       </thead>
       <tbody>
@@ -186,7 +182,7 @@ const Table: React.FC<TableProps> = (props) => {
                 {td.cell(row)}
               </td>
             ))}
-            {contextMenu && (
+            {generateContextMenuItems && (
               <td className={styles.td}>
                 <AnimatePresence exitBeforeEnter initial={false}>
                   {isOpeningCaseId === row.id && showLoading ? (
@@ -196,14 +192,10 @@ const Table: React.FC<TableProps> = (props) => {
                   ) : (
                     <ContextMenu
                       menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
-                      items={contextMenu.menuItems.map((item) =>
-                        item === PrebuiltMenuItems.openCaseInNewTab
-                          ? openCaseInNewTabMenuItem(row.id)
-                          : item === PrebuiltMenuItems.deleteCase &&
-                            onDeleteCase
-                          ? deleteCaseMenuItem(row, onDeleteCase)
-                          : (item as ContextMenuItem),
-                      )}
+                      items={[
+                        openCaseInNewTabMenuItem(row.id),
+                        ...generateContextMenuItems(row),
+                      ]}
                       disclosure={
                         <IconButton
                           icon="ellipsisVertical"
