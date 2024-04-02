@@ -39,7 +39,7 @@ test.describe('MS - Work Machines', () => {
         .getByRole('button', { name: 'Opna síu' })
         .first()
       const inputField = page.getByRole('textbox', {
-        name: '`Uppfletting ökutækis`',
+        name: 'Uppfletting ökutækis',
       })
       await inputField.click()
       await inputField.type('hys', { delay: 200 })
