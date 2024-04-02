@@ -64,7 +64,6 @@ create_pre_release_branch() {
   # Create branch on remote
   if git branch -r |& grep -q "$NEW_BRANCH"; then
     >&2 echo "Branch $NEW_BRANCH already exists (on remote)"
-    sleep 1
     [ "$IGNORE_EXISTING_RELEASE" = true ] || return 1
   fi
 
@@ -114,7 +113,7 @@ release_flows() {
   case "${ACTION}" in
   branch) create_pre_release_branch ;;
   promote) promote_to_release ;;
-  *) echo "Unknown action '${ACTION}'" exit 1 ;;
+  *) echo "Unknown action '${ACTION}'; exit 1 ;;
   esac
 }
 
