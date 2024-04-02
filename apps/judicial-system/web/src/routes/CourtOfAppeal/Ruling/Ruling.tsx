@@ -55,7 +55,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useContext(FormContext)
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
@@ -94,7 +94,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     useState<string>('')
 
   const isStepValid =
-    allFilesUploaded &&
+    allFilesDoneOrError &&
     isCourtOfAppealRulingStepFieldsValid(workingCase) &&
     (workingCase.appealRulingDecision ===
       CaseAppealRulingDecision.DISCONTINUED ||

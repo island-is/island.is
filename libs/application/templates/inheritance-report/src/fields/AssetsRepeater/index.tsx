@@ -25,7 +25,12 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
-import { isValidRealEstate, valueToNumber } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  isValidRealEstate,
+  valueToNumber,
+} from '../../lib/utils/helpers'
+import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import ShareInput from '../../components/ShareInput'
 
 type RepeaterProps = {
@@ -46,9 +51,8 @@ type RepeaterProps = {
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { externalData } = application
   const { id, props } = field
-  const { calcWithShareValue, assetKey, fromExternalData } = props
+  const { calcWithShareValue, assetKey } = props
 
   if (typeof calcWithShareValue !== 'boolean' || !assetKey) {
     throw new Error('calcWithShareValue and assetKey are required')
@@ -117,10 +121,11 @@ export const AssetsRepeater: FC<
   }
 
   useEffect(() => {
-    const extData = getValueViaPath(
-      (externalData.syslumennOnEntry?.data as any).estate,
-      fromExternalData ?? '',
-    ) as Record<string, unknown>[]
+    const estData =
+      getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
+
+    const extData =
+      getValueViaPath<InheritanceReportAsset[]>(estData, assetKey) ?? []
 
     if (
       !(application?.answers as any)?.assets?.[assetKey]?.hasModified &&
@@ -130,7 +135,7 @@ export const AssetsRepeater: FC<
       replace(
         extData.map((x) => ({
           ...x,
-          share: '0',
+          share: String(x.share),
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
@@ -284,7 +289,7 @@ const FieldComponent = ({
         </GridColumn>
       )
     case 'assetNumber':
-      if (assetKey === 'realEstate') {
+      if (assetKey === 'assets') {
         content = (
           <RealEstateNumberField
             field={field}

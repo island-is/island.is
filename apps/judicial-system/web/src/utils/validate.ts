@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness, isTrafficViolationCase } from './stepHelper'
+import { isBusiness, isTrafficViolationIndictment } from './stepHelper'
 
 export type Validation =
   | 'empty'
@@ -92,8 +92,8 @@ const getRegexByValidation = (validation: Validation) => {
     }
     case 'vehicle-registration-number': {
       return {
-        regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
-        errorMessage: 'Dæmi: AB-123',
+        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
+        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {
@@ -496,7 +496,7 @@ export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
     workingCase.caseFiles?.some(
       (file) => file.category === CaseFileCategory.COVER_LETTER,
     ) &&
-      (isTrafficViolationCase(workingCase) ||
+      (isTrafficViolationIndictment(workingCase) ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.INDICTMENT,
         )) &&
