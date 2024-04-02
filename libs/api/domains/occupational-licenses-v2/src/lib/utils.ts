@@ -1,5 +1,5 @@
 import { DistrictCommissionersLicenseStatus } from '@island.is/clients/district-commissioners-licenses'
-import { StatusV2 } from './models/licenseStatus.model'
+import { Status } from './models/licenseStatus.model'
 
 export type LicenseType = 'Education' | 'Health' | 'DistrictCommissioners'
 
@@ -40,18 +40,18 @@ export const getLicenseTypeByIdPrefix = (
 
 export const mapDistrictCommissionersLicenseStatusToStatus = (
   status: DistrictCommissionersLicenseStatus,
-): StatusV2 => {
+): Status => {
   switch (status) {
     case 'expired':
-      return StatusV2.INVALID
+      return Status.INVALID
 
     case 'in-progress':
-      return StatusV2.IN_PROGRESS
+      return Status.IN_PROGRESS
 
     case 'valid':
-      return StatusV2.VALID
+      return Status.VALID
 
     default:
-      return StatusV2.UNKNOWN
+      return Status.UNKNOWN
   }
 }

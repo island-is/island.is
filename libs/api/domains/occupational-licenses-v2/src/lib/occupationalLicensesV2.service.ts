@@ -28,7 +28,7 @@ import {
 } from '@island.is/cms-translations'
 import { LicenseType } from './models/licenseType.model'
 import { LicenseResponse as MMSLicenseResponse } from '@island.is/clients/mms'
-import { StatusV2 } from './models/licenseStatus.model'
+import { Status } from './models/licenseStatus.model'
 import { LicenseError } from './models/licenseError.model'
 import { FetchError } from '@island.is/clients/middlewares'
 
@@ -239,25 +239,25 @@ export class OccupationalLicensesV2Service {
   mapHealthDirectorateLicense = (
     data: HealthDirectorateLicenseToPractice,
   ): License => {
-    let status: StatusV2
+    let status: Status
     switch (data.status) {
       case 'LIMITED':
-        status = StatusV2.LIMITED
+        status = Status.LIMITED
         break
       case 'VALID':
-        status = StatusV2.VALID
+        status = Status.VALID
         break
       case 'REVOKED':
-        status = StatusV2.REVOKED
+        status = Status.REVOKED
         break
       case 'WAIVED':
-        status = StatusV2.WAIVED
+        status = Status.WAIVED
         break
       case 'INVALID':
-        status = StatusV2.INVALID
+        status = Status.INVALID
         break
       default:
-        status = StatusV2.UNKNOWN
+        status = Status.UNKNOWN
     }
 
     const organization: OrganizationSlugType = 'landlaeknir'
@@ -295,7 +295,7 @@ export class OccupationalLicensesV2Service {
       validFrom: new Date(data.issued),
       title: capitalize(data.type),
       status:
-        new Date(data.issued) < new Date() ? StatusV2.VALID : StatusV2.INVALID,
+        new Date(data.issued) < new Date() ? Status.VALID : Status.INVALID,
     }
   }
 }

@@ -4,14 +4,20 @@ import {
   ConfigType,
   IdsClientConfig,
   LazyDuringDevScope,
+  XRoadConfig,
 } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { DistrictCommissionersLicensesClientConfig } from './districtCommissionersLicenses.config'
 
 export const DistrictCommissionerLicensesApiProvider: Provider<RettindiFyrirIslandIsApi> =
   {
     provide: RettindiFyrirIslandIsApi,
     scope: LazyDuringDevScope,
-    useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) =>
+    useFactory: (
+      xroadConfig: ConfigType<typeof XRoadConfig>,
+      config: ConfigType<typeof DistrictCommissionersLicensesClientConfig>,
+      idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    ) =>
       new RettindiFyrirIslandIsApi(
         new Configuration({
           fetchApi: createEnhancedFetch({
@@ -27,7 +33,16 @@ export const DistrictCommissionerLicensesApiProvider: Provider<RettindiFyrirIsla
                 }
               : undefined,
           }),
+          basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+          headers: {
+            'X-Road-Client': xroadConfig.xRoadClient,
+            Accept: 'application/json',
+          },
         }),
       ),
-    inject: [IdsClientConfig.KEY],
+    inject: [
+      XRoadConfig.KEY,
+      DistrictCommissionersLicensesClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
   }

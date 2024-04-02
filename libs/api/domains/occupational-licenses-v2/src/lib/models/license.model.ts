@@ -1,6 +1,6 @@
 import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { GenericField } from './genericField.model'
-import { StatusV2 } from './licenseStatus.model'
+import { Status } from './licenseStatus.model'
 import { LicenseType } from './licenseType.model'
 
 @ObjectType('OccupationalLicenseV2')
@@ -44,8 +44,8 @@ export class License {
   @Field({ nullable: true })
   title?: string
 
-  @Field(() => StatusV2)
-  status!: StatusV2
+  @Field(() => Status)
+  status!: Status
 
   @Field(() => [GenericField], { nullable: true })
   genericFields?: Array<GenericField>

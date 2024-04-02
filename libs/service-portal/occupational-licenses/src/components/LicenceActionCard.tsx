@@ -2,7 +2,7 @@ import { FormatMessage, useLocale } from '@island.is/localization'
 import { ActionCard } from '@island.is/service-portal/core'
 import { olMessage as ol } from '../lib/messages'
 import { m } from '@island.is/service-portal/core'
-import { OccupationalLicenseStatusV2 } from '@island.is/api/schema'
+import { OccupationalLicenseV2Status } from '@island.is/api/schema'
 import { TagVariant } from '@island.is/island-ui/core'
 
 type LicenseActionCardProps = {
@@ -10,40 +10,40 @@ type LicenseActionCardProps = {
   validFrom?: string | Date
   url?: string
   image?: string
-  status: OccupationalLicenseStatusV2
+  status: OccupationalLicenseV2Status
 }
 
 const getTagProps = (
-  status: OccupationalLicenseStatusV2,
+  status: OccupationalLicenseV2Status,
   formatMessage: FormatMessage,
 ): { label: string; variant: TagVariant | undefined } => {
   switch (status) {
-    case OccupationalLicenseStatusV2.VALID:
+    case OccupationalLicenseV2Status.VALID:
       return {
         label: formatMessage(ol.validLicense),
         variant: 'blue',
       }
-    case OccupationalLicenseStatusV2.LIMITED:
+    case OccupationalLicenseV2Status.LIMITED:
       return {
         label: formatMessage(ol.validWithLimitationsLicense),
         variant: 'yellow',
       }
-    case OccupationalLicenseStatusV2.IN_PROGRESS:
+    case OccupationalLicenseV2Status.IN_PROGRESS:
       return {
         label: formatMessage(ol.inProgressLicense),
         variant: 'yellow',
       }
-    case OccupationalLicenseStatusV2.REVOKED:
+    case OccupationalLicenseV2Status.REVOKED:
       return {
         label: formatMessage(ol.revokedLicense),
         variant: 'red',
       }
-    case OccupationalLicenseStatusV2.WAIVED:
+    case OccupationalLicenseV2Status.WAIVED:
       return {
         label: formatMessage(ol.waivedLicense),
         variant: 'red',
       }
-    case OccupationalLicenseStatusV2.INVALID:
+    case OccupationalLicenseV2Status.INVALID:
       return {
         label: formatMessage(ol.invalidLicense),
         variant: 'red',
