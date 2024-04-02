@@ -77,6 +77,7 @@ export class DelegationIndex extends Model<
     return {
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
+      subjectId: this.subjectId,
     }
   }
 }

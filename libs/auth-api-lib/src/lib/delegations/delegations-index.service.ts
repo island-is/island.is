@@ -134,8 +134,7 @@ const toDelegationIndexInfo = (
 
 /**
  * Service class for delegation index.
- * Delegation index stores delegations for a user
- * to bypass the need to fetch them from third party services
+ * Delegation index stores delegations for a user to bypass the need to fetch them from third party services
  * */
 @Injectable()
 export class DelegationsIndexService {
@@ -153,6 +152,7 @@ export class DelegationsIndexService {
     private personalRepresentativeScopePermissionService: PersonalRepresentativeScopePermissionService,
   ) {}
 
+  /* Lookup delegations in index from user for specific scope */
   async getDelegationRecords({
     scope,
     fromNationalId,
