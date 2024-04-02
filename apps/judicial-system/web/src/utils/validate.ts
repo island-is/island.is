@@ -92,8 +92,8 @@ const getRegexByValidation = (validation: Validation) => {
     }
     case 'vehicle-registration-number': {
       return {
-        regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
-        errorMessage: 'Dæmi: AB-123',
+        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
+        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {
@@ -461,15 +461,25 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   )
 }
 
-export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
-  const { appealRulingDecision, appealConclusion, appealState } = workingCase
+export const isCourtOfAppealRulingStepFieldsValid = (
+  workingCase: Case,
+): boolean => {
+  return Boolean(
+    workingCase.appealRulingDecision &&
+      (workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.DISCONTINUED ||
+        validate([[workingCase.appealConclusion, ['empty']]]).isValid),
+  )
+}
 
-  return (
-    appealState === CaseAppealState.COMPLETED ||
-    appealState === CaseAppealState.WITHDRAWN ||
-    (appealRulingDecision !== null &&
-      validate([[appealConclusion, ['empty']]]).isValid) ||
-    appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+  return Boolean(
+    isCourtOfAppealRulingStepFieldsValid(workingCase) &&
+      (workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.DISCONTINUED ||
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.APPEAL_RULING,
+        )),
   )
 }
 

@@ -131,8 +131,13 @@ export const expandAnswers = (
         value: answers.assets.money?.value ?? '',
       },
       otherAssets: {
-        info: answers.assets.otherAssets?.info ?? '',
-        value: answers.assets.otherAssets?.value ?? '',
+        data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
+          return {
+            info: otherAsset?.info ?? '',
+            value: otherAsset?.value ?? '',
+          }
+        }),
+        total: answers.assets.otherAssets?.total ?? 0,
       },
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
