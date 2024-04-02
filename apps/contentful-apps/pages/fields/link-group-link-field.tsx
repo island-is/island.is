@@ -18,12 +18,92 @@ const getSubpageContentTypeId = (pageContentTypeId?: string) => {
   return null
 }
 
+interface SubpageData {
+  pageAbove: EntryProps | null
+  subpageContentType: ContentTypeProps | null
+  loading: boolean
+}
+
+const useSubpageData = (): SubpageData => {
+  const sdk = useSDK<FieldExtensionSDK>()
+  const cma = useCMA()
+  const [data, setData] = useState<SubpageData>({
+    pageAbove: null,
+    subpageContentType: null,
+    loading: true,
+  })
+
+  useEffect(() => {
+    const fetchPageAbove = async (
+      pageAboveContentTypeId: string,
+    ): Promise<boolean> => {
+      const pageAboveResponse = await cma.entry.getMany({
+        query: {
+          links_to_entry: sdk.entry.getSys().id,
+          content_type: pageAboveContentTypeId,
+        },
+      })
+
+      if (pageAboveResponse.items.length > 0) {
+        const pageAboveEntry = pageAboveResponse.items[0]
+
+        const subpageContentTypeId = getSubpageContentTypeId(
+          pageAboveEntry.sys.contentType.sys.id,
+        )
+
+        setData({
+          loading: false,
+          pageAbove: pageAboveEntry,
+          subpageContentType: subpageContentTypeId
+            ? await cma.contentType.get({
+                contentTypeId: subpageContentTypeId,
+              })
+            : null,
+        })
+        return true
+      }
+      return false
+    }
+
+    Promise.allSettled(
+      // Check for all possible pages and whether they are linking to us
+      [fetchPageAbove('organizationPage'), fetchPageAbove('projectPage')],
+    )
+      .then((results) => {
+        const subpageDataWasFound = results.some(
+          (result) => result.status === 'fulfilled' && result.value,
+        )
+        if (!subpageDataWasFound) {
+          setData({
+            loading: false,
+            pageAbove: null,
+            subpageContentType: null,
+          })
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        setData({
+          loading: false,
+          pageAbove: null,
+          subpageContentType: null,
+        })
+      })
+  }, [cma.contentType, cma.entry, sdk.entry])
+
+  return data
+}
+
 const LinkGroupLinkField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
-  const [pageAbove, setPageAbove] = useState<EntryProps | null>(null)
-  const [subpageContentType, setSubpageContentType] =
-    useState<ContentTypeProps | null>(null)
+
+  const {
+    loading: loadingSubpageData,
+    pageAbove,
+    subpageContentType,
+  } = useSubpageData()
+
   const [linkContentType, setLinkContentType] =
     useState<ContentTypeProps | null>(null)
 
@@ -52,38 +132,6 @@ const LinkGroupLinkField = () => {
         setLinkContentType(response)
       })
   }, [cma.contentType])
-
-  useEffect(() => {
-    const fetchPageAbove = async (pageAboveContentTypeId: string) => {
-      const pageAboveResponse = await cma.entry.getMany({
-        query: {
-          links_to_entry: sdk.entry.getSys().id,
-          content_type: pageAboveContentTypeId,
-        },
-      })
-
-      if (pageAboveResponse.items.length > 0) {
-        const pageAboveEntry = pageAboveResponse.items[0]
-        setPageAbove(pageAboveEntry)
-
-        const subpageContentTypeId = getSubpageContentTypeId(
-          pageAboveEntry.sys.contentType.sys.id,
-        )
-
-        if (subpageContentTypeId) {
-          setSubpageContentType(
-            await cma.contentType.get({
-              contentTypeId: subpageContentTypeId,
-            }),
-          )
-        }
-      }
-    }
-
-    // Check for all possible pages and whether they are linking to us
-    fetchPageAbove('organizationPage')
-    fetchPageAbove('projectPage')
-  }, [cma.contentType, cma.entry, sdk.entry])
 
   const handleCreateEntry = async (
     contentTypeId: string,
@@ -167,7 +215,7 @@ const LinkGroupLinkField = () => {
     })
   }
 
-  if (!linkContentType) {
+  if (!linkContentType || loadingSubpageData) {
     return (
       <Flex paddingTop="spacingM" justifyContent="center">
         <Spinner />
@@ -195,6 +243,8 @@ const LinkGroupLinkField = () => {
         renderCustomActions={(props) => (
           <CombinedLinkActions
             {...props}
+            canLinkEntity={true}
+            canCreateEntity={true}
             contentTypes={selectableContentTypes}
             onLinkExisting={() => handleLinkExisting(props)}
             onCreate={(contentTypeId) =>
@@ -221,6 +271,8 @@ const LinkGroupLinkField = () => {
       renderCustomActions={(props) => (
         <CombinedLinkActions
           {...props}
+          canLinkEntity={true}
+          canCreateEntity={true}
           contentTypes={selectableContentTypes}
           onLinkExisting={() => handleLinkExisting(props)}
           onCreate={(contentTypeId) => handleCreateEntry(contentTypeId, props)}
