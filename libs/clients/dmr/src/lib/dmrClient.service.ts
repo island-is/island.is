@@ -8,12 +8,16 @@ import {
   JournalControllerApplicationRequest,
   JournalControllerCategoriesRequest,
   JournalControllerDepartmentsRequest,
+  JournalControllerInvolvedPartiesRequest,
+  JournalControllerMainCategoriesRequest,
   JournalControllerTypesRequest,
 } from '../../gen/fetch/apis'
 import {
   JournalAdvert,
   JournalAdvertCategoriesResponse,
   JournalAdvertDepartmentsResponse,
+  JournalAdvertInvolvedPartiesResponse,
+  JournalAdvertMainCategoriesResponse,
   JournalAdvertTypesResponse,
   JournalAdvertsResponse,
   JournalPostApplicationResponse,
@@ -46,10 +50,22 @@ export class DmrClientService {
     return this.dmrApi.journalControllerTypes(params)
   }
 
+  public async mainCategories(
+    params: JournalControllerMainCategoriesRequest,
+  ): Promise<JournalAdvertMainCategoriesResponse> {
+    return await this.dmrApi.journalControllerMainCategories(params)
+  }
+
   public async categories(
     params: JournalControllerCategoriesRequest,
   ): Promise<JournalAdvertCategoriesResponse> {
     return await this.dmrApi.journalControllerCategories(params)
+  }
+
+  public async involvedParties(
+    params: JournalControllerInvolvedPartiesRequest,
+  ): Promise<JournalAdvertInvolvedPartiesResponse> {
+    return await this.dmrApi.journalControllerInvolvedParties(params)
   }
 
   public async submitApplication(

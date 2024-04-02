@@ -8,6 +8,8 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { overviewAssets } from '../OverviewSections/OverviewAssets'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import { Application } from '@island.is/application/types'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -74,7 +76,7 @@ export const assets = buildSection({
                     currency: true,
                   },
                 ],
-                assetKey: 'realEstate',
+                assetKey: 'assets',
                 calcWithShareValue: true,
                 repeaterButtonText: m.addRealEstate.defaultMessage,
                 fromExternalData: 'assets',
@@ -109,12 +111,24 @@ export const assets = buildSection({
               title: m.inventoryTextField,
               placeholder: m.inventoryTextField,
               variant: 'textarea',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    ?.inheritanceReportInfo?.cash?.[0]?.description ?? ''
+                )
+              },
               rows: 7,
             }),
             buildTextField({
               id: 'assets.inventory.value',
               title: m.inventoryValueTitle,
               width: 'half',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    ?.inheritanceReportInfo?.cash?.[0]?.propertyValuation ?? '0'
+                )
+              },
               variant: 'currency',
             }),
           ],
@@ -208,6 +222,10 @@ export const assets = buildSection({
               id: 'assets.guns.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'modifiers.guns.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -265,6 +283,10 @@ export const assets = buildSection({
               id: 'assets.bankAccounts.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'modifiers.bankAccounts.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -276,20 +298,20 @@ export const assets = buildSection({
                 fields: [
                   {
                     title: m.bankAccount,
-                    id: 'accountNumber',
+                    id: 'assetNumber',
                     required: true,
                     format: '####-##-######',
                     placeholder: '0000-00-000000',
                   },
                   {
                     title: m.bankAccountCapital,
-                    id: 'capital',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
                   {
                     title: m.bankAccountPenaltyInterestRates,
-                    id: 'penaltyInterestRates',
+                    id: 'exchangeRateOrInterest',
                     required: false,
                     currency: true,
                   },
@@ -307,10 +329,11 @@ export const assets = buildSection({
                 ],
                 assetKey: 'bankAccounts',
                 calcWithShareValue: false,
+                fromExternalData: 'bankAccounts',
                 skipPushRight: false,
                 repeaterButtonText: m.bankAccountRepeaterButton,
-                sumField: 'capital',
-                sumField2: 'penaltyInterestRates',
+                sumField: 'propertyValuation',
+                sumField2: 'exchangeRateOrInterest',
               },
             ),
           ],
@@ -350,24 +373,25 @@ export const assets = buildSection({
                 fields: [
                   {
                     title: m.claimsIssuer,
-                    id: 'issuer',
+                    id: 'description',
                   },
                   {
                     title: m.nationalId,
-                    id: 'nationalId',
+                    id: 'assetNumber',
                     format: '######-####',
                   },
                   {
                     title: m.claimsAmount,
-                    id: 'value',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
                 ],
                 assetKey: 'claims',
                 calcWithShareValue: false,
+                fromExternalData: 'sharesAndClaims',
                 repeaterButtonText: m.claimsRepeaterButton,
-                sumField: 'value',
+                sumField: 'propertyValuation',
               },
             ),
           ],
@@ -407,21 +431,21 @@ export const assets = buildSection({
                 fields: [
                   {
                     title: m.stocksOrganization,
-                    id: 'organization',
+                    id: 'description',
                   },
                   {
                     title: m.stocksNationalId,
-                    id: 'nationalId',
+                    id: 'assetNumber',
                     format: '######-####',
                   },
                   {
                     title: m.stocksFaceValue,
-                    id: 'faceValue',
+                    id: 'amount',
                     currency: true,
                   },
                   {
                     title: m.stocksRateOfChange,
-                    id: 'rateOfExchange',
+                    id: 'exchangeRateOrInterest',
                     type: 'number',
                   },
                   {
@@ -436,6 +460,7 @@ export const assets = buildSection({
                 assetKey: 'stocks',
                 repeaterButtonText: m.stocksRepeaterButton,
                 sumField: 'value',
+                fromExternalData: 'stocks',
               },
             ),
           ],
@@ -463,6 +488,13 @@ export const assets = buildSection({
               title: m.moneyText,
               placeholder: m.moneyPlaceholder,
               variant: 'textarea',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    ?.inheritanceReportInfo?.depositsAndMoney?.[0]
+                    ?.description ?? ''
+                )
+              },
               rows: 7,
             }),
             buildTextField({
@@ -470,6 +502,13 @@ export const assets = buildSection({
               title: m.moneyValue,
               width: 'half',
               variant: 'currency',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    ?.inheritanceReportInfo?.depositsAndMoney?.[0]
+                    ?.propertyValuation ?? '0'
+                )
+              },
             }),
           ],
         }),
@@ -490,19 +529,34 @@ export const assets = buildSection({
               description: m.otherAssetsDescription,
               titleVariant: 'h3',
             }),
-            buildTextField({
-              id: 'assets.otherAssets.info',
-              title: m.otherAssetsText,
-              placeholder: m.otherAssetsPlaceholder,
-              variant: 'textarea',
-              rows: 7,
+            buildDescriptionField({
+              id: 'assets.otherAssets.total',
+              title: '',
             }),
-            buildTextField({
-              id: 'assets.otherAssets.value',
-              title: m.otherAssetsValue,
-              width: 'half',
-              variant: 'currency',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'assets.otherAssets.data',
+                component: 'OtherAssetsRepeater',
+                doesNotRequireAnswer: true,
+              },
+              {
+                fields: [
+                  {
+                    title: m.otherAssetsText,
+                    id: 'info',
+                    required: true,
+                  },
+                  {
+                    title: m.otherAssetsValue,
+                    id: 'value',
+                    required: true,
+                    currency: true,
+                  },
+                ],
+                repeaterButtonText: m.otherAssetRepeaterButton,
+              },
+            ),
           ],
         }),
       ],

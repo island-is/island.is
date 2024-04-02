@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import cn from 'classnames'
 
+import { ResponsiveSpace } from '@island.is/island-ui/core'
 import { DefaultHeader } from '@island.is/web/components'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
@@ -54,6 +55,13 @@ const VinnueftilitidHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         }
         className={styles.gridContainer}
         logoAltText={logoAltText}
+        titleSectionPaddingLeft={
+          organizationPage.themeProperties
+            .titleSectionPaddingLeft as ResponsiveSpace
+        }
+        mobileBackground={
+          organizationPage.themeProperties.mobileBackgroundColor
+        }
       />
     </div>
   )

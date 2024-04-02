@@ -31,7 +31,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
+import { isTrafficViolationIndictment } from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -75,7 +75,7 @@ const useCaseList = () => {
 
   const openCase = (caseToOpen: Case, user: User) => {
     let routeTo = null
-    const isTrafficViolation = isTrafficViolationCase(caseToOpen)
+    const isTrafficViolation = isTrafficViolationIndictment(caseToOpen)
 
     if (isDefenceUser(user)) {
       if (isIndictmentCase(caseToOpen.type)) {
