@@ -58,7 +58,6 @@ import {
   isGovernmentComplainee,
   isPreviousOmbudsmanComplaint,
 } from '../utils'
-import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -66,34 +65,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   mode: FormModes.DRAFT,
   logo: Logo,
   children: [
-    buildSection({
-      id: 'conditions',
-      title: section.dataCollection,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: dataProvider.dataProviderHeader,
-          subTitle: dataProvider.dataProviderSubTitle,
-          checkboxLabel: dataProvider.dataProviderCheckboxLabel,
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: dataProvider.nationalRegistryTitle,
-              subTitle: dataProvider.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: dataProvider.userProfileTitle,
-              subTitle: dataProvider.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
-              title: dataProvider.notificationTitle,
-              subTitle: dataProvider.notificationSubTitle,
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSection({
       id: 'information',
       title: section.information,
