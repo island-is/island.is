@@ -7,7 +7,7 @@ export const approved = defineMessages({
     description: 'Title of the approved section',
   },
   text: {
-    id: 'ghb.application:approved.text',
+    id: 'ghb.application:approved.text#markdown',
     defaultMessage:
       'Umsókn þín um kaup ríkis á íbúðarhúsnæði í Grindavík hefur verið samþykkt.',
     description: 'Text of the section when the application is approved',

@@ -33,7 +33,7 @@ interface VehicleDetails {
   color: string
   isDebtLess?: boolean
   validationErrorMessages?: VehicleValidationErrorMessage[]
-  requireMilage?: boolean
+  requireMileage?: boolean
 }
 
 interface Props extends FieldBaseProps {
@@ -51,7 +51,7 @@ const extractCommonVehicleInfo = function (
     permno: basicInfo.permno || '',
     make: basicInfo.make || '',
     color: basicInfo.color || '',
-    requireMilage: basicInfo.requireMileage || false,
+    requireMileage: basicInfo.requireMileage || false,
   }
 }
 
@@ -230,7 +230,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.make`, vehicleDetails.make)
     setValue(`${field.id}.plate`, plate)
     setValue(`${field.id}.color`, vehicleDetails.color || undefined)
-    setValue(`${field.id}.requireMilage`, vehicleDetails.requireMilage)
+    setValue(`${field.id}.requireMileage`, vehicleDetails.requireMileage)
     setValue('vehicleInfo.plate', plate)
     setValue('vehicleInfo.type', vehicleDetails.make)
     setVehicleDetails(vehicleDetails)
@@ -261,8 +261,13 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.color`, vehicleDetailsWithGrant.color || undefined)
     setValue(
       `${field.id}.newRegistrationDate`,
-      vehicleDetailsWithGrant.newRegistrationDate,
+      vehicleDetailsWithGrant.newRegistrationDate || '',
     )
+    setValue(
+      `${field.id}.firstRegistrationDate`,
+      vehicleDetailsWithGrant.firstRegistrationDate || '',
+    )
+    setValue(`${field.id}.vin`, vehicleDetailsWithGrant.vin)
     setValue(`${field.id}.grantAmount`, vehicleDetailsWithGrant.vehicleGrant)
     setValue(
       `${field.id}.grantItemCode`,

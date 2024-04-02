@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { IntlShape, useIntl } from 'react-intl'
 
@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  CrimeScene,
   offenseSubstances,
   Substance,
   SubstanceMap,
@@ -35,7 +36,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
-import { policeCaseInfo } from '../Defendant/PoliceCaseInfo/PoliceCaseInfo.strings'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
@@ -275,6 +275,47 @@ export const getLegalArguments = (
   })
 }
 
+export const getIncidentDescription = (
+  indictmentCount: TIndictmentCount,
+  formatMessage: IntlShape['formatMessage'],
+  crimeScene?: CrimeScene,
+) => {
+  const { offenses, substances, vehicleRegistrationNumber } = indictmentCount
+
+  if (offenses?.length === 0) {
+    return ''
+  }
+
+  let incidentLocation = ''
+  let incidentDate = ''
+
+  if (crimeScene) {
+    incidentLocation = crimeScene.place ?? ''
+    incidentDate =
+      formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
+  }
+
+  const reason = getIncidentDescriptionReason(
+    offenses ?? [],
+    substances ?? {},
+    formatMessage,
+  )
+
+  const incidentDescription = formatMessage(
+    strings.incidentDescriptionAutofill,
+    {
+      incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
+      vehicleRegistrationNumber: vehicleRegistrationNumber
+        ? vehicleRegistrationNumber
+        : '[Skráningarnúmer ökutækis]',
+      reason,
+      incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
+    },
+  )
+
+  return incidentDescription
+}
+
 export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
   props,
 ) => {
@@ -325,54 +366,6 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
     [lawTag, indictmentCount.lawsBroken],
   )
 
-  const incidentDescription = useCallback(
-    (indictmentCount: TIndictmentCount) => {
-      const {
-        offenses,
-        substances,
-        policeCaseNumber,
-        vehicleRegistrationNumber,
-      } = indictmentCount
-
-      if (offenses?.length === 0) {
-        return ''
-      }
-
-      let incidentLocation = ''
-      let incidentDate = ''
-      let incidentDescription = ''
-
-      if (workingCase.crimeScenes && policeCaseNumber) {
-        const crimeScenes = workingCase.crimeScenes
-        const crimeDate = crimeScenes[policeCaseNumber].date
-
-        incidentLocation = crimeScenes[policeCaseNumber].place ?? ''
-        incidentDate =
-          formatDate(crimeDate, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
-      }
-
-      const reason = getIncidentDescriptionReason(
-        offenses ?? [],
-        substances ?? {},
-        formatMessage,
-      )
-
-      incidentDescription = formatMessage(strings.incidentDescriptionAutofill, {
-        incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-        vehicleRegistrationNumber: vehicleRegistrationNumber
-          ? vehicleRegistrationNumber
-          : '[Skráningarnúmer ökutækis]',
-        reason,
-        incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
-      })
-
-      setIncidentDescriptionErrorMessage('')
-
-      return incidentDescription
-    },
-    [formatMessage, workingCase.crimeScenes],
-  )
-
   const handleIndictmentCountChanges = (update: UpdateIndictmentCount) => {
     let lawsBroken
 
@@ -388,11 +381,24 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
       update.legalArguments = getLegalArguments(lawsBroken, formatMessage)
     }
 
-    onChange(indictmentCount.id, {
-      incidentDescription: incidentDescription({
+    const policeCaseNumber =
+      update.policeCaseNumber ?? indictmentCount.policeCaseNumber
+
+    const crimeScene = policeCaseNumber
+      ? workingCase.crimeScenes[policeCaseNumber]
+      : undefined
+
+    const incidentDescription = getIncidentDescription(
+      {
         ...indictmentCount,
         ...update,
-      }),
+      },
+      formatMessage,
+      crimeScene,
+    )
+
+    onChange(indictmentCount.id, {
+      incidentDescription,
       ...update,
     })
   }
@@ -448,7 +454,7 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
       </Box>
       <Box marginBottom={2}>
         <InputMask
-          mask={'**-*99'}
+          mask={[/[A-Z]/i, /[A-Z]/i, /[A-Z]|[0-9]/i, /[0-9]/, /[0-9]/]}
           maskPlaceholder={null}
           value={indictmentCount.vehicleRegistrationNumber ?? ''}
           beforeMaskedStateChange={({ nextState }) => {

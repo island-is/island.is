@@ -180,6 +180,10 @@ export const m = defineMessages({
     id: 'service.portal:more-options',
     defaultMessage: 'Fleiri möguleikar',
   },
+  owner: {
+    id: 'service.portal:owner',
+    defaultMessage: 'Eigandi',
+  },
   get: {
     id: 'service.portal:get',
     defaultMessage: 'Sækja',
@@ -856,6 +860,10 @@ export const m = defineMessages({
     id: 'service.portal:no-data-found',
     defaultMessage: 'Engin gögn fundust fyrir þig',
   },
+  noTransactionFound: {
+    id: 'service.portal:no-transaction-found',
+    defaultMessage: 'Engar færslur eru innan þeirra skilyrða sem valin eru',
+  },
   noData: {
     id: 'service.portal:no-data-found-simple',
     defaultMessage: 'Engin gögn fundust',
@@ -1308,6 +1316,10 @@ export const m = defineMessages({
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
   },
+  backToList: {
+    id: 'service.portal:back-to-list',
+    defaultMessage: 'Aftur í lista',
+  },
   month: {
     id: 'service.portal:month',
     defaultMessage: 'Mánuður',
@@ -1425,26 +1437,48 @@ export const m = defineMessages({
     id: 'service.portal:icelandic',
     defaultMessage: 'Íslenska',
   },
-  noDataFoundVariable: {
-    id: 'sp.health:no-data-found',
+  noDataFoundVariableSingular: {
+    id: 'service.portal:no-data-found-variable-singular',
+    defaultMessage: 'Ekkert {arg} skráð',
+  },
+  noDataFoundVariableSingularFeminine: {
+    id: 'service.portal:no-data-found-variable-singular-feminine',
     defaultMessage: 'Engin {arg} skráð',
   },
+  noDataFoundVariableSingularMasculine: {
+    id: 'service.portal:no-data-found-variable-singular-masculine',
+    defaultMessage: 'Enginn {arg} skráður',
+  },
   noDataFoundVariableMasculine: {
-    id: 'sp.health:no-data-found-masculine',
+    id: 'service.portal:no-data-found-variable-masculine',
     defaultMessage: 'Engir {arg} skráðir',
   },
   noDataFoundVariableFeminine: {
-    id: 'sp.health:no-data-found-feminine',
+    id: 'service.portal:no-data-found-variable-feminine',
     defaultMessage: 'Engar {arg} skráðar',
   },
+  noDataFoundVariable: {
+    id: 'service.portal:no-data-found-variable',
+    defaultMessage: 'Engin {arg} skráð',
+  },
   noDataFoundVariableDetail: {
-    id: 'sp.health:no-data-found-detail',
+    id: 'service.portal:no-data-found-variable-detail',
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
   noDataFoundVariableDetailVariation: {
-    id: 'sp.health:no-data-found-detail-variation',
+    id: 'service.portal:no-data-found-variable-detail-variation',
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariationFeminine: {
+    id: 'service.portal:no-data-found-variable-detail-variation-feminine',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráðar {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariationMasculine: {
+    id: 'service.portal:no-data-variable-found-detail-variation-masculine',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
 })

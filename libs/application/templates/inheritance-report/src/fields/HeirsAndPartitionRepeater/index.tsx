@@ -28,6 +28,7 @@ import {
 import { HeirsAndPartitionRepeaterProps } from './types'
 import { TAX_FREE_LIMIT } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
+import ShareInput from '../../components/ShareInput'
 
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<
@@ -149,7 +150,6 @@ export const HeirsAndPartitionRepeater: FC<
     )
     const inheritanceTaxValue = Math.round(taxableInheritanceValue * 0.1)
 
-    setValue(`${updateIndex}.heirsPercentage`, String(numValue))
     setValue(
       `${updateIndex}.taxFreeInheritance`,
       String(taxFreeInheritanceValue),
@@ -175,7 +175,7 @@ export const HeirsAndPartitionRepeater: FC<
     }
 
     const total = values.reduce((acc: number, current: any) => {
-      const val = parseInt(current[props.sumField], 10)
+      const val = parseFloat(current[props.sumField])
 
       return current?.enabled ? acc + (isNaN(val) ? 0 : val) : acc
     }, 0)
@@ -213,13 +213,18 @@ export const HeirsAndPartitionRepeater: FC<
   const [total, setTotal] = useState(0)
 
   useEffect(() => {
-    if (fields.length === 0 && estateData?.estate?.estateMembers) {
+    if (
+      fields.length === 0 &&
+      estateData?.inheritanceReportInfo?.heirs &&
+      !(application.answers as any)?.heirs?.hasModified
+    ) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
       // despite checking on the length of the fields
       // so now using "replace" instead, for the initial setup
-      replace(estateData.estate.estateMembers)
+      replace(estateData?.inheritanceReportInfo?.heirs)
+      setValue('heirs.hasModified', true)
     }
-  }, [estateData?.estate?.estateMembers, fields.length, replace])
+  }, [])
 
   return (
     <Box>
@@ -365,24 +370,14 @@ export const HeirsAndPartitionRepeater: FC<
                         </GridColumn>
                       ) : customField.id === 'heirsPercentage' ? (
                         <GridColumn span="1/2" paddingBottom={2}>
-                          <InputController
-                            id={`${fieldIndex}.${customField.id}`}
+                          <ShareInput
                             name={`${fieldIndex}.${customField.id}`}
                             disabled={!member.enabled}
                             label={customField.title}
-                            defaultValue={defaultValue ? defaultValue : 1}
-                            type="number"
-                            suffix="%"
-                            backgroundColor="blue"
-                            onChange={(
-                              event: React.ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                              >,
-                            ) => {
-                              const val = parseInt(event.target.value, 10)
+                            onAfterChange={(val) => {
                               updateValues(fieldIndex, val)
                             }}
-                            error={
+                            errorMessage={
                               error && error[mainIndex]
                                 ? error[mainIndex][customField.id]
                                 : undefined

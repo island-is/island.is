@@ -1,6 +1,36 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Pre-data collection
+  preDataCollectionHeading: {
+    id: 'ir.application:preDataCollectionHeading',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Heading for pre-collection',
+  },
+  preDataCollectionInfo: {
+    id: 'ir.application:preDataCollectionInfo',
+    defaultMessage:
+      'Til þess að geta hafið umsókn þarf fyrst að sækja til sýslumanns hvort viðkomandi eigi einhver dánarbú á skrá.',
+    description: 'Info for pre-collection',
+  },
+  preDataCollectionTitle: {
+    id: 'ir.application:preDataCollectionTitle',
+    defaultMessage: 'Upplýsingar um dánarbú',
+    description: 'Title of provider for pre-collection',
+  },
+
+  preDataCollectionDescription: {
+    id: 'ir.application:preDataCollectionDescription',
+    defaultMessage: 'Sóttar verða upplýsingar frá sýslumanni um dánarbú',
+    description: 'Description of provider for pre-collection',
+  },
+
+  preDataCollectionChooseEstateSelectTitle: {
+    id: 'ir.application:preDataCollectionChooseEstateSelectTitle',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Title for pre-collection of data',
+  },
+
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
@@ -289,6 +319,11 @@ export const m = defineMessages({
       'Ef hinn látni átti ekki peninga sem varðveittir eru utan fjármálastofnana vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
+  otherAssetRepeaterButton: {
+    id: 'ir.application:otherAssetRepeaterButton',
+    defaultMessage: 'Bæta við eign',
+    description: '',
+  },
   continueWithoutOtherAssets: {
     id: 'ir.application:continueWithoutOtherAssets',
     defaultMessage:
@@ -417,7 +452,7 @@ export const m = defineMessages({
   },
   vehicleNumberLabel: {
     id: 'ir.application:vehicleNumberLabel',
-    defaultMessage: 'Skráningarnúmer ökutækis',
+    defaultMessage: 'Fastanúmer ökutækis',
     description: 'Vehicle number label',
   },
   vehicleTypeLabel: {
@@ -488,6 +523,16 @@ export const m = defineMessages({
   bankAccountBalance: {
     id: 'ir.application:bankAccountBalance',
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
+    description: '',
+  },
+  bankAccountCapital: {
+    id: 'ir.application:bankAccountCapital',
+    defaultMessage: 'Höfuðstóll á dánardegi',
+    description: '',
+  },
+  bankAccountPenaltyInterestRates: {
+    id: 'ir.application:bankAccountPenaltyInterestRates',
+    defaultMessage: 'Áfallnir vextir á dánardegi',
     description: '',
   },
   bankAccountPlaceholder: {
@@ -969,6 +1014,11 @@ export const m = defineMessages({
     defaultMessage: 'Búshluti eftirlifandi maka',
     description: '',
   },
+  deceasedSeparateProperty: {
+    id: 'ir.application:deceasedSeparateProperty',
+    defaultMessage: 'Séreign hins látna',
+    description: '',
+  },
   spousesShareDescription: {
     id: 'ir.application:spousesShareDescription',
     defaultMessage:
@@ -1252,6 +1302,11 @@ export const m = defineMessages({
   infoPlaceholder: {
     id: 'ir.application:infoPlaceholder',
     defaultMessage: 'Skráðu inn athugasemdir hér',
+    description: '',
+  },
+  invalidShareValue: {
+    id: 'ir.application:invalidShareValue',
+    defaultMessage: 'Ógilt eignarhlutfall',
     description: '',
   },
   totalPercentage: {

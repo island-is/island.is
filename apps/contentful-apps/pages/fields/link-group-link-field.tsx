@@ -24,6 +24,8 @@ const LinkGroupLinkField = () => {
   const [pageAbove, setPageAbove] = useState<EntryProps | null>(null)
   const [subpageContentType, setSubpageContentType] =
     useState<ContentTypeProps | null>(null)
+  const [linkContentType, setLinkContentType] =
+    useState<ContentTypeProps | null>(null)
 
   // Handle iframe resizing when item count changes
   useEffect(() => {
@@ -32,7 +34,7 @@ const LinkGroupLinkField = () => {
         sdk.window.startAutoResizer()
       } else {
         sdk.window.stopAutoResizer()
-        sdk.window.updateHeight(!items?.length ? 210 : 300)
+        sdk.window.updateHeight(!items?.length ? 240 : 340)
       }
     })
 
@@ -40,6 +42,16 @@ const LinkGroupLinkField = () => {
       unregister()
     }
   }, [sdk.field, sdk.window])
+
+  useEffect(() => {
+    cma.contentType
+      .get({
+        contentTypeId: 'link',
+      })
+      .then((response) => {
+        setLinkContentType(response)
+      })
+  }, [cma.contentType])
 
   useEffect(() => {
     const fetchPageAbove = async (pageAboveContentTypeId: string) => {
@@ -145,7 +157,9 @@ const LinkGroupLinkField = () => {
         : sdk.dialogs.selectMultipleEntries
 
     selectEntriesFunction({
-      contentTypes: contentTypeToSelect ? [contentTypeToSelect] : [],
+      contentTypes: contentTypeToSelect
+        ? [contentTypeToSelect, 'link']
+        : ['link'],
     }).then((entries: EntryProps[]) => {
       entries = Array.isArray(entries) ? entries : [entries]
       entries = entries.filter((entry) => entry?.sys?.id) // Make sure the entries are non-empty
@@ -153,15 +167,17 @@ const LinkGroupLinkField = () => {
     })
   }
 
-  const selectableContentTypes = subpageContentType ? [subpageContentType] : []
-
-  if (!subpageContentType) {
+  if (!linkContentType) {
     return (
       <Flex paddingTop="spacingM" justifyContent="center">
         <Spinner />
       </Flex>
     )
   }
+
+  const selectableContentTypes = subpageContentType
+    ? [subpageContentType, linkContentType]
+    : [linkContentType]
 
   if (sdk.ids.field === 'primaryLink') {
     return (
@@ -173,7 +189,7 @@ const LinkGroupLinkField = () => {
         parameters={{
           instance: {
             showCreateEntityAction: true,
-            showLinkEntityAction: true,
+            showLinkEntityAction: selectableContentTypes.length > 1,
           },
         }}
         renderCustomActions={(props) => (
@@ -199,7 +215,7 @@ const LinkGroupLinkField = () => {
       parameters={{
         instance: {
           showCreateEntityAction: true,
-          showLinkEntityAction: true,
+          showLinkEntityAction: selectableContentTypes.length > 1,
         },
       }}
       renderCustomActions={(props) => (

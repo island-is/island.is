@@ -10,9 +10,13 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   NationalRegistryClientService,
-  ResidenceHistoryEntryDto,
+  ResidenceEntryDto,
 } from '@island.is/clients/national-registry-v2'
-import { getDomicileOnDate } from './grindavik-housing-buyout.utils'
+import {
+  getDomicileOnDate,
+  formatBankInfo,
+  getPreemptiveErrorDetails,
+} from './grindavik-housing-buyout.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   GrindavikHousingBuyoutAnswers,
@@ -21,9 +25,10 @@ import {
 
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 type CheckResidence = {
-  residenceHistory: ResidenceHistoryEntryDto[]
+  residenceHistory: ResidenceEntryDto
   realEstateId: string
   realEstateAddress: string
 }
@@ -36,6 +41,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     private propertiesApi: FasteignirApi,
   ) {
     super(ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT)
+  }
+
+  private getRealEstatesWithAuth(auth: User) {
+    return this.propertiesApi.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
+    )
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -68,24 +79,60 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
 
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
+    const hasLoanFromOtherProvider =
+      answers.loanProviders.loans?.findIndex((x) => !!x.otherProvider) !== -1 ??
+      false
+    const noLoanCheckbox =
+      answers.loanProviders.hasNoLoans?.includes(YES) ?? false
+    const hasNoLoans =
+      noLoanCheckbox && answers.loanProviders.loans?.length === 0
     const wishesForPreemptiveRights =
-      answers.preemptiveRightWish?.includes(YES) ?? false
+      answers.preemptiveRight.preemptiveRightWish === YES
+    const preemptiveRightType =
+      answers.preemptiveRight.preemptiveRightType ?? []
+    const otherOwnersBankInfo = answers.additionalOwners?.map((x) => ({
+      nationalId: x.nationalId,
+      bankInfo: formatBankInfo(x.bankInfo),
+    }))
 
     const extraData: { [key: string]: string } = {
       applicationId: application.id,
+      applicantBankInfo: formatBankInfo(answers.applicantBankInfo),
       residenceData: JSON.stringify(
         application.externalData.checkResidence.data,
       ),
       propertyData: JSON.stringify(
         application.externalData.getGrindavikHousing.data,
       ),
-      loans: JSON.stringify(answers.loans),
+      preferredDeliveryDate: answers.deliveryDate ?? '',
+      otherOwnersBankInfo: JSON.stringify(otherOwnersBankInfo),
+      loans: JSON.stringify(answers.loanProviders.loans),
+      hasLoanFromOtherProvider: hasLoanFromOtherProvider.toString(),
+      hasNoLoans: hasNoLoans.toString(),
       confirmsLoanTakeover: confirmsLoanTakeover.toString(),
       wishesForPreemptiveRights: wishesForPreemptiveRights.toString(),
+      preemptiveRightType: JSON.stringify(preemptiveRightType),
     }
 
     const uploadDataName = 'Umsókn um kaup á íbúðarhúsnæði í Grindavík'
     const uploadDataId = 'grindavik-umsokn-1'
+
+    // Preemptive error check
+    try {
+      await this.syslumennService.uploadDataPreemptiveErrorCheck(
+        [applicant, ...counterParties],
+        [],
+        extraData,
+        uploadDataName,
+        uploadDataId,
+      )
+    } catch (error) {
+      const details = getPreemptiveErrorDetails(error)
+      // Only throw template api error if we get details back
+      if (details) {
+        throw new TemplateApiError(details, 400)
+      }
+    }
 
     const response = await this.syslumennService.uploadData(
       [applicant, ...counterParties],
@@ -97,23 +144,49 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     return { ...response, applicationId: application.id }
   }
 
+  /**
+   * Looks up the residence of a person on a given date. First it checks the current residence and then looks up the residence history.
+   * This is due to missing data for individuals that have registrations from before 1986 from the history service.
+   * Returns null if no residence is found on either the current residence or the residence history.
+   */
+  async findResidenceOnDate(
+    nationalId: string,
+    dateInQuestion: string,
+  ): Promise<ResidenceEntryDto | null> {
+    //First off we check the current residence and check if that is on said date
+    const currentResidence = await this.nationalRegistryApi.getCurrentResidence(
+      nationalId,
+    )
+
+    const currentResidenceOnDate = currentResidence
+      ? getDomicileOnDate([currentResidence], dateInQuestion)
+      : null
+
+    if (currentResidenceOnDate) {
+      //If we have a residence on the date in question we return that
+      return currentResidenceOnDate
+    }
+
+    // The current residence is not at the time or the data is missing. Then we need to get the residence history and check if we have a residence at the time.
+    const residenceHistory = await this.nationalRegistryApi.getResidenceHistory(
+      nationalId,
+    )
+
+    const domicileOn10nov = getDomicileOnDate(residenceHistory, dateInQuestion)
+
+    return domicileOn10nov
+  }
+
   async checkResidence({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<CheckResidence> {
-    const data = await this.nationalRegistryApi.getResidenceHistory(
-      auth.nationalId,
-    )
+    const dateInQuestion = '2023-11-10'
 
-    if (data.length === 0) {
-      throw new TemplateApiError(
-        {
-          summary: prerequisites.errors.residendHistoryNotFoundDescription,
-          title: prerequisites.errors.residendHistoryNotFoundTitle,
-        },
-        400,
-      )
-    }
+    const residenceOnDate = await this.findResidenceOnDate(
+      auth.nationalId,
+      dateInQuestion,
+    )
 
     // gervimaður færeyjar pass through
     if (
@@ -121,16 +194,13 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       auth.nationalId === '0101302399'
     ) {
       return {
-        residenceHistory: data,
+        residenceHistory: residenceOnDate as ResidenceEntryDto,
         realEstateId: 'F12345',
         realEstateAddress: 'Vesturhóp 34, 240 Grindavík',
       }
     }
 
-    const dateInQuestion = '2023-11-10'
-    const domicileOn10nov = getDomicileOnDate(data, dateInQuestion)
-
-    if (!domicileOn10nov) {
+    if (!residenceOnDate) {
       throw new TemplateApiError(
         {
           summary: prerequisites.errors.noResidenceRecordForDateDescription,
@@ -140,12 +210,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       )
     }
 
-    if (domicileOn10nov.postalCode !== '240') {
+    if (residenceOnDate.postalCode !== '240') {
       throw new TemplateApiError(
         {
           summary: {
             ...prerequisites.errors.noResidenceDescription,
-            values: { locality: domicileOn10nov?.city ?? 'fannst ekki' },
+            values: { locality: residenceOnDate?.city ?? 'fannst ekki' },
           },
           title: prerequisites.errors.noResidenceTitle,
         },
@@ -153,13 +223,13 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
       )
     }
 
-    if (!domicileOn10nov.realEstateNumber) {
+    if (!residenceOnDate.realEstateNumber) {
       throw new TemplateApiError(
         {
           summary: {
             ...prerequisites.errors.noRealEstateNumberWasFoundDescription,
             values: {
-              streetName: domicileOn10nov?.streetName ?? 'fannst ekki',
+              streetName: residenceOnDate?.streetName ?? 'fannst ekki',
             },
           },
           title: prerequisites.errors.noRealEstateNumberWasFoundTitle,
@@ -169,9 +239,9 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     }
 
     return {
-      residenceHistory: data,
-      realEstateId: domicileOn10nov.realEstateNumber,
-      realEstateAddress: domicileOn10nov.streetName,
+      residenceHistory: residenceOnDate,
+      realEstateId: residenceOnDate.realEstateNumber,
+      realEstateAddress: residenceOnDate.streetName,
     }
   }
 
@@ -194,7 +264,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
       property = this.mockGetFasteign(realEstateId)
     } else {
-      property = await this.propertiesApi.fasteignirGetFasteign({
+      property = await this.getRealEstatesWithAuth(auth).fasteignirGetFasteign({
         fasteignanumer: realEstateId,
       })
     }

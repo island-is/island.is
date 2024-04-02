@@ -1,8 +1,6 @@
-import { defineMessages, MessageDescriptor } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
-type MessageDir = Record<string, Record<string, MessageDescriptor>>
-
-export const parentalLeaveFormMessages: MessageDir = {
+export const parentalLeaveFormMessages = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
     institution: {
@@ -216,11 +214,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:otherParent.title',
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
-    },
-    otherParentSubTitle: {
-      id: 'pl.application:otherParent.sub.title',
-      defaultMessage: 'Hitt foreldrið',
-      description: 'Other parent',
     },
     otherParentName: {
       id: 'pl.application:otherParent.name',
@@ -896,11 +889,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:employerSubSection',
       defaultMessage: 'Breyta eða bæta við vinnuveitanda',
       description: 'Edit or add an employer',
-    },
-    periodReview: {
-      id: 'pl.application:periodReview',
-      defaultMessage: 'Tímabil',
-      description: 'Period',
     },
     editOrAddInfoSection: {
       id: 'pl.application:editOrAddInfoSection',
@@ -1607,6 +1595,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
+    uploadHeader: {
+      id: 'pl.application:fileUpload.upload.title',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
     uploadDescription: {
       id: 'pl.application:fileUpload.upload.description',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
@@ -1798,37 +1791,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     buttonsEdit: {
       id: 'pl.application:review.buttonsEdit',
-      defaultMessage: 'Breyta / bæta við tímabilum',
-      description: 'Edit or add periods to the application',
-    },
-    editApplicationModalTitle: {
-      id: 'pl.application:review.edit.modal.title',
-      defaultMessage: 'Breyta umsókn?',
-      description: 'Edit application?',
-    },
-    editApplicationModalDesc: {
-      id: 'pl.application:review.edit.modal.desc',
-      defaultMessage:
-        'Ef þú heldur áfram að breyta umsókn þinni, þá verður að endurtaka sumar eða allar samþykktirnar.',
-      description:
-        'If you continue to edit your submitted application, then some or all of the approvals will have to be repeated.',
-    },
-    editApplicationModalAria: {
-      id: 'pl.application:review.edit.modal.aria',
-      defaultMessage:
-        'Venjulegur valmynd til að staðfesta hvort þú viljir breyta forritinu.',
-      description:
-        'A modal dialog to confirm if you want to edit your application.',
-    },
-    editApplicationModalConfirmButton: {
-      id: 'pl.application:review.edit.modal.confirmButton',
-      defaultMessage: 'Haltu áfram',
-      description: 'Continue',
-    },
-    editApplicationModalCancelButton: {
-      id: 'pl.application:review.edit.modal.cancelButton',
-      defaultMessage: 'Hætta við',
-      description: 'Cancel',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
@@ -1947,6 +1911,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Language to use in communication with the Parental Leave Fund',
     },
+    benefits: {
+      id: 'pl.application:review.benefits',
+      defaultMessage: 'Bætur',
+      description: 'Benefits',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -1957,26 +1926,24 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     draftNotApprovedOtherParentDesc: {
       id: 'pl.application:draftFlow.requiresAction.otherParentDesc',
-      defaultMessage: 'The other parent did not approve your request.',
-      description: 'The other parent did not approve your request.',
+      defaultMessage:
+        'Hitt foreldrið samþykkti ekki beiðni þína. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
+      description:
+        'The other parent did not approve your request. You can make edits to your application and resubmit for review.',
     },
     draftNotApprovedEmployerDesc: {
       id: 'pl.application:draftFlow.requiresAction.employerDesc',
       defaultMessage:
-        'Vinnuveitandi þinn samþykkti ekki valið tímabil en óskar eftir nýju og breyttu tímabili.',
+        'Vinnuveitandi þinn samþykkti ekki valin tímabil. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
       description:
-        'Your employer did not approve the selected period and requests that you resubmit an alternative period.',
+        'Your employer did not approve the selected periods. You can make edits to your application and resubmit for review.',
     },
     draftNotApprovedVMLSTDesc: {
       id: 'pl.application:draftFlow.requiresAction.VMLSTDesc',
-      defaultMessage: 'Vinnumalastofnun did not approve your application.',
-      description: 'Vinnumalastofnun did not approve your application.',
-    },
-    draftAdditionalDocumentRequiredDesc: {
-      id: 'pl.application:draftFlow.requiresAction.additionalDocument',
       defaultMessage:
-        'Vinnumalastofnun vantar frekari gögn vegna umsóknarinnar',
-      description: 'Additional document required',
+        'Vinnumálastofnun samþykkti ekki umsókn þína. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
+      description:
+        'The Directorate of Labour did not approve your application. You can make edits to your application and resubmit for review.',
     },
     modifyDraftDesc: {
       id: 'pl.application:draftFlow.modifyDesc',
@@ -1984,11 +1951,6 @@ export const parentalLeaveFormMessages: MessageDir = {
         'You can make edits to your application and re-submit for consideration.',
       description:
         'You can make edits to your application and re-submit for consideration.',
-    },
-    modifyDraftButton: {
-      id: 'pl.application:draftFlow.modifyDraftButton',
-      defaultMessage: 'Make changes',
-      description: 'Make changes',
     },
   }),
 
@@ -2010,36 +1972,26 @@ export const parentalLeaveFormMessages: MessageDir = {
     // For Requires Action screen (when edits are not approved)
     editsNotApprovedTitle: {
       id: 'pl.application:editFlow.requiresAction.title',
-      defaultMessage: 'Your edits were not approved',
+      defaultMessage: 'Breytingar þínar voru ekki samþykktar',
       description: 'Your edits were not approved',
     },
     editsNotApprovedEmployerDesc: {
       id: 'pl.application:editFlow.requiresAction.employerDesc',
       defaultMessage:
-        'Your edits were not approved by your employer, you can choose to modify them and re-submit or discard the modifications.',
+        'Breytingar þínar voru ekki samþykktar af vinnuveitanda þínum, þú getur valið að eyða breytingunum eða breytt umsókn og sent aftur til skoðunar.',
       description:
-        'Your edits were not approved by your employer, you can choose to modify them and re-submit or discard the modifications.',
+        'Your edits were not approved by your employer. You can choose to discard your previous edits or edit the application and resend it for review.',
     },
     editsNotApprovedVMLSTDesc: {
       id: 'pl.application:editFlow.requiresAction.VMLSTDesc',
       defaultMessage:
-        'Your edits were not approved by Vinnumalastofnun, you can choose to modify them and re-submit or discard the modifications.',
+        'Breytingar þínar voru ekki samþykktar af Vinnumálastofnun, þú getur valið að eyða breytingunum eða breytt umsókn og sent aftur til skoðunar.',
       description:
-        'Your edits were not approved by Vinnumalastofnun, you can choose to modify them and re-submit or discard the modifications.',
-    },
-    editsNotApprovedCTA: {
-      id: 'pl.application:editFlow.requiresAction.CTA',
-      defaultMessage: 'What action would you like to take?',
-      description: 'What action would you like to take?',
-    },
-    editsNotApprovedEditButton: {
-      id: 'pl.application:editFlow.requiresAction.editButtonLabel',
-      defaultMessage: 'Modify my edits and re-submit',
-      description: 'Modify my edits and re-submit',
+        'Your edits were not approved by the Directorate of Labour. You can choose to discard your previous edits or edit the application and resend it for review.',
     },
     editsNotApprovedDiscardButton: {
       id: 'pl.application:editFlow.requiresAction.discardButtonLabel',
-      defaultMessage: 'Discard my edits',
+      defaultMessage: 'Eyða breytingum',
       description: 'Discard my edits',
     },
   }),
@@ -2055,15 +2007,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fela allt',
       description: 'Collapse all',
     },
-    section: {
-      id: 'pl.application:confirmation.section',
-      defaultMessage: 'Samþykkja',
-      description: 'Confirmation',
-    },
     title: {
       id: 'pl.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Review and submit',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
     },
     cancel: {
       id: 'pl.application:confirmation.cancel',
@@ -2076,6 +2023,11 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description:
         'Please review your information before submitting the application.',
+    },
+    submitButton: {
+      id: 'pl.application:confirmation.submit.button',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
     },
   }),
 
@@ -2353,8 +2305,8 @@ export const employerFormMessages = defineMessages({
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'pl.application:inReview.form.title',
-    defaultMessage: 'Fæðingarorlof',
-    description: 'Parental Leave',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: 'Application Overview',
   },
 })
 
