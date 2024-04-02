@@ -430,7 +430,7 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    comment,
+    applicationComment: comment,
     employers:
       (applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits) ||
       ((applicationType === PARENTAL_GRANT ||
