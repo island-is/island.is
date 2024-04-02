@@ -96,7 +96,7 @@ promote_to_release() {
   export GITHOOK_NO_VERIFY=true LOCAL_VERSION=true
   # "last" release is the current because it has been created
   RELEASE_VERSION="$(get_last_release)"
-  echo "Release $RELEASE_VERSION"
+  echo "Promoting release candidate $RELEASE_VERSION to prod"
   # Rename pre-release/* branch to release/*
   echo "Renaming pre-release to release (locally)"
   git branch -m "pre-release/${RELEASE_VERSION}" "release/${RELEASE_VERSION}"
