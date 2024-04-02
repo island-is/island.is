@@ -56,6 +56,16 @@ export const userWithFeatureFlagDisabled: UserProfileDto = {
   emailNotifications: true,
 }
 
+export const userWithSendToDelegationsFeatureFlagDisabled: UserProfileDto = {
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'email4@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+}
+
 export const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
   notificationTitle: 'Demo title ',
@@ -72,12 +82,19 @@ const userProfiles = [
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
   userWithFeatureFlagDisabled,
+  userWithSendToDelegationsFeatureFlagDisabled,
 ]
 
 const delegations: Record<string, DelegationRecordDTO[]> = {
   [userWithDelegations.nationalId]: [
     {
       fromNationalId: userWithDelegations.nationalId,
+      toNationalId: userWitNoDelegations.nationalId,
+    },
+  ],
+  [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
+    {
+      fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
       toNationalId: userWitNoDelegations.nationalId,
     },
   ],
@@ -108,8 +125,19 @@ export class MockV2UsersApi {
 }
 
 export class MockFeatureFlagService {
-  getValue(_feature: Features, _defaultValue: boolean | string, user?: User) {
-    return user?.nationalId !== userWithFeatureFlagDisabled.nationalId
+  getValue(feature: Features, _defaultValue: boolean | string, user?: User) {
+    if (feature === Features.isNotificationEmailWorkerEnabled) {
+      return user?.nationalId !== userWithFeatureFlagDisabled.nationalId
+    }
+
+    if (feature === Features.shouldSendEmailNotificationsToDelegations) {
+      return (
+        user?.nationalId !==
+        userWithSendToDelegationsFeatureFlagDisabled.nationalId
+      )
+    }
+
+    return true
   }
 }
 

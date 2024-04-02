@@ -26,6 +26,7 @@ import {
   userWithDocumentNotificationsDisabled,
   userWithEmailNotificationsDisabled,
   userWithFeatureFlagDisabled,
+  userWithSendToDelegationsFeatureFlagDisabled,
   userWitNoDelegations,
 } from './mocks'
 import { wait } from './helpers'
@@ -185,6 +186,13 @@ describe('NotificationsWorkerService', () => {
     await addToQueue(userWithFeatureFlagDisabled.nationalId)
 
     expect(emailService.sendEmail).not.toHaveBeenCalled()
+    expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
+  })
+
+  it('should not send email to delegations if feature flag is turned off', async () => {
+    await addToQueue(userWithSendToDelegationsFeatureFlagDisabled.nationalId)
+
+    expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
   })
 
