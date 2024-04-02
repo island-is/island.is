@@ -14,7 +14,7 @@ export class CreateSessionDto {
   @IsString()
   @IsOptional()
   @ApiPropertyOptional({
-    description: 'The IDS session ID',
+    description: 'The IDS session IDddddd',
   })
   sessionId!: string
 
