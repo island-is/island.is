@@ -14,7 +14,7 @@ fragment NotificationMessageFields on NotificationMessage {
   title
   body
   link {
-    uri
+    url
   }
 }
 

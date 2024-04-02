@@ -44,7 +44,7 @@ export class NotificationRecipient {
 @ObjectType()
 export class NotificationLink {
   @Field({ nullable: true })
-  uri?: string
+  url?: string
 }
 
 @ObjectType()

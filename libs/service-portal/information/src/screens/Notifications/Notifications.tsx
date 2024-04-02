@@ -109,8 +109,8 @@ const UserNotifications = () => {
               cta={{
                 label: formatMessage(m.seeDetails),
                 variant: 'text',
-                url: item.message.link.uri ?? undefined,
-                hide: !item.message.link.uri,
+                url: item.message.link.url ?? undefined,
+                hide: !item.message.link.url,
                 callback: () =>
                   postMarkAsRead({
                     variables: {

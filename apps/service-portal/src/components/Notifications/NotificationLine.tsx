@@ -24,7 +24,7 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
     <Box className={styles.lineWrapper}>
       <LinkResolver
         className={styles.link}
-        href={data.message?.link?.uri ?? ''}
+        href={data.message?.link?.url ?? ''}
         callback={onClickCallback}
       >
         <Box
