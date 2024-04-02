@@ -11,11 +11,11 @@ import {
   DelegationIndexMeta,
   Delegation,
   DelegationScope,
-  DelegationType,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
 import { domainName, TestCase, user } from './delegations-index-types'
@@ -244,7 +244,7 @@ describe('DelegationsIndexService', () => {
           where: {
             fromNationalId,
             toNationalId: user.nationalId,
-            type: DelegationType.Custom,
+            type: AuthDelegationType.Custom,
           },
         })
 
@@ -456,7 +456,7 @@ describe('DelegationsIndexService', () => {
         expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
         expect(delegation.toNationalId).toBe(user.nationalId)
         expect(delegation.type).toBe(
-          `${DelegationType.PersonalRepresentative}:${prRight1}`,
+          `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
         )
       })
     })

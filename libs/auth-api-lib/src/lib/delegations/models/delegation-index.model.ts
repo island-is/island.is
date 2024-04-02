@@ -61,6 +61,12 @@ export class DelegationIndex extends Model<
   })
   customDelegationScopes?: string[]
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  subjectId?: string
+
   @CreatedAt
   readonly created!: CreationOptional<Date>
 

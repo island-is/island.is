@@ -45,6 +45,7 @@ export type DelegationIndexInfo = Pick<
   | 'type'
   | 'validTo'
   | 'customDelegationScopes'
+  | 'subjectId'
 >
 
 type DelegationDTOWithStringType = Omit<DelegationDTO, 'type'> & {
@@ -96,6 +97,9 @@ const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
     throw new BadRequestException('Invalid validTo')
   }
 }
+
+const filterDelegationsWithoutSubjectId = (delegation: DelegationIndexInfo) =>
+  !delegation.subjectId
 
 const getPersonalRepresentativeDelegationType = (right: string) =>
   `${AuthDelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
@@ -368,7 +372,33 @@ export class DelegationsIndexService {
         ),
     )
 
-    return { deleted, created, updated }
+    return this.getSubjectIds({ deleted, created, updated })
+  }
+
+  private getSubjectIds({ created, updated, deleted }: SortedDelegations) {
+    const allDelegations = [...created, ...updated, ...deleted]
+
+    const findSubjectId = (delegations: DelegationIndexInfo[]) => {
+      return delegations.filter(filterDelegationsWithoutSubjectId).map((d) => {
+        // subject id is unique between from and to nationalId so if we already have a delegation with the same from and to nationalId, we can use that subjectId
+        const subjectId = allDelegations.find(
+          (delegation) =>
+            delegation.toNationalId === d.toNationalId && delegation.subjectId,
+        )?.subjectId
+
+        if (!subjectId) {
+          // call new function to get subjectId
+        }
+
+        return { ...d, subjectId }
+      })
+    }
+
+    return {
+      created: findSubjectId(created),
+      updated: findSubjectId(updated),
+      deleted,
+    }
   }
 
   private async getCustomDelegations(nationalId: string, useMaster = false) {
