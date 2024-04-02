@@ -93,9 +93,7 @@ clean_caches() {
 }
 
 clean_dist() {
-
   dry || rm -rf -- **/dist/
-
 }
 
 clean_yarn() {
