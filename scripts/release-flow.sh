@@ -7,6 +7,7 @@ set -euo pipefail
 : "${PUSH_RELEASE_BRANCH:=false}"
 : "${IGNORE_EXISTING_RELEASE:=false}"
 : "${RELEASE_VERSION:=}"
+: "${LOCAL_VERSION:=false}"
 
 get_last_good_sha() {
   # Should use GitHub's GraphQL API
@@ -17,7 +18,13 @@ get_last_good_sha() {
 }
 
 get_last_release() {
-  git branch -r |& grep -oP '(?<=release/)(\d+\.?){3}' | sort -nr | head -n 1
+  (
+    if [ "$LOCAL_VERSION" = true ]; then
+      git branch
+    else
+      git branch -r
+    fi
+  ) |& grep -oP '(?<=release/)(\d+\.?){3}' | sort -nr | head -n 1
 }
 bump_release_number() {
   local current_release major_version minor_version patch_version
@@ -73,11 +80,11 @@ create_pre_release_branch() {
 
 describe_release() {
   CURRENT_RELEASE="$(get_last_release)"
-  BUMBED_RELEASE="$(bump_release_number "$CURRENT_RELEASE")"
+  BUMPED_RELEASE="$(bump_release_number "$CURRENT_RELEASE")"
   LAST_GOOD_SHA="$(get_last_good_sha)"
   echo "Current release: $CURRENT_RELEASE"
-  echo "Next release: $BUMBED_RELEASE"
-  echo "Release branch: pre-release/$BUMBED_RELEASE"
+  echo "Next release: $BUMPED_RELEASE"
+  echo "Release branch: pre-release/$BUMPED_RELEASE"
   echo "Good commit: $LAST_GOOD_SHA"
   echo "Good commit message:"
   git log --format=%B -n 1 "$(get_last_good_sha)" | while read -r line; do
@@ -86,11 +93,19 @@ describe_release() {
 }
 
 promote_to_release() {
+  export GITHOOK_NO_VERIFY=true LOCAL_VERSION=true
+  # "last" release is the current because it has been created
+  RELEASE_VERSION="$(get_last_release)"
+  echo "Release $RELEASE_VERSION"
   # Rename pre-release/* branch to release/*
-  git branch -m "pre-release/$BUMBED_RELEASE" "release/$BUMBED_RELEASE"
-  git push --set-upstream origin "release/$BUMBED_RELEASE"
-  git push
-
+  echo "Renaming pre-release to release (locally)"
+  git branch -m "pre-release/${RELEASE_VERSION}" "release/${RELEASE_VERSION}"
+  echo "Pushing release branch"
+  git push origin "release/${RELEASE_VERSION}" --set-upstream
+  echo "Deleting pre-release branch (on remote)"
+  git push origin "pre-release/${RELEASE_VERSION}" --delete
+  echo "Deleting pre-release branch (locally)"
+  git branch -D "pre-release/${RELEASE_VERSION}"
 }
 
 release_flows() {
