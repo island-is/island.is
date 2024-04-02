@@ -4,14 +4,12 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CaseTransition,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,

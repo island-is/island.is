@@ -57,7 +57,7 @@ export const useContextMenu = () => {
     return {
       title: formatMessage(strings.openInNewTab),
       onClick: () => handleOpenCase(id, true),
-      icon: 'open' as IconMapIcon,
+      icon: 'open',
     }
   }
 
@@ -68,7 +68,7 @@ export const useContextMenu = () => {
     return {
       title: formatMessage(strings.deleteCase),
       onClick: () => handleDeleteCase(caseToDelete),
-      icon: 'trash' as IconMapIcon,
+      icon: 'trash',
     }
   }
 
