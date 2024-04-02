@@ -110,7 +110,7 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
-  const { deleteCaseMenuItem } = useContextMenu()
+  const { deleteCaseMenuItem, openCaseInNewTabMenuItem } = useContextMenu()
 
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
@@ -266,7 +266,10 @@ export const Cases: React.FC = () => {
                       ]}
                       data={casesAwaitingConfirmation}
                       generateContextMenuItems={(row: CaseListEntry) => {
-                        return [deleteCaseMenuItem(row, deleteCase)]
+                        return [
+                          openCaseInNewTabMenuItem(row.id),
+                          deleteCaseMenuItem(row, deleteCase),
+                        ]
                       }}
                       columns={[
                         {

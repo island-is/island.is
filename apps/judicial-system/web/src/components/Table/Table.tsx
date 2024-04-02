@@ -15,10 +15,7 @@ import MobileCase from '../../routes/Shared/Cases/MobileCase'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
-import ContextMenu, {
-  ContextMenuItem,
-  useContextMenu,
-} from '../ContextMenu/ContextMenu'
+import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
 import { UserContext } from '../UserProvider/UserProvider'
 import SortButton from './SortButton/SortButton'
@@ -36,7 +33,6 @@ interface TableProps {
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
-  renderContextMenu?: (row: CaseListEntry) => ReactNode
 }
 
 export const useTable = () => {
@@ -77,7 +73,6 @@ const Table: React.FC<TableProps> = (props) => {
     useCaseList()
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
   const { isTransitioningCase } = useCase()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
   const { width } = useViewport()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -192,10 +187,7 @@ const Table: React.FC<TableProps> = (props) => {
                   ) : (
                     <ContextMenu
                       menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
-                      items={[
-                        openCaseInNewTabMenuItem(row.id),
-                        ...generateContextMenuItems(row),
-                      ]}
+                      items={generateContextMenuItems(row)}
                       disclosure={
                         <IconButton
                           icon="ellipsisVertical"
