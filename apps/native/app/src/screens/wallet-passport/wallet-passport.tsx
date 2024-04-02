@@ -368,7 +368,9 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
         <LicenceCard
           nativeID={`license-${CustomLicenseType.Passport}_destination`}
           type={CustomLicenseType.Passport}
-          date={new Date(item?.expirationDate)}
+          date={
+            item?.expirationDate ? new Date(item?.expirationDate) : undefined
+          }
           status={isInvalid ? 'NOT_VALID' : 'VALID'}
         />
       </SafeAreaView>
