@@ -43,6 +43,10 @@ export const DeceasedShare = ({
     }
   }, [checked, inputFieldName, setValue, watchedInputField])
 
+  useEffect(() => {
+    console.log('changed watchedInputField', watchedInputField)
+  }, [watchedInputField])
+
   return (
     <Box
       marginBottom={2}

@@ -297,5 +297,6 @@ export const expandAnswers = (
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',
+    shareTotal: answers.shareTotal ?? 0,
   }
 }

@@ -123,6 +123,7 @@ export interface Money extends DeceasedShare {
 
 export interface ClaimsData extends DeceasedShare {
   value: string
+  propertyValuation: string
   description: string
   issuer: string
   nationalId: string

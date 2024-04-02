@@ -49,7 +49,12 @@ export const heirs = buildSection({
         buildMultiField({
           id: 'propertyForExchange',
           title: m.propertyForExchangeAlternative,
+          description: m.assetsToShareDescription,
           children: [
+            buildDescriptionField({
+              id: 'shareTotal',
+              title: '',
+            }),
             buildCustomField({
               title: '',
               id: 'share',

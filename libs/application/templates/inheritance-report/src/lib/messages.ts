@@ -1008,6 +1008,14 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Assets to share
+  assetsToShareDescription: {
+    id: 'ir.application:assetsToShareDescription',
+    defaultMessage:
+      'Frá dregst búshluti eftirlifandi maka skv. reglum hjúskaparlaga nr. 31/1993 (50% eigna).',
+    description: '',
+  },
+
   // Heirs
   spousesShare: {
     id: 'ir.application:spousesShare',
