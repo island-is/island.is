@@ -3,9 +3,9 @@ import { FishingLicenseDateRestriction } from './fishing-license-data-restrictio
 
 @ObjectType()
 export class FishingLicenseListOptions {
-  @Field()
+  @Field({ nullable: true })
   key?: string
-  @Field()
+  @Field({ nullable: true })
   description?: string
   @Field()
   disabled?: boolean

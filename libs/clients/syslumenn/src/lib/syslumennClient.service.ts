@@ -23,6 +23,8 @@ import {
   TemporaryEventLicence,
   VehicleRegistration,
   RegistryPerson,
+  InheritanceTax,
+  InheritanceReportInfo,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -45,6 +47,8 @@ import {
   mapMasterLicence,
   mapVehicle,
   mapDepartedToRegistryPerson,
+  mapInheritanceTax,
+  mapEstateToInheritanceReportInfo,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -494,6 +498,31 @@ export class SyslumennService {
     })
 
     return mapDepartedToRegistryPerson(res)
+  }
+
+  async getInheritanceTax(dateOfDeath: Date): Promise<InheritanceTax> {
+    const { id, api } = await this.createApi()
+    const res = await api.erfdafjarskatturGet({
+      audkenni: id,
+      danardagur: dateOfDeath,
+    })
+
+    return mapInheritanceTax(res)
+  }
+
+  async getEstateInfoForInheritanceReport(
+    nationalId: string,
+  ): Promise<Array<InheritanceReportInfo>> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarUrDanarbuiErfdafjarskattPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+
+    const { yfirlit: overView } = res
+    return (overView ?? []).map(mapEstateToInheritanceReportInfo)
   }
 
   async changeEstateRegistrant(
