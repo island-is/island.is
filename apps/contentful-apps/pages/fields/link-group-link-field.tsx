@@ -157,7 +157,9 @@ const LinkGroupLinkField = () => {
         : sdk.dialogs.selectMultipleEntries
 
     selectEntriesFunction({
-      contentTypes: contentTypeToSelect ? [contentTypeToSelect] : [],
+      contentTypes: contentTypeToSelect
+        ? [contentTypeToSelect, 'link']
+        : ['link'],
     }).then((entries: EntryProps[]) => {
       entries = Array.isArray(entries) ? entries : [entries]
       entries = entries.filter((entry) => entry?.sys?.id) // Make sure the entries are non-empty
@@ -165,20 +167,17 @@ const LinkGroupLinkField = () => {
     })
   }
 
-  const selectableContentTypes =
-    subpageContentType && linkContentType
-      ? [subpageContentType, linkContentType]
-      : linkContentType
-      ? [linkContentType]
-      : []
-
-  if (!subpageContentType) {
+  if (!linkContentType) {
     return (
       <Flex paddingTop="spacingM" justifyContent="center">
         <Spinner />
       </Flex>
     )
   }
+
+  const selectableContentTypes = subpageContentType
+    ? [subpageContentType, linkContentType]
+    : [linkContentType]
 
   if (sdk.ids.field === 'primaryLink') {
     return (
@@ -190,7 +189,7 @@ const LinkGroupLinkField = () => {
         parameters={{
           instance: {
             showCreateEntityAction: true,
-            showLinkEntityAction: true,
+            showLinkEntityAction: selectableContentTypes.length > 1,
           },
         }}
         renderCustomActions={(props) => (
@@ -216,7 +215,7 @@ const LinkGroupLinkField = () => {
       parameters={{
         instance: {
           showCreateEntityAction: true,
-          showLinkEntityAction: true,
+          showLinkEntityAction: selectableContentTypes.length > 1,
         },
       }}
       renderCustomActions={(props) => (
