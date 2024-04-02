@@ -46,6 +46,7 @@ type RepeaterProps = {
       sumField2: string
       fromExternalData?: string
       calcWithShareValue?: boolean
+      hideDeceasedShare?: boolean
       skipPushRight?: boolean
     }
   }
@@ -433,7 +434,9 @@ export const ReportFieldsRepeater: FC<
                 )
               })}
             </GridRow>
-            {deceasedHadAssets && <DeceasedShare id={fieldIndex} />}
+            {!props?.hideDeceasedShare && deceasedHadAssets && (
+              <DeceasedShare id={fieldIndex} />
+            )}
           </Box>
         )
       })}

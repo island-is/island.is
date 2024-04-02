@@ -59,7 +59,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [shareValues, setShareValues] = useState<
     Record<keyof Partial<EstateAssets>, ShareItem>
   >({
-    bankAccounts: { title: m.bankAccount, items: [] },
+    bankAccounts: { title: m.estateBankInfo, items: [] },
     claims: { title: m.claimsTitle, items: [] },
     guns: { title: m.guns, items: [] },
     inventory: { title: m.inventoryTitle, items: [] },
@@ -263,49 +263,32 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     setValue(`shareTotal`, shareTotal)
   }, [setValue, shareValues])
 
-  const assetsTotal = getNumberValue('assets.assetsTotal')
+  // const assetsTotal = getNumberValue('assets.assetsTotal')
+  const funeralCost = getNumberValue('funeralCost.total')
+  const businessDebts = getNumberValue('business.businessDebts.total')
+  const publicCharges = getNumberValue('debts.publicCharges')
   const debtsTotal = getNumberValue('debts.debtsTotal')
-  const businessTotal = getNumberValue('business.businessTotal')
-
-  const shouldDeduct =
-    getValueViaPath(answers, 'deceasedHadAssets') === YES &&
-    getValueViaPath(answers, 'deceasedWasMarried') === YES
-
-  // useEffect(() => {
-  //   setValue('debts.debtsTotal', total)
-  // }, [total, setValue])
+  const domesticAndForeignDebts = valueToNumber(
+    getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total'),
+  )
+  const allDebtsTotal =
+    getNumberValue('debts.debtsTotal') + funeralCost + businessDebts
 
   // Við þurfum að staðfesta að við séum að reikna hreina eign til skipta rétt => 8.1 / 2 = 8.2
   // Búshluti maka er 50% af hreinni eign
   //
   // Hrein eign:
   // eign - frádráttur (skuldir) + eign í atvinnurekstri - frádráttur (búshluti maka)
-  const total = assetsTotal - debtsTotal + businessTotal
-  const sharedDeduction = shouldDeduct ? total / 2 : 0
 
-  const netPropertyForExchange = total - sharedDeduction
+  const netPropertyForExchange = shareTotal - debtsTotal
 
   return (
     <Box>
-      {/* <Box display="flex" flexDirection="column" marginTop={4}>
-        <Text variant="h4">
-          {formatMessage(m.propertyForExchangeAlternative)}
-        </Text>
-        <Text>{formatCurrency(String(total))}</Text>
-      </Box>
-      <Box display="flex" flexDirection="column" marginTop={4}>
-        <Text variant="h4">{formatMessage(m.totalDeductionAlternative)}</Text>
-        <Text>{formatCurrency(String(sharedDeduction))}</Text>
-      </Box>
-      <Box display="flex" flexDirection="column" marginTop={4}>
-        <Text variant="h4">{formatMessage(m.netPropertyForExchange)}</Text>
-        <Text>{formatCurrency(String(netPropertyForExchange))}</Text>
-      </Box> */}
       <Box marginTop={4}>
         <Box marginBottom={2}>
           <GridRow>
             <GridColumn span={['1/1', '1/2']}>
-              <Text variant="h4">Hrein eign</Text>
+              <Text variant="h4">{formatMessage(m.netProperty)}</Text>
             </GridColumn>
             <GridColumn span={['1/1', '1/2']}>
               <Text textAlign="right">
@@ -316,35 +299,56 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </Box>
         <Box marginLeft={[0, 4]}>
           <GridRow rowGap={1}>
-            <ItemRow item={shareValues.bankAccounts} />
-            <ItemRow item={shareValues.claims} />
-            <ItemRow item={shareValues.guns} />
-            <ItemRow item={shareValues.inventory} />
-            <ItemRow item={shareValues.money} />
-            <ItemRow item={shareValues.otherAssets} />
-            <ItemRow item={shareValues.realEstate} />
-            <ItemRow item={shareValues.stocks} />
-            <ItemRow item={shareValues.vehicles} />
+            <ShareItemRow item={shareValues.bankAccounts} />
+            <ShareItemRow item={shareValues.claims} />
+            <ShareItemRow item={shareValues.guns} />
+            <ShareItemRow item={shareValues.inventory} />
+            <ShareItemRow item={shareValues.money} />
+            <ShareItemRow item={shareValues.otherAssets} />
+            <ShareItemRow item={shareValues.realEstate} />
+            <ShareItemRow item={shareValues.stocks} />
+            <ShareItemRow item={shareValues.vehicles} />
           </GridRow>
         </Box>
         <Box marginY={4}>
-          <GridRow>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text variant="h4">Skuldir</Text>
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text textAlign="right">{formatCurrency(String(0))}</Text>
-            </GridColumn>
-          </GridRow>
+          <Box marginBottom={2}>
+            <GridRow>
+              <GridColumn span={['1/1', '1/2']}>
+                <Text variant="h4">
+                  {formatMessage(m.domesticAndForeignDebts)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <Text textAlign="right">
+                  {formatCurrency(String(-allDebtsTotal))}
+                </Text>
+              </GridColumn>
+            </GridRow>
+          </Box>
+          <Box marginLeft={[0, 4]}>
+            <GridRow rowGap={1}>
+              <ItemRow title={m.funeralCostTitle} total={-funeralCost} />
+              <ItemRow
+                title={m.domesticAndForeignDebts}
+                total={-domesticAndForeignDebts}
+              />
+              <ItemRow title={m.publicChargesTitle} total={-publicCharges} />
+              <ItemRow title={m.business} total={-businessDebts} />
+            </GridRow>
+          </Box>
         </Box>
-        <Divider weight="purple200" />
+        <Divider />
         <Box paddingTop={4}>
           <GridRow>
             <GridColumn span={['1/1', '1/2']}>
-              <Text variant="h4">Hrein eign til skipta</Text>
+              <Text variant="h4">
+                {formatMessage(m.netPropertyForExchange)}
+              </Text>
             </GridColumn>
             <GridColumn span={['1/1', '1/2']}>
-              <Text textAlign="right">{formatCurrency(String(0))}</Text>
+              <Text textAlign="right">
+                {formatCurrency(String(netPropertyForExchange))}
+              </Text>
             </GridColumn>
           </GridRow>
         </Box>
@@ -355,7 +359,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
 export default CalculateShare
 
-const ItemRow = ({ item }: { item: ShareItem }) => {
+const ShareItemRow = ({ item }: { item: ShareItem }) => {
   const { formatMessage } = useLocale()
 
   const total = item.items.reduce((acc, item) => acc + item.shareValue, 0)
@@ -373,3 +377,37 @@ const ItemRow = ({ item }: { item: ShareItem }) => {
     </>
   )
 }
+
+const ItemRow = ({
+  title,
+  total,
+}: {
+  title: MessageDescriptor
+  total: number
+}) => {
+  const { formatMessage } = useLocale()
+
+  return (
+    <>
+      <GridColumn span={['1/1', '1/2']}>
+        {title && <Text variant="small">{formatMessage(title)}</Text>}
+      </GridColumn>
+      <GridColumn span={['1/1', '1/2']}>
+        <Box textAlign="right">
+          <Text variant="small">{formatCurrency(String(total))}</Text>
+        </Box>
+      </GridColumn>
+    </>
+  )
+}
+
+// Fasteignir
+// Innbú
+// Farartæki
+// Skotvopn
+// Innstæður í bönkum og sparisjóðum
+// Verðbréf og kröfur
+// Hlutabréf
+// Peningar og bankahólf
+// Aðrar eignir
+// Yfirlit eigna

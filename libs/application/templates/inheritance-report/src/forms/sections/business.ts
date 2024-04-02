@@ -66,6 +66,7 @@ export const business = buildSection({
                     width: 'half',
                   },
                 ],
+                hideDeceasedShare: true,
                 repeaterButtonText: m.debtsRepeaterButton,
                 fromExternalData: 'debtsInBusiness',
                 sumField: 'propertyValuation',
