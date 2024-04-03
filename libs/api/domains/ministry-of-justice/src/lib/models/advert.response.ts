@@ -44,10 +44,10 @@ export class AdvertDepartmentResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('MinistryOfJusticeAdvertsInvolvedPartiesResponse')
-export class AdvertInvolvedPartiesResponse {
+@ObjectType('MinistryOfJusticeAdvertsInstitutionsResponse')
+export class AdvertInstitutionsResponse {
   @Field(() => [AdvertEntity])
-  involvedParties!: AdvertEntity[]
+  institutions!: AdvertEntity[]
 
   @Field(() => AdvertPaging)
   paging!: AdvertPaging
