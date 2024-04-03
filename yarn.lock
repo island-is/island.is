@@ -32479,7 +32479,6 @@ __metadata:
     react-is: 18.2.0
     react-keyed-flatten-children: 1.2.0
     react-modal: 3.15.1
-    react-modal-global: 2.3.4
     react-number-format: 4.9.1
     react-pdf: 7.5.0
     react-popper: 2.3.0
@@ -42227,21 +42226,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-modal-global@npm:2.3.4":
-  version: 2.3.4
-  resolution: "react-modal-global@npm:2.3.4"
-  dependencies:
-    type-fest: ^4.0.0
-  peerDependencies:
-    react: ^18.2.0
-    react-dom: ^18.2.0
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-  checksum: 6bb593dd6a1fdcbb4a599cb79151c7d1264be4b9550eae0ad4da81aff4ae13ec8f4f1255fe96fe8096456ba357d13bc60abdf6be25abec581297a9547f6ea377
-  languageName: node
-  linkType: hard
-
 "react-modal@npm:3.15.1, react-modal@npm:^3.11.2":
   version: 3.15.1
   resolution: "react-modal@npm:3.15.1"
@@ -48226,13 +48210,6 @@ __metadata:
   version: 3.6.0
   resolution: "type-fest@npm:3.6.0"
   checksum: 3cb3b27fc1dc69e0a7524041d9d32cfd3786b16591952e0b2b87ca44b53acaed1bf86ee62a7cc3033a55154d44542e8b488d500d1b363d828f62a9fae9d2a043
-  languageName: node
-  linkType: hard
-
-"type-fest@npm:^4.0.0":
-  version: 4.15.0
-  resolution: "type-fest@npm:4.15.0"
-  checksum: 8da2b8c4556a6bbafd79c0d50b4f3ba6526942aead9c1687038980276eee72b95a1d195bc6f1408e0ebf96ebfbe9d33436b506b35ed4b68f14f8b3ff56753850
   languageName: node
   linkType: hard
 
