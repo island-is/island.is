@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -24,11 +25,12 @@ import {
   UserProfileApi,
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
-  NationalRegistryApi,
   UniversityOfIcelandApi,
+  EducationInfoApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { HealthcareWorkPermitSchema } from './dataSchema'
+import { getChargeItemCodes } from '../utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -80,11 +82,16 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    // Add is part of EES
+                  },
+                }),
                 UserProfileApi,
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 HealtcareLicenesApi,
-                UniversityOfIcelandApi
+                UniversityOfIcelandApi,
+                EducationInfoApi,
               ],
             },
           ],
@@ -118,9 +125,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/HealthcareWorkPermitForm').then(
-                  (module) =>
-                    Promise.resolve(module.HealthcareWorkPermitForm),
+                import('../forms/HealthcareWorkPermitForm').then((module) =>
+                  Promise.resolve(module.HealthcareWorkPermitForm),
                 ),
               write: 'all',
               delete: true,
@@ -133,7 +139,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
-        chargeItemCodes: [],
+        chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
         lifecycle: {
           shouldBeListed: true,
@@ -174,7 +180,6 @@ const template: ApplicationTemplate<
           ],
         },
       },
-
     },
   },
   mapUserToRole(
@@ -189,4 +194,3 @@ const template: ApplicationTemplate<
 }
 
 export default template
-

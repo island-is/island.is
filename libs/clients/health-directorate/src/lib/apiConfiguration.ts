@@ -9,6 +9,7 @@ import { HealthDirectorateClientConfig } from './healthDirectorateClient.config'
 import {
   Configuration,
   StarfsleyfiAMinumSidumApi,
+  UmsoknStarfsleyfiApi,
   VottordApi,
 } from '../../gen/fetch'
 
@@ -39,7 +40,7 @@ const configFactory = (
   },
 })
 
-export const exportedApis = [StarfsleyfiAMinumSidumApi, VottordApi].map(
+export const exportedApis = [StarfsleyfiAMinumSidumApi, VottordApi, UmsoknStarfsleyfiApi].map(
   (Api) => ({
     provide: Api,
     scope: LazyDuringDevScope,

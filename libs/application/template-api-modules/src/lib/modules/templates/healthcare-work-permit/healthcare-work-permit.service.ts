@@ -4,17 +4,20 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
+  HealthcareWorkPermitAnswers,
   error as errorMsg,
 } from '@island.is/application/templates/healthcare-work-permit'
 import {
   HealthDirectorateClientService,
-  HealthcareLicense,
+  StarfsleyfiUmsoknStarfsleyfi,
+  UtbuaStarfsleyfiSkjalResponse,
 } from '@island.is/clients/health-directorate'
 import {
   Transcripts,
-  UniversityOfIcelandService
+  UniversityOfIcelandService,
 } from '@island.is/clients/university-of-iceland'
 import { TemplateApiError } from '@island.is/nest/problem'
 
@@ -23,29 +26,43 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
-    private readonly universityOfIcelandService: UniversityOfIcelandService
+    private readonly universityOfIcelandService: UniversityOfIcelandService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
   }
 
   async getMyHealthcareLicenses({
     auth,
-  }: TemplateApiModuleActionProps): Promise<HealthcareLicense[]> {
+  }: TemplateApiModuleActionProps): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
     const result =
-      await this.healthDirectorateClientService.getMyHealthcareLicenses(auth)
-      
-      // TODO Error if the service does not respond/is down ?
+      await this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
+        auth,
+      )
 
-      return result
+    // TODO Error if the service does not respond/is down ?
+
+    return result
+  }
+
+  async getEducationInfo({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
+    const result =
+      await this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+        auth,
+      )
+
+    // TODO Error if the service does not respond/is down ?
+
+    return result
   }
 
   async getMyAcademicCareer({
     auth,
   }: TemplateApiModuleActionProps): Promise<Transcripts> {
-    const result =
-      await this.universityOfIcelandService.studentInfo(auth)
+    const result = await this.universityOfIcelandService.studentInfo(auth)
 
-    if(!result){
+    if (!result) {
       throw new TemplateApiError(
         {
           title: errorMsg.emptyCareerResponseTitle,
@@ -55,15 +72,15 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-      return result
+    return result
   }
-
 
   async submitApplication({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<any> { // TODO Add type here!
-    
+  }: TemplateApiModuleActionProps): Promise<UtbuaStarfsleyfiSkjalResponse> {
+    // TODO Change to custom type with base64 + .. ?
+
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
@@ -82,14 +99,22 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    // const answers = application.answers as HealthcareWorkPermitAnswers
+    const answers = application.answers as HealthcareWorkPermitAnswers
 
-    // const nationalRegistryData = application.externalData.nationalRegistry
-    //   ?.data as NationalRegistryIndividual
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistryIndividual
 
-    // Submit the application
-
-    return {}
-
+    return await this.healthDirectorateClientService.submitApplicationHealthcareWorkPermit(
+      auth,
+      {
+        name: nationalRegistryData.fullName,
+        dateOfBirth: nationalRegistryData.birthDate,
+        email: answers.userInformation?.email,
+        phone: answers.userInformation?.phone, // TODO Is phone in correct format ?
+        idProfession: answers.selectWorkPermit.studyProgram, // TODO Where can I get idProfession from
+        citizenship: nationalRegistryData.citizenship?.code || '',
+        education: [], // TODO
+      },
+    )
   }
 }
