@@ -99,12 +99,12 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
       lang === 'is' && chosenProgram
         ? chosenProgram.specializationNameIs
           ? ` - ${formatMessage(
-              information.labels.programSelection.specilizationLabel,
+              information.labels.programSelection.specializationLabel,
             )}: ${chosenProgram.specializationNameIs}`
           : ''
         : chosenProgram && chosenProgram.specializationNameEn
         ? ` - ${formatMessage(
-            information.labels.programSelection.specilizationLabel,
+            information.labels.programSelection.specializationLabel,
           )}: ${chosenProgram.specializationNameEn}`
         : ''
     const programName = `${
@@ -166,12 +166,12 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
                     ? program.specializationNameIs
                       ? ` - ${formatMessage(
                           information.labels.programSelection
-                            .specilizationLabel,
+                            .specializationLabel,
                         )}: ${program.specializationNameIs}`
                       : ''
                     : program.specializationNameEn
                     ? ` - ${formatMessage(
-                        information.labels.programSelection.specilizationLabel,
+                        information.labels.programSelection.specializationLabel,
                       )}: ${program.specializationNameEn}`
                     : ''
                 return {
