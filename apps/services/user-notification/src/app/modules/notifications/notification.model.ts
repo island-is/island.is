@@ -21,6 +21,7 @@ interface ArgItem {
 
 @Table({
   tableName: 'user_notification', // Explicitly setting the table name
+  indexes: [{ fields: ['message_id'] }, { fields: ['recipient'] }],
 })
 export class Notification extends Model<
   InferAttributes<Notification>,
