@@ -298,5 +298,9 @@ export const expandAnswers = (
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',
     shareTotal: answers.shareTotal ?? 0,
+    allDebtsTotal: answers.allDebtsTotal ?? 0,
+    netPropertyForExchange: answers.netPropertyForExchange ?? 0,
+    netProperty: answers.netProperty ?? 0,
+    cohabitantShare: answers.cohabitantShare ?? 0,
   }
 }

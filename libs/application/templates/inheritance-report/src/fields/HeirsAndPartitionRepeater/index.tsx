@@ -21,10 +21,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
-import {
-  getEstateDataFromApplication,
-  valueToNumber,
-} from '../../lib/utils/helpers'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
 import { TAX_FREE_LIMIT } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
@@ -133,21 +130,19 @@ export const HeirsAndPartitionRepeater: FC<
     const numValue = isNaN(value) ? 0 : value
     const percentage = numValue > 0 ? numValue / 100 : 0
 
-    const assetsTotal = Number(getValueViaPath(answers, 'assets.assetsTotal'))
-    const debtsTotal = Number(getValueViaPath(answers, 'debts.debtsTotal'))
-    const businessTotal = Number(
-      getValueViaPath(answers, 'business.businessTotal'),
+    console.log('percentage', percentage)
+    const netPropertyForExchange = Number(
+      getValueViaPath(answers, 'netPropertyForExchange'),
     )
-    const totalDeduction = valueToNumber(
-      getValueViaPath(answers, 'totalDeduction'),
-    )
-    const inheritanceValue = Math.round(
-      (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
-    )
+    console.log('netPropertyForExchange', netPropertyForExchange)
+    const inheritanceValue = Math.round(netPropertyForExchange * percentage)
+
+    console.log('inheritanceValue', inheritanceValue)
     const taxFreeInheritanceValue = Math.round(TAX_FREE_LIMIT * percentage)
     const taxableInheritanceValue = Math.round(
       inheritanceValue - taxFreeInheritanceValue,
     )
+
     const inheritanceTaxValue = Math.round(taxableInheritanceValue * 0.1)
 
     setValue(
@@ -224,6 +219,7 @@ export const HeirsAndPartitionRepeater: FC<
       replace(estateData?.inheritanceReportInfo?.heirs)
       setValue('heirs.hasModified', true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

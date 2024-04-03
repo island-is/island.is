@@ -22,6 +22,7 @@ import { useFormContext } from 'react-hook-form'
 
 type CalcShared = {
   value: number
+  deduction: number
   shareValue: number
   deceasedShare: number
 }[]
@@ -38,6 +39,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const [shareTotal, setShareTotal] = useState(0)
+  const [allDebtsTotal, setAllDebtsTotal] = useState(0)
+  const [netPropertyForExchange, setNetPropertyForExchange] = useState(0)
+  const [netProperty, setNetProperty] = useState(0)
 
   const [shareValues, setShareValues] = useState<
     Record<keyof Partial<EstateAssets>, ShareItem>
@@ -85,9 +89,12 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   console.log('CalculateShare answers', answers)
 
-  const getNumberValue = (key: string) => {
-    return valueToNumber(getValueViaPath(answers, key))
-  }
+  const getNumberValue = useCallback(
+    (key: string) => {
+      return valueToNumber(getValueViaPath(answers, key))
+    },
+    [answers],
+  )
 
   const updateShareCalculations = useCallback(() => {
     const bankAccounts: CalcShared = (
@@ -99,8 +106,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const deceasedShare = valueToNumber(item.deceasedShare)
       const value = propertyValuation + exchangeRateOrInterest
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -113,8 +122,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -127,8 +138,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -141,8 +154,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -155,8 +170,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -169,8 +186,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -183,8 +202,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -197,8 +218,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -211,8 +234,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
+      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
       return {
         value,
+        deduction,
         shareValue,
         deceasedShare,
       }
@@ -266,35 +291,58 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     console.log('shareValues', shareValues)
 
-    let shareTotal = 0
+    let netPropertyValue = 0
+    let shareTotalValue = 0
+    let deductionTotal = 0
 
     for (const [_, value] of Object.entries(shareValues)) {
-      const total = value.items.reduce((acc, item) => acc + item.shareValue, 0)
-      shareTotal += total
+      const total = value.items.reduce((acc, item) => acc + item.value, 0)
+      netPropertyValue += total
+
+      const share = value.items.reduce((acc, item) => acc + item.shareValue, 0)
+      shareTotalValue += share
+
+      const deduction = value.items.reduce(
+        (acc, item) => acc + item.deduction,
+        0,
+      )
+      deductionTotal += deduction
     }
 
-    setShareTotal(shareTotal)
-    setValue(`shareTotal`, shareTotal)
+    setNetProperty(netPropertyValue)
+    setShareTotal(shareTotalValue)
+    setValue(`netProperty`, netPropertyValue)
+    setValue(`shareTotal`, shareTotalValue)
+    setValue(`cohabitantShare`, deductionTotal)
   }, [setValue, shareValues])
 
-  // const assetsTotal = getNumberValue('assets.assetsTotal')
   const funeralCost = getNumberValue('funeralCost.total')
   const businessDebts = getNumberValue('business.businessDebts.total')
   const publicCharges = getNumberValue('debts.publicCharges')
-  const debtsTotal = getNumberValue('debts.debtsTotal')
+
+  useEffect(() => {
+    const allDebtsTotalValue =
+      getNumberValue('debts.debtsTotal') + funeralCost + businessDebts
+    const netPropertyForExchangeValue = shareTotal - allDebtsTotalValue
+
+    setAllDebtsTotal(allDebtsTotalValue)
+    setNetPropertyForExchange(netPropertyForExchangeValue)
+
+    setValue(`allDebtsTotal`, allDebtsTotalValue)
+    setValue(`netPropertyForExchange`, netPropertyForExchangeValue)
+    setValue(`netProperty`, netProperty)
+  }, [
+    businessDebts,
+    funeralCost,
+    getNumberValue,
+    netProperty,
+    setValue,
+    shareTotal,
+  ])
+
   const domesticAndForeignDebts = valueToNumber(
     getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total'),
   )
-  const allDebtsTotal =
-    getNumberValue('debts.debtsTotal') + funeralCost + businessDebts
-
-  // Við þurfum að staðfesta að við séum að reikna hreina eign til skipta rétt => 8.1 / 2 = 8.2
-  // Búshluti maka er 50% af hreinni eign
-  //
-  // Hrein eign:
-  // eign - frádráttur (skuldir) + eign í atvinnurekstri - frádráttur (búshluti maka)
-
-  const netPropertyForExchange = shareTotal - debtsTotal
 
   return (
     <Box>
@@ -306,7 +354,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']}>
               <Text textAlign="right">
-                {formatCurrency(String(shareTotal))}
+                {formatCurrency(String(netProperty))}
               </Text>
             </GridColumn>
           </GridRow>
