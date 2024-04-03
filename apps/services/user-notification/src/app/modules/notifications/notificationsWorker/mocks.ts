@@ -17,6 +17,16 @@ export const userWithDelegations: UserProfileDto = {
   emailNotifications: true,
 }
 
+export const userWithDelegations2: UserProfileDto = {
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'email5@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+}
+
 export const userWitNoDelegations: UserProfileDto = {
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
@@ -78,6 +88,7 @@ export const mockHnippTemplate: HnippTemplate = {
 
 const userProfiles = [
   userWithDelegations,
+  userWithDelegations2,
   userWitNoDelegations,
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
@@ -90,6 +101,12 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
     {
       fromNationalId: userWithDelegations.nationalId,
       toNationalId: userWitNoDelegations.nationalId,
+    },
+  ],
+  [userWithDelegations2.nationalId]: [
+    {
+      fromNationalId: userWithDelegations2.nationalId,
+      toNationalId: userWithDelegations.nationalId,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [

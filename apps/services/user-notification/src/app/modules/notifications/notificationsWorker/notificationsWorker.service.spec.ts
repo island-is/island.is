@@ -23,6 +23,7 @@ import {
   MockNationalRegistryV3ClientService,
   MockV2UsersApi,
   userWithDelegations,
+  userWithDelegations2,
   userWithDocumentNotificationsDisabled,
   userWithEmailNotificationsDisabled,
   userWithFeatureFlagDisabled,
@@ -156,6 +157,36 @@ describe('NotificationsWorkerService', () => {
     // should write the messages to db
     const messages = await notificationModel.findAll()
     expect(messages).toHaveLength(2)
+  })
+
+  it('should not send email or push notifications to delegation holders if recipient is a delegation holder (test correct propagation of emails to delegation holders)', async () => {
+    // userWithDelegations2 -> userWithDelegations -X userWitNoDelegations
+    await addToQueue(userWithDelegations2.nationalId)
+
+    // Should not have been called 3 times if propagation is correct
+    expect(emailService.sendEmail).toHaveBeenCalledTimes(2)
+
+    // should send email to primary recipient
+    expect(emailService.sendEmail).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        to: expect.objectContaining({
+          name: mockFullName,
+          address: userWithDelegations2.email,
+        }),
+      }),
+    )
+
+    // should send email to delegation recipient
+    expect(emailService.sendEmail).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        to: expect.objectContaining({
+          name: mockFullName,
+          address: userWithDelegations.email,
+        }),
+      }),
+    )
   })
 
   it('should not send email or push notification if we are outside working hours (8 AM - 11 PM) ', async () => {
