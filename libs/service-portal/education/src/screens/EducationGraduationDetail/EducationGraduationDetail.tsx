@@ -6,7 +6,6 @@ import {
   Divider,
   GridColumn,
   GridRow,
-  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
