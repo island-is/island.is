@@ -311,7 +311,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
     setNetProperty(netPropertyValue)
     setShareTotal(shareTotalValue)
-    setValue(`netProperty`, netPropertyValue)
     setValue(`shareTotal`, shareTotalValue)
     setValue(`cohabitantShare`, deductionTotal)
   }, [setValue, shareValues])
@@ -324,13 +323,14 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const allDebtsTotalValue =
       getNumberValue('debts.debtsTotal') + funeralCost + businessDebts
     const netPropertyForExchangeValue = shareTotal - allDebtsTotalValue
+    const netPropertyValue = netProperty - allDebtsTotalValue
 
     setAllDebtsTotal(allDebtsTotalValue)
     setNetPropertyForExchange(netPropertyForExchangeValue)
 
     setValue(`allDebtsTotal`, allDebtsTotalValue)
+    setValue(`netProperty`, netPropertyValue)
     setValue(`netPropertyForExchange`, netPropertyForExchangeValue)
-    setValue(`netProperty`, netProperty)
   }, [
     businessDebts,
     funeralCost,

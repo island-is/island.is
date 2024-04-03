@@ -166,9 +166,7 @@ export const heirs = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String(
-                    getValueViaPath<number>(answers, 'netPropertyForExchange'),
-                  ),
+                  String(getValueViaPath<number>(answers, 'netProperty')),
                 ),
             }),
             buildDescriptionField({
