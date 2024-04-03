@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
-import { EmailService, Message } from '@island.is/email-service'
+import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
@@ -88,19 +88,79 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
   createEmail({
     isEnglish,
-    profile,
+    recipientEmail,
     template,
     formattedTemplate,
     fullName,
   }: {
     isEnglish: boolean
-    profile: UserProfileDto
+    recipientEmail: string | null
     template: HnippTemplate
     formattedTemplate: HnippTemplate
     fullName: string
   }): Message {
-    if (!profile.email) {
+    if (!recipientEmail) {
       throw new Error('User does not have email notifications enabled')
+    }
+
+    const generateBody = (): Body[] => {
+      return [
+        {
+          component: 'Image',
+          context: {
+            src: join(__dirname, `./assets/images/logo.jpg`),
+            alt: 'Ísland.is logo',
+          },
+        },
+        {
+          component: 'Spacer',
+        },
+        {
+          component: 'Heading',
+          context: {
+            copy: fullName
+              ? isEnglish
+                ? `Hi ${fullName}`
+                : `Hæ ${fullName}`
+              : formattedTemplate.notificationTitle,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: formattedTemplate.notificationBody,
+          },
+        },
+        {
+          component: 'Spacer',
+        },
+        ...(formattedTemplate.clickActionUrl
+          ? [
+              {
+                component: 'Button',
+                context: {
+                  copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
+                  href: formattedTemplate.clickActionUrl,
+                },
+              },
+              {
+                component: 'Spacer',
+              },
+            ]
+          : [null]),
+        {
+          component: 'TextWithLink',
+          context: {
+            small: true,
+            preText: isEnglish ? 'In settings on ' : 'Í stillingum á ',
+            linkHref: 'https://www.island.is/minarsidur/min-gogn/stillingar/',
+            linkLabel: 'Ísland.is',
+            postText: isEnglish
+              ? ', you can decide if you want to be notified or not.'
+              : ' getur þú ákveðið hvort hnippt er í þig.',
+          },
+        },
+      ].filter((item) => item !== null) as Body[]
     }
 
     return {
@@ -110,66 +170,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       },
       to: {
         name: fullName,
-        address: profile.email,
+        address: recipientEmail,
       },
       subject: template.notificationTitle,
       template: {
         title: template.notificationTitle,
-        body: [
-          {
-            component: 'Image',
-            context: {
-              src: join(__dirname, `./assets/images/logo.jpg`),
-              alt: 'Ísland.is logo',
-            },
-          },
-          {
-            component: 'Spacer',
-          },
-          {
-            component: 'Heading',
-            context: {
-              copy: fullName
-                ? isEnglish
-                  ? `Hi ${fullName}`
-                  : `Hæ ${fullName}`
-                : formattedTemplate.notificationTitle,
-            },
-          },
-          {
-            component: 'Copy',
-            context: {
-              copy: formattedTemplate.notificationBody,
-            },
-          },
-          {
-            component: 'Spacer',
-          },
-          {
-            component: 'Button',
-            context: {
-              copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
-              href:
-                formattedTemplate.clickActionUrl ??
-                'https://www.island.is/minarsidur/postholf',
-            },
-          },
-          {
-            component: 'Spacer',
-          },
-          {
-            component: 'TextWithLink',
-            context: {
-              small: true,
-              preText: isEnglish ? 'In settings on ' : 'Í stillingum á ',
-              linkHref: 'https://www.island.is/minarsidur/min-gogn/stillingar/',
-              linkLabel: 'Ísland.is',
-              postText: isEnglish
-                ? ', you can decide if you want to be notified or not.'
-                : ' getur þú ákveðið hvort hnippt er í þig.',
-            },
-          },
-        ],
+        body: generateBody(),
       },
     }
   }
@@ -222,7 +228,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     try {
       const emailContent = this.createEmail({
         isEnglish,
-        profile,
+        recipientEmail: profile.email ?? null,
         template,
         formattedTemplate,
         fullName,
