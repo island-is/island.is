@@ -273,6 +273,16 @@ export const getStatementDeadline = (appealReceived: Date): string => {
   ).toISOString()
 }
 
+export const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
+  if (!decision) {
+    return false
+  }
+  return [
+    CaseAppealDecision.POSTPONE,
+    CaseAppealDecision.NOT_APPLICABLE,
+  ].includes(decision)
+}
+
 export const prosecutorCanSelectDefenderForInvestigationCase = (
   type?: CaseType | null,
 ): boolean => {

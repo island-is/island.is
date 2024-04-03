@@ -9,6 +9,7 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
+  isAppealableDecision,
   isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -66,7 +67,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
-    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+    (isAppealableDecision(workingCase.accusedAppealDecision) ||
       workingCase.hasBeenAppealed)
 
   return (

@@ -51,6 +51,7 @@ export {
   isCompletedCase,
   CaseAppealState,
   getStatementDeadline,
+  isAppealableDecision,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from './lib/case'
 export type {
