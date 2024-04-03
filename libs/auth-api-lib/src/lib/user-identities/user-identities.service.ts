@@ -1,21 +1,26 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { randomBytes } from 'crypto'
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { ClaimDto } from './dto/claim.dto'
 import { UserIdentityDto } from './dto/user-identity.dto'
 import { Claim } from './models/claim.model'
 import { UserIdentity } from './models/user-identity.model'
 
-import type { Logger } from '@island.is/logging'
+export const audkenniProvider = 'audkenni'
+export const delegationProvider = 'delegation'
+export const actorSubjectIdType = 'actorSubjectId'
 
-const audkenniProvider = 'audkenni'
-const delegationProvider = 'delegation'
-const actorSubjectIdType = 'actorSubjectId'
 @Injectable()
 export class UserIdentitiesService {
   constructor(
@@ -28,7 +33,7 @@ export class UserIdentitiesService {
     private logger: Logger,
   ) {}
 
-  /** Get's all user identities and total count of rows */
+  /** Gets all user identities and total count of rows */
   async findAndCountAll(): Promise<{
     rows: UserIdentity[]
     count: number
@@ -59,6 +64,7 @@ export class UserIdentitiesService {
         )
       })
     } catch {
+      console.log('here')
       this.logger.warn('Error when executing transaction, rollbacked.')
     }
   }
@@ -77,7 +83,7 @@ export class UserIdentitiesService {
     })
   }
 
-  /** Get user identity by national national id (kt) */
+  /** Get user identity by national id (kt) */
   async findByNationalId(nationalId: string) {
     if (!nationalId) {
       throw new BadRequestException('NationalId must be provided')
@@ -104,7 +110,7 @@ export class UserIdentitiesService {
     return null
   }
 
-  /** Gets a user identiy by a provider and subjectid */
+  /** Gets a user identity by a provider and subjectId */
   async findByProviderSubjectId(
     provider: string,
     subjectId: string,
@@ -128,7 +134,7 @@ export class UserIdentitiesService {
     })
   }
 
-  /** Gets a delegation identity by a provider, subjectid and actor subject id */
+  /** Gets a delegation identity by a provider, subjectId and actor subjectId */
   async findDelegationIdentity(
     provider: string,
     subjectId: string,
@@ -190,7 +196,7 @@ export class UserIdentitiesService {
     return await this.findBySubjectId(userIdentity.subjectId)
   }
 
-  /** Deletes an user identity by subjectid */
+  /** Deletes a user identity by subjectId */
   async delete(subjectId: string): Promise<number> {
     this.logger.debug('Deleting user identity with subjectId: ', subjectId)
 
@@ -203,7 +209,7 @@ export class UserIdentitiesService {
     })
   }
 
-  /** Activates or deactivates a user by it's subjectId */
+  /** Activates or deactivates a user by its subjectId */
   async setActive(
     subjectId: string,
     active: boolean,
@@ -255,15 +261,17 @@ export class UserIdentitiesService {
     return claims
   }
 
-  async findOrCreateSubjectId(
-    fromNationalId: string,
-    toNationalId: string,
-  ): Promise<string | null> {
+  async findOrCreateSubjectId({
+    toNationalId,
+    fromNationalId,
+  }: {
+    fromNationalId: string
+    toNationalId: string
+  }): Promise<string | null> {
     const actor = await this.findSubject(toNationalId, audkenniProvider)
 
     if (!actor) {
-      // TODO: should we rather throw an exception?
-      return null
+      throw new NotFoundException('Actor not found')
     }
 
     const delegation = await this.userIdentityModel.findOne({
@@ -301,7 +309,7 @@ export class UserIdentitiesService {
   private async autoProvisionDelegation(
     fromNationalId: string,
     actor: UserIdentity,
-  ): Promise<string> {
+  ): Promise<string | null> {
     const subjectId = this.generateSubjectId()
 
     const delegation: UserIdentityDto = {
@@ -321,9 +329,9 @@ export class UserIdentitiesService {
       ], // claims will be updated when the delegation is used
     }
 
-    await this.create(delegation)
+    const createdDelegation = await this.create(delegation)
 
-    return subjectId
+    return createdDelegation?.subjectId ?? null
   }
 
   private generateSubjectId(): string {
