@@ -64,7 +64,6 @@ export class UserIdentitiesService {
         )
       })
     } catch {
-      console.log('here')
       this.logger.warn('Error when executing transaction, rollbacked.')
     }
   }
