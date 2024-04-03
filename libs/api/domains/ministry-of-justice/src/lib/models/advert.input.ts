@@ -1,11 +1,11 @@
 import { InputType, Field, registerEnumType } from '@nestjs/graphql'
 
-export enum JournalSignatureBodyTypeEnum {
+export enum AdvertSignatureBodyTypeEnum {
   Hefbundin = 'Hefðbundin',
   Nefnd = 'Nefnd',
 }
 
-registerEnumType(JournalSignatureBodyTypeEnum, {
+registerEnumType(AdvertSignatureBodyTypeEnum, {
   name: 'MinistryOfJusticeAdvertSignatureType',
 })
 
@@ -13,6 +13,27 @@ registerEnumType(JournalSignatureBodyTypeEnum, {
 export class AdvertsInput {
   @Field(() => String, { nullable: true })
   search?: string
+
+  @Field(() => Number, { nullable: true })
+  page?: number
+
+  @Field(() => [String], { nullable: true })
+  department?: string[]
+
+  @Field(() => [String], { nullable: true })
+  type?: string[]
+
+  @Field(() => [String], { nullable: true })
+  category?: string[]
+
+  @Field(() => [String], { nullable: true })
+  involvedParty?: string[]
+
+  @Field(() => Date, { nullable: true })
+  dateFrom?: string
+
+  @Field(() => Date, { nullable: true })
+  dateTo?: string
 }
 
 @InputType('MinistryOfJusticeTypesInput')
@@ -72,8 +93,8 @@ export class AdvertSignatureData {
 }
 @InputType('MinistryOfJusticeAdvertSignature')
 export class AdvertSignature {
-  @Field(() => JournalSignatureBodyTypeEnum)
-  type!: JournalSignatureBodyTypeEnum
+  @Field(() => AdvertSignatureBodyTypeEnum)
+  type!: AdvertSignatureBodyTypeEnum
 
   @Field(() => String, { nullable: true })
   additional?: string

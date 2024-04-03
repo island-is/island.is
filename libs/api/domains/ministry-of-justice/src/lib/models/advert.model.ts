@@ -18,6 +18,39 @@ registerEnumType(AdvertStatus, {
   name: 'MinistryOfJusticeAdvertStatus',
 })
 
+@ObjectType('MinistryOfJusticeAdvertMainCategory')
+export class AdvertMainCategory {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  slug!: string
+
+  @Field(() => String)
+  description!: string
+}
+
+@ObjectType('MinistryOfJusticeAdvertCategory')
+export class AdvertCategory {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  slug!: string
+
+  @Field(() => AdvertEntity, { nullable: true })
+  department?: AdvertEntity | null
+
+  @Field(() => AdvertMainCategory, { nullable: true })
+  mainCategory?: AdvertMainCategory | null
+}
+
 @ObjectType('MinistryOfJusticeAdvertEntity')
 export class AdvertEntity {
   @Field(() => ID)
@@ -105,7 +138,7 @@ export class Advert {
   publicationDate!: string | null
 
   @Field(() => [AdvertEntity])
-  categories!: AdvertEntity[]
+  categories!: AdvertCategory[]
 
   @Field(() => AdvertEntity)
   involvedParty!: AdvertEntity
