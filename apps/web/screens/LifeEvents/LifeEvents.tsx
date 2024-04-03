@@ -23,8 +23,9 @@ import { ContentLanguage, QueryGetLifeEventsArgs } from '@island.is/api/schema'
 import { GET_LIFE_EVENTS_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { ApplicationsTexts } from './LifeEvents.types'
 
+type LifeEvents = GetLifeEventsQuery['getLifeEvents']
 interface Props {
-  lifeEvents: any
+  lifeEvents: LifeEvents
   namespace: ApplicationsTexts
 }
 
@@ -79,26 +80,35 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
         paddingBottom={2}
         third
       >
-        {lifeEvents?.map((event: any, index: number) => {
-          return (
-            <CardWithFeaturedItems
-              key={index}
-              heading={event.shortTitle || event.title}
-              imgSrc={event.tinyThumbnail?.url ?? ''}
-              alt={event.tinyThumbnail?.title ?? ''}
-              dataTestId={'lifeevent-card-with-featured-items'}
-              href={
-                linkResolver(event.__typename as LinkType, [event.slug]).href
-              }
-              featuredItems={event.featured ?? []}
-              buttonTitle={
-                event.seeMoreText && event.seeMoreText !== ''
-                  ? event.seeMoreText
-                  : 'Skoða lífsviðburð'
-              }
-            />
-          )
-        })}
+        {lifeEvents?.map(
+          ({
+            __typename: typename,
+            shortTitle,
+            title,
+            slug,
+            tinyThumbnail,
+            featured,
+            seeMoreText,
+            id,
+          }) => {
+            return (
+              <CardWithFeaturedItems
+                key={id}
+                heading={shortTitle || title}
+                imgSrc={tinyThumbnail?.url ?? ''}
+                imgAlt={''}
+                dataTestId={'lifeevent-card-with-featured-items'}
+                href={linkResolver(typename as LinkType, [slug]).href}
+                featuredItems={featured ?? []}
+                buttonTitle={
+                  seeMoreText && seeMoreText !== ''
+                    ? seeMoreText
+                    : 'Skoða lífsviðburð'
+                }
+              />
+            )
+          },
+        )}
       </GridItems>
     </>
   )

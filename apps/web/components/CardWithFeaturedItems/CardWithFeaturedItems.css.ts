@@ -8,12 +8,14 @@ export const container = style({
 })
 
 export const image = style({
-  width: '100%',
+  width: 100,
   height: 'auto',
   maxWidth: 100,
   maxHeight: 100,
+  marginTop: 10,
   ...themeUtils.responsiveStyle({
     xl: {
+      width: 120,
       maxWidth: 120,
       maxHeight: 120,
       marginRight: 20,

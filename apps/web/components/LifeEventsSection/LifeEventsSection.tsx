@@ -7,7 +7,7 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
-import { GridItems, IconTitleCard } from '@island.is/web/components'
+import { GridItems } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { LifeEventPage } from '@island.is/web/graphql/schema'
 import CardWithFeaturedItems from '../CardWithFeaturedItems/CardWithFeaturedItems'
@@ -65,7 +65,7 @@ export const LifeEventsSection = ({
                 key={index}
                 heading={lifeEvent.shortTitle || lifeEvent.title}
                 imgSrc={lifeEvent.tinyThumbnail?.url ?? ''}
-                alt={lifeEvent.tinyThumbnail?.title ?? ''}
+                imgAlt={''}
                 dataTestId={'lifeevent-card-with-featured-items'}
                 href={
                   linkResolver(lifeEvent.__typename as LinkType, [

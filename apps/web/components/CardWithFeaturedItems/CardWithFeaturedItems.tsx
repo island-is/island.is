@@ -15,23 +15,67 @@ import { Featured } from '@island.is/web/graphql/schema'
 type CardWithFeaturedItemsProps = {
   heading: string
   imgSrc: string
-  alt: string
+  imgAlt?: string
   href: string | null
   dataTestId?: string
   buttonTitle?: string
   featuredItems: Featured[]
 }
 
+export const FeaturedItemsLinks = ({
+  featuredItems,
+}: {
+  featuredItems: Featured[]
+}) => {
+  const { linkResolver } = useLinkResolver()
+
+  return (
+    <Hidden below="sm">
+      <Box marginY={2}>
+        {featuredItems.map((item: Featured, index: number) => {
+          const cardUrl = linkResolver(item.thing?.type as LinkType, [
+            item.thing?.slug ?? '',
+          ])
+          return (
+            <Box marginBottom={1} key={index}>
+              <Tag
+                key={item.title}
+                {...(cardUrl.href.startsWith('/')
+                  ? {
+                      CustomLink: ({ children, ...props }) => (
+                        <Link
+                          key={item.title}
+                          {...props}
+                          {...cardUrl}
+                          dataTestId="featured-link"
+                        >
+                          {children}
+                        </Link>
+                      ),
+                    }
+                  : { href: cardUrl.href })}
+                variant="purple"
+                whiteBackground
+              >
+                {item.title}
+              </Tag>
+            </Box>
+          )
+        })}
+      </Box>
+    </Hidden>
+  )
+}
+
 export const CardWithFeaturedItems = ({
   heading,
   imgSrc,
-  alt,
+  imgAlt = '',
   href,
   dataTestId,
   featuredItems,
   buttonTitle,
 }: CardWithFeaturedItemsProps) => {
-  const { linkResolver } = useLinkResolver()
   return (
     <FocusableBox
       href={href ?? undefined}
@@ -52,40 +96,7 @@ export const CardWithFeaturedItems = ({
         </Box>
         <Box height="full">
           {featuredItems.length > 0 && (
-            <Hidden below="sm">
-              <Box marginY={2}>
-                {featuredItems.map((item: Featured, index: number) => {
-                  const cardUrl = linkResolver(item.thing?.type as LinkType, [
-                    item.thing?.slug ?? '',
-                  ])
-                  return (
-                    <Box marginBottom={1} key={index}>
-                      <Tag
-                        key={item.title}
-                        {...(cardUrl.href.startsWith('/')
-                          ? {
-                              CustomLink: ({ children, ...props }) => (
-                                <Link
-                                  key={item.title}
-                                  {...props}
-                                  {...cardUrl}
-                                  dataTestId="featured-link"
-                                >
-                                  {children}
-                                </Link>
-                              ),
-                            }
-                          : { href: cardUrl.href })}
-                        variant="purple"
-                        whiteBackground
-                      >
-                        {item.title}
-                      </Tag>
-                    </Box>
-                  )
-                })}
-              </Box>
-            </Hidden>
+            <FeaturedItemsLinks featuredItems={featuredItems} />
           )}
         </Box>
         <Box>
@@ -97,12 +108,12 @@ export const CardWithFeaturedItems = ({
             colorScheme="purple"
             nowrap
           >
-            {buttonTitle ? buttonTitle : 'Skoða nánar'}
+            {buttonTitle || ''}
           </Button>
         </Box>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <img src={imgSrc} alt={alt} className={styles.image} />
+        <img src={imgSrc} alt={imgAlt} className={styles.image} />
       </Box>
     </FocusableBox>
   )
