@@ -7,8 +7,8 @@ export class Payment {
   name!: string
 
   @Field(() => Int)
-  totalYearCumulativeAmount?: number
+  totalYearCumulativeAmount!: number
 
   @Field(() => [PaymentMonth])
-  monthlyPaymentHistory?: Array<PaymentMonth>
+  monthlyPaymentHistory!: Array<PaymentMonth>
 }
