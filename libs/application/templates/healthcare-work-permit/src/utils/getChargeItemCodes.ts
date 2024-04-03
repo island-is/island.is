@@ -17,9 +17,14 @@ export const getChargeItemCodesAndExtraLabel = (
 }> => {
   const answers = application.answers as HealthcareWorkPermit
 
-  const licenses = application?.externalData?.healthcareLicenses
-    ?.data as HealthcareLicense[]
+  // const licenses = application?.externalData?.healthcareLicenses
+  //   ?.data as HealthcareLicense[]
 
+  const result = []
+  result.push({
+    chargeItemCode: ChargeItemCode.HEALTHCARE_WORK_PERMIT.toString(),
+    extraLabel: answers.selectWorkPermit.studyProgram,
+  })
 
-  return []
+  return result
 }

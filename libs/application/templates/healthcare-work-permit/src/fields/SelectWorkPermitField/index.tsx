@@ -2,12 +2,8 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import {
-  CheckboxController,
-  RadioController,
-} from '@island.is/shared/form-fields'
+import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
-import { formatDate } from '../../utils'
 import { Transcripts } from '@island.is/clients/university-of-iceland'
 
 interface Option {
@@ -19,8 +15,6 @@ interface Option {
 export const SelectWorkPermitField: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = (props) => {
-  console.log('MAAADE IT')
-
   const { lang, formatMessage } = useLocale()
   const { application } = props
 
@@ -40,17 +34,6 @@ export const SelectWorkPermitField: FC<
                   ? workPermit.studyProgram
                   : workPermit.studyProgram}
               </Text>
-              {/* {license.isTemporary && (
-                <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
-                  {formatMessage(
-                    information.labels.selectWorkPermit
-                      .workPermitOptionSubLabelTemporary,
-                    {
-                      dateTo: formatDate(license.validTo || new Date()),
-                    },
-                  )}
-                </Text>
-              )} */}
             </Box>
             {disabled && (
               <Box marginTop={2}>

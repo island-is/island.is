@@ -1,3 +1,5 @@
+import { Nam } from '../../gen/fetch'
+
 export interface HealthcareLicense {
   professionId: string
   professionNameIs: string
@@ -22,4 +24,14 @@ export interface HealthcareLicenseCertificateRequest {
 export interface HealthcareLicenseCertificate {
   professionId: string
   base64: string
+}
+
+export interface HealthcareWorkPermitRequest {
+  name: string
+  dateOfBirth: Date
+  email: string
+  phone: string
+  idProfession: string
+  citizenship: string
+  education: Nam[]
 }

@@ -126,6 +126,7 @@ import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grinda
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
 
+
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
