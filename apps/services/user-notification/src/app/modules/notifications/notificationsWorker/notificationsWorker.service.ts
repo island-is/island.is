@@ -331,8 +331,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         // should always send email notification
-        const notificationPromises = [
-          void this.handleEmailNotification(handleNotificationArgs),
+        const notificationPromises: Promise<void>[] = [
+          this.handleEmailNotification(handleNotificationArgs),
         ]
 
         // If the message is not on behalf of anyone, we look up delegations for the recipient and add messages to the queue for each delegation
@@ -373,7 +373,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
           // Only send push notifications for the main recipient
           notificationPromises.push(
-            void this.handleDocumentNotification(handleNotificationArgs),
+            this.handleDocumentNotification(handleNotificationArgs),
           )
         }
 
