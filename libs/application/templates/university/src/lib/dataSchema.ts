@@ -38,7 +38,6 @@ const ProgramSchema = z.object({
   universityName: z.string(),
   program: z.string(),
   programName: z.string(),
-  examLocation: z.string().optional(), // TODO make conditional requirement if the mode of delivery Online is chosen
 })
 
 export const EducationNotFinishedSchema = z.object({

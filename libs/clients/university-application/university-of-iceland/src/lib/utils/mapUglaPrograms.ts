@@ -72,7 +72,11 @@ export const mapUglaPrograms = (
           nameEn: k.heitiEn || '',
         })),
         applicationPeriodOpen: mapApplicationPeriodOpen(program),
-        applicationInUniversityGateway: program.canApplyOnHaskolanam || true,
+        applicationInUniversityGateway:
+          program.canApplyOnHaskolanam !== undefined &&
+          program.canApplyOnHaskolanam !== null
+            ? program.canApplyOnHaskolanam
+            : true,
       })
     } catch (e) {
       logError(program.externalId || '', e)
@@ -93,7 +97,7 @@ const mapApplicationPeriodOpen = (program: InlineResponse2002Data): boolean => {
 const mapExtraApplicationFields = (
   program: InlineResponse2002Data,
 ): IProgram['extraApplicationFields'] => {
-  let fields =
+  const fields =
     program.extraApplicationFields?.map((field) => ({
       externalId: '', //TODO missing in api
       nameIs: field.nameIs || '',

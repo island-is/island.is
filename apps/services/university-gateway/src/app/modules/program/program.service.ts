@@ -114,12 +114,16 @@ export class ProgramService {
       startingSemesterSeason?: Season
       universityId?: string
       degreeType?: DegreeType
+      applicationInUniversityGateway?: boolean
+      applicationPeriodOpen?: boolean
     } = {}
     if (active !== undefined) where.active = active
     if (year !== undefined) where.startingSemesterYear = year
     if (season !== undefined) where.startingSemesterSeason = season
     if (universityId !== undefined) where.universityId = universityId
     if (degreeType !== undefined) where.degreeType = degreeType
+    where.applicationInUniversityGateway = true
+    where.applicationPeriodOpen = true
 
     return paginate({
       Model: this.programModel,

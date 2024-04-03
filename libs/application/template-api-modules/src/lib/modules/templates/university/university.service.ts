@@ -78,6 +78,8 @@ export class UniversityService extends BaseTemplateApiService {
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
       extraApplicationFields: item.extraApplicationFields,
+      applicationInUniversityGateway: item.applicationInUniversityGateway,
+      applicationPeriodOpen: item.applicationPeriodOpen,
     }))
   }
 

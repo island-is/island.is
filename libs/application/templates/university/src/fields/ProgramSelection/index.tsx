@@ -117,7 +117,7 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
       chosenProgram?.modeOfDelivery &&
       chosenProgram?.modeOfDelivery.length <= 1
     ) {
-      setValue(`modeOfDeliveryInformation`, ModeOfDelivery.ON_SITE)
+      setValue(`modeOfDeliveryInformation.chosenMode`, ModeOfDelivery.ON_SITE)
     }
     setValue(`${Routes.PROGRAMINFORMATION}.programName`, programName)
   }
