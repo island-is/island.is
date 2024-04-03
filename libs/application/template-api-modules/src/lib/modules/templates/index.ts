@@ -130,6 +130,7 @@ import { RequestInspectionTemplateService } from './aosh/request-inspection/requ
 import { HealthInsuranceDeclarationModule } from './health-insurance-declaration/health-insurance-declaration.module'
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 
+
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
