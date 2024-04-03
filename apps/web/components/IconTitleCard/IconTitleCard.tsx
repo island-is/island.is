@@ -72,7 +72,7 @@ export const IconTitleCard = ({
             colorScheme="purple"
             nowrap
           >
-            {buttonTitle ? buttonTitle : 'Skoða nánar'}
+            {buttonTitle || ''}
           </Button>
         </Box>
       )}
