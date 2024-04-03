@@ -13,7 +13,7 @@ import { DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: User
@@ -118,7 +118,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         email: defenderEmail,
         role: UserRole.DEFENDER,
         active: true,
-        canConfirmAppeal: false,
+        canConfirmIndictment: false,
       })
     })
   })
@@ -151,7 +151,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         email: defenderEmail,
         role: UserRole.DEFENDER,
         active: true,
-        canConfirmAppeal: false,
+        canConfirmIndictment: false,
       })
     })
   })

@@ -12,6 +12,8 @@ import {
 import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
+  AdvertInstitutionsResponse,
+  AdvertMainCategoriesResponse,
   AdvertResponse,
   AdvertsResponse,
   AdvertTypeResponse,
@@ -55,10 +57,24 @@ export class MinistryOfJusticeResolver {
     return this.mojService.types(params)
   }
 
+  @Query(() => AdvertMainCategoriesResponse, {
+    name: 'ministryOfJusticeMainCategories',
+  })
+  mainCategories(@Args('params') params: QueryParams) {
+    return this.mojService.mainCategories(params)
+  }
+
   @Query(() => AdvertCategoryResponse, {
     name: 'ministryOfJusticeCategories',
   })
   categories(@Args('params') params: QueryParams) {
     return this.mojService.categories(params)
+  }
+
+  @Query(() => AdvertInstitutionsResponse, {
+    name: 'ministryOfJusticeInstitutions',
+  })
+  institutions(@Args('params') params: QueryParams) {
+    return this.mojService.institutions(params)
   }
 }

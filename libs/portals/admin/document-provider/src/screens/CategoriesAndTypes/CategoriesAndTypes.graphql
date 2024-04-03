@@ -1,0 +1,15 @@
+query GetDocumentProvidedTypes {
+  documentProviderProvidedTypes {
+    id
+    name
+    active
+  }
+}
+
+query GetDocumentProvidedCategories {
+  documentProviderProvidedCategories {
+    id
+    name
+    active
+  }
+}
