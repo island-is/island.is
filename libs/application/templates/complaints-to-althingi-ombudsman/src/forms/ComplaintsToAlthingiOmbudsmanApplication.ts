@@ -1,9 +1,8 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDataProviderItem,
   buildDateField,
-  buildExternalDataProvider,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -155,18 +154,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               backgroundColor: 'blue',
               defaultValue: '',
             }),
-            buildCustomField(
-              {
-                id: 'complainedForInformation.titleField',
-                title: complainedFor.information.fieldTitle,
-                component: 'FieldTitle',
-                doesNotRequireAnswer: true,
-              },
-              {
-                marginTop: 7,
-                marginBottom: 3,
-              },
-            ),
+            buildDescriptionField({
+              id: 'complainedForInformation.titleField',
+              title: complainedFor.information.fieldTitle,
+              marginTop: 7,
+              marginBottom: 3,
+            }),
             buildTextField({
               id: 'complainedForInformation.connection',
               title: complainedFor.information.textareaTitle,
@@ -176,18 +169,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               variant: 'textarea',
               rows: 6,
             }),
-            buildCustomField(
-              {
-                id: 'complainedForInformation.uploadTitleField',
-                title: complainedFor.labels.powerOfAttorney,
-                component: 'FieldTitle',
-                doesNotRequireAnswer: true,
-              },
-              {
-                marginTop: 7,
-                marginBottom: 3,
-              },
-            ),
+            buildDescriptionField({
+              id: 'complainedForInformation.uploadTitleField',
+              title: complainedFor.labels.powerOfAttorney,
+              marginTop: 7,
+              marginBottom: 3,
+            }),
             buildFileUploadField({
               id: 'complainedForInformation.powerOfAttorney',
               title: '',
