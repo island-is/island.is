@@ -1,7 +1,11 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   MinarSidur,
+  NamsUpplysingar,
   StarfsleyfiAMinumSidumApi,
+  StarfsleyfiUmsoknStarfsleyfi,
+  UmsoknStarfsleyfiApi,
+  UtbuaStarfsleyfiSkjalResponse,
   VottordApi,
 } from '../../gen/fetch'
 import { Injectable } from '@nestjs/common'
@@ -9,6 +13,7 @@ import {
   HealthcareLicense,
   HealthcareLicenseCertificate,
   HealthcareLicenseCertificateRequest,
+  HealthcareWorkPermitRequest,
 } from './healthDirectorateClient.types'
 import format from 'date-fns/format'
 
@@ -17,6 +22,7 @@ export class HealthDirectorateClientService {
   constructor(
     private readonly starfsleyfiAMinumSidumApi: StarfsleyfiAMinumSidumApi,
     private readonly vottordApi: VottordApi,
+    private readonly umsoknStarfsleyfiApi: UmsoknStarfsleyfiApi,
   ) {}
 
   private starfsleyfiAMinumSidumApiWithAuth(auth: Auth) {
@@ -27,6 +33,10 @@ export class HealthDirectorateClientService {
 
   private vottordApiWithAuth(auth: Auth) {
     return this.vottordApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private umsoknStarfsleyfiApiWith(auth: Auth) {
+    return this.umsoknStarfsleyfiApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   public async getHealthDirectorateLicense(
@@ -78,6 +88,51 @@ export class HealthDirectorateClientService {
     }
 
     return result
+  }
+
+  async getHealthCareLicensesForWorkPermit(
+    auth: Auth,
+  ): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
+    const licenses = await this.umsoknStarfsleyfiApiWith(
+      auth,
+    ).umsoknStarfsleyfiStarfsleyfiGet()
+
+    return licenses
+  }
+
+  async getHealthCareWorkPermitEducationInfo(
+    auth: Auth,
+  ): Promise<NamsUpplysingar[]> {
+    const educationInfo = await this.umsoknStarfsleyfiApiWith(
+      auth,
+    ).umsoknStarfsleyfiNamsUpplysGet()
+
+    return educationInfo
+  }
+
+  async submitApplicationHealthcareWorkPermit(
+    auth: User,
+    request: HealthcareWorkPermitRequest,
+  ): Promise<UtbuaStarfsleyfiSkjalResponse> {
+    const item = await this.umsoknStarfsleyfiApiWith(
+      auth,
+    ).umsoknStarfsleyfiUtbuaSkjalPost({
+      utbuaStarfsleyfiSkjalRequest: {
+        name: request.name,
+        dateOfBirth: format(new Date(request.dateOfBirth), 'dd.MM.yyyy'),
+        citizenship: request.citizenship,
+        email: request.email,
+        phoneNo: request.phone,
+        idProfession: request.idProfession,
+        education: request.education,
+      },
+    })
+
+    if (!item.base64String) {
+      throw new Error('Empty file')
+    }
+
+    return item
   }
 
   async submitApplicationHealthcareLicenseCertificate(

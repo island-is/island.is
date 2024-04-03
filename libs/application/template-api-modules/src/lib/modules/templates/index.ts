@@ -128,6 +128,7 @@ import { StreetRegistrationTemplateService } from './aosh/street-registration/st
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
 
+
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
