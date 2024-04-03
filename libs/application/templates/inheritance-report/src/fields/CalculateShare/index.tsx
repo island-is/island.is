@@ -11,22 +11,14 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
-import { valueToNumber } from '../../lib/utils/helpers'
+import {
+  getDeceasedHadAssets,
+  getDeceasedWasInCohabitation,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 import { EstateAssets } from '../../types'
 import { MessageDescriptor } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
-
-/**
-  
-Ég og Stefán erum gift og eigum saman íbúð upp á 90 milljónir.
-Við eigum 50/50 í henni, en höfum gert erfðaskrá sem tekur fram að ég eigi séreign í eigninni, 30 milljónir.
-
-Þegar ég dey, þá reiknast þetta sem:
-Okkar sameign = 90M-30M=60M sem svo skiptist í tvennt þþví ég átti 50% í íbúðinni, svo 30M til skipta
-Ofan á þessar 30M til skipta bætist mín séreign, 30M sem fer beint til skipta. Svo til skipta fer 30M+30M=60M.
-
-*/
 
 type CalcShared = {
   value: number
@@ -37,15 +29,6 @@ type CalcShared = {
 type ShareItem = {
   title: MessageDescriptor
   items: CalcShared
-}
-
-const getShareValue = (value: number, deceasedShare: number): number => {
-  const deceasedShareValue =
-    deceasedShare > 0 ? valueToNumber(value * (deceasedShare / 100)) : 0
-
-  const shareValue = Math.round((value - deceasedShareValue) / 2)
-
-  return shareValue
 }
 
 export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -69,6 +52,37 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     stocks: { title: m.stocksTitle, items: [] },
     vehicles: { title: m.vehiclesTitle, items: [] },
   })
+
+  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedWasInCohabitation = getDeceasedWasInCohabitation(application)
+
+  // Dæmi:
+  // Tvær manneskjur, A og B eru gift og eiga saman íbúð upp á 90 milljónir.
+  // Þær eiga 50/50 í henni, en hafa gert erfðaskrá sem tekur fram að A eigi séreign í eigninni, 30 milljónir.
+  // Þegar A deyr, þá reiknast þetta sem:
+  // Sameign = 90M-30M=60M sem skiptist í tvennt því A átti 50% í íbúðinni, svo 30M til skipta
+  // Ofan á þessar 30M til skipta bætist séreign A, 30M sem fer beint til skipta. Svo til skipta fer 30M+30M=60M.
+  const getShareValue = (value: number, deceasedShare: number): number => {
+    const deceasedShareValue =
+      deceasedHadAssets && deceasedShare > 0
+        ? valueToNumber(value * (deceasedShare / 100))
+        : 0
+
+    let shareValue = Math.round(value)
+
+    if (deceasedWasInCohabitation) {
+      if (deceasedHadAssets) {
+        shareValue = Math.round(
+          (value - deceasedShareValue) / 2 + deceasedShareValue,
+        )
+      } else {
+        shareValue = Math.round((value - deceasedShareValue) / 2)
+      }
+    }
+
+    return shareValue
+  }
+
   console.log('CalculateShare answers', answers)
 
   const getNumberValue = (key: string) => {
