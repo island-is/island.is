@@ -1,0 +1,3 @@
+import HealthInsuranceDeclarationTemplate from './lib/HealthInsuranceDeclarationTemplate'
+
+export default HealthInsuranceDeclarationTemplate

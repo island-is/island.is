@@ -391,6 +391,9 @@
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
+      "@island.is/application/templates/health-insurance-declaration": [
+        "libs/application/templates/health-insurance-declaration/src/index.ts"
+      ],
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
