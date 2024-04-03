@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
-import { transformCase } from './case.transformer'
+import { getAppealInfo, transformCase } from './case.transformer'
 
 describe('transformCase', () => {
   each`
@@ -306,6 +306,24 @@ describe('transformCase', () => {
       },
     )
 
+    each([CaseAppealDecision.ACCEPT, CaseAppealDecision.APPEAL]).it(
+      'should return that case cannot be appealed when prosecutorAppealDecision is %s',
+      (prosecutorAppealDecision) => {
+        const theCase = {
+          rulingDate: '2022-06-15T19:50:08.033Z',
+          prosecutorAppealDecision,
+        } as Case
+
+        const appealInfo = transformCase(theCase)
+
+        expect(appealInfo).toEqual(
+          expect.objectContaining({
+            canBeAppealed: false,
+          }),
+        )
+      },
+    )
+
     each([CaseAppealDecision.POSTPONE, CaseAppealDecision.NOT_APPLICABLE]).it(
       'should return that case can be appealed when accusedAppealDecision is %s',
       (accusedAppealDecision) => {
@@ -321,6 +339,24 @@ describe('transformCase', () => {
             canBeAppealed: true,
             appealDeadline: '2022-06-18T19:50:08.033Z',
             hasBeenAppealed: false,
+          }),
+        )
+      },
+    )
+
+    each([CaseAppealDecision.ACCEPT, CaseAppealDecision.APPEAL]).it(
+      'should return that case cannot be appealed when accusedAppealDecision is %s',
+      (accusedAppealDecision) => {
+        const theCase = {
+          rulingDate: '2022-06-15T19:50:08.033Z',
+          accusedAppealDecision,
+        } as Case
+
+        const appealInfo = transformCase(theCase)
+
+        expect(appealInfo).toEqual(
+          expect.objectContaining({
+            canBeAppealed: false,
           }),
         )
       },
@@ -435,6 +471,43 @@ describe('transformCase', () => {
           )
         },
       )
+    })
+  })
+})
+describe('getAppealInfo', () => {
+  it('should return empty appeal info when ruling date is not provided', () => {
+    // Arrange
+    const theCase = {} as Case
+
+    // Act
+    const appealInfo = getAppealInfo(theCase)
+
+    // Assert
+    expect(appealInfo).toEqual({})
+  })
+
+  it('should return correct appeal info when ruling date is provided', () => {
+    const rulingDate = new Date().toISOString()
+    const theCase = {
+      rulingDate,
+      appealState: CaseAppealState.APPEALED,
+      accusedAppealDecision: CaseAppealDecision.APPEAL,
+      prosecutorAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
+      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: false,
+      hasBeenAppealed: true,
+      appealedByRole: UserRole.DEFENDER,
+      appealedDate: '2022-06-15T19:50:08.033Z',
+      appealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
+      ).toISOString(),
+      statementDeadline: '2021-06-16T19:50:08.033Z',
     })
   })
 })

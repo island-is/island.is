@@ -17,7 +17,7 @@ interface AppealInfo {
   statementDeadline?: string
 }
 
-const getAppealInfo = (theCase: Case): AppealInfo => {
+export const getAppealInfo = (theCase: Case): AppealInfo => {
   const {
     rulingDate,
     appealState,
