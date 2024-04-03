@@ -335,6 +335,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           this.handleEmailNotification(handleNotificationArgs),
         ]
 
+        // Only send push notifications for the main recipient
+        if (!message.onBehalfOf) {
+          notificationPromises.push(
+            this.handleDocumentNotification(handleNotificationArgs),
+          )
+        }
+
+        await Promise.all(notificationPromises)
+
         // If the message is not on behalf of anyone, we look up delegations for the recipient and add messages to the queue for each delegation
         if (!message.onBehalfOf) {
           const shouldSendEmailToDelegations =
@@ -370,14 +379,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               })
             }
           }
-
-          // Only send push notifications for the main recipient
-          notificationPromises.push(
-            this.handleDocumentNotification(handleNotificationArgs),
-          )
         }
-
-        await Promise.all(notificationPromises)
       },
     )
   }
