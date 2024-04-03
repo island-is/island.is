@@ -65,7 +65,6 @@ export const LifeEventsSection = ({
                 key={index}
                 heading={lifeEvent.shortTitle || lifeEvent.title}
                 imgSrc={lifeEvent.tinyThumbnail?.url ?? ''}
-                imgAlt={''}
                 dataTestId={'lifeevent-card-with-featured-items'}
                 href={
                   linkResolver(lifeEvent.__typename as LinkType, [
