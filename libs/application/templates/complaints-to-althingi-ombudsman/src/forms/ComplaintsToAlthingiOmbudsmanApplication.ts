@@ -33,7 +33,6 @@ import {
   complainee,
   complaintDescription,
   complaintInformation,
-  dataProvider,
   information,
   section,
   attachments,
