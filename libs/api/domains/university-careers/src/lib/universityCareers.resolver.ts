@@ -71,6 +71,7 @@ export class UniversityCareersResolver {
 
   @Query(() => StudentTrack, {
     name: 'universityCareersStudentTrack',
+    nullable: true,
   })
   @Audit()
   async studentTrack(

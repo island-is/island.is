@@ -40,11 +40,11 @@ export const EducationGraduationDetail = () => {
     },
   })
 
-  const studentInfo = data?.universityCareersStudentTrack.transcript
-  const text = data?.universityCareersStudentTrack.metadata
-  const files = data?.universityCareersStudentTrack.files
+  const studentInfo = data?.universityCareersStudentTrack?.transcript
+  const text = data?.universityCareersStudentTrack?.metadata
+  const files = data?.universityCareersStudentTrack?.files
   const downloadServiceURL =
-    data?.universityCareersStudentTrack.downloadServiceURL
+    data?.universityCareersStudentTrack?.downloadServiceURL
 
   const graduationDate = studentInfo
     ? formatDate(studentInfo?.graduationDate)
@@ -116,9 +116,6 @@ export const EducationGraduationDetail = () => {
       </GridRow>
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {loading && !error && (
-        <SkeletonLoader height={20} width={500} repeat={3} />
-      )}
       {!loading && !error && !studentInfo && (
         <Box marginTop={8}>
           <Problem
@@ -196,7 +193,6 @@ export const EducationGraduationDetail = () => {
             <Divider />
           </Stack>
           <Box marginTop={5}>
-            {loading && !error && <SkeletonLoader height={20} repeat={2} />}
             <Text variant="small">{text?.footer}</Text>
           </Box>
         </>
