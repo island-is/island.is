@@ -51,7 +51,10 @@ import {
   RightsPortalClientConfig,
   RightsPortalClientModule,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import { DistrictCommissionersLicensesClientModule } from '@island.is/clients/district-commissioners-licenses'
+import {
+  DistrictCommissionersLicensesClientConfig,
+  DistrictCommissionersLicensesClientModule,
+} from '@island.is/clients/district-commissioners-licenses'
 @Module({
   controllers: [
     DocumentController,
@@ -89,6 +92,7 @@ import { DistrictCommissionersLicensesClientModule } from '@island.is/clients/di
         RegulationsClientConfig,
         WorkMachinesClientConfig,
         MMSClientConfig,
+        DistrictCommissionersLicensesClientConfig,
         RightsPortalClientConfig,
         DocumentClientConfig,
       ],
