@@ -50,7 +50,7 @@ Run on whenever you check out a branch:
 
 ```bash
 yarn install
-yarn infra
+yarn infra install
 yarn codegen
 ```
 
