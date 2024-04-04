@@ -56,9 +56,8 @@
     "codegen": "node scripts/codegen.js",
     "schemas": "echo 'The `schemas` script is deprecated. Please run `yarn codegen` instead.' && node scripts/codegen.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
-    "charts": "yarn charts",
-    "infra": "yarn ./infra install",
-    "cli": "yarn ./infra cli",
+    "charts": "yarn infra charts",
+    "infra": "node scripts/infra-cmds.js",
     "run-proxies": "./scripts/run-proxies.sh",
     "proxies": "yarn run-proxies",
     "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
