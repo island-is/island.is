@@ -844,7 +844,7 @@ export const vehicleMessage = defineMessages({
   },
   mileageInputTooLow: {
     id: 'sp.vehicles:mileage-errors-input-too-low',
-    defaultMessage: 'Verður að vera hærri en hæsta staðfesta skráning',
+    defaultMessage: 'Verður að vera hærri en síðasta staðfesta skráning',
   },
   mileageInputMinLength: {
     id: 'sp.vehicles:mileage-errors-min-length',
