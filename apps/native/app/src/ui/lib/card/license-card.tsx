@@ -1,4 +1,4 @@
-import { Barcode, BARCODE_CONTAINER_HEIGHT } from '@ui/lib/barcode/barcode'
+import { Barcode } from '@ui/lib/barcode/barcode'
 import { Skeleton } from '@ui/lib/skeleton/skeleton'
 import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
@@ -12,7 +12,7 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
-import { screenWidth } from '../../../utils/dimensions'
+import { isAndroid } from '../../../utils/devices'
 import { isString } from '../../../utils/is-string'
 import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
@@ -37,32 +37,39 @@ import { font } from '../../utils/font'
 
 export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 
-const Host = styled(Animated.View)`
-  padding: ${({ theme: { spacing } }) => `${spacing[2]}px ${spacing[3]}`}px;
-  min-height: 112px;
-  row-gap: ${LICENSE_CARD_ROW_GAP}px;
-  border-radius: ${({ theme: { border } }) => border.radius.extraLarge};
-  overflow: hidden;
-`
+const Host = styled(Animated.View)(({ theme }) => ({
+  position: 'relative',
+  minHeight: 112,
+  paddingHorizontal: theme.spacing[3],
+  paddingVertical: theme.spacing[2],
+  rowGap: LICENSE_CARD_ROW_GAP,
+  borderRadius: theme.border.radius.extraLarge,
+  overflow: 'hidden',
+}))
 
 const ContentContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
 `
 
-const BarcodeWrapper = styled.View`
-  flex: 1;
-  min-height: ${BARCODE_CONTAINER_HEIGHT}px;
-  max-height: ${BARCODE_CONTAINER_HEIGHT}px;
-  border-radius: ${({ theme: { border } }) => border.radius.large};
-  overflow: hidden;
-`
+const BarcodeWrapper = styled.View<{ minHeight?: number }>(
+  ({ theme, minHeight }) => ({
+    flex: 1,
+    borderRadius: theme.border.radius.large,
+    minHeight,
+    overflow: 'hidden',
+  }),
+)
 
-const BarcodeContainer = styled.View`
-  flex: 1;
-  background-color: ${({ theme: { color } }) => color.white};
-  padding: ${({ theme: { spacing } }) => spacing.smallGutter}px;
-`
+const BarcodeContainer = styled.View<{ isAndroid?: boolean }>(
+  ({ theme, isAndroid }) => ({
+    flex: 1,
+    backgroundColor: theme.color.white,
+    padding: theme.spacing.smallGutter,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }),
+)
 
 const ProgressBarContainer = styled.View`
   position: absolute;
@@ -265,6 +272,8 @@ interface LicenseCardProps {
     loading?: boolean
     expirationTime?: Date
     expirationTimeCallback?(): void
+    width: number
+    height: number
   }
 }
 
@@ -278,7 +287,7 @@ export function LicenseCard({
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
-  const barcodeWidth = screenWidth - theme.spacing[3] * 2
+
   const intl = useIntl()
   const variant = statusIcon[status]
   const preset = type
@@ -291,7 +300,7 @@ export function LicenseCard({
   const textColor = theme.shades.light.foreground
   const showBarcodeView =
     status === 'VALID' &&
-    ((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
+    !!((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
 
   return (
     <Host>
@@ -343,10 +352,14 @@ export function LicenseCard({
         )}
       </ContentContainer>
       {showBarcodeView && (
-        <BarcodeWrapper>
+        <BarcodeWrapper minHeight={barcode?.height}>
           {!barcode.loading && barcode?.value ? (
-            <BarcodeContainer>
-              <Barcode value={barcode.value} />
+            <BarcodeContainer isAndroid={isAndroid}>
+              <Barcode
+                value={barcode.value}
+                width={barcode.width}
+                height={barcode.height}
+              />
               {barcode?.expirationTime && (
                 <ProgressBarContainer>
                   <ExpirationProgressBar
@@ -355,7 +368,7 @@ export function LicenseCard({
                     expireTime={
                       barcode.expirationTime.getTime() - new Date().getTime()
                     }
-                    barContainerWidth={barcodeWidth}
+                    barContainerWidth={barcode.width}
                   />
                 </ProgressBarContainer>
               )}

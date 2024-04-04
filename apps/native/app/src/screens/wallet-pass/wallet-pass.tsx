@@ -4,7 +4,6 @@ import {
   LICENSE_CARD_ROW_GAP,
   LicenseCard,
 } from '@ui'
-import { BARCODE_HEIGHT } from '@ui/lib/barcode/barcode'
 import * as FileSystem from 'expo-file-system'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -30,6 +29,7 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { isAndroid, isIos } from '../../utils/devices'
+import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
 
 const INFORMATION_BASE_TOP_SPACING = 70
@@ -142,6 +142,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
   const allowLicenseBarcode = pkPassAllowed && !data?.payload?.metadata?.expired
   const licenseType = data?.license?.type
+  const barcodeWidth =
+    screenWidth - theme.spacing[5] * 2 - theme.spacing.smallGutter * 2
+  const barcodeHeight = barcodeWidth / 3
 
   const onAddPkPass = async () => {
     const { canAddPasses, addPass } = Platform.select({
@@ -164,7 +167,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         if (!data?.generatePkPass.pkpassUrl) {
           throw Error('Failed to generate pkpass')
         }
-        if (Platform.OS === 'android') {
+        if (isAndroid) {
           const pkPassUri =
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             FileSystem.documentDirectory! + Date.now() + '.pkpass'
@@ -294,6 +297,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               loading: res.loading && !data?.barcode,
               expirationTimeCallback,
               expirationTime,
+              width: barcodeWidth,
+              height: barcodeHeight,
             },
           })}
         />
@@ -302,7 +307,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         contentInset={{ bottom: 162 }}
         topSpacing={
           allowLicenseBarcode && data?.barcode?.token
-            ? BARCODE_HEIGHT + LICENSE_CARD_ROW_GAP
+            ? barcodeHeight + LICENSE_CARD_ROW_GAP
             : 0
         }
       >

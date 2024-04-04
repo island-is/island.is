@@ -105,7 +105,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Query list of licenses
   const res = useListLicensesQuery({
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
     variables: {
       input: {
         includedTypes: [

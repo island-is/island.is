@@ -10102,7 +10102,6 @@ __metadata:
     react-intl: 5.20.12
     react-native: 0.71.1
     react-native-app-auth: 6.4.3
-    react-native-barcode-creator: 0.1.7
     react-native-blob-util: 0.16.4
     react-native-code-push: 7.1.0
     react-native-device-info: 10.3.0
@@ -10118,6 +10117,7 @@ __metadata:
     react-native-quick-actions: 0.3.13
     react-native-share: 7.1.1
     react-native-spotlight-search: 2.0.0
+    react-native-svg: 15.1.0
     react-native-webview: 11.26.1
     react-test-renderer: 18.2.0
     styled-components: 5.3.6
@@ -24954,7 +24954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-tree@npm:^1.1.2":
+"css-tree@npm:^1.1.2, css-tree@npm:^1.1.3":
   version: 1.1.3
   resolution: "css-tree@npm:1.1.3"
   dependencies:
@@ -44935,16 +44935,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-barcode-creator@npm:0.1.7":
-  version: 0.1.7
-  resolution: "react-native-barcode-creator@npm:0.1.7"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 7ecea4167b9684c837c564d03b32f9e2dd443182706620342b58888f09352ce81fdac3ed195f273f24fedbaeadecda3a305c5208bee0171fe9bda64ae0549ed8
-  languageName: node
-  linkType: hard
-
 "react-native-base64@npm:0.0.2":
   version: 0.0.2
   resolution: "react-native-base64@npm:0.0.2"
@@ -45126,6 +45116,19 @@ __metadata:
   peerDependencies:
     react-native: "*"
   checksum: a2d9ca1d1ff5a629faf5f57d061f091f03e0526f18a8cf76bbfd9b33adae2f07705d2eedd683489288ca8e8fe20c0be11258dd406d9adc3c7c01166d000ccd3a
+  languageName: node
+  linkType: hard
+
+"react-native-svg@npm:15.1.0":
+  version: 15.1.0
+  resolution: "react-native-svg@npm:15.1.0"
+  dependencies:
+    css-select: ^5.1.0
+    css-tree: ^1.1.3
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: a3694b74097e56a810a9142c9480532b63fb9cac0ff8b74c038478172d09acdb4077d93cfa53a8bb31e7ec1a9fc9f6e81a95b028c64af5370b5b3534c99aee0b
   languageName: node
   linkType: hard
 
