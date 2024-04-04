@@ -29,7 +29,7 @@ export const DistrictCommissionerLicensesApiProvider: Provider<RettindiFyrirIsla
                   issuer: idsClientConfig.issuer,
                   clientId: idsClientConfig.clientId,
                   clientSecret: idsClientConfig.clientSecret,
-                  scope: [],
+                  scope: config.scope,
                 }
               : undefined,
           }),
