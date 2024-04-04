@@ -328,6 +328,38 @@ const enhancedFetch = createEnhancedFetch({
 
 In the above example, requests going to the pin endpoint will never be shared between users, while other requests can be cached between users.
 
+#### Caching with sensitive path or query parameters
+
+When working with an API that uses static placeholders in the URL for sensitive parameters, as [described in our API Design Guide](https://docs.devland.is/technical-overview/api-design-guide/rest-request), you need to take special care.
+
+We have added a built-in support for headers that match the header key patterns described in the API Design Guide. If path params header keys starts with `X-Param` and query params with `X-Query` then you don't need to do anything. The cache will work as expected, handled automatically by the `defaultCacheKey` function.
+
+⚠️ __Warning__  
+If the API uses another header key pattern than mentioned above, then the `defaultCacheKey` function should be overridden to add the API specific header keys.
+
+##### Example of overriding the `defaultCacheKey` function
+
+When API endpoint uses custom header keys for path and/or query parameters, a `cacheKey` function should be provided to override the `defaultCacheKey` function to include the custom header keys.
+
+You can use the `defaultCacheKey` function as a base cache key, then add the custom header keys to the cache key.
+
+```ts
+const enhancedFetch = createEnhancedFetch({
+  name: 'some-api',
+  cache: {
+    cacheManager,
+    cacheKey: ({ headers }: Request) => {
+      const cacheKey = defaultCacheKey(request)
+      const paramHeader = headers.get('X-Param-Key')
+      const queryHeader = headers.get('X-Query-Key')
+      return `${cacheKey}#${paramHeader}#${queryHeader}`
+    },
+  },
+})
+
+
+```
+
 ## Running unit tests
 
-Run `nx test clients-middlewares` to execute the unit tests via [Jest](https://jestjs.io).
+Run `yarn nx test clients-middlewares` to execute the unit tests via [Jest](https://jestjs.io).

@@ -27,7 +27,6 @@ export const ApiConfiguration = {
               noPrefix: true,
               ttl: 0,
             }),
-            cacheKey: defaultCacheKeyWithHeader('X-Param-National-Id'),
             shared: false,
             overrideCacheControl: config.cacheControl,
           }
