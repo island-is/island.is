@@ -40,6 +40,20 @@
             "schema": { "type": "integer", "format": "int32" }
           },
           {
+            "name": "paymentOrigin",
+            "in": "query",
+            "description": "Origin of payment, e.g.standard payments(Húsbót) or special payments(Sérstakar). 0= Both, 1= Almennar, 2=Sérstakar",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "description": "Payment for rental month.",
+            "style": "form",
+            "schema": { "type": "string" }
+          },
+          {
             "name": "version",
             "in": "path",
             "required": true,
