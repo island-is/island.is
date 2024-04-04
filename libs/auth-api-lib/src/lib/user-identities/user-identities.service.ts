@@ -267,23 +267,19 @@ export class UserIdentitiesService {
     fromNationalId: string
     toNationalId: string
   }): Promise<string | null> {
-    const actor = await this.findSubject(toNationalId, audkenniProvider)
+    const actor = await this.findUserIdentity({
+      nationalId: toNationalId,
+      provider: audkenniProvider,
+    })
 
     if (!actor) {
       throw new NotFoundException('Actor not found')
     }
 
-    const delegation = await this.userIdentityModel.findOne({
-      where: {
-        providerName: delegationProvider,
-        providerSubjectId: `IS-${fromNationalId}`,
-      },
-      include: [
-        {
-          model: Claim,
-          where: { type: actorSubjectIdType, value: actor.subjectId },
-        },
-      ],
+    const delegation = await this.findUserIdentity({
+      nationalId: fromNationalId,
+      provider: delegationProvider,
+      claim: { type: actorSubjectIdType, value: actor.subjectId },
     })
 
     if (delegation) {
@@ -293,15 +289,31 @@ export class UserIdentitiesService {
     }
   }
 
-  private findSubject(
-    nationalId: string,
-    provider: string,
-  ): Promise<UserIdentity | null> {
+  private findUserIdentity({
+    nationalId,
+    provider,
+    claim,
+  }: {
+    nationalId: string
+    provider: string
+    claim?: {
+      type: string
+      value: string
+    }
+  }): Promise<UserIdentity | null> {
     return this.userIdentityModel.findOne({
       where: {
         providerName: provider,
         providerSubjectId: `IS-${nationalId}`,
       },
+      ...(claim && {
+        include: [
+          {
+            model: Claim,
+            where: { type: claim.type, value: claim.value },
+          },
+        ],
+      }),
     })
   }
 
