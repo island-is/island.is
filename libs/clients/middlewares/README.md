@@ -334,7 +334,7 @@ When working with an API that uses static placeholders in the URL for sensitive 
 
 We have added a built-in support for headers that match the header key patterns described in the API Design Guide. If path params header keys starts with `X-Param` and query params with `X-Query` then you don't need to do anything. The cache will work as expected, handled automatically by the `defaultCacheKey` function.
 
-⚠️ __Warning__  
+⚠️ **Warning**  
 If the API uses another header key pattern than mentioned above, then the `defaultCacheKey` function should be overridden to add the API specific header keys.
 
 ##### Example of overriding the `defaultCacheKey` function
@@ -356,8 +356,6 @@ const enhancedFetch = createEnhancedFetch({
     },
   },
 })
-
-
 ```
 
 ## Running unit tests
