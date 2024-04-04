@@ -2134,7 +2134,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
         const actionName = findActionName(context)
         set(answers, 'actionName', actionName)
-        console.log('actionName', actionName)
+
         return context
       }),
       clearChangedPeriodsNEmployers: assign((context) => {

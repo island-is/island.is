@@ -120,7 +120,7 @@ export const findActionName = (context: ApplicationContext) => {
         set(application.answers, 'changePeriods', true)
       }
     }
-    console.log('BUU', { tmpChangeEmployer, tmpChangePeriods })
+
     // If the applicant has selected add employee and/or period at some point
     if (tmpChangeEmployer && tmpChangePeriods) {
       return FileType.EMPPER
