@@ -8,12 +8,12 @@ import type { CaseMessage } from '@island.is/judicial-system/message'
 import {
   CaseFileMessage,
   DefendantMessage,
+  messageEndpoint,
   MessageService,
   MessageType,
   OldMessageType,
   PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
-import { messageEndpoint } from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
