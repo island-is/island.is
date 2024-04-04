@@ -18,7 +18,6 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  isAppealableDecision,
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonSystemUser,
@@ -420,8 +419,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const shouldDisplayAlertBanner =
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
-    (isProsecutionUser(user) &&
-      isAppealableDecision(workingCase.prosecutorAppealDecision)) ||
+    (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
     workingCase.appealState === CaseAppealState.COMPLETED
 
   return (

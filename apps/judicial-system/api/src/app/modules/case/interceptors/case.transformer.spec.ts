@@ -508,6 +508,44 @@ describe('getAppealInfo', () => {
         new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
       ).toISOString(),
       statementDeadline: '2021-06-16T19:50:08.033Z',
+      canDefenderAppeal: false,
+      canProsecutorAppeal: false,
+    })
+  })
+
+  const rulingDate = new Date().toISOString()
+
+  Object.values(CaseAppealDecision).forEach((decision) => {
+    const expected =
+      decision === CaseAppealDecision.POSTPONE ||
+      decision === CaseAppealDecision.NOT_APPLICABLE
+
+    test(`canProsecutorAppeal for appeal decision ${decision} should return ${expected}`, () => {
+      const theCase = {
+        rulingDate,
+        prosecutorAppealDecision: decision,
+      } as Case
+
+      const appealInfo = getAppealInfo(theCase)
+
+      expect(appealInfo).toHaveProperty('canProsecutorAppeal', expected)
+    })
+  })
+
+  Object.values(CaseAppealDecision).forEach((decision) => {
+    const expected =
+      decision === CaseAppealDecision.POSTPONE ||
+      decision === CaseAppealDecision.NOT_APPLICABLE
+
+    test(`canDefenderAppeal for appeal decision ${decision} should return ${expected}`, () => {
+      const theCase = {
+        rulingDate,
+        accusedAppealDecision: decision,
+      } as Case
+
+      const appealInfo = getAppealInfo(theCase)
+
+      expect(appealInfo).toHaveProperty('canDefenderAppeal', expected)
     })
   })
 })

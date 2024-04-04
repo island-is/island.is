@@ -1,6 +1,6 @@
 import {
+  CaseAppealDecision,
   getStatementDeadline,
-  isAppealableDecision,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -15,6 +15,18 @@ interface AppealInfo {
   appealedByRole?: UserRole
   appealedDate?: string
   statementDeadline?: string
+  canProsecutorAppeal?: boolean
+  canDefenderAppeal?: boolean
+}
+
+const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
+  if (!decision) {
+    return false
+  }
+  return [
+    CaseAppealDecision.POSTPONE,
+    CaseAppealDecision.NOT_APPLICABLE,
+  ].includes(decision)
 }
 
 export const getAppealInfo = (theCase: Case): AppealInfo => {
@@ -40,6 +52,12 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
     !hasBeenAppealed &&
     (isAppealableDecision(accusedAppealDecision) ||
       isAppealableDecision(prosecutorAppealDecision))
+
+  appealInfo.canProsecutorAppeal =
+    !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
+
+  appealInfo.canDefenderAppeal =
+    !hasBeenAppealed && isAppealableDecision(accusedAppealDecision)
 
   appealInfo.hasBeenAppealed = hasBeenAppealed
 

@@ -9,7 +9,6 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  isAppealableDecision,
   isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -34,7 +33,6 @@ import {
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealDecision,
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -67,8 +65,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
-    (isAppealableDecision(workingCase.accusedAppealDecision) ||
-      workingCase.hasBeenAppealed)
+    (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
 
   return (
     <>
