@@ -348,7 +348,8 @@ const enhancedFetch = createEnhancedFetch({
   name: 'some-api',
   cache: {
     cacheManager,
-    cacheKey: ({ headers }: Request) => {
+    cacheKey: (request: Request) => {
+      const headers = request.headers
       const cacheKey = defaultCacheKey(request)
       const paramHeader = headers.get('X-Param-Key')
       const queryHeader = headers.get('X-Query-Key')
