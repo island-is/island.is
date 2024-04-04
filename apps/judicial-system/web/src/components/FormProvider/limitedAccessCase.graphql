@@ -102,7 +102,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
-    canProsecutorAppeal
     canDefenderAppeal
     hasBeenAppealed
     appealedByRole
