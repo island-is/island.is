@@ -35,7 +35,7 @@ type UseParams = {
 
 const IntellectualPropertiesTrademarkDetail = () => {
   useNamespaces('sp.intellectual-property')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error } =
@@ -43,6 +43,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
       variables: {
         input: {
           key: id,
+          locale,
         },
       },
     })
