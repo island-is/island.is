@@ -1076,6 +1076,23 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Enska',
       description: 'english',
     },
+    commentSection: {
+      id: 'pl.application:applicant.comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    commentDescription: {
+      id: 'pl.application:applicant.comment.description',
+      defaultMessage:
+        'Hafir þú einhverja athugasemd skildu hana eftir hér. Athugið að athugasemdir takmarkast við 250 stafabil. Ef nauðsyn krefur getur þú hlaðið upp skjali með lengri athugasemdum á skjánum hér á undan.',
+      description:
+        'Please leave any additional comments below. Note that comments are limited to 250 characters. If needed, please upload a document with longer comments on the previous screen.',
+    },
+    commentPlaceholder: {
+      id: 'pl.application:applicant.comment.placeholder',
+      defaultMessage: 'Skrifaðu athugasemd hér',
+      description: 'Your comment',
+    },
   }),
 
   errors: defineMessages({
