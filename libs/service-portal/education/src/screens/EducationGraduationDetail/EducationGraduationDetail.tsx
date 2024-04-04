@@ -21,20 +21,63 @@ import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { UniversityCareersUniversityId } from '@island.is/api/schema'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 type UseParams = {
   id: string
+  uni: string
+}
+
+const parseUniversityId = (
+  id: string,
+): {
+  uniId: UniversityCareersUniversityId
+  slug: OrganizationSlugType
+} | null => {
+  switch (id) {
+    case 'hi':
+      return {
+        uniId: UniversityCareersUniversityId.UNIVERSITY_OF_ICELAND,
+        slug: 'haskoli-islands',
+      }
+    case 'unak':
+      return {
+        uniId: UniversityCareersUniversityId.UNIVERSITY_OF_AKUREYRI,
+        slug: 'haskolinn-a-akureyri',
+      }
+    case 'lbhi':
+      return {
+        uniId: UniversityCareersUniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
+        slug: 'landbunadarhaskoli-islands',
+      }
+    case 'bifrost':
+      return {
+        uniId: UniversityCareersUniversityId.BIFROST_UNIVERSITY,
+        slug: 'bifrost',
+      }
+    case 'holar':
+      return {
+        uniId: UniversityCareersUniversityId.HOLAR_UNIVERSITY,
+        slug: 'holaskoli-haskolinn-a-holum',
+      }
+    default:
+      return null
+  }
 }
 
 export const EducationGraduationDetail = () => {
   useNamespaces('sp.education-graduation')
-  const { id } = useParams() as UseParams
+  const { id, uni } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
+
+  const universityData = parseUniversityId(uni)
 
   const { data, loading, error } = useStudentTrackQuery({
     variables: {
       input: {
         trackNumber: parseInt(id),
         locale: lang,
+        universityId: universityData?.uniId,
       },
     },
   })
@@ -56,7 +99,7 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={m.educationGraduation}
         intro={text?.description || ''}
-        serviceProviderSlug={'haskoli-islands'}
+        serviceProviderSlug={universityData?.slug}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>

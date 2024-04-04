@@ -133,12 +133,13 @@ export const EducationGraduation = () => {
                     defaultMessage: 'Skoða',
                   }).defaultMessage,
                   variant: 'text',
-                  url: item?.trackNumber
-                    ? EducationPaths.EducationHaskoliGraduationDetail.replace(
-                        ':id',
-                        item.trackNumber.toString(),
-                      )
-                    : '',
+                  url:
+                    item?.trackNumber && item?.institution?.id
+                      ? EducationPaths.EducationHaskoliGraduationDetail.replace(
+                          ':id',
+                          item.trackNumber.toString(),
+                        ).replace(':uni', item.institution.id.toString())
+                      : '',
                 }}
                 image={
                   item.institution?.displayName
