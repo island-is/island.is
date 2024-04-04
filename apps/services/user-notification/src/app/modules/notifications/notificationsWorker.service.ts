@@ -184,7 +184,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     message,
     messageId,
   }: HandleNotification): Promise<void> {
-    profile.email = 'gunnlaugur@aranja.com'
     const { nationalId } = profile
 
     const allowEmailNotification = await this.featureFlagService.getValue(
