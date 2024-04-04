@@ -58,10 +58,20 @@ export const searchQuery = (
             },
           })
         } else {
-          should.push({ prefix: { title: queryString } })
           should.push({
-            fuzzy: {
-              title: { value: queryString, fuzziness: 1, prefix_length: 0 },
+            bool: {
+              should: [
+                { prefix: { title: queryString } },
+                {
+                  fuzzy: {
+                    title: {
+                      value: queryString,
+                      fuzziness: 1,
+                      prefix_length: 0,
+                    },
+                  },
+                },
+              ],
             },
           })
         }
@@ -91,17 +101,16 @@ export const searchQuery = (
   // if we have types restrict the query to those types
   if (types?.length) {
     minimumShouldMatch++ // now we have to match at least one type and the search query
-
-    types.forEach((type) => {
-      const [value, boost = 1] = type.split('^')
-      should.push({
-        term: {
-          type: {
+    should.push({
+      terms: {
+        type: types.map((type) => {
+          const [value, boost = 1] = type.split('^')
+          return {
             value,
             boost: getBoostForType(value, boost),
-          },
-        },
-      })
+          }
+        }),
+      },
     })
   }
 
