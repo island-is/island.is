@@ -337,9 +337,9 @@ We have added a built-in support for headers that match the header key patterns 
 ⚠️ **Warning**  
 If the API uses another header key pattern than mentioned above, then the `defaultCacheKey` function should be overridden to add the API specific header keys.
 
-##### Example of overriding the `defaultCacheKey` function
+##### Example of overriding the `defaultCacheKey` function for sensitive path and query parameters
 
-When API endpoint uses custom header keys for path and/or query parameters, a `cacheKey` function should be provided to override the `defaultCacheKey` function to include the custom header keys.
+When API endpoint uses custom header keys for sensitive path and query parameters, a `cacheKey` function should be provided to override the `defaultCacheKey` function to include the custom header keys.
 
 You can use the `defaultCacheKey` function as a base cache key, then add the custom header keys to the cache key.
 
@@ -361,4 +361,4 @@ const enhancedFetch = createEnhancedFetch({
 
 ## Running unit tests
 
-Run `yarn nx test clients-middlewares` to execute the unit tests via [Jest](https://jestjs.io).
+Run `yarn test clients-middlewares` to execute the unit tests via [Jest](https://jestjs.io).
