@@ -18,11 +18,6 @@ import { ChartResolver } from './chart.resolver'
     ChartDataByExternalJsonProviderDataLoader,
     ChartResolver,
   ],
-  exports: [
-    UltravioletRadiationLatestMeasurementService,
-    UltravioletRadiationSeriesService,
-    ChartService,
-    ChartResolver,
-  ],
+  exports: [ChartResolver],
 })
 export class ChartModule {}
