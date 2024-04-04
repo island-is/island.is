@@ -14,6 +14,10 @@ The Ísland.is design system is developed and showcased using [Storybook](https:
 
 To get more technical information about the project please make sure to read this [overview](https://docs.devland.is/technical-overview/technical-overview).
 
+## New developers
+
+Make sure to follow [this guide](https://docs.devland.is/development/getting-started) to get up and running.
+
 ## External contributors
 
 If you want to contribute to the repository, please make sure to follow [this guide](https://docs.devland.is/repository/external-contribute).
@@ -46,6 +50,7 @@ Run on whenever you check out a branch:
 
 ```bash
 yarn install
+yarn infra
 yarn codegen
 ```
 
