@@ -28,17 +28,32 @@ export const formatReadableTrademarkType = (
 ) => {
   switch (type) {
     case TrademarkType.MULTIMEDIA:
-      return namespace?.['sp.intellectual-property:multimedia-trademark']
+      return (
+        namespace?.['sp.intellectual-property:multimedia-trademark'] ??
+        'Margmiðlunarmerki'
+      )
     case TrademarkType.ANIMATION:
-      return namespace?.['sp.intellectual-property:animation-trademark']
+      return (
+        namespace?.['sp.intellectual-property:animation-trademark'] ??
+        'Hreyfimerki'
+      )
     case TrademarkType.AUDIO:
-      return namespace?.['sp.intellectual-property:audio-trademark']
+      return (
+        namespace?.['sp.intellectual-property:audio-trademark'] ?? 'Hljóðmerki'
+      )
     case TrademarkType.TEXT:
-      return namespace?.['sp.intellectual-property:text-trademark']
+      return (
+        namespace?.['sp.intellectual-property:text-trademark'] ?? 'Textamerki'
+      )
     case TrademarkType.IMAGE:
-      return namespace?.['sp.intellectual-property:image-trademark']
+      return (
+        namespace?.['sp.intellectual-property:image-trademark'] ?? 'Myndmerki'
+      )
     case TrademarkType.TEXT_AND_IMAGE:
-      return namespace?.['sp.intellectual-property:text-and-image-trademark']
+      return (
+        namespace?.['sp.intellectual-property:text-and-image-trademark'] ??
+        'Orð- og myndmerki'
+      )
     default:
       return undefined
   }
