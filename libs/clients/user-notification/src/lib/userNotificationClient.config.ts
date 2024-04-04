@@ -6,6 +6,20 @@ const schema = z.object({
   scope: z.array(z.string()),
 })
 
+export const UserNotificationSystemClientConfig = defineConfig({
+  name: 'UserNotificationSystemConfig',
+  schema,
+  load(env) {
+    return {
+      basePath: env.required(
+        'USER_NOTIFICATION_CLIENT_URL',
+        'http://localhost:3333',
+      ),
+      scope: ['api_resource.scope'],
+    }
+  },
+})
+
 export const UserNotificationClientConfig = defineConfig({
   name: 'UserNotificationConfig',
   schema,

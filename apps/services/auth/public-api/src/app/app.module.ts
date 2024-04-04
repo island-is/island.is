@@ -19,6 +19,10 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 
 import { environment } from '../environments'
 import { DelegationsModule } from './modules/delegations/delegations.module'
+import {
+  UserNotificationClientConfig,
+  UserNotificationSystemClientConfig,
+} from '@island.is/clients/user-notification'
 
 @Module({
   imports: [
@@ -37,6 +41,8 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
         IdsClientConfig,
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
+        UserNotificationClientConfig,
+        UserNotificationSystemClientConfig,
         XRoadConfig,
       ],
     }),

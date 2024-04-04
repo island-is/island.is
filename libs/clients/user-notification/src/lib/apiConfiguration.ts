@@ -1,13 +1,21 @@
-import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
+import { Provider } from '@nestjs/common'
+
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
   IdsClientConfig,
   LazyDuringDevScope,
 } from '@island.is/nest/config'
-import { Configuration, UserNotificationApi } from '../../gen/fetch'
+import {
+  Configuration,
+  NotificationsApi,
+  UserNotificationApi,
+} from '../../gen/fetch'
 
-import { UserNotificationClientConfig } from './userNotificationClient.config'
+import {
+  UserNotificationSystemClientConfig,
+  UserNotificationClientConfig,
+} from './userNotificationClient.config'
 
 export const UserNotificationApiProvider: Provider<UserNotificationApi> = {
   provide: UserNotificationApi,
@@ -35,4 +43,24 @@ export const UserNotificationApiProvider: Provider<UserNotificationApi> = {
       }),
     ),
   inject: [IdsClientConfig.KEY, UserNotificationClientConfig.KEY],
+}
+
+export const NotificationsApiProvider: Provider<NotificationsApi> = {
+  provide: NotificationsApi,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    idsConfig: ConfigType<typeof IdsClientConfig>,
+    config: ConfigType<typeof UserNotificationSystemClientConfig>,
+  ) =>
+    new NotificationsApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-system-user-notification',
+          organizationSlug: 'stafraent-island',
+          autoAuth: undefined,
+        }),
+        basePath: `${config.basePath}/v1`,
+      }),
+    ),
+  inject: [IdsClientConfig.KEY, UserNotificationSystemClientConfig.KEY],
 }

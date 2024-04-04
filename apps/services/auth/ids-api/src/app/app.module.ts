@@ -30,6 +30,10 @@ import { ResourcesModule } from './resources/resources.module'
 import { TranslationModule } from './translation/translation.module'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UsersModule } from './users/users.module'
+import {
+  UserNotificationClientConfig,
+  UserNotificationSystemClientConfig,
+} from '@island.is/clients/user-notification'
 
 @Module({
   imports: [
@@ -59,6 +63,8 @@ import { UsersModule } from './users/users.module'
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
         UserProfileClientConfig,
+        UserNotificationClientConfig,
+        UserNotificationSystemClientConfig,
         XRoadConfig,
       ],
     }),

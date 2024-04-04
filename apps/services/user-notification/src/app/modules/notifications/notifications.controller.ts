@@ -19,6 +19,7 @@ import {
   ApiExtraModels,
   getSchemaPath,
   ApiOperation,
+  ApiTags,
 } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -32,6 +33,7 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
+@ApiTags('notifications')
 @ApiExtraModels(CreateNotificationDto)
 @UseInterceptors(CacheInterceptor)
 export class NotificationsController {

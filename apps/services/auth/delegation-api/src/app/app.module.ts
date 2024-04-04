@@ -8,6 +8,10 @@ import {
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import {
+  UserNotificationSystemClientConfig,
+  UserNotificationClientConfig,
+} from '@island.is/clients/user-notification'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -45,6 +49,8 @@ import { ScopesModule } from './scopes/scopes.module'
         IdsClientConfig,
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
+        UserNotificationClientConfig,
+        UserNotificationSystemClientConfig,
         XRoadConfig,
       ],
     }),

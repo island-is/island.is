@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common'
-import { UserNotificationApiProvider } from './apiConfiguration'
+import {
+  UserNotificationApiProvider,
+  NotificationsApiProvider,
+} from './apiConfiguration'
 
 @Module({
-  providers: [UserNotificationApiProvider],
-  exports: [UserNotificationApiProvider],
+  providers: [UserNotificationApiProvider, NotificationsApiProvider],
+  exports: [UserNotificationApiProvider, NotificationsApiProvider],
 })
 export class UserNotificationClientModule {}

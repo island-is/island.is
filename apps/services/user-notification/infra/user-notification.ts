@@ -80,7 +80,7 @@ export const userNotificationServiceSetup = (services: {
         memory: '256Mi',
       },
     })
-    .grantNamespaces('nginx-ingress-internal')
+    .grantNamespaces('nginx-ingress-internal', 'identity-server')
 
 export const userNotificationWorkerSetup = (services: {
   userProfileApi: ServiceBuilder<typeof serviceWorkerName>

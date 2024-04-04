@@ -7,8 +7,9 @@ import { InjectModel } from '@nestjs/sequelize'
 import { and, Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
 
-import { User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
+import { NotificationsApi } from '@island.is/clients/user-notification'
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { DelegationScopeService } from './delegation-scope.service'
@@ -43,6 +44,7 @@ export class DelegationsOutgoingService {
     private delegationResourceService: DelegationResourcesService,
     private delegationIndexService: DelegationsIndexService,
     private namesService: NamesService,
+    private notificationsApi: NotificationsApi,
   ) {}
 
   async findAll(
@@ -51,6 +53,7 @@ export class DelegationsOutgoingService {
     domainName?: string,
     otherUser?: string,
   ): Promise<DelegationDTO[]> {
+    console.log('Delegate outgoing service findAll')
     if (otherUser) {
       return this.findByOtherUser(user, otherUser, domainName)
     }
@@ -226,6 +229,15 @@ export class DelegationsOutgoingService {
       createDelegation.toNationalId,
     )
 
+    // Send a hnipp notification to the toNationalId
+    this.notificationsApi.notificationsControllerCreateHnippNotification({
+      createHnippNotificationDto: {
+        args: [],
+        recipient: createDelegation.toNationalId,
+        templateId: 'HNIPP.UMBOD.NYTT',
+      },
+    })
+
     return newDelegation
   }
 
@@ -298,6 +310,8 @@ export class DelegationsOutgoingService {
       delegation.toNationalId,
     )
 
+    // TODO: notify toNationalId of updated delegation?
+
     return delegation
   }
 
@@ -332,6 +346,8 @@ export class DelegationsOutgoingService {
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
     )
+
+    // TODO: also notify toNationalId of lost delegation?
   }
 
   private async findOneInternal(

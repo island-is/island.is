@@ -19,11 +19,17 @@ export class DomainResolver {
   @Query(() => [Domain], {
     name: 'authDomains',
   })
-  getDomains(
+  async getDomains(
     @CurrentUser() user: User,
     @Args('input') input: DomainsInput,
   ): Promise<Domain[]> {
-    return this.domain.getDomains(user, input)
+    try {
+      const res = await this.domain.getDomains(user, input)
+
+      return res
+    } catch (e) {
+      throw e
+    }
   }
 
   @ResolveField('organisationLogoUrl', () => String, { nullable: true })

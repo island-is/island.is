@@ -36,6 +36,10 @@ import { ArborgWorkpoinClientConfig } from '@island.is/clients/workpoint/arborg'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { DmrClientConfig } from '@island.is/clients/dmr'
+import {
+  UserNotificationClientConfig,
+  UserNotificationSystemClientConfig,
+} from '@island.is/clients/user-notification'
 
 @Module({
   imports: [
@@ -75,6 +79,8 @@ import { DmrClientConfig } from '@island.is/clients/dmr'
         SocialInsuranceAdministrationClientConfig,
         SignatureCollectionClientConfig,
         DmrClientConfig,
+        UserNotificationClientConfig,
+        UserNotificationSystemClientConfig,
       ],
     }),
   ],
