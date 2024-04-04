@@ -244,9 +244,9 @@ const VehicleMileage = () => {
                               ? confirmedRegistrations
                               : [...details]
 
-                            const highestRegistration =
+                            const latestRegistration =
                               detailArray[0].mileageNumber ?? 0
-                            if (highestRegistration > value) {
+                            if (latestRegistration > value) {
                               return formatMessage(messages.mileageInputTooLow)
                             }
                           }
