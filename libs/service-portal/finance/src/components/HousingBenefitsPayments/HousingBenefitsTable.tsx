@@ -10,13 +10,13 @@ import {
 } from '@island.is/service-portal/core'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { m as messages } from '../../lib/messages'
-import { HousingBenefitPayments } from '@island.is/api/schema'
-import { HousingBenefitsFooter } from './HousingBenefitFooter'
+import { HousingBenefitsPayments } from '@island.is/api/schema'
+import { HousingBenefitsFooter } from './HousingBenefitsFooter'
 
 export const ITEMS_ON_PAGE = 12
 
 interface Props {
-  payments: HousingBenefitPayments
+  payments: HousingBenefitsPayments
   page: number
   setPage: (n: number) => void
 }

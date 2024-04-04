@@ -1,7 +1,7 @@
 import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
 
 @InputType()
-export class HousingBenefitPaymentsInput {
+export class HousingBenefitsPaymentsInput {
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateFrom?: Date
 

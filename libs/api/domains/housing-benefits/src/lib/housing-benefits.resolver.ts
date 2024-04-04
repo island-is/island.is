@@ -11,8 +11,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
 import { Audit } from '@island.is/nest/audit'
-import { HousingBenefitPaymentsResponse } from './models/housingBenefit.model'
-import { HousingBenefitPaymentsInput } from './dto/getHmsLoansPaymenthistory.input'
+import { HousingBenefitsPaymentsResponse } from './models/housingBenefit.model'
+import { HousingBenefitsPaymentsInput } from './dto/getHmsLoansPaymenthistory.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -23,16 +23,16 @@ export class HousingBenefitsResolver {
     private housingBenefitsService: HmsHousingBenefitsClientService,
   ) {}
 
-  @Query(() => HousingBenefitPaymentsResponse, {
-    name: 'housingBenefitPayments',
+  @Query(() => HousingBenefitsPaymentsResponse, {
+    name: 'housingBenefitsPayments',
     nullable: true,
   })
   @Audit()
-  async getHousingBenefitPayments(
+  async getHousingBenefitsPayments(
     @CurrentUser() user: User,
-    @Args('input') input: HousingBenefitPaymentsInput,
-  ): Promise<HousingBenefitPaymentsResponse | null> {
-    return await this.housingBenefitsService.hmsPaymentHistory(user, {
+    @Args('input') input: HousingBenefitsPaymentsInput,
+  ): Promise<HousingBenefitsPaymentsResponse | null> {
+    return this.housingBenefitsService.hmsPaymentHistory(user, {
       ...input,
       version: '1',
     })

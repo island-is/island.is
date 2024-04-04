@@ -2,11 +2,11 @@ import { Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, amountFormat, tableStyles } from '@island.is/service-portal/core'
 import { m as messages } from '../../lib/messages'
-import { HousingBenefitPayment } from '@island.is/api/schema'
+import { HousingBenefitsPayment } from '@island.is/api/schema'
 import sumBy from 'lodash/sumBy'
 
 interface Props {
-  paymentArray: HousingBenefitPayment[]
+  paymentArray: HousingBenefitsPayment[]
 }
 
 const sumKeys = [
@@ -18,7 +18,7 @@ const sumKeys = [
 
 export const getTotalFooter = (paymentArray: Props['paymentArray']) => {
   return sumKeys.map((item) =>
-    sumBy(paymentArray, (o) => o[item as keyof HousingBenefitPayment] ?? 0),
+    sumBy(paymentArray, (o) => o[item as keyof HousingBenefitsPayment] ?? 0),
   )
 }
 

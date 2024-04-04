@@ -2,7 +2,7 @@ import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
-export class HousingBenefitPageInfo {
+export class HousingBenefitsPageInfo {
   @Field({ nullable: true })
   hasNextPage!: boolean
 
@@ -11,7 +11,7 @@ export class HousingBenefitPageInfo {
 }
 
 @ObjectType()
-export class HousingBenefitPayment {
+export class HousingBenefitsPayment {
   @Field(() => Int, { nullable: true })
   nr?: number
 
@@ -76,14 +76,14 @@ export class HousingBenefitPayment {
   paymentOrigin?: number | null
 }
 
-@ObjectType('HousingBenefitPayments')
-export class HousingBenefitPaymentsResponse {
-  @CacheField(() => [HousingBenefitPayment])
-  data!: HousingBenefitPayment[]
+@ObjectType('HousingBenefitsPayments')
+export class HousingBenefitsPaymentsResponse {
+  @CacheField(() => [HousingBenefitsPayment])
+  data!: HousingBenefitsPayment[]
 
   @Field()
   totalCount!: number
 
-  @CacheField(() => HousingBenefitPageInfo)
-  pageInfo!: HousingBenefitPageInfo
+  @CacheField(() => HousingBenefitsPageInfo)
+  pageInfo!: HousingBenefitsPageInfo
 }

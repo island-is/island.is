@@ -52,8 +52,12 @@ export const icelandLocalTime = (date?: string) => {
 
 export const displayMonthOrYear = (date: string, l: Locale) => {
   const locale = l === 'is' ? is : undefined
-  if (date.includes('-')) {
-    return format(new Date(date), 'MMMM yyyy', { locale })
+  try {
+    if (date.includes('-')) {
+      return format(new Date(date), 'MMMM yyyy', { locale })
+    }
+    return format(new Date(date), 'yyyy', { locale })
+  } catch {
+    return date
   }
-  return format(new Date(date), 'yyyy', { locale })
 }

@@ -16,7 +16,7 @@ import { FootNote, m } from '@island.is/service-portal/core'
 import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
 import HousingBenefitsTable, {
   ITEMS_ON_PAGE,
-} from '../../components/HousingBenefitPayments/HousingBenefitsTable'
+} from '../../components/HousingBenefitsPayments/HousingBenefitsTable'
 import { Problem } from '@island.is/react-spa/shared'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportHousingBenefitFiles } from '../../utils/filesHousingBenefits'
@@ -84,20 +84,20 @@ const FinanceHousingBenefits = () => {
               span={['1/1', '7/9', '6/9', '5/9', '5/9']}
               paddingTop={[1, 1, 2, 0, 0]}
             >
-              {data?.housingBenefitPayments?.data &&
-                data.housingBenefitPayments.data.length > 0 && (
+              {data?.housingBenefitsPayments?.data &&
+                data.housingBenefitsPayments.data.length > 0 && (
                   <Box display="flex" height="full" alignItems="flexEnd">
                     <Inline space={2}>
                       <DropdownExport
                         onGetCSV={() =>
                           exportHousingBenefitFiles(
-                            data.housingBenefitPayments?.data ?? [],
+                            data.housingBenefitsPayments?.data ?? [],
                             'csv',
                           )
                         }
                         onGetExcel={() =>
                           exportHousingBenefitFiles(
-                            data.housingBenefitPayments?.data ?? [],
+                            data.housingBenefitsPayments?.data ?? [],
                             'xlsx',
                           )
                         }
@@ -127,7 +127,7 @@ const FinanceHousingBenefits = () => {
           </GridRow>
         </Hidden>
         <Box marginTop={3}>
-          {!error && !loading && !data?.housingBenefitPayments && (
+          {!error && !loading && !data?.housingBenefitsPayments && (
             <Problem
               type="no_data"
               title={formatMessage(m.noData)}
@@ -143,12 +143,12 @@ const FinanceHousingBenefits = () => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {data?.housingBenefitPayments?.data &&
-            data.housingBenefitPayments.data.length > 0 && (
+          {data?.housingBenefitsPayments?.data &&
+            data.housingBenefitsPayments.data.length > 0 && (
               <HousingBenefitsTable
                 setPage={setPage}
                 page={page}
-                payments={data.housingBenefitPayments}
+                payments={data.housingBenefitsPayments}
               />
             )}
         </Box>

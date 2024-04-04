@@ -1,5 +1,5 @@
-query GetHousingBenefitsList($input: HousingBenefitPaymentsInput!) {
-  housingBenefitPayments(input: $input) {
+query GetHousingBenefitsList($input: HousingBenefitsPaymentsInput!) {
+  housingBenefitsPayments(input: $input) {
     data {
       nr
       nationalId

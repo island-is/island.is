@@ -1,10 +1,10 @@
 import { downloadFile, formatDate } from '@island.is/service-portal/core'
 import { HousingPaymentsHeaders } from './dataHeaders'
 import { amountFormat } from '@island.is/service-portal/core'
-import { HousingBenefitPayment } from '@island.is/api/schema'
+import { HousingBenefitsPayment } from '@island.is/api/schema'
 
 export const exportHousingBenefitFiles = async (
-  payments: HousingBenefitPayment[],
+  payments: HousingBenefitsPayment[],
   type: 'xlsx' | 'csv',
 ) => {
   const paymentsArray = payments.map((item) => [
