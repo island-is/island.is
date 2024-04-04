@@ -7,6 +7,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   States,
+  FileType,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -16,6 +17,7 @@ import {
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
+import set from 'lodash/set'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -75,17 +77,58 @@ export const currentDateStartTime = () => {
 export const findActionName = (context: ApplicationContext) => {
   const { application } = context
   const { state } = application
-  const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
+  const { addEmployer, addPeriods, changeEmployer, changePeriods } =
+    getApplicationAnswers(application.answers)
+
   if (
     state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
     state === States.RESIDENCE_GRANT_APPLICATION
   )
     return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
+
   if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
-    if (addEmployer === YES && addPeriods === YES) return 'empper'
-    if (addEmployer === YES) return 'employer'
-    if (addPeriods === YES) return 'period'
+    let tmpChangePeriods = changePeriods
+    let tmpChangeEmployer = changeEmployer
+
+    if (addEmployer === YES && addPeriods === YES) {
+      tmpChangeEmployer = true
+      tmpChangePeriods = true
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer) {
+        set(application.answers, 'changeEmployer', true)
+      }
+      if (!changePeriods) {
+        set(application.answers, 'changePeriods', true)
+      }
+    }
+
+    if (addEmployer === YES) {
+      tmpChangeEmployer = true
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer) {
+        set(application.answers, 'changeEmployer', true)
+      }
+    }
+    if (addPeriods === YES) {
+      tmpChangePeriods = true
+
+      // Keep book keeping of what has been selected
+      if (!changePeriods) {
+        set(application.answers, 'changePeriods', true)
+      }
+    }
+    console.log('BUU', { tmpChangeEmployer, tmpChangePeriods })
+    // If the applicant has selected add employee and/or period at some point
+    if (tmpChangeEmployer && tmpChangePeriods) {
+      return FileType.EMPPER
+    } else if (tmpChangeEmployer) {
+      return FileType.EMPLOYER
+    } else if (tmpChangePeriods) {
+      return FileType.PERIOD
+    }
   }
 
   return undefined

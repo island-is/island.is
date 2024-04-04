@@ -979,6 +979,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const language = getValueViaPath(answers, 'applicant.language') as string
 
+  const changeEmployer = getValueViaPath(answers, 'changeEmployer') as boolean
+  const changePeriods = getValueViaPath(answers, 'changePeriods') as boolean
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -1046,6 +1049,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     tempPeriods,
     tempEmployers,
     language,
+    changeEmployer,
+    changePeriods,
   }
 }
 
