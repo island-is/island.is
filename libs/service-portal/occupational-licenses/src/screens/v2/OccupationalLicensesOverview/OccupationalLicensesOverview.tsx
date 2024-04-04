@@ -82,29 +82,44 @@ const OverviewV2 = () => {
           })}
         />
       )}
-
-      <Box marginTop={6}>
-        {loading && !error && <CardLoader />}
-        <Stack space={2}>
-          {licenses.map((license, index) => {
-            const image = organizations.find((o) => o.slug === license.issuer)
-              ?.logo?.url
-            return (
-              <LicenceActionCard
-                key={index}
-                title={license.title ?? ''}
-                validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
-                url={OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
-                  ':id',
-                  license.licenseId,
-                )}
-                image={image}
-                status={license.status}
-              />
-            )
-          })}
-        </Stack>
-      </Box>
+      {!error && !loading && !errors.length && !licenses.length && (
+        <Problem
+          type="no_data"
+          title={formatMessage(m.noDataFound)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/coffee.svg"
+          titleSize="h3"
+          noBorder={false}
+        />
+      )}
+      {!error && loading && (
+        <Box marginTop={6}>
+          <CardLoader />
+        </Box>
+      )}
+      {!error && !loading && !!licenses.length && (
+        <Box marginTop={6}>
+          <Stack space={2}>
+            {licenses.map((license, index) => {
+              const image = organizations.find((o) => o.slug === license.issuer)
+                ?.logo?.url
+              return (
+                <LicenceActionCard
+                  key={index}
+                  title={license.title ?? ''}
+                  validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
+                  url={OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
+                    ':id',
+                    license.licenseId,
+                  )}
+                  image={image}
+                  status={license.status}
+                />
+              )
+            })}
+          </Stack>
+        </Box>
+      )}
       <FootNote serviceProviderSlug={'syslumenn'} />
     </Box>
   )
