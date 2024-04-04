@@ -113,16 +113,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           },
         },
         {
-          component: 'Spacer',
+          component: 'Tag',
+          context: {
+            label: fullName,
+          },
         },
         {
           component: 'Heading',
           context: {
-            copy: fullName
-              ? isEnglish
-                ? `Hi ${fullName}`
-                : `Hæ ${fullName}`
-              : formattedTemplate.notificationTitle,
+            copy: formattedTemplate.notificationTitle,
           },
         },
         {
@@ -185,6 +184,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     message,
     messageId,
   }: HandleNotification): Promise<void> {
+    profile.email = 'gunnlaugur@aranja.com'
     const { nationalId } = profile
 
     const allowEmailNotification = await this.featureFlagService.getValue(
