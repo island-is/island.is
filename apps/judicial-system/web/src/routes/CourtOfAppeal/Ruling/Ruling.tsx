@@ -40,7 +40,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
@@ -94,15 +94,15 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     useState<string>('')
 
   const isStepValid =
-    workingCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
-      ? allFilesDoneOrError
-      : uploadFiles.some(
-          (file) =>
-            file.category === CaseFileCategory.APPEAL_RULING &&
-            file.status === 'done',
-        ) &&
-        allFilesDoneOrError &&
-        isCourtOfAppealRulingStepValid(workingCase)
+    allFilesDoneOrError &&
+    isCourtOfAppealRulingStepFieldsValid(workingCase) &&
+    (workingCase.appealRulingDecision ===
+      CaseAppealRulingDecision.DISCONTINUED ||
+      uploadFiles.some(
+        (file) =>
+          file.category === CaseFileCategory.APPEAL_RULING &&
+          file.status === 'done',
+      ))
 
   const handleRulingDecisionChange = (
     appealRulingDecision: CaseAppealRulingDecision,
@@ -171,6 +171,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={isStepValid}
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(strings.title)} />
