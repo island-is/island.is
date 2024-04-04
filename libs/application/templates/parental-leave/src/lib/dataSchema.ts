@@ -369,11 +369,11 @@ export const dataSchema = z.object({
         params: errorMessages.requiredAttachment,
       }),
     residenceGrant: z
-    .array(FileSchema)
-    .optional()
-    .refine((a) => a === undefined || a.length > 0, {
-      params: errorMessages.requiredAttachment,
-    }),
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
   }),
   employers: z
     .array(
