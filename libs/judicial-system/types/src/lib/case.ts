@@ -273,8 +273,6 @@ export const getStatementDeadline = (appealReceived: Date): string => {
   ).toISOString()
 }
 
-
-
 export const prosecutorCanSelectDefenderForInvestigationCase = (
   type?: CaseType | null,
 ): boolean => {
