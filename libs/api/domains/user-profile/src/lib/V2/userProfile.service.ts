@@ -82,7 +82,10 @@ export class UserProfileServiceV2 {
 
   async getUserProfile(user: User): Promise<UserProfile> {
     const userProfile = await this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerFindUserProfile({})
+      .meUserProfileControllerFindUserProfile({
+        clientType:
+          MeUserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
+      })
       .catch((e) => handleError(e, `getUserProfileV2 error`))
 
     const bankInfo = await this.getBankInfo(user)

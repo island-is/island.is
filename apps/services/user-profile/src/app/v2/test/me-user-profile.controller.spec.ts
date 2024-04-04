@@ -132,9 +132,9 @@ describe('MeUserProfileController', () => {
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
         email: null,
-        emailVerified: true,
+        emailVerified: false,
         mobilePhoneNumber: null,
-        mobilePhoneNumberVerified: true,
+        mobilePhoneNumberVerified: false,
         locale: null,
         documentNotifications: true,
         needsNudge: true,

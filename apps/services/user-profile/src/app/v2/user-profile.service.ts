@@ -47,38 +47,23 @@ export class UserProfileService {
     })
 
     if (!userProfile) {
-      return this.filterByClientTypeAndRestrictionDate(
-        clientType,
-        {
-          nationalId,
-          email: null,
-          mobilePhoneNumber: null,
-          locale: null,
-          mobilePhoneNumberVerified: false,
-          emailVerified: false,
-          documentNotifications: true,
-          needsNudge: null,
-          emailNotifications: true,
-          isRestricted: false,
-        },
-        null,
-      )
+      return {
+        nationalId,
+        email: null,
+        mobilePhoneNumber: null,
+        locale: null,
+        mobilePhoneNumberVerified: false,
+        emailVerified: false,
+        documentNotifications: true,
+        needsNudge: null,
+        emailNotifications: true,
+        isRestricted: false,
+      }
     }
 
     return this.filterByClientTypeAndRestrictionDate(
       clientType,
-      {
-        nationalId: userProfile.nationalId,
-        email: userProfile.email,
-        mobilePhoneNumber: userProfile.mobilePhoneNumber,
-        locale: userProfile.locale,
-        mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-        emailVerified: userProfile.emailVerified,
-        documentNotifications: userProfile.documentNotifications,
-        needsNudge: this.checkNeedsNudge(userProfile),
-        emailNotifications: userProfile.emailNotifications,
-        isRestricted: false,
-      },
+      userProfile,
       userProfile.lastNudge,
     )
   }
@@ -392,21 +377,36 @@ export class UserProfileService {
 
   filterByClientTypeAndRestrictionDate(
     clientType: ClientType,
-    userProfile: UserProfileDto,
+    userProfile: UserProfile,
     lastNudge: Date | null,
   ): UserProfileDto {
+    const isThirdParty = clientType === ClientType.THIRD_PARTY
+    let filteredUserProfile: UserProfileDto = {
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      needsNudge: this.checkNeedsNudge(userProfile),
+      emailNotifications: userProfile.emailNotifications,
+      isRestricted: false,
+    }
+
     if (MIGRATION_DATE > lastNudge) {
-      userProfile = {
-        ...userProfile,
-        email: clientType === ClientType.THIRD_PARTY ? null : userProfile.email,
-        mobilePhoneNumber:
-          clientType === ClientType.THIRD_PARTY
-            ? null
-            : userProfile.mobilePhoneNumber,
+      filteredUserProfile = {
+        ...filteredUserProfile,
+        email: isThirdParty ? null : userProfile.email,
+        mobilePhoneNumber: isThirdParty ? null : userProfile.mobilePhoneNumber,
+        emailVerified: isThirdParty ? false : userProfile.emailVerified,
+        mobilePhoneNumberVerified: isThirdParty
+          ? false
+          : userProfile.mobilePhoneNumberVerified,
         isRestricted: true,
       }
     }
 
-    return userProfile
+    return filteredUserProfile
   }
 }
