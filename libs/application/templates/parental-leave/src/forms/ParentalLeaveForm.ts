@@ -1118,6 +1118,23 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'commentSection',
+          title: parentalLeaveFormMessages.applicant.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: parentalLeaveFormMessages.applicant.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              maxLength: 1024,
+              description:
+                parentalLeaveFormMessages.applicant.commentDescription,
+              placeholder:
+                parentalLeaveFormMessages.applicant.commentPlaceholder,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
