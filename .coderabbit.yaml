@@ -1,0 +1,58 @@
+language: 'en'
+early_access: true
+reviews:
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  path_instructions:
+    - path: 'apps/services/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+        - NestJS architecture, including modules, services, and controllers.
+        - Dependency injection patterns and service encapsulation.
+        - Integration and unit testing coverage and practices."
+    - path: 'apps/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+        - NextJS best practices, including file structure, API routes, and static generation methods.
+        - Efficient state management and server-side rendering techniques.
+        - Optimal use of TypeScript for component and utility type safety."
+    - path: 'libs/services/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+        - Shared services and modules that can be utilized across NestJS apps.
+        - Proper implementation of NestJS providers, including custom providers.
+        - Adherence to NestJS module encapsulation and isolation principles."
+    - path: 'libs/shared/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+         - Cross-application utility functions, types, and constants.
+         - TypeScript best practices to ensure type safety and reusability.
+         - Documentation and examples for library consumers."
+    - path: 'libs/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+        - Reusability of components and hooks across different NextJS apps.
+        - TypeScript usage for defining props and exporting types.
+        - Effective tree-shaking and bundling practices."
+    - path: 'scripts/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+        - Script efficiency, readability, and maintainability.
+        - Usage of environmental variables and configuration files for flexibility.
+        - Integration with NX workspace utilities and commands."
+    - path: 'infra/src/dsl/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+        - The clarity and expressiveness of the DSL syntax.
+        - Integration with Helm charts and Kubernetes resources.
+        - Documentation on how to use the DSL to create complex Helm values."
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - 'main'
+chat:
+  auto_reply: true
