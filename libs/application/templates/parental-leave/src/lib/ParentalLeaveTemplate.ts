@@ -1277,7 +1277,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
           'setNavId',
-          'clearChangedPeriodsNEmployeers',
+          'clearChangedPeriodsNEmployers',
         ],
         exit: [
           'clearTemp',
@@ -2137,7 +2137,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         console.log('actionName', actionName)
         return context
       }),
-      clearChangedPeriodsNEmployeers: assign((context) => {
+      clearChangedPeriodsNEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
 
