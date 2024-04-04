@@ -5,6 +5,7 @@ export const container = style({
   height: 260,
   minWidth: 0,
   minHeight: 0,
+  overflow: 'hidden',
 })
 
 export const image = style({
