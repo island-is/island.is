@@ -58,9 +58,10 @@ describe('NotificationController - Send court date notification', () => {
     it('should send message to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_COURT_DATE_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
+          body: { type: NotificationType.COURT_DATE },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })
@@ -78,9 +79,10 @@ describe('NotificationController - Send court date notification', () => {
     it('should send defender assigned message to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
+          body: { type: NotificationType.DEFENDER_ASSIGNED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })

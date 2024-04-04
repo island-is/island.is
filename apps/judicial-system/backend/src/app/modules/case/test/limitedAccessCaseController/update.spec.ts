@@ -4,6 +4,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -107,9 +108,10 @@ describe('LimitedAccessCaseController - Update', () => {
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
+          body: { type: NotificationType.APPEAL_STATEMENT },
         },
       ])
     })
