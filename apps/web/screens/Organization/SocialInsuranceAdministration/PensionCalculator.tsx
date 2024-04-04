@@ -276,7 +276,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         ageOfFirst75DisabilityAssessment: undefined,
       }),
       ...(hasDisabilityAssessment(data.typeOfBasePension) && {
-        livingConditionAbroadInYears: 0,
+        livingConditionAbroadInYears: undefined,
       }),
       ...(!hasStartDate(data.typeOfBasePension) && {
         birthMonth: undefined,
