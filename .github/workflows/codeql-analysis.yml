@@ -12,7 +12,9 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ec2-runners
+    container:
+      image: ${{ EC2_IMAGE }}
 
     strategy:
       fail-fast: false
