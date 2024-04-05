@@ -36,37 +36,34 @@ import { font } from '../../utils/font'
 
 export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 
-const Host = styled(Animated.View)(({ theme }) => ({
-  position: 'relative',
-  minHeight: 112,
-  paddingHorizontal: theme.spacing[3],
-  paddingVertical: theme.spacing[2],
-  rowGap: LICENSE_CARD_ROW_GAP,
-  borderRadius: theme.border.radius.extraLarge,
-  overflow: 'hidden',
-}))
+const Host = styled(Animated.View)`
+  position: relative;
+  min-height: 112px;
+  padding: ${({ theme }) => `${theme.spacing[2]}px ${theme.spacing[3]}px`};
+  row-gap: ${LICENSE_CARD_ROW_GAP}px;
+  border-radius: ${({ theme }) => theme.border.radius.extraLarge};
+  overflow: hidden;
+`
 
 const ContentContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
 `
 
-const BarcodeWrapper = styled.View<{ minHeight?: number }>(
-  ({ theme, minHeight }) => ({
-    flex: 1,
-    borderRadius: theme.border.radius.large,
-    minHeight,
-    overflow: 'hidden',
-  }),
-)
+const BarcodeWrapper = styled.View<{ minHeight?: number }>`
+  flex: 1;
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  min-height: ${({ minHeight }) => minHeight}px;
+  overflow: hidden;
+`
 
-const BarcodeContainer = styled.View(({ theme }) => ({
-  flex: 1,
-  backgroundColor: theme.color.white,
-  padding: theme.spacing.smallGutter,
-  alignItems: 'center',
-  justifyContent: 'center',
-}))
+const BarcodeContainer = styled.View`
+  flex: 1;
+  background-color: ${({ theme }) => theme.color.white};
+  padding: ${({ theme }) => theme.spacing.smallGutter}px;
+  align-items: center;
+  justify-content: center;
+`
 
 const ProgressBarContainer = styled.View`
   position: absolute;

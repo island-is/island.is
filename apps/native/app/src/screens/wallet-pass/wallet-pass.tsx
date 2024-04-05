@@ -20,6 +20,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
   GenericUserLicense,
@@ -125,6 +126,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
+  const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
 
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
@@ -140,7 +142,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const pkPassAllowed =
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
-  const allowLicenseBarcode = pkPassAllowed && !data?.payload?.metadata?.expired
+  const allowLicenseBarcode =
+    isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
   const licenseType = data?.license?.type
   const barcodeWidth =
     screenWidth - theme.spacing[5] * 2 - theme.spacing.smallGutter * 2
