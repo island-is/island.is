@@ -127,7 +127,7 @@ describe('NotificationsWorkerService', () => {
       1,
       expect.objectContaining({
         to: expect.objectContaining({
-          name: mockFullName,
+          name: userWithDelegations.name,
           address: userWithDelegations.email,
         }),
       }),
@@ -138,7 +138,7 @@ describe('NotificationsWorkerService', () => {
       2,
       expect.objectContaining({
         to: expect.objectContaining({
-          name: mockFullName,
+          name: userWithDelegations.name, // should use the original recipient name
           address: userWitNoDelegations.email,
         }),
       }),
@@ -171,7 +171,7 @@ describe('NotificationsWorkerService', () => {
       1,
       expect.objectContaining({
         to: expect.objectContaining({
-          name: mockFullName,
+          name: userWithDelegations2.name,
           address: userWithDelegations2.email,
         }),
       }),
@@ -182,7 +182,7 @@ describe('NotificationsWorkerService', () => {
       2,
       expect.objectContaining({
         to: expect.objectContaining({
-          name: mockFullName,
+          name: userWithDelegations2.name, // should use the original recipient name
           address: userWithDelegations.email,
         }),
       }),

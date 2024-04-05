@@ -1,13 +1,21 @@
+import faker from 'faker'
+
 import { UserProfileDto } from '@island.is/clients/user-profile'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Features } from '@island.is/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
+
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 
 export const mockFullName = 'mockFullName'
 
-export const userWithDelegations: UserProfileDto = {
+interface MockUserProfileDto extends UserProfileDto {
+  name: string
+}
+
+export const userWithDelegations: MockUserProfileDto = {
+  name: 'userWithDelegations',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email@email.com',
@@ -17,7 +25,8 @@ export const userWithDelegations: UserProfileDto = {
   emailNotifications: true,
 }
 
-export const userWithDelegations2: UserProfileDto = {
+export const userWithDelegations2: MockUserProfileDto = {
+  name: 'userWithDelegations2',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email5@email.com',
@@ -27,7 +36,8 @@ export const userWithDelegations2: UserProfileDto = {
   emailNotifications: true,
 }
 
-export const userWitNoDelegations: UserProfileDto = {
+export const userWitNoDelegations: MockUserProfileDto = {
+  name: 'userWitNoDelegations',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email1@email.com',
@@ -37,7 +47,8 @@ export const userWitNoDelegations: UserProfileDto = {
   emailNotifications: true,
 }
 
-export const userWithEmailNotificationsDisabled: UserProfileDto = {
+export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
+  name: 'userWithEmailNotificationsDisabled',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   emailVerified: true,
@@ -46,7 +57,8 @@ export const userWithEmailNotificationsDisabled: UserProfileDto = {
   emailNotifications: false,
 }
 
-export const userWithDocumentNotificationsDisabled: UserProfileDto = {
+export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
+  name: 'userWithDocumentNotificationsDisabled',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email2@email.com',
@@ -56,7 +68,8 @@ export const userWithDocumentNotificationsDisabled: UserProfileDto = {
   emailNotifications: true,
 }
 
-export const userWithFeatureFlagDisabled: UserProfileDto = {
+export const userWithFeatureFlagDisabled: MockUserProfileDto = {
+  name: 'userWithFeatureFlagDisabled',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email3@email.com',
@@ -66,15 +79,17 @@ export const userWithFeatureFlagDisabled: UserProfileDto = {
   emailNotifications: true,
 }
 
-export const userWithSendToDelegationsFeatureFlagDisabled: UserProfileDto = {
-  nationalId: createNationalId('person'),
-  mobilePhoneNumber: '1234567',
-  email: 'email4@email.com',
-  emailVerified: true,
-  mobilePhoneNumberVerified: true,
-  documentNotifications: true,
-  emailNotifications: true,
-}
+export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
+  {
+    name: 'userWithSendToDelegationsFeatureFlagDisabled',
+    nationalId: createNationalId('person'),
+    mobilePhoneNumber: '1234567',
+    email: 'email4@email.com',
+    emailVerified: true,
+    mobilePhoneNumberVerified: true,
+    documentNotifications: true,
+    emailNotifications: true,
+  }
 
 export const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -101,18 +116,21 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
     {
       fromNationalId: userWithDelegations.nationalId,
       toNationalId: userWitNoDelegations.nationalId,
+      subjectId: faker.datatype.uuid(),
     },
   ],
   [userWithDelegations2.nationalId]: [
     {
       fromNationalId: userWithDelegations2.nationalId,
       toNationalId: userWithDelegations.nationalId,
+      subjectId: faker.datatype.uuid(),
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
     {
       fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
       toNationalId: userWitNoDelegations.nationalId,
+      subjectId: faker.datatype.uuid(),
     },
   ],
 }
@@ -159,9 +177,11 @@ export class MockFeatureFlagService {
 }
 
 export class MockNationalRegistryV3ClientService {
-  getName() {
+  getName(nationalId: string) {
+    const user = userProfiles.find((u) => u.nationalId === nationalId)
+
     return {
-      fulltNafn: mockFullName,
+      fulltNafn: user?.name ?? mockFullName,
     }
   }
 }

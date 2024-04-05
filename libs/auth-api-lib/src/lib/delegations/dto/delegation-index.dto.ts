@@ -14,8 +14,8 @@ export class DelegationRecordDTO {
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
-  subjectId?: string
+  @ApiProperty({ type: String, nullable: true })
+  subjectId?: string | null
 }
 
 export class PaginatedDelegationRecordDTO {
