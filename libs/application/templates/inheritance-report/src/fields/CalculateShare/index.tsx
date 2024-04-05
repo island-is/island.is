@@ -329,18 +329,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       <Box marginTop={4}>
-        <Box marginBottom={2}>
-          <GridRow>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text variant="h4">{formatMessage(m.netProperty)}</Text>
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text textAlign="right">
-                {formatCurrency(String(netProperty))}
-              </Text>
-            </GridColumn>
-          </GridRow>
-        </Box>
+        <TitleRow title={m.assetsToShareTotalAssets} value={netProperty} />
+        <TitleRow title={m.assetsToShareTotalDebts} value={allDebtsTotal} />
+        <TitleRow title={m.netProperty} value={netProperty - allDebtsTotal} />
+        <TitleRow title={m.share} value={shareTotal} />
         <Box marginLeft={[0, 4]}>
           <GridRow rowGap={1}>
             <ShareItemRow item={shareValues.bankAccounts} />
@@ -355,20 +347,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </GridRow>
         </Box>
         <Box marginY={4}>
-          <Box marginBottom={2}>
-            <GridRow>
-              <GridColumn span={['1/1', '1/2']}>
-                <Text variant="h4">
-                  {formatMessage(m.domesticAndForeignDebts)}
-                </Text>
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']}>
-                <Text textAlign="right">
-                  {formatCurrency(String(-allDebtsTotal))}
-                </Text>
-              </GridColumn>
-            </GridRow>
-          </Box>
+          <TitleRow title={m.domesticAndForeignDebts} value={allDebtsTotal} />
           <Box marginLeft={[0, 4]}>
             <GridRow rowGap={1}>
               <ItemRow title={m.funeralCostTitle} total={-funeralCost} />
@@ -382,18 +361,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </Box>
         <Divider />
         <Box paddingTop={4}>
-          <GridRow>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text variant="h4">
-                {formatMessage(m.netPropertyForExchange)}
-              </Text>
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text textAlign="right">
-                {formatCurrency(String(netPropertyForExchange))}
-              </Text>
-            </GridColumn>
-          </GridRow>
+          <TitleRow
+            title={m.netPropertyForExchange}
+            value={netPropertyForExchange}
+          />
         </Box>
       </Box>
     </Box>
@@ -405,19 +376,63 @@ export default CalculateShare
 const ShareItemRow = ({ item }: { item: ShareItem }) => {
   const { formatMessage } = useLocale()
 
-  const total = item.items.reduce((acc, item) => acc + item.shareValue, 0)
+  const total = item.items.reduce((acc, item) => acc + item.value, 0)
+  const shareTotal = item.items.reduce((acc, item) => acc + item.shareValue, 0)
 
   return (
-    <>
-      <GridColumn span={['1/1', '1/2']}>
-        {item.title && <Text variant="small">{formatMessage(item.title)}</Text>}
-      </GridColumn>
-      <GridColumn span={['1/1', '1/2']}>
-        <Box textAlign="right">
-          <Text variant="small">{formatCurrency(String(total))}</Text>
-        </Box>
-      </GridColumn>
-    </>
+    <GridColumn span={['1/1']}>
+      <GridRow rowGap={0}>
+        <GridColumn span={['1/1', '1/2']}>
+          {item.title && (
+            <Text variant="small">{formatMessage(item.title)}</Text>
+          )}
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']}>
+          <Box textAlign={['left', 'right']}>
+            <Text variant="small">{formatCurrency(String(total))}</Text>
+          </Box>
+        </GridColumn>
+        {shareTotal > 0 && (
+          <>
+            <GridColumn span={['1/1', '1/2']}>
+              <Text variant="small">{formatMessage(m.share)}</Text>
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']}>
+              <Box textAlign={['left', 'right']}>
+                <Text variant="small">
+                  {formatCurrency(String(shareTotal))}
+                </Text>
+              </Box>
+            </GridColumn>
+          </>
+        )}
+      </GridRow>
+    </GridColumn>
+  )
+}
+
+const TitleRow = ({
+  title,
+  value,
+}: {
+  title: MessageDescriptor
+  value: number
+}) => {
+  const { formatMessage } = useLocale()
+
+  return (
+    <Box marginBottom={2}>
+      <GridRow>
+        <GridColumn span={['1/1', '1/2']}>
+          <Text variant="h4">{formatMessage(title)}</Text>
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']}>
+          <Box textAlign={['left', 'right']}>
+            <Text>{formatCurrency(String(value))}</Text>
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </Box>
   )
 }
 
@@ -431,26 +446,17 @@ const ItemRow = ({
   const { formatMessage } = useLocale()
 
   return (
-    <>
-      <GridColumn span={['1/1', '1/2']}>
-        {title && <Text variant="small">{formatMessage(title)}</Text>}
-      </GridColumn>
-      <GridColumn span={['1/1', '1/2']}>
-        <Box textAlign="right">
-          <Text variant="small">{formatCurrency(String(total))}</Text>
-        </Box>
-      </GridColumn>
-    </>
+    <GridColumn span={['1/1']}>
+      <GridRow rowGap={0}>
+        <GridColumn span={['1/1', '1/2']}>
+          {title && <Text variant="small">{formatMessage(title)}</Text>}
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']}>
+          <Box textAlign={['left', 'right']}>
+            <Text variant="small">{formatCurrency(String(total))}</Text>
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </GridColumn>
   )
 }
-
-// Fasteignir
-// Innbú
-// Farartæki
-// Skotvopn
-// Innstæður í bönkum og sparisjóðum
-// Verðbréf og kröfur
-// Hlutabréf
-// Peningar og bankahólf
-// Aðrar eignir
-// Yfirlit eigna

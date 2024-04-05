@@ -1015,6 +1015,26 @@ export const m = defineMessages({
       'Frá dregst búshluti eftirlifandi maka skv. reglum hjúskaparlaga nr. 31/1993 (50% eigna).',
     description: '',
   },
+  assetsToShareTotalAssets: {
+    id: 'ir.application:assetsToShareTotalAssets',
+    defaultMessage: 'Heildareignir',
+    description: '',
+  },
+  assetsToShareTotalDebts: {
+    id: 'ir.application:assetsToShareTotalDebts',
+    defaultMessage: 'Heildarskuldir',
+    description: '',
+  },
+  assetsToShareSpouseShare: {
+    id: 'ir.application:assetsToShareSpouseShare',
+    defaultMessage: 'Búshluti makans',
+    description: '',
+  },
+  assetsToShareEstateShare: {
+    id: 'ir.application:assetsToShareEstateShare',
+    defaultMessage: 'Búshluti dánarbús',
+    description: '',
+  },
 
   // Heirs
   spousesShare: {
