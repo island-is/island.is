@@ -267,6 +267,9 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as an European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',
