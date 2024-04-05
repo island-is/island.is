@@ -22,7 +22,7 @@ export const EXCLUDED_ENVIRONMENT_PATTERNS = [/.*_NODES?$/, /REDIS/]
  * Returns true if the environment variable should be included
  * based on the name
  */
-export function shouldIncludeEnv(name: string | string[]): boolean {
+export const shouldIncludeEnv = (name: string | string[]): boolean => {
   if (Array.isArray(name)) {
     return name.every(shouldIncludeEnv)
   }

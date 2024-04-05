@@ -2,7 +2,7 @@ import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { renderHelmServices } from '../dsl/exports/helm'
 import { getSsmParams } from '../dsl/adapters/get-ssm-params'
-import { logger } from '../common'
+import { logger } from '../logging'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
