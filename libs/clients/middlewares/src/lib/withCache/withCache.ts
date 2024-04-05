@@ -275,10 +275,13 @@ export function defaultCacheKey(request: Request) {
 
 function calculateHeadersCacheKey(requestHeaders: Headers): string {
   const cacheableHeadersValues: string[] = []
+  const lowerCasedPatterns = COMMON_HEADER_PATTERNS.map((pattern) =>
+    pattern.toLowerCase(),
+  )
 
   for (const [name, value] of requestHeaders) {
-    for (const pattern of COMMON_HEADER_PATTERNS) {
-      if (name.toLowerCase().startsWith(pattern.toLowerCase())) {
+    for (const pattern of lowerCasedPatterns) {
+      if (name.toLowerCase().startsWith(pattern)) {
         cacheableHeadersValues.push(value)
       }
     }
