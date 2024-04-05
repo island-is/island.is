@@ -653,7 +653,6 @@ describe('EnhancedFetch#withCache', () => {
       const env1 = setupTestEnv({
         cache: {
           cacheManager,
-          //cacheKey: defaultCacheKeyWithHeader(headerKey),
           overrideCacheControl: buildCacheControl({ maxAge: 50 }),
         },
       })
@@ -705,7 +704,7 @@ describe('EnhancedFetch#withCache', () => {
 
     it('should correctly calculate the cache key for one matching header', () => {
       const headers = new Headers({
-        'X-Param': '123',
+        'X-Param-Key': '123',
         Accept: 'application/json',
       })
       expect(calculateHeadersCacheKey(headers)).toBe('#123')
@@ -713,8 +712,8 @@ describe('EnhancedFetch#withCache', () => {
 
     it('should correctly calculate the cache key for multiple matching headers', () => {
       const headers = new Headers({
-        'X-Param': '123',
-        'X-Query': '456',
+        'X-Param-Key': '123',
+        'X-Query-Key': '456',
         Accept: 'application/json',
       })
       expect(calculateHeadersCacheKey(headers)).toBe('#123#456')
@@ -722,8 +721,8 @@ describe('EnhancedFetch#withCache', () => {
 
     it('should be case-insensitive when matching header names', () => {
       const headers = new Headers({
-        'x-param': '123',
-        'x-query': '456',
+        'x-param-key': '123',
+        'x-query-key': '456',
         Accept: 'application/json',
       })
       expect(calculateHeadersCacheKey(headers)).toBe('#123#456')
@@ -731,8 +730,8 @@ describe('EnhancedFetch#withCache', () => {
 
     it('should handle unusual characters in header values', () => {
       const headers = new Headers({
-        'X-Param': '123$%^&*',
-        'X-Query': '456@!~',
+        'X-Param-Key': '123$%^&*',
+        'X-Query-Key': '456@!~',
       })
       expect(calculateHeadersCacheKey(headers)).toBe('#123$%^&*#456@!~')
     })
@@ -740,7 +739,7 @@ describe('EnhancedFetch#withCache', () => {
     it('should handle extremely long values in headers', () => {
       const longValue = 'a'.repeat(1000)
       const headers = new Headers({
-        'X-Param': longValue,
+        'X-Param-Key': longValue,
       })
       expect(calculateHeadersCacheKey(headers)).toBe(`#${longValue}`)
     })
