@@ -38,6 +38,7 @@ type ShareItem = {
 
 export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
+  errors,
 }) => {
   const { answers } = application
   const [, updateState] = useState<unknown>()
@@ -444,6 +445,8 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     updateShareCalculations,
   ])
 
+  const inputError = (errors?.customSpouseSharePercentage as string) ?? ''
+
   return (
     <Box>
       {hasCustomSpouseSharePercentage && (
@@ -455,11 +458,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               onAfterChange={(val) => {
                 setCustomSpouseSharePercentage(val / 100)
               }}
-              // errorMessage={
-              //   error && error[mainIndex]
-              //     ? error[mainIndex][customField.id]
-              //     : undefined
-              // }
+              errorMessage={inputError}
               required
             />
           </GridColumn>

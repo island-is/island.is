@@ -587,7 +587,13 @@ export const inheritanceReportSchema = z.object({
   netPropertyForExchange: z.number(),
 
   hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
-  customSpouseSharePercentage: z.string().optional(),
+  customSpouseSharePercentage: z
+    .string()
+    .refine((v) => {
+      const val = valueToNumber(v)
+      return val >= 0 && val <= 100
+    })
+    .optional(),
 
   /* einkaskipti */
   confirmAction: z.array(z.enum([YES])).length(1),
