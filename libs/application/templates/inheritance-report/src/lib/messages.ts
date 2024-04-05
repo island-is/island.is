@@ -1035,6 +1035,16 @@ export const m = defineMessages({
     defaultMessage: 'Búshluti dánarbús',
     description: '',
   },
+  assetsToShareHasCustomSpousePercentage: {
+    id: 'ir.application:assetsToShareHasCustomSpousePercentage',
+    defaultMessage: 'Maki hefur annan búshluta en 50%',
+    description: '',
+  },
+  assetsToShareCustomSpousePercentage: {
+    id: 'ir.application:assetsToShareCustomSpousePercentage',
+    defaultMessage: 'Búshluti',
+    description: '',
+  },
 
   // Heirs
   spousesShare: {

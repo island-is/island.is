@@ -103,3 +103,5 @@ export const hasYes = (arr?: string[]) =>
 export const shouldShowDeceasedShareField = (answers: FormValue) =>
   getValueViaPath(answers, 'deceasedHadAssets') === YES &&
   getValueViaPath(answers, 'deceasedWasMarried') === YES
+
+export const _v = (value: number) => Math.round(valueToNumber(value))

@@ -293,5 +293,9 @@ export const expandAnswers = (
 
     // Hrein eign til skipta: Heildarséreign + Búshluti dánarbús
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
+
+    hasCustomSpouseSharePercentage:
+      answers.hasCustomSpouseSharePercentage ?? [],
+    customSpouseSharePercentage: answers.customSpouseSharePercentage ?? '50',
   }
 }

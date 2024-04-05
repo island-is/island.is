@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
@@ -12,7 +13,8 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
-import { valueToNumber } from '../../lib/utils/helpers'
+import { _v, valueToNumber } from '../../lib/utils/helpers'
+import { YES } from '../../lib/constants'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -55,6 +57,33 @@ export const heirs = buildSection({
               id: 'netPropertyForExchange',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'customSpouseSharePercentage',
+              title: '',
+            }),
+            buildCheckboxField({
+              id: 'hasCustomSpouseSharePercentage',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.assetsToShareHasCustomSpousePercentage,
+                },
+              ],
+            }),
+            // buildTextField({
+            //   id: 'customSpouseSharePercentage',
+            //   title: m.assetsToShareCustomSpousePercentage,
+            //   width: 'half',
+            //   condition: (answers) =>
+            //     !!getValueViaPath<string[]>(
+            //       answers,
+            //       'hasCustomSpouseSharePercentage',
+            //     )?.includes(YES),
+            // }),
             buildCustomField({
               title: '',
               id: 'share',
@@ -174,7 +203,7 @@ export const heirs = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String(getValueViaPath<number>(answers, 'netTotal')),
+                  String(_v(getValueViaPath<number>(answers, 'netTotal') ?? 0)),
                 ),
             }),
             buildDescriptionField({
@@ -187,7 +216,9 @@ export const heirs = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String(getValueViaPath<number>(answers, 'spouseTotal')),
+                  String(
+                    _v(getValueViaPath<number>(answers, 'spouseTotal') ?? 0),
+                  ),
                 ),
             }),
             buildDescriptionField({
@@ -201,7 +232,12 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 return formatCurrency(
                   String(
-                    getValueViaPath<number>(answers, 'netPropertyForExchange'),
+                    _v(
+                      getValueViaPath<number>(
+                        answers,
+                        'netPropertyForExchange',
+                      ) ?? 0,
+                    ),
                   ),
                 )
               },

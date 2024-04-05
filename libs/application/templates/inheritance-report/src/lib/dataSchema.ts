@@ -586,6 +586,9 @@ export const inheritanceReportSchema = z.object({
   // Hrein eign til skipta: Heildarséreign + Búshluti dánarbús
   netPropertyForExchange: z.number(),
 
+  hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
+  customSpouseSharePercentage: z.string().optional(),
+
   /* einkaskipti */
   confirmAction: z.array(z.enum([YES])).length(1),
 })
