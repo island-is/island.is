@@ -154,7 +154,7 @@ export class DelegationsIndexService {
     private userIdentitiesService: UserIdentitiesService,
   ) {}
 
-  /* Lookup delegations in index from user for specific scope */
+  /* Lookup delegations in index for user for specific scope */
   async getDelegationRecords({
     scope,
     fromNationalId,

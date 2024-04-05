@@ -18,7 +18,6 @@ import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import {
   MockDelegationsService,
   MockFeatureFlagService,
-  mockFullName,
   mockHnippTemplate,
   MockNationalRegistryV3ClientService,
   MockV2UsersApi,

@@ -1,7 +1,6 @@
 import { Optional } from 'sequelize'
 
 import {
-  actorSubjectIdType,
   ApiScopeDTO,
   ApiScopeUserAccessDTO,
   Claim,
@@ -15,7 +14,6 @@ import {
   PersonalRepresentativeTypeDTO,
   UserIdentity,
 } from '@island.is/auth-api-lib'
-import faker from 'faker'
 
 export type CreateClientClaim = Optional<
   Pick<ClientClaim, 'clientId' | 'type' | 'value'>,
