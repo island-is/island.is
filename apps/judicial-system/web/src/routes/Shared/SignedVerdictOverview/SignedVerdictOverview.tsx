@@ -57,7 +57,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
-  CaseAppealDecision,
   CaseAppealState,
   CaseDecision,
   CaseState,
