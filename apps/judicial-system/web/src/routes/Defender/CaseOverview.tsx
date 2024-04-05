@@ -33,7 +33,6 @@ import {
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealDecision,
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -66,8 +65,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
-    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-      workingCase.hasBeenAppealed)
+    (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
 
   return (
     <>
