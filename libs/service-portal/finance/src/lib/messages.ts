@@ -315,7 +315,7 @@ export const m = defineMessages({
   },
   hbPaymentType: {
     id: 'sp.finance-housing-benefits:payment-type-title',
-    defaultMessage: 'Leigumánuður / Ár',
+    defaultMessage: 'Tegund greiðslu',
   },
   hbAllPayments: {
     id: 'sp.finance-housing-benefits:all-payments',
