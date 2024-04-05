@@ -302,16 +302,6 @@ export const ReportFieldsRepeater: FC<
 
                 const shouldRecalculateTotal =
                   props.sumField === field.id || props.sumField2 === field.id
-                console.log(
-                  'foreignBankAccountIndexes',
-                  foreignBankAccountIndexes,
-                  mainIndex,
-                )
-
-                console.log(
-                  'enabled',
-                  foreignBankAccountIndexes.includes(mainIndex),
-                )
 
                 shouldPushRight = pushRight
 

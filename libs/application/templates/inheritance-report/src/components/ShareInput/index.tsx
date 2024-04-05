@@ -19,7 +19,6 @@ const onFocusInput = (
   e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
 ) => {
   const target = e.target as HTMLInputElement | HTMLTextAreaElement
-  console.log('onFocusInput', target.value)
   const len = target?.value?.length ?? 0
   target.setSelectionRange(len - 1, len - 1)
 }
@@ -151,7 +150,6 @@ export const ShareInput = ({
             }
 
             if (isRemoving || validInput) {
-              console.log('val', val)
               onChange(val.replace(',', '.'))
               return onAfterChange?.(numberValue)
             }

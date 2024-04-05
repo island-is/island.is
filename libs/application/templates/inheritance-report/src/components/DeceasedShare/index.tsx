@@ -58,25 +58,6 @@ export const DeceasedShare = ({
     }
   }, [checked, defaultValue, inputFieldName, setValue, watchedInputField])
 
-  console.log(
-    'id',
-    id,
-    'labelCheck',
-    labelCheck,
-    'labelInput',
-    labelInput,
-    'checkFieldName',
-    checkFieldName,
-    'valueFieldName',
-    valueFieldName,
-    'defaultValue',
-    defaultValue,
-    'pushRight',
-    pushRight,
-    'paddingTop',
-    paddingTop,
-  )
-
   return (
     <GridRow>
       <GridColumn
@@ -85,7 +66,7 @@ export const DeceasedShare = ({
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
       >
-        <Box width="full" border="standard">
+        <Box width="full">
           <Box paddingBottom={checked ? 2 : 0} width="full">
             <CheckboxController
               name={checkboxFieldName}

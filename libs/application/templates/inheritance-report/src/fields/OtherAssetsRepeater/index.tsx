@@ -152,7 +152,7 @@ export const OtherAssetsRepeater: FC<
                 )
               })}
             </GridRow>
-            {deceasedHadAssets && <DeceasedShare id={fieldIndex} />}
+            {deceasedHadAssets && <DeceasedShare pushRight id={fieldIndex} />}
           </Box>
         )
       })}

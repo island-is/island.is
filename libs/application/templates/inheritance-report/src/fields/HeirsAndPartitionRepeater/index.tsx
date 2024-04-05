@@ -36,7 +36,6 @@ export const HeirsAndPartitionRepeater: FC<
   const { id, props } = field
   const { customFields } = props
 
-  console.log('application', application)
   const { formatMessage } = useLocale()
   const { getValues, setError, setValue } = useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
@@ -131,14 +130,11 @@ export const HeirsAndPartitionRepeater: FC<
     const numValue = isNaN(value) ? 0 : value
     const percentage = numValue > 0 ? numValue / 100 : 0
 
-    console.log('percentage', percentage)
     const netPropertyForExchange = Number(
       getValueViaPath(answers, 'netPropertyForExchange'),
     )
-    console.log('netPropertyForExchange', netPropertyForExchange)
     const inheritanceValue = Math.round(netPropertyForExchange * percentage)
 
-    console.log('inheritanceValue', inheritanceValue)
     const taxFreeInheritanceValue = Math.round(TAX_FREE_LIMIT * percentage)
     const taxableInheritanceValue = Math.round(
       inheritanceValue - taxFreeInheritanceValue,
@@ -244,8 +240,6 @@ export const HeirsAndPartitionRepeater: FC<
 
           const fieldIndex = `${id}[${mainIndex}]`
 
-          console.log('member', member)
-
           return [
             ...acc,
             <Box
@@ -345,7 +339,6 @@ export const HeirsAndPartitionRepeater: FC<
                 {customFields.map((customField: any, customFieldIndex) => {
                   const defaultValue = (member as any)?.[customField.id]
 
-                  console.log('customField', customField)
                   return (
                     <Fragment key={customFieldIndex}>
                       {customField?.sectionTitle ? (
@@ -499,8 +492,6 @@ export const HeirsAndPartitionRepeater: FC<
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         if (member.initial) return null
-
-        console.log('initial member', member)
 
         return (
           <Box key={member.id}>

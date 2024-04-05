@@ -235,9 +235,6 @@ export const AdditionalHeir = ({
         {customFields.map((customField: any, customFieldIndex) => {
           const defaultValue = (currentHeir as any)?.[customField.id]
 
-          console.log('customField', customField)
-          console.log('currentHeir', currentHeir)
-
           return (
             <Fragment key={customFieldIndex}>
               {customField?.sectionTitle ? (

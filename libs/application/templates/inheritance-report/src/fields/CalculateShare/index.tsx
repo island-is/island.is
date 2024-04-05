@@ -87,8 +87,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return shareValue
   }
 
-  console.log(application)
-  console.log('CalculateShare answers', answers)
+  console.log('answers', answers)
 
   const getNumberValue = useCallback(
     (key: string) => {
@@ -101,7 +100,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const bankAccounts: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.bankAccounts?.data ?? []
     ).map((item) => {
-      // console.log('bankAccount', item)
       const propertyValuation = valueToNumber(item.propertyValuation)
       const exchangeRateOrInterest = valueToNumber(item.exchangeRateOrInterest)
       const deceasedShare = valueToNumber(item.deceasedShare)
@@ -119,7 +117,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const claims: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.claims?.data ?? []
     ).map((item) => {
-      // console.log('claim', item)
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
@@ -135,7 +132,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const guns: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.guns?.data ?? []
     ).map((item) => {
-      // console.log('gun', item)
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
@@ -151,7 +147,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const inventory: CalcShared = (
       [(answers.assets as unknown as EstateAssets)?.inventory] ?? []
     ).map((item) => {
-      // console.log('inventory', item)
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
@@ -167,7 +162,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const money: CalcShared = (
       [(answers.assets as unknown as EstateAssets)?.money] ?? []
     ).map((item) => {
-      // console.log('money', item)
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
@@ -183,7 +177,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const otherAssets: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.otherAssets?.data ?? []
     ).map((item) => {
-      // console.log('otherAsset', item)
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
@@ -199,7 +192,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const realEstate: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.realEstate?.data ?? []
     ).map((item) => {
-      // console.log('realEstate', item)
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
@@ -215,7 +207,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const stocks: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.stocks?.data ?? []
     ).map((item) => {
-      // console.log('stock', item)
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)
@@ -231,7 +222,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const vehicles: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.vehicles?.data ?? []
     ).map((item) => {
-      // console.log('vehicle', item)
       const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const shareValue = getShareValue(value, deceasedShare)

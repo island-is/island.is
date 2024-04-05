@@ -144,6 +144,7 @@ export const assets = buildSection({
                 component: 'DeceasedShareField',
               },
               {
+                id: 'assets.inventory',
                 paddingTop: 2,
               },
             ),
@@ -536,6 +537,7 @@ export const assets = buildSection({
                 component: 'DeceasedShareField',
               },
               {
+                id: 'assets.money',
                 paddingTop: 2,
               },
             ),
