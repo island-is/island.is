@@ -174,20 +174,20 @@ export class CmsContentfulService {
   }
 
   async getOrganizationLogos(
-    organizationFields: string[],
+    organizationFieldValues: string[],
     searchByField: keyof types.IOrganizationFields,
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
       select: `fields.logo,fields.${searchByField}`,
-      [`fields.${searchByField}[in]`]: organizationFields.join(','),
+      [`fields.${searchByField}[in]`]: organizationFieldValues.join(','),
     }
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationFields>(null, params)
       .catch(errorHandler('getOrganizationsLogo'))
 
-    return organizationFields.map((title) => {
+    return organizationFieldValues.map((title) => {
       if (!result.items) {
         return null
       } else {

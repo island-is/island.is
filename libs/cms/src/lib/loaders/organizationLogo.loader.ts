@@ -9,7 +9,7 @@ export type LogoUrl = string | null
 
 interface OrganizationLogoLoadInput {
   field: keyof IOrganizationFields
-  key: string
+  value: string
 }
 
 export type OrganizationLogoDataLoader = DataLoader<
@@ -28,8 +28,8 @@ export class OrganizationLogoLoader
     keys: readonly OrganizationLogoLoadInput[],
   ): Promise<Array<LogoUrl>> {
     const organizationLogos = await Promise.all(
-      keys.map(({ field, key }) =>
-        this.cmsContentfulService.getOrganizationLogos([key], field),
+      keys.map(({ field, value }) =>
+        this.cmsContentfulService.getOrganizationLogos([value], field),
       ),
     )
 
