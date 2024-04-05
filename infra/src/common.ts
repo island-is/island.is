@@ -1,5 +1,6 @@
-import { spawn } from 'child_process'
+import { spawn, spawnSync, SpawnSyncReturns } from 'child_process'
 import { rootDir } from './dsl/consts'
+import { logger } from './logging'
 
 export async function runCommand({
   command,
@@ -53,48 +54,27 @@ export async function runCommand({
   return proc
 }
 
-export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error'
-
-const logLevelEnv = (
-  process.env.LOG_LEVEL ??
-  (process.env.DEBUG ? 'debug' : null) ??
-  'info'
-).toLowerCase()
-export const LOG_LEVEL: LogLevel =
-  (
-    {
-      trace: 'trace',
-      debug: 'debug',
-      info: 'info',
-      warn: 'warn',
-      warning: 'warn',
-      error: 'error',
-    } as const
-  )[logLevelEnv] ?? 'info'
-
-export class Logger {
-  readonly logLevel = LOG_LEVEL
-  log = (level: LogLevel, ...args: any[]) => this._logger(level)(...args)
-  trace = this._logger('trace')
-  debug = this._logger('debug')
-  info = this._logger('info')
-  warn = this._logger('warn')
-  error = this._logger('error')
-
-  // Returns a function that logs at the correct level
-  private _logger(level: LogLevel) {
-    const l2l = {
-      trace: 0,
-      debug: 10,
-      info: 20,
-      warn: 30,
-      error: 40,
-    }
-    if (l2l[level] >= l2l[this.logLevel]) {
-      return console.error
-      // return console[level]
-    }
-    return () => {}
+const bufferToLines = (data: Buffer) => data.toString().split('\n')
+const processOutputFormatter = (proc: SpawnSyncReturns<Buffer>) => ({
+  ...proc,
+  stdout: bufferToLines(proc.stdout),
+  stderr: bufferToLines(proc.stderr),
+})
+export const runCommandSync = (args: Parameters<typeof runCommand>[0]) => {
+  logger.debug(`Running: ${args.command}`, { ...args, command: undefined })
+  const command = Array.isArray(args.command)
+    ? args.command.join(' ')
+    : args.command
+  if (args.dryRun) {
+    logger.info(`[DRY RUN] ${command}`)
+    return processOutputFormatter(spawnSync('true'))
   }
+  const proc = spawnSync(command, {
+    cwd: args.cwd,
+    shell: true,
+    stdio: 'pipe',
+  })
+  return processOutputFormatter(proc)
 }
-export const logger = new Logger()
+
+export { logger } from './logging'
