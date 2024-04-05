@@ -48,10 +48,11 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
 
   const hasBeenAppealed = Boolean(appealState)
 
-  appealInfo.canBeAppealed =
+  appealInfo.canBeAppealed = Boolean(
     !hasBeenAppealed &&
-    (isAppealableDecision(accusedAppealDecision) ||
-      isAppealableDecision(prosecutorAppealDecision))
+      (isAppealableDecision(accusedAppealDecision) ||
+        isAppealableDecision(prosecutorAppealDecision)),
+  )
 
   appealInfo.canProsecutorAppeal =
     !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
