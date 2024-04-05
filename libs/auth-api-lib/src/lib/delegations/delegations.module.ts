@@ -26,6 +26,7 @@ import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.mo
 import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationsIndexService } from './delegations-index.service'
+import { UserIdentitiesModule } from '../user-identities/user-identities.module'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DelegationsIndexService } from './delegations-index.service'
     PersonalRepresentativeModule,
     NationalRegistryClientModule,
     RskRelationshipsClientModule,
+    UserIdentitiesModule,
     FeatureFlagModule,
     SequelizeModule.forFeature([
       ApiScope,

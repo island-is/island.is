@@ -68,4 +68,14 @@ export const indexingTestCases: Record<string, TestCase> = {
       expectedFrom: [adult1],
     },
   ),
+  singleCustomDelegation: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsCustomDelegation: true,
+    }),
+    {
+      fromCustom: [adult1],
+      expectedFrom: [adult1],
+    },
+  ),
 }

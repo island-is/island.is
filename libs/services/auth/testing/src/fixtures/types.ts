@@ -1,8 +1,10 @@
 import { Optional } from 'sequelize'
 
 import {
+  actorSubjectIdType,
   ApiScopeDTO,
   ApiScopeUserAccessDTO,
+  Claim,
   ClientClaim,
   ClientGrantType,
   DelegationDTO,
@@ -11,7 +13,9 @@ import {
   IdentityResource,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeTypeDTO,
+  UserIdentity,
 } from '@island.is/auth-api-lib'
+import faker from 'faker'
 
 export type CreateClientClaim = Optional<
   Pick<ClientClaim, 'clientId' | 'type' | 'value'>,
@@ -88,3 +92,19 @@ export type CreatePersonalRepresentativeScopePermission = {
   rightTypeCode: string
   apiScopeName: string
 }
+
+export type CreateUserIdentity = Optional<
+  Pick<
+    UserIdentity,
+    'providerName' | 'providerSubjectId' | 'subjectId' | 'active' | 'name'
+  >,
+  'providerName' | 'providerSubjectId' | 'subjectId' | 'active' | 'name'
+>
+
+export type CreateClaim = Optional<
+  Pick<
+    Claim,
+    'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
+  >,
+  'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
+>

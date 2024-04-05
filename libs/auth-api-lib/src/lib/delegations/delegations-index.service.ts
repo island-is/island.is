@@ -33,6 +33,7 @@ import {
   validateToAndFromNationalId,
   delegationProviderTypeMap,
 } from './utils/delegations'
+import { UserIdentitiesService } from '../user-identities/user-identities.service'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -150,6 +151,7 @@ export class DelegationsIndexService {
     private delegationsIncomingCompanyService: IncomingDelegationsCompanyService,
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private personalRepresentativeScopePermissionService: PersonalRepresentativeScopePermissionService,
+    private userIdentitiesService: UserIdentitiesService,
   ) {}
 
   /* Lookup delegations in index from user for specific scope */
@@ -297,7 +299,7 @@ export class DelegationsIndexService {
     })
 
     // add subject id to new delegations
-    const delegationsWithSubjectIds = this.getSubjectIds({
+    const delegationsWithSubjectIds = await this.getSubjectIds({
       newRecords: delegations,
       currRecords,
     })
@@ -382,31 +384,37 @@ export class DelegationsIndexService {
     return { deleted, created, updated }
   }
 
-  private getSubjectIds({
+  private async getSubjectIds({
     currRecords,
     newRecords,
   }: {
     newRecords: DelegationIndexInfo[]
     currRecords: DelegationIndexInfo[]
-  }) {
-    return newRecords.map((d) => {
-      if (d.subjectId) {
-        return d
-      }
+  }): Promise<DelegationIndexInfo[]> {
+    return Promise.all(
+      newRecords.map(async (d) => {
+        if (d.subjectId) {
+          return d
+        }
 
-      // subject id is unique between from and to nationalId so if we already have a delegation with the same from and to nationalId, we can use that subjectId
-      const subjectId = currRecords.find(
-        (delegation) =>
-          delegation.fromNationalId === d.fromNationalId &&
-          delegation.subjectId,
-      )?.subjectId
+        // subjectId is unique between from and to nationalId so if we already have a delegation with the same from and to nationalId, we can use that subjectId
+        let subjectId =
+          currRecords.find(
+            (delegation) =>
+              delegation.fromNationalId === d.fromNationalId &&
+              delegation.subjectId,
+          )?.subjectId ?? null
 
-      if (!subjectId) {
-        // call new function to get subjectId
-      }
+        if (!subjectId) {
+          subjectId = await this.userIdentitiesService.findOrCreateSubjectId({
+            toNationalId: d.toNationalId,
+            fromNationalId: d.fromNationalId,
+          })
+        }
 
-      return { ...d, subjectId }
-    })
+        return { ...d, subjectId }
+      }),
+    )
   }
 
   private async getCustomDelegations(nationalId: string, useMaster = false) {

@@ -13,6 +13,7 @@ import {
   ApiScopeGroup,
   ApiScopeUser,
   ApiScopeUserAccess,
+  Claim,
   Client,
   ClientAllowedScope,
   ClientClaim,
@@ -32,6 +33,7 @@ import {
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeType,
   Translation,
+  UserIdentity,
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -46,6 +48,7 @@ import { CreateDomain } from './domain.fixture'
 import {
   CreateApiScope,
   CreateApiScopeUserAccess,
+  CreateClaim,
   CreateClientClaim,
   CreateClientGrantType,
   CreateClientUri,
@@ -56,6 +59,7 @@ import {
   CreatePersonalRepresentativeDelegation,
   CreatePersonalRepresentativeRightType,
   CreatePersonalRepresentativeScopePermission,
+  CreateUserIdentity,
 } from './types'
 
 export class FixtureFactory {
@@ -508,6 +512,40 @@ export class FixtureFactory {
       customDelegationScopes,
       validTo,
       subjectId,
+    })
+  }
+
+  async createUserIdentity({
+    providerName = faker.random.word(),
+    providerSubjectId = faker.datatype.uuid(),
+    subjectId = faker.datatype.uuid(),
+    active = true,
+    name = faker.name.findName(),
+  }: CreateUserIdentity) {
+    return this.get(UserIdentity).create({
+      providerName,
+      providerSubjectId,
+      subjectId,
+      active,
+      name,
+    })
+  }
+
+  async createClaim({
+    type = faker.random.word(),
+    value = faker.random.word(),
+    subjectId = faker.datatype.uuid(),
+    valueType = faker.random.word(),
+    issuer = faker.random.word(),
+    originalIssuer = faker.random.word(),
+  }: CreateClaim) {
+    return this.get(Claim).create({
+      type,
+      value,
+      subjectId,
+      valueType,
+      issuer,
+      originalIssuer,
     })
   }
 }

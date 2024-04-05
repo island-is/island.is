@@ -65,7 +65,7 @@ export class DelegationIndex extends Model<
     type: DataType.STRING,
     allowNull: true,
   })
-  subjectId?: string
+  subjectId?: string | null
 
   @CreatedAt
   readonly created!: CreationOptional<Date>
