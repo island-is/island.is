@@ -17,6 +17,32 @@ import {
   UserNotificationClientConfig,
 } from './userNotificationClient.config'
 
+const generateApiConfiguration = (
+  isSystemNotification: boolean,
+  idsConfig: ConfigType<typeof IdsClientConfig>,
+  config: ConfigType<typeof UserNotificationClientConfig>,
+) => {
+  return new Configuration({
+    fetchApi: createEnhancedFetch({
+      name: isSystemNotification
+        ? 'clients-system-user-notification'
+        : 'clients-user-notification',
+      organizationSlug: 'stafraent-island',
+      autoAuth:
+        !isSystemNotification && idsConfig.isConfigured
+          ? {
+              issuer: idsConfig.issuer,
+              clientId: idsConfig.clientId,
+              clientSecret: idsConfig.clientSecret,
+              scope: config.scope,
+              mode: 'auto',
+            }
+          : undefined,
+    }),
+    basePath: `${config.basePath}/v1`,
+  })
+}
+
 export const UserNotificationApiProvider: Provider<UserNotificationApi> = {
   provide: UserNotificationApi,
   scope: LazyDuringDevScope,
@@ -24,24 +50,7 @@ export const UserNotificationApiProvider: Provider<UserNotificationApi> = {
     idsConfig: ConfigType<typeof IdsClientConfig>,
     config: ConfigType<typeof UserNotificationClientConfig>,
   ) =>
-    new UserNotificationApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-user-notification',
-          organizationSlug: 'stafraent-island',
-          autoAuth: idsConfig.isConfigured
-            ? {
-                issuer: idsConfig.issuer,
-                clientId: idsConfig.clientId,
-                clientSecret: idsConfig.clientSecret,
-                scope: config.scope,
-                mode: 'auto',
-              }
-            : undefined,
-        }),
-        basePath: `${config.basePath}/v1`,
-      }),
-    ),
+    new UserNotificationApi(generateApiConfiguration(false, idsConfig, config)),
   inject: [IdsClientConfig.KEY, UserNotificationClientConfig.KEY],
 }
 
@@ -51,17 +60,6 @@ export const NotificationsApiProvider: Provider<NotificationsApi> = {
   useFactory: (
     idsConfig: ConfigType<typeof IdsClientConfig>,
     config: ConfigType<typeof UserNotificationSystemClientConfig>,
-  ) =>
-    new NotificationsApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-system-user-notification',
-          organizationSlug: 'stafraent-island',
-          // No autoauth since system user notification endpoint is
-          // not protected by scope
-        }),
-        basePath: `${config.basePath}/v1`,
-      }),
-    ),
+  ) => new NotificationsApi(generateApiConfiguration(true, idsConfig, config)),
   inject: [IdsClientConfig.KEY, UserNotificationSystemClientConfig.KEY],
 }
