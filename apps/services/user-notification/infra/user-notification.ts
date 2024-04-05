@@ -3,7 +3,12 @@ import {
   Client,
   NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  json,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
@@ -33,6 +38,15 @@ export const userNotificationServiceSetup = (services: {
       USER_PROFILE_CLIENT_URL: ref(
         (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
       ),
+      AUTH_DELEGATION_API_URL: {
+        dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        staging:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        prod: 'https://auth-delegation-api.internal.innskra.island.is',
+      },
+      AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
+        '@island.is/auth/delegations/index:system',
+      ]),
     })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
