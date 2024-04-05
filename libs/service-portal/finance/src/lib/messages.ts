@@ -309,4 +309,20 @@ export const m = defineMessages({
     id: 'sp.finance-housing-benefits:reduction-assets',
     defaultMessage: 'Skerðing vegna eigna',
   },
+  hbRentalMonthYear: {
+    id: 'sp.finance-housing-benefits:rental-month-year-title',
+    defaultMessage: 'Leigumánuður / Ár',
+  },
+  hbAllPayments: {
+    id: 'sp.finance-housing-benefits:all-payments',
+    defaultMessage: 'Allar greiðslur',
+  },
+  hbGeneralPayments: {
+    id: 'sp.finance-housing-benefits:general-payments',
+    defaultMessage: 'Almennar greiðslur',
+  },
+  hbSpecialPayments: {
+    id: 'sp.finance-housing-benefits:special-payments',
+    defaultMessage: 'Sérstakar greiðslur',
+  },
 })

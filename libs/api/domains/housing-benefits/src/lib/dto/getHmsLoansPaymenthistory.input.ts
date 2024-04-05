@@ -13,4 +13,10 @@ export class HousingBenefitsPaymentsInput {
 
   @Field(() => Int, { nullable: true })
   pageSize?: number
+
+  @Field(() => Int, { nullable: true })
+  paymentOrigin?: number
+
+  @Field({ nullable: true })
+  month?: string
 }
