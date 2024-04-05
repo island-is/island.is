@@ -65,7 +65,7 @@ export class SmartSolutionsService {
       }
     }
 
-    this.logger.debug('PkPass verification failed', {
+    this.logger.warning('PkPass verification failed', {
       error: { ...res.errors },
       requestId,
       category: LOG_CATEGORY,
