@@ -15,7 +15,7 @@ const loadCommands = () => {
     const cmds = Object.keys(packageJson.scripts)
     return cmds
   } catch (e) {
-    throw new Error('Failed to load commands:', e)
+    throw new Error(`Failed to load commands: ${e.message}`)
   }
 }
 
