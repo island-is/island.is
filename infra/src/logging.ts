@@ -23,7 +23,7 @@ export const LOG_LEVEL: LogLevel =
       warning: 'warn',
       error: 'error',
     } as const
-  )[logLevelEnv] ?? 'info'
+  )[logLevelEnv] ?? 'warn'
 
 import winston from 'winston'
 
