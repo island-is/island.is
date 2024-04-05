@@ -571,5 +571,23 @@ describe('DelegationsIndexService', () => {
 
       expect(delegations.length).toEqual(1)
     })
+
+    it('should create subjectId if userIdentity does not exits', async () => {
+      const fromNationalId = testCase.customDelegations[0].fromNationalId
+
+      // Act
+      await delegationIndexService.indexDelegations(user)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: user.nationalId,
+          fromNationalId,
+        },
+      })
+
+      expect(delegations.length).toEqual(1)
+      expect(delegations[0].subjectId).toBeDefined()
+    })
   })
 })
