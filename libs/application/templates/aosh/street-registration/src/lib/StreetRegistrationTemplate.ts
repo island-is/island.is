@@ -24,7 +24,12 @@ import { MachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { IdentityApi, UserProfileApi, MachinesApi } from '../dataProviders'
+import {
+  IdentityApi,
+  UserProfileApi,
+  MachinesApi,
+  MustInspectBeforeRegistrationApi,
+} from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { getChargeItemCodes } from '../utils'
@@ -101,7 +106,12 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi, MachinesApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                MachinesApi,
+                MustInspectBeforeRegistrationApi,
+              ],
             },
           ],
         },

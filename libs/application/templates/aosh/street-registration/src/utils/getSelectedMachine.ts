@@ -15,3 +15,16 @@ export const getSelectedMachine = (
   ) as MachinesWithTotalCount
   return machines.machines.find((machine) => machine.id === machineId)
 }
+
+export const mustInspectBeforeStreetRegistration = (
+  externalData: ExternalData,
+  regNumber: string,
+) => {
+  const inspectBeforeTypes = getValueViaPath(
+    externalData,
+    'typesMustInspectBeforeRegistration.data',
+    [],
+  ) as string[]
+  console.log('inspectBeforeTypes', inspectBeforeTypes)
+  return inspectBeforeTypes?.includes(regNumber.substring(0, 2)) || false
+}

@@ -140,6 +140,10 @@ export class WorkMachinesService {
     return this.machineService.getMachineDetail(auth, id, rel)
   }
 
+  // async typesMustInspectBeforeRegistration(auth: User): Promise<string[]> {
+  //   return await this.machineService.mustInspectBeforeRegistration(auth)
+  // }
+
   async getMachineByRegno(
     auth: User,
     regNumber: string,

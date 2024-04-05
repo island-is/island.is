@@ -58,6 +58,14 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
     return result
   }
 
+  async getTypesMustInspectBeforeRegistration({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string[]> {
+    return await this.workMachineClientService.mustInspectBeforeRegistration(
+      auth,
+    )
+  }
+
   async submitApplication({
     application,
     auth,

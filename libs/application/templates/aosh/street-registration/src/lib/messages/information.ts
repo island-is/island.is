@@ -77,6 +77,11 @@ export const information = {
         defaultMessage: 'Leita',
         description: 'Pick machine find button',
       },
+      inspectBeforeRegistration: {
+        id: 'aosh.drm.application:information.labels.pickMachine.inspectBeforeRegistration',
+        defaultMessage: 'Hafið samband við Vinnueftirlitið til að götuskrá',
+        description: 'Pick machine inspect before registration',
+      },
     }),
     machine: defineMessages({
       sectionTitle: {

@@ -939,6 +939,27 @@
         }
       }
     },
+    "/api/MachineStreetRegistration/MustInspectBeforeRegistration": {
+      "get": {
+        "tags": ["MachineStreetRegistration"],
+        "summary": "Returns a list of registration number prefixes that require an inspection before street registration",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MachineSupervisorChange": {
       "post": {
         "tags": ["MachineSupervisorChange"],

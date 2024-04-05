@@ -6,3 +6,8 @@ export const MachinesApi = defineTemplateApi({
   action: 'getMachines',
   externalDataId: 'machinesList',
 })
+
+export const MustInspectBeforeRegistrationApi = defineTemplateApi({
+  action: 'getTypesMustInspectBeforeRegistration',
+  externalDataId: 'typesMustInspectBeforeRegistration',
+})

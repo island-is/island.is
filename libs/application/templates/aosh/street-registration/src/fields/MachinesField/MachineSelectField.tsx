@@ -16,6 +16,7 @@ import { useLazyMachineDetails } from '../../hooks/useLazyMachineDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { MachineDto } from '@island.is/clients/work-machines'
+import { mustInspectBeforeStreetRegistration } from '../../utils/getSelectedMachine'
 
 interface MachineSearchFieldProps {
   currentMachineList: MachineDto[]
@@ -62,6 +63,20 @@ export const MachineSelectField: FC<
     if (currentMachine.id) {
       getMachineDetailsCallback(currentMachine.id)
         .then((response) => {
+          const mustInspect = mustInspectBeforeStreetRegistration(
+            application.externalData,
+            response.getWorkerMachineDetails?.regNumber || '',
+          )
+
+          if (mustInspect && !response.getWorkerMachineDetails.disabled) {
+            response.getWorkerMachineDetails = {
+              ...response.getWorkerMachineDetails,
+              disabled: true,
+              status: formatMessage(
+                information.labels.pickMachine.inspectBeforeRegistration,
+              ),
+            }
+          }
           setSelectedMachine(response.getWorkerMachineDetails)
           setValue(
             'machine.regNumber',

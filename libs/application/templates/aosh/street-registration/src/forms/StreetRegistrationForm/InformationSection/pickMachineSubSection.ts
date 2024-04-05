@@ -7,6 +7,8 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
+import { mustInspectBeforeStreetRegistration } from '../../../utils/getSelectedMachine'
+import { useLocale } from '@island.is/localization'
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',
@@ -32,15 +34,29 @@ export const pickMachineSubSection = buildSubSection({
           options: (application) => {
             const machineList = application?.externalData.machinesList
               .data as MachinesWithTotalCount
+
             return machineList.machines.map((machine) => {
               return {
                 value: machine.id || '',
                 label: machine?.regNumber || '',
                 subLabel: `${machine.category}: ${machine.type} - ${machine.subType}`,
-                disabled: machine?.disabled || false,
+                disabled: machine?.disabled
+                  ? true
+                  : mustInspectBeforeStreetRegistration(
+                      application?.externalData,
+                      machine?.regNumber || '',
+                    ) || false,
                 tag: machine?.disabled
                   ? {
-                      label: machine?.status || '',
+                      label: mustInspectBeforeStreetRegistration(
+                        application?.externalData,
+                        machine?.regNumber || '',
+                      )
+                        ? useLocale().formatMessage(
+                            information.labels.pickMachine
+                              .inspectBeforeRegistration,
+                          )
+                        : machine?.status || '',
                       variant: 'red',
                       outlined: true,
                     }

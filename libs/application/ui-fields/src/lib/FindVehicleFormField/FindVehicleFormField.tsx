@@ -25,7 +25,10 @@ import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
 import format from 'date-fns/format'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { energyFundsLabel } from './FindVehicleFormField.util'
+import {
+  energyFundsLabel,
+  mustInspectBeforeStreetRegistration,
+} from './FindVehicleFormField.util'
 
 interface VehicleDetails {
   permno: string
@@ -237,9 +240,23 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const setMachineValues = (machineDetails: MachineDetails) => {
+    const mustInspect = mustInspectBeforeStreetRegistration(
+      application?.externalData,
+      machineDetails.regNumber || '',
+    )
+    if (mustInspect && !machineDetails.disabled) {
+      machineDetails = {
+        ...machineDetails,
+        disabled: true,
+        status: formatText(
+          'inspectBeforeRegistration',
+          application,
+          formatMessage,
+        ),
+      }
+    }
     setValue(`${field.id}.regNumber`, machineDetails.regNumber)
     setValue(`${field.id}.category`, machineDetails.category)
-
     setValue(`${field.id}.type`, machineDetails.type || '')
     setValue(`${field.id}.subType`, machineDetails.subType || '')
     setValue(`${field.id}.plate`, machineDetails.plate || '')

@@ -226,4 +226,10 @@ export class WorkMachinesClientService {
       machineInspectionRequestCreateDto: requestInspection,
     })
   }
+
+  async mustInspectBeforeRegistration(auth: Auth) {
+    return await this.machineStreetApiWithAuth(
+      auth,
+    ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet()
+  }
 }
