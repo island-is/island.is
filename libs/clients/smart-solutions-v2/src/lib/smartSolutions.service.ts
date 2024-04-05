@@ -141,7 +141,7 @@ export class SmartSolutionsService {
         passId: res.data?.upsertPass?.id,
         category: LOG_CATEGORY,
       })
-      onCreateCallback()
+      await onCreateCallback()
     } else {
       this.logger.debug('PkPass upsert successful', {
         requestId,
