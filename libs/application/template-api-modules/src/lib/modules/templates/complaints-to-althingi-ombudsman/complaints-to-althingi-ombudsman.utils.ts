@@ -77,18 +77,5 @@ export const gatherContacts = (
     webPage: '',
   }
 
-  const complainee = {
-    type: 'Company',
-    name: answers.complaintDescription.complaineeName,
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    idnumber: '0000000001',
-    postalCode: '',
-    role: ContactRole.GOVERNMENT,
-    primary: 'false',
-    webPage: '',
-  }
-  return [complaintant, complainee]
+  return [complaintant]
 }

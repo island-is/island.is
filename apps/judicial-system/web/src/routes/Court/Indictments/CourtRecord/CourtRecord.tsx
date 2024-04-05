@@ -40,11 +40,11 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const { formatMessage } = useIntl()
-  const { transitionCase } = useCase()
+  const { transitionCase, isTransitioningCase } = useCase()
 
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
@@ -74,7 +74,7 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={allFilesUploaded}
+      isValid={allFilesDoneOrError}
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
@@ -139,8 +139,8 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
           onNextButtonClick={() =>
             handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
           }
-          nextIsDisabled={!allFilesUploaded}
-          nextIsLoading={isLoadingWorkingCase}
+          nextIsDisabled={!allFilesDoneOrError}
+          nextIsLoading={isTransitioningCase}
           nextButtonText={formatMessage(m.nextButtonText)}
         />
       </FormContentContainer>

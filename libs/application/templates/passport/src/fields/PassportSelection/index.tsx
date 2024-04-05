@@ -64,14 +64,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     let tagObject = {} as Tag
     let isDisabled = false
 
-    if ((!domicileCode || domicileCode.substring(0, 2) === '99') && !isChild) {
-      isDisabled = true
-      tagObject = {
-        label: formatMessage(m.incorrectDomicileTage),
-        variant: 'red',
-        outlined: true,
-      }
-    } else if (!identityDocument) {
+    if (!identityDocument) {
       tagObject = {
         label: formatMessage(m.noPassport),
         variant: 'blue',

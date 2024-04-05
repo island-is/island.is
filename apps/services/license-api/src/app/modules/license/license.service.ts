@@ -6,7 +6,10 @@ import {
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BarcodeService } from '@island.is/services/license'
+import {
+  BarcodeService,
+  TOKEN_EXPIRED_ERROR,
+} from '@island.is/services/license'
 import {
   BadRequestException,
   Inject,
@@ -315,6 +318,11 @@ export class LicenseService {
         ...(data.extraData && { passIdentity: data.extraData }),
       }
     } catch (error) {
+      if (error.name === TOKEN_EXPIRED_ERROR) {
+        return {
+          valid: false,
+        }
+      }
       this.logger.error(error.message, {
         category: LOG_CATEGORY,
         requestId,
@@ -336,7 +344,7 @@ export class LicenseService {
 
     if (!isJSON(inputData.barcodeData)) {
       const jsonErrorMsg = 'Barcode data must be in JSON format'
-      this.logger.error(jsonErrorMsg, {
+      this.logger.warn(jsonErrorMsg, {
         category: LOG_CATEGORY,
         requestId,
       })
@@ -352,7 +360,7 @@ export class LicenseService {
     })
 
     if (!passTemplateId) {
-      this.logger.error('No pass template id supplied', {
+      this.logger.warn('No pass template id supplied', {
         category: LOG_CATEGORY,
         requestId,
       })
