@@ -113,7 +113,10 @@ release_flows() {
   case "${ACTION}" in
   branch) create_pre_release_branch ;;
   promote) promote_to_release ;;
-  *) echo "Unknown action '${ACTION}'; exit 1 ;;
+  *)
+    echo "Unknown action '${ACTION}'"
+    exit 1
+    ;;
   esac
 }
 
