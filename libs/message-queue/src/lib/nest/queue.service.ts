@@ -16,7 +16,7 @@ export class QueueService implements OnApplicationBootstrap {
   ) {}
 
   // NB: We initialize the queues using "onApplicationBootstrap" rather than an
-  // async "useFactory" because creating the the nest application (like the
+  // async "useFactory" because creating the nest application (like the
   // openapi generator does at the time of writing) initializes all
   // factories, but we don't want to attempt connecting to the queue server
   // unless we're actually going to run the application

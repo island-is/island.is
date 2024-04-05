@@ -1187,6 +1187,34 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:spc-number',
     defaultMessage: 'SPC númer',
   },
+  multimediaTrademark: {
+    id: 'sp.intellectual-property:multimedia-trademark',
+    defaultMessage: 'Margmiðlunarmerki',
+  },
+  animationTrademark: {
+    id: 'sp.intellectual-property:animation-trademark',
+    defaultMessage: 'Hreyfimerki',
+  },
+  audioTrademark: {
+    id: 'sp.intellectual-property:audio-trademark',
+    defaultMessage: 'Hljóðmerki',
+  },
+  textTrademark: {
+    id: 'sp.intellectual-property:text-trademark',
+    defaultMessage: 'Orðmerki',
+  },
+  imageTrademark: {
+    id: 'sp.intellectual-property:image-trademark',
+    defaultMessage: 'Myndmerki',
+  },
+  textAndImageTrademark: {
+    id: 'sp.intellectual-property:text-and-image-trademark',
+    defaultMessage: 'Orð- og myndmerki',
+  },
+  unknownTrademark: {
+    id: 'sp.intellectual-property:unknown-trademark',
+    defaultMessage: 'Óþekkt merki',
+  },
   notFound: {
     id: 'sp.intellectual-property:not-found',
     defaultMessage: '{arg} ekki skráð',
