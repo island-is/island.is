@@ -80,6 +80,33 @@ export const deceased = buildSection({
           space: 'gutter',
           title: '',
         }),
+        // buildCustomField(
+        //   {
+        //     title: '',
+        //     condition: (answers) =>
+        //       getValueViaPath(answers, 'deceasedWasMarried') === YES,
+        //     id: 'deceasedCohabitantShare',
+        //     doesNotRequireAnswer: true,
+        //     component: 'DeceasedShareField',
+        //     childInputIds: [
+        //       'deceasedCohabitantShare',
+        //       'deceasedCohabitantShareEnabled',
+        //     ],
+        //   },
+        //   {
+        //     id: '',
+        //     labelCheck: m.hadSeparatePropertyTitle,
+        //     labelInput: m.deceasedShare,
+        //     checkFieldName: 'deceasedCohabitantShareEnabled',
+        //     valueFieldName: 'deceasedCohabitantShare',
+        //     defaultValue: '50',
+        //   },
+        // ),
+        // buildDescriptionField({
+        //   id: 'space4',
+        //   space: 'gutter',
+        //   title: '',
+        // }),
         buildRadioField({
           id: 'deceasedHadAssets',
           title: m.hadSeparateProperty,

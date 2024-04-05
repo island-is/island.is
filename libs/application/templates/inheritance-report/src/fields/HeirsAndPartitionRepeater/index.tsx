@@ -36,6 +36,7 @@ export const HeirsAndPartitionRepeater: FC<
   const { id, props } = field
   const { customFields } = props
 
+  console.log('application', application)
   const { formatMessage } = useLocale()
   const { getValues, setError, setValue } = useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
@@ -243,6 +244,8 @@ export const HeirsAndPartitionRepeater: FC<
 
           const fieldIndex = `${id}[${mainIndex}]`
 
+          console.log('member', member)
+
           return [
             ...acc,
             <Box
@@ -342,6 +345,7 @@ export const HeirsAndPartitionRepeater: FC<
                 {customFields.map((customField: any, customFieldIndex) => {
                   const defaultValue = (member as any)?.[customField.id]
 
+                  console.log('customField', customField)
                   return (
                     <Fragment key={customFieldIndex}>
                       {customField?.sectionTitle ? (
@@ -495,6 +499,8 @@ export const HeirsAndPartitionRepeater: FC<
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         if (member.initial) return null
+
+        console.log('initial member', member)
 
         return (
           <Box key={member.id}>

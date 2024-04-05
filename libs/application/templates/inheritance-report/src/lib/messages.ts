@@ -1054,6 +1054,11 @@ export const m = defineMessages({
       'Átti hinn látni séreign í hjúskapnum samkvæmt kaupmála eða fyrirmælum í erfðaskrá?',
     description: '',
   },
+  hadSeparatePropertyTitle: {
+    id: 'ir.application:hadSeparatePropertyTitle',
+    defaultMessage: 'Látni átti séreign í eigninni',
+    description: '',
+  },
   totalSeparateProperty: {
     id: 'ir.application:totalSeparateProperty',
     defaultMessage:

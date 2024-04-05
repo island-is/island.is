@@ -87,6 +87,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return shareValue
   }
 
+  console.log(application)
   console.log('CalculateShare answers', answers)
 
   const getNumberValue = useCallback(
@@ -316,12 +317,10 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }, [setValue, shareValues])
 
   const funeralCost = getNumberValue('funeralCost.total')
-  const businessDebts = getNumberValue('business.businessDebts.total')
   const publicCharges = getNumberValue('debts.publicCharges')
 
   useEffect(() => {
-    const allDebtsTotalValue =
-      getNumberValue('debts.debtsTotal') + funeralCost + businessDebts
+    const allDebtsTotalValue = getNumberValue('debts.debtsTotal') + funeralCost
     const netPropertyForExchangeValue = shareTotal - allDebtsTotalValue
     const netPropertyValue = netProperty - allDebtsTotalValue
 
@@ -331,14 +330,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     setValue(`allDebtsTotal`, allDebtsTotalValue)
     setValue(`netProperty`, netPropertyValue)
     setValue(`netPropertyForExchange`, netPropertyForExchangeValue)
-  }, [
-    businessDebts,
-    funeralCost,
-    getNumberValue,
-    netProperty,
-    setValue,
-    shareTotal,
-  ])
+  }, [funeralCost, getNumberValue, netProperty, setValue, shareTotal])
 
   const domesticAndForeignDebts = valueToNumber(
     getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total'),
@@ -395,7 +387,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 total={-domesticAndForeignDebts}
               />
               <ItemRow title={m.publicChargesTitle} total={-publicCharges} />
-              <ItemRow title={m.business} total={-businessDebts} />
             </GridRow>
           </Box>
         </Box>

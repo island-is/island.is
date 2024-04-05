@@ -1,9 +1,8 @@
 import {
-  GridColumnProps,
   GridColumn,
   GridRow,
   Box,
-  Tooltip,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import ShareInput from '../ShareInput'
 import { useEffect } from 'react'
@@ -13,93 +12,110 @@ import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
-import { valueToNumber } from '../../lib/utils/helpers'
+import { MessageDescriptor } from 'react-intl'
+
+export type DeceasedShareProps = {
+  id?: string
+  labelCheck?: MessageDescriptor
+  labelInput?: MessageDescriptor
+  checkFieldName?: string
+  valueFieldName?: string
+  defaultValue?: string
+  pushRight?: boolean
+  paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
+}
 
 export const DeceasedShare = ({
   id,
-}: {
-  id: string
-} & GridColumnProps) => {
+  labelCheck = m.hadSeparatePropertyTitle,
+  labelInput = m.deceasedShare,
+  checkFieldName = 'deceasedShareEnabled',
+  valueFieldName = 'deceasedShare',
+  defaultValue = '0',
+  pushRight,
+  paddingTop = 'none',
+  paddingBottom = 'none',
+}: DeceasedShareProps) => {
   const { errors } = useFormState()
   const { setValue, watch } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const checkboxFieldName = `${id}.deceasedShareEnabled`
-  const inputFieldName = `${id}.deceasedShare`
+  const prefix = id ? `${id}.` : ''
+
+  const checkboxFieldName = `${prefix}${checkFieldName}`
+  const inputFieldName = `${prefix}${valueFieldName}`
 
   const watchedCheckboxField = watch(checkboxFieldName)
   const watchedInputField = watch(inputFieldName)
 
-  const hasError = getErrorViaPath(errors, `${id}.deceasedShare`)
+  const hasError = getErrorViaPath(errors, `${id}.${valueFieldName}`)
   const checked = watchedCheckboxField?.[0] === YES
 
   useEffect(() => {
     if (!checked) {
-      setValue(inputFieldName, '0')
-    } else {
-      if (valueToNumber(watchedInputField) > 0) {
-        console.log('watchedInputField', watchedInputField)
-      }
+      setValue(inputFieldName, defaultValue)
     }
-  }, [checked, inputFieldName, setValue, watchedInputField])
+  }, [checked, defaultValue, inputFieldName, setValue, watchedInputField])
 
-  useEffect(() => {
-    console.log('changed watchedInputField', watchedInputField)
-  }, [watchedInputField])
+  console.log(
+    'id',
+    id,
+    'labelCheck',
+    labelCheck,
+    'labelInput',
+    labelInput,
+    'checkFieldName',
+    checkFieldName,
+    'valueFieldName',
+    valueFieldName,
+    'defaultValue',
+    defaultValue,
+    'pushRight',
+    pushRight,
+    'paddingTop',
+    paddingTop,
+  )
 
   return (
-    <Box
-      marginBottom={2}
-      paddingY={2}
-      paddingX={2}
-      borderRadius="large"
-      border="standard"
-    >
-      <GridRow>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={[2, 0]}>
-          <Box
-            display="flex"
-            alignItems="center"
-            flexDirection="row"
-            flexWrap="wrap"
-            height="full"
-          >
+    <GridRow>
+      <GridColumn
+        span={['1/1', '1/2']}
+        offset={pushRight ? ['0', '1/2'] : '0'}
+        paddingTop={paddingTop}
+        paddingBottom={paddingBottom}
+      >
+        <Box width="full" border="standard">
+          <Box paddingBottom={checked ? 2 : 0} width="full">
             <CheckboxController
               name={checkboxFieldName}
-              split="1/2"
               large={false}
               id={checkboxFieldName}
+              labelVariant="default"
+              strong={checked}
               defaultValue={watchedCheckboxField}
               options={[
                 {
-                  label: formatMessage(m.share),
+                  label: formatMessage(labelCheck),
                   value: YES,
                 },
               ]}
               spacing={0}
             />
-            <Box marginLeft={1} paddingTop={1}>
-              <Tooltip
-                text={formatMessage(m.hadSeparateProperty)}
-                placement="bottom"
-                iconSize="medium"
+          </Box>
+          {checked && (
+            <Box width="full">
+              <ShareInput
+                name={inputFieldName}
+                errorMessage={hasError}
+                disabled={!checked}
+                label={formatMessage(labelInput)}
               />
             </Box>
-          </Box>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/2']}>
-          <ShareInput
-            name={inputFieldName}
-            // onAfterChange={(val) => {
-            //   setValue(inputFieldName, String(val))
-            // }}
-            errorMessage={hasError}
-            disabled={!checked}
-            label={formatMessage(m.deceasedShare)}
-          />
-        </GridColumn>
-      </GridRow>
-    </Box>
+          )}
+        </Box>
+      </GridColumn>
+    </GridRow>
   )
 }
 

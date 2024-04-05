@@ -265,7 +265,10 @@ export const ReportFieldsRepeater: FC<
         itemIndex += 1
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  let shouldPushRight = false
 
   return (
     <Box>
@@ -299,6 +302,18 @@ export const ReportFieldsRepeater: FC<
 
                 const shouldRecalculateTotal =
                   props.sumField === field.id || props.sumField2 === field.id
+                console.log(
+                  'foreignBankAccountIndexes',
+                  foreignBankAccountIndexes,
+                  mainIndex,
+                )
+
+                console.log(
+                  'enabled',
+                  foreignBankAccountIndexes.includes(mainIndex),
+                )
+
+                shouldPushRight = pushRight
 
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
@@ -327,6 +342,7 @@ export const ReportFieldsRepeater: FC<
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
                         defaultValue={[]}
+                        spacing={0}
                         options={[
                           {
                             label: formatMessage(m.bankAccountForeignLabel),
@@ -345,14 +361,14 @@ export const ReportFieldsRepeater: FC<
                           )
                         }}
                       />
-                    ) : field.id === 'accountNumber' ? (
+                    ) : field.id === 'assetNumber' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(m.bankAccount)}
                         backgroundColor="blue"
                         {...(!foreignBankAccountIndexes.includes(mainIndex) && {
                           format: '####-##-######',
-                          placeholder: '0000-00-000000',
+                          placeholder: '0000-00-000000-000',
                         })}
                         error={err}
                         required
@@ -435,7 +451,11 @@ export const ReportFieldsRepeater: FC<
               })}
             </GridRow>
             {!props?.hideDeceasedShare && deceasedHadAssets && (
-              <DeceasedShare id={fieldIndex} />
+              <DeceasedShare
+                id={fieldIndex}
+                paddingBottom={2}
+                pushRight={shouldPushRight}
+              />
             )}
           </Box>
         )

@@ -28,4 +28,4 @@ export enum ApiActions {
 export type ErrorValue = { [key: string]: any }
 
 // TODO: this value should be fetched from the API at some point
-export const TAX_FREE_LIMIT = 6203409
+export const TAX_FREE_LIMIT = 6_203_409

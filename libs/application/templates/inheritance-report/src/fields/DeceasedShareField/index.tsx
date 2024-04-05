@@ -1,20 +1,22 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { Field, FieldBaseProps } from '@island.is/application/types'
 import { FC, PropsWithChildren } from 'react'
 
 import { Answers } from '../../types'
-import DeceasedShare from '../../components/DeceasedShare'
-import { Box } from '@island.is/island-ui/core'
+import DeceasedShare, {
+  DeceasedShareProps,
+} from '../../components/DeceasedShare'
 
 export const DeceasedShareField: FC<
   PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ field }) => {
-  const { id } = field
+> = (data) => {
+  const props =
+    (data?.field as Field & { props: DeceasedShareProps })?.props ?? null
 
-  return (
-    <Box marginTop={2}>
-      <DeceasedShare id={id} />
-    </Box>
-  )
+  if (!props) {
+    return null
+  }
+
+  return <DeceasedShare {...props} />
 }
 
 export default DeceasedShareField

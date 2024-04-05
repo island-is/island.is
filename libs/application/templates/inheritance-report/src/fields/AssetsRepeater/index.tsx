@@ -147,6 +147,8 @@ export const AssetsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetKey])
 
+  let shouldPushRight = false
+
   return (
     <Box>
       {fields.map((repeaterField: any, mainIndex) => {
@@ -175,6 +177,8 @@ export const AssetsRepeater: FC<
                 const fieldName = `${fieldIndex}.${field.id}`
                 const error = errors && getErrorViaPath(errors, fieldName)
 
+                shouldPushRight = pushRight
+
                 return (
                   <FieldComponent
                     key={index}
@@ -193,7 +197,13 @@ export const AssetsRepeater: FC<
                 )
               })}
             </GridRow>
-            {deceasedHadAssets && <DeceasedShare id={fieldIndex} />}
+            {deceasedHadAssets && (
+              <DeceasedShare
+                pushRight={shouldPushRight}
+                paddingBottom={2}
+                id={fieldIndex}
+              />
+            )}
           </Box>
         )
       })}

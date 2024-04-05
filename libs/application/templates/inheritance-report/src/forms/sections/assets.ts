@@ -134,13 +134,19 @@ export const assets = buildSection({
               },
               variant: 'currency',
             }),
-            buildCustomField({
-              title: '',
-              condition: shouldShowDeceasedShareField,
-              id: 'assets.inventory',
-              doesNotRequireAnswer: true,
-              component: 'DeceasedShareField',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                condition: shouldShowDeceasedShareField,
+                id: 'assets.inventory',
+                doesNotRequireAnswer: true,
+                width: 'full',
+                component: 'DeceasedShareField',
+              },
+              {
+                paddingTop: 2,
+              },
+            ),
           ],
         }),
       ],
@@ -340,7 +346,7 @@ export const assets = buildSection({
                 assetKey: 'bankAccounts',
                 calcWithShareValue: false,
                 fromExternalData: 'bankAccounts',
-                skipPushRight: false,
+                skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton,
                 sumField: 'propertyValuation',
                 sumField2: 'exchangeRateOrInterest',
@@ -520,13 +526,19 @@ export const assets = buildSection({
                 )
               },
             }),
-            buildCustomField({
-              title: '',
-              condition: shouldShowDeceasedShareField,
-              id: 'assets.money',
-              doesNotRequireAnswer: true,
-              component: 'DeceasedShareField',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                condition: shouldShowDeceasedShareField,
+                id: 'assets.money',
+                doesNotRequireAnswer: true,
+                width: 'full',
+                component: 'DeceasedShareField',
+              },
+              {
+                paddingTop: 2,
+              },
+            ),
           ],
         }),
       ],

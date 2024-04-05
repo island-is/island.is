@@ -204,31 +204,6 @@ export const expandAnswers = (
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
-    business: {
-      businessAssets: {
-        data: (answers.business.businessAssets?.data ?? []).map((asset) => {
-          return {
-            description: asset.description ?? '',
-            propertyValuation: asset.propertyValuation ?? '',
-            assetType: asset.assetType ?? '',
-            assetNumber: asset.assetNumber ?? '',
-          }
-        }),
-        total: answers.business.businessAssets?.total ?? 0,
-      },
-      businessDebts: {
-        data: (answers.business.businessDebts?.data ?? []).map((debt) => {
-          return {
-            assetNumber: debt.assetNumber ?? '',
-            description: debt.description ?? '',
-            propertyValuation: debt.propertyValuation ?? 0,
-            nationalId: debt.nationalId ?? '',
-          }
-        }),
-        total: answers.business.businessDebts?.total ?? 0,
-      },
-      businessTotal: answers.business.businessTotal ?? 0,
-    },
     confirmAction: answers.confirmAction,
     debts: {
       debtsTotal: answers.debts.debtsTotal ?? 0,
@@ -302,5 +277,8 @@ export const expandAnswers = (
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
     netProperty: answers.netProperty ?? 0,
     cohabitantShare: answers.cohabitantShare ?? 0,
+    deceasedCohabitantShare: answers.deceasedCohabitantShare ?? '50',
+    deceasedCohabitantShareEnabled:
+      answers.deceasedCohabitantShareEnabled ?? [],
   }
 }

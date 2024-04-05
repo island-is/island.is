@@ -107,7 +107,7 @@ export const ShareInput = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={'0%'}
+      defaultValue={'0'}
       render={({ field: { onChange, value, name } }) => (
         <Input
           ref={ref}
