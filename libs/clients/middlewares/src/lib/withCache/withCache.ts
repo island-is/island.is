@@ -259,7 +259,7 @@ export function withCache({
   return fetchWithCache
 }
 
-function defaultCacheKey(request: Request) {
+export function defaultCacheKey(request: Request) {
   // Here we trim the origin and the protocol from the URL to clean up cache
   // keys and increase cache hits in environments where the same API is routed
   // in different ways.
