@@ -273,7 +273,7 @@ export function defaultCacheKey(request: Request) {
   return `${url.pathname}${url.search}${headersCacheKey}`
 }
 
-function calculateHeadersCacheKey(requestHeaders: Headers): string {
+export function calculateHeadersCacheKey(requestHeaders: Headers): string {
   const cacheableHeadersValues: string[] = []
   const lowerCasedPatterns = COMMON_HEADER_PATTERNS.map((pattern) =>
     pattern.toLowerCase(),

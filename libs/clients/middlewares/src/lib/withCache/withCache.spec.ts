@@ -6,6 +6,7 @@ jest.useFakeTimers()
 jest.advanceTimersByTime(10)
 
 import { caching } from 'cache-manager'
+import { Headers } from 'node-fetch'
 
 import { Auth } from '@island.is/auth-nest-tools'
 import { buildCacheControl, CacheControlOptions } from './buildCacheControl'
@@ -16,7 +17,7 @@ import {
   fakeResponse,
   setupTestEnv,
 } from '../../../test/setup'
-import { COMMON_HEADER_PATTERNS } from './withCache'
+import { calculateHeadersCacheKey, COMMON_HEADER_PATTERNS } from './withCache'
 
 const testUrl = 'http://localhost/test'
 
@@ -691,5 +692,57 @@ describe('EnhancedFetch#withCache', () => {
     // Assert
     const actualHeaders = env.fetch.mock.calls[0][0].headers.raw()
     expect(actualHeaders).toMatchObject(expectedHeaders)
+  })
+
+  describe('calculateHeadersCacheKey', () => {
+    it('should return an empty string when no headers match the patterns', () => {
+      const headers = new Headers({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe('')
+    })
+
+    it('should correctly calculate the cache key for one matching header', () => {
+      const headers = new Headers({
+        'X-Param': '123',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe('#123')
+    })
+
+    it('should correctly calculate the cache key for multiple matching headers', () => {
+      const headers = new Headers({
+        'X-Param': '123',
+        'X-Query': '456',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe('#123#456')
+    })
+
+    it('should be case-insensitive when matching header names', () => {
+      const headers = new Headers({
+        'x-param': '123',
+        'x-query': '456',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe('#123#456')
+    })
+
+    it('should handle unusual characters in header values', () => {
+      const headers = new Headers({
+        'X-Param': '123$%^&*',
+        'X-Query': '456@!~',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe('#123$%^&*#456@!~')
+    })
+
+    it('should handle extremely long values in headers', () => {
+      const longValue = 'a'.repeat(1000)
+      const headers = new Headers({
+        'X-Param': longValue,
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe(`#${longValue}`)
+    })
   })
 })
