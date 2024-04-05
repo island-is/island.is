@@ -339,6 +339,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     slug: 'tyggingaryfirlysing',
-    translation: 'hid.application',
+    translation: ['hid.application', 'uiForms.application'],
   },
 }
