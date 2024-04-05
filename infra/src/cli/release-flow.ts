@@ -1,26 +1,13 @@
-import { execSync } from 'child_process'
-
-/**
- * Executes a shell command and returns the output as a string.
- * @param command The shell command to execute.
- * @returns The output of the shell command.
- */
-const execCommand = (command: string) => {
-  try {
-    return execSync(command, { stdio: 'pipe' }).toString().trim()
-  } catch (error) {
-    console.error(`Error executing command: ${command}`)
-    throw error
-  }
-}
+import { runCommandSync } from '../common'
+import { logger } from '../logging'
 
 /**
  * Gets the last good SHA using GitHub's GraphQL API. Currently assumes the current commit is good.
  * @returns The good SHA.
  */
 const getLastGoodSha = () => {
-  const goodSha = execCommand('git rev-parse HEAD')
-  console.error(`Assuming current commit is good (${goodSha})`)
+  const goodSha = runCommandSync({ command: 'git rev-parse HEAD' }).stdout
+  logger.warn(`Assuming current commit is good (${goodSha})`)
   return goodSha
 }
 
@@ -30,9 +17,13 @@ const getLastGoodSha = () => {
  * @returns The last release version.
  */
 const getLastRelease = (localVersion: boolean) => {
-  const branches = execCommand(`git branch ${localVersion ? '' : '-r'}`)
+  const branches = runCommandSync({
+    command: `git branch ${localVersion ? '' : '-r'}`,
+  })
   const releaseRegex = /release\/(\d+\.\d+\.\d+)/g
-  const matches = [...branches.matchAll(releaseRegex)].map((m) => m[1])
+  const matches = [...branches.stdout.join('\n').matchAll(releaseRegex)].map(
+    (m) => m[1],
+  )
   if (!matches.length) return '0.0.0'
   return matches.sort().reverse()[0]
 }
@@ -76,12 +67,14 @@ export const createPreReleaseBranch = ({
   localVersion,
   maxMinor,
   releaseVersion,
+  dryRun = false,
 }: {
   pushReleaseBranch: boolean
   ignoreExistingRelease: boolean
   localVersion: boolean
   maxMinor: number
   releaseVersion?: string
+  dryRun?: boolean
 }) => {
   const currentRelease = getLastRelease(localVersion)
   const bumpedRelease = bumpReleaseNumber({
@@ -92,18 +85,17 @@ export const createPreReleaseBranch = ({
   const newBranch = `pre-release/${bumpedRelease}`
   const lastGoodSha = getLastGoodSha()
 
-  try {
-    execCommand(`git checkout -b ${newBranch} ${lastGoodSha}`)
-    console.log(`Successfully created branch ${newBranch} locally`)
+  logger.info(`Creating branch ${newBranch} locally`)
+  runCommandSync({
+    command: `git branch ${newBranch} ${lastGoodSha}`,
+    dryRun,
+  }) || logger.error(`Error creating branch ${newBranch} locally`)
 
-    if (pushReleaseBranch) {
-      execCommand(`git push --set-upstream origin ${newBranch}`)
-      console.log(`Successfully pushed branch ${newBranch} to remote`)
-    }
-  } catch (error) {
-    if (!ignoreExistingRelease) {
-      console.error(`Error creating pre-release branch: ${newBranch}`)
-      throw error
-    }
+  if (pushReleaseBranch) {
+    logger.info(`Pushing branch ${newBranch} to remote`)
+    runCommandSync({
+      command: `git push --set-upstream origin ${newBranch}`,
+      dryRun,
+    }) || logger.error(`Error pushing branch ${newBranch} to remote`)
   }
 }

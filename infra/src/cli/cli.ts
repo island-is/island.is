@@ -9,6 +9,13 @@ import { renderLocalServices, runLocalServices } from './render-local-mocks'
 import { createPreReleaseBranch } from './release-flow'
 
 yargs(process.argv.slice(2))
+  .option('n', {
+    alias: 'dry-run',
+    describe: 'Dry run',
+    type: 'boolean',
+    default: false,
+    global: true,
+  })
   .command(
     'branch',
     'Create a pre-release branch',
@@ -50,6 +57,7 @@ yargs(process.argv.slice(2))
         ignoreExistingRelease: args.i,
         localVersion: args.l,
         releaseVersion: args.r,
+        dryRun: args.n,
       })
     },
   )
