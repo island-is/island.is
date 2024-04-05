@@ -39,7 +39,7 @@ export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 const Host = styled(Animated.View)`
   position: relative;
   min-height: 112px;
-  padding: ${({ theme }) => `${theme.spacing[2]}px ${theme.spacing[3]}px`};
+  padding: ${({ theme }) => theme.spacing[2]}px;
   row-gap: ${LICENSE_CARD_ROW_GAP}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
   overflow: hidden;

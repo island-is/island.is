@@ -146,8 +146,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
   const licenseType = data?.license?.type
   const barcodeWidth =
-    screenWidth - theme.spacing[5] * 2 - theme.spacing.smallGutter * 2
-  const barcodeHeight = barcodeWidth / 3
+    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeHeight = barcodeWidth / 3.5
 
   const onAddPkPass = async () => {
     const { canAddPasses, addPass } = Platform.select({
@@ -292,7 +292,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               ? getImageFromRawData(data?.payload?.rawData)
               : undefined
           }
-          date={new Date(Number(data?.fetch?.updated))}
+          date={
+            data?.fetch?.updated
+              ? new Date(Number(data?.fetch?.updated))
+              : undefined
+          }
           status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
           {...(allowLicenseBarcode && {
             barcode: {
@@ -309,9 +313,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <Information
         contentInset={{ bottom: 162 }}
         topSpacing={
-          allowLicenseBarcode && data?.barcode?.token
-            ? barcodeHeight + LICENSE_CARD_ROW_GAP
-            : 0
+          allowLicenseBarcode ? barcodeHeight + LICENSE_CARD_ROW_GAP : 0
         }
       >
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
