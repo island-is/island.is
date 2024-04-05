@@ -8,8 +8,10 @@ import type { CaseMessage } from '@island.is/judicial-system/message'
 import {
   CaseFileMessage,
   DefendantMessage,
+  messageEndpoint,
   MessageService,
   MessageType,
+  OldMessageType,
   PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
@@ -36,32 +38,32 @@ export class MessageHandlerService implements OnModuleDestroy {
     let handled = false
 
     switch (message.type) {
-      case MessageType.DELIVER_PROSECUTOR_TO_COURT:
+      case OldMessageType.DELIVER_PROSECUTOR_TO_COURT:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           `deliverProsecutorToCourt`,
         )
         break
-      case MessageType.DELIVER_DEFENDANT_TO_COURT: {
+      case OldMessageType.DELIVER_DEFENDANT_TO_COURT: {
         const defendantMessage: DefendantMessage = message as DefendantMessage
         handled = await this.internalDeliveryService.deliver(
           message.user,
           defendantMessage.caseId,
-          `defendant/${defendantMessage.defendantId}/deliverToCourt`,
+          `deliverDefendantToCourt/${defendantMessage.defendantId}`,
         )
         break
       }
-      case MessageType.DELIVER_CASE_FILE_TO_COURT: {
+      case OldMessageType.DELIVER_CASE_FILE_TO_COURT: {
         const caseFileMessage = message as CaseFileMessage
         handled = await this.internalDeliveryService.deliver(
           message.user,
           caseFileMessage.caseId,
-          `file/${caseFileMessage.caseFileId}/deliverToCourt`,
+          `deliverCaseFileToCourt/${caseFileMessage.caseFileId}`,
         )
         break
       }
-      case MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT: {
+      case OldMessageType.DELIVER_CASE_FILES_RECORD_TO_COURT: {
         const policeCaseMessage = message as PoliceCaseMessage
         handled = await this.internalDeliveryService.deliver(
           message.user,
@@ -70,56 +72,56 @@ export class MessageHandlerService implements OnModuleDestroy {
         )
         break
       }
-      case MessageType.DELIVER_REQUEST_TO_COURT:
+      case OldMessageType.DELIVER_REQUEST_TO_COURT:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverRequestToCourt',
         )
         break
-      case MessageType.DELIVER_COURT_RECORD_TO_COURT:
+      case OldMessageType.DELIVER_COURT_RECORD_TO_COURT:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverCourtRecordToCourt',
         )
         break
-      case MessageType.DELIVER_SIGNED_RULING_TO_COURT:
+      case OldMessageType.DELIVER_SIGNED_RULING_TO_COURT:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverSignedRulingToCourt',
         )
         break
-      case MessageType.DELIVER_CASE_CONCLUSION_TO_COURT:
+      case OldMessageType.DELIVER_CASE_CONCLUSION_TO_COURT:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverCaseConclusionToCourt',
         )
         break
-      case MessageType.DELIVER_CASE_TO_POLICE:
+      case OldMessageType.DELIVER_CASE_TO_POLICE:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverCaseToPolice',
         )
         break
-      case MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE:
+      case OldMessageType.DELIVER_INDICTMENT_CASE_TO_POLICE:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverIndictmentCaseToPolice',
         )
         break
-      case MessageType.DELIVER_INDICTMENT_TO_POLICE:
+      case OldMessageType.DELIVER_INDICTMENT_TO_POLICE:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverIndictmentToPolice',
         )
         break
-      case MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE:
+      case OldMessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE:
         {
           const policeCaseMessage = message as PoliceCaseMessage
           handled = await this.internalDeliveryService.deliver(
@@ -129,7 +131,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           )
         }
         break
-      case MessageType.DELIVER_SIGNED_RULING_TO_POLICE:
+      case OldMessageType.DELIVER_SIGNED_RULING_TO_POLICE:
         {
           const policeCaseMessage = message as PoliceCaseMessage
           handled = await this.internalDeliveryService.deliver(
@@ -139,23 +141,23 @@ export class MessageHandlerService implements OnModuleDestroy {
           )
         }
         break
-      case MessageType.DELIVER_APPEAL_TO_POLICE:
+      case OldMessageType.DELIVER_APPEAL_TO_POLICE:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
           'deliverAppealToPolice',
         )
         break
-      case MessageType.ARCHIVE_CASE_FILE: {
+      case OldMessageType.ARCHIVE_CASE_FILE: {
         const caseFileMessage = message as CaseFileMessage
         handled = await this.internalDeliveryService.deliver(
           message.user,
           caseFileMessage.caseId,
-          `file/${caseFileMessage.caseFileId}/archive`,
+          `archiveCaseFile/${caseFileMessage.caseFileId}`,
         )
         break
       }
-      case MessageType.ARCHIVE_CASE_FILES_RECORD: {
+      case OldMessageType.ARCHIVE_CASE_FILES_RECORD: {
         const policeCaseMessage = message as PoliceCaseMessage
         handled = await this.internalDeliveryService.deliver(
           message.user,
@@ -164,7 +166,7 @@ export class MessageHandlerService implements OnModuleDestroy {
         )
         break
       }
-      case MessageType.SEND_HEADS_UP_NOTIFICATION:
+      case OldMessageType.SEND_HEADS_UP_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -172,7 +174,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.HEADS_UP },
         )
         break
-      case MessageType.SEND_READY_FOR_COURT_NOTIFICATION:
+      case OldMessageType.SEND_READY_FOR_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -180,7 +182,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.READY_FOR_COURT },
         )
         break
-      case MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION:
+      case OldMessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -188,7 +190,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.RECEIVED_BY_COURT },
         )
         break
-      case MessageType.SEND_COURT_DATE_NOTIFICATION:
+      case OldMessageType.SEND_COURT_DATE_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -196,7 +198,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.COURT_DATE },
         )
         break
-      case MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
+      case OldMessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -204,7 +206,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
         )
         break
-      case MessageType.SEND_RULING_NOTIFICATION:
+      case OldMessageType.SEND_RULING_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -212,7 +214,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.RULING },
         )
         break
-      case MessageType.SEND_MODIFIED_NOTIFICATION:
+      case OldMessageType.SEND_MODIFIED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -220,7 +222,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.MODIFIED },
         )
         break
-      case MessageType.SEND_REVOKED_NOTIFICATION:
+      case OldMessageType.SEND_REVOKED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -228,7 +230,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.REVOKED },
         )
         break
-      case MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION:
+      case OldMessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -236,7 +238,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.DEFENDER_ASSIGNED },
         )
         break
-      case MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION:
+      case OldMessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -246,7 +248,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           },
         )
         break
-      case MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION:
+      case OldMessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -254,7 +256,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_RECEIVED_BY_COURT },
         )
         break
-      case MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION:
+      case OldMessageType.SEND_APPEAL_STATEMENT_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -262,7 +264,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_STATEMENT },
         )
         break
-      case MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION:
+      case OldMessageType.SEND_APPEAL_COMPLETED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -270,7 +272,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_COMPLETED },
         )
         break
-      case MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION:
+      case OldMessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -278,7 +280,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_JUDGES_ASSIGNED },
         )
         break
-      case MessageType.SEND_APPEAL_CASE_FILES_UPDATED_NOTIFICATION:
+      case OldMessageType.SEND_APPEAL_CASE_FILES_UPDATED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -286,7 +288,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_CASE_FILES_UPDATED },
         )
         break
-      case MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION:
+      case OldMessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -294,7 +296,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_WITHDRAWN },
         )
         break
-      case MessageType.SEND_INDICTMENT_DENIED_NOTIFICATION:
+      case OldMessageType.SEND_INDICTMENT_DENIED_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,
           message.caseId,
@@ -303,7 +305,18 @@ export class MessageHandlerService implements OnModuleDestroy {
         )
         break
       default:
-        this.logger.error('Unknown message type', { msg: message })
+        if (message.type in MessageType) {
+          handled = await this.internalDeliveryService.deliver(
+            message.user,
+            message.caseId,
+            `${messageEndpoint[message.type]}${
+              message.elementId ? `/${message.elementId}` : ''
+            }`,
+            message.body,
+          )
+        } else {
+          this.logger.error('Unknown message type', { msg: message })
+        }
     }
 
     this.logger.debug(`Message ${handled ? 'handled' : 'not handled'}`, {
