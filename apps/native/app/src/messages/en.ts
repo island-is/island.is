@@ -269,7 +269,7 @@ export const en: TranslatedMessages = {
     'This summary is not valid as a parking card.',
   'licenseDetail.ehic.alert.title': 'Remember the card!',
   'licenseDetail.ehic.alert.description':
-    'This summary is not valid as an European Health Insurance card.',
+    'This summary is not valid as a European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',
