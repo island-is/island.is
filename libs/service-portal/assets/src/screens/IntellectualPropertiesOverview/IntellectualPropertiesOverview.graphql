@@ -1,7 +1,5 @@
-query GetIntellectualProperties(
-  $input: IntellectualPropertiesCollectionInput!
-) {
-  intellectualProperties(input: $input) {
+query GetIntellectualProperties {
+  intellectualProperties {
     __typename
     totalCount
     items {
@@ -36,7 +34,7 @@ query GetIntellectualProperties(
       ... on IntellectualPropertiesTrademark {
         __typename
         text
-        typeReadable
+        type
         status
         id
       }

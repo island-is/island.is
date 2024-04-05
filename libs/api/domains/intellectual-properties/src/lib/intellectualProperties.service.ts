@@ -8,19 +8,12 @@ import { isDefined } from '@island.is/shared/utils'
 import { IntellectualPropertiesClientService } from '@island.is/clients/intellectual-properties'
 import { Patent } from './models/patent.model'
 import { Trademark, TrademarkType } from './models/trademark.model'
-import {
-  mapTrademarkType,
-  mapTrademarkSubtype,
-  mapFullAddress,
-  formatReadableTrademarkType,
-} from './mapper'
+import { mapTrademarkType, mapTrademarkSubtype, mapFullAddress } from './mapper'
 import { checkIfDesignValueIsFalsy, parseDateIfValid } from './utils'
 import { Image } from './models/image.model'
 import { PatentIS } from './models/patentIS.model'
 import { PatentEP } from './models/patentEP.model'
 import { SPC } from './models/spc.model'
-import { TranslationsDict } from '@island.is/cms-translations'
-import { Locale } from '@island.is/shared/types'
 
 const DATE_FORMAT = 'dd.MM.yyyy HH:mm:SS'
 
@@ -31,19 +24,11 @@ const parseIPDate = (date: Date | string | undefined | null) =>
 export class IntellectualPropertiesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject('translation-dict')
-    private readonly translationDictionary: (
-      locale: Locale,
-    ) => Promise<TranslationsDict>,
     private ipService: IntellectualPropertiesClientService,
   ) {}
 
-  async getTrademarks(
-    user: User,
-    locale: Locale,
-  ): Promise<Array<Trademark> | null> {
+  async getTrademarks(user: User): Promise<Array<Trademark> | null> {
     const trademarks = await this.ipService.getTrademarks(user)
-    const dict = await this.translationDictionary(locale)
 
     return trademarks
       .map((t) => {
@@ -51,16 +36,13 @@ export class IntellectualPropertiesService {
           return null
         }
 
-        const trademarkType = mapTrademarkType(t.type)
-
         return {
           ...t,
           id: t.vmid,
           text: t.text ?? '',
-          status:
-            locale === 'en' ? t.statusEN ?? undefined : t.status ?? undefined,
-          type: trademarkType,
-          typeReadable: formatReadableTrademarkType(trademarkType, dict),
+          status: t.status ?? '',
+          type: mapTrademarkType(t.type) ?? undefined,
+          typeReadable: t.type ?? '',
           subType: mapTrademarkSubtype(t) ?? undefined,
           vmId: t.vmid,
           applicationDate: parseIPDate(t.applicationDate),
@@ -72,10 +54,8 @@ export class IntellectualPropertiesService {
   async getTrademarkByVmId(
     user: User,
     trademarkId: string,
-    locale: Locale,
   ): Promise<Trademark | null> {
     const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
-    const dict = await this.translationDictionary(locale)
 
     const objectionDate = trademark.datePublished
       ? parseIPDate(trademark?.datePublished)
@@ -85,7 +65,7 @@ export class IntellectualPropertiesService {
       return null
     }
 
-    const type = mapTrademarkType(trademark.type)
+    const type = mapTrademarkType(trademark.type) ?? undefined
     const mediaPath =
       type === TrademarkType.IMAGE || type === TrademarkType.TEXT_AND_IMAGE
         ? trademark.orginalImagePath
@@ -93,16 +73,12 @@ export class IntellectualPropertiesService {
     return {
       ...trademark,
       id: trademark.vmid,
-      type,
       text: trademark.text ?? '',
-      typeReadable: formatReadableTrademarkType(type, dict),
+      type: mapTrademarkType(trademark.type) ?? undefined,
       subType: mapTrademarkSubtype(trademark) ?? undefined,
       applicationNumber: trademark.applicationNumber ?? undefined,
       registrationNumber: trademark.registrationNumber ?? undefined,
-      status:
-        locale === 'en'
-          ? trademark.statusEN ?? undefined
-          : trademark.status ?? undefined,
+      status: trademark.status ?? undefined,
       media: {
         mediaPath: mediaPath ?? undefined,
         mediaType: trademark.media?.mediaType ?? undefined,
