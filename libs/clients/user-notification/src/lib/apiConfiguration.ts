@@ -57,7 +57,8 @@ export const NotificationsApiProvider: Provider<NotificationsApi> = {
         fetchApi: createEnhancedFetch({
           name: 'clients-system-user-notification',
           organizationSlug: 'stafraent-island',
-          autoAuth: undefined,
+          // No autoauth since system user notification endpoint is
+          // not protected by scope
         }),
         basePath: `${config.basePath}/v1`,
       }),

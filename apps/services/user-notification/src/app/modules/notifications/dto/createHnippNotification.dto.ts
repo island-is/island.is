@@ -31,6 +31,7 @@ export class CreateHnippNotificationDto {
   @Type(() => ArgumentDto)
   @ValidateNested({ each: true })
   @ApiProperty({
+    type: [ArgumentDto],
     example: [
       { key: 'organization', value: 'Hnipp Test Crew' },
       { key: 'documentId', value: 'abcd-abcd-abcd-abcd' },

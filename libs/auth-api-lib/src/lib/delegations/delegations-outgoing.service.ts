@@ -30,6 +30,10 @@ import { getDelegationNoActorWhereClause } from './utils/delegations'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { DelegationDirection } from './types/delegationDirection'
 import { DelegationsIndexService } from './delegations-index.service'
+import {
+  NEW_DELEGATION_TEMPLATE_ID,
+  UPDATED_DELEGATION_TEMPLATE_ID,
+} from './constants'
 
 /**
  * Service class for outgoing delegations.
@@ -53,7 +57,6 @@ export class DelegationsOutgoingService {
     domainName?: string,
     otherUser?: string,
   ): Promise<DelegationDTO[]> {
-    console.log('Delegate outgoing service findAll')
     if (otherUser) {
       return this.findByOtherUser(user, otherUser, domainName)
     }
@@ -200,6 +203,8 @@ export class DelegationsOutgoingService {
         fromNationalId: user.nationalId,
         toNationalId: createDelegation.toNationalId,
         domainName: createDelegation.domainName,
+        // TODO: should not persist names with the delegation
+        // should always look it up to avoid being out of sync
         fromDisplayName,
         toName,
       })
@@ -228,15 +233,6 @@ export class DelegationsOutgoingService {
     void this.delegationIndexService.indexCustomDelegations(
       createDelegation.toNationalId,
     )
-
-    // Send a hnipp notification to the toNationalId
-    this.notificationsApi.notificationsControllerCreateHnippNotification({
-      createHnippNotificationDto: {
-        args: [],
-        recipient: createDelegation.toNationalId,
-        templateId: 'HNIPP.UMBOD.NYTT',
-      },
-    })
 
     return newDelegation
   }
@@ -310,7 +306,30 @@ export class DelegationsOutgoingService {
       delegation.toNationalId,
     )
 
-    // TODO: notify toNationalId of updated delegation?
+    const fromDisplayName = await this.namesService.getUserName(user)
+    const scopes = patchedDelegation.updateScopes ?? []
+    const scopeNames = scopes.map((scope) => scope.name)
+
+    const hasExistingScopes =
+      (currentDelegation.delegationScopes?.length ?? 0) > 0
+
+    const args = [
+      { key: 'name', value: fromDisplayName },
+      { key: 'scopes', value: scopeNames.join(', ') },
+    ]
+
+    // Notify toNationalId of the delegation update
+    this.notificationsApi.notificationsControllerCreateHnippNotification({
+      createHnippNotificationDto: {
+        args,
+        recipient: delegation.toNationalId,
+        // If there are existing scopes we are updating the delegation
+        // else it is a new delegation
+        templateId: hasExistingScopes
+          ? UPDATED_DELEGATION_TEMPLATE_ID
+          : NEW_DELEGATION_TEMPLATE_ID,
+      },
+    })
 
     return delegation
   }
@@ -346,8 +365,6 @@ export class DelegationsOutgoingService {
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
     )
-
-    // TODO: also notify toNationalId of lost delegation?
   }
 
   private async findOneInternal(
