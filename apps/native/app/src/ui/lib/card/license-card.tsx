@@ -12,7 +12,6 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
-import { isAndroid } from '../../../utils/devices'
 import { isString } from '../../../utils/is-string'
 import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
@@ -61,15 +60,13 @@ const BarcodeWrapper = styled.View<{ minHeight?: number }>(
   }),
 )
 
-const BarcodeContainer = styled.View<{ isAndroid?: boolean }>(
-  ({ theme, isAndroid }) => ({
-    flex: 1,
-    backgroundColor: theme.color.white,
-    padding: theme.spacing.smallGutter,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }),
-)
+const BarcodeContainer = styled.View(({ theme }) => ({
+  flex: 1,
+  backgroundColor: theme.color.white,
+  padding: theme.spacing.smallGutter,
+  alignItems: 'center',
+  justifyContent: 'center',
+}))
 
 const ProgressBarContainer = styled.View`
   position: absolute;
@@ -354,7 +351,7 @@ export function LicenseCard({
       {showBarcodeView && (
         <BarcodeWrapper minHeight={barcode?.height}>
           {!barcode.loading && barcode?.value ? (
-            <BarcodeContainer isAndroid={isAndroid}>
+            <BarcodeContainer>
               <Barcode
                 value={barcode.value}
                 width={barcode.width}
