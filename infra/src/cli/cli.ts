@@ -6,8 +6,53 @@ import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
+import { createPreReleaseBranch } from './release-flow'
 
-const cli = yargs(process.argv.slice(2))
+yargs(process.argv.slice(2))
+  .command(
+    'branch',
+    'Create a pre-release branch',
+    (yargs) =>
+      yargs
+        .option('m', {
+          alias: 'max-minor',
+          describe: 'Maximum minor version number',
+          type: 'number',
+          default: 4,
+        })
+        .option('p', {
+          alias: 'push-release-branch',
+          describe: 'Push release branch to remote',
+          type: 'boolean',
+          default: false,
+        })
+        .option('i', {
+          alias: 'ignore-existing-release',
+          describe: 'Ignore existing release branch',
+          type: 'boolean',
+          default: false,
+        })
+        .option('l', {
+          alias: 'local-version',
+          describe: 'Use local versioning',
+          type: 'boolean',
+          default: false,
+        })
+        .option('r', {
+          alias: 'release-version',
+          describe: 'Set a specific release version',
+          type: 'string',
+        }),
+    (args) => {
+      createPreReleaseBranch({
+        maxMinor: args.m,
+        pushReleaseBranch: args.p,
+        ignoreExistingRelease: args.i,
+        localVersion: args.l,
+        releaseVersion: args.r,
+      })
+    },
+  )
   .command(
     'render-env',
     'Render a chart for environment',
@@ -103,5 +148,7 @@ const cli = yargs(process.argv.slice(2))
         startProxies: argv.proxies,
       }),
   )
+  .help('h')
+  .alias('h', 'help')
   .demandCommand(1)
   .parse()
