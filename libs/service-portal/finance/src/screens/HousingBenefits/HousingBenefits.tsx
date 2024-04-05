@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Box,
   DatePicker,
@@ -39,9 +39,8 @@ const FinanceHousingBenefits = () => {
     setSelectedMonth(undefined)
   }
 
-  useEffect(() => {
+  useMemo(() => {
     const paymentType = Number(paymentOrigin)
-    console.log('paymentType', paymentType)
     loadHousingPayments({
       variables: {
         input: {
