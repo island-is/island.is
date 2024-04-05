@@ -84,6 +84,60 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
           },
         },
       },
+      [States.DRAFT]: {
+        meta: {
+          status: FormModes.DRAFT,
+          name: application.general.name.defaultMessage,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationSent,
+              onEvent: DefaultEvents.SUBMIT,
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/HealthInsuranceDeclarationForm').then(
+                  (module) =>
+                    Promise.resolve(module.HealthInsuranceDeclarationForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              delete: true,
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.SUBMITTED,
+          },
+        },
+      },
+      [States.SUBMITTED]: {
+        meta: {
+          name: States.SUBMITTED,
+          progress: 1,
+          status: 'completed',
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Submitted').then((val) =>
+                  Promise.resolve(val.HealthInsuranceDeclarationSubmitted),
+                ),
+            },
+          ],
+        },
+      },
     },
   },
   mapUserToRole: (nationalId, application) => {
