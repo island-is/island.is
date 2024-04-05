@@ -1,7 +1,6 @@
 import {
   buildCacheControl,
   createEnhancedFetch,
-  defaultCacheKeyWithHeader,
 } from '@island.is/clients/middlewares'
 import {
   ConfigType,

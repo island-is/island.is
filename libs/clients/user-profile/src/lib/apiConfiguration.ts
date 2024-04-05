@@ -1,7 +1,4 @@
-import {
-  createEnhancedFetch,
-  defaultCacheKeyWithHeader,
-} from '@island.is/clients/middlewares'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
 
