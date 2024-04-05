@@ -291,7 +291,7 @@ api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
-    HUNTING_LICENSE_PASS_TEMPLATE_ID: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba'
+    HUNTING_LICENSE_PASS_TEMPLATE_ID: '5f42f942-d8d6-40bf-a186-5a9e12619d9f'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -522,6 +522,7 @@ api:
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY'
     VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY'
@@ -1524,6 +1525,7 @@ license-api:
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
@@ -2737,6 +2739,8 @@ user-notification:
     - 'node'
   enabled: true
   env:
+    AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'

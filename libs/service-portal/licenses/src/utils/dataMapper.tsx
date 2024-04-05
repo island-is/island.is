@@ -624,7 +624,7 @@ export const getTypeFromPath = (path: string) => {
     case LicenseTypePath.vinnuvelarettindi:
       return LicenseType.MachineLicense
     case LicenseTypePath.ororkuskirteini:
-      return LicenseType.MachineLicense
+      return LicenseType.DisabilityLicense
     case LicenseTypePath.veidikort:
       return LicenseType.HuntingLicense
     case LicenseTypePath.pcard:

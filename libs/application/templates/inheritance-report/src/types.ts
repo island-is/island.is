@@ -173,8 +173,8 @@ export interface RealEstate {
 }
 
 export interface OtherAssetsData {
-  otherAssets: string
-  otherAssetsValue: string
+  info: string
+  value: string
   taxFreeInheritance: number
 }
 export interface OtherAssets {
@@ -183,9 +183,9 @@ export interface OtherAssets {
 }
 
 export interface BankAccountsData {
-  capital: string
-  penaltyInterestRates: string
-  accountNumber: string
+  exchangeRateOrInterest: string
+  propertyNumber: string
+  propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
 }

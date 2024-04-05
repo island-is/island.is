@@ -73,12 +73,13 @@ export class InternalFileController {
   })
   async archiveCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Archiving file ${fileId} of case ${caseId}`)
 
-    const success = await this.fileService.archive(caseFile)
+    const success = await this.fileService.archive(theCase, caseFile)
 
     return { delivered: success }
   }

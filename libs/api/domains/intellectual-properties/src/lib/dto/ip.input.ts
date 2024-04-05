@@ -7,4 +7,9 @@ export class IntellectualPropertiesInput {
   @Field()
   @IsString()
   key!: string
+
+  @Allow()
+  @Field({ nullable: true })
+  @IsString()
+  locale?: string
 }

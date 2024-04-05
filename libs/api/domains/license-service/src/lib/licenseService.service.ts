@@ -536,10 +536,16 @@ export class LicenseServiceService {
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
 
-    if (!client.clientSupportsPkPass) {
-      this.logger.warn('License type does not support barcode', {
-        licenseType,
-      })
+    if (
+      genericUserLicense.license.pkpassStatus !==
+      GenericUserLicensePkPassStatus.Available
+    ) {
+      this.logger.info(
+        `pkpassStatus not available for license: ${licenseType}`,
+        {
+          pkpassStatus: genericUserLicense.license.pkpassStatus,
+        },
+      )
 
       return null
     }

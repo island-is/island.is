@@ -79,6 +79,7 @@ export enum Features {
 
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
+  shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 }
 
 export enum ServerSideFeature {

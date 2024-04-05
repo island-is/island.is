@@ -366,7 +366,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             </Box>
             <Box marginTop={2}>
               {data.credits && data.credits > 0 ? (
-                <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+                <Text variant="default">{`${data.degreeAbbreviation} - ${
+                  data.credits
+                } ${n('units', 'einingar')}`}</Text>
               ) : (
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
