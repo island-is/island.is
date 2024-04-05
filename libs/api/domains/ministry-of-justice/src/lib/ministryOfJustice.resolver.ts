@@ -12,7 +12,7 @@ import {
 import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
-  AdvertInvolvedPartiesResponse,
+  AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
   AdvertsResponse,
@@ -71,10 +71,10 @@ export class MinistryOfJusticeResolver {
     return this.mojService.categories(params)
   }
 
-  @Query(() => AdvertInvolvedPartiesResponse, {
-    name: 'ministryOfJusticeInvolvedParties',
+  @Query(() => AdvertInstitutionsResponse, {
+    name: 'ministryOfJusticeInstitutions',
   })
-  involvedParties(@Args('params') params: QueryParams) {
-    return this.mojService.involvedParties(params)
+  institutions(@Args('params') params: QueryParams) {
+    return this.mojService.institutions(params)
   }
 }
