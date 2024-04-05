@@ -313,6 +313,10 @@ export const m = defineMessages({
     id: 'sp.finance-housing-benefits:rental-month-year-title',
     defaultMessage: 'Leigumánuður / Ár',
   },
+  hbPaymentType: {
+    id: 'sp.finance-housing-benefits:payment-type-title',
+    defaultMessage: 'Leigumánuður / Ár',
+  },
   hbAllPayments: {
     id: 'sp.finance-housing-benefits:all-payments',
     defaultMessage: 'Allar greiðslur',

@@ -87,7 +87,7 @@ const HousingBenefitsFilter = ({
           categories={[
             {
               id: 'payment-type',
-              label: 'Tegund greiðslu',
+              label: formatMessage(messages.hbPaymentType),
               selected: paymentOrigin ? [paymentOrigin] : [],
               filters: [
                 {
