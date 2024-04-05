@@ -69,7 +69,6 @@ const HousingBenefitsFilter = ({
           labelClear={formatMessage(m.clearSelected)}
           singleExpand={true}
           onChange={({ selected, categoryId }) => {
-            console.log('selected', selected)
             if (categoryId === 'payment-type') {
               setPaymentOrigin(selected[0])
             }
