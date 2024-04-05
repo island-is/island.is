@@ -33,7 +33,8 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.areaId.summary',
-      defaultMessage: 'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
+      defaultMessage:
+        'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
       description: '',
     },
   }),
