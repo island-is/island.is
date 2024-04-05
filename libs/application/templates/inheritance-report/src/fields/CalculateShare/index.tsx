@@ -36,12 +36,21 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { answers } = application
-  const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
+  // Heildareign
+  const [total, setTotal] = useState(0)
+  // Heildarskuldir
+  const [debtsTotal, setDebtsTotal] = useState(0)
+  // Heildarséreign
   const [shareTotal, setShareTotal] = useState(0)
-  const [allDebtsTotal, setAllDebtsTotal] = useState(0)
+  // Hrein eign: Heildareign - Heildarskuldir
+  const [netTotal, setNetTotal] = useState(0)
+  // Búshluti makans: Hrein eign - Heildarséreign / 2
+  const [spouseTotal, setSpouseTotal] = useState(0)
+  // Búshluti dánarbús: Hrein eign - Heildarséreign / 2
+  const [estateTotal, setEstateTotal] = useState(0)
+  // Hrein eign til skipta: Heildarséreign + Búshluti dánarbús
   const [netPropertyForExchange, setNetPropertyForExchange] = useState(0)
-  const [netProperty, setNetProperty] = useState(0)
 
   const [shareValues, setShareValues] = useState<
     Record<keyof Partial<EstateAssets>, ShareItem>
@@ -279,59 +288,83 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     updateShareCalculations()
   }, [updateShareCalculations])
 
-  useEffect(() => {
-    console.log('shareValues', shareValues)
+  console.log('shareValues', shareValues)
 
-    let netPropertyValue = 0
-    let shareTotalValue = 0
-    let deductionTotal = 0
+  // Set the total value of all assets
+  useEffect(() => {
+    let x = 0
 
     for (const [_, value] of Object.entries(shareValues)) {
-      const total = value.items.reduce((acc, item) => acc + item.value, 0)
-      netPropertyValue += total
-
-      const share = value.items.reduce((acc, item) => acc + item.shareValue, 0)
-      shareTotalValue += share
-
-      const deduction = value.items.reduce(
-        (acc, item) => acc + item.deduction,
-        0,
-      )
-      deductionTotal += deduction
+      x += value.items.reduce((acc, item) => acc + item.value, 0)
     }
 
-    setNetProperty(netPropertyValue)
-    setShareTotal(shareTotalValue)
-    setValue(`shareTotal`, shareTotalValue)
-    setValue(`cohabitantShare`, deductionTotal)
-  }, [setValue, shareValues])
+    setTotal(x)
+  }, [shareValues])
 
-  const funeralCost = getNumberValue('funeralCost.total')
-  const publicCharges = getNumberValue('debts.publicCharges')
+  // Set the total value of all debts
+  useEffect(() => {
+    const funeralCost = getNumberValue('funeralCost.total')
+    const debtsTotalValue = getNumberValue('debts.debtsTotal') + funeralCost
+
+    setDebtsTotal(debtsTotalValue)
+  }, [getNumberValue, total])
+
+  // Set the total value of all deceased seperate assets
+  useEffect(() => {
+    let x = 0
+
+    for (const [_, value] of Object.entries(shareValues)) {
+      x += value.items.reduce((acc, item) => acc + item.shareValue, 0)
+    }
+
+    setShareTotal(x)
+  }, [shareValues])
+
+  // Set the net total value
+  useEffect(() => {
+    setNetTotal(total - debtsTotal)
+  }, [total, debtsTotal])
+
+  // Set the spouse total value
+  useEffect(() => {
+    setSpouseTotal(netTotal - shareTotal)
+  }, [netTotal, shareTotal])
+
+  // Set the estate total value
+  useEffect(() => {
+    setEstateTotal(netTotal - shareTotal)
+  }, [netTotal, shareTotal])
+
+  // Set the estate total value
+  useEffect(() => {
+    setNetPropertyForExchange(shareTotal + estateTotal)
+  }, [estateTotal, shareTotal])
 
   useEffect(() => {
-    const allDebtsTotalValue = getNumberValue('debts.debtsTotal') + funeralCost
-    const netPropertyForExchangeValue = shareTotal - allDebtsTotalValue
-    const netPropertyValue = netProperty - allDebtsTotalValue
-
-    setAllDebtsTotal(allDebtsTotalValue)
-    setNetPropertyForExchange(netPropertyForExchangeValue)
-
-    setValue(`allDebtsTotal`, allDebtsTotalValue)
-    setValue(`netProperty`, netPropertyValue)
-    setValue(`netPropertyForExchange`, netPropertyForExchangeValue)
-  }, [funeralCost, getNumberValue, netProperty, setValue, shareTotal])
-
-  const domesticAndForeignDebts = valueToNumber(
-    getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total'),
-  )
+    setValue('total', total)
+    setValue('debtsTotal', debtsTotal)
+    setValue('shareTotal', shareTotal)
+    setValue('netTotal', netTotal)
+    setValue('spouseTotal', spouseTotal)
+    setValue('estateTotal', estateTotal)
+    setValue('netPropertyForExchange', netPropertyForExchange)
+  }, [
+    debtsTotal,
+    estateTotal,
+    netPropertyForExchange,
+    netTotal,
+    setValue,
+    shareTotal,
+    spouseTotal,
+    total,
+  ])
 
   return (
     <Box>
       <Box marginTop={4}>
-        <TitleRow title={m.assetsToShareTotalAssets} value={netProperty} />
-        <TitleRow title={m.assetsToShareTotalDebts} value={allDebtsTotal} />
-        <TitleRow title={m.netProperty} value={netProperty - allDebtsTotal} />
+        <TitleRow title={m.assetsToShareTotalAssets} value={total} />
+        <TitleRow title={m.assetsToShareTotalDebts} value={debtsTotal} />
+        <TitleRow title={m.netProperty} value={netTotal} />
         <TitleRow title={m.share} value={shareTotal} />
         <Box marginLeft={[0, 4]}>
           <GridRow rowGap={1}>
@@ -347,17 +380,8 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </GridRow>
         </Box>
         <Box marginY={4}>
-          <TitleRow title={m.domesticAndForeignDebts} value={allDebtsTotal} />
-          <Box marginLeft={[0, 4]}>
-            <GridRow rowGap={1}>
-              <ItemRow title={m.funeralCostTitle} total={-funeralCost} />
-              <ItemRow
-                title={m.domesticAndForeignDebts}
-                total={-domesticAndForeignDebts}
-              />
-              <ItemRow title={m.publicChargesTitle} total={-publicCharges} />
-            </GridRow>
-          </Box>
+          <TitleRow title={m.assetsToShareSpouseShare} value={spouseTotal} />
+          <TitleRow title={m.assetsToShareEstateShare} value={estateTotal} />
         </Box>
         <Divider />
         <Box paddingTop={4}>
@@ -436,27 +460,27 @@ const TitleRow = ({
   )
 }
 
-const ItemRow = ({
-  title,
-  total,
-}: {
-  title: MessageDescriptor
-  total: number
-}) => {
-  const { formatMessage } = useLocale()
+// const ItemRow = ({
+//   title,
+//   total,
+// }: {
+//   title: MessageDescriptor
+//   total: number
+// }) => {
+//   const { formatMessage } = useLocale()
 
-  return (
-    <GridColumn span={['1/1']}>
-      <GridRow rowGap={0}>
-        <GridColumn span={['1/1', '1/2']}>
-          {title && <Text variant="small">{formatMessage(title)}</Text>}
-        </GridColumn>
-        <GridColumn span={['1/1', '1/2']}>
-          <Box textAlign={['left', 'right']}>
-            <Text variant="small">{formatCurrency(String(total))}</Text>
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </GridColumn>
-  )
-}
+//   return (
+//     <GridColumn span={['1/1']}>
+//       <GridRow rowGap={0}>
+//         <GridColumn span={['1/1', '1/2']}>
+//           {title && <Text variant="small">{formatMessage(title)}</Text>}
+//         </GridColumn>
+//         <GridColumn span={['1/1', '1/2']}>
+//           <Box textAlign={['left', 'right']}>
+//             <Text variant="small">{formatCurrency(String(total))}</Text>
+//           </Box>
+//         </GridColumn>
+//       </GridRow>
+//     </GridColumn>
+//   )
+// }

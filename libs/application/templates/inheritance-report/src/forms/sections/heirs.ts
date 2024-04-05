@@ -28,23 +28,31 @@ export const heirs = buildSection({
           description: m.assetsToShareDescription,
           children: [
             buildDescriptionField({
+              id: 'total',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'debtsTotal',
+              title: '',
+            }),
+            buildDescriptionField({
               id: 'shareTotal',
               title: '',
             }),
             buildDescriptionField({
-              id: 'allDebtsTotal',
+              id: 'netTotal',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'spouseTotal',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'estateTotal',
               title: '',
             }),
             buildDescriptionField({
               id: 'netPropertyForExchange',
-              title: '',
-            }),
-            buildDescriptionField({
-              id: 'netProperty',
-              title: '',
-            }),
-            buildDescriptionField({
-              id: 'cohabitantShare',
               title: '',
             }),
             buildCustomField({
@@ -166,7 +174,7 @@ export const heirs = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String(getValueViaPath<number>(answers, 'netProperty')),
+                  String(getValueViaPath<number>(answers, 'netTotal')),
                 ),
             }),
             buildDescriptionField({
@@ -179,7 +187,7 @@ export const heirs = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String(getValueViaPath<number>(answers, 'cohabitantShare')),
+                  String(getValueViaPath<number>(answers, 'spouseTotal')),
                 ),
             }),
             buildDescriptionField({
@@ -192,13 +200,8 @@ export const heirs = buildSection({
               display: 'flex',
               value: ({ answers }) => {
                 return formatCurrency(
-                  formatCurrency(
-                    String(
-                      getValueViaPath<number>(
-                        answers,
-                        'netPropertyForExchange',
-                      ),
-                    ),
+                  String(
+                    getValueViaPath<number>(answers, 'netPropertyForExchange'),
                   ),
                 )
               },

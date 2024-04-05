@@ -556,14 +556,35 @@ export const inheritanceReportSchema = z.object({
     ),
 
   totalDeduction: z.number(),
-  shareTotal: z.number(),
-  allDebtsTotal: z.number(),
-  netPropertyForExchange: z.number(),
-  netProperty: z.number(),
-  cohabitantShare: z.number(),
 
-  deceasedCohabitantShare: z.string().optional(),
-  deceasedCohabitantShareEnabled: z.array(z.enum([YES])).optional(),
+  // shareTotal: z.number(),
+  // allDebtsTotal: z.number(),
+  // netPropertyForExchange: z.number(),
+  // netProperty: z.number(),
+  // cohabitantShare: z.number(),
+  // deceasedCohabitantShare: z.string().optional(),
+  // deceasedCohabitantShareEnabled: z.array(z.enum([YES])).optional(),
+
+  // Heildareign
+  total: z.number(),
+
+  // Heildarskuldir
+  debtsTotal: z.number(),
+
+  // Heildarséreign
+  shareTotal: z.number(),
+
+  // Hrein eign: Heildareign - Heildarskuldir
+  netTotal: z.number(),
+
+  // Búshluti makans: Hrein eign - Heildarséreign / 2
+  spouseTotal: z.number(),
+
+  // Búshluti dánarbús: Hrein eign - Heildarséreign / 2
+  estateTotal: z.number(),
+
+  // Hrein eign til skipta: Heildarséreign + Búshluti dánarbús
+  netPropertyForExchange: z.number(),
 
   /* einkaskipti */
   confirmAction: z.array(z.enum([YES])).length(1),
