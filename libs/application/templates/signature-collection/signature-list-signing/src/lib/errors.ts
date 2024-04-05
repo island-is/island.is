@@ -25,6 +25,18 @@ export const errorMessages = {
       description: '',
     },
   }),
+  areaId: defineMessages({
+    title: {
+      id: 'sls.application:error.areaId.title',
+      defaultMessage: 'Ekki með landsfjórðung skráðan',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.areaId.summary',
+      defaultMessage: 'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
+      description: '',
+    },
+  }),
   residency: defineMessages({
     title: {
       id: 'sls.application:error.residency.title',
