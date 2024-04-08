@@ -406,7 +406,8 @@ const Search: Screen<CategoryProps> = ({
 
   const filteredItems = [...searchResultsItems].filter(noUncategorized)
   const nothingFound = filteredItems.length === 0
-  const totalSearchResults = searchResults.total
+  const totalSearchResults =
+    searchResults.total === 0 ? searchResults.items.length : searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
   const searchResultsText =
