@@ -1,23 +1,23 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { NotificationsController } from './notifications.controller';
-import { NotificationsService } from './notifications.service';
-import { QueueService } from '@island.is/message-queue';
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto';
-import { HnippTemplate } from './dto/hnippTemplate.response';
-import { CreateNotificationDto } from './dto/createNotification.dto';
+import { Test, TestingModule } from '@nestjs/testing'
+import { NotificationsController } from './notifications.controller'
+import { NotificationsService } from './notifications.service'
+import { QueueService } from '@island.is/message-queue'
+import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { HnippTemplate } from './dto/hnippTemplate.response'
+import { CreateNotificationDto } from './dto/createNotification.dto'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Locale } from './locale.enum';
+import { Locale } from './locale.enum'
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager'
 
 describe('NotificationsController', () => {
-  let controller: NotificationsController;
-  let notificationsService: NotificationsService;
-  let queueService: QueueService;
+  let controller: NotificationsController
+  let notificationsService: NotificationsService
+  let queueService: QueueService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-        imports: [CacheModule.register()], 
-        controllers: [NotificationsController],
+      imports: [CacheModule.register()],
+      controllers: [NotificationsController],
       providers: [
         {
           provide: NotificationsService,
@@ -36,48 +36,71 @@ describe('NotificationsController', () => {
           },
         },
         {
-            // Assuming this is the correct token based on your controller's constructor
-            provide: 'IslandIsMessageQueue/QueueService/notifications',
-            useValue: { add: jest.fn().mockResolvedValue('mockQueueId') },
-          },
+          // Assuming this is the correct token based on your controller's constructor
+          provide: 'IslandIsMessageQueue/QueueService/notifications',
+          useValue: { add: jest.fn().mockResolvedValue('mockQueueId') },
+        },
         {
-            provide: CacheInterceptor,
-            useValue: jest.fn(),
-        }
+          provide: CacheInterceptor,
+          useValue: jest.fn(),
+        },
       ],
-    }).compile();
+    }).compile()
 
-    controller = module.get<NotificationsController>(NotificationsController);
-    notificationsService = module.get<NotificationsService>(NotificationsService);
-    queueService = module.get('IslandIsMessageQueue/QueueService/notifications');
-});
+    controller = module.get<NotificationsController>(NotificationsController)
+    notificationsService =
+      module.get<NotificationsService>(NotificationsService)
+    queueService = module.get('IslandIsMessageQueue/QueueService/notifications')
+  })
 
   // Individual tests go here
   describe('getNotificationTemplates', () => {
     it('should return an array of notification templates', async () => {
-      const templates: HnippTemplate[] = [{ templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT', notificationTitle: 'New document', notificationBody: 'New document from {{organization}}', args: ['arg1', 'arg2'] }];
-  
-      jest.spyOn(notificationsService, 'getTemplates').mockResolvedValue(templates);
-  
-      const result = await controller.getNotificationTemplates(Locale.IS);
-  
-      expect(notificationsService.getTemplates).toHaveBeenCalledWith(Locale.IS);
-      expect(result).toEqual(templates);
-    });
-  });
+      const templates: HnippTemplate[] = [
+        {
+          templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+          notificationTitle: 'New document',
+          notificationBody: 'New document from {{organization}}',
+          args: ['arg1', 'arg2'],
+        },
+      ]
+
+      jest
+        .spyOn(notificationsService, 'getTemplates')
+        .mockResolvedValue(templates)
+
+      const result = await controller.getNotificationTemplates(Locale.IS)
+
+      expect(notificationsService.getTemplates).toHaveBeenCalledWith(Locale.IS)
+      expect(result).toEqual(templates)
+    })
+  })
 
   describe('getNotificationTemplate', () => {
     it('should return a single notification template by ID', async () => {
-      const template: HnippTemplate = { templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT', notificationTitle: 'Title', notificationBody: 'Body', args: ['arg1'] };
-  
-      jest.spyOn(notificationsService, 'getTemplate').mockResolvedValue(template);
-  
-      const result = await controller.getNotificationTemplate('HNIPP.POSTHOLF.NEW_DOCUMENT', Locale.IS);
-  
-      expect(notificationsService.getTemplate).toHaveBeenCalledWith('HNIPP.POSTHOLF.NEW_DOCUMENT', Locale.IS);
-      expect(result).toEqual(template);
-    });
-  });
+      const template: HnippTemplate = {
+        templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        notificationTitle: 'Title',
+        notificationBody: 'Body',
+        args: ['arg1'],
+      }
+
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockResolvedValue(template)
+
+      const result = await controller.getNotificationTemplate(
+        'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        Locale.IS,
+      )
+
+      expect(notificationsService.getTemplate).toHaveBeenCalledWith(
+        'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        Locale.IS,
+      )
+      expect(result).toEqual(template)
+    })
+  })
   describe('createHnippNotification', () => {
     it('should validate and queue a new Hnipp notification, returning a response with the id', async () => {
       const createHnippNotificationDto: CreateHnippNotificationDto = {
@@ -87,38 +110,35 @@ describe('NotificationsController', () => {
           { key: 'organization', value: 'Test Organization' },
           { key: 'documentId', value: '1234' },
         ],
-      };
-  
-      jest.spyOn(notificationsService, 'validate').mockResolvedValue(undefined);
-  
-      const mockQueueId = 'mockQueueId';
-      jest.spyOn(queueService, 'add').mockResolvedValue(mockQueueId);
-  
-      let validationError;
-      try {
-        await controller.createHnippNotification(createHnippNotificationDto);
-      } catch (error) {
-        validationError = error;
       }
-  
+
+      jest.spyOn(notificationsService, 'validate').mockResolvedValue(undefined)
+
+      const mockQueueId = 'mockQueueId'
+      jest.spyOn(queueService, 'add').mockResolvedValue(mockQueueId)
+
+      let validationError
+      try {
+        await controller.createHnippNotification(createHnippNotificationDto)
+      } catch (error) {
+        validationError = error
+      }
+
       // Asserting the validation passed by checking no error was thrown
-      expect(validationError).toBeUndefined();
-  
+      expect(validationError).toBeUndefined()
+
       // Additionally, checking the validate method was called correctly
       expect(notificationsService.validate).toHaveBeenCalledWith(
         createHnippNotificationDto.templateId,
-        createHnippNotificationDto.args
-      );
-  
+        createHnippNotificationDto.args,
+      )
+
       // Assert that the queueService.add was called with any argument, considering
       // the test setup does not specify the exact argument structure.
-      expect(queueService.add).toHaveBeenCalledWith(expect.anything());
-  
+      expect(queueService.add).toHaveBeenCalledWith(expect.anything())
+
       // If reaching this point without errors, validation is considered successful.
-      expect(true).toBe(true); // This is implicitly true if no error was thrown.
-    });
-  });
-  
-  
-  
-});
+      expect(true).toBe(true) // This is implicitly true if no error was thrown.
+    })
+  })
+})

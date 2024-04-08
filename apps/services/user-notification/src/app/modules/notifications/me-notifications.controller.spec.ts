@@ -1,21 +1,21 @@
-import request from 'supertest';
-import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../../app.module'; // Import your AppModule
+import request from 'supertest'
+import { INestApplication } from '@nestjs/common'
+import { Test, TestingModule } from '@nestjs/testing'
+import { AppModule } from '../../app.module' // Import your AppModule
 
 describe('MeNotificationsController', () => {
-  let app: INestApplication;
-  let server: request.SuperTest<request.Test>;
+  let app: INestApplication
+  let server: request.SuperTest<request.Test>
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    }).compile()
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-    server = request(app.getHttpServer());
-  });
+    app = moduleFixture.createNestApplication()
+    await app.init()
+    server = request(app.getHttpServer())
+  })
 
   // describe('Authenticated users with correct scopes', () => {
   //   it('GET /me/notifications should return 200', async () => {
@@ -48,16 +48,16 @@ describe('MeNotificationsController', () => {
   describe('Unauthenticated users', () => {
     it('GET /me/notifications should return 401', async () => {
       // Make an unauthenticated request
-      const response = await server.get('/me/notifications');
+      const response = await server.get('/me/notifications')
 
-      expect(response.status).toBe(401);
+      expect(response.status).toBe(401)
       // Additional assertions can be added here
-    });
+    })
 
     // Additional tests for other endpoints and HTTP methods
-  });
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

@@ -93,12 +93,11 @@ export class NotificationsController {
   @Get('/templates')
   @Version('1')
   async getNotificationTemplates(
-    @Query('locale') locale: Locale = Locale.IS
+    @Query('locale') locale: Locale = Locale.IS,
   ): Promise<HnippTemplate[]> {
     this.logger.info(`Fetching hnipp templates for locale: ${locale}`)
     return await this.notificationsService.getTemplates(locale)
   }
-
 
   @Documentation({
     summary: 'Fetches a single notification template',
@@ -126,7 +125,7 @@ export class NotificationsController {
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
-    @Query('locale') locale: Locale = Locale.IS
+    @Query('locale') locale: Locale = Locale.IS,
   ): Promise<HnippTemplate> {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
@@ -150,11 +149,11 @@ export class NotificationsController {
     this.logger.info('Message queued', {
       messageId: id,
       ...flattenedArgs,
-      ...body
+      ...body,
     })
 
     return {
-      id
+      id,
     }
   }
 }

@@ -218,7 +218,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
 
     const [template, individual] = await Promise.all([
-      this.notificationsService.getTemplate(message.templateId,mapStringToLocale(profile.locale),
+      this.notificationsService.getTemplate(
+        message.templateId,
+        mapStringToLocale(profile.locale),
       ),
       this.nationalRegistryService.getName(profile.nationalId),
     ])
