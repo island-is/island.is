@@ -112,7 +112,7 @@ export const typeOfBankInfo = (
     : BankAccountType.ICELANDIC
 }
 
-export function getYesNoOptions() {
+export const getYesNoOptions = () => {
   const options: Option[] = [
     {
       value: YES,
@@ -127,7 +127,7 @@ export function getYesNoOptions() {
   return options
 }
 
-export function getTaxOptions() {
+export const getTaxOptions = () => {
   const options: Option[] = [
     {
       value: TaxLevelOptions.INCOME,
