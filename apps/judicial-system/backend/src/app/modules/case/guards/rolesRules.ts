@@ -301,7 +301,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     }
     if (
       !isIndictmentCase(theCase.type) &&
-      [CaseTransition.RETURN_INDICTMENT].includes(request.body.transition)
+      request.body.transition === CaseTransition.RETURN_INDICTMENT
     ) {
       return false
     }
