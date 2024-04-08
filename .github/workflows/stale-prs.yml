@@ -7,7 +7,7 @@ jobs:
   stale:
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     steps:
       - uses: actions/stale@v8
         with:

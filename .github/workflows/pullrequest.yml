@@ -23,7 +23,7 @@ jobs:
   prepare:
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
 
     env:
@@ -233,7 +233,7 @@ jobs:
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -292,7 +292,7 @@ jobs:
     if: needs.prepare.outputs.E2E_CHUNKS
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -358,7 +358,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -386,7 +386,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -403,7 +403,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -447,7 +447,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -497,7 +497,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -544,7 +544,7 @@ jobs:
   success:
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     if: always()
     needs:
       - prepare

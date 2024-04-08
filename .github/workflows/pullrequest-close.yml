@@ -14,7 +14,7 @@ jobs:
     name: Clean up feature deployment
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     steps:
       - name: Get git branch
         run: |

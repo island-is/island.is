@@ -14,7 +14,7 @@ jobs:
     name: Analyze
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
 
     strategy:
       fail-fast: false

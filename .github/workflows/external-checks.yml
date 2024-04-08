@@ -13,7 +13,7 @@ jobs:
     name: Lint CODEOWNERS
     runs-on: ec2-runners
     container:
-      image: ${{ EC2_IMAGE }}
+      image: ${{ vars.EC2_IMAGE }}
     env:
       CHECK: 'false'
 
