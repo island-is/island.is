@@ -72,12 +72,12 @@ export class StepsService {
       .catch((e) => this.handle4xx(e, 'failed to delete step'))
 
     if (!response || response instanceof ApolloError) {
-      return
+      return void 0
     }
-    return response as void
+    return response
   }
 
-  async updateStep(auth: User, input: UpdateStepInput): Promise<Step> {
+  async updateStep(auth: User, input: UpdateStepInput): Promise<void> {
     const request: ApiStepsStepIdPutRequest = {
       stepId: input.stepId,
       stepUpdateDto: input.stepUpdateDto
@@ -88,8 +88,8 @@ export class StepsService {
       .catch((e) => this.handle4xx(e, 'failed to update step'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      return void 0
     }
-    return response as Step
+    return response
   }
 }

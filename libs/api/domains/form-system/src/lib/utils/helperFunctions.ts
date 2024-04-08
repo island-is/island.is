@@ -47,7 +47,7 @@ interface GraphQLInputSettings {
   [key: string]: unknown
 }
 
-export function RestToGraphqlInputSettings(input?: RESTInputSettings): GraphQLInputSettings {
+export function restToGraphqlInputSettings(input?: RESTInputSettings): GraphQLInputSettings {
   return {
     hasInput: input?.erInnslattur,
     isList: input?.erListi,
@@ -70,7 +70,7 @@ export function RestToGraphqlInputSettings(input?: RESTInputSettings): GraphQLIn
   }
 }
 
-export function GraphqlToRestInputSettings(input?: InputSettings): RESTInputSettings {
+export function graphqlToRestInputSettings(input?: InputSettings): RESTInputSettings {
   return {
     erInnslattur: input?.hasInput,
     erListi: input?.isList,

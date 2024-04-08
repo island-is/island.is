@@ -45,7 +45,8 @@ export class FormsResolver {
     return this.formsService.postForm(user, input)
   }
 
-  @Mutation(() => FormResponse, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemUpdateForm'
   })
   async updateForm(
@@ -55,14 +56,15 @@ export class FormsResolver {
     return this.formsService.updateForm(user, input)
   }
 
-  @Mutation(() => FormResponse, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemDeleteForm'
   })
   async deleteForm(
     @Args('input', { type: () => DeleteFormInput }) input: DeleteFormInput,
     @CurrentUser() user: User
   ): Promise<void> {
-    return this.formsService.deleteForm(user, input)
+    return await this.formsService.deleteForm(user, input)
   }
 
 

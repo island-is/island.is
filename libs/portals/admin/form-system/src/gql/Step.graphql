@@ -1,0 +1,107 @@
+mutation formSystemCreateStep(
+  $input: FormSystemCreateStepInput!
+) {
+  formSystemCreateStep(input: $input) {
+    callRuleset
+    displayOrder
+    groups {
+      displayOrder
+      guid
+      id
+      inputs {
+        description {
+          is
+          en
+        }
+        displayOrder
+        groupGuid
+        groupId
+        guid
+        id
+        inputFields
+        inputSettings {
+          amount
+          buttonText {
+            is
+            en
+          }
+          hasInput
+          hasLink
+          header
+          interval
+          isLarge
+          isList
+          isMulti
+          list {
+            description {
+              is
+              en
+            }
+            displayOrder
+            guid
+            isSelected
+            label {
+              is
+              en
+            }
+            value
+          }
+          max
+          maxLength
+          maxSize
+          min
+          minLength
+          name {
+            is
+            en
+          }
+          size
+          type
+          types
+          url
+        }
+        isHidden
+        isPartOfMultiSet
+        isRequired
+        name {
+          is
+          en
+        }
+        type
+      }
+      isHidden
+      multiSet
+      name {
+        is
+        en
+      }
+      stepGuid
+      stepId
+    }
+    guid
+    id
+    isCompleted
+    isHidden
+    name {
+      is
+      en
+    }
+    type
+    waitingText {
+      is
+      en
+    }
+  }
+}
+
+mutation formSystemDeleteStep(
+  $input: FormSystemDeleteStepInput!
+) {
+  formSystemDeleteStep(input: $input)
+}
+
+mutation formSystemUpdateStep(
+  $input: FormSystemUpdateStepInput!
+) {
+  formSystemUpdateStep(input: $input)
+}

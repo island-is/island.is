@@ -74,13 +74,13 @@ export class GroupInput {
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
-  @Field(() => [InputInput])
+  @Field(() => [InputInput], { nullable: 'itemsAndList' })
   inputs?: InputInput[] | null
 
   @Field(() => Int, { nullable: true })
   stepId?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   multiSet?: number
 
   @Field(() => String, { nullable: true })

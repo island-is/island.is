@@ -3,7 +3,8 @@
   "compilerOptions": {
     //"module": "commonjs"
     "jsx": "react-jsx",
-    "allowJs": true
+    "allowJs": true,
+    "resolveJsonModule": true,
   },
   "files": [],
   "include": [],

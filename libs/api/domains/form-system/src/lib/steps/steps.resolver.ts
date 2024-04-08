@@ -33,23 +33,25 @@ export class StepsResolver {
     return this.stepsService.postStep(user, input)
   }
 
-  @Mutation(() => Step, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemDeleteStep'
   })
   async deleteStep(
     @Args('input', { type: () => DeleteStepInput }) input: DeleteStepInput,
     @CurrentUser() user: User
   ): Promise<void> {
-    return this.stepsService.deleteStep(user, input)
+    return await this.stepsService.deleteStep(user, input)
   }
 
-  @Mutation(() => Step, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemUpdateStep'
   })
   async updateStep(
     @Args('input', { type: () => UpdateStepInput }) input: UpdateStepInput,
     @CurrentUser() user: User
-  ): Promise<Step> {
+  ): Promise<void> {
     return this.stepsService.updateStep(user, input)
   }
 }

@@ -13,19 +13,19 @@ export class Group {
   @Field(() => String, { nullable: true })
   guid?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   displayOrder?: number
 
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
-  @Field(() => [Input])
+  @Field(() => [Input], { nullable: 'itemsAndList' })
   inputs?: Input[] | null
 
   @Field(() => Int, { nullable: true })
   stepId?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   multiSet?: number
 
   @Field(() => String, { nullable: true })

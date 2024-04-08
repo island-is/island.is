@@ -32,23 +32,25 @@ export class GroupsResolver {
     return this.groupsService.postGroup(user, input)
   }
 
-  @Mutation(() => Group, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemDeleteGroup'
   })
   async deleteGroup(
     @Args('input', { type: () => DeleteGroupInput }) input: DeleteGroupInput,
     @CurrentUser() user: User
   ): Promise<void> {
-    return this.groupsService.deleteGroup(user, input)
+    return await this.groupsService.deleteGroup(user, input)
   }
 
-  @Mutation(() => Group, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemUpdateGroup'
   })
   async updateGroup(
     @Args('input', { type: () => UpdateGroupInput }) input: UpdateGroupInput,
     @CurrentUser() user: User
-  ): Promise<Group> {
+  ): Promise<void> {
     return this.groupsService.updateGroup(user, input)
   }
 }

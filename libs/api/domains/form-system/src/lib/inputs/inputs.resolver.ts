@@ -32,23 +32,26 @@ export class InputsResolver {
     return this.inputsService.postInput(user, input)
   }
 
-  @Mutation(() => Input, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemDeleteInput'
   })
   async deleteInput(
     @Args('input', { type: () => DeleteInputInput }) input: DeleteInputInput,
     @CurrentUser() user: User
   ): Promise<void> {
-    return this.inputsService.deleteInput(user, input)
+    const response = await this.inputsService.deleteInput(user, input)
+    return response
   }
 
-  @Mutation(() => Input, {
+  @Mutation(() => Boolean, {
+    nullable: true,
     name: 'formSystemUpdateInput'
   })
   async updateInput(
     @Args('input', { type: () => UpdateInputInput }) input: UpdateInputInput,
     @CurrentUser() user: User
-  ): Promise<Input> {
+  ): Promise<void> {
     return this.inputsService.updateInput(user, input)
   }
 }

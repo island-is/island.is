@@ -4,10 +4,13 @@ import { m } from './lib/messages';
 import { PortalModule } from '@island.is/portals/core'
 import { FormSystemPaths } from './lib/paths'
 import { formsLoader } from './screens/Forms/Forms.loader';
+import { formLoader } from './screens/Form/Form.loader';
 
 const Forms = lazy(() =>
   import('./screens/Forms/Forms')
 )
+
+const Form = lazy(() => import('./screens/Form/Form'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.formSystem,
@@ -19,13 +22,19 @@ export const formSystemModule: PortalModule = {
   layout: 'full',
   enabled: ({ userInfo }) =>
     userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
-  routes: () => {
+  routes: (props) => {
     return [
       {
         name: m.formSystemTitle,
         path: FormSystemPaths.FormSystemRoot,
         element: <Forms />,
-        // loader: formsLoader(props)
+        loader: formsLoader(props)
+      },
+      {
+        name: m.formSystemIntro,
+        path: FormSystemPaths.Form,
+        element: <Form />,
+        loader: formLoader(props)
       }
     ]
   }

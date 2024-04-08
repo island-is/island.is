@@ -1,6 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 
-@InputType('FormSystemGlobalInput')
+@InputType('FormSystemLanguageTypeInput')
 export class LanguageTypeInput {
   @Field(() => String, { nullable: true })
   is?: string | null

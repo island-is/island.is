@@ -12,7 +12,7 @@ export const formSystemNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.formSystemTitle,
-      path: FormSystemPaths.FormSystemRoot,
+      path: FormSystemPaths.Form,
       activeIfExact: true
     }
   ]

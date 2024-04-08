@@ -101,7 +101,12 @@ const TableRow = ({
                 {
                   title: 'Breyta',
                   onClick: () => {
-                    navigate(FormSystemPaths.Form.replace(':formId', String(id)))
+                    navigate(FormSystemPaths.Form.replace(':formId', String(id)),
+                      {
+                        state: {
+                          formId: id
+                        }
+                      })
                   },
                 },
                 {

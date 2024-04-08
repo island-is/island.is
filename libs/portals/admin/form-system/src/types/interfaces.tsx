@@ -1,20 +1,15 @@
 import { Dispatch, SetStateAction, FocusEvent } from 'react'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { EFormApplicantTypes } from './enums'
-import { Action as ListsAction } from '../hooks/listsReducer'
 import { FormAction } from '../hooks/formReducer'
 import { FormHeaderAction } from '../hooks/headerInfoReducer'
+import { FormSystemApplicantType, FormSystemDocumentType, FormSystemForm, FormSystemGroup, FormSystemInput, FormSystemListType, FormSystemStep } from '@island.is/api/schema'
+import { Maybe } from 'graphql/jsutils/Maybe'
 
 export type IFormBuilderContext = {
-  formBuilder: IFormBuilder
-  formDispatch: Dispatch<FormAction>
-  lists: {
-    activeItem: ActiveItem
-    steps: IStep[]
-    groups: IGroup[]
-    inputs: IInput[]
-  }
-  listsDispatch: Dispatch<ListsAction>
+  // formBuilder: IFormBuilder
+  // formDispatch: Dispatch<FormAction>
+  lists: ILists
   formUpdate: () => Promise<void>
   inSettings: boolean
   setInSettings: Dispatch<SetStateAction<boolean>>
@@ -118,15 +113,15 @@ export interface IInput {
 
 export type ILists = {
   activeItem: ActiveItem
-  steps: IStep[]
-  groups: IGroup[]
-  inputs: IInput[]
+  steps?: Maybe<FormSystemStep>[]
+  groups?: Maybe<FormSystemGroup>[]
+  inputs?: Maybe<FormSystemInput>[]
   [key: string]: unknown
 }
 
 export interface ActiveItem {
   type: ItemType
-  data: IStep | IGroup | IInput
+  data: Maybe<FormSystemStep> | Maybe<FormSystemGroup> | Maybe<FormSystemInput>
 }
 
 export interface ISelectOption {
@@ -139,12 +134,12 @@ export interface ITenging {
 }
 
 export interface IFormBuilder {
-  form: IForm
-  forms?: IForm[] | null
-  documentTypes: ICertificate[]
-  inputTypes: IInputType[]
-  applicantTypes: IApplicantType[]
-  listTypes: IListType[]
+  form?: Maybe<FormSystemForm>
+  forms?: Maybe<IForm>[] | null
+  documentTypes?: Maybe<Maybe<FormSystemDocumentType>[]>
+  inputTypes?: Maybe<Maybe<FormSystemInput>[]>
+  applicantTypes?: Maybe<Maybe<FormSystemApplicantType>[]>
+  listTypes?: Maybe<Maybe<FormSystemListType>[]>
 }
 
 export interface IListType {
@@ -232,14 +227,13 @@ export interface ITranslation {
   translatedText: string
   translatedTextStructured: [string, string][]
 }
+
 export enum NavbarSelectStatus {
   OFF = 'Off',
   NORMAL = 'Normal',
   LIST_ITEM = 'ListItem',
   ON_WITHOUT_SELECT = 'OnWithoutSelect',
 }
-
-export type ItemType = 'Step' | 'Group' | 'Input'
 
 export type ILanguage = {
   is: string
@@ -251,3 +245,5 @@ export interface User {
   image?: string
 }
 type Sizes = 'xs' | 'sm' | 'md'
+
+export type ItemType = 'Step' | 'Group' | 'Input'

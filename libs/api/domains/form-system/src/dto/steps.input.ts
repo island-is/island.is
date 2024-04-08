@@ -80,7 +80,7 @@ export class StepInput {
   waitingText?: LanguageTypeInput
 
   @Field(() => Boolean, { nullable: true })
-  callRulest?: boolean
+  callRuleset?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean

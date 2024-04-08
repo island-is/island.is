@@ -6,7 +6,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { CreateFormInput, DeleteFormInput, GetFormInput, GetFormsInput, UpdateFormInput } from "../../dto/forms.input"
 import { FormResponse } from "../../models/formResponse.model"
 import { FormListResponse } from "../../models/formListResponse.model"
-import { GraphqlToRestInputSettings, RESTInputSettings, RestToGraphqlInputSettings } from "../utils/helperFunctions"
+import { graphqlToRestInputSettings, RESTInputSettings, restToGraphqlInputSettings } from "../utils/helperFunctions"
 import { Form } from "../../models/form.model"
 import { Input } from "../../models/input.model"
 
@@ -59,7 +59,7 @@ export class FormsService {
       inputsList: response.form?.inputsList?.map((input) => {
         return {
           ...input,
-          inputSettings: RestToGraphqlInputSettings(input.inputSettings as RESTInputSettings)
+          inputSettings: restToGraphqlInputSettings(input.inputSettings as RESTInputSettings)
         }
       })
     }
@@ -114,10 +114,11 @@ export class FormsService {
   async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
     const formattedForm = {
       ...input.form,
+      id: input.formId,
       inputsList: input.form?.inputsList?.map((input) => {
         return {
           ...input,
-          inputSettings: GraphqlToRestInputSettings(input.inputSettings)
+          inputSettings: graphqlToRestInputSettings(input.inputSettings)
         }
       })
     }
@@ -126,11 +127,11 @@ export class FormsService {
       formId: input.formId,
       formUpdateDto: formattedForm as FormUpdateDto,
     }
-
+    console.log('request: ', request)
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update form'))
-
+    console.log('response: ', response)
     if (!response || response instanceof ApolloError) {
       return void 0
     }

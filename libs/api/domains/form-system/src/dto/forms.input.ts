@@ -53,7 +53,7 @@ export class FormInput {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date | null
 
-  @Field(() => graphqlTypeJson)
+  @Field(() => graphqlTypeJson, { nullable: true })
   dependencies?: { [key: string]: string[] } | null
 
   @Field(() => [DocumentTypeInput], { nullable: 'itemsAndList' })
@@ -65,11 +65,11 @@ export class FormInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   completedMessage?: LanguageTypeInput
 
-  @Field()
-  isTranslated?: boolean
+  @Field(() => Boolean, { nullable: true })
+  isTranslated?: boolean | null
 
-  @Field()
-  stopProgressOnValidatingStep?: boolean
+  @Field(() => Boolean, { nullable: true })
+  stopProgressOnValidatingStep?: boolean | null
 
   @Field(() => Int, { nullable: true })
   applicationsDaysToRemove?: number

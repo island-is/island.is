@@ -15,7 +15,7 @@ export class Input {
   @Field(() => LanguageType, { nullable: true })
   description?: LanguageType
 
-  @Field()
+  @Field(() => Boolean, { nullable: true })
   isRequired?: boolean
 
   @Field(() => Int, { nullable: true })
@@ -24,7 +24,7 @@ export class Input {
   @Field(() => Int, { nullable: true })
   groupId?: number
 
-  @Field()
+  @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
   @Field(() => String, { nullable: true })
@@ -33,7 +33,7 @@ export class Input {
   @Field(() => String, { nullable: true })
   guid?: string
 
-  @Field()
+  @Field(() => Boolean, { nullable: true })
   isPartOfMultiSet?: boolean
 
   @Field(() => String, { nullable: true })

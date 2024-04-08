@@ -23,7 +23,7 @@ export class Step {
   waitingText?: LanguageType
 
   @Field(() => Boolean, { nullable: true })
-  callRulest?: boolean
+  callRuleset?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
