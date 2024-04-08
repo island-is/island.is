@@ -36,7 +36,7 @@ export const info = buildMultiField({
       width: 'half',
       largeButtons: false,
       space: 'containerGutter',
-      defaultValue: PassportStatus.LOST,
+      defaultValue: [],
       options: () => [
         {
           value: PassportStatus.LOST,
