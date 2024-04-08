@@ -1325,7 +1325,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onEntry: [
             defineTemplateApi({
               action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENTPERIOD,
+              params: FileType.DOCUMENT,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
