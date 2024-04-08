@@ -4,6 +4,7 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
+  NationalRegistryIndividual,
   TagVariant,
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
@@ -97,14 +98,14 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           defaultValue: '',
           options: [
             {
-              label: (application.externalData.nationalRegistry.data as any)
+              label: (application.externalData.nationalRegistry.data as NationalRegistryIndividual)
                 ?.fullName,
               value:
                 identityDocumentData.userPassport?.productionRequestID +
                 ',' +
                 identityDocumentData.userPassport?.numberWithType +
                 ',' +
-                (application.externalData.nationalRegistry.data as any)
+                (application.externalData.nationalRegistry.data as NationalRegistryIndividual)
                   ?.fullName,
               subLabel: identityDocumentData.userPassport
                 ? formatMessage(m.passportNumber) +

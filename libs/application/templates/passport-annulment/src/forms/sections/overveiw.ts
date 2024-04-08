@@ -1,11 +1,12 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildDividerField,
   buildKeyValueField,
   buildMultiField,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application, DefaultEvents, YES } from '@island.is/application/types'
 import { STATUS } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
@@ -24,7 +25,7 @@ export const overview = buildMultiField({
     }),
     buildKeyValueField({
       label: m.name,
-      width: 'half',
+      width: 'full',
       value: (application: Application) =>
         (
           application.answers as {
@@ -32,9 +33,14 @@ export const overview = buildMultiField({
           }
         )?.passportName,
     }),
+    buildDescriptionField({
+      id: 'overview.space0',
+      title: '',
+      space: 'gutter',
+    }),
     buildKeyValueField({
       label: m.passportNumber,
-      width: 'half',
+      width: 'full',
       value: (application: Application) =>
         (
           application.answers as {
@@ -42,9 +48,8 @@ export const overview = buildMultiField({
           }
         )?.passportNumber,
     }),
-
     buildDescriptionField({
-      id: 'overview.space',
+      id: 'overview.space1',
       title: '',
       space: 'gutter',
     }),
@@ -61,20 +66,33 @@ export const overview = buildMultiField({
       title: '',
       space: 'gutter',
     }),
-    buildKeyValueField({
-      label: m.commentTitle,
-      width: 'full',
-      value: (application: Application) =>
-        (
-          application.answers as {
-            comment?: string
-          }
-        )?.comment,
+    buildDividerField({}),
+    buildDescriptionField({
+      id: 'overview.confirmTitle',
+      title: m.confirmTitle,
+      titleVariant: 'h3',
+      description: '',
+      space: 'gutter',
+      marginBottom: 2,
     }),
     buildDescriptionField({
-      id: 'overview.space3',
+      id: 'overview.confirmDescription',
       title: '',
-      space: 'gutter',
+      description: m.confirmDescription,
+      marginBottom: 3,
+    }),
+    buildCheckboxField({
+      id: 'confirmAnnulment',
+      title: '',
+      backgroundColor: 'white',
+      defaultValue: [],
+      large: false,
+      options: () => [
+        {
+          value: YES,
+          label: 'Ég skil að....',
+        },
+      ],
     }),
     buildSubmitField({
       id: 'submit',

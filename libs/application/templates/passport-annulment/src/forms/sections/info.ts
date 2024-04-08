@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildTextField,
   buildRadioField,
@@ -30,15 +29,8 @@ export const info = buildMultiField({
       defaultValue: (application: Application) =>
         application.answers.passportNumber,
     }),
-    buildDescriptionField({
-      id: 'service.dropTypeDescription',
-      title: m.infoText,
-      titleVariant: 'h3',
-      description: m.infoTextDescription,
-      space: 'containerGutter',
-    }),
     buildRadioField({
-      id: 'status',
+      id: 'passportStatus',
       title: m.statusTitle,
       width: 'half',
       largeButtons: false,
@@ -53,14 +45,6 @@ export const info = buildMultiField({
           label: m.statusStolen,
         },
       ],
-    }),
-    buildTextField({
-      id: 'comment',
-      title: m.commentTitle,
-      variant: 'textarea',
-      doesNotRequireAnswer: true,
-      placeholder: m.commentPlaceholder,
-      rows: 7,
     }),
   ],
 })
