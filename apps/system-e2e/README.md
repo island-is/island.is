@@ -6,8 +6,8 @@ Welcome to testing. For your convenience each section has a TL;DR, so you can qu
 
 System smoke tests are run against our live [dev web](https://beta.dev01.devland.is/), on every commit to `main`.
 This means that changes done on the dev web will be reflected in the system tests.
-E.g. if you change a users preferred locale, your test will break if it's not language-agnostic.
-To combat this we have implemented `disablers.disable*` and `urls.icelandicAndNoPopup`.
+E.g. if you change a user's preferred locale, your test will break if it's not language-agnostic.
+To combat this, we have implemented `disablers.disable*` and `urls.icelandicAndNoPopup`.
 We plan on phasing these out for mocking with Mountebank and test servers.
 
 System acceptance tests will be running in their own isolated dev-environment, daily.
@@ -211,4 +211,4 @@ This is an infrastructure issue and should have been resolved. If you see this i
 
 ## ⌛ Tests are timing out
 
-This indicates either a local network issue like bad internet (your problem), or a performance problem in the application code. In some cases this can be remedied by increasing the timeout if a certain site/service is known to be slow with `page.goto('/my-url', { timeout: 1e11 })`.
+This indicates either a local network issue like bad internet (your problem), or a performance problem in the application code. In some cases, this can be remedied by increasing the timeout if a certain site/service is known to be slow with `page.goto('/my-url', { timeout: 1e11 })`.
