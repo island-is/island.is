@@ -17,4 +17,23 @@ export const infoCardActiveIndictment = defineMessages({
     defaultMessage: 'Brot',
     description: 'Notaður sem titill á "brot" hluta af yfirliti ákæru.',
   },
+  scheduled: {
+    id: 'judicial.system.indictments:overview.scheduled',
+    defaultMessage: 'Á dagskrá',
+    description: 'Notaður sem texti sem tilgreinir að málið sé á dagskrá',
+  },
+})
+
+export const infoCardCaseScheduled = defineMessages({
+  scheduled: {
+    id: 'judicial.system.indictments:overview.scheduled',
+    defaultMessage: 'Á dagskrá',
+    description: 'Notaður sem texti sem tilgreinir að málið sé á dagskrá',
+  },
+  courtRoom: {
+    id: 'judicial.system.indictments:overview.court_room',
+    defaultMessage:
+      '{courtRoom, select, NONE {Dómsalur hefur ekki verið skráður} other {Dómsalur {courtRoom}}}',
+    description: 'Notaður sem texti sem tilgreinir hvaða dómsalur er skráður',
+  },
 })

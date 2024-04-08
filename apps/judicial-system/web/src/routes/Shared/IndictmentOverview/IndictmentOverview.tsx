@@ -1,5 +1,7 @@
 import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import isFuture from 'date-fns/isFuture'
+import parseISO from 'date-fns/parseISO'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -24,6 +26,7 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 
 import { strings } from './IndictmentOverview.strings'
 
@@ -66,6 +69,15 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {!caseIsClosed && workingCase.courtDate && workingCase.court && (
+          <Box component="section" marginBottom={5}>
+            <InfoCardCaseScheduled
+              court={workingCase.court}
+              courtDate={workingCase.courtDate}
+              courtRoom={workingCase.courtRoom}
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment />

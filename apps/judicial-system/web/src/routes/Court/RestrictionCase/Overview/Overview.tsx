@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import {
   core,
   laws,
@@ -37,6 +38,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
@@ -105,6 +107,17 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
+        {!isCompletedCase(workingCase.state) &&
+          workingCase.courtDate &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={workingCase.courtDate}
+                courtRoom={workingCase.courtRoom}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

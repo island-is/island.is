@@ -16,6 +16,7 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
@@ -39,6 +40,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import {
   UploadState,
   useCourtUpload,
@@ -102,7 +104,17 @@ const Overview = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
-
+        {!isCompletedCase(workingCase.state) &&
+          workingCase.courtDate &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={workingCase.courtDate}
+                courtRoom={workingCase.courtRoom}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
