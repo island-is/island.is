@@ -90,7 +90,7 @@ export const overview = buildMultiField({
       options: () => [
         {
           value: YES,
-          label: 'Ég skil að....',
+          label: m.confirmCheckboxLabel,
         },
       ],
     }),

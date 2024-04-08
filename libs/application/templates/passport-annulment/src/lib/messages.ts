@@ -123,6 +123,11 @@ export const m = defineMessages({
       'Vegabréf sem tilkynnt eru glötuð eru skráð inn í Schengen og Interpol upplýsingakerfin og eru þar með ónothæf. Tilkynna skal lögreglu, Þjóðskrá Íslands eða sendimönnum Íslands erlendis þegar í stað ef vegabréf glatast, og gera sérstaka grein fyrir afdrifum þess.\n\n Einungis er hægt að tilkynna um sitt eigið vegabréf og þeirra barna sem tilkynnandi hefur forsjá yfir.',
     description: 'Some description',
   },
+  confirmCheckboxLabel: {
+    id: 'paa.application:confirmCheckboxLabel',
+    defaultMessage: 'Ég staðfesti að ég skilji þessa upplýsingar',
+    description: 'Some description',
+  },
   statusTitle: {
     id: 'paa.application:personalInfo.statusTitle',
     defaultMessage: 'Hvað gerðist við vegabréfið',
