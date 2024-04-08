@@ -26,9 +26,10 @@ import {
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
-import { TAX_FREE_LIMIT } from '../../lib/constants'
+import { DEFAULT_TAX_FREE_LIMIT } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import ShareInput from '../../components/ShareInput'
+import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<
@@ -38,6 +39,8 @@ export const HeirsAndPartitionRepeater: FC<
   const { answers } = application
   const { id, props } = field
   const { customFields } = props
+
+  console.log('application', application)
 
   const { formatMessage } = useLocale()
   const { getValues, setError, setValue } = useFormContext()
@@ -103,9 +106,14 @@ export const HeirsAndPartitionRepeater: FC<
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
+    inheritanceReportInfos: Array<InheritanceReportInfo>
   }
 
   const estateData = getEstateDataFromApplication(application)
+
+  const inheritanceTaxFreeLimit =
+    externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
+      ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
 
   const relations =
     externalData.relationOptions?.map((relation) => ({
@@ -185,7 +193,7 @@ export const HeirsAndPartitionRepeater: FC<
 
       const taxFreeInheritanceValue = isSpouse
         ? inheritanceValue
-        : Math.round(TAX_FREE_LIMIT * percentage)
+        : Math.round(inheritanceTaxFreeLimit * percentage)
       const taxableInheritanceValue = Math.round(
         inheritanceValue - taxFreeInheritanceValue,
       )
@@ -210,7 +218,7 @@ export const HeirsAndPartitionRepeater: FC<
 
       calculateTotal()
     },
-    [answers, calculateTotal, getValues, setValue],
+    [answers, calculateTotal, getValues, inheritanceTaxFreeLimit, setValue],
   )
 
   const initialLoad = useCallback(() => {
