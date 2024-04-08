@@ -275,6 +275,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ...(!hasDisabilityAssessment(data.typeOfBasePension) && {
         ageOfFirst75DisabilityAssessment: undefined,
       }),
+      ...(hasDisabilityAssessment(data.typeOfBasePension) && {
+        livingConditionAbroadInYears: undefined,
+      }),
       ...(!hasStartDate(data.typeOfBasePension) && {
         birthMonth: undefined,
         birthYear: undefined,
@@ -748,78 +751,79 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             </Box>
                           )}
                         </Stack>
-
-                        <Stack space={2}>
-                          <Text>
-                            {formatMessage(
-                              translationStrings.hasLivedAbroadLabel,
-                            )}
-                          </Text>
-                          <Box className={styles.inputContainer}>
-                            <Inline space={3}>
-                              <RadioButton
-                                id="hasLivedAbroadNo"
-                                checked={hasLivedAbroad === false}
-                                onChange={() => {
-                                  setHasLivedAbroad(false)
-                                  methods.setValue(
-                                    'livingConditionAbroadInYears',
-                                    null,
-                                  )
-                                }}
-                                label={formatMessage(
-                                  translationStrings.hasLivedAbroadNo,
-                                )}
-                              />
-                              <RadioButton
-                                id="hasLivedAbroadYes"
-                                checked={hasLivedAbroad === true}
-                                onChange={() => {
-                                  setHasLivedAbroad(true)
-                                }}
-                                label={formatMessage(
-                                  translationStrings.hasLivedAbroadYes,
-                                )}
-                              />
-                            </Inline>
-                          </Box>
-
-                          {hasLivedAbroad && (
+                        {!hasDisabilityAssessment(typeOfBasePension) && (
+                          <Stack space={2}>
+                            <Text>
+                              {formatMessage(
+                                translationStrings.hasLivedAbroadLabel,
+                              )}
+                            </Text>
                             <Box className={styles.inputContainer}>
-                              <InputController
-                                id={
-                                  'livingConditionAbroadInYears' as keyof CalculationInput
-                                }
-                                name={
-                                  'livingConditionAbroadInYears' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.livingConditionAbroadInYearsLabel,
-                                )}
-                                placeholder={formatMessage(
-                                  translationStrings.livingConditionAbroadInYearsPlaceholder,
-                                )}
-                                type="number"
-                                suffix={` ${formatMessage(
-                                  translationStrings.yearsSuffix,
-                                )}`}
-                                format={(value) => {
-                                  if (
-                                    Number(value) >
-                                    maxLivingConditionAbroadInYears
-                                  ) {
-                                    value = String(
-                                      maxLivingConditionAbroadInYears,
+                              <Inline space={3}>
+                                <RadioButton
+                                  id="hasLivedAbroadNo"
+                                  checked={hasLivedAbroad === false}
+                                  onChange={() => {
+                                    setHasLivedAbroad(false)
+                                    methods.setValue(
+                                      'livingConditionAbroadInYears',
+                                      null,
                                     )
-                                  }
-                                  return `${value} ${formatMessage(
-                                    translationStrings.yearsSuffix,
-                                  )}`
-                                }}
-                              />
+                                  }}
+                                  label={formatMessage(
+                                    translationStrings.hasLivedAbroadNo,
+                                  )}
+                                />
+                                <RadioButton
+                                  id="hasLivedAbroadYes"
+                                  checked={hasLivedAbroad === true}
+                                  onChange={() => {
+                                    setHasLivedAbroad(true)
+                                  }}
+                                  label={formatMessage(
+                                    translationStrings.hasLivedAbroadYes,
+                                  )}
+                                />
+                              </Inline>
                             </Box>
-                          )}
-                        </Stack>
+
+                            {hasLivedAbroad && (
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={
+                                    'livingConditionAbroadInYears' as keyof CalculationInput
+                                  }
+                                  name={
+                                    'livingConditionAbroadInYears' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.livingConditionAbroadInYearsLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.livingConditionAbroadInYearsPlaceholder,
+                                  )}
+                                  type="number"
+                                  suffix={` ${formatMessage(
+                                    translationStrings.yearsSuffix,
+                                  )}`}
+                                  format={(value) => {
+                                    if (
+                                      Number(value) >
+                                      maxLivingConditionAbroadInYears
+                                    ) {
+                                      value = String(
+                                        maxLivingConditionAbroadInYears,
+                                      )
+                                    }
+                                    return `${value} ${formatMessage(
+                                      translationStrings.yearsSuffix,
+                                    )}`
+                                  }}
+                                />
+                              </Box>
+                            )}
+                          </Stack>
+                        )}
 
                         <NumericInputFieldWrapper
                           heading={formatMessage(
