@@ -16,7 +16,6 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { isCompletedCase } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
