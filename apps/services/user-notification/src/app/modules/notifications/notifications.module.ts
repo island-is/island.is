@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { CacheModule } from '@nestjs/cache-manager'
+import { ConfigType } from '@nestjs/config'
 import * as firebaseAdmin from 'firebase-admin'
 
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
@@ -23,11 +24,13 @@ import { NotificationDispatchService } from './notificationDispatch.service'
 import {
   IS_RUNNING_AS_WORKER,
   NotificationsWorkerService,
+  SERVICE_PORTAL_CLICK_ACTION_URL,
 } from './notificationsWorker/notificationsWorker.service'
 import {
   APP_PROTOCOL,
   MessageProcessorService,
 } from './messageProcessor.service'
+import { UserNotificationsConfig } from '../../../config'
 
 @Module({
   exports: [NotificationsService],
@@ -67,22 +70,33 @@ import {
     MessageProcessorService,
     {
       provide: FIREBASE_PROVIDER,
-      useFactory: () =>
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
         process.env.INIT_SCHEMA === 'true'
           ? {}
           : firebaseAdmin.initializeApp({
               credential: firebaseAdmin.credential.cert(
-                JSON.parse(environment.firebaseCredentials),
+                config.firebaseCredentials,
               ),
             }),
+      inject: [UserNotificationsConfig.KEY],
     },
     {
       provide: IS_RUNNING_AS_WORKER,
-      useValue: environment.isWorker,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.isWorker,
+      inject: [UserNotificationsConfig.KEY],
     },
     {
       provide: APP_PROTOCOL,
-      useValue: environment.appProtocol,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.appProtocol,
+      inject: [UserNotificationsConfig.KEY],
+    },
+    {
+      provide: SERVICE_PORTAL_CLICK_ACTION_URL,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.servicePortalClickActionUrl,
+      inject: [UserNotificationsConfig.KEY],
     },
   ],
 })
