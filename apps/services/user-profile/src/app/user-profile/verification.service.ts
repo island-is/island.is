@@ -18,7 +18,7 @@ import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { EmailVerification } from './emailVerification.model'
 import { SmsVerification } from './smsVerification.model'
 import { UserProfileConfig } from '../../config'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'verification-service'

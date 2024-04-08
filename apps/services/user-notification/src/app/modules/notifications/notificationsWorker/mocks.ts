@@ -15,6 +15,7 @@ export const userWithDelegations: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithDelegations2: UserProfileDto = {
@@ -25,6 +26,7 @@ export const userWithDelegations2: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWitNoDelegations: UserProfileDto = {
@@ -35,6 +37,7 @@ export const userWitNoDelegations: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithEmailNotificationsDisabled: UserProfileDto = {
@@ -44,6 +47,7 @@ export const userWithEmailNotificationsDisabled: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: false,
+  isRestricted: false,
 }
 
 export const userWithDocumentNotificationsDisabled: UserProfileDto = {
@@ -54,6 +58,7 @@ export const userWithDocumentNotificationsDisabled: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: false,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithFeatureFlagDisabled: UserProfileDto = {
@@ -64,6 +69,7 @@ export const userWithFeatureFlagDisabled: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithSendToDelegationsFeatureFlagDisabled: UserProfileDto = {
@@ -74,6 +80,7 @@ export const userWithSendToDelegationsFeatureFlagDisabled: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const mockHnippTemplate: HnippTemplate = {

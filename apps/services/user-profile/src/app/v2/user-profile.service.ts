@@ -18,7 +18,7 @@ import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
 import { ClientType } from '../types/ClientType'
 import { UserProfileConfig } from '../../config'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1

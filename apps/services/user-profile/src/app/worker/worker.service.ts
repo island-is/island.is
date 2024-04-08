@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import addMonths from 'date-fns/addMonths'
 
 import { logger } from '@island.is/logging'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 import { InjectModel } from '@nestjs/sequelize'
 import { UserProfile } from '../user-profile/userProfile.model'
