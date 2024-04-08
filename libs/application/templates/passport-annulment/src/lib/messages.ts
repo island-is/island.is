@@ -235,7 +235,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   applicationCompleteNextStepsMessage: {
-    id: 'paa.application:applicationCompleteNextStepsMessage',
+    id: 'paa.application:applicationCompleteNextStepsMessage#markdown',
     defaultMessage:
       'Tilkynning um glatað vegabréf hefur verið móttekin og verður skoðuð.',
     description: 'Some description',
