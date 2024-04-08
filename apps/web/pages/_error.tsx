@@ -2,6 +2,8 @@ import React from 'react'
 import type { GetServerSidePropsContext, NextPageContext } from 'next'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
+import { Locale } from '@island.is/shared/types'
+
 import { ErrorPageQuery, ErrorPageQueryVariables } from '../graphql/schema'
 import withApollo from '../graphql/withApollo'
 import { getLocaleFromPath } from '../i18n'
@@ -9,6 +11,7 @@ import I18n from '../i18n/I18n'
 import Layout, { LayoutProps } from '../layouts/main'
 import { ErrorScreen } from '../screens/Error'
 import { GET_ERROR_PAGE } from '../screens/queries'
+import { fetch404RedirectUrl } from '../utils/fetch404RedirectUrl'
 
 type ErrorPageProps = {
   statusCode: number
@@ -58,6 +61,24 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
     const locale = getLocaleFromPath(asPath)
+
+    if (statusCode === 404) {
+      const redirectUrl = await fetch404RedirectUrl(
+        props.apolloClient,
+        asPath,
+        props.locale as Locale,
+      )
+
+      if (redirectUrl) {
+        const isBrowser = typeof window !== 'undefined'
+        if (isBrowser) {
+          window.location.href = redirectUrl
+        } else {
+          res?.writeHead(302, { Location: redirectUrl })
+          res?.end()
+        }
+      }
+    }
 
     if (err) {
       console.error(err)
