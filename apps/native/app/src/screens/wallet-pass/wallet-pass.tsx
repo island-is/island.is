@@ -226,15 +226,22 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <View style={{ height: cardHeight }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
-          {/* Show info alert if PCard */}
-          {data?.license?.type === GenericLicenseType.PCard && (
+          {/* Show info alert if PCard or Ehic */}
+          {(data?.license?.type === GenericLicenseType.PCard ||
+            data?.license?.type === GenericLicenseType.Ehic) && (
             <View style={{ paddingTop: 24 }}>
               <InfoAlert
                 title={intl.formatMessage({
-                  id: 'licenseDetail.pcard.alert.title',
+                  id:
+                    data?.license?.type === GenericLicenseType.PCard
+                      ? 'licenseDetail.pcard.alert.title'
+                      : 'licenseDetail.ehic.alert.title',
                 })}
                 message={intl.formatMessage({
-                  id: 'licenseDetail.pcard.alert.description',
+                  id:
+                    data?.license?.type === GenericLicenseType.PCard
+                      ? 'licenseDetail.pcard.alert.description'
+                      : 'licenseDetail.ehic.alert.description',
                 })}
                 type="info"
                 hasBorder

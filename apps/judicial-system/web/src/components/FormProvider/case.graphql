@@ -198,6 +198,7 @@ query Case($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
+    canProsecutorAppeal
     hasBeenAppealed
     appealedByRole
     appealedDate
