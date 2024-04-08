@@ -88,42 +88,73 @@ export const HomeSupportForm: Form = buildForm({
       id: 'contactsSection',
       title: m.application.contacts.sectionTitle,
       children: [
-        buildTableRepeaterField({
-          id: 'contacts',
+        buildMultiField({
+          id: 'contactsMultiField',
           title: m.application.contacts.sectionTitle,
-          formTitle: m.application.contacts.formTitle,
-          addItemButtonText: m.application.contacts.addContactButton,
-          saveItemButtonText: m.application.contacts.saveContactButton,
-          fields: {
-            name: {
-              component: 'input',
-              label: applicantInformationMessages.labels.name,
-              width: 'half',
-            },
-            email: {
-              component: 'input',
-              label: applicantInformationMessages.labels.email,
-              type: 'email',
-              width: 'half',
-            },
-            phone: {
-              component: 'input',
-              label: applicantInformationMessages.labels.tel,
-              type: 'tel',
-              format: '###-####',
-              width: 'half',
-            },
-            relation: {
-              component: 'input',
-              label: m.application.contacts.relation,
-              width: 'half',
-            },
-          },
-          table: {
-            format: {
-              phone: (value) => formatPhoneNumber(value),
-            },
-          },
+          description: m.application.contacts.sectionDescription,
+          children: [
+            buildTableRepeaterField({
+              id: 'contacts',
+              title: '',
+              marginTop: 0,
+              formTitle: m.application.contacts.formTitle,
+              addItemButtonText: m.application.contacts.addContactButton,
+              saveItemButtonText: m.application.contacts.saveContactButton,
+              fields: {
+                name: {
+                  component: 'input',
+                  label: applicantInformationMessages.labels.name,
+                  width: 'half',
+                },
+                email: {
+                  component: 'input',
+                  label: applicantInformationMessages.labels.email,
+                  type: 'email',
+                  width: 'half',
+                },
+                phone: {
+                  component: 'input',
+                  label: applicantInformationMessages.labels.tel,
+                  type: 'tel',
+                  format: '###-####',
+                  width: 'half',
+                },
+                relation: {
+                  component: 'input',
+                  label: m.application.contacts.relation,
+                  width: 'half',
+                },
+                mainContact: {
+                  component: 'checkbox',
+                  label: m.application.contacts.markAsMainContact,
+                  width: 'full',
+                  backgroundColor: 'white',
+                  options: [
+                    {
+                      label: m.application.contacts.markAsMainContact,
+                      value: YES,
+                    },
+                  ],
+                },
+              },
+              table: {
+                format: {
+                  phone: (value) => formatPhoneNumber(value),
+                  mainContact: (value) =>
+                    value?.includes(YES)
+                      ? coreMessages.radioYes
+                      : coreMessages.radioNo,
+                },
+                header: [
+                  applicantInformationMessages.labels.name,
+                  applicantInformationMessages.labels.email,
+                  applicantInformationMessages.labels.tel,
+                  m.application.contacts.relation,
+                  m.application.contacts.mainContact,
+                ],
+              },
+            }),
+          ],
         }),
       ],
     }),
@@ -215,7 +246,10 @@ export const HomeSupportForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
+    // This section is disabled for now, but kept for future implementation
+    // When we can fetch this information from insurance data
+
+    /*  buildSection({
       id: 'exemptionSection',
       title: m.application.exemption.sectionTitle,
       children: [
@@ -238,7 +272,7 @@ export const HomeSupportForm: Form = buildForm({
           ],
         }),
       ],
-    }),
+    }), */
     buildSection({
       id: 'overview',
       title: m.application.overview.sectionTitle,
@@ -312,8 +346,9 @@ export const HomeSupportForm: Form = buildForm({
             }),
             buildDividerField({}),
 
-            // Exemption
-            buildDescriptionField({
+            // Exemption - Disabled for now
+
+            /* buildDescriptionField({
               id: 'exemptionOverview',
               title: m.application.exemption.sectionTitle,
               titleVariant: 'h4',
@@ -324,7 +359,7 @@ export const HomeSupportForm: Form = buildForm({
                 (answers as HomeSupport).exemption?.includes(YES)
                   ? coreMessages.radioYes
                   : coreMessages.radioNo,
-            }),
+            }), */
             buildSubmitField({
               id: 'submit',
               title: m.application.general.submit,
