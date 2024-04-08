@@ -38,6 +38,7 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 
 import { Screen } from '../../../types'
@@ -86,6 +87,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutation,
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
+  const { activeLocale } = useI18n()
 
   useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
@@ -178,7 +180,9 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       smallBackground
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
       pageData={serviceWebPage}
     >

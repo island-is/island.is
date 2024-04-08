@@ -326,10 +326,16 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             >
               <InfoAlert
                 title={intl.formatMessage({
-                  id: 'licenseDetail.pcard.alert.title',
+                  id:
+                    licenseType === GenericLicenseType.PCard
+                      ? 'licenseDetail.pcard.alert.title'
+                      : 'licenseDetail.ehic.alert.title',
                 })}
                 message={intl.formatMessage({
-                  id: 'licenseDetail.pcard.alert.description',
+                  id:
+                    licenseType === GenericLicenseType.PCard
+                      ? 'licenseDetail.pcard.alert.description'
+                      : 'licenseDetail.ehic.alert.description',
                 })}
                 type="info"
                 hasBorder

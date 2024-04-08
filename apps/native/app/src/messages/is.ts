@@ -401,6 +401,9 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
+  'licenseDetail.ehic.alert.description':
+    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
