@@ -560,6 +560,45 @@ export class CourtService {
     }
   }
 
+  async updateAppealCaseWithAssignedRoles(
+    user: User,
+    caseId: string,
+    appealCaseNumber?: string,
+    appealAssistantNationalId?: string,
+    appealJudge1NationalId?: string,
+    appealJudge2NationalId?: string,
+    appealJudge3NationalId?: string,
+  ): Promise<unknown> {
+    try {
+      const subject = `Landsréttur - ${appealCaseNumber} - aðilar`
+      const content = JSON.stringify({
+        appealAssistantNationalId,
+        appealJudge1NationalId,
+        appealJudge2NationalId,
+        appealJudge3NationalId,
+      })
+
+      return this.sendToRobot(subject, content)
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update appeal case with assigned roles',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          appealCaseNumber,
+          appealAssistantNationalId,
+          appealJudge1NationalId,
+          appealJudge2NationalId,
+          appealJudge3NationalId,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
   private async getNextRobotEmailNumber() {
     return this.sequelize
       .query<{ nextval: number }>(`SELECT nextval('robot_email_seq')`, {

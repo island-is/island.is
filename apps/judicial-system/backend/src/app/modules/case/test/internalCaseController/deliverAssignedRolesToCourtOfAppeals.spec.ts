@@ -4,7 +4,6 @@ import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -16,17 +15,31 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('InternalCaseController - Deliver appeal received date to court of appeals', () => {
+describe('InternalCaseController - Deliver assigned roles to court of appeals', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
   const appealCaseNumber = uuid()
-  const appealReceivedByCourtDate = randomDate()
+  const appealAssistantId = uuid()
+  const appealJudge1Id = uuid()
+  const appealJudge2Id = uuid()
+  const appealJudge3Id = uuid()
+  const appealAssistantNationalId = uuid()
+  const appealJudge1NationalId = uuid()
+  const appealJudge2NationalId = uuid()
+  const appealJudge3NationalId = uuid()
 
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
     appealCaseNumber,
-    appealReceivedByCourtDate,
+    appealAssistantId,
+    appealJudge1Id,
+    appealJudge2Id,
+    appealJudge3Id,
+    appealAssistant: { nationalId: appealAssistantNationalId },
+    appealJudge1: { nationalId: appealJudge1NationalId },
+    appealJudge2: { nationalId: appealJudge2NationalId },
+    appealJudge3: { nationalId: appealJudge3NationalId },
   } as Case
 
   let mockCourtService: CourtService
@@ -37,15 +50,15 @@ describe('InternalCaseController - Deliver appeal received date to court of appe
       await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockUpdateAppealCaseWithAppealReceivedDate =
-      mockCourtService.updateAppealCaseWithAppealReceivedDate as jest.Mock
-    mockUpdateAppealCaseWithAppealReceivedDate.mockResolvedValue(uuid())
+    const mockUpdateAppealCaseWithAssignedRoles =
+      mockCourtService.updateAppealCaseWithAssignedRoles as jest.Mock
+    mockUpdateAppealCaseWithAssignedRoles.mockResolvedValue(uuid())
 
     givenWhenThen = async () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverAppealReceivedDateToCourtOfAppeals(caseId, theCase, {
+        .deliverAssignedRolesToCourtOfAppeals(caseId, theCase, {
           user,
         })
         .then((result) => (then.result = result))
@@ -64,12 +77,15 @@ describe('InternalCaseController - Deliver appeal received date to court of appe
 
     it('should return success', () => {
       expect(
-        mockCourtService.updateAppealCaseWithAppealReceivedDate,
+        mockCourtService.updateAppealCaseWithAssignedRoles,
       ).toHaveBeenCalledWith(
         user,
         caseId,
         appealCaseNumber,
-        appealReceivedByCourtDate,
+        appealAssistantNationalId,
+        appealJudge1NationalId,
+        appealJudge2NationalId,
+        appealJudge3NationalId,
       )
       expect(then.result).toEqual({ delivered: true })
     })

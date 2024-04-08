@@ -482,6 +482,19 @@ export class CaseService {
     return messages
   }
 
+  private getDeliverAssignedAppealRolesToCourtOfAppealsMessages(
+    user: TUser,
+    theCase: Case,
+  ): CaseMessage[] {
+    return [
+      {
+        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
+        user,
+        caseId: theCase.id,
+      },
+    ]
+  }
+
   private addMessagesForSubmittedIndicitmentCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -892,13 +905,33 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages: CaseMessage[] = [
       {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE,
         user,
         caseId: theCase.id,
       },
-    ])
+    ]
+
+    if (this.allAppealRolesAssigned(theCase)) {
+      messages.push(
+        ...this.getDeliverAssignedAppealRolesToCourtOfAppealsMessages(
+          user,
+          theCase,
+        ),
+      )
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  private addMessagesForAssignedAppealRolesToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue(
+      this.getDeliverAssignedAppealRolesToCourtOfAppealsMessages(user, theCase),
+    )
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -1008,13 +1041,30 @@ export class CaseService {
     }
 
     // This only applies to restriction cases
-    // New appeal case number
-    if (
-      updatedCase.appealCaseNumber &&
-      updatedCase.appealCaseNumber !== theCase.appealCaseNumber
-    ) {
-      await this.addMessagesForReceivedAppealedCaseToQueue(updatedCase, user)
+    if (updatedCase.appealCaseNumber) {
+      if (updatedCase.appealCaseNumber !== theCase.appealCaseNumber) {
+        // New appeal case number
+        await this.addMessagesForReceivedAppealedCaseToQueue(updatedCase, user)
+      } else if (
+        this.allAppealRolesAssigned(updatedCase) &&
+        (updatedCase.appealAssistantId !== theCase.appealAssistantId ||
+          updatedCase.appealJudge1Id !== theCase.appealJudge1Id ||
+          updatedCase.appealJudge2Id !== theCase.appealJudge2Id ||
+          updatedCase.appealJudge3Id !== theCase.appealJudge3Id)
+      ) {
+        // New appeal court
+        await this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)
+      }
     }
+  }
+
+  private allAppealRolesAssigned(updatedCase: Case) {
+    return (
+      updatedCase.appealAssistantId &&
+      updatedCase.appealJudge1Id &&
+      updatedCase.appealJudge2Id &&
+      updatedCase.appealJudge3Id
+    )
   }
 
   async findById(caseId: string, allowDeleted = false): Promise<Case> {
