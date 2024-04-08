@@ -125,7 +125,7 @@ Each test case (`test`) should test a specific scenario from end-to-end. If your
 - Hotel permit with food, but no alcohol
 - Hotel permit with food and alcohol
 - Bar with only alcohol
-- Home accommodation (AirBnB style), no food, no alcohol
+- Home accommodation (Airbnb style), no food, no alcohol
 
 ## 🧰 Using fixtures
 
@@ -197,7 +197,7 @@ Now that you are set up. You need to run a couple of commands.
   - This would show you commands how to start the mocking for `service-portal` and `api`. Replace with the services you want to test.
 - In the output you will see a docker output it will look something like this: `docker run -it --rm -p ...` copy that line and run in a new terminal window. Now your Mountebank impostor should be running.
 - Now start your services, but make sure your services ports have been replaced by the ports provided by Mountebank. In this examples case that would be `XROAD_BASE_PATH=http://localhost:9388 yarn start api`
-- Run the test with Playwright and you should see your mocked data replace the API's data.
+- Run the test with Playwright and you should see your mocked data replace the APIs data.
 
 # 🙋 Troubleshooting/FAQ
 
@@ -205,9 +205,9 @@ Now that you are set up. You need to run a couple of commands.
 
 A 500 error can occur randomly. If the error is coming from your app or code you worked on, you have earned yourself a debug day. If the error is not from your code, ignore it for now. We do not know what’s going on 🤷
 
-## 💀 Error: ESOCKETTIMEDOUT
+## 💀 Error: `ESOCKETTIMEDOUT`
 
-This is an infrastructure issue and should have been resolved. If you see this in your tests on dev, contact devops 👩‍💻
+This is an infrastructure issue and should have been resolved. If you see this in your tests on dev, contact DevOps 👩‍💻
 
 ## ⌛ Tests are timing out
 
