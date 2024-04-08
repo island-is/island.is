@@ -4,9 +4,9 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
-defaults:
-  run:
-    shell: bash
+# defaults:
+#   run:
+#     shell: bash
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
@@ -59,9 +59,11 @@ jobs:
 
       - name: Checking out relevant branches
         run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
+          set -euo pipefail
+          set -x
+          git cat-file -t "$GITHUB_HEAD_REF" >/dev/null
+          git cat-file -t "$GITHUB_BASE_REF" >/dev/null
+          git cat-file -t "$GITHUB_SHA" >/dev/null
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
@@ -72,6 +74,7 @@ jobs:
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
+        continue-on-error: true
         with:
           name: pr-event
           path: event.json
