@@ -338,7 +338,7 @@ export const ApplicationConfigurations = {
     translation: 'ojoi.application',
   },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
-    slug: 'tyggingaryfirlysing',
+    slug: 'tryggingaryfirlysing',
     translation: ['hid.application', 'uiForms.application'],
   },
 }
