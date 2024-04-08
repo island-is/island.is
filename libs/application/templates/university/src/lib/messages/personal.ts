@@ -58,8 +58,18 @@ export const personal = {
       alertMessage: {
         id: 'uni.application:personal.labels.userInformation.alertMessage#markdown',
         defaultMessage:
-          'Ef netfang og símanúmer er ekki rétt hér að neðan þá verður að breyta þeim upplýsingum á mínum síðum. Þú þarft svo að koma aftur í þennan glugga og uppfæra upplýsingar hér neðst á síðunni.',
+          'Ef netfang og símanúmer er ekki rétt hér að neðan þá verður að breyta þeim upplýsingum á {mínum síðum}. Þú þarft svo að koma aftur í þennan glugga og uppfæra upplýsingar hér neðst á síðunni.',
         description: 'User information alert message',
+      },
+      alertMessageLink: {
+        id: 'uni.application:personal.labels.userInformation.alertMessageLink',
+        defaultMessage: '/minarsidur',
+        description: 'Link for mínar síður',
+      },
+      alertMessageLinkTitle: {
+        id: 'uni.application:personal.labels.userInformation.alertMessageLinkTitle',
+        defaultMessage: 'Fara á mínar síður',
+        description: 'title for mínar síður link',
       },
     }),
   },
