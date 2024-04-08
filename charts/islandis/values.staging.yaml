@@ -353,6 +353,7 @@ api:
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1'
     XROAD_HUNTING_LICENSE_PATH: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api'
@@ -372,7 +373,7 @@ api:
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '35000'
     XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
-    XROAD_RSK_PROCURING_REDIS_NODES: '["redis-applications.internal:6379"]'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
     XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
@@ -529,6 +530,7 @@ api:
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY'
     VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY'
@@ -622,6 +624,7 @@ application-system-api:
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
@@ -1034,6 +1037,7 @@ download-service:
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/license-api-v1'
@@ -1465,6 +1469,7 @@ license-api:
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
@@ -2667,6 +2672,8 @@ user-notification:
     - 'node'
   enabled: true
   env:
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2852,6 +2859,8 @@ user-notification-worker:
     - 'node'
   enabled: true
   env:
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'

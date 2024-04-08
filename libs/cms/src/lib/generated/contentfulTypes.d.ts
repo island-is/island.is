@@ -3506,6 +3506,12 @@ export interface IServiceWebPageFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
+
+  /** Contact Form Disclaimer */
+  contactFormDisclaimer?: Document | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {

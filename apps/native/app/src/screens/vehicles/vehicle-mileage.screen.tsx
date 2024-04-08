@@ -264,7 +264,9 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 originCodes[item.originCode as keyof typeof originCodes] ??
                 item.originCode
               }
-              subtitle={<FormattedDate value={item.readDate} />}
+              subtitle={
+                item.readDate ? <FormattedDate value={item.readDate} /> : '-'
+              }
               accessory={
                 item.mileage
                   ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`

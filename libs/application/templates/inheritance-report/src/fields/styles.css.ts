@@ -16,6 +16,17 @@ export const removeFieldButton = style({
   },
 })
 
+export const removeFieldButtonSingle = style({
+  top: 0,
+  right: 0,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      top: theme.spacing['3'],
+      right: -theme.spacing['6'],
+    },
+  },
+})
+
 export const printButton = style({
   '@media': {
     [`screen and (min-width: 932px)`]: {
