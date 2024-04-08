@@ -56,11 +56,12 @@ export const useGetCurrentCollection = () => {
   return { collection, loading }
 }
 
-export const useGetOpenLists = (collectionId: string) => {
+export const useGetOpenLists = (collection: SignatureCollection) => {
   const { data, loading: openListsLoading } = useQuery<Query>(GetOpenLists, {
     variables: {
-      input: { collectionId: collectionId },
+      input: { collectionId: collection?.id },
     },
+    skip: !collection || collection.isActive,
   })
   const openLists =
     data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
