@@ -863,7 +863,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             triggerEvent: DefaultEvents.APPROVE,
-            params: FileType.DOCUMENTPERIOD,
+            params: FileType.DOCUMENT,
             throwOnError: true,
           }),
           roles: [
