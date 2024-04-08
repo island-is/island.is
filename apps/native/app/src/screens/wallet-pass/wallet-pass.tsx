@@ -148,6 +148,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const barcodeWidth =
     screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3.3
+  const updated = data?.fetch?.updated
 
   const onAddPkPass = async () => {
     const { canAddPasses, addPass } = Platform.select({
@@ -292,11 +293,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               ? getImageFromRawData(data?.payload?.rawData)
               : undefined
           }
-          date={
-            data?.fetch?.updated
-              ? new Date(Number(data?.fetch?.updated))
-              : undefined
-          }
+          date={updated ? new Date(Number(updated)) : undefined}
           status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
           {...(allowLicenseBarcode && {
             barcode: {
