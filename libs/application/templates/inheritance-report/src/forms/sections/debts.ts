@@ -14,6 +14,7 @@ import { format as formatNationalId } from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { AllDebts, ApplicationDebts } from '../../types'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 
 export const debts = buildSection({
   id: 'debts',
@@ -48,7 +49,7 @@ export const debts = buildSection({
                 fields: [
                   {
                     title: m.debtsCreditorName,
-                    id: 'creditorName',
+                    id: 'description',
                   },
                   {
                     title: m.creditorsNationalId,
@@ -57,17 +58,18 @@ export const debts = buildSection({
                   },
                   {
                     title: m.debtsLoanIdentity,
-                    id: 'loanIdentity',
+                    id: 'assetNumber',
                   },
                   {
                     title: m.debtsBalance,
-                    id: 'balance',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton,
-                sumField: 'balance',
+                fromExternalData: 'otherDebts',
+                sumField: 'propertyValuation',
               },
             ),
           ],
@@ -98,6 +100,13 @@ export const debts = buildSection({
               id: 'debts.publicCharges',
               width: 'half',
               variant: 'currency',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    ?.inheritanceReportInfo?.officialFees?.[0]
+                    ?.propertyValuation ?? '0'
+                )
+              },
             }),
           ],
         }),

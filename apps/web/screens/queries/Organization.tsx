@@ -234,6 +234,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         imageIsFullHeight
         imageObjectFit
         imageObjectPosition
+        titleSectionPaddingLeft
+        mobileBackgroundColor
       }
       externalLinks {
         text

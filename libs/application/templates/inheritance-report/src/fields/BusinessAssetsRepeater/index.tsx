@@ -22,12 +22,17 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
-import { isValidRealEstate, valueToNumber } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  isValidRealEstate,
+  valueToNumber,
+} from '../../lib/utils/helpers'
+import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 
 type RepeaterProps = {
   field: {
@@ -40,6 +45,7 @@ type RepeaterProps = {
       sumField: string
       fromExternalData?: string
       calcWithShareValue?: boolean
+      assetKey: string
     }
   }
 }
@@ -48,11 +54,15 @@ type PropertyType = 'asset' | 'estate'
 
 export const BusinessAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
-> = ({ field, errors }) => {
+> = ({ field, errors, application }) => {
   const { id, props } = field
-  const { assetFields, estateFields } = props
+  const { assetFields, estateFields, assetKey } = props
 
-  const { fields, append, remove } = useFieldArray<any>({
+  if (!assetKey) {
+    throw new Error('[BusinessRepeater]: assetKey is required')
+  }
+
+  const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
   })
   const { setValue, getValues, control } = useFormContext()
@@ -85,6 +95,33 @@ export const BusinessAssetsRepeater: FC<
     calculateTotal()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    const estData =
+      getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
+
+    const extData =
+      getValueViaPath<InheritanceReportAsset[]>(estData, assetKey) ?? []
+
+    if (
+      !(application?.answers as any)?.assets?.[assetKey]?.hasModified &&
+      fields.length === 0 &&
+      extData.length
+    ) {
+      replace(
+        extData.map((x) => ({
+          ...x,
+          share: String(x.share),
+          // Assetnumber refers to estate number in this case
+          // This may be confusing because of the naming
+          // But these are the default names overall
+          assetType: x.assetNumber ? 'estate' : 'asset',
+        })),
+      )
+      setValue(`assets.${assetKey}.hasModified`, true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetKey])
 
   const onAdd = (type: PropertyType) => {
     const values = (type === 'asset' ? assetFields : estateFields).map(

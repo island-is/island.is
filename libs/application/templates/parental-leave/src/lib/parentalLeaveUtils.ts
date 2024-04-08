@@ -1,4 +1,4 @@
-import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ApplicationLifecycle,
@@ -74,6 +74,7 @@ import {
   Period,
   PersonInformation,
   PregnancyStatusAndRightsResults,
+  SelectOption,
   VMSTPeriod,
   YesOrNo,
 } from '../types'
@@ -791,6 +792,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -1007,6 +1010,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
+    comment,
     employers,
     employerLastSixMonths,
     isNotStillEmployed,
@@ -2048,7 +2052,7 @@ export const getAttachments = (application: Application) => {
       AttachmentTypes.EMPLOYMENT_TERMINATION_CERTIFICATE,
     )
   }
-  if (commonFiles.length > 0) {
+  if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
   }
 
@@ -2076,4 +2080,12 @@ export const calculatePruneDate = (application: Application) => {
   }
 
   return pruneAt
+}
+
+export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
+  if (id === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === id)?.label
 }

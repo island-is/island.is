@@ -57,8 +57,9 @@ export const extractFilterTags = (filterCategories: FilterCategory[]) => {
     filterCategory.selected.forEach((selection) => {
       const data = filterCategory.filters.find(
         ({ value }) => value === selection,
-      )
-      if (data) filterTags.push({ ...data, category: filterCategory.id })
+      ) ?? { label: selection, value: selection }
+
+      filterTags.push({ ...data, category: filterCategory.id })
     }),
   )
 
