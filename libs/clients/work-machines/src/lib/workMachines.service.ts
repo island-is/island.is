@@ -1,12 +1,17 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiMachineRequestInspectionPostRequest,
+  ApiMachineStatusChangePostRequest,
   ApiMachinesGetRequest,
   ExcelRequest,
   GetMachineRequest,
   MachineCategoryApi,
   MachineHateoasDto,
+  MachineInspectionRequestCreateDto,
   MachineOwnerChangeApi,
+  MachineRequestInspectionApi,
+  MachineStatusChangeApi,
   MachineSupervisorChangeApi,
   MachinesApi,
   MachinesDocumentApi,
@@ -36,6 +41,8 @@ export class WorkMachinesClientService {
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
     private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
+    private readonly machineStatusApi: MachineStatusChangeApi,
+    private readonly machineRequestInspection: MachineRequestInspectionApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -54,6 +61,16 @@ export class WorkMachinesClientService {
 
   private machineSupervisorChangeApiWithAuth(auth: Auth) {
     return this.machineSupervisorChangeApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
+
+  private machineStatusApiWithAuth(auth: Auth) {
+    return this.machineStatusApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineRequestInspectionApiWithAuth(auth: Auth) {
+    return this.machineRequestInspection.withMiddleware(
       new AuthMiddleware(auth),
     )
   }
@@ -83,6 +100,7 @@ export class WorkMachinesClientService {
       pageSize: 20,
       pageNumber: 1,
     })
+
     return {
       machines:
         result?.value?.map((machine) => {
@@ -94,7 +112,7 @@ export class WorkMachinesClientService {
             status: machine?.status || '',
           }
         }) || [],
-      totalCount: result?.pagination?.currentPage || 0,
+      totalCount: result?.pagination?.totalCount || 0,
     }
   }
 
@@ -163,5 +181,25 @@ export class WorkMachinesClientService {
     await this.machineSupervisorChangeApiWithAuth(
       auth,
     ).apiMachineSupervisorChangePost(input)
+  }
+
+  async deregisterMachine(
+    auth: Auth,
+    deregisterMachine: ApiMachineStatusChangePostRequest,
+  ) {
+    await this.machineStatusApiWithAuth(auth).apiMachineStatusChangePost(
+      deregisterMachine,
+    )
+  }
+
+  async requestInspection(
+    auth: Auth,
+    requestInspection: MachineInspectionRequestCreateDto,
+  ) {
+    await this.machineRequestInspectionApiWithAuth(
+      auth,
+    ).apiMachineRequestInspectionPost({
+      machineInspectionRequestCreateDto: requestInspection,
+    })
   }
 }

@@ -26,11 +26,12 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Patent } from './models/patent.model'
+import { IntellectualPropertiesCollectionInput } from './dto/ipCollection.input'
 
 @Resolver()
 @FeatureFlag(Features.isIntellectualPropertyModuleEnabled)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.intellectualProperties)
 @Audit({ namespace: '@island.is/api/intellectual-properties' })
 export class IntellectualPropertiesResolver {
   constructor(
@@ -45,11 +46,13 @@ export class IntellectualPropertiesResolver {
   @Audit()
   async getIntellectualProperties(
     @CurrentUser() user: User,
+    @Args('input', { type: () => IntellectualPropertiesCollectionInput })
+    input: IntellectualPropertiesCollectionInput,
   ): Promise<IntellectualPropertiesResponse | null> {
     const data = await Promise.all([
       this.ipService.getPatents(user),
       this.ipService.getDesigns(user),
-      this.ipService.getTrademarks(user),
+      this.ipService.getTrademarks(user, input.locale === 'en' ? 'en' : 'is'),
     ])
 
     const flattenedData = data.filter(isDefined).flat()
@@ -141,8 +144,15 @@ export class IntellectualPropertiesResolver {
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertiesTrademarks(@CurrentUser() user: User) {
-    return this.ipService.getTrademarks(user)
+  getIntellectualPropertiesTrademarks(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => IntellectualPropertiesInput })
+    input: IntellectualPropertiesInput,
+  ) {
+    return this.ipService.getTrademarks(
+      user,
+      input.locale === 'en' ? 'en' : 'is',
+    )
   }
 
   @Query(() => Trademark, {
@@ -155,6 +165,10 @@ export class IntellectualPropertiesResolver {
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
   ) {
-    return this.ipService.getTrademarkByVmId(user, input.key)
+    return this.ipService.getTrademarkByVmId(
+      user,
+      input.key,
+      input.locale === 'en' ? 'en' : 'is',
+    )
   }
 }

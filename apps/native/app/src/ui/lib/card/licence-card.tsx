@@ -15,8 +15,9 @@ import BackgroundPassport from '../../assets/card/passport-bg.png'
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
-import LogoEnvironmentAgency from '../../assets/card/ust.png'
+import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
 import BackgroundHuntingCard from '../../assets/card/veidikort.png'
+import LogoEhic from '../../assets/card/sjukratryggingar.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import { dynamicColor } from '../../utils'
@@ -169,8 +170,8 @@ const LicenseCardPresets: Record<LicenseType, CardPreset> = {
     backgroundColor: '#E2EDFF',
   },
   Ehic: {
-    title: 'Evrópukort',
-    logo: LogoCoatOfArms,
+    title: 'Evrópska sjúkratryggingakortið',
+    logo: LogoEhic,
     backgroundImage: BackgroundPassport,
     backgroundColor: '#E2EDFF',
   },

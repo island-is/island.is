@@ -48,6 +48,8 @@ const mockProfile: UserProfile = {
   emailStatus: 'VERIFIED',
   mobileStatus: 'VERIFIED',
   lastNudge: new Date(),
+  emailNotifications: true,
+  nextNudge: new Date(),
 }
 
 describe('MessageProcessorService', () => {

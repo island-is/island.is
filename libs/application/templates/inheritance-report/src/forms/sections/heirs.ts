@@ -21,11 +21,11 @@ export const heirs = buildSection({
   children: [
     buildSubSection({
       id: 'spouse',
-      title: m.spousesShare,
+      title: m.deceasedSeparateProperty,
       children: [
         buildMultiField({
           id: 'spouse',
-          title: m.spousesShare,
+          title: m.deceasedSeparateProperty,
           description: m.spousesShareDescription,
           children: [
             buildCustomField({
@@ -141,6 +141,10 @@ export const heirs = buildSection({
               id: 'heirs.total',
               title: '',
             }),
+            buildDescriptionField({
+              id: 'heirs.hasModified',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
@@ -155,7 +159,7 @@ export const heirs = buildSection({
                     id: 'relation',
                   },
                   {
-                    // sectionTitle: m.heirShare.defaultMessage,
+                    // sectionTitle: m.heirShare,
                     title: m.heirsInheritanceRate.defaultMessage,
                     id: 'heirsPercentage',
                   },

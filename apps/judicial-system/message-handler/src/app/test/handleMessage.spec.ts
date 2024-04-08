@@ -7,8 +7,10 @@ import {
   CaseFileMessage,
   CaseMessage,
   DefendantMessage,
+  messageEndpoint,
   MessageService,
   MessageType,
+  OldMessageType,
   PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 import { NotificationType, User } from '@island.is/judicial-system/types'
@@ -69,7 +71,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+        type: OldMessageType.DELIVER_PROSECUTOR_TO_COURT,
         user,
         caseId,
       })
@@ -97,7 +99,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+        type: OldMessageType.DELIVER_DEFENDANT_TO_COURT,
         user,
         caseId,
         defendantId,
@@ -106,7 +108,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     it('should deliver defendant to court', async () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backendUrl}/api/internal/case/${caseId}/defendant/${defendantId}/deliverToCourt`,
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverDefendantToCourt/${defendantId}`,
         {
           method: 'POST',
           headers: {
@@ -126,7 +128,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+        type: OldMessageType.DELIVER_CASE_FILE_TO_COURT,
         user,
         caseId,
         caseFileId,
@@ -135,7 +137,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     it('should deliver case file to court', async () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backendUrl}/api/internal/case/${caseId}/file/${caseFileId}/deliverToCourt`,
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseFileToCourt/${caseFileId}`,
         {
           method: 'POST',
           headers: {
@@ -155,7 +157,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+        type: OldMessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
         user,
         caseId,
         policeCaseNumber,
@@ -183,7 +185,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_REQUEST_TO_COURT,
+        type: OldMessageType.DELIVER_REQUEST_TO_COURT,
         user,
         caseId,
       })
@@ -210,7 +212,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+        type: OldMessageType.DELIVER_COURT_RECORD_TO_COURT,
         user,
         caseId,
       })
@@ -237,7 +239,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_SIGNED_RULING_TO_COURT,
+        type: OldMessageType.DELIVER_SIGNED_RULING_TO_COURT,
         user,
         caseId,
       })
@@ -264,7 +266,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
+        type: OldMessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
         user,
         caseId,
       })
@@ -291,7 +293,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_CASE_TO_POLICE,
+        type: OldMessageType.DELIVER_CASE_TO_POLICE,
         user,
         caseId,
       })
@@ -318,7 +320,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
+        type: OldMessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
         user,
         caseId,
       })
@@ -340,12 +342,95 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('deliver indictment to police', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: OldMessageType.DELIVER_INDICTMENT_TO_POLICE,
+        user,
+        caseId,
+      })
+    })
+
+    it('should deliver indictment to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverIndictmentToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver case files record to police', () => {
+    const policeCaseNumber = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: OldMessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
+        user,
+        caseId,
+        policeCaseNumber,
+      } as PoliceCaseMessage)
+    })
+
+    it('should deliver case files record to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseFilesRecordToPolice/${policeCaseNumber}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver sigend ruling to police', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: OldMessageType.DELIVER_SIGNED_RULING_TO_POLICE,
+        user,
+        caseId,
+      })
+    })
+
+    it('should deliver sigend ruling to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverSignedRulingToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('deliver appeal to police', () => {
     let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.DELIVER_APPEAL_TO_POLICE,
+        type: OldMessageType.DELIVER_APPEAL_TO_POLICE,
         user,
         caseId,
       })
@@ -373,7 +458,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.ARCHIVE_CASE_FILE,
+        type: OldMessageType.ARCHIVE_CASE_FILE,
         user,
         caseId,
         caseFileId,
@@ -382,7 +467,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     it('should archive case file', async () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backendUrl}/api/internal/case/${caseId}/file/${caseFileId}/archive`,
+        `${config.backendUrl}/api/internal/case/${caseId}/archiveCaseFile/${caseFileId}`,
         {
           method: 'POST',
           headers: {
@@ -402,7 +487,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.ARCHIVE_CASE_FILES_RECORD,
+        type: OldMessageType.ARCHIVE_CASE_FILES_RECORD,
         user,
         caseId,
         policeCaseNumber,
@@ -430,7 +515,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+        type: OldMessageType.SEND_HEADS_UP_NOTIFICATION,
         user,
         caseId,
       })
@@ -457,7 +542,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+        type: OldMessageType.SEND_READY_FOR_COURT_NOTIFICATION,
         user,
         caseId,
       })
@@ -487,7 +572,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+        type: OldMessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
         user,
         caseId,
       })
@@ -517,7 +602,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_COURT_DATE_NOTIFICATION,
+        type: OldMessageType.SEND_COURT_DATE_NOTIFICATION,
         user,
         caseId,
       })
@@ -547,7 +632,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+        type: OldMessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
         user,
         caseId,
       })
@@ -577,7 +662,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_RULING_NOTIFICATION,
+        type: OldMessageType.SEND_RULING_NOTIFICATION,
         user,
         caseId,
       })
@@ -604,7 +689,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_MODIFIED_NOTIFICATION,
+        type: OldMessageType.SEND_MODIFIED_NOTIFICATION,
         user,
         caseId,
       })
@@ -634,7 +719,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_REVOKED_NOTIFICATION,
+        type: OldMessageType.SEND_REVOKED_NOTIFICATION,
         user,
         caseId,
       })
@@ -661,7 +746,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+        type: OldMessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
         user,
         caseId,
       })
@@ -691,7 +776,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        type: OldMessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
         user,
         caseId,
       })
@@ -721,7 +806,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
+        type: OldMessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
         user,
         caseId,
       })
@@ -751,7 +836,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        type: OldMessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
         user,
         caseId,
       })
@@ -781,7 +866,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+        type: OldMessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
         user,
         caseId,
       })
@@ -811,7 +896,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION,
+        type: OldMessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION,
         user,
         caseId,
       })
@@ -841,7 +926,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_APPEAL_CASE_FILES_UPDATED_NOTIFICATION,
+        type: OldMessageType.SEND_APPEAL_CASE_FILES_UPDATED_NOTIFICATION,
         user,
         caseId,
       })
@@ -871,7 +956,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        type: OldMessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
         user,
         caseId,
       })
@@ -890,6 +975,124 @@ describe('MessageHandlerService - Handle message', () => {
             type: NotificationType.APPEAL_WITHDRAWN,
             user,
           }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send indictment denied notifications', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: OldMessageType.SEND_INDICTMENT_DENIED_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send indictment denied notifications', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.INDICTMENT_DENIED,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('handle message', () => {
+    let then: Then
+    const type = MessageType.DELIVERY_TO_COURT_PROSECUTOR
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type,
+        user,
+        caseId,
+      })
+    })
+
+    it('should handle message', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/${messageEndpoint[type]}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('handle message with element id', () => {
+    let then: Then
+    const type = MessageType.DELIVERY_TO_COURT_DEFENDANT
+    const elementId = uuid()
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type,
+        user,
+        caseId,
+        elementId,
+      })
+    })
+
+    it('should handle message', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/${messageEndpoint[type]}/${elementId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('handle message with body', () => {
+    let then: Then
+    const messageType = MessageType.NOTIFICATION
+    const notificationType = NotificationType.HEADS_UP
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: messageType,
+        user,
+        caseId,
+        body: { type: notificationType },
+      })
+    })
+
+    it('should handle message', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/${messageEndpoint[messageType]}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ type: notificationType, user }),
         },
       )
       expect(then.result).toBe(true)

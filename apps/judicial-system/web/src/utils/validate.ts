@@ -1,18 +1,19 @@
 // TODO: Add tests
 import {
-  CaseAppealRulingDecision,
   isIndictmentCase,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
+  CaseFileCategory,
   CaseType,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness } from './stepHelper'
+import { isBusiness, isTrafficViolationIndictment } from './stepHelper'
 
 export type Validation =
   | 'empty'
@@ -91,8 +92,8 @@ const getRegexByValidation = (validation: Validation) => {
     }
     case 'vehicle-registration-number': {
       return {
-        regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
-        errorMessage: 'Dæmi: AB-123',
+        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
+        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {
@@ -460,24 +461,47 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   )
 }
 
-export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
-  const { appealRulingDecision, appealConclusion, appealState } = workingCase
+export const isCourtOfAppealRulingStepFieldsValid = (
+  workingCase: Case,
+): boolean => {
+  return Boolean(
+    workingCase.appealRulingDecision &&
+      (workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.DISCONTINUED ||
+        validate([[workingCase.appealConclusion, ['empty']]]).isValid),
+  )
+}
 
-  return (
-    appealState === CaseAppealState.COMPLETED ||
-    appealState === CaseAppealState.WITHDRAWN ||
-    (appealRulingDecision !== null &&
-      validate([[appealConclusion, ['empty']]]).isValid) ||
-    appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+  return Boolean(
+    isCourtOfAppealRulingStepFieldsValid(workingCase) &&
+      (workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.DISCONTINUED ||
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.APPEAL_RULING,
+        )),
   )
 }
 
 export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: Case,
 ): boolean => {
+  return validate([
+    [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+  ]).isValid
+}
+
+export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    validate([
-      [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
-    ]).isValid,
+    workingCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.COVER_LETTER,
+    ) &&
+      (isTrafficViolationIndictment(workingCase) ||
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.INDICTMENT,
+        )) &&
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+      ),
   )
 }

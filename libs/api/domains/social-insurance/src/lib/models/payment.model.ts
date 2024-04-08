@@ -1,14 +1,14 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { PaymentMonth } from './paymentMonth'
+import { PaymentMonth } from './paymentMonth.model'
 
 @ObjectType('SocialInsurancePayment')
 export class Payment {
   @Field()
-  type!: string
+  name!: string
 
   @Field(() => Int)
-  totalYearCumulativeAmount?: number
+  totalYearCumulativeAmount!: number
 
   @Field(() => [PaymentMonth])
-  monthlyPaymentHistory?: Array<PaymentMonth>
+  monthlyPaymentHistory!: Array<PaymentMonth>
 }

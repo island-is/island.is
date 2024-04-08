@@ -1,16 +1,17 @@
-import { Module, forwardRef } from '@nestjs/common'
 import { HttpModule } from '@nestjs/axios'
+import { Module, forwardRef } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { VehicleModule } from '../vehicle/vehicle.module'
+import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
 import { RecyclingPartnerModule } from '../recyclingPartner/recyclingPartner.module'
 import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
-import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
+import { VehicleModule } from '../vehicle/vehicle.module'
 
 import { RecyclingRequestModel } from './recyclingRequest.model'
-import { RecyclingRequestService } from './recyclingRequest.service'
 import { RecyclingRequestResolver } from './recyclingRequest.resolver'
+import { RecyclingRequestService } from './recyclingRequest.service'
 import { RecyclingRequestAppSysResolver } from './recyclingRequestAppSys.resolver'
+import { IcelandicTransportAuthorityModule } from '../../services/icelandicTransportAuthority.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RecyclingRequestAppSysResolver } from './recyclingRequestAppSys.resolve
     FjarsyslaModule,
     forwardRef(() => RecyclingPartnerModule),
     forwardRef(() => SamgongustofaModule),
+    forwardRef(() => IcelandicTransportAuthorityModule),
   ],
   providers: [
     RecyclingRequestResolver,

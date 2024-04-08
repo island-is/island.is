@@ -29,12 +29,12 @@ export const draft: Form = buildForm({
       title: m.informationTitle,
       children: [
         subSectionTempInfo,
+        subSectionPhone,
         subSectionOtherCountry,
         subSectionOtherCountryDirections,
         subSectionHealthDeclaration,
         subSectionQualityPhoto,
         subSectionDelivery,
-        subSectionPhone,
         subSectionHealthDeclaration,
         subSectionSummary,
       ],
@@ -51,7 +51,7 @@ export const draft: Form = buildForm({
     }),
     buildSection({
       id: 'done',
-      title: m.overviewDone,
+      title: m.applicationDone,
       children: [],
     }),
   ],

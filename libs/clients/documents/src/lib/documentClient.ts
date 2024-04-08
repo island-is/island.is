@@ -18,15 +18,12 @@ import { PaperMailResponse } from './models/PaperMailRes'
 import { RequestPaperDTO } from './models/RequestPaperDTO'
 import { MessageActionDTO } from './models/MessageActionDTO'
 import { BulkMailActionDTO } from './models/BulkMailActionDTO'
+import { DocumentPageInput } from './models/DocumentPageInput'
+import { DocumentPageNumberRes } from './models/DocumentPageNumberRes'
+import { ConfigType } from '@nestjs/config'
+import { DocumentClientConfig } from './documentClient.config'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
-
-export interface DocumentClientConfig {
-  basePath: string
-  clientId: string
-  clientSecret: string
-  tokenUrl: string
-}
 
 @Injectable()
 export class DocumentClient {
@@ -35,8 +32,8 @@ export class DocumentClient {
 
   constructor(
     private httpService: HttpService,
-    @Inject(DOCUMENT_CLIENT_CONFIG)
-    private clientConfig: DocumentClientConfig,
+    @Inject(DocumentClientConfig.KEY)
+    private clientConfig: ConfigType<typeof DocumentClientConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -181,6 +178,14 @@ export class DocumentClient {
   async customersSenders(nationalId: string): Promise<SendersResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/senders`
     return await this.getRequest<SendersResponse>(requestRoute)
+  }
+
+  async getDocumentPageNumber(
+    requestParameters: DocumentPageInput,
+  ): Promise<DocumentPageNumberRes | null> {
+    const { nationalId, messageId, pageSize } = requestParameters
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/${messageId}/page?pageSize=${pageSize}`
+    return await this.getRequest<DocumentPageNumberRes>(requestRoute)
   }
 
   async requestPaperMail(

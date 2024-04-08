@@ -73,7 +73,11 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
-  condition?: (application: Application) => boolean
+  condition?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => boolean
+  dataTestId?: string
 } & (
   | {
       component: 'input'
@@ -185,6 +189,7 @@ export enum FieldTypes {
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  STATIC_TABLE = 'STATIC_TABLE',
 }
 
 export enum FieldComponents {
@@ -215,6 +220,7 @@ export enum FieldComponents {
   TABLE_REPEATER = 'TableRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  STATIC_TABLE = 'StaticTableFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -368,6 +374,9 @@ export interface KeyValueField extends BaseField {
   value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -393,6 +402,8 @@ export interface MessageWithLinkButtonField extends BaseField {
   url: string
   buttonTitle: FormText
   message: FormText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 export interface ExpandableDescriptionField extends BaseField {
@@ -487,9 +498,11 @@ export type TableRepeaterField = BaseField & {
   formTitle?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
   table?: {
     /**
@@ -502,7 +515,7 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string>
+    format?: Record<string, (value: string) => string | StaticText>
   }
 }
 export interface FindVehicleField extends BaseField {
@@ -522,6 +535,8 @@ export interface FindVehicleField extends BaseField {
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
+  isEnergyFunds?: boolean
+  energyFundsMessages?: Record<string, FormText>
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
@@ -536,6 +551,19 @@ export interface HiddenInputField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: never
+}
+
+export interface StaticTableField extends BaseField {
+  readonly type: FieldTypes.STATIC_TABLE
+  component: FieldComponents.STATIC_TABLE
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  summary?:
+    | { label: StaticText; value: StaticText }[]
+    | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
 export type Field =
@@ -568,3 +596,4 @@ export type Field =
   | HiddenInputWithWatchedValueField
   | HiddenInputField
   | FindVehicleField
+  | StaticTableField

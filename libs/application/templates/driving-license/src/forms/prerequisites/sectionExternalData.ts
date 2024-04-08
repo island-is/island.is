@@ -4,7 +4,6 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-
 import {
   NationalRegistryUserApi,
   TeachersApi,

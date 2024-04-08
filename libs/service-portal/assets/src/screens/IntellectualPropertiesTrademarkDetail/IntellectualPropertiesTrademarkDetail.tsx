@@ -35,7 +35,7 @@ type UseParams = {
 
 const IntellectualPropertiesTrademarkDetail = () => {
   useNamespaces('sp.intellectual-property')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error } =
@@ -43,6 +43,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
       variables: {
         input: {
           key: id,
+          locale,
         },
       },
     })
@@ -188,14 +189,6 @@ const IntellectualPropertiesTrademarkDetail = () => {
     }
   }
 
-  if (error && !loading) {
-    return <Problem error={error} />
-  }
-
-  if (!ip && !loading) {
-    return <Problem type="no_data" />
-  }
-
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -207,119 +200,135 @@ const IntellectualPropertiesTrademarkDetail = () => {
           )}
         />
       </Box>
-      <Stack space="containerGutter">
-        {ip?.type &&
-          ip?.media?.mediaPath &&
-          mapTrademarkToHero(ip.type, ip.media.mediaPath, ip?.text ?? '')}
-        <Stack space="p2">
-          <UserInfoLine
-            title={formatMessage(ipMessages.baseInfo)}
-            label={ipMessages.name}
-            content={ip?.text ? ip.text : ip?.id ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={ipMessages.type}
-            content={ip?.typeReadable ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={m.status}
-            content={ip?.status ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={ipMessages.make}
-            content={ip?.subType ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-        {!loading && !error && orderedDates.length > 0 && (
-          <Box>
-            <Timeline
-              title={formatMessage(ipMessages.timeline)}
-              maxDate={orderedDates[orderedDates.length - 1].date}
-              minDate={orderedDates[0].date}
-            >
-              {orderedDates.map((datapoint) => (
-                <Stack key="list-item-application-date" space="smallGutter">
-                  <Text variant="h5">{formatDate(datapoint.date)}</Text>
-                  <Text>{datapoint.message}</Text>
-                </Stack>
-              ))}
-            </Timeline>
-            <TableGrid
-              title={formatMessage(ipMessages.information)}
-              dataArray={chunk(extraInfoArray, 2)}
-            />
-          </Box>
-        )}
-        <Stack space="p2">
-          <UserInfoLine
-            title={formatMessage(ipMessages.owner)}
-            label={formatMessage(ipMessages.name)}
-            content={ip?.markOwners?.[0]?.name ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={formatMessage(ipMessages.address)}
-            content={ip?.markOwners?.[0]?.addressFull ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-        {ip?.markAgent?.name && ip?.markAgent.addressFull && (
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && !ip && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(ipMessages.notFound, {
+            arg: formatMessage(ipMessages.trademark),
+          })}
+          message={formatMessage(ipMessages.notFoundText, {
+            arg: formatMessage(ipMessages.trademark).toLowerCase(),
+          })}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!error && (ip || loading) && (
+        <Stack space="containerGutter">
+          {ip?.type &&
+            ip?.media?.mediaPath &&
+            mapTrademarkToHero(ip.type, ip.media.mediaPath, ip?.text ?? '')}
           <Stack space="p2">
             <UserInfoLine
-              title={formatMessage(ipMessages.agent)}
+              title={formatMessage(ipMessages.baseInfo)}
+              label={ipMessages.name}
+              content={ip?.text ? ip.text : ip?.id ?? ''}
+              loading={loading}
+            />
+            <Divider />
+            <UserInfoLine
+              label={ipMessages.type}
+              content={ip?.typeReadable ?? ''}
+              loading={loading}
+            />
+            <Divider />
+            <UserInfoLine
+              label={m.status}
+              content={ip?.status ?? ''}
+              loading={loading}
+            />
+            <Divider />
+            <UserInfoLine
+              label={ipMessages.make}
+              content={ip?.subType ?? ''}
+              loading={loading}
+            />
+            <Divider />
+          </Stack>
+          {!error && orderedDates.length > 0 && (
+            <Box>
+              <Timeline
+                title={formatMessage(ipMessages.timeline)}
+                maxDate={orderedDates[orderedDates.length - 1].date}
+                minDate={orderedDates[0].date}
+              >
+                {orderedDates.map((datapoint) => (
+                  <Stack key="list-item-application-date" space="smallGutter">
+                    <Text variant="h5">{formatDate(datapoint.date)}</Text>
+                    <Text>{datapoint.message}</Text>
+                  </Stack>
+                ))}
+              </Timeline>
+              <TableGrid
+                title={formatMessage(ipMessages.information)}
+                dataArray={chunk(extraInfoArray, 2)}
+              />
+            </Box>
+          )}
+          <Stack space="p2">
+            <UserInfoLine
+              title={formatMessage(ipMessages.owner)}
               label={formatMessage(ipMessages.name)}
-              content={ip?.markAgent?.name ?? ''}
+              content={ip?.markOwners?.[0]?.name ?? ''}
               loading={loading}
             />
             <Divider />
             <UserInfoLine
               label={formatMessage(ipMessages.address)}
-              content={ip?.markAgent?.addressFull ?? ''}
+              content={ip?.markOwners?.[0]?.addressFull ?? ''}
               loading={loading}
             />
             <Divider />
           </Stack>
-        )}
+          {ip?.markAgent?.name && ip?.markAgent.addressFull && (
+            <Stack space="p2">
+              <UserInfoLine
+                title={formatMessage(ipMessages.agent)}
+                label={formatMessage(ipMessages.name)}
+                content={ip?.markAgent?.name ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={formatMessage(ipMessages.address)}
+                content={ip?.markAgent?.addressFull ?? ''}
+                loading={loading}
+              />
+              <Divider />
+            </Stack>
+          )}
 
-        {!!categories?.length && (
-          <Box>
-            <Text variant="eyebrow" color="purple400">
-              {formatMessage(ipMessages.productsAndServices)}
-            </Text>
-            <Accordion dividerOnTop={false} space={3}>
-              {ip?.markCategories
-                ?.map((category, index) => {
-                  if (!category.categoryNumber) {
-                    return null
-                  }
+          {!!categories?.length && (
+            <Box>
+              <Text variant="eyebrow" color="purple400">
+                {formatMessage(ipMessages.productsAndServices)}
+              </Text>
+              <Accordion dividerOnTop={false} space={3}>
+                {ip?.markCategories
+                  ?.map((category, index) => {
+                    if (!category.categoryNumber) {
+                      return null
+                    }
 
-                  return (
-                    <AccordionItem
-                      key={`${category.categoryNumber}-${index}}`}
-                      id={category.categoryNumber}
-                      label={`${formatMessage(ipMessages.category)} ${
-                        category.categoryNumber
-                      }`}
-                    >
-                      <Text>{category.categoryDescription ?? ''}</Text>
-                    </AccordionItem>
-                  )
-                })
-                .filter(isDefined)}
-            </Accordion>
-          </Box>
-        )}
-      </Stack>
+                    return (
+                      <AccordionItem
+                        key={`${category.categoryNumber}-${index}}`}
+                        id={category.categoryNumber}
+                        label={`${formatMessage(ipMessages.category)} ${
+                          category.categoryNumber
+                        }`}
+                      >
+                        <Text>{category.categoryDescription ?? ''}</Text>
+                      </AccordionItem>
+                    )
+                  })
+                  .filter(isDefined)}
+              </Accordion>
+            </Box>
+          )}
+        </Stack>
+      )}
     </>
   )
 }

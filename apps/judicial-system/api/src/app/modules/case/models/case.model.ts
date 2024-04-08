@@ -324,6 +324,12 @@ export class Case {
   readonly canBeAppealed?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  readonly canProsecutorAppeal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly canDefenderAppeal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   readonly hasBeenAppealed?: boolean
 
   @Field({ nullable: true })
@@ -385,4 +391,7 @@ export class Case {
 
   @Field(() => Institution, { nullable: true })
   readonly prosecutorsOffice?: Institution
+
+  @Field({ nullable: true })
+  readonly indictmentDeniedExplanation?: string
 }

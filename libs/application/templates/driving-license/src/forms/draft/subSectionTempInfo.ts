@@ -16,6 +16,7 @@ import {
 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { B_FULL_RENEWAL_65, B_TEMP } from '../../lib/constants'
+import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
@@ -26,16 +27,30 @@ export const subSectionTempInfo = buildSubSection({
   children: [
     buildMultiField({
       id: 'info',
-      title: m.informationTitle,
-      space: 1,
+      title: m.informationApplicant,
+      space: 2,
       children: [
         buildTextField({
           id: 'applicant.name',
           title: m.overviewName,
           readOnly: true,
-          width: 'half',
           defaultValue: ({ externalData }: Application) =>
-            externalData.nationalRegistry?.data.fullName,
+            (externalData.nationalRegistry?.data as NationalRegistryIndividual)
+              .fullName,
+        }),
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForTempLicenseTitle,
+        }),
+        buildDividerField({
+          title: '',
+          color: 'dark400',
+        }),
+        buildKeyValueField({
+          label: m.informationApplicant,
+          value: ({ externalData: { nationalRegistry } }) =>
+            (nationalRegistry.data as NationalRegistryUser).fullName,
+          width: 'half',
         }),
         buildTextField({
           id: 'applicant.address',
@@ -51,15 +66,23 @@ export const subSectionTempInfo = buildSubSection({
               return ''
             }
 
-            const { streetAddress, city } = address
+            const { streetAddress, postalCode, city } = address
 
-            return `${streetAddress}${city ? ', ' + city : ''}`
+            return `${streetAddress}${
+              city ? ', ' + postalCode + ' ' + city : ''
+            }`
           },
+        }),
+        buildPhoneField({
+          id: 'phone',
+          width: 'half',
+          title: m.phoneNumberTitle,
+          defaultValue: (application: Application) =>
+            application.externalData.userProfile.data.mobilePhoneNumber ?? '',
         }),
         buildTextField({
           id: 'email',
           title: m.informationYourEmail,
-          placeholder: 'Netfang',
           width: 'half',
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile.data as UserProfile
@@ -69,7 +92,6 @@ export const subSectionTempInfo = buildSubSection({
         buildDividerField({
           title: '',
           color: 'dark400',
-          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
         }),
         buildDescriptionField({
           id: 'drivingInstructorTitle',

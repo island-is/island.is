@@ -10,6 +10,7 @@ import {
   Text,
   BreadcrumbsDeprecated as Breadcrumbs,
   SkeletonLoader,
+  Button,
 } from '@island.is/island-ui/core'
 
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
@@ -48,7 +49,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
     },
   } = useI18n()
   const router = useRouter()
-
+  /*
   const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery, {
     fetchPolicy: 'cache-and-network',
   })
@@ -92,15 +93,30 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
       </PageLayout>
     )
   }
-
+*/
   return (
     <PageLayout>
       <Box paddingBottom={[3, 3, 6, 6]}>
         <Breadcrumbs>
-          <Link href={`${BASE_PATH}${homeRoute}`}>Ísland.is</Link>
+          <Link href="https://island.is/skilavottord">Ísland.is</Link>
           <span>{t.title}</span>
         </Breadcrumbs>
       </Box>
+      <h1 style={{ color: 'red' }}>
+        Þessu vefsvæði hefur verið lokað!
+        <br /> Vinsamlegast notaðu{' '}
+        <a href="https://island.is/skilavottord">island.is/skilavottord</a> í
+        staðinn.
+      </h1>
+      <br />
+      <h3 style={{ color: 'red' }}>
+        This website has been closed!
+        <br />
+        Please use{' '}
+        <a href="https://island.is/skilavottord">island.is/skilavottord</a>{' '}
+        instead.
+      </h3>
+      {/*
       <Box paddingBottom={4}>
         <Text variant="h1">{t.title}</Text>
       </Box>
@@ -133,7 +149,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
             onContinue={onContinue}
           />
         )}
-      </Stack>
+        </Stack> */}
     </PageLayout>
   )
 }

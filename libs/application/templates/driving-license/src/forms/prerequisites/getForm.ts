@@ -42,8 +42,8 @@ export const getForm = ({
         children: [],
       }),
       buildSection({
-        id: 'confirm',
-        title: m.overviewDone,
+        id: 'confim',
+        title: m.applicationDone,
         children: [],
       }),
     ],

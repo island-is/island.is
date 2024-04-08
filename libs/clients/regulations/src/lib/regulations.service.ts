@@ -73,15 +73,19 @@ export class RegulationsService {
     if (params) {
       url.search = new URLSearchParams(params).toString()
     }
-    const response = await this.fetch(url.toString(), {
-      body: init?.body,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(init?.headers && init?.headers),
-      },
-      method: init?.method || 'GET',
-    })
-    return (await response.json()) as T
+    try {
+      const response = await this.fetch(url.toString(), {
+        body: init?.body,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(init?.headers && init?.headers),
+        },
+        method: init?.method || 'GET',
+      })
+      return (await response.json()) as T
+    } catch (error) {
+      return null
+    }
   }
 
   async createPresignedPost(

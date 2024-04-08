@@ -312,6 +312,11 @@ export class UpdateCaseDto {
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly rulingSignatureDate?: Date
+
+  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly judgeId?: string
@@ -425,4 +430,9 @@ export class UpdateCaseDto {
   @IsEnum(UserRole, { each: true })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentDeniedExplanation?: string
 }

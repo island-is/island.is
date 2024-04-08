@@ -1,11 +1,13 @@
 {
   "name": "@island.is/native-app",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "scripts": {
     "release:android": "cd android && ./gradlew bundleProdRelease bundleDevRelease",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "react-native run-android --mode devDebug",
+    "android:prod": "react-native run-android --variant=prodDebug",
+    "ios": "react-native run-ios --scheme Ísland.dev",
+    "ios:prod": "react-native run-ios --scheme Ísland.is",
     "typecheck": "tsc --noEmit",
     "build-mock": "echo FIXME",
     "start": "react-native start",

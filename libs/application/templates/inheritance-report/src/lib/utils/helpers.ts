@@ -1,5 +1,5 @@
 import { Application, FormValue } from '@island.is/application/types'
-import { EstateInfo } from '@island.is/clients/syslumenn'
+import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
@@ -17,27 +17,19 @@ export const isValidString = (string: string | undefined) =>
 
 export const getEstateDataFromApplication = (
   application: Application<FormValue>,
-): { estate?: EstateInfo } => {
+): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
-  let estateData = (
+  const estateData = (
     application.externalData.syslumennOnEntry?.data as {
-      estates?: Array<EstateInfo>
+      inheritanceReportInfos?: Array<InheritanceReportInfo>
     }
-  ).estates?.find((estate) => estate.caseNumber === selectedEstate)
-
-  // TODO: remove singular estate property when legacy applications
-  //       have cleared out of the system
-  if (!estateData) {
-    estateData = (
-      application.externalData.syslumennOnEntry?.data as {
-        estate: EstateInfo
-      }
-    ).estate
-  }
+  ).inheritanceReportInfos?.find(
+    (estate) => estate.caseNumber === selectedEstate,
+  )
 
   return {
-    estate: estateData,
+    inheritanceReportInfo: estateData,
   }
 }
 
@@ -69,29 +61,25 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
  * @param value
  * @returns number
  */
-export const valueToNumber = (value?: unknown): number => {
-  if (!value) {
-    return 0
-  }
-
+export const valueToNumber = (value: unknown, delimiter = '.'): number => {
   if (typeof value === 'number') {
     return value
   }
 
-  if (typeof value === 'string') {
-    const numStr = value.replace(/[^\d,]/g, '')
-    const numStrDot = numStr.replace(',', '.')
-    const num = parseFloat(numStrDot)
+  if (typeof value === 'string' && value.length > 0) {
+    const regex = new RegExp(`[^${delimiter}\\d]+`, 'g')
+    const regex2 = new RegExp(`(?<=\\${delimiter}.*)\\${delimiter}`, 'g')
 
-    return isNaN(num) ? 0 : num
+    const parsed = value.replace(regex, '').replace(regex2, '')
+    return parseFloat(parsed.replace(delimiter, '.'))
   }
 
   return 0
 }
 
 export const isValidRealEstate = (value: string) => {
-  const lotRegex = /^[Ll]\d{6}$/
-  const houseRegex = /^[Ff]\d{7}$/
+  const lotRegex = /^[Ll]{0,1}\d{6}$/
+  const houseRegex = /^[Ff]{0,1}\d{7}$/
 
   return lotRegex.test(value) || houseRegex.test(value)
 }

@@ -57,10 +57,24 @@ export const dataSchema = z.object({
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),
-  drivingLicenseInOtherCountry: z.enum([YES, NO]),
-  drivingLicenseDeprivedOrRestrictedInOtherCountry: z.union([
-    z.array(z.enum([YES, NO])).nonempty(),
-    z.enum([YES, NO]),
-  ]),
+  otherCountry: z
+    .object({
+      drivingLicenseInOtherCountry: z.enum([YES, NO]),
+      drivingLicenseDeprivedOrRestrictedInOtherCountry: z
+        .array(z.string())
+        .optional(),
+    })
+    .refine(
+      ({
+        drivingLicenseInOtherCountry,
+        drivingLicenseDeprivedOrRestrictedInOtherCountry,
+      }) => {
+        return drivingLicenseInOtherCountry === YES
+          ? !!drivingLicenseDeprivedOrRestrictedInOtherCountry &&
+              drivingLicenseDeprivedOrRestrictedInOtherCountry.length > 0
+          : true
+      },
+      { path: ['drivingLicenseDeprivedOrRestrictedInOtherCountry'] },
+    ),
   hasHealthRemarks: z.enum([YES, NO]),
 })

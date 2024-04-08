@@ -33,6 +33,15 @@ export const messages = defineMessages({
     id: 'sp.assets:housing',
     defaultMessage: 'Íbúðarhúsnæði',
   },
+  realEstate: {
+    id: 'sp.assets:real-estate',
+    defaultMessage: 'Fasteign',
+  },
+  realEstateDetailIntro: {
+    id: 'sp.assets:real-estate-detail-intro',
+    defaultMessage:
+      'Hér koma upplýsingar um fasteignina frá Húsnæðis og Mannvirkjastofnun.',
+  },
   appraisal: {
     id: 'sp.assets:appraisal',
     defaultMessage: 'Fasteignamat',
@@ -835,7 +844,7 @@ export const vehicleMessage = defineMessages({
   },
   mileageInputTooLow: {
     id: 'sp.vehicles:mileage-errors-input-too-low',
-    defaultMessage: 'Verður að vera hærri en hæsta staðfesta skráning',
+    defaultMessage: 'Verður að vera hærri en síðasta staðfesta skráning',
   },
   mileageInputMinLength: {
     id: 'sp.vehicles:mileage-errors-min-length',
@@ -873,6 +882,18 @@ export const ipMessages = defineMessages({
   basePatent: {
     id: 'sp.intellectual-property:base-patent',
     defaultMessage: 'Grunneinkaleyfi',
+  },
+  design: {
+    id: 'sp.intellectual-property:design',
+    defaultMessage: 'Hönnun',
+  },
+  trademark: {
+    id: 'sp.intellectual-property:trademark',
+    defaultMessage: 'Vörumerki',
+  },
+  patent: {
+    id: 'sp.intellectual-property:patent',
+    defaultMessage: 'Einkaleyfi',
   },
   title: {
     id: 'sp.intellectual-property:title',
@@ -1165,6 +1186,43 @@ export const ipMessages = defineMessages({
   spcNumber: {
     id: 'sp.intellectual-property:spc-number',
     defaultMessage: 'SPC númer',
+  },
+  multimediaTrademark: {
+    id: 'sp.intellectual-property:multimedia-trademark',
+    defaultMessage: 'Margmiðlunarmerki',
+  },
+  animationTrademark: {
+    id: 'sp.intellectual-property:animation-trademark',
+    defaultMessage: 'Hreyfimerki',
+  },
+  audioTrademark: {
+    id: 'sp.intellectual-property:audio-trademark',
+    defaultMessage: 'Hljóðmerki',
+  },
+  textTrademark: {
+    id: 'sp.intellectual-property:text-trademark',
+    defaultMessage: 'Orðmerki',
+  },
+  imageTrademark: {
+    id: 'sp.intellectual-property:image-trademark',
+    defaultMessage: 'Myndmerki',
+  },
+  textAndImageTrademark: {
+    id: 'sp.intellectual-property:text-and-image-trademark',
+    defaultMessage: 'Orð- og myndmerki',
+  },
+  unknownTrademark: {
+    id: 'sp.intellectual-property:unknown-trademark',
+    defaultMessage: 'Óþekkt merki',
+  },
+  notFound: {
+    id: 'sp.intellectual-property:not-found',
+    defaultMessage: '{arg} ekki skráð',
+  },
+  notFoundText: {
+    id: 'sp.intellectual-property:not-found-text',
+    defaultMessage:
+      'Ef þú telur að hér eigi að birtast {arg}, vinsamlegast hafðu samband við þjónustuaðila',
   },
 })
 

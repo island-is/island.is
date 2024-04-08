@@ -207,6 +207,11 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
     },
+    XROAD_HMS_HOUSING_BENEFITS_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
+    },
   },
 })
 
@@ -286,6 +291,16 @@ export const Firearm = new XroadConf({
       dev: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1',
       staging: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
       prod: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
+    },
+  },
+})
+
+export const Hunting = new XroadConf({
+  env: {
+    XROAD_HUNTING_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
+      staging: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api',
+      prod: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api',
     },
   },
 })
@@ -751,6 +766,16 @@ export const UniversityGatewayHolarUniversity = new XroadConf({
       dev: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
       staging: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
       prod: 'IS/EDU/5001694359/Holar-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayReykjavikUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_REYKJAVIK_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10062/RvkUni-Hvin-Protected/umsoknir-v1',
+      staging: 'IS-TEST/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5101054190/RvkUni-Hvin-Protected/umsoknir-v1',
     },
   },
 })

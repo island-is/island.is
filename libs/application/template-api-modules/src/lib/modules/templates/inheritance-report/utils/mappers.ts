@@ -94,8 +94,9 @@ export const expandAnswers = (
       bankAccounts: {
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
-            accountNumber: account.accountNumber ?? '',
-            balance: account.balance ?? '',
+            assetNumber: account.assetNumber ?? '',
+            propertyValuation: account.propertyValuation ?? '',
+            exchangeRateOrInterest: account.exchangeRateOrInterest ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
           }
         }),
@@ -104,9 +105,9 @@ export const expandAnswers = (
       claims: {
         data: (answers.assets.claims?.data ?? []).map((claim) => {
           return {
-            issuer: claim.issuer ?? '',
-            value: claim.value ?? '',
-            nationalId: claim.nationalId ?? '',
+            assetNumber: claim.assetNumber ?? '',
+            description: claim.description ?? '',
+            propertyValuation: claim.propertyValuation ?? '',
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -130,8 +131,13 @@ export const expandAnswers = (
         value: answers.assets.money?.value ?? '',
       },
       otherAssets: {
-        info: answers.assets.otherAssets?.info ?? '',
-        value: answers.assets.otherAssets?.value ?? '',
+        data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
+          return {
+            info: otherAsset?.info ?? '',
+            value: otherAsset?.value ?? '',
+          }
+        }),
+        total: answers.assets.otherAssets?.total ?? 0,
       },
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
@@ -142,16 +148,15 @@ export const expandAnswers = (
             share: realEstate.share ?? '0',
           }
         }),
-        hasModified: answers.assets.realEstate?.hasModified ?? false,
         total: answers.assets.realEstate?.total ?? 0,
       },
       stocks: {
         data: (answers.assets.stocks?.data ?? []).map((stock) => {
           return {
-            faceValue: stock.faceValue ?? '',
-            nationalId: stock.nationalId ?? '',
-            organization: stock.organization ?? '',
-            rateOfExchange: stock.rateOfExchange ?? '',
+            amount: stock.amount ?? '',
+            assetNumber: stock.assetNumber ?? '',
+            description: stock.description ?? '',
+            exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',
           }
         }),
@@ -165,7 +170,6 @@ export const expandAnswers = (
             propertyValuation: vehicle.propertyValuation ?? '',
           }
         }),
-        hasModified: answers.assets.vehicles?.hasModified ?? false,
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
@@ -173,8 +177,10 @@ export const expandAnswers = (
       businessAssets: {
         data: (answers.business.businessAssets?.data ?? []).map((asset) => {
           return {
-            businessAsset: asset.businessAsset ?? '',
-            businessAssetValue: asset.businessAssetValue ?? 0,
+            description: asset.description ?? '',
+            propertyValuation: asset.propertyValuation ?? '',
+            assetType: asset.assetType ?? '',
+            assetNumber: asset.assetNumber ?? '',
           }
         }),
         total: answers.business.businessAssets?.total ?? 0,
@@ -182,9 +188,9 @@ export const expandAnswers = (
       businessDebts: {
         data: (answers.business.businessDebts?.data ?? []).map((debt) => {
           return {
-            loanIdentity: debt.loanIdentity ?? '',
-            businessDebt: debt.businessDebt ?? '',
-            debtValue: debt.debtValue ?? 0,
+            assetNumber: debt.assetNumber ?? '',
+            description: debt.description ?? '',
+            propertyValuation: debt.propertyValuation ?? 0,
             nationalId: debt.nationalId ?? '',
           }
         }),
@@ -199,9 +205,9 @@ export const expandAnswers = (
         data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
-              loanIdentity: debt.loanIdentity ?? '',
-              balance: debt.balance ?? 0,
-              creditorName: debt.creditorName ?? '',
+              assetNumber: debt.assetNumber ?? '',
+              propertyValuation: debt.propertyValuation ?? 0,
+              description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
             }
           },
@@ -256,7 +262,7 @@ export const expandAnswers = (
       hadSeparateProperty: answers?.spouse?.hadSeparateProperty,
       spouseTotalDeduction: answers?.spouse?.spouseTotalDeduction ?? 0,
       spouseTotalSeparateProperty:
-        answers?.spouse?.spouseTotalSeparateProperty ?? 0,
+        answers?.spouse?.spouseTotalSeparateProperty ?? '',
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',

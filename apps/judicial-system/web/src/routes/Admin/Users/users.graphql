@@ -18,6 +18,7 @@ query Users {
       active
     }
     active
+    canConfirmIndictment
     latestLogin
     loginCount
   }

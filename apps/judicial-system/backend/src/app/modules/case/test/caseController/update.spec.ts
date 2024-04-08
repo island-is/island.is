@@ -11,6 +11,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  NotificationType,
   restrictionCases,
   User,
   UserRole,
@@ -25,7 +26,7 @@ import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: Case
@@ -298,26 +299,26 @@ describe('CaseController - Update', () => {
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVER_REQUEST_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_REQUEST,
             user,
             caseId,
           },
           {
-            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
             user,
             caseId,
           },
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId1,
+            elementId: defendantId1,
           },
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId2,
+            elementId: defendantId2,
           },
         ])
       })
@@ -341,16 +342,16 @@ describe('CaseController - Update', () => {
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId1,
+            elementId: defendantId1,
           },
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId2,
+            elementId: defendantId2,
           },
         ])
       })
@@ -378,7 +379,7 @@ describe('CaseController - Update', () => {
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
           user,
           caseId,
         },
@@ -453,63 +454,63 @@ describe('CaseController - Update', () => {
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
             user,
             caseId,
           },
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId1,
+            elementId: defendantId1,
           },
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId2,
+            elementId: defendantId2,
           },
           {
-            type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
             user,
             caseId,
-            policeCaseNumber: policeCaseNumber1,
+            elementId: policeCaseNumber1,
           },
           {
-            type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
             user,
             caseId,
-            policeCaseNumber: policeCaseNumber2,
+            elementId: policeCaseNumber2,
           },
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: coverLetterId,
+            elementId: coverLetterId,
           },
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: indictmentId,
+            elementId: indictmentId,
           },
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: criminalRecordId,
+            elementId: criminalRecordId,
           },
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: costBreakdownId,
+            elementId: costBreakdownId,
           },
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: uncategorisedId,
+            elementId: uncategorisedId,
           },
         ])
       })
@@ -538,11 +539,12 @@ describe('CaseController - Update', () => {
       it('should post modified notification to queue', async () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.SEND_MODIFIED_NOTIFICATION,
+            type: MessageType.NOTIFICATION,
             user,
             caseId,
+            body: { type: NotificationType.MODIFIED },
           },
-          { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
+          { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
         ])
       })
     },
@@ -594,9 +596,10 @@ describe('CaseController - Update', () => {
       it('should queue messages', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+            type: MessageType.NOTIFICATION,
             user,
             caseId,
+            body: { type: NotificationType.APPEAL_STATEMENT },
           },
         ])
       })

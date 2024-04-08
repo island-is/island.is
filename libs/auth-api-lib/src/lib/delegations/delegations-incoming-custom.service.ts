@@ -26,6 +26,11 @@ import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
+type FindAllValidIncomingOptions = {
+  nationalId: string
+  domainName?: string
+}
+
 /**
  * Service class for incoming delegations.
  * This class supports domain based delegations.
@@ -44,13 +49,16 @@ export class DelegationsIncomingCustomService {
   ) {}
 
   async findAllValidIncoming(
-    user: User,
-    domainName?: string,
+    { nationalId, domainName }: FindAllValidIncomingOptions,
+    useMaster = false,
   ): Promise<DelegationDTO[]> {
     const { delegations, fromNameInfo } = await this.findAllIncoming(
-      user,
-      DelegationValidity.NOW,
-      domainName,
+      {
+        nationalId,
+        validity: DelegationValidity.NOW,
+        domainName,
+      },
+      useMaster,
     )
 
     const delegationDTOs = delegations.map((d) => d.toDTO())
@@ -77,10 +85,10 @@ export class DelegationsIncomingCustomService {
       return []
     }
 
-    const { delegations, fromNameInfo } = await this.findAllIncoming(
-      user,
-      DelegationValidity.NOW,
-    )
+    const { delegations, fromNameInfo } = await this.findAllIncoming({
+      nationalId: user.nationalId,
+      validity: DelegationValidity.NOW,
+    })
 
     const validDelegations = delegations
       .map((d) => {
@@ -131,16 +139,22 @@ export class DelegationsIncomingCustomService {
   }
 
   private async findAllIncoming(
-    user: User,
-    validity: DelegationValidity,
-    domainName?: string,
+    {
+      nationalId,
+      domainName,
+      validity,
+    }: FindAllValidIncomingOptions & {
+      validity: DelegationValidity
+    },
+    useMaster = false,
   ): Promise<{ delegations: Delegation[]; fromNameInfo: IndividualDto[] }> {
     let whereOptions = getScopeValidityWhereClause(validity)
     if (domainName) whereOptions = { ...whereOptions, domainName: domainName }
 
     const delegations = await this.delegationModel.findAll({
+      useMaster,
       where: {
-        toNationalId: user.nationalId,
+        toNationalId: nationalId,
       },
       include: [
         {
@@ -279,7 +293,7 @@ export class DelegationsIncomingCustomService {
       )
 
       // We do not want to fail the whole request if we cannot get the live status from delegations.
-      // Therefore we return all delegations as alive delegations.
+      // Therefore, we return all delegations as alive delegations.
       return {
         aliveDelegations: delegations,
         deceasedDelegations: [],

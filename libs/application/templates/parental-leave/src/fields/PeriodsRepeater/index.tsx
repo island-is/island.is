@@ -26,7 +26,7 @@ import {
   getApplicationAnswers,
   synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
+import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
@@ -128,12 +128,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
         })
 
         if (errors) {
-          return [
-            false,
-            formatMessage(
-              parentalLeaveFormMessages.errorMessages.periodsCouldNotContinue,
-            ),
-          ]
+          return [false, formatMessage(errorMessages.periodsCouldNotContinue)]
         }
 
         return [true, null]
@@ -144,19 +139,12 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
           const message =
             (problem.fields?.periods as string) ??
             problem.detail ??
-            formatMessage(
-              parentalLeaveFormMessages.errorMessages.periodsUnexpectedError,
-            )
+            formatMessage(errorMessages.periodsUnexpectedError)
 
           return [false, message]
         }
 
-        return [
-          false,
-          formatMessage(
-            parentalLeaveFormMessages.errorMessages.periodsUnexpectedError,
-          ),
-        ]
+        return [false, formatMessage(errorMessages.periodsUnexpectedError)]
       }
     })
   }, [
@@ -205,7 +193,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
         <Timeline
           initDate={dobDate}
           title={formatMessage(
-            parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
+            parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
           titleSmall={formatMessage(
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
@@ -227,7 +215,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
         <Box alignItems="center">
           <Inline space={1} alignY="center">
             <Button
-              size="small"
+              variant="ghost"
               icon="add"
               disabled={!canAddAnotherPeriod}
               onClick={expandRepeater}

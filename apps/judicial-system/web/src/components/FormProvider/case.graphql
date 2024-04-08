@@ -198,6 +198,7 @@ query Case($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
+    canProsecutorAppeal
     hasBeenAppealed
     appealedByRole
     appealedDate
@@ -229,6 +230,7 @@ query Case($input: CaseQueryInput!) {
     isAppealCustodyIsolation
     appealIsolationToDate
     requestAppealRulingNotToBePublished
+    indictmentDeniedExplanation
     eventLogs {
       id
       created

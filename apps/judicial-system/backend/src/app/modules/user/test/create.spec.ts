@@ -23,6 +23,7 @@ describe('UserController - Create', () => {
   const role = randomEnum(UserRole)
   const institutionId = uuid()
   const active = true
+  const canConfirmIndictment = false
   let mockUserModel: typeof User
   let givenWhenThen: GivenWhenThen
 
@@ -44,6 +45,7 @@ describe('UserController - Create', () => {
           role,
           institutionId,
           active,
+          canConfirmIndictment,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -73,6 +75,7 @@ describe('UserController - Create', () => {
         role,
         institutionId,
         active,
+        canConfirmIndictment,
       })
       expect(then.result).toBe(user)
     })

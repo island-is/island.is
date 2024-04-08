@@ -6,13 +6,12 @@ import {
 } from '@island.is/application/types'
 import { m } from '../messages'
 import { ConditionFn, DrivingLicense } from '../types'
-import { YES } from '../constants'
+import { NO, YES } from '../constants'
 import {
   DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
 } from '../../lib/constants'
-import { hasYes } from '@island.is/application/core'
 
 export const allowFakeCondition =
   (result = YES) =>
@@ -46,7 +45,8 @@ export const isApplicationForCondition =
   }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
-  !hasYes(answers?.drivingLicenseInOtherCountry)
+  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') ===
+    NO || true
 
 export const chooseDistrictCommissionerDescription = ({
   answers,
