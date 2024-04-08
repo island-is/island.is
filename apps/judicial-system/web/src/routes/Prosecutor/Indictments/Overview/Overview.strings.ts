@@ -93,8 +93,8 @@ export const overview = {
     description:
       'Notaður sem titill á "Hafna aðkæra" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
   }),
-  indictmentResentExplanationTitle: defineMessage({
-    id: 'judicial.system.indictments:overview.indictment_resent_explanation_title',
+  indictmentReturnExplanationTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_returned_explanation_title',
     defaultMessage: 'Ákæra endursend',
     description:
       'Notaður sem titill á "Ákæra endursend" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',

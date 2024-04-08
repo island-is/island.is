@@ -26,7 +26,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
-import ResendIndictmentModal from '../../Court/Indictments/ResendIndictmentCaseModal/ResendIndictmentCaseModal'
+import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
@@ -99,7 +99,7 @@ const IndictmentOverview = () => {
               )
             }
             nextButtonText={formatMessage(core.continue)}
-            actionButtonText={formatMessage(strings.resendIndictmentButtonText)}
+            actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
             actionButtonColorScheme={'destructive'}
             actionButtonIsDisabled={!workingCase.courtCaseNumber}
             onActionButtonClick={() => setModalVisible(true)}
@@ -107,7 +107,7 @@ const IndictmentOverview = () => {
         </FormContentContainer>
       )}
       {isDistrictCourtUser(user) && modalVisible && (
-        <ResendIndictmentModal
+        <ReturnIndictmentModal
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           onClose={() => setModalVisible(false)}

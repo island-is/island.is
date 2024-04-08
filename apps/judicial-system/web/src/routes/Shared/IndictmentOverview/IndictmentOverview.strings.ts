@@ -12,8 +12,8 @@ export const strings = defineMessages({
     defaultMessage: 'Máli lokið',
     description: 'Notaður sem titill á yfirliti ákæru þegar máli er lokið.',
   },
-  resendIndictmentButtonText: {
-    id: 'judicial.system.core:indictment_overview.resend_indictment_button_text',
+  returnIndictmentButtonText: {
+    id: 'judicial.system.core:indictment_overview.return_indictment_button_text',
     defaultMessage: 'Endursenda',
     description: 'Notaður sem texti á takka til að endursenda ákæru.',
   },

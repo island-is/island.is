@@ -230,6 +230,7 @@ query Case($input: CaseQueryInput!) {
     appealIsolationToDate
     requestAppealRulingNotToBePublished
     indictmentDeniedExplanation
+    indictmentReturnedExplanation
     eventLogs {
       id
       created

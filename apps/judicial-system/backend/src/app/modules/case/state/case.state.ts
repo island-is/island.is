@@ -43,7 +43,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     },
   ],
   [
-    CaseTransition.RESEND_INDICTMENT,
+    CaseTransition.RETURN_INDICTMENT,
     {
       fromStates: [CaseState.RECEIVED],
       fromAppealStates: [undefined],
