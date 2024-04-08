@@ -505,6 +505,17 @@ export const inheritanceReportSchema = z.object({
         },
       )
       .array()
+      .refine(
+        (v) => {
+          if (v.length > 0) {
+            const count = v.filter((x) => x.relation === 'Maki')?.length
+            return count <= 1
+          }
+
+          return true
+        },
+        { message: 'hey', params: m.errorSpouseCount, path: ['relation'] },
+      )
       .optional(),
     total: z.number().refine((v) => {
       const val = typeof v === 'string' ? parseInt(v, 10) ?? 0 : v

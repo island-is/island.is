@@ -1277,6 +1277,11 @@ export const m = defineMessages({
     defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
+  errorSpouseCount: {
+    id: 'ir.application:errorSpouseCount',
+    defaultMessage: 'Aðeins er hægt að hafa einn erfingja sem maka',
+    description: '',
+  },
   inheritanceUnder18Error: {
     id: 'ir.application:inheritanceUnder18Error',
     defaultMessage:

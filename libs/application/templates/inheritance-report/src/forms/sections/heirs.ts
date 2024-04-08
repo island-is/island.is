@@ -121,40 +121,39 @@ export const heirs = buildSection({
               {
                 customFields: [
                   {
-                    title: m.heirsRelation.defaultMessage,
+                    title: m.heirsRelation,
                     id: 'relation',
                   },
                   {
-                    // sectionTitle: m.heirShare,
-                    title: m.heirsInheritanceRate.defaultMessage,
+                    title: m.heirsInheritanceRate,
                     id: 'heirsPercentage',
                   },
                   {
-                    title: m.taxFreeInheritance.defaultMessage,
+                    title: m.taxFreeInheritance,
                     id: 'taxFreeInheritance',
                     readOnly: true,
                     currency: true,
                   },
                   {
-                    title: m.inheritanceAmount.defaultMessage,
+                    title: m.inheritanceAmount,
                     id: 'inheritance',
                     readOnly: true,
                     currency: true,
                   },
                   {
-                    title: m.taxableInheritance.defaultMessage,
+                    title: m.taxableInheritance,
                     id: 'taxableInheritance',
                     readOnly: true,
                     currency: true,
                   },
                   {
-                    title: m.inheritanceTax.defaultMessage,
+                    title: m.inheritanceTax,
                     id: 'inheritanceTax',
                     readOnly: true,
                     currency: true,
                   },
                 ],
-                repeaterButtonText: m.addHeir.defaultMessage,
+                repeaterButtonText: m.addHeir,
                 sumField: 'heirsPercentage',
               },
             ),

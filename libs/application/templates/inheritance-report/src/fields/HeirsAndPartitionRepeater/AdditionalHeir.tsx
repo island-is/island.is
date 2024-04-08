@@ -253,6 +253,9 @@ export const AdditionalHeir = ({
                     label={formatMessage(
                       m.inheritanceRelationWithApplicantLabel,
                     )}
+                    onSelect={() => {
+                      clearErrors()
+                    }}
                     defaultValue={currentHeir.relation}
                     options={relationOptions}
                     error={error?.relation}
@@ -266,7 +269,7 @@ export const AdditionalHeir = ({
                   <ShareInput
                     name={`${fieldIndex}.${customField.id}`}
                     disabled={!currentHeir.enabled}
-                    label={customField.title}
+                    label={formatMessage(customField.title)}
                     onAfterChange={(val) => {
                       updateValues(fieldIndex, val)
                     }}
@@ -286,7 +289,7 @@ export const AdditionalHeir = ({
                     disabled={!currentHeir.enabled}
                     defaultValue={defaultValue ? defaultValue : ''}
                     format={customField.format}
-                    label={customField.title}
+                    label={formatMessage(customField.title)}
                     currency
                     readOnly
                     error={
