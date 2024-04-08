@@ -5,12 +5,14 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { Program } from './model/program'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
+import { Course } from '../course/model/course'
 import { University } from '../university/model/university'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
       University,
+      Course,
       Program,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
