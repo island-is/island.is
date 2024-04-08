@@ -25,7 +25,7 @@ export const LifeEventsSection = ({
   headingId,
   items = [],
   seeMoreText,
-  cardsButtonTitle = ''
+  cardsButtonTitle = '',
 }: LifeEventsSectionProps) => {
   const { linkResolver } = useLinkResolver()
 
