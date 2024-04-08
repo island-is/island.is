@@ -12,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { isCompletedCase } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
