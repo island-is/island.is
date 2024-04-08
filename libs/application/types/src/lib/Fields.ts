@@ -515,7 +515,7 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string>
+    format?: Record<string, (value: string) => string | StaticText>
   }
 }
 export interface FindVehicleField extends BaseField {
