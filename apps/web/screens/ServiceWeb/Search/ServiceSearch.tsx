@@ -227,7 +227,9 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                   initialInputValue={q}
                   placeholder={o(
                     'serviceWebSearchPlaceholder',
-                    'Leitaðu á þjónustuvefnum',
+                    activeLocale === 'is'
+                      ? 'Leitaðu á þjónustuvefnum'
+                      : 'Search the service web',
                   )}
                   nothingFoundText={n(
                     'nothingFoundText',
