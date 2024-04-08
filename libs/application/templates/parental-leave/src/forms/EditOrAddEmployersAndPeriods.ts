@@ -324,7 +324,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             .additionalAttachmentTitle,
           children: [
             buildMultiField({
-              id: 'additionalDocumentsRequiredScreen',
+              id: 'changeEmployerScreen',
               title:
                 parentalLeaveFormMessages.fileUpload
                   .additionalAttachmentTitle,
@@ -333,7 +333,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                   .additionalAttachmentDescription,
               children: [
                 buildFileUploadField({
-                  id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+                  id: 'fileUpload.changeEmployer',
                   title: '',
                   maxSize: FILE_SIZE_LIMIT,
                   maxSizeErrorText:

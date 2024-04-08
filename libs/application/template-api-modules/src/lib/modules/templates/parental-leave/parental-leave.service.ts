@@ -424,6 +424,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       noChildrenFoundTypeOfApplication,
       employerLastSixMonths,
       employers,
+      changeEmployer,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
@@ -448,6 +449,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           )
           attachments.push({
             attachmentType: apiConstants.attachments.residenceGrant,
+            attachmentBytes: pdf,
+          })
+        })
+      }
+    }
+    if (
+      state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+    ) {
+      if (changeEmployer) {
+        changeEmployer.forEach(async (item, index) => {
+          const pdf = await this.getPdf(
+            application,
+            index,
+            'fileUpload.changeEmployer',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.changeEmployer,
             attachmentBytes: pdf,
           })
         })
