@@ -262,8 +262,8 @@ ignore it for now. We do not know what’s going on 🤷
 
 ### 💀 Error: `ESOCKETTIMEDOUT`
 
-This is an infrastructure issue and should have been resolved. If you see this in
-your tests on dev, contact DevOps 👩‍💻
+This is an infrastructure issue which should have been resolved. If you see this
+in your tests on dev, contact DevOps 👩‍💻
 
 ### ⌛ Tests are timing out
 
