@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   DEFENDER_INDICTMENT_ROUTE,
@@ -164,7 +163,6 @@ const useCaseList = () => {
           ? getLimitedAccessCase({ variables: { input: { id } } })
           : getCase({ variables: { input: { id } } })
       }
-
       if (
         isTransitioningCase ||
         isSendingNotification ||
@@ -194,12 +192,6 @@ const useCaseList = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: theme.spacing[3],
-        }}
       >
         <LoadingDots single />
       </motion.div>
