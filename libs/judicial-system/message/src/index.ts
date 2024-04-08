@@ -1,4 +1,4 @@
-export { MessageType } from './lib/message'
+export { OldMessageType, MessageType, messageEndpoint } from './lib/message'
 export type {
   CaseMessage,
   DefendantMessage,

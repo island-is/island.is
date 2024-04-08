@@ -58,9 +58,10 @@ describe('NotificationController - Send appeal files updated notifications', () 
     it('should queue message for delivery', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_APPEAL_CASE_FILES_UPDATED_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
+          body: { type: NotificationType.APPEAL_CASE_FILES_UPDATED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })
