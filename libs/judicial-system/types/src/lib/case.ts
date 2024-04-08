@@ -118,6 +118,7 @@ export enum CaseTransition {
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
+  RESEND_INDICTMENT = 'RESEND_INDICTMENT',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */

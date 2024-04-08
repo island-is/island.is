@@ -28,6 +28,10 @@ interface Props {
   nextButtonColorScheme?: ButtonTypes['colorScheme']
   onNextButtonClick?: () => void
   hideNextButton?: boolean
+  actionButtonText?: string
+  actionButtonColorScheme?: 'destructive'
+  actionButtonIsDisabled?: boolean
+  onActionButtonClick?: () => void
   infoBoxText?: string
 }
 
@@ -61,6 +65,18 @@ const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
           {!isMobile && (props.previousButtonText || formatMessage(core.back))}
         </Button>
       </Box>
+      {props.actionButtonText && (
+        <Box className={cn(styles.button, styles.actionButton)}>
+          <Button
+            onClick={props.onActionButtonClick}
+            variant="ghost"
+            colorScheme={props.actionButtonColorScheme ?? 'destructive'}
+            disabled={props.actionButtonIsDisabled}
+          >
+            {props.actionButtonText}
+          </Button>
+        </Box>
+      )}
       {(!props.hideNextButton || props.infoBoxText) && (
         <Box
           display="flex"

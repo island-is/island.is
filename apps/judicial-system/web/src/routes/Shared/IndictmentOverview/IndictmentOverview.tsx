@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -7,6 +7,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDefenceUser,
+  isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -25,15 +26,17 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
+import ResendIndictmentModal from '../../Court/Indictments/ResendIndictmentCaseModal/ResendIndictmentCaseModal'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound, setWorkingCase } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const caseIsClosed = isCompletedCase(workingCase.state)
 
@@ -96,8 +99,20 @@ const IndictmentOverview = () => {
               )
             }
             nextButtonText={formatMessage(core.continue)}
+            actionButtonText={formatMessage(strings.resendIndictmentButtonText)}
+            actionButtonColorScheme={'destructive'}
+            actionButtonIsDisabled={!workingCase.courtCaseNumber}
+            onActionButtonClick={() => setModalVisible(true)}
           />
         </FormContentContainer>
+      )}
+      {isDistrictCourtUser(user) && modalVisible && (
+        <ResendIndictmentModal
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          onClose={() => setModalVisible(false)}
+          onComplete={() => router.push(constants.CASES_ROUTE)}
+        />
       )}
     </PageLayout>
   )
