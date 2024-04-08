@@ -8,7 +8,6 @@ export const uppercase = style({
 export const ownPopertyShareContainer = style({
   borderRadius: theme.border.radius.large,
   padding: 24,
-  // backgroundColor: theme.color.blue100,
   border: `1px solid ${theme.color.blue200}`,
 })
 
@@ -23,7 +22,6 @@ export const removeFieldButton = style({
   right: 0,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      // top: theme.spacing['9'],
       top: theme.spacing['3'],
       right: -theme.spacing['6'],
     },

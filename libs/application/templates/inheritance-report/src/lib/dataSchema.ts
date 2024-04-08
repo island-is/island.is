@@ -568,14 +568,6 @@ export const inheritanceReportSchema = z.object({
 
   totalDeduction: z.number(),
 
-  // shareTotal: z.number(),
-  // allDebtsTotal: z.number(),
-  // netPropertyForExchange: z.number(),
-  // netProperty: z.number(),
-  // cohabitantShare: z.number(),
-  // deceasedCohabitantShare: z.string().optional(),
-  // deceasedCohabitantShareEnabled: z.array(z.enum([YES])).optional(),
-
   // Heildareign
   total: z.number(),
 

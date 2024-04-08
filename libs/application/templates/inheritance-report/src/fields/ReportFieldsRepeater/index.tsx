@@ -358,7 +358,7 @@ export const ReportFieldsRepeater: FC<
                         backgroundColor="blue"
                         {...(!foreignBankAccountIndexes.includes(mainIndex) && {
                           format: '####-##-######',
-                          placeholder: '0000-00-000000-000',
+                          placeholder: '0000-00-000000',
                         })}
                         error={err}
                         required
