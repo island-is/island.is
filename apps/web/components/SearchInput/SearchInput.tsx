@@ -1,44 +1,46 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
   forwardRef,
   ReactElement,
+  useCallback,
+  useEffect,
   useReducer,
+  useRef,
+  useState,
 } from 'react'
-import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
+import Downshift from 'downshift'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
-import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+
 import {
   AsyncSearchInput,
+  AsyncSearchInputProps,
   AsyncSearchSizes,
   Box,
-  Text,
-  Stack,
   Link,
-  AsyncSearchInputProps,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
-import {
-  GetSearchResultsQuery,
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  Article,
-  SubArticle,
-  SearchableContentTypes,
-  AnchorPage,
-  News,
-  OrganizationSubpage,
-  LifeEventPage,
-} from '@island.is/web/graphql/schema'
-
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
+import { Locale } from '@island.is/shared/types'
+import {
+  AnchorPage,
+  Article,
+  ContentLanguage,
+  GetSearchResultsQuery,
+  LifeEventPage,
+  News,
+  OrganizationSubpage,
+  QuerySearchResultsArgs,
+  SearchableContentTypes,
+  SubArticle,
+} from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
+import { finetuneSearchResultItems } from '@island.is/web/utils/search'
 
 import * as styles from './SearchInput.css'
 
@@ -418,6 +420,7 @@ const Results = ({
   highlightedResults,
 }: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
+  const { activeLocale } = useI18n()
 
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
@@ -430,6 +433,13 @@ const Results = ({
 
     return <CommonSearchTerms suggestions={suggestions} />
   }
+
+  const searchResultItems = finetuneSearchResultItems(
+    search.term,
+    search.results?.items ?? [],
+    activeLocale,
+  )
+
   return (
     <Box
       display="flex"
@@ -438,13 +448,13 @@ const Results = ({
       paddingY={2}
       paddingX={3}
     >
-      {autosuggest && search.results && search.results.items.length > 0 && (
+      {autosuggest && searchResultItems.length > 0 && (
         <div className={styles.menuRow}>
           <Stack space={2}>
             <Text variant="eyebrow" color="purple400">
               {quickContentLabel}
             </Text>
-            {search.results.items
+            {searchResultItems
               .slice(0, 5)
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
