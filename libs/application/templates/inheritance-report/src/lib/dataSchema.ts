@@ -514,7 +514,7 @@ export const inheritanceReportSchema = z.object({
 
           return true
         },
-        { message: 'hey', params: m.errorSpouseCount, path: ['relation'] },
+        { params: m.errorSpouseCount, path: ['relation'] },
       )
       .optional(),
     total: z.number().refine((v) => {
@@ -567,28 +567,13 @@ export const inheritanceReportSchema = z.object({
     ),
 
   totalDeduction: z.number(),
-
-  // Heildareign
   total: z.number(),
-
-  // Heildarskuldir
   debtsTotal: z.number(),
-
-  // Heildarséreign
   shareTotal: z.number(),
-
-  // Hrein eign: Heildareign - Heildarskuldir
   netTotal: z.number(),
-
-  // Búshluti makans: Hrein eign - Heildarséreign / 2
   spouseTotal: z.number(),
-
-  // Búshluti dánarbús: Hrein eign - Heildarséreign / 2
   estateTotal: z.number(),
-
-  // Hrein eign til skipta: Heildarséreign + Búshluti dánarbús
   netPropertyForExchange: z.number(),
-
   hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
   customSpouseSharePercentage: z
     .string()
