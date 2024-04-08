@@ -503,8 +503,6 @@ PODS:
   - react-native-app-auth (6.4.3):
     - AppAuth (= 1.4.0)
     - React-Core
-  - react-native-barcode-creator (0.1.7):
-    - React-Core
   - react-native-blob-util (0.16.4):
     - React-Core
   - react-native-cookies (6.2.1):
@@ -647,6 +645,8 @@ PODS:
     - React
   - RNShare (7.1.1):
     - React-Core
+  - RNSVG (15.1.0):
+    - React-Core
   - SocketRocket (0.6.0)
   - SSZipArchive (2.2.3)
   - Yoga (1.14.0)
@@ -725,7 +725,6 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-app-auth (from `../node_modules/react-native-app-auth`)
-  - react-native-barcode-creator (from `../node_modules/react-native-barcode-creator`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - "react-native-cookies (from `../node_modules/@react-native-cookies/cookies`)"
   - react-native-passkit-wallet (from `../node_modules/react-native-passkit-wallet`)
@@ -760,6 +759,7 @@ DEPENDENCIES:
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNQuickAction (from `../node_modules/react-native-quick-actions`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -880,8 +880,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-app-auth:
     :path: "../node_modules/react-native-app-auth"
-  react-native-barcode-creator:
-    :path: "../node_modules/react-native-barcode-creator"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
   react-native-cookies:
@@ -950,6 +948,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-quick-actions"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1027,7 +1027,6 @@ SPEC CHECKSUMS:
   React-jsinspector: ff56004b0c974b688a6548c156d5830ad751ae07
   React-logger: 60a0b5f8bed667ecf9e24fecca1f30d125de6d75
   react-native-app-auth: fd1eaa667c0bc014199456d14a6440cb74de814e
-  react-native-barcode-creator: a311a66cf233b58a3993dcf6902fb227399b7a87
   react-native-blob-util: 60453b777610c87a22b3524032c0214e8db555db
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-passkit-wallet: bd06b26f147016c352013a75271dd22cc11514df
@@ -1062,12 +1061,13 @@ SPEC CHECKSUMS:
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNShare: a22398d8d02336133e28bf8b6e0b47b31abade41
+  RNSVG: 50cf2c7018e57cf5d3522d98d0a3a4dd6bf9d093
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: 921eb014669cf9c718ada68b08d362517d564e0c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 3dbcaf1abb38797833cbf2e3c94e517dd00d38b5
+PODFILE CHECKSUM: 88dd06099129c132ab3214042958bb9c117cadf7
 
 COCOAPODS: 1.15.2

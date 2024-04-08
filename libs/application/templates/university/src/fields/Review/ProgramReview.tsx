@@ -1,10 +1,8 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
-import { review } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
-import { GenericReview } from '../../components/GenericReview'
 import { UniversityApplication } from '../../lib/dataSchema'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -17,18 +15,17 @@ export const ProgramReview: FC<Props> = ({
   route,
 }) => {
   const answers = application.answers as UniversityApplication
-  const { formatMessage } = useLocale()
 
   return (
-    <GenericReview
-      application={application}
-      leftColumnItems={[
-        answers?.programInformation.programName,
-        answers?.programInformation.universityName,
-      ]}
-      leftDescription={formatMessage(review.labels.chosenProgram)}
-      goToScreen={goToScreen}
-      route={route}
-    />
+    <Box paddingBottom={4}>
+      <Box></Box>
+      <GridRow>
+        <GridColumn span="1/2">
+          <Text>{answers?.programInformation.programName}</Text>
+          <Text>{answers?.programInformation.universityName}</Text>
+        </GridColumn>
+        <GridColumn span="1/2"></GridColumn>
+      </GridRow>
+    </Box>
   )
 }

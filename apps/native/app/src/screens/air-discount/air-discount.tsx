@@ -7,6 +7,7 @@ import {
   Skeleton,
   Typography,
 } from '@ui'
+import React from 'react'
 import { SafeAreaView, ScrollView, View, Image } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { FormattedMessage, useIntl } from 'react-intl'

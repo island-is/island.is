@@ -1,4 +1,4 @@
-import { Barcode, BARCODE_CONTAINER_HEIGHT } from '@ui/lib/barcode/barcode'
+import { Barcode } from '@ui/lib/barcode/barcode'
 import { Skeleton } from '@ui/lib/skeleton/skeleton'
 import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
@@ -12,7 +12,6 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
-import { screenWidth } from '../../../utils/dimensions'
 import { isString } from '../../../utils/is-string'
 import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
@@ -28,7 +27,7 @@ import LogoEhic from '../../assets/card/sjukratryggingar.png'
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
-import LogoEnvironmentAgency from '../../assets/card/ust.png'
+import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
 import BackgroundHuntingCard from '../../assets/card/veidikort.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
@@ -38,10 +37,11 @@ import { font } from '../../utils/font'
 export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 
 const Host = styled(Animated.View)`
-  padding: ${({ theme: { spacing } }) => `${spacing[2]}px ${spacing[3]}`}px;
+  position: relative;
   min-height: 112px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
   row-gap: ${LICENSE_CARD_ROW_GAP}px;
-  border-radius: ${({ theme: { border } }) => border.radius.extraLarge};
+  border-radius: ${({ theme }) => theme.border.radius.extraLarge};
   overflow: hidden;
 `
 
@@ -50,18 +50,19 @@ const ContentContainer = styled.View`
   justify-content: space-between;
 `
 
-const BarcodeWrapper = styled.View`
+const BarcodeWrapper = styled.View<{ minHeight?: number }>`
   flex: 1;
-  min-height: ${BARCODE_CONTAINER_HEIGHT}px;
-  max-height: ${BARCODE_CONTAINER_HEIGHT}px;
-  border-radius: ${({ theme: { border } }) => border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  min-height: ${({ minHeight }) => minHeight}px;
   overflow: hidden;
 `
 
 const BarcodeContainer = styled.View`
   flex: 1;
-  background-color: ${({ theme: { color } }) => color.white};
-  padding: ${({ theme: { spacing } }) => spacing.smallGutter}px;
+  background-color: ${({ theme }) => theme.color.white};
+  padding: ${({ theme }) => theme.spacing.smallGutter}px;
+  align-items: center;
+  justify-content: center;
 `
 
 const ProgressBarContainer = styled.View`
@@ -265,6 +266,8 @@ interface LicenseCardProps {
     loading?: boolean
     expirationTime?: Date
     expirationTimeCallback?(): void
+    width: number
+    height: number
   }
 }
 
@@ -278,7 +281,7 @@ export function LicenseCard({
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
-  const barcodeWidth = screenWidth - theme.spacing[3] * 2
+
   const intl = useIntl()
   const variant = statusIcon[status]
   const preset = type
@@ -291,7 +294,7 @@ export function LicenseCard({
   const textColor = theme.shades.light.foreground
   const showBarcodeView =
     status === 'VALID' &&
-    ((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
+    !!((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
 
   return (
     <Host>
@@ -343,10 +346,14 @@ export function LicenseCard({
         )}
       </ContentContainer>
       {showBarcodeView && (
-        <BarcodeWrapper>
+        <BarcodeWrapper minHeight={barcode?.height}>
           {!barcode.loading && barcode?.value ? (
             <BarcodeContainer>
-              <Barcode value={barcode.value} />
+              <Barcode
+                value={barcode.value}
+                width={barcode.width}
+                height={barcode.height}
+              />
               {barcode?.expirationTime && (
                 <ProgressBarContainer>
                   <ExpirationProgressBar
@@ -355,7 +362,7 @@ export function LicenseCard({
                     expireTime={
                       barcode.expirationTime.getTime() - new Date().getTime()
                     }
-                    barContainerWidth={barcodeWidth}
+                    barContainerWidth={barcode.width}
                   />
                 </ProgressBarContainer>
               )}

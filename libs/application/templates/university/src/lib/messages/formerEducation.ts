@@ -168,6 +168,31 @@ export const formerEducation = {
         defaultMessage: 'Veldu skjöl til að hlaða upp',
         description: 'File upload button label',
       },
+      framhaldsskoliSelectionLabel: {
+        id: 'uni.application:formerEducation.educationDetails.framhaldsskoliSelectionLabel',
+        defaultMessage: 'Framhaldsskólastig',
+        description: 'framhaldsskoli selection label',
+      },
+      bachelorsSelectionLabel: {
+        id: 'uni.application:formerEducation.educationDetails.bachelorsSelectionLabel',
+        defaultMessage: 'Grunnnám',
+        description: 'Bachelors selection label',
+      },
+      mastersSelectionLabel: {
+        id: 'uni.application:formerEducation.educationDetails.mastersSelectionLabel',
+        defaultMessage: 'Framhaldsnám',
+        description: 'masters selection label',
+      },
+      doctorsSelectionLabel: {
+        id: 'uni.application:formerEducation.educationDetails.doctorsSelectionLabel',
+        defaultMessage: 'Doktorsnám',
+        description: 'Doctors selection label',
+      },
+      itemTitle: {
+        id: 'uni.application:formerEducation.educationDetails.itemTitle#markdown',
+        defaultMessage: 'Námsferill {index}',
+        description: 'section item itle label',
+      },
     }),
     otherDocuments: defineMessages({
       pageTitle: {
