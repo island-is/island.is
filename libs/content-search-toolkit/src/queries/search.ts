@@ -32,7 +32,7 @@ export const searchQuery = (
   const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
-  // Since the search engine has not been configured to support organization aliases
+  // Handle aliases since the search engine has not been configured to support organization aliases
   if (queryString.trim().toLowerCase() === 'tr') {
     queryString = 'Tryggingastofnun'
   }
