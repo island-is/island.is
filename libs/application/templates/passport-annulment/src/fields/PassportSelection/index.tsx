@@ -98,15 +98,19 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           defaultValue: '',
           options: [
             {
-              label: (application.externalData.nationalRegistry.data as NationalRegistryIndividual)
-                ?.fullName,
+              label: (
+                application.externalData.nationalRegistry
+                  .data as NationalRegistryIndividual
+              )?.fullName,
               value:
                 identityDocumentData.userPassport?.productionRequestID +
                 ',' +
                 identityDocumentData.userPassport?.numberWithType +
                 ',' +
-                (application.externalData.nationalRegistry.data as NationalRegistryIndividual)
-                  ?.fullName,
+                (
+                  application.externalData.nationalRegistry
+                    .data as NationalRegistryIndividual
+                )?.fullName,
               subLabel: identityDocumentData.userPassport
                 ? formatMessage(m.passportNumber) +
                   ' ' +
