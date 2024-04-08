@@ -56,20 +56,8 @@ export const useContextMenu = () => {
     }
   }
 
-  const deleteCaseMenuItem = (
-    caseToDelete: CaseListEntry,
-    handleDeleteCase: (theCase: CaseListEntry) => void,
-  ): ContextMenuItem => {
-    return {
-      title: formatMessage(strings.deleteCase),
-      onClick: () => handleDeleteCase(caseToDelete),
-      icon: 'trash',
-    }
-  }
-
   return {
     openCaseInNewTabMenuItem,
-    deleteCaseMenuItem,
   }
 }
 
