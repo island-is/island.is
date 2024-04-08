@@ -18,19 +18,13 @@ yarn run ios
 
 ### 2b. Building for Android
 
-Make sure to have JDK v17 installed
+Follow documentation for setting up android [here](https://reactnative.dev/docs/environment-setup?platform=android&guide=native).
+
+Open the project in android studio and then local.properties should be created, if you want to skip that, make sure to:
 
 Add `local.properties` file to `/apps/native/app/android`
 
 Add `google-services.json` file to `/apps/native/app/android/app`
-
-Add the following lines to your shell configuration file:
-
-```bash
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-```
 
 Open up an android emulator or connect a physical device
 
@@ -76,9 +70,6 @@ or
 ```bash
 yarn run android
 ```
-
-note:
-If you get an error regarding `:expo-modules-core:downloadBoost` then look at [this](https://github.com/expo/expo/issues/19596#issuecomment-1880842689) fix. But the pathces have been added to git should it should work.
 
 ### 3. Start development server
 
