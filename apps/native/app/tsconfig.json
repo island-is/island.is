@@ -11,5 +11,9 @@
     },
     "types": ["@types/styled-components-react-native"]
   },
-  "exclude": ["**/*.stories.tsx", "**/*.stories.ts", "src/screens/devtools/storybook.tsx"]
+  "exclude": [
+    "**/*.stories.tsx",
+    "**/*.stories.ts",
+    "src/screens/devtools/storybook.tsx"
+  ]
 }
