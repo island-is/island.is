@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
+import { PassportStatus } from '../../lib/constants'
 
 export const info = buildMultiField({
   id: 'personalInfo',
@@ -35,13 +36,14 @@ export const info = buildMultiField({
       width: 'half',
       largeButtons: false,
       space: 'containerGutter',
+      defaultValue: PassportStatus.LOST,
       options: () => [
         {
-          value: 'lost',
+          value: PassportStatus.LOST,
           label: m.statusLost,
         },
         {
-          value: 'stolen',
+          value: PassportStatus.STOLEN,
           label: m.statusStolen,
         },
       ],
