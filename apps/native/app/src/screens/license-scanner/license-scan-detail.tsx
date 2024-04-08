@@ -17,6 +17,7 @@ enum ScanResult {
   ADR_LICENSE = 'AdrLicense',
   MACHINE_LICENSE = 'MachineLicense',
   DISABILITY_LICENSE = 'DisabilityLicense',
+  HUNTING_LICENSE = 'HuntingLicense',
   UNKNOWN = 'Unknown',
 }
 
@@ -33,13 +34,18 @@ const VVRTemplateIds = [
   '61012578-c2a0-489e-8dbd-3df5b3e538ea',
   'd63e4b27-9a0b-45b1-8fe4-a9be0011781f',
 ]
-const ADRTemplaeIds = [
+const ADRTemplateIds = [
   '4e49febe-7ca9-49e3-a3be-3be70cb996c2',
   '62a105d5-ef8a-419e-8423-fbbbfb5f1b36',
 ]
 const DisabilityTemplateIds = [
   'd0b1a6b6-3af3-4131-9b97-c6d7d2ed7e63',
   'c78364b6-33a8-4242-84ca-24de0854fe00',
+]
+
+const HuntingLicenseTemplateIds = [
+  '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+  '5f42f942-d8d6-40bf-a186-5a9e12619d9f',
 ]
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
@@ -72,7 +78,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
           setScanResult(ScanResult.FIREARM_LICENSE)
         }
 
-        if (ADRTemplaeIds.includes(parsed?.passTemplateId)) {
+        if (ADRTemplateIds.includes(parsed?.passTemplateId)) {
           setScanResult(ScanResult.ADR_LICENSE)
         }
 
@@ -82,6 +88,10 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
 
         if (DisabilityTemplateIds.includes(parsed?.passTemplateId)) {
           setScanResult(ScanResult.DISABILITY_LICENSE)
+        }
+
+        if (HuntingLicenseTemplateIds.includes(parsed?.passTemplateId)) {
+          setScanResult(ScanResult.HUNTING_LICENSE)
         }
       }
       // else if (type === Constants.BarCodeType.qr) {

@@ -1,8 +1,11 @@
 import formatDistance from 'date-fns/formatDistance'
 
 import { Inject, Injectable } from '@nestjs/common'
+import addMonths from 'date-fns/addMonths'
 
 import { logger } from '@island.is/logging'
+import { ConfigType } from '@island.is/nest/config'
+
 import { InjectModel } from '@nestjs/sequelize'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileAdvania } from './userProfileAdvania.model'
@@ -11,8 +14,8 @@ import {
   chooseEmailAndPhoneNumberFields,
   hasMatchingContactInfo,
 } from './worker.utils'
+import { NUDGE_INTERVAL } from '../v2/user-profile.service'
 import { UserProfileConfig } from '../../config'
-import { ConfigType } from '@island.is/nest/config'
 
 /**
  * The purpose of this worker is to import user profiles from Advania
@@ -48,6 +51,7 @@ export class UserProfileWorkerService {
         email: advaniaProfile.email?.toLowerCase?.(),
         mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
         lastNudge: null,
+        nextNudge: null,
         documentNotifications: advaniaProfile.canNudge === true,
       })
     }
@@ -56,6 +60,7 @@ export class UserProfileWorkerService {
       return this.userProfileModel.upsert({
         nationalId: advaniaProfile.ssn,
         lastNudge: advaniaProfile.nudgeLastAsked,
+        nextNudge: addMonths(advaniaProfile.nudgeLastAsked, NUDGE_INTERVAL),
       })
     }
 
@@ -70,6 +75,7 @@ export class UserProfileWorkerService {
         ...emailAndPhoneFields,
         documentNotifications: advaniaProfile.canNudge === true,
         lastNudge: null,
+        nextNudge: null,
       })
     }
 
@@ -79,6 +85,10 @@ export class UserProfileWorkerService {
     return this.userProfileModel.upsert({
       nationalId,
       lastNudge: emailVerified || mobilePhoneNumberVerified ? modified : null,
+      nextNudge:
+        emailVerified || mobilePhoneNumberVerified
+          ? addMonths(modified, NUDGE_INTERVAL)
+          : null,
     })
   }
 

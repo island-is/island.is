@@ -1,6 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  ApplicationLifecycle,
   ExternalData,
   Field,
   FormValue,
@@ -73,6 +74,7 @@ import {
   Period,
   PersonInformation,
   PregnancyStatusAndRightsResults,
+  SelectOption,
   VMSTPeriod,
   YesOrNo,
 } from '../types'
@@ -790,6 +792,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -1006,6 +1010,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
+    comment,
     employers,
     employerLastSixMonths,
     isNotStillEmployed,
@@ -2047,9 +2052,40 @@ export const getAttachments = (application: Application) => {
       AttachmentTypes.EMPLOYMENT_TERMINATION_CERTIFICATE,
     )
   }
-  if (commonFiles.length > 0) {
+  if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
   }
 
   return attachments
+}
+
+export const calculatePruneDate = (application: Application) => {
+  const { pruneAt } = application as unknown as ApplicationLifecycle
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+  // If date of birth is set then we use that date + 2 years as prune date
+  if (dateOfBirth?.data?.dateOfBirth) {
+    const pruneDate = new Date(dateOfBirth.data.dateOfBirth)
+    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
+
+    return pruneDate
+  }
+
+  // Just to be sure that we have some date set for prune date
+  if (!pruneAt) {
+    const pruneDate = new Date()
+    pruneDate.setMonth(pruneDate.getMonth() + 3)
+
+    return pruneDate
+  }
+
+  return pruneAt
+}
+
+export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
+  if (id === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === id)?.label
 }

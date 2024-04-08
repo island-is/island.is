@@ -73,7 +73,7 @@ export class SocialInsuranceService {
           return {
             type: mapToPaymentGroupType(g.groupId ?? undefined),
             name: g.group,
-            totalYearCumulativeAmount: g.total ?? undefined,
+            totalYearCumulativeAmount: g.total ?? 0,
             monthlyPaymentHistory:
               g.monthTotals
                 ?.map((mt) => {
@@ -82,7 +82,7 @@ export class SocialInsuranceService {
                   }
                   return {
                     monthIndex: mt.month,
-                    amount: mt.amount ?? undefined,
+                    amount: mt.amount ?? 0,
                   }
                 })
                 .filter(isDefined) ?? [],
@@ -94,7 +94,7 @@ export class SocialInsuranceService {
                   }
                   return {
                     name: r.name,
-                    totalYearCumulativeAmount: r.total ?? undefined,
+                    totalYearCumulativeAmount: r.total ?? 0,
                     monthlyPaymentHistory:
                       r.months
                         ?.map((m) => {
@@ -103,7 +103,7 @@ export class SocialInsuranceService {
                           }
                           return {
                             monthIndex: m.month,
-                            amount: m.amount ?? undefined,
+                            amount: m.amount ?? 0,
                           }
                         })
                         .filter(isDefined) ?? [],
