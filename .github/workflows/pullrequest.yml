@@ -384,9 +384,11 @@ jobs:
   run-shellcheck:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: ${{ vars.EC2_IMAGE }}
+    runs-on: ubuntu-latest
+    # Getting error from 'Run ShellCheck' step
+    # runs-on: ec2-runners
+    # container:
+    #   image: ${{ vars.EC2_IMAGE }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
