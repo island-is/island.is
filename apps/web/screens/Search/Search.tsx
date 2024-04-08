@@ -68,7 +68,6 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { AnchorPageType } from '@island.is/web/utils/anchorPage'
 import { hasProcessEntries } from '@island.is/web/utils/article'
-import { finetuneSearchResultItems } from '@island.is/web/utils/search'
 
 import { Screen } from '../../types'
 import {
@@ -406,8 +405,7 @@ const Search: Screen<CategoryProps> = ({
 
   const filteredItems = [...searchResultsItems].filter(noUncategorized)
   const nothingFound = filteredItems.length === 0
-  const totalSearchResults =
-    searchResults.total === 0 ? searchResults.items.length : searchResults.total
+  const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
   const searchResultsText =
@@ -932,22 +930,9 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404)
   }
 
-  let searchResultItems = finetuneSearchResultItems(
-    queryString,
-    searchResults.items,
-    locale,
-  )
-
-  if (searchResultItems.length > PERPAGE) {
-    searchResultItems = searchResultItems.slice(0, PERPAGE)
-  }
-
   return {
     q: queryString,
-    searchResults: {
-      ...searchResults,
-      items: searchResultItems,
-    },
+    searchResults,
     countResults,
     namespace,
     showSearchInHeader: false,
