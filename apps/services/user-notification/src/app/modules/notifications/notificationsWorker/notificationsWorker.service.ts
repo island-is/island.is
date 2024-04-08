@@ -5,19 +5,26 @@ import { InjectModel } from '@nestjs/sequelize'
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
-import { EmailService, Message } from '@island.is/email-service'
+import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
+import { EmailService, Message, Body } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { InjectWorker, WorkerService } from '@island.is/message-queue'
+import {
+  InjectQueue,
+  InjectWorker,
+  QueueService,
+  WorkerService,
+} from '@island.is/message-queue'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { DocumentsScope } from '@island.is/auth/scopes'
 
-import { MessageProcessorService } from './messageProcessor.service'
-import { NotificationDispatchService } from './notificationDispatch.service'
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { NotificationsService } from './notifications.service'
-import { HnippTemplate } from './dto/hnippTemplate.response'
-import { Notification } from './notification.model'
-import { mapStringToLocale } from './utils'
+import { MessageProcessorService } from '../messageProcessor.service'
+import { NotificationDispatchService } from '../notificationDispatch.service'
+import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
+import { NotificationsService } from '../notifications.service'
+import { HnippTemplate } from '../dto/hnippTemplate.response'
+import { Notification } from '../notification.model'
+import { mapStringToLocale } from '../utils'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 const WORK_STARTING_HOUR = 8 // 8 AM
@@ -36,6 +43,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly messageProcessor: MessageProcessorService,
     private readonly notificationsService: NotificationsService,
     private readonly userProfileApi: V2UsersApi,
+    private readonly delegationsApi: DelegationsApi,
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
     private readonly featureFlagService: FeatureFlagService,
     @InjectWorker('notifications')
@@ -48,11 +56,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly emailService: EmailService,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    @InjectQueue('notifications') private readonly queue: QueueService,
   ) {}
 
   onApplicationBootstrap() {
     if (this.isRunningAsWorker) {
-      this.run()
+      void this.run()
     }
   }
 
@@ -89,19 +98,78 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
   createEmail({
     isEnglish,
-    profile,
+    recipientEmail,
     template,
     formattedTemplate,
     fullName,
   }: {
     isEnglish: boolean
-    profile: UserProfileDto
+    recipientEmail: string | null
     template: HnippTemplate
     formattedTemplate: HnippTemplate
     fullName: string
   }): Message {
-    if (!profile.email) {
+    if (!recipientEmail) {
       throw new Error('User does not have email notifications enabled')
+    }
+
+    const generateBody = (): Body[] => {
+      return [
+        {
+          component: 'Image',
+          context: {
+            src: join(__dirname, `./assets/images/logo.jpg`),
+            alt: 'Ísland.is logo',
+          },
+        },
+        {
+          component: 'Tag',
+          context: {
+            label: fullName,
+          },
+        },
+        {
+          component: 'Heading',
+          context: {
+            copy: formattedTemplate.notificationTitle,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: formattedTemplate.notificationBody,
+          },
+        },
+        {
+          component: 'Spacer',
+        },
+        ...(formattedTemplate.clickActionUrl
+          ? [
+              {
+                component: 'Button',
+                context: {
+                  copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
+                  href: formattedTemplate.clickActionUrl,
+                },
+              },
+              {
+                component: 'Spacer',
+              },
+            ]
+          : [null]),
+        {
+          component: 'TextWithLink',
+          context: {
+            small: true,
+            preText: isEnglish ? 'In settings on ' : 'Í stillingum á ',
+            linkHref: 'https://www.island.is/minarsidur/min-gogn/stillingar/',
+            linkLabel: 'Ísland.is',
+            postText: isEnglish
+              ? ', you can decide if you want to be notified or not.'
+              : ' getur þú ákveðið hvort hnippt er í þig.',
+          },
+        },
+      ].filter((item) => item !== null) as Body[]
     }
 
     return {
@@ -111,66 +179,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       },
       to: {
         name: fullName,
-        address: profile.email,
+        address: recipientEmail,
       },
       subject: template.notificationTitle,
       template: {
         title: template.notificationTitle,
-        body: [
-          {
-            component: 'Image',
-            context: {
-              src: join(__dirname, `./assets/images/logo.jpg`),
-              alt: 'Ísland.is logo',
-            },
-          },
-          {
-            component: 'Spacer',
-          },
-          {
-            component: 'Heading',
-            context: {
-              copy: fullName
-                ? isEnglish
-                  ? `Hi ${fullName}`
-                  : `Hæ ${fullName}`
-                : formattedTemplate.notificationTitle,
-            },
-          },
-          {
-            component: 'Copy',
-            context: {
-              copy: formattedTemplate.notificationBody,
-            },
-          },
-          {
-            component: 'Spacer',
-          },
-          {
-            component: 'Button',
-            context: {
-              copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
-              href:
-                formattedTemplate.clickActionUrl ??
-                'https://www.island.is/minarsidur/postholf',
-            },
-          },
-          {
-            component: 'Spacer',
-          },
-          {
-            component: 'TextWithLink',
-            context: {
-              small: true,
-              preText: isEnglish ? 'In settings on ' : 'Í stillingum á ',
-              linkHref: 'https://www.island.is/minarsidur/min-gogn/stillingar/',
-              linkLabel: 'Ísland.is',
-              postText: isEnglish
-                ? ', you can decide if you want to be notified or not.'
-                : ' getur þú ákveðið hvort hnippt er í þig.',
-            },
-          },
-        ],
+        body: generateBody(),
       },
     }
   }
@@ -224,11 +238,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     try {
       const emailContent = this.createEmail({
         isEnglish,
-        profile,
+        recipientEmail: profile.email ?? null,
         template,
         formattedTemplate,
         fullName,
       })
+
       await this.emailService.sendEmail(emailContent)
 
       this.logger.info('Email notification sent', {
@@ -247,7 +262,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     const currentHour = now.getHours()
     const currentMinutes = now.getMinutes()
     const currentSeconds = now.getSeconds()
-    // Is it outside of working hours?
+    // Is it outside working hours?
     if (currentHour >= WORK_ENDING_HOUR || currentHour < WORK_STARTING_HOUR) {
       // If it's past the end hour or before the start hour, sleep until the start hour.
       const sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
@@ -322,10 +337,54 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           message,
         }
 
-        await Promise.all([
-          this.handleDocumentNotification(handleNotificationArgs),
+        // should always send email notification
+        const notificationPromises: Promise<void>[] = [
           this.handleEmailNotification(handleNotificationArgs),
-        ])
+        ]
+
+        // If the message is not on behalf of anyone, we look up delegations for the recipient and add messages to the queue for each delegation
+        if (!message.onBehalfOf) {
+          // Only send push notifications for the main recipient
+          notificationPromises.push(
+            this.handleDocumentNotification(handleNotificationArgs),
+          )
+
+          const shouldSendEmailToDelegations =
+            await this.featureFlagService.getValue(
+              Features.shouldSendEmailNotificationsToDelegations,
+              false,
+              { nationalId: message.recipient } as User,
+            )
+
+          if (shouldSendEmailToDelegations) {
+            // don't fail if we can't get delegations
+            try {
+              const delegations =
+                await this.delegationsApi.delegationsControllerGetDelegationRecords(
+                  {
+                    xQueryFromNationalId: message.recipient,
+                    scope: DocumentsScope.main,
+                  },
+                )
+
+              await Promise.all(
+                delegations.data.map((delegation) =>
+                  this.queue.add({
+                    ...message,
+                    recipient: delegation.toNationalId,
+                    onBehalfOf: message.recipient,
+                  }),
+                ),
+              )
+            } catch (error) {
+              this.logger.error('Error adding delegations to message queue', {
+                error,
+              })
+            }
+          }
+        }
+
+        await Promise.all(notificationPromises)
       },
     )
   }

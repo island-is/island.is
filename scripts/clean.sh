@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-CLEAN_DRY=false
+CLEAN_DRY="${DRY:-false}"
+CLEAN_DIST=false
 CLEAN_CACHES=false
 CLEAN_YARN=false
 CLEAN_GENERATED=false
@@ -16,7 +17,7 @@ log() {
 # Allow never being passed arguments
 # shellcheck disable=SC2120
 dry() {
-  [[ $# -gt 0 ]] && log "$*"
+  [[ $# -eq 0 ]] || log "$*"
   if [[ "$CLEAN_DRY" == "true" ]]; then
     return 0
   fi
@@ -27,6 +28,11 @@ show_help() {
   cat <<EOF
 Usage:
   ./scripts/clean.sh [OPTIONS]
+
+  --generated     Clean generated files
+  --dist          Clean dist files
+  --cache         Clean caches
+  --yarn          Clean yarn and npm caches (e.g. node_modules)
   -f | --force    Force clean
   -d | --dry      Dry run
   -h | --help     Show help
@@ -43,6 +49,9 @@ cli() {
     --yarn)
       CLEAN_YARN=true
       ;;
+    --dist)
+      CLEAN_DIST=true
+      ;;
     --cache)
       CLEAN_CACHES=true
       ;;
@@ -51,12 +60,13 @@ cli() {
       ;;
     *)
       show_help
-      exit
+      exit 1
       ;;
     esac
     shift
   done
-  if [[ "$CLEAN_GENERATED" == "false" && "$CLEAN_YARN" == "false" && "$CLEAN_CACHES" == "false" ]]; then
+  if [[ "$CLEAN_GENERATED" == "false" && "$CLEAN_YARN" == "false" && "$CLEAN_CACHES" == "false" && "$CLEAN_DIST" == "false" ]]; then
+    CLEAN_DIST=true
     CLEAN_GENERATED=true
     CLEAN_YARN=true
     CLEAN_CACHES=true
@@ -75,12 +85,15 @@ clean_generated() {
     -o -name "fragmentTypes.json" \
     \) "$(dry && echo -print || echo -delete)"
 
-  # shellcheck disable=SC2046
-  find . -not -path "./.cache/*" -type d \( -path '*/gen/fetch' \) -exec $(dry && echo 'echo') rm -rf '{}' +
+  find . -not -path "./.cache/*" -type d \( -path '*/gen/fetch' \) -exec "$(dry && echo 'echo' || echo '')" rm -rf '{}' +
 }
 
 clean_caches() {
   dry || rm -rf "${CLEAN_CACHES_LIST[@]}"
+}
+
+clean_dist() {
+  dry || rm -rf -- **/dist/
 }
 
 clean_yarn() {
@@ -101,7 +114,7 @@ clean_yarn() {
 }
 
 clean_all() {
-  for job in generated caches yarn; do
+  for job in generated caches dist yarn; do
     job_uppercase=$(echo $job | tr '[:lower:]' '[:upper:]')
     job_variable="CLEAN_${job_uppercase}"
 

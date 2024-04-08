@@ -8,7 +8,6 @@ export const HomeSupportSchema = z.object({
   applicant: applicantInformationSchema(),
   receivesDoctorService: z.enum([YES, NO]),
   reason: z.string().optional(),
-  exemption: z.array(z.enum([YES])).optional(),
   contacts: z
     .array(
       z.object({
@@ -29,6 +28,7 @@ export const HomeSupportSchema = z.object({
           .string()
           .or(z.undefined())
           .refine((v) => !!v, { params: errors.fields.required }),
+        mainContact: z.array(z.enum([YES]).optional()).optional(),
       }),
     )
     .optional(),
