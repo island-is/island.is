@@ -39,6 +39,7 @@ import {
 } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -94,6 +95,7 @@ const SubPage: Screen<SubPageProps> = ({
     singleSupportQNA?.id,
   )
   useLocalLinkTypeResolver()
+  const { activeLocale } = useI18n()
 
   const organizationSlug = organization?.slug
   const question = singleSupportQNA
@@ -177,7 +179,9 @@ const SubPage: Screen<SubPageProps> = ({
       smallBackground
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
       pageData={serviceWebPage}
     >

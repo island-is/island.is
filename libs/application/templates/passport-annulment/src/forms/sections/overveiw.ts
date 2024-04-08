@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
-import { STATUS } from '../../lib/constants'
+import { PassportStatus } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const overview = buildMultiField({
@@ -52,7 +52,7 @@ export const overview = buildMultiField({
       label: m.statusTitle,
       width: 'full',
       value: (application: Application) =>
-        application.answers.status === STATUS.LOST
+        application.answers.status === PassportStatus.LOST
           ? m.statusLost
           : m.statusStolen,
     }),
