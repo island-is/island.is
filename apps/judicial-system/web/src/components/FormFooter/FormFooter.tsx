@@ -39,6 +39,7 @@ const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
+  const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
   return (
     <Box
@@ -72,6 +73,7 @@ const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
             variant="ghost"
             colorScheme={props.actionButtonColorScheme ?? 'destructive'}
             disabled={props.actionButtonIsDisabled}
+            fluid={isTablet}
           >
             {props.actionButtonText}
           </Button>
