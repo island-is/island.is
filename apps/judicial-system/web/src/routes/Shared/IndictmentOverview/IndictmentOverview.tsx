@@ -1,7 +1,5 @@
 import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import isFuture from 'date-fns/isFuture'
-import parseISO from 'date-fns/parseISO'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
