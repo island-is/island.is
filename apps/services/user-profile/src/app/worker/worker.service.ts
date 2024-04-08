@@ -1,6 +1,6 @@
 import formatDistance from 'date-fns/formatDistance'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import { logger } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
@@ -11,7 +11,8 @@ import {
   chooseEmailAndPhoneNumberFields,
   hasMatchingContactInfo,
 } from './worker.utils'
-import { environment } from '../../environments'
+import { UserProfileConfig } from '../../config'
+import { ConfigType } from '@island.is/nest/config'
 
 /**
  * The purpose of this worker is to import user profiles from Advania
@@ -23,6 +24,8 @@ export class UserProfileWorkerService {
     private readonly userProfileModel: typeof UserProfile,
     @InjectModel(UserProfileAdvania)
     private readonly userProfileAdvaniaModel: typeof UserProfileAdvania,
+    @Inject(UserProfileConfig.KEY)
+    private config: ConfigType<typeof UserProfileConfig>,
   ) {}
 
   public async run() {
@@ -91,10 +94,10 @@ export class UserProfileWorkerService {
     logger.info(`${numberOfProfilesToProcess} profiles to process`)
 
     const numberOfPagesToProcess = Math.ceil(
-      numberOfProfilesToProcess / environment.worker.processPageSize,
+      numberOfProfilesToProcess / this.config.workerProcessPageSize,
     )
     logger.info(
-      `splitting work into ${numberOfPagesToProcess} pages with page_size=${environment.worker.processPageSize}`,
+      `splitting work into ${numberOfPagesToProcess} pages with page_size=${this.config.workerProcessPageSize}`,
     )
 
     const startTime = Date.now()
@@ -115,7 +118,7 @@ export class UserProfileWorkerService {
         where: {
           status: ProcessedStatus.PENDING,
         },
-        limit: environment.worker.processPageSize,
+        limit: this.config.workerProcessPageSize,
       })
 
       const userProfiles = await this.userProfileModel.findAll({
@@ -189,7 +192,7 @@ export class UserProfileWorkerService {
   ) {
     const timeElapsed = Date.now() - startTime
     const profilesProcessed =
-      (currentPageIndex + 1) * environment.worker.processPageSize
+      (currentPageIndex + 1) * this.config.workerProcessPageSize
     const msPerProfile = timeElapsed / profilesProcessed
     const timeRemaining =
       (numberOfProfilesToProcess - profilesProcessed) * msPerProfile

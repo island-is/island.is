@@ -1,14 +1,6 @@
 const devConfig = {
   production: false,
   port: 3366,
-  email: {
-    fromEmail: 'noreply@island.is',
-    fromName: 'island.is',
-    replyToEmail: 'noreply@island.is',
-    replyToName: 'island.is',
-    servicePortalBaseUrl:
-      process.env.SERVICE_PORTAL_BASE_URL ?? 'http://localhost:4200',
-  },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
@@ -33,21 +25,11 @@ const devConfig = {
       'https://identity-server.dev01.devland.is',
     audience: '@island.is',
   },
-  worker: {
-    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
-      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
-      : 3000,
-  },
 }
 
 const prodConfig = {
   production: true,
   port: 3333,
-  email: {
-    fromEmail: process.env.EMAIL_FROM,
-    fromName: process.env.EMAIL_FROM_NAME,
-    servicePortalBaseUrl: process.env.SERVICE_PORTAL_BASE_URL,
-  },
   smsOptions: {
     url: process.env.NOVA_URL,
     username: process.env.NOVA_USERNAME,
@@ -73,11 +55,6 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
-  },
-  worker: {
-    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
-      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
-      : 3000,
   },
 }
 

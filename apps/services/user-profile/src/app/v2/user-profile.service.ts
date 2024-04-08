@@ -17,13 +17,11 @@ import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
 import { ClientType } from '../types/ClientType'
+import { UserProfileConfig } from '../../config'
+import { ConfigType } from '@island.is/nest/config'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
-
-export const MIGRATION_DATE = new Date(
-  process.env.USER_PROFILE_MIGRATION_DATE ?? '2022-01-01',
-)
 
 @Injectable()
 export class UserProfileService {
@@ -34,6 +32,8 @@ export class UserProfileService {
     private readonly verificationService: VerificationService,
     private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
+    @Inject(UserProfileConfig.KEY)
+    private config: ConfigType<typeof UserProfileConfig>,
   ) {}
 
   async findById(
@@ -61,11 +61,7 @@ export class UserProfileService {
       }
     }
 
-    return this.filterByClientTypeAndRestrictionDate(
-      clientType,
-      userProfile,
-      userProfile.lastNudge,
-    )
+    return this.filterByClientTypeAndRestrictionDate(clientType, userProfile)
   }
 
   async patch(
@@ -378,9 +374,8 @@ export class UserProfileService {
   filterByClientTypeAndRestrictionDate(
     clientType: ClientType,
     userProfile: UserProfile,
-    lastNudge: Date | null,
   ): UserProfileDto {
-    const isThirdParty = clientType === ClientType.THIRD_PARTY
+    const isFirstParty = clientType === ClientType.FIRST_PARTY
     let filteredUserProfile: UserProfileDto = {
       nationalId: userProfile.nationalId,
       email: userProfile.email,
@@ -394,15 +389,18 @@ export class UserProfileService {
       isRestricted: false,
     }
 
-    if (MIGRATION_DATE > lastNudge) {
+    if (
+      (this.config.migrationDate ?? addMonths(new Date(), 1)) >
+      userProfile.lastNudge
+    ) {
       filteredUserProfile = {
         ...filteredUserProfile,
-        email: isThirdParty ? null : userProfile.email,
-        mobilePhoneNumber: isThirdParty ? null : userProfile.mobilePhoneNumber,
-        emailVerified: isThirdParty ? false : userProfile.emailVerified,
-        mobilePhoneNumberVerified: isThirdParty
-          ? false
-          : userProfile.mobilePhoneNumberVerified,
+        email: isFirstParty ? userProfile.email : null,
+        mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
+        emailVerified: isFirstParty ? false : userProfile.emailVerified,
+        mobilePhoneNumberVerified: isFirstParty
+          ? userProfile.mobilePhoneNumberVerified
+          : false,
         isRestricted: true,
       }
     }
