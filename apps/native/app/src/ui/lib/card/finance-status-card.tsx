@@ -9,7 +9,7 @@ const Host = styled.View`
   border-radius: ${({ theme }) => theme.border.radius.large};
 `
 
-const Card = styled.TouchableHighlight<{ open: boolean }>`
+const Card = styled.TouchableHighlight<{ open?: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-bottom-left-radius: ${({ theme, open }) =>
     open ? 0 : theme.border.radius.large};
