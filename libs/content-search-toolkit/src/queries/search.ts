@@ -30,6 +30,7 @@ export const searchQuery = (
   const should = []
   const must: TagQuery[] = []
   const mustNot: TagQuery[] = []
+  let minimumShouldMatch = 1
 
   // Since the search engine has not been configured to support organization aliases
   if (queryString.trim().toLowerCase() === 'tr') {
