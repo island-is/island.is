@@ -88,12 +88,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const deceasedHadAssets = getDeceasedHadAssets(application)
   const deceasedWasInCohabitation = getDeceasedWasInCohabitation(application)
 
-  // Dæmi:
-  // Tvær manneskjur, A og B eru gift og eiga saman íbúð upp á 90 milljónir.
-  // Þær eiga 50/50 í henni, en hafa gert erfðaskrá sem tekur fram að A eigi séreign í eigninni, 30 milljónir.
-  // Þegar A deyr, þá reiknast þetta sem:
-  // Sameign = 90M-30M=60M sem skiptist í tvennt því A átti 50% í íbúðinni, svo 30M til skipta
-  // Ofan á þessar 30M til skipta bætist séreign A, 30M sem fer beint til skipta. Svo til skipta fer 30M+30M=60M.
   const getShareValue = (
     value: number,
     deceasedShare: number,
