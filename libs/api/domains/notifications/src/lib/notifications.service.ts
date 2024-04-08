@@ -3,7 +3,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  // UpdateNotificationDtoStatusEnum,
+  // UpdateNotificationDtoStatusEnum,,
+  MeNotificationsControllerFindManyLocaleEnum,
+  MeNotificationsControllerFindOneLocaleEnum,
+  MeNotificationsControllerUpdateLocaleEnum,
   UserNotificationApi,
 } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
@@ -36,7 +39,7 @@ export class NotificationsService {
     const notifications = await this.userNotificationsWAuth(
       user,
     ).meNotificationsControllerFindMany({
-      locale,
+      locale: locale as MeNotificationsControllerFindManyLocaleEnum,
       limit: input?.limit,
       before: input?.before,
       after: input?.after,
@@ -44,7 +47,7 @@ export class NotificationsService {
 
     if (!notifications.data) {
       this.logger.debug('no notification found')
-      return null
+      return null;
     }
 
     return {
@@ -59,11 +62,11 @@ export class NotificationsService {
     id: number,
     locale: Locale,
     user: User,
-  ): Promise<NotificationResponse | null> {
-    this.logger.debug('getting potential single notification')
-    const notification = await this.userNotificationsWAuth(
-      user,
-    ).meNotificationsControllerFindOne({ locale, id })
+    ): Promise<NotificationResponse | null> {
+      this.logger.debug('getting potential single notification')
+      const notification = await this.userNotificationsWAuth(
+        user,
+      ).meNotificationsControllerFindOne({ locale: locale as MeNotificationsControllerFindOneLocaleEnum, id })
 
     if (!notification) {
       this.logger.debug('no notification found')
@@ -84,7 +87,7 @@ export class NotificationsService {
     const notification = await this.userNotificationsWAuth(
       user,
     ).meNotificationsControllerUpdate({
-      locale,
+      locale: locale as MeNotificationsControllerUpdateLocaleEnum,
       id,
       updateNotificationDto: {
         read: true,
