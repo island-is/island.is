@@ -1,6 +1,6 @@
 # System Testing
 
-Welcome to testing. For your convenience each section has a TL;DR, so you can quickly
+Welcome to testing. For your convenience, each section has a TL;DR, so you can quickly
 get started.
 
 ## Test environment
@@ -10,7 +10,7 @@ on every commit to `main`.
 This means that changes done on the dev web will be reflected in the system tests.
 E.g. if you change a user's preferred locale, your test will break if it's not language-agnostic.
 To combat this, we have implemented `disablers.disable*` and `urls.icelandicAndNoPopup`.
-We plan on phasing out these out for mocking with Mountebank and test servers.
+We plan on phasing these out for mocking with Mountebank and test servers.
 
 System acceptance tests will be running in their own isolated dev-environment, daily.
 We haven't yet implemented running these tests regularly, and require manual start,
@@ -45,7 +45,7 @@ running is simply:
 
 However, not all projects support this, or are incomplete in this setup. If this
 fails, find its `README.md` and follow the instructions given there. If that fails,
-reach out to the QA team and we’ll remedy the documentation and improve the initial
+reach out to the QA team, and we’ll remedy the documentation and improve the initial
 setup.
 
 ### 🤖 Start Playwright
@@ -177,7 +177,7 @@ If you want to mock a scenario where the back-end returns a specific object/repl
 you can use `page.route` to catch the back-end call and either modify the request/response
 or return something custom.
 
-For example, if you want to simulate a GraphQL error from user-profile you could
+For example, if you want to simulate a GraphQL error from user-profile, you could
 add the following to your test case (`test(...)`) or `test.beforeAll`/`test.beforeEach`:
 
 ```jsx
@@ -207,7 +207,7 @@ _very_ asynchronously. This can be an issue when targeting some elements, but th
 do not appear on the first page load, but instead load after the basic page has
 loaded.
 
-In such cases you can wait for the elements to exist with `page.waitFor*` ([docs](https://playwright.dev/docs/api/class-page#page-wait-for-event)):
+In such cases, you can wait for the elements to exist with `page.waitFor*` ([docs](https://playwright.dev/docs/api/class-page#page-wait-for-event)):
 
 ```jsx
 // Wait for there to be at least 3 checkboxes
