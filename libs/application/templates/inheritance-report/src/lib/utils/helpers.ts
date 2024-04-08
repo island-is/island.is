@@ -104,4 +104,5 @@ export const shouldShowDeceasedShareField = (answers: FormValue) =>
   getValueViaPath(answers, 'deceasedHadAssets') === YES &&
   getValueViaPath(answers, 'deceasedWasMarried') === YES
 
-export const _v = (value: number) => Math.round(valueToNumber(value))
+export const roundedValueToNumber = (value: unknown) =>
+  Math.round(valueToNumber(value))

@@ -13,7 +13,7 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
-import { _v, valueToNumber } from '../../lib/utils/helpers'
+import { roundedValueToNumber, valueToNumber } from '../../lib/utils/helpers'
 import { YES } from '../../lib/constants'
 
 export const heirs = buildSection({
@@ -202,7 +202,11 @@ export const heirs = buildSection({
               display: 'flex',
               value: ({ answers }) =>
                 formatCurrency(
-                  String(_v(getValueViaPath<number>(answers, 'netTotal') ?? 0)),
+                  String(
+                    roundedValueToNumber(
+                      getValueViaPath<number>(answers, 'netTotal'),
+                    ),
+                  ),
                 ),
             }),
             buildDescriptionField({
@@ -216,7 +220,9 @@ export const heirs = buildSection({
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    _v(getValueViaPath<number>(answers, 'spouseTotal') ?? 0),
+                    roundedValueToNumber(
+                      getValueViaPath<number>(answers, 'spouseTotal'),
+                    ),
                   ),
                 ),
             }),
@@ -231,11 +237,11 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 return formatCurrency(
                   String(
-                    _v(
+                    roundedValueToNumber(
                       getValueViaPath<number>(
                         answers,
                         'netPropertyForExchange',
-                      ) ?? 0,
+                      ),
                     ),
                   ),
                 )

@@ -11,9 +11,9 @@ import {
 import { m } from './messages'
 
 const deceasedShare = {
-  deceasedShare: z.string().optional(),
+  deceasedShare: z.string().nonempty().optional(),
   deceasedShareEnabled: z.array(z.enum([YES])).optional(),
-  deceasedShareAmount: z.number().optional(),
+  deceasedShareAmount: z.number().min(0).max(100).optional(),
 }
 
 const validateDeceasedShare = ({

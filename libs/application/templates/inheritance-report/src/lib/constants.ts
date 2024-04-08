@@ -25,6 +25,7 @@ export enum ApiActions {
   syslumennOnEntry = 'syslumennOnEntry',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ErrorValue = { [key: string]: any }
 
 // TODO: this value should be fetched from the API at some point

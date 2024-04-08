@@ -12,9 +12,9 @@ import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import {
-  _v,
   getDeceasedHadAssets,
   getDeceasedWasInCohabitation,
+  roundedValueToNumber,
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { EstateAssets } from '../../types'
@@ -466,10 +466,19 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       )}
 
       <Box marginTop={4}>
-        <TitleRow title={m.assetsToShareTotalAssets} value={_v(total)} />
-        <TitleRow title={m.assetsToShareTotalDebts} value={_v(debtsTotal)} />
-        <TitleRow title={m.netProperty} value={_v(netTotal)} />
-        <TitleRow title={m.share} value={_v(shareTotal)} />
+        <TitleRow
+          title={m.assetsToShareTotalAssets}
+          value={roundedValueToNumber(total)}
+        />
+        <TitleRow
+          title={m.assetsToShareTotalDebts}
+          value={roundedValueToNumber(debtsTotal)}
+        />
+        <TitleRow
+          title={m.netProperty}
+          value={roundedValueToNumber(netTotal)}
+        />
+        <TitleRow title={m.share} value={roundedValueToNumber(shareTotal)} />
         <Box marginLeft={[0, 4]}>
           <GridRow rowGap={1}>
             <ShareItemRow item={shareValues.bankAccounts} />
@@ -486,18 +495,18 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <Box marginY={4}>
           <TitleRow
             title={m.assetsToShareSpouseShare}
-            value={_v(spouseTotal)}
+            value={roundedValueToNumber(spouseTotal)}
           />
           <TitleRow
             title={m.assetsToShareEstateShare}
-            value={_v(estateTotal)}
+            value={roundedValueToNumber(estateTotal)}
           />
         </Box>
         <Divider />
         <Box paddingTop={4}>
           <TitleRow
             title={m.netPropertyForExchange}
-            value={_v(netPropertyForExchange)}
+            value={roundedValueToNumber(netPropertyForExchange)}
           />
         </Box>
       </Box>
@@ -526,7 +535,9 @@ const ShareItemRow = ({ item }: { item: ShareItem }) => {
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
           <Box textAlign={['left', 'right']}>
-            <Text variant="small">{formatCurrency(String(_v(total)))}</Text>
+            <Text variant="small">
+              {formatCurrency(String(roundedValueToNumber(total)))}
+            </Text>
           </Box>
         </GridColumn>
         {shareTotal > 0 && (
@@ -537,7 +548,7 @@ const ShareItemRow = ({ item }: { item: ShareItem }) => {
             <GridColumn span={['1/1', '1/2']}>
               <Box textAlign={['left', 'right']}>
                 <Text variant="small">
-                  {formatCurrency(String(_v(shareTotal)))}
+                  {formatCurrency(String(roundedValueToNumber(shareTotal)))}
                 </Text>
               </Box>
             </GridColumn>
@@ -565,7 +576,7 @@ const TitleRow = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
           <Box textAlign={['left', 'right']}>
-            <Text>{formatCurrency(String(_v(value)))}</Text>
+            <Text>{formatCurrency(String(roundedValueToNumber(value)))}</Text>
           </Box>
         </GridColumn>
       </GridRow>
