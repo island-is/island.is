@@ -25,14 +25,12 @@ import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../../types/nudge-type'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
-import {
-  MIGRATION_DATE,
-  NUDGE_INTERVAL,
-  SKIP_INTERVAL,
-} from '../user-profile.service'
+import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { ClientType } from '../../types/ClientType'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
+
+const MIGRATION_DATE = new Date('2024-03-10')
 
 const testUserProfile = {
   nationalId: createNationalId(),

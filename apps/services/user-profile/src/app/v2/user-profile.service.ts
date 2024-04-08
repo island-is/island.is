@@ -397,7 +397,7 @@ export class UserProfileService {
         ...filteredUserProfile,
         email: isFirstParty ? userProfile.email : null,
         mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
-        emailVerified: isFirstParty ? false : userProfile.emailVerified,
+        emailVerified: isFirstParty ? userProfile.emailVerified : false,
         mobilePhoneNumberVerified: isFirstParty
           ? userProfile.mobilePhoneNumberVerified
           : false,

@@ -15,7 +15,6 @@ import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { getModelToken } from '@nestjs/sequelize'
 import { ClientType } from '../../types/ClientType'
-import { MIGRATION_DATE } from '../user-profile.service'
 import subMonths from 'date-fns/subMonths'
 import addMonths from 'date-fns/addMonths'
 
@@ -24,6 +23,8 @@ const testUserProfile = {
   email: faker.internet.email(),
   mobilePhoneNumber: createPhoneNumber(),
 }
+
+const MIGRATION_DATE = new Date('2024-03-10')
 
 describe('UserProfileController', () => {
   describe('No auth', () => {
