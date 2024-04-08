@@ -18,9 +18,67 @@ yarn run ios
 
 ### 2b. Building for Android
 
+Make sure to have JDK v17 installed
+
+Add `local.properties` file to `/apps/native/app/android`
+
+Add `google-services.json` file to `/apps/native/app/android/app`
+
+Add the following lines to your shell configuration file:
+
+```bash
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+
+Open up an android emulator or connect a physical device
+
+in `/apps/native/app/android` run the following commands:
+
+```ts
+// Build the project
+./gradlew assembleDebug
+```
+
+If using an **emulator** do the following:
+
+```ts
+// Move to device
+adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+```
+
+If using a **physical device** do the following:
+
+```ts
+// List devices and their ids
+adb devices
+
+// Use deviceId from previous command to move to physical device
+adb -s <deviceId> install  ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+```
+
+For both emulators and physical devices:
+
+```ts
+// fix port for device
+adb reverse tcp:8081 tcp:8081
+```
+
+and finally
+
+```bash
+yarn start
+```
+
+or
+
 ```bash
 yarn run android
 ```
+
+note:
+If you get an error regarding `:expo-modules-core:downloadBoost` then look at [this](https://github.com/expo/expo/issues/19596#issuecomment-1880842689) fix. But the pathces have been added to git should it should work.
 
 ### 3. Start development server
 
