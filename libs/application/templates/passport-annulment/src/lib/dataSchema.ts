@@ -1,13 +1,13 @@
 import { z } from 'zod'
 import { error } from './error'
-import { STATUS } from './constants'
+import { PassportStatus } from './constants'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   passportNumber: z.string().min(1),
   passportName: z.string().min(1),
   productionRequestID: z.string().min(1),
-  status: z.enum([STATUS.LOST, STATUS.STOLEN]),
+  status: z.enum([PassportStatus.LOST, PassportStatus.STOLEN]),
   comment: z.string().min(1),
   passport: z
     .object({
