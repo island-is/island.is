@@ -68,7 +68,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { AnchorPageType } from '@island.is/web/utils/anchorPage'
 import { hasProcessEntries } from '@island.is/web/utils/article'
-import { finetuneSearchResultItems } from '@island.is/web/utils/search'
+import { finetuneSearchResults } from '@island.is/web/utils/search'
 
 import { Screen } from '../../types'
 import {
@@ -932,22 +932,18 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404)
   }
 
-  let searchResultItems = finetuneSearchResultItems(
-    queryString,
-    searchResults.items,
-    locale,
-  ) as typeof searchResults.items
-
-  if (searchResultItems.length > PERPAGE) {
-    searchResultItems = searchResultItems.slice(0, PERPAGE)
-  }
+  const finetunedSearchResults =
+    page === 1 // Only finetune results on the first page
+      ? (finetuneSearchResults(
+          queryString,
+          searchResults,
+          locale,
+        ) as typeof searchResults)
+      : searchResults
 
   return {
     q: queryString,
-    searchResults: {
-      ...searchResults,
-      items: searchResultItems,
-    },
+    searchResults: finetunedSearchResults,
     countResults,
     namespace,
     showSearchInHeader: false,

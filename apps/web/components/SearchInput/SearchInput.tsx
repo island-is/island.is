@@ -40,7 +40,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
-import { finetuneSearchResultItems } from '@island.is/web/utils/search'
+import { finetuneSearchResults } from '@island.is/web/utils/search'
 
 import * as styles from './SearchInput.css'
 
@@ -434,11 +434,13 @@ const Results = ({
     return <CommonSearchTerms suggestions={suggestions} />
   }
 
-  const searchResultItems = finetuneSearchResultItems(
+  const searchResults = finetuneSearchResults(
     search.term,
-    search.results?.items ?? [],
+    search.results,
     activeLocale,
   )
+
+  const searchResultItems = searchResults?.items ?? []
 
   return (
     <Box
