@@ -83,6 +83,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           headingId="life-events-title"
           items={(page?.lifeEvents as LifeEventPage[]) ?? []}
           seeMoreText={n('seeMoreLifeEvents')}
+          cardsButtonTitle={n('LifeEventsCardsButtonTitle', 'Skoða lífsviðburð')}
         />
       </Box>
       <Box

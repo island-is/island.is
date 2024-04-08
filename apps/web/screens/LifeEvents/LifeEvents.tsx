@@ -102,7 +102,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
                 buttonTitle={
                   seeMoreText && seeMoreText !== ''
                     ? seeMoreText
-                    : 'Skoða lífsviðburð'
+                    : n('cardsButtonTitle', 'Skoða lífsviðburð')
                 }
               />
             )

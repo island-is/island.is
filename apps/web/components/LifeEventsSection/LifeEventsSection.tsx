@@ -17,6 +17,7 @@ interface LifeEventsSectionProps {
   headingId: string
   seeMoreText: string
   items: LifeEventPage[]
+  cardsButtonTitle?: string
 }
 
 export const LifeEventsSection = ({
@@ -24,6 +25,7 @@ export const LifeEventsSection = ({
   headingId,
   items = [],
   seeMoreText,
+  cardsButtonTitle = ''
 }: LifeEventsSectionProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -75,7 +77,7 @@ export const LifeEventsSection = ({
                 buttonTitle={
                   lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
                     ? lifeEvent.seeMoreText
-                    : 'Skoða lífsviðburð'
+                    : cardsButtonTitle
                 }
               />
             )
