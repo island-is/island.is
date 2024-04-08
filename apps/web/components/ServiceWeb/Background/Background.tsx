@@ -52,7 +52,7 @@ const SocialInsuranceAdministration = dynamic(
       './Variations/SocialInsuranceAdministration/SocialInsuranceAdministration'
     ),
   {
-    ssr: true,
+    ssr: false,
   },
 )
 
@@ -93,9 +93,8 @@ export const Background = ({
         setComponent(<Hms namespace={namespace} />)
         break
       case 'tryggingastofnun':
-      case 'tr':
       case 'social-insurance-administration':
-        setComponent(<SocialInsuranceAdministration namespace={namespace} />)
+        setComponent(<SocialInsuranceAdministration />)
         break
       case 'default':
       default:
