@@ -10,7 +10,6 @@ const Logo: FC<React.PropsWithChildren<unknown>> = () => (
     y="0px"
     width="100%"
     viewBox="0 0 1730 483"
-    //enable-background="new 0 0 1730 483"
     xmlSpace="preserve"
   >
     <path
