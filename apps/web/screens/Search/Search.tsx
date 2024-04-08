@@ -936,7 +936,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     queryString,
     searchResults.items,
     locale,
-  ) as typeof searchResults.items
+  )
 
   if (searchResultItems.length > PERPAGE) {
     searchResultItems = searchResultItems.slice(0, PERPAGE)
