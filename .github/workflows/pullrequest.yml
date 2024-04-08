@@ -40,7 +40,7 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}-01
+      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}-10
     steps:
       - uses: actions/checkout@v3
         with:
