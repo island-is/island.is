@@ -16,7 +16,6 @@ import {
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
