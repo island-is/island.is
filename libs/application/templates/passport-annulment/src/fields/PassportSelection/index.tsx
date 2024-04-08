@@ -4,6 +4,7 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
+  NationalRegistryIndividual,
   TagVariant,
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
@@ -36,7 +37,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   } = useFormContext()
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
-  const fieldErros = getErrorViaPath(errors, userPassportRadio)
+  const fieldErrors = getErrorViaPath(errors, userPassportRadio)
   const identityDocumentData = application.externalData.identityDocument
     .data as IdentityDocumentData
 
@@ -85,7 +86,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   return (
     <Box>
       <RadioFormField
-        error={fieldErros}
+        error={fieldErrors}
         application={application}
         field={{
           id: userPassportRadio,
@@ -97,15 +98,19 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           defaultValue: '',
           options: [
             {
-              label: (application.externalData.nationalRegistry.data as any)
-                ?.fullName,
+              label: (
+                application.externalData.nationalRegistry
+                  .data as NationalRegistryIndividual
+              )?.fullName,
               value:
                 identityDocumentData.userPassport?.productionRequestID +
                 ',' +
                 identityDocumentData.userPassport?.numberWithType +
                 ',' +
-                (application.externalData.nationalRegistry.data as any)
-                  ?.fullName,
+                (
+                  application.externalData.nationalRegistry
+                    .data as NationalRegistryIndividual
+                )?.fullName,
               subLabel: identityDocumentData.userPassport
                 ? formatMessage(m.passportNumber) +
                   ' ' +
@@ -132,7 +137,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
         </Text>
       )}
       <RadioFormField
-        error={fieldErros}
+        error={fieldErrors}
         application={application}
         field={{
           space: 'smallGutter',

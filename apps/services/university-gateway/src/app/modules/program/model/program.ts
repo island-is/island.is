@@ -17,7 +17,6 @@ import {
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model/university'
-import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway'
 import {
   CreationOptional,
