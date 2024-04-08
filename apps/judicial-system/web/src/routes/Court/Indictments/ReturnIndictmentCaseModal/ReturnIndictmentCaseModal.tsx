@@ -62,7 +62,7 @@ const ReturnIndictmentModal: React.FC<React.PropsWithChildren<Props>> = ({
         name: user?.name,
         courtName: workingCase.court?.name,
       },
-    )}\n${explanation}`
+    )} ${explanation}`
 
     const updatedCase = await updateCase(workingCase.id, {
       indictmentReturnedExplanation: prependedReturnedExplanation,
