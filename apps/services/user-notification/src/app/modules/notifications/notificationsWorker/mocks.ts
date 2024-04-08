@@ -9,6 +9,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 
 export const mockFullName = 'mockFullName'
+export const delegationSubjectId = 'delegation-subject-id'
 
 interface MockUserProfileDto extends UserProfileDto {
   name: string
@@ -91,15 +92,25 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     emailNotifications: true,
   }
 
-export const mockHnippTemplate: HnippTemplate = {
-  templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title ',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
-  clickAction: 'Demo click action {{arg2}}',
-  category: 'Demo category',
-  args: ['arg1', 'arg2'],
-}
+export const mockTemplateId = 'HNIPP.DEMO.ID'
+
+export const getMockHnippTemplate = ({
+  templateId = mockTemplateId,
+  notificationTitle = 'Demo title ',
+  notificationBody = 'Demo body {{arg1}}',
+  notificationDataCopy = 'Demo data copy',
+  clickActionUrl = 'https://island.is/minarsidur/postholf',
+  category = 'Demo category',
+  args = ['arg1', 'arg2'],
+}: Partial<HnippTemplate>): HnippTemplate => ({
+  templateId,
+  notificationTitle,
+  notificationBody,
+  notificationDataCopy,
+  clickActionUrl,
+  category,
+  args,
+})
 
 const userProfiles = [
   userWithDelegations,
@@ -116,14 +127,14 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
     {
       fromNationalId: userWithDelegations.nationalId,
       toNationalId: userWitNoDelegations.nationalId,
-      subjectId: faker.datatype.uuid(),
+      subjectId: null, // test that 3rd party login is not used if subjectId is null
     },
   ],
   [userWithDelegations2.nationalId]: [
     {
       fromNationalId: userWithDelegations2.nationalId,
       toNationalId: userWithDelegations.nationalId,
-      subjectId: faker.datatype.uuid(),
+      subjectId: delegationSubjectId,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [

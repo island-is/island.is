@@ -38,6 +38,7 @@ export const userNotificationServiceSetup = (services: {
       USER_PROFILE_CLIENT_URL: ref(
         (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
       ),
+      SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
       AUTH_DELEGATION_API_URL: {
         dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         staging:
@@ -129,6 +130,7 @@ export const userNotificationWorkerSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
       AUTH_DELEGATION_API_URL: {
         dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         staging:

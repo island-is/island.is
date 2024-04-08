@@ -26,6 +26,10 @@ import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { Notification } from '../notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
+export const SERVICE_PORTAL_CLICK_ACTION_URL = Symbol(
+  'SERVICE_PORTAL_CLICK_ACTION_URL',
+)
+
 const WORK_STARTING_HOUR = 8 // 8 AM
 const WORK_ENDING_HOUR = 23 // 11 PM
 
@@ -51,6 +55,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly logger: Logger,
     @Inject(IS_RUNNING_AS_WORKER)
     private readonly isRunningAsWorker: boolean,
+    @Inject(SERVICE_PORTAL_CLICK_ACTION_URL)
+    private readonly servicePortalClickActionUrl: string,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @InjectModel(Notification)
@@ -98,15 +104,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   createEmail({
     isEnglish,
     recipientEmail,
-    template,
     formattedTemplate,
     fullName,
+    subjectId,
   }: {
     isEnglish: boolean
     recipientEmail: string | null
-    template: HnippTemplate
     formattedTemplate: HnippTemplate
     fullName: string
+    subjectId?: string
   }): Message {
     if (!recipientEmail) {
       throw new Error('User does not have email notifications enabled')
@@ -148,7 +154,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
                 component: 'Button',
                 context: {
                   copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
-                  href: formattedTemplate.clickActionUrl,
+                  href: this.getClickActionUrl(formattedTemplate, subjectId),
                 },
               },
               {
@@ -180,9 +186,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         name: fullName,
         address: recipientEmail,
       },
-      subject: template.notificationTitle,
+      subject: formattedTemplate.notificationTitle,
       template: {
-        title: template.notificationTitle,
+        title: formattedTemplate.notificationTitle,
         body: generateBody(),
       },
     }
@@ -245,11 +251,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     try {
       const emailContent = this.createEmail({
+        formattedTemplate,
         isEnglish,
         recipientEmail: profile.email ?? null,
-        template,
-        formattedTemplate,
         fullName,
+        subjectId: message.onBehalfOf?.subjectId,
       })
 
       await this.emailService.sendEmail(emailContent)
@@ -410,5 +416,33 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   private async getFullName(nationalId: string): Promise<string> {
     const individual = await this.nationalRegistryService.getName(nationalId)
     return individual?.fulltNafn ?? ''
+  }
+
+  /* Private methods */
+
+  // When sending email to delegation holder we want to use third party login if we have a subjectId and are sending to a service portal url
+  private getClickActionUrl(
+    formattedTemplate: HnippTemplate,
+    subjectId?: string,
+  ) {
+    if (!formattedTemplate.clickActionUrl) {
+      return ''
+    }
+
+    if (!subjectId) {
+      return formattedTemplate.clickActionUrl
+    }
+
+    const shouldUseThirdPartyLogin = formattedTemplate.clickActionUrl.includes(
+      this.servicePortalClickActionUrl,
+    )
+
+    return shouldUseThirdPartyLogin
+      ? `${
+          this.servicePortalClickActionUrl
+        }/login?login_hint=${subjectId}&target_link_uri=${encodeURI(
+          formattedTemplate.clickActionUrl,
+        )}`
+      : formattedTemplate.clickActionUrl
   }
 }
