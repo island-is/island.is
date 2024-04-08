@@ -9,7 +9,7 @@ export const finetuneSearchResultItems = (
     | GetSearchResultsQuery['searchResults']['items']
     | GetSearchResultsDetailedQuery['searchResults']['items'],
   locale: string,
-) => {
+): typeof searchResultItems => {
   if (
     locale !== 'is' ||
     ![
@@ -34,7 +34,7 @@ export const finetuneSearchResultItems = (
   }
 
   // Make sure that when users type in "tr" or "try" they'll see "Tryggingastofnun" at the top
-  const items = [...searchResultItems]
+  const items = [...searchResultItems] as typeof searchResultItems
 
   const tryggingastofnunId = '6IcAmT2PvhiITeydiNAEk1'
 
