@@ -18,7 +18,11 @@ const UniversityStudiesHeader: React.FC<
   const { linkResolver } = useLinkResolver()
 
   return (
-    <div className={styles.headerBg}>
+    <div
+      className={
+        styles.headerBg[organizationPage.slug === 'haskolanam' ? 'is' : 'en']
+      }
+    >
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
