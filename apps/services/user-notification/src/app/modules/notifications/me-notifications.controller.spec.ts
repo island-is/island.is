@@ -1,21 +1,32 @@
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../../app.module'; // Import your AppModule
+import { AppModule } from '../../app.module'; 
+import { setupAppWithoutAuth } from '@island.is/testing/nest';
+import { SequelizeConfigService } from '../../sequelizeConfig.service';
 
 describe('MeNotificationsController', () => {
   let app: INestApplication;
-  let server: request.SuperTest<request.Test>;
 
-  beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-    server = request(app.getHttpServer());
-  });
+  it('GET  should return 401 when user is not authenticated', async () => {
+    // Arrange
+    const app = await setupAppWithoutAuth({
+      AppModule: AppModule,
+      SequelizeConfigService: SequelizeConfigService,
+    })
+
+    const server = request(app.getHttpServer())
+
+    // Act
+    const res = await server
+      .get('/v1/me/notifications')
+      
+    // Assert
+    expect(res.status).toBe(401)
+
+
+    await app.cleanUp()
+  })
 
   // describe('Authenticated users with correct scopes', () => {
   //   it('GET /me/notifications should return 200', async () => {
@@ -45,19 +56,19 @@ describe('MeNotificationsController', () => {
   //   // Additional tests for other endpoints and HTTP methods
   // });
 
-  describe('Unauthenticated users', () => {
-    it('GET /me/notifications should return 401', async () => {
-      // Make an unauthenticated request
-      const response = await server.get('/me/notifications');
+  // describe('Unauthenticated users', () => {
+  //   it('GET /me/notifications should return 401', async () => {
+  //     // Make an unauthenticated request
+  //     const response = await server.get('/me/notifications');
 
-      expect(response.status).toBe(401);
-      // Additional assertions can be added here
-    });
+  //     expect(response.status).toBe(401);
+  //     // Additional assertions can be added here
+  //   });
 
-    // Additional tests for other endpoints and HTTP methods
-  });
+  //   // Additional tests for other endpoints and HTTP methods
+  // });
 
-  afterAll(async () => {
-    await app.close();
-  });
+  // afterAll(async () => {
+  //   await app.close();
+  // });
 });

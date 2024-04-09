@@ -30,6 +30,7 @@ export class NotificationsService {
     return this.userNotificationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  
   async getNotifications(
     locale: Locale,
     user: User,
