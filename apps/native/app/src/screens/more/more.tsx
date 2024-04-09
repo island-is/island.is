@@ -19,7 +19,8 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
 const Row = styled.View`
-  margin-top: 16px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   margin-left: -${({ theme }) => theme.spacing[2]}px;
   margin-right: -${({ theme }) => theme.spacing[2]}px;
   flex-direction: column;
@@ -72,7 +73,11 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   return (
     <>
       <ScrollView
-        style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16 }}
+        style={{
+          flex: 1,
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+        }}
       >
         <SafeAreaView>
           <UserCard

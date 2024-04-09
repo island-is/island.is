@@ -14,6 +14,7 @@ import { Image } from './models/image.model'
 import { PatentIS } from './models/patentIS.model'
 import { PatentEP } from './models/patentEP.model'
 import { SPC } from './models/spc.model'
+import capitalize from 'lodash/capitalize'
 
 const DATE_FORMAT = 'dd.MM.yyyy HH:mm:SS'
 
@@ -42,7 +43,7 @@ export class IntellectualPropertiesService {
           text: t.text ?? '',
           status: t.status ?? '',
           type: mapTrademarkType(t.type) ?? undefined,
-          typeReadable: t.type ?? '',
+          typeReadable: t.type ? capitalize(t.type) : '',
           subType: mapTrademarkSubtype(t) ?? undefined,
           vmId: t.vmid,
           applicationDate: parseIPDate(t.applicationDate),

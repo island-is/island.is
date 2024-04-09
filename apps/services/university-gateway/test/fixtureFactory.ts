@@ -6,14 +6,10 @@ import { TestApp } from '@island.is/testing/nest'
 import { Program } from '../src/app/modules/program/model/program'
 import { University } from '../src/app/modules/university/model/university'
 import {
-  CourseSeason,
   DegreeType,
   ModeOfDelivery,
-  Requirement,
   Season,
 } from '@island.is/university-gateway'
-import { Course } from '../src/app/modules/course/model/course'
-import { ProgramCourse } from '../src/app/modules/program/model/programCourse'
 import { ProgramModeOfDelivery } from '../src/app/modules/program/model/programModeOfDelivery'
 
 export class FixtureFactory {
@@ -63,7 +59,8 @@ export class FixtureFactory {
       tmpActive: false,
       allowException: false,
       allowThirdLevelQualification: false,
-      courses: [],
+      applicationPeriodOpen: true,
+      applicationInUniversityGateway: true,
     })
 
     for (let i = 0; i < modeOfDeliveryList.length; i++) {
@@ -74,27 +71,5 @@ export class FixtureFactory {
     }
 
     return program
-  }
-
-  async createCourse({ programId }: { programId: string }) {
-    const program = await this.get(Program).findByPk(programId)
-
-    const course = await this.get(Course).create({
-      externalId: faker.datatype.uuid(),
-      nameIs: faker.random.word(),
-      nameEn: faker.random.word(),
-      universityId: program?.universityId || '',
-      credits: 6,
-    })
-
-    await this.get(ProgramCourse).create({
-      programId: programId,
-      courseId: course.id,
-      requirement: Requirement.MANDATORY,
-      semesterYear: 2023,
-      semesterSeason: CourseSeason.FALL,
-    })
-
-    return course
   }
 }
