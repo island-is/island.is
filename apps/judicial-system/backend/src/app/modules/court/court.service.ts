@@ -15,6 +15,7 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealRulingDecision,
   CaseDecision,
   CaseType,
   IndictmentSubtype,
@@ -591,6 +592,42 @@ export class CourtService {
           appealJudge1NationalId,
           appealJudge2NationalId,
           appealJudge3NationalId,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateAppealCaseWithConclusion(
+    user: User,
+    caseId: string,
+    appealCaseNumber?: string,
+    isCorrection?: boolean,
+    appealRulingDecision?: CaseAppealRulingDecision,
+    appealRulingDate?: Date,
+  ): Promise<unknown> {
+    try {
+      const subject = `Landsréttur - ${appealCaseNumber} - lyktir`
+      const content = JSON.stringify({
+        isCorrection,
+        appealRulingDecision,
+        appealRulingDate,
+      })
+
+      return this.sendToRobot(subject, content)
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update appeal case with conclusion',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          appealCaseNumber,
+          isCorrection,
+          appealRulingDecision,
+          appealRulingDate,
         },
         error,
       )

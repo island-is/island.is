@@ -833,7 +833,7 @@ export class CaseService {
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
             caseFile.category &&
-            CaseFileCategory.APPEAL_RULING === caseFile.category,
+            caseFile.category === CaseFileCategory.APPEAL_RULING,
         )
         .map((caseFile) => ({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
@@ -841,12 +841,19 @@ export class CaseService {
           caseId: theCase.id,
           elementId: caseFile.id,
         })) ?? []
-    messages.push({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: NotificationType.APPEAL_COMPLETED },
-    })
+    messages.push(
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_COMPLETED },
+      },
+      {
+        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
+        user,
+        caseId: theCase.id,
+      },
+    )
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({

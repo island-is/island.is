@@ -615,6 +615,14 @@ describe('CaseController - Transition', () => {
                   body: { type: NotificationType.APPEAL_COMPLETED },
                 },
                 {
+                  type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                {
                   type: MessageType.DELIVERY_TO_POLICE_APPEAL,
                   user: {
                     ...defaultUser,
