@@ -89,6 +89,10 @@ paths:
                           type: 'string'
                         externalUrlEn:
                           type: 'string'
+                        applicationUrlIs:
+                          type: 'string'
+                        applicationUrlEn:
+                          type: 'string'
                         modeOfDelivery:
                           type: 'array'
                           items:
@@ -109,6 +113,10 @@ paths:
                           type: 'string'
                         costInformationEn:
                           type: 'string'
+                        mustPickExamVenue:
+                          type: 'boolean'
+                        canApplyOnHaskolanam:
+                          type: 'boolean'
                         extraApplicationSettings:
                           type: 'object'
                           properties:
@@ -144,6 +152,8 @@ paths:
                               format: 'date-time'
                             nafnleynd:
                               type: 'string'
+                            thridja_stigsnam_leyft:
+                              type: 'string'
                         extraApplicationFields:
                           type: 'array'
                           items:
@@ -163,6 +173,21 @@ paths:
                                 type: 'string'
                               required:
                                 type: 'boolean'
+                        extraApplicationTexts:
+                          type: 'object'
+                          properties:
+                            toptextIs:
+                              type: 'string'
+                            sociallifeIs:
+                              type: 'string'
+                            forYouIs:
+                              type: 'string'
+                            exchangeStudyIs:
+                              type: 'string'
+                            workIs:
+                              type: 'string'
+                            aboutIs:
+                              type: 'string'
                         kjorsvid:
                           type: 'array'
                           items:

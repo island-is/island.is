@@ -48,6 +48,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'false',
         prod: 'false',
       },
+      USE_MICROSOFT_GRAPH_API_FOR_COURT_ROBOT: {
+        dev: 'false',
+        staging: 'true',
+        prod: 'true',
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -65,7 +70,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       EMAIL_REPLY_TO_NAME: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME',
       PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL',
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
-      COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
@@ -73,6 +77,12 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       EVENT_URL: '/k8s/judicial-system/EVENT_URL',
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
       ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY',
+      COURT_ROBOT_CLIENT_ID: '/k8s/judicial-system/COURT_ROBOT_CLIENT_ID',
+      COURT_ROBOT_TENANT_ID: '/k8s/judicial-system/COURT_ROBOT_TENANT_ID',
+      COURT_ROBOT_CLIENT_SECRET:
+        '/k8s/judicial-system/COURT_ROBOT_CLIENT_SECRET',
+      COURT_ROBOT_USER: '/k8s/judicial-system/COURT_ROBOT_USER',
+      COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL',
     })
     .liveness('/liveness')
     .readiness('/liveness')

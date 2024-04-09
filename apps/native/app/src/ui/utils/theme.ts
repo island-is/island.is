@@ -27,7 +27,7 @@ const spacing = {
   28: UNIT * 28,
   29: UNIT * 29,
   30: UNIT * 30,
-  none: UNIT * 0,
+  none: 0,
   smallGutter: UNIT * 0.5,
   gutter: UNIT * 2,
   containerGutter: UNIT * 6,
@@ -81,6 +81,7 @@ export const theme = {
     radius: {
       standard: '4px',
       large: '8px',
+      extraLarge: '16px',
       circle: '50%',
     },
     width: {

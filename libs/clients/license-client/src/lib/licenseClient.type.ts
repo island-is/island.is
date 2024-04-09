@@ -178,7 +178,10 @@ export interface LicenseClient<Type extends LicenseType> {
   type: LicenseType
   clientSupportsPkPass: boolean
   getLicenses: (user: User) => Promise<Result<Array<LicenseResult<Type>>>>
-  licenseIsValidForPkPass?: (payload: unknown) => LicensePkPassAvailability
+  licenseIsValidForPkPass?: (
+    payload: unknown,
+    user?: User,
+  ) => Promise<LicensePkPassAvailability>
   getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
   getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
   verifyPkPassDeprecated?: (data: string) => Promise<Result<PkPassVerification>>
