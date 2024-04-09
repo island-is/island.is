@@ -45,7 +45,7 @@ import {
   IntellectualProperties,
   Inna,
   UniversityCareers,
-  OfficialJournalOfIceland
+  OfficialJournalOfIceland,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
