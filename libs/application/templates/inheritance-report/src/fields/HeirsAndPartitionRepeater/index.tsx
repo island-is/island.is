@@ -40,8 +40,6 @@ export const HeirsAndPartitionRepeater: FC<
   const { id, props } = field
   const { customFields } = props
 
-  console.log('application', application)
-
   const { formatMessage } = useLocale()
   const { getValues, setError, setValue } = useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
@@ -161,15 +159,19 @@ export const HeirsAndPartitionRepeater: FC<
   }, [getValues, id, props.sumField, setValue])
 
   const updateValues = useCallback(
-    (updateIndex: string, value: number) => {
+    (updateIndex: string, value: number, index?: number) => {
       const numValue = isNaN(value) ? 0 : value
       const percentage = numValue > 0 ? numValue / 100 : 0
+      const heirs = getValues()?.heirs?.data as EstateMember[]
+      let currentHeir = getValueViaPath(answers, updateIndex) as EstateMember
 
-      const currentHeir = getValueViaPath(answers, updateIndex) as EstateMember
+      if (!currentHeir && typeof index === 'number') {
+        // if no current heir then it has not been saved yet, so let's
+        // get the current heir from the heirs list
+        currentHeir = heirs?.[index]
+      }
 
       const currentNationalId = valueToNumber(currentHeir?.nationalId)
-
-      const heirs = getValues()?.heirs?.data as EstateMember[]
 
       // currently we can only check if heir is spouse by relation string value...
       const spouse = (heirs ?? []).filter(
@@ -202,19 +204,19 @@ export const HeirsAndPartitionRepeater: FC<
         ? 0
         : Math.round(taxableInheritanceValue * 0.1)
 
-      setValue(
-        `${updateIndex}.taxFreeInheritance`,
-        String(taxFreeInheritanceValue),
+      const taxFreeInheritance = String(taxFreeInheritanceValue)
+      const taxableInheritance = String(
+        taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue,
       )
-      setValue(`${updateIndex}.inheritance`, String(inheritanceValue))
-      setValue(
-        `${updateIndex}.inheritanceTax`,
-        String(inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue),
+      const inheritance = String(inheritanceValue)
+      const inheritanceTax = String(
+        inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue,
       )
-      setValue(
-        `${updateIndex}.taxableInheritance`,
-        String(taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue),
-      )
+
+      setValue(`${updateIndex}.taxFreeInheritance`, taxFreeInheritance)
+      setValue(`${updateIndex}.inheritance`, inheritance)
+      setValue(`${updateIndex}.inheritanceTax`, inheritanceTax)
+      setValue(`${updateIndex}.taxableInheritance`, taxableInheritance)
 
       calculateTotal()
     },
@@ -225,7 +227,7 @@ export const HeirsAndPartitionRepeater: FC<
     fields.forEach((field: any, mainIndex: number) => {
       const fieldIndex = `${id}[${mainIndex}]`
       const heirsPercentage = getValues(`${fieldIndex}.heirsPercentage`)
-      updateValues(fieldIndex, heirsPercentage)
+      updateValues(fieldIndex, heirsPercentage, mainIndex)
     })
   }, [fields, getValues, id, updateValues])
 
@@ -429,7 +431,7 @@ export const HeirsAndPartitionRepeater: FC<
                             disabled={!member.enabled}
                             label={formatMessage(customField.title)}
                             onAfterChange={(val) => {
-                              updateValues(fieldIndex, val)
+                              updateValues(fieldIndex, val, customFieldIndex)
                             }}
                             errorMessage={
                               error && error[mainIndex]

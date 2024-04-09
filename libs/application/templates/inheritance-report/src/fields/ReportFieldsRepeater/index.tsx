@@ -351,7 +351,8 @@ export const ReportFieldsRepeater: FC<
                           )
                         }}
                       />
-                    ) : field.id === 'assetNumber' ? (
+                    ) : field.type !== 'nationalId' &&
+                      field.id === 'assetNumber' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(m.bankAccount)}
@@ -413,7 +414,7 @@ export const ReportFieldsRepeater: FC<
                           repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={formatMessage(field.title)}
+                        label={formatMessage(field.title) + 'hey'}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}

@@ -40,7 +40,7 @@ export const AdditionalHeir = ({
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
-  updateValues: (updateIndex: string, value: number) => void
+  updateValues: (updateIndex: string, value: number, index?: number) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
   error: Record<string, string>
@@ -271,7 +271,7 @@ export const AdditionalHeir = ({
                     disabled={!currentHeir.enabled}
                     label={formatMessage(customField.title)}
                     onAfterChange={(val) => {
-                      updateValues(fieldIndex, val)
+                      updateValues(fieldIndex, val, customFieldIndex)
                     }}
                     errorMessage={
                       error && error[index]

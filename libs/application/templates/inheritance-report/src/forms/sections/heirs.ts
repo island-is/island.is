@@ -13,7 +13,11 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
-import { roundedValueToNumber, valueToNumber } from '../../lib/utils/helpers'
+import {
+  roundedValueToNumber,
+  shouldShowCustomSpouseShare,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 import { YES } from '../../lib/constants'
 
 export const heirs = buildSection({
@@ -67,6 +71,7 @@ export const heirs = buildSection({
               large: false,
               backgroundColor: 'white',
               defaultValue: [],
+              condition: shouldShowCustomSpouseShare,
               options: [
                 {
                   value: YES,
@@ -74,16 +79,6 @@ export const heirs = buildSection({
                 },
               ],
             }),
-            // buildTextField({
-            //   id: 'customSpouseSharePercentage',
-            //   title: m.assetsToShareCustomSpousePercentage,
-            //   width: 'half',
-            //   condition: (answers) =>
-            //     !!getValueViaPath<string[]>(
-            //       answers,
-            //       'hasCustomSpouseSharePercentage',
-            //     )?.includes(YES),
-            // }),
             buildCustomField({
               title: '',
               id: 'share',
@@ -217,6 +212,7 @@ export const heirs = buildSection({
             buildKeyValueField({
               label: m.totalDeduction,
               display: 'flex',
+              condition: shouldShowCustomSpouseShare,
               value: ({ answers }) =>
                 formatCurrency(
                   String(
@@ -229,6 +225,7 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'space1',
               title: '',
+              condition: shouldShowCustomSpouseShare,
               space: 'gutter',
             }),
             buildKeyValueField({

@@ -86,10 +86,16 @@ export const isValidRealEstate = (value: string) => {
   return lotRegex.test(value) || houseRegex.test(value)
 }
 
+export const getDeceasedWasMarriedAndHadAssets = (
+  application: Application,
+): boolean =>
+  application?.answers &&
+  getDeceasedHadAssets(application) &&
+  getDeceasedWasInCohabitation(application)
+
 export const getDeceasedHadAssets = (application: Application): boolean =>
   application?.answers &&
-  getValueViaPath(application.answers, 'deceasedHadAssets') === YES &&
-  getValueViaPath(application.answers, 'deceasedWasMarried') === YES
+  getValueViaPath(application.answers, 'deceasedHadAssets') === YES
 
 export const getDeceasedWasInCohabitation = (
   application: Application,
@@ -102,6 +108,9 @@ export const hasYes = (arr?: string[]) =>
 
 export const shouldShowDeceasedShareField = (answers: FormValue) =>
   getValueViaPath(answers, 'deceasedHadAssets') === YES &&
+  getValueViaPath(answers, 'deceasedWasMarried') === YES
+
+export const shouldShowCustomSpouseShare = (answers: FormValue) =>
   getValueViaPath(answers, 'deceasedWasMarried') === YES
 
 export const roundedValueToNumber = (value: unknown) =>

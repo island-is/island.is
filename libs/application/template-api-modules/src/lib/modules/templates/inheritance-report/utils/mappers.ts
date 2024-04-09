@@ -179,7 +179,7 @@ export const expandAnswers = (
         data: (answers.assets.stocks?.data ?? []).map((stock) => {
           return {
             amount: stock.amount ?? '',
-            nationalId: stock.nationalId ?? '',
+            assetNumber: stock.assetNumber ?? '',
             description: stock.description ?? '',
             exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',
@@ -273,27 +273,13 @@ export const expandAnswers = (
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',
 
-    // Heildareign
     total: answers.total ?? 0,
-
-    // Heildarskuldir
     debtsTotal: answers.debtsTotal ?? 0,
-
-    // Heildarséreign
     shareTotal: answers.shareTotal ?? 0,
-
-    // Hrein eign: Heildareign - Heildarskuldir
     netTotal: answers.netTotal ?? 0,
-
-    // Búshluti makans: Hrein eign - Heildarséreign / 2
     spouseTotal: answers.spouseTotal ?? 0,
-
-    // Búshluti dánarbús: Hrein eign - Heildarséreign / 2
     estateTotal: answers.estateTotal ?? 0,
-
-    // Hrein eign til skipta: Heildarséreign + Búshluti dánarbús
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
-
     hasCustomSpouseSharePercentage:
       answers.hasCustomSpouseSharePercentage ?? [],
     customSpouseSharePercentage: answers.customSpouseSharePercentage ?? '50',

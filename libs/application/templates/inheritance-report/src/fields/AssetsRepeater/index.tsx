@@ -29,7 +29,7 @@ import {
   getEstateDataFromApplication,
   isValidRealEstate,
   valueToNumber,
-  getDeceasedHadAssets,
+  getDeceasedWasMarriedAndHadAssets,
 } from '../../lib/utils/helpers'
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import ShareInput from '../../components/ShareInput'
@@ -56,7 +56,7 @@ export const AssetsRepeater: FC<
   const { id, props } = field
   const { calcWithShareValue, assetKey } = props
 
-  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   if (typeof calcWithShareValue !== 'boolean' || !assetKey) {
     throw new Error('calcWithShareValue and assetKey are required')

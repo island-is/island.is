@@ -45,21 +45,13 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const forceUpdate = useCallback(() => updateState({}), [])
   const { formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
-  // Heildareign
   const [total, setTotal] = useState(0)
-  // Heildarskuldir
   const [debtsTotal, setDebtsTotal] = useState(0)
-  // Heildarséreign
   const [shareTotal, setShareTotal] = useState(0)
-  // Hrein eign: Heildareign - Heildarskuldir
   const [netTotal, setNetTotal] = useState(0)
-  // Búshluti makans: Hrein eign - Heildarséreign / 2
   const [spouseTotal, setSpouseTotal] = useState(0)
-  // Búshluti dánarbús: Hrein eign - Heildarséreign / 2
   const [estateTotal, setEstateTotal] = useState(0)
-  // Hrein eign til skipta: Heildarséreign + Búshluti dánarbús
   const [netPropertyForExchange, setNetPropertyForExchange] = useState(0)
-  // Búshluti maka ef annar en 50%
   const formValues = getValues()
   const [customSpouseSharePercentage, setCustomSpouseSharePercentage] =
     useState(
@@ -68,7 +60,11 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         : 0,
     )
 
+  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedWasInCohabitation = getDeceasedWasInCohabitation(application)
+
   const hasCustomSpouseSharePercentage =
+    deceasedWasInCohabitation &&
     !!formValues?.hasCustomSpouseSharePercentage?.includes(YES)
 
   const [shareValues, setShareValues] = useState<
@@ -84,9 +80,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     stocks: { title: m.stocksTitle, items: [] },
     vehicles: { title: m.vehiclesTitle, items: [] },
   })
-
-  const deceasedHadAssets = getDeceasedHadAssets(application)
-  const deceasedWasInCohabitation = getDeceasedWasInCohabitation(application)
 
   const getShareValue = (
     value: number,
@@ -384,8 +377,17 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       ).toFixed(7),
     )
 
-    setSpouseTotal((netTotal - shareTotal) * val)
-  }, [customSpouseSharePercentage, netTotal, shareTotal])
+    setSpouseTotal(
+      deceasedWasInCohabitation
+        ? (netTotal - shareTotal) * (deceasedWasInCohabitation ? val : 1)
+        : 0,
+    )
+  }, [
+    customSpouseSharePercentage,
+    netTotal,
+    shareTotal,
+    deceasedWasInCohabitation,
+  ])
 
   // Set the estate total value
   useEffect(() => {
@@ -396,8 +398,15 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       ).toFixed(7),
     )
 
-    setEstateTotal((netTotal - shareTotal) * val)
-  }, [customSpouseSharePercentage, netTotal, shareTotal])
+    setEstateTotal(
+      (netTotal - shareTotal) * (deceasedWasInCohabitation ? val : 1),
+    )
+  }, [
+    customSpouseSharePercentage,
+    netTotal,
+    shareTotal,
+    deceasedWasInCohabitation,
+  ])
 
   // Set the estate total value
   useEffect(() => {
@@ -472,7 +481,13 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           title={m.netProperty}
           value={roundedValueToNumber(netTotal)}
         />
-        <TitleRow title={m.share} value={roundedValueToNumber(shareTotal)} />
+        {deceasedHadAssets ||
+          (shareTotal > 0 && (
+            <TitleRow
+              title={m.share}
+              value={roundedValueToNumber(shareTotal)}
+            />
+          ))}
         <Box marginLeft={[0, 4]}>
           <GridRow rowGap={1}>
             <ShareItemRow item={shareValues.bankAccounts} />
@@ -487,10 +502,12 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </GridRow>
         </Box>
         <Box marginY={4}>
-          <TitleRow
-            title={m.assetsToShareSpouseShare}
-            value={roundedValueToNumber(spouseTotal)}
-          />
+          {deceasedWasInCohabitation && (
+            <TitleRow
+              title={m.assetsToShareSpouseShare}
+              value={roundedValueToNumber(spouseTotal)}
+            />
+          )}
           <TitleRow
             title={m.assetsToShareEstateShare}
             value={roundedValueToNumber(estateTotal)}
@@ -577,28 +594,3 @@ const TitleRow = ({
     </Box>
   )
 }
-
-// const ItemRow = ({
-//   title,
-//   total,
-// }: {
-//   title: MessageDescriptor
-//   total: number
-// }) => {
-//   const { formatMessage } = useLocale()
-
-//   return (
-//     <GridColumn span={['1/1']}>
-//       <GridRow rowGap={0}>
-//         <GridColumn span={['1/1', '1/2']}>
-//           {title && <Text variant="small">{formatMessage(title)}</Text>}
-//         </GridColumn>
-//         <GridColumn span={['1/1', '1/2']}>
-//           <Box textAlign={['left', 'right']}>
-//             <Text variant="small">{formatCurrency(String(total))}</Text>
-//           </Box>
-//         </GridColumn>
-//       </GridRow>
-//     </GridColumn>
-//   )
-// }
