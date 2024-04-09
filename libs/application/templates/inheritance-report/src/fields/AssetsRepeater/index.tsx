@@ -29,9 +29,11 @@ import {
   getEstateDataFromApplication,
   isValidRealEstate,
   valueToNumber,
+  getDeceasedWasMarriedAndHadAssets,
 } from '../../lib/utils/helpers'
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import ShareInput from '../../components/ShareInput'
+import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
   field: {
@@ -53,6 +55,8 @@ export const AssetsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { id, props } = field
   const { calcWithShareValue, assetKey } = props
+
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   if (typeof calcWithShareValue !== 'boolean' || !assetKey) {
     throw new Error('calcWithShareValue and assetKey are required')
@@ -143,10 +147,12 @@ export const AssetsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetKey])
 
+  let shouldPushRight = false
+
   return (
     <Box>
-      {fields.map((repeaterField: any, index) => {
-        const fieldIndex = `${id}[${index}]`
+      {fields.map((repeaterField: any, mainIndex) => {
+        const fieldIndex = `${id}[${mainIndex}]`
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
@@ -157,7 +163,7 @@ export const AssetsRepeater: FC<
                 circle
                 icon="remove"
                 onClick={() => {
-                  remove(index)
+                  remove(mainIndex)
                   calculateTotal()
                 }}
               />
@@ -170,6 +176,8 @@ export const AssetsRepeater: FC<
 
                 const fieldName = `${fieldIndex}.${field.id}`
                 const error = errors && getErrorViaPath(errors, fieldName)
+
+                shouldPushRight = pushRight
 
                 return (
                   <FieldComponent
@@ -189,6 +197,13 @@ export const AssetsRepeater: FC<
                 )
               })}
             </GridRow>
+            {deceasedHadAssets && (
+              <DeceasedShare
+                pushRight={shouldPushRight}
+                paddingBottom={2}
+                id={fieldIndex}
+              />
+            )}
           </Box>
         )
       })}

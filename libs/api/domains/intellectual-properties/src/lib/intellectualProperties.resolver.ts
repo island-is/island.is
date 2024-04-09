@@ -26,7 +26,6 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Patent } from './models/patent.model'
-import { IntellectualPropertiesCollectionInput } from './dto/ipCollection.input'
 
 @Resolver()
 @FeatureFlag(Features.isIntellectualPropertyModuleEnabled)
@@ -46,13 +45,11 @@ export class IntellectualPropertiesResolver {
   @Audit()
   async getIntellectualProperties(
     @CurrentUser() user: User,
-    @Args('input', { type: () => IntellectualPropertiesCollectionInput })
-    input: IntellectualPropertiesCollectionInput,
   ): Promise<IntellectualPropertiesResponse | null> {
     const data = await Promise.all([
       this.ipService.getPatents(user),
       this.ipService.getDesigns(user),
-      this.ipService.getTrademarks(user, input.locale === 'en' ? 'en' : 'is'),
+      this.ipService.getTrademarks(user),
     ])
 
     const flattenedData = data.filter(isDefined).flat()
@@ -144,15 +141,8 @@ export class IntellectualPropertiesResolver {
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertiesTrademarks(
-    @CurrentUser() user: User,
-    @Args('input', { type: () => IntellectualPropertiesInput })
-    input: IntellectualPropertiesInput,
-  ) {
-    return this.ipService.getTrademarks(
-      user,
-      input.locale === 'en' ? 'en' : 'is',
-    )
+  getIntellectualPropertiesTrademarks(@CurrentUser() user: User) {
+    return this.ipService.getTrademarks(user)
   }
 
   @Query(() => Trademark, {
@@ -165,10 +155,6 @@ export class IntellectualPropertiesResolver {
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
   ) {
-    return this.ipService.getTrademarkByVmId(
-      user,
-      input.key,
-      input.locale === 'en' ? 'en' : 'is',
-    )
+    return this.ipService.getTrademarkByVmId(user, input.key)
   }
 }
