@@ -88,7 +88,7 @@ to use roles or `data-testid` attributes for stability (see below on how to).
 Writing tests for every possible combination is time-consuming for you and the CI
 pipeline, with diminishing value beyond the most common cases.
 
-You should therefore aim to write test for:
+You should therefore aim to write tests for:
 
 - Most common usage patterns
 - Usage/patterns that MUST NOT break
@@ -147,7 +147,7 @@ test.describe('Overview part of banking app', () => {
 ```
 
 Each test case (`test`) should test a specific scenario from end-to-end. If your
-test is getting long and complicated consider breaking it up within a `test` with
+test is getting long and complicated, consider breaking it up within a `test` with
 `test.step`; each step will run in succession and the failure/success report is
 easier to read. Let’s take the operating license application as an example; test
 various routes/cases:
