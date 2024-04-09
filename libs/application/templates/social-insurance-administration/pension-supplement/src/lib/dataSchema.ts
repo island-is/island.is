@@ -34,7 +34,7 @@ export const dataSchema = z.object({
     abroad: z.enum([YES, NO]),
   }),
   applicant: z.object({
-    email: z.string().email(),
+    email: z.string().email().min(1),
     phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
       params: coreSIAErrorMessages.phoneNumber,
     }),

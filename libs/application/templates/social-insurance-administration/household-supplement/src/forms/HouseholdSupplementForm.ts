@@ -166,7 +166,8 @@ export const HouseholdSupplementForm: Form = buildForm({
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { userProfilePhoneNumber } =
-                      getApplicationExternalData(application.externalData)
+                      getApplicationExternalData(application.externalData) || ''
+
                     return userProfilePhoneNumber
                   },
                 }),
