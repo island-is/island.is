@@ -2,6 +2,9 @@ import { style } from '@vanilla-extract/css'
 
 import { themeUtils } from '@island.is/island-ui/theme'
 
+const backgroundImageUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/4dlQwaChrcgyRLTSJ0CsPM/7d83caf105d1c665a5d1ae2ff28ba89e/herobanner_haskolanam.svg'
+
 export const headerBg = style({
   position: 'relative',
   ...themeUtils.responsiveStyle({
@@ -10,15 +13,31 @@ export const headerBg = style({
       justifyContent: 'center',
       alignItems: 'center',
       height: 340,
+      background:
+        'linear-gradient(90deg, #C1EDDF 0%, #FDE1AD 79%) center/cover',
     },
     md: {
       display: 'block',
       justifyContent: 'unset',
       alignItems: 'unset',
       height: 340,
+      backgroundImage: `url(${backgroundImageUrl})`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '992px',
+      backgroundPosition: 'center',
     },
     lg: {
       height: 444,
+      backgroundImage: `url(${backgroundImageUrl})`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'unset',
+      backgroundPosition: 'center',
+    },
+    xl: {
+      backgroundImage: `url(${backgroundImageUrl})`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '1440px',
+      backgroundPosition: 'center',
     },
   }),
 })
