@@ -40,7 +40,7 @@ export const AdditionalHeir = ({
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
-  updateValues: (updateIndex: string, value: number) => void
+  updateValues: (updateIndex: string, value: number, index?: number) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
   error: Record<string, string>
@@ -253,6 +253,9 @@ export const AdditionalHeir = ({
                     label={formatMessage(
                       m.inheritanceRelationWithApplicantLabel,
                     )}
+                    onSelect={() => {
+                      clearErrors()
+                    }}
                     defaultValue={currentHeir.relation}
                     options={relationOptions}
                     error={error?.relation}
@@ -266,9 +269,9 @@ export const AdditionalHeir = ({
                   <ShareInput
                     name={`${fieldIndex}.${customField.id}`}
                     disabled={!currentHeir.enabled}
-                    label={customField.title}
+                    label={formatMessage(customField.title)}
                     onAfterChange={(val) => {
-                      updateValues(fieldIndex, val)
+                      updateValues(fieldIndex, val, customFieldIndex)
                     }}
                     errorMessage={
                       error && error[index]
@@ -286,7 +289,7 @@ export const AdditionalHeir = ({
                     disabled={!currentHeir.enabled}
                     defaultValue={defaultValue ? defaultValue : ''}
                     format={customField.format}
-                    label={customField.title}
+                    label={formatMessage(customField.title)}
                     currency
                     readOnly
                     error={

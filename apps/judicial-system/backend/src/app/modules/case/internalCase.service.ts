@@ -617,7 +617,10 @@ export class InternalCaseService {
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
-        this.logger.error('Failed to update case with prosecutor', { reason })
+        this.logger.error(
+          `Failed to update case ${theCase.id} with prosecutor`,
+          { reason },
+        )
 
         return { delivered: false }
       })
@@ -725,6 +728,65 @@ export class InternalCaseService {
           : undefined,
       )
       .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update case ${theCase.id} with conclusion`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverReceivedDateToCourtOfAppeals(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateAppealCaseWithReceivedDate(
+        user,
+        theCase.id,
+        theCase.appealCaseNumber,
+        theCase.appealReceivedByCourtDate,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update appeal case ${theCase.id} with received date`,
+          {
+            reason,
+          },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverAssignedRolesToCourtOfAppeals(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateAppealCaseWithAssignedRoles(
+        user,
+        theCase.id,
+        theCase.appealCaseNumber,
+        theCase.appealAssistant?.nationalId,
+        theCase.appealJudge1?.nationalId,
+        theCase.appealJudge2?.nationalId,
+        theCase.appealJudge3?.nationalId,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update appeal case ${theCase.id} with assigned roles`,
+          {
+            reason,
+          },
+        )
+
+        return { delivered: false }
+      })
   }
 
   private async deliverCaseToPoliceWithFiles(

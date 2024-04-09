@@ -62,10 +62,10 @@ export interface UseBoxStylesProps {
   pointerEvents?: keyof typeof styleRefs.pointerEvents
   overflow?: keyof typeof styleRefs.overflow
   minWidth?: keyof typeof styleRefs.minWidth
-  top?: keyof typeof styleRefs.relativePosition.top
-  bottom?: keyof typeof styleRefs.relativePosition.bottom
-  left?: keyof typeof styleRefs.relativePosition.left
-  right?: keyof typeof styleRefs.relativePosition.right
+  top?: ResponsiveProp<Space>
+  bottom?: ResponsiveProp<Space>
+  left?: ResponsiveProp<Space>
+  right?: ResponsiveProp<Space>
   userSelect?: keyof typeof styleRefs.userSelect
   outline?: keyof typeof styleRefs.outline
   opacity?: keyof typeof styleRefs.opacity
@@ -182,10 +182,42 @@ export const useBoxStyles = ({
     styles.pointerEvents[pointerEvents!],
     styles.overflow[overflow!],
     styles.minWidth[minWidth!],
-    styles.relativePosition.top[top!],
-    styles.relativePosition.bottom[bottom!],
-    styles.relativePosition.right[right!],
-    styles.relativePosition.left[left!],
+    top !== undefined &&
+      resolveResponsiveProp(
+        top,
+        styles.relativePosition.top,
+        styles.relativePositionSm.top,
+        styles.relativePositionMd.top,
+        styles.relativePositionLg.top,
+        styles.relativePositionXl.top,
+      ),
+    bottom !== undefined &&
+      resolveResponsiveProp(
+        bottom,
+        styles.relativePosition.bottom,
+        styles.relativePositionSm.bottom,
+        styles.relativePositionMd.bottom,
+        styles.relativePositionLg.bottom,
+        styles.relativePositionXl.bottom,
+      ),
+    left !== undefined &&
+      resolveResponsiveProp(
+        left,
+        styles.relativePosition.left,
+        styles.relativePositionSm.left,
+        styles.relativePositionMd.left,
+        styles.relativePositionLg.left,
+        styles.relativePositionXl.left,
+      ),
+    right !== undefined &&
+      resolveResponsiveProp(
+        right,
+        styles.relativePosition.right,
+        styles.relativePositionSm.right,
+        styles.relativePositionMd.right,
+        styles.relativePositionLg.right,
+        styles.relativePositionXl.right,
+      ),
     resolvedMarginTop !== undefined &&
       resolveResponsiveProp(
         resolvedMarginTop,

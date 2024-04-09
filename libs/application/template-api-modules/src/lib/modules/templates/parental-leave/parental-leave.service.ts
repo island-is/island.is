@@ -233,7 +233,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         dateOfBirth: applicationInformation.dateOfBirth,
       }
     } catch (e) {
-      this.logger.warning('Failed to fetch application information', e)
+      this.logger.error('Failed to fetch application information', e)
     }
 
     return {

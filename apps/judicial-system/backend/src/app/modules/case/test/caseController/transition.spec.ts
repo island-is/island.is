@@ -15,6 +15,7 @@ import {
   indictmentCases,
   investigationCases,
   isIndictmentCase,
+  NotificationType,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
@@ -191,42 +192,43 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.ARCHIVE_CASE_FILE,
+                  type: MessageType.ARCHIVING_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: caseFileId1,
+                  elementId: caseFileId1,
                 },
                 {
-                  type: MessageType.ARCHIVE_CASE_FILE,
+                  type: MessageType.ARCHIVING_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: caseFileId2,
+                  elementId: caseFileId2,
                 },
                 {
-                  type: MessageType.ARCHIVE_CASE_FILES_RECORD,
+                  type: MessageType.ARCHIVING_CASE_FILES_RECORD,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  policeCaseNumber,
+                  elementId: policeCaseNumber,
                 },
                 {
-                  type: MessageType.SEND_RULING_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.RULING },
                 },
                 {
-                  type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
+                  type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
@@ -239,41 +241,42 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.REVOKED },
                 },
                 {
-                  type: MessageType.ARCHIVE_CASE_FILE,
+                  type: MessageType.ARCHIVING_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: caseFileId1,
+                  elementId: caseFileId1,
                 },
                 {
-                  type: MessageType.ARCHIVE_CASE_FILE,
+                  type: MessageType.ARCHIVING_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: caseFileId2,
+                  elementId: caseFileId2,
                 },
                 ...(oldState === CaseState.RECEIVED
                   ? [
                       {
-                        type: MessageType.ARCHIVE_CASE_FILES_RECORD,
+                        type: MessageType.ARCHIVING_CASE_FILES_RECORD,
                         user: {
                           ...defaultUser,
                           canConfirmIndictment: isIndictmentCase(theCase.type),
                         },
                         caseId,
-                        policeCaseNumber,
+                        elementId: policeCaseNumber,
                       },
                     ]
                   : []),
@@ -286,12 +289,13 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.READY_FOR_COURT },
                 },
               ],
             )
@@ -303,7 +307,16 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                  body: { type: NotificationType.RECEIVED_BY_COURT },
+                },
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
@@ -311,15 +324,7 @@ describe('CaseController - Transition', () => {
                   caseId,
                 },
                 {
-                  type: MessageType.DELIVER_INDICTMENT_TO_POLICE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                },
-                {
-                  type: MessageType.DELIVER_CASE_FILES_RECORD_TO_POLICE,
+                  type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
@@ -336,7 +341,7 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
+                  type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
@@ -344,7 +349,7 @@ describe('CaseController - Transition', () => {
                   caseId,
                 },
                 {
-                  type: MessageType.DELIVER_COURT_RECORD_TO_COURT,
+                  type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
@@ -352,16 +357,16 @@ describe('CaseController - Transition', () => {
                   caseId,
                 },
                 {
-                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: caseFileId1,
+                  elementId: caseFileId1,
                 },
                 {
-                  type: MessageType.DELIVER_CASE_TO_POLICE,
+                  type: MessageType.DELIVERY_TO_POLICE_CASE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
@@ -377,12 +382,13 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.REVOKED },
                 },
               ],
             )
@@ -394,12 +400,13 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.RECEIVED_BY_COURT },
                 },
               ],
             )
@@ -527,39 +534,40 @@ describe('CaseController - Transition', () => {
                 mockMessageService.sendMessagesToQueue,
               ).toHaveBeenCalledWith([
                 {
-                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: prosecutorAppealBriefId,
+                  elementId: prosecutorAppealBriefId,
                 },
                 {
-                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: prosecutorAppealBriefCaseFileId1,
+                  elementId: prosecutorAppealBriefCaseFileId1,
                 },
                 {
-                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: prosecutorAppealBriefCaseFileId2,
+                  elementId: prosecutorAppealBriefCaseFileId2,
                 },
                 {
-                  type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
                 },
               ])
             }
@@ -571,12 +579,13 @@ describe('CaseController - Transition', () => {
                 mockMessageService.sendMessagesToQueue,
               ).toHaveBeenCalledWith([
                 {
-                  type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.APPEAL_RECEIVED_BY_COURT },
                 },
               ])
             }
@@ -588,24 +597,25 @@ describe('CaseController - Transition', () => {
                 mockMessageService.sendMessagesToQueue,
               ).toHaveBeenCalledWith([
                 {
-                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  caseFileId: appealRulingId,
+                  elementId: appealRulingId,
                 },
                 {
-                  type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.APPEAL_COMPLETED },
                 },
                 {
-                  type: MessageType.DELIVER_APPEAL_TO_POLICE,
+                  type: MessageType.DELIVERY_TO_POLICE_APPEAL,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
@@ -622,12 +632,13 @@ describe('CaseController - Transition', () => {
                 mockMessageService.sendMessagesToQueue,
               ).toHaveBeenCalledWith([
                 {
-                  type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  body: { type: NotificationType.APPEAL_WITHDRAWN },
                 },
               ])
             }
