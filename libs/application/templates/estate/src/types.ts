@@ -68,6 +68,7 @@ export interface EstateMember {
   dateOfBirth?: string
   custodian?: string
   foreignCitizenship?: ('yes' | 'no')[]
+  noContactInfo?: ('yes' | 'no')[]
   enabled?: boolean
   phone?: string
   email?: string

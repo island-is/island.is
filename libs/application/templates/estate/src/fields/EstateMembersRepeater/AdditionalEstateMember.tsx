@@ -209,7 +209,6 @@ export const AdditionalEstateMember = ({
                 defaultValue={field.email || ''}
                 backgroundColor="blue"
                 error={error?.email}
-                required
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

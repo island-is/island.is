@@ -81,6 +81,11 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesta',
     description: '',
   },
+  noContactInfo: {
+    id: 'es.application:noContactInfo',
+    defaultMessage: 'Án upplýsinga um samskipti',
+    description: '',
+  },
 
   // Data collection - external data providers
   dataCollectionTitle: {
