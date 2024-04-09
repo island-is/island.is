@@ -17,7 +17,7 @@ const promptUserForSheetName = (
 
   const modal = `
   <label for="${sheetNameSelectId}">Choose a tab:</label>
-  <select id="${sheetNameSelectId}" name="${sheetNameSelectId}" id="${sheetNameSelectId}">
+  <select id="${sheetNameSelectId}" name="${sheetNameSelectId}">
     ${sheetNames.map((name) => `<option value="${name}">${name}</option>`)}
   </select>
   <button id="${confirmButtonId}" style="background-color: #0059C8; color:white; padding: 2px">Confirm</button>
