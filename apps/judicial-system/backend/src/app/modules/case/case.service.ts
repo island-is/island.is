@@ -755,7 +755,7 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private addMessagesForAppealedCaseToQueue(
+  private async addMessagesForAppealedCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -764,7 +764,7 @@ export class CaseService {
       theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
       theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
     ) {
-      return Promise.resolve()
+      return
     }
 
     const messages: CaseMessage[] =
@@ -888,6 +888,19 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForReceivedAppealedCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -935,6 +948,7 @@ export class CaseService {
       await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
     }
 
+    // This only applies to restriction cases
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
@@ -950,6 +964,7 @@ export class CaseService {
       }
     }
 
+    // This only applies to restriction cases
     if (
       updatedCase.prosecutorStatementDate?.getTime() !==
       theCase.prosecutorStatementDate?.getTime()
@@ -957,13 +972,12 @@ export class CaseService {
       await this.addMessagesForAppealStatementToQueue(updatedCase, user)
     }
 
-    if (isRestrictionCase(updatedCase.type)) {
-      if (
-        updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
-      ) {
-        // Case to dates modified
-        await this.addMessagesForModifiedCaseToQueue(updatedCase, user)
-      }
+    // This only applies to restriction cases
+    if (
+      updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
+    ) {
+      // Case to dates modified
+      await this.addMessagesForModifiedCaseToQueue(updatedCase, user)
     }
 
     if (updatedCase.courtCaseNumber) {
@@ -991,6 +1005,15 @@ export class CaseService {
           await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
       }
+    }
+
+    // This only applies to restriction cases
+    // New appeal case number
+    if (
+      updatedCase.appealCaseNumber &&
+      updatedCase.appealCaseNumber !== theCase.appealCaseNumber
+    ) {
+      await this.addMessagesForReceivedAppealedCaseToQueue(updatedCase, user)
     }
   }
 
