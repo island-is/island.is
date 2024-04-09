@@ -1,12 +1,11 @@
-import request from 'supertest';
-import { INestApplication } from '@nestjs/common';
-import { AppModule } from '../../app.module'; 
-import { setupAppWithoutAuth } from '@island.is/testing/nest';
-import { SequelizeConfigService } from '../../sequelizeConfig.service';
+import request from 'supertest'
+import { INestApplication } from '@nestjs/common'
+import { AppModule } from '../../app.module'
+import { setupAppWithoutAuth } from '@island.is/testing/nest'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
 describe('MeNotificationsController', () => {
-  let app: INestApplication;
-
+  let app: INestApplication
 
   it('GET  should return 401 when user is not authenticated', async () => {
     // Arrange
@@ -18,12 +17,10 @@ describe('MeNotificationsController', () => {
     const server = request(app.getHttpServer())
 
     // Act
-    const res = await server
-      .get('/v1/me/notifications')
-      
+    const res = await server.get('/v1/me/notifications')
+
     // Assert
     expect(res.status).toBe(401)
-
 
     await app.cleanUp()
   })
@@ -71,4 +68,4 @@ describe('MeNotificationsController', () => {
   // afterAll(async () => {
   //   await app.close();
   // });
-});
+})
