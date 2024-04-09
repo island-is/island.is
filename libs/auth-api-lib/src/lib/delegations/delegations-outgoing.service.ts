@@ -1,13 +1,15 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { and, Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
 
-import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { NotificationsApi } from '@island.is/clients/user-notification'
 
@@ -38,6 +40,7 @@ import {
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 /**
  * Service class for outgoing delegations.
@@ -55,6 +58,8 @@ export class DelegationsOutgoingService {
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
     private scopeService: ScopeService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   async findAll(
@@ -303,7 +308,7 @@ export class DelegationsOutgoingService {
         },
       })
     } catch (e) {
-      // TODO: log error
+      this.logger.error(`Failed to send delegation notification`, e)
     }
   }
 
