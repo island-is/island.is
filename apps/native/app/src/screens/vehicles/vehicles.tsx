@@ -98,7 +98,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const scrollY = useRef(new Animated.Value(0)).current
-  const loadingTimeout = useRef<NodeJS.Timeout>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const res = useListVehiclesQuery({
     fetchPolicy: 'cache-first',
     variables: {
