@@ -8,6 +8,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  CaseType,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -617,6 +618,125 @@ describe('CaseController - Update', () => {
 
     it('should not post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal case number updated', () => {
+    const appealCaseNumber = uuid()
+    const caseToUpdate = { appealCaseNumber }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.TRAVEL_BAN,
+      appealCaseNumber,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('assigned appeal roles updated', () => {
+    const appealCaseNumber = uuid()
+    const appealAssistantId = uuid()
+    const appealJudge1Id = uuid()
+    const appealJudge2Id = uuid()
+    const appealJudge3Id = uuid()
+    const caseToUpdate = { appealCaseNumber }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.SEARCH_WARRANT,
+      appealCaseNumber,
+      appealAssistantId,
+      appealJudge1Id,
+      appealJudge2Id,
+      appealJudge3Id,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, appealCaseNumber } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('appeal case number updated with assigned appeal roles', () => {
+    const appealCaseNumber = uuid()
+    const appealAssistantId = uuid()
+    const appealJudge1Id = uuid()
+    const appealJudge2Id = uuid()
+    const appealJudge3Id = uuid()
+    const caseToUpdate = { appealCaseNumber }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+      appealCaseNumber,
+      appealAssistantId,
+      appealJudge1Id,
+      appealJudge2Id,
+      appealJudge3Id,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        {
+          ...theCase,
+          appealCaseNumber: uuid(),
+          appealAssistantId,
+          appealJudge1Id,
+          appealJudge2Id,
+          appealJudge3Id,
+        } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
+          user,
+          caseId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
+          user,
+          caseId,
+        },
+      ])
     })
   })
 })

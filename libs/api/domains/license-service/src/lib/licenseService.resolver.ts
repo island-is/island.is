@@ -57,7 +57,7 @@ export class LicenseServiceResolver {
     })
   }
 
-  @Query(() => GenericUserLicense)
+  @Query(() => GenericUserLicense, { nullable: true })
   @Audit()
   async genericLicense(
     @CurrentUser() user: User,

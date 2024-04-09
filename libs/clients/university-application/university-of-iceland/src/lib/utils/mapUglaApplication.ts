@@ -1,4 +1,4 @@
-import { IApplication } from '@island.is/university-gateway'
+import { ApplicationTypes, IApplication } from '@island.is/university-gateway'
 import { ApplicationsPostRequest } from '../../../gen/fetch'
 
 export const mapUglaApplication = (
@@ -20,13 +20,16 @@ export const mapUglaApplication = (
 
       nominationId: 0, // TODO what is this?
 
-      undanthaga: 'false', // TODO connect to choice in application
+      undanthaga:
+        application.educationOption === ApplicationTypes.EXEMPTION
+          ? 'true'
+          : 'false',
 
       leidbeiningarFylgigognLesid: 'false', // TODO done when extraApplicationFields are connected
 
       inntokuskilyrdiLesin: 'false', // TODO done when extraApplicationFields are connected
 
-      kjorsvid: 'TODO', // TODO connect to chosen kjorsvid
+      // kjorsvid: und, // TODO connect to chosen kjorsvid
 
       personuverndSamthykki: 'false', // TODO done when extraApplicationFields are connected
       hugverkaretturSamthykki: 'false', // TODO done when extraApplicationFields are connected
@@ -37,13 +40,15 @@ export const mapUglaApplication = (
       samthykkiTrunadarlaeknir: 'false', // TODO done when extraApplicationFields are connected
       samthykkiSakaskra: 'false', // TODO done when extraApplicationFields are connected
       samthykkiOkurettindaskra: 'false', // TODO done when extraApplicationFields are connected
-      framhaldsskolar: application.educationList.map((education) => {
+      framhaldsskolar: [],
+      fyrraNam: application.educationList.map((education) => {
         return {
-          framhaldsskoliNafn: education.schoolName,
-          framhaldsskoliLand: 'TODO',
+          skoli: education.schoolName,
+          namsgrada: education.degree,
+          land: education.degreeCountry,
+          namiLokid: education.degreeEndDate,
         }
       }),
-      fyrraNam: [], // TODO við gerum ekki greinamun í educationList á framhaldsskóla námi og öðru námi.. hvernig höndlum við þetta?
       medmaelendur: [], // TODO are we doing this?
       leidbeinandi: undefined, // TODO are we doing this?
       tenglar: [], // TODO are we doing this?
