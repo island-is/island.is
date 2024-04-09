@@ -18,6 +18,10 @@ module.exports = {
               defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
               allowNull: false,
             },
+            date_type: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
             modified: {
               type: 'TIMESTAMP WITH TIME ZONE',
               defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
@@ -31,16 +35,16 @@ module.exports = {
               },
               allowNull: false,
             },
-            court_date: {
+            date: {
               type: Sequelize.DATE,
-              allowNull: true,
+              allowNull: false,
             },
           },
           { transaction: t },
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `insert into "date_log" (id, case_id, court_date)
+            `insert into "date_log" (id, case_id, date)
                select md5(random()::text || clock_timestamp()::text)::uuid, 
                id, 
                court_date

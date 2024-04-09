@@ -239,6 +239,12 @@ query Case($input: CaseQueryInput!) {
       nationalId
       userRole
     }
+    dateLogs {
+      id
+      caseId
+      dateType
+      courtDate
+    }
     prosecutorsOffice {
       id
       name

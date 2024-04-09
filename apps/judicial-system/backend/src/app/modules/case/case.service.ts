@@ -35,6 +35,7 @@ import {
   CaseTransition,
   CaseType,
   completedCaseStates,
+  DateType,
   EventType,
   isIndictmentCase,
   isRestrictionCase,
@@ -62,6 +63,7 @@ import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { DateLog } from '../date-log'
 
 export interface UpdateCase
   extends Pick<
@@ -95,7 +97,6 @@ export interface UpdateCase
     | 'sharedWithProsecutorsOfficeId'
     | 'courtCaseNumber'
     | 'sessionArrangements'
-    | 'courtDate'
     | 'courtLocation'
     | 'courtRoom'
     | 'courtStartDate'
@@ -159,6 +160,7 @@ export interface UpdateCase
 }
 
 const eventTypes = Object.values(EventType)
+const dateTypes = Object.values(DateType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -239,6 +241,13 @@ export const include: Includeable[] = [
     where: {
       eventType: { [Op.in]: eventTypes },
     },
+    separate: true,
+  },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
     separate: true,
   },
 ]
