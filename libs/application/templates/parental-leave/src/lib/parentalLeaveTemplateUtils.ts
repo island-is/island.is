@@ -7,6 +7,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   States,
+  FileType,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -78,10 +79,12 @@ export const findActionName = (context: ApplicationContext) => {
   const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
   if (
     state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
-    state === States.RESIDENCE_GRANT_APPLICATION
-  )
-    return 'documentPeriod'
-  if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
+    state === States.RESIDENCE_GRANT_APPLICATION ||
+    state === States.ADDITIONAL_DOCUMENTS_REQUIRED
+  ) {
+    return FileType.DOCUMENT
+  }
+
   if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
     if (addEmployer === YES && addPeriods === YES) return 'empper'
     if (addEmployer === YES) return 'employer'

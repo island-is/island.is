@@ -1385,7 +1385,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
-      previousState,
       employerLastSixMonths,
       employers,
     } = getApplicationAnswers(application.answers)
@@ -1400,10 +1399,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const attachments = await this.getAttachments(application)
 
     try {
-      const actionNameFromParams =
-        previousState === States.RESIDENCE_GRANT_APPLICATION
-          ? isParamsActionName(params)
-          : undefined
+      const actionNameFromParams = isParamsActionName(params)
 
       const periods = await this.createPeriodsDTO(
         application,

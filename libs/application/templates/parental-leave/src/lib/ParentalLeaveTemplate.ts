@@ -834,7 +834,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRANT_APPLICATION]: {
-        entry: ['assignToVMST', 'setResidenceGrant'],
+        entry: ['assignToVMST', 'setResidenceGrant', 'setActionName'],
         exit: ['setPreviousState', 'setHasAppliedForReidenceGrant'],
         meta: {
           status: 'inprogress',
@@ -863,9 +863,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             triggerEvent: DefaultEvents.APPROVE,
-            params: FileType.DOCUMENT,
             throwOnError: true,
           }),
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1325,7 +1325,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onEntry: [
             defineTemplateApi({
               action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENT,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
