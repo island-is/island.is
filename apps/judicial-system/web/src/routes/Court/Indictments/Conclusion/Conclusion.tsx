@@ -2,12 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import {
-  AlertMessage,
-  Box,
-  InputFileUpload,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, InputFileUpload, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -81,12 +76,6 @@ const Conclusion: React.FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <AlertMessage
-            message={formatMessage(m.alertBannerText)}
-            type="info"
-          />
-        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.courtRecordTitle)} />
           <InputFileUpload
