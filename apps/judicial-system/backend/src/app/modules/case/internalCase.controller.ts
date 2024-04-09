@@ -267,25 +267,23 @@ export class InternalCaseController {
   )
   @Post(
     `case/:caseId/${
-      messageEndpoint[
-        MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE
-      ]
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE]
     }`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers an appeal received date to court of appeals',
+    description: 'Delivers a received date to court of appeals',
   })
-  deliverAppealReceivedDateToCourtOfAppeals(
+  deliverReceivedDateToCourtOfAppeals(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering the appeal received date for case ${caseId} to court of appeals`,
+      `Delivering the received date for case ${caseId} to court of appeals`,
     )
 
-    return this.internalCaseService.deliverAppealReceivedDateToCourtOfAppeals(
+    return this.internalCaseService.deliverReceivedDateToCourtOfAppeals(
       theCase,
       deliverDto.user,
     )

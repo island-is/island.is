@@ -481,7 +481,7 @@ export class CaseService {
     return messages
   }
 
-  private getDeliverAssignedAppealRolesToCourtOfAppealsMessages(
+  private getDeliverAssignedRolesToCourtOfAppealsMessages(
     user: TUser,
     theCase: Case,
   ): CaseMessage[] {
@@ -906,7 +906,7 @@ export class CaseService {
   ): Promise<void> {
     const messages: CaseMessage[] = [
       {
-        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE,
+        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
         user,
         caseId: theCase.id,
       },
@@ -914,10 +914,7 @@ export class CaseService {
 
     if (this.allAppealRolesAssigned(theCase)) {
       messages.push(
-        ...this.getDeliverAssignedAppealRolesToCourtOfAppealsMessages(
-          user,
-          theCase,
-        ),
+        ...this.getDeliverAssignedRolesToCourtOfAppealsMessages(user, theCase),
       )
     }
 
@@ -929,7 +926,7 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     return this.messageService.sendMessagesToQueue(
-      this.getDeliverAssignedAppealRolesToCourtOfAppealsMessages(user, theCase),
+      this.getDeliverAssignedRolesToCourtOfAppealsMessages(user, theCase),
     )
   }
 

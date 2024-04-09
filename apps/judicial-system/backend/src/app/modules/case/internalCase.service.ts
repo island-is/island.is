@@ -738,12 +738,12 @@ export class InternalCaseService {
       })
   }
 
-  async deliverAppealReceivedDateToCourtOfAppeals(
+  async deliverReceivedDateToCourtOfAppeals(
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
-      .updateAppealCaseWithAppealReceivedDate(
+      .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
         theCase.appealCaseNumber,

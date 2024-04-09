@@ -10,15 +10,14 @@ import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { InternalCaseController } from '../../internalCase.controller'
 
-describe('InternalCaseController - Deliver appeal received date to court of appeals guards', () => {
+describe('InternalCaseController - Deliver received date to court of appeals guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalCaseController.prototype
-        .deliverAppealReceivedDateToCourtOfAppeals,
+      InternalCaseController.prototype.deliverReceivedDateToCourtOfAppeals,
     )
   })
 

@@ -640,7 +640,7 @@ describe('CaseController - Update', () => {
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE,
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
           user,
           caseId,
         },
@@ -727,7 +727,7 @@ describe('CaseController - Update', () => {
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE,
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
           user,
           caseId,
         },

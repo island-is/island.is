@@ -521,9 +521,9 @@ export class CourtService {
           courtName,
           courtCaseNumber,
           decision,
-          rulingDate: rulingDate?.toISOString(),
-          validToDate: validToDate?.toISOString(),
-          isolationToDate: isolationToDate?.toISOString(),
+          rulingDate,
+          validToDate,
+          isolationToDate,
         },
         error,
       )
@@ -532,7 +532,7 @@ export class CourtService {
     }
   }
 
-  async updateAppealCaseWithAppealReceivedDate(
+  async updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
     appealCaseNumber?: string,
@@ -551,7 +551,7 @@ export class CourtService {
           actor: user.name,
           institution: user.institution?.name,
           appealCaseNumber,
-          appealReceivedByCourtDate: appealReceivedByCourtDate?.toISOString(),
+          appealReceivedByCourtDate,
         },
         error,
       )
