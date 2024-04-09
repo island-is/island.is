@@ -124,7 +124,7 @@ export const EducationGraduation = () => {
             return (
               <ActionCard
                 key={`education-graduation-${index}`}
-                heading={item.institution?.displayName}
+                heading={item.institution?.displayName ?? undefined}
                 text={item.faculty}
                 subText={`${item.studyProgram} ${item.degree}`}
                 cta={{

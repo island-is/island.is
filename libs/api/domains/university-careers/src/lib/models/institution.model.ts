@@ -5,6 +5,6 @@ export class Institution {
   @Field(() => String)
   id!: string
 
-  @Field(() => String)
-  displayName!: string
+  @Field(() => String, { nullable: true })
+  displayName?: string
 }

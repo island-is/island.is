@@ -32,6 +32,7 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 import { StudentTrackOverviewDto } from './dto/studentTrackOverviewDto'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 @Injectable()
 export class UniversityCareersClientService implements UniversityCareerService {
@@ -43,6 +44,44 @@ export class UniversityCareersClientService implements UniversityCareerService {
     private readonly hiApi: HIApi,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  getOrganizationSlugType = (
+    type: UniversityId,
+  ): OrganizationSlugType | undefined => {
+    switch (type) {
+      case UniversityId.UNIVERSITY_OF_ICELAND:
+        return 'haskoli-islands'
+      case UniversityId.HOLAR_UNIVERSITY:
+        return 'holaskoli-haskolinn-a-holum'
+      case UniversityId.UNIVERSITY_OF_AKUREYRI:
+        return 'haskolinn-a-akureyri'
+      case UniversityId.BIFROST_UNIVERSITY:
+        return 'bifrost'
+      case UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND:
+        return 'landbunadarhaskoli-islands'
+      default:
+        return undefined
+    }
+  }
+
+  getUniversityByOrganizationSlug = (
+    slug: OrganizationSlugType,
+  ): UniversityId | undefined => {
+    switch (slug) {
+      case 'haskoli-islands':
+        return UniversityId.UNIVERSITY_OF_ICELAND
+      case 'holaskoli-haskolinn-a-holum':
+        return UniversityId.HOLAR_UNIVERSITY
+      case 'haskolinn-a-akureyri':
+        return UniversityId.UNIVERSITY_OF_AKUREYRI
+      case 'bifrost':
+        return UniversityId.BIFROST_UNIVERSITY
+      case 'landbunadarhaskoli-islands':
+        return UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND
+      default:
+        return undefined
+    }
+  }
 
   getApi = (
     type: UniversityId,

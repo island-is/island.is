@@ -1,4 +1,5 @@
 export { StudentTranscriptApi as LbhiApi } from './gen/fetch'
+export { StudentTrackInstitution as LbhiStudentTrackInstitution } from './gen/fetch'
 export { StudentTrack as LbhiStudentTrack } from './gen/fetch'
 export { NemandiGetLocaleEnum as LbhiLocale } from './gen/fetch'
 export { NemandiFerillFerillFileTranscriptGetLocaleEnum as LbhiTranscriptLocale } from './gen/fetch'

@@ -150,6 +150,10 @@ components:
           type: 'string'
           description: 'Námsleið sem nemandinn er skráð á ferilinn'
           example: 'Lögfræði'
+        programId:
+          type: 'string'
+          description: '6 stafa ID á námsleið'
+          example: '123456'
         degree:
           type: 'string'
           description: 'Námsgráða'

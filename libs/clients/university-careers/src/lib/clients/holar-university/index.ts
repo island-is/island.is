@@ -1,4 +1,5 @@
 export { StudentTranscriptApi as HolarApi } from './gen/fetch'
+export { StudentTrackInstitution as HolarStudentTrackInstitution } from './gen/fetch'
 export { StudentTrack as HolarStudentTrack } from './gen/fetch'
 export { NemandiGetLocaleEnum as HolarLocale } from './gen/fetch'
 export { NemandiFerillFerillFileTranscriptGetLocaleEnum as HolarTranscriptLocale } from './gen/fetch'

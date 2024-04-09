@@ -3,17 +3,19 @@ import {
   HolarStudentTrack,
   LbhiStudentTrack,
   UnakStudentTrack,
+  HIStudentTrack,
 } from '../clients'
+import {
+  StudentTrackInstitutionDto,
+  mapToStudentTrackInstitutionDto,
+} from './studentTrackInstitutionDto'
 
 export interface StudentTrackDto {
   name?: string
   nationalId?: string
   graduationDate?: Date
   trackNumber?: number
-  institution?: {
-    id?: string
-    displayName?: string
-  }
+  institution?: StudentTrackInstitutionDto
   school?: string
   faculty?: string
   studyProgram?: string
@@ -25,7 +27,8 @@ export const mapToStudentTrackDto = (
     | HolarStudentTrack
     | LbhiStudentTrack
     | BifrostStudentTrack
-    | UnakStudentTrack,
+    | UnakStudentTrack
+    | HIStudentTrack,
 ): StudentTrackDto | null => {
   if (!transcript.graduationDate) {
     return null
@@ -33,6 +36,7 @@ export const mapToStudentTrackDto = (
 
   return {
     ...transcript,
+    institution: mapToStudentTrackInstitutionDto(transcript.institution),
     graduationDate: new Date(transcript.graduationDate),
   }
 }

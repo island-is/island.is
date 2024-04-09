@@ -15,8 +15,8 @@ export class StudentTrackTranscript {
   @Field(() => Number)
   trackNumber!: number
 
-  @Field(() => Institution, { nullable: true })
-  institution?: Institution
+  @Field(() => Institution)
+  institution!: Institution
 
   @Field(() => String)
   school!: string

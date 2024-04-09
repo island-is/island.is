@@ -14,7 +14,6 @@ import type { ConfigType } from '@island.is/nest/config'
 import { StudentInfoByUniversityInput } from './dto/studentInfoByUniversity.input'
 import { UniversityId } from '@island.is/clients/university-careers'
 import { Locale } from '@island.is/shared/types'
-import { mapToStudentTrackModel } from './mapper'
 import { StudentTrack } from './models/studentTrack.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { StudentInfoInput } from './dto/studentInfo.input'
@@ -22,6 +21,7 @@ import { UniversityCareersService } from './universityCareers.service'
 import { StudentTrackHistory } from './models/studentTrackHistory.model'
 import { StudentTrackTranscriptResult } from './models/studentTrackTranscriptResult.model'
 import { isDefined } from '@island.is/shared/utils'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -81,25 +81,20 @@ export class UniversityCareersResolver {
     if (!input.trackNumber) {
       return null
     }
-    const data = await this.service.getStudentTrack(
+
+    const student = await this.service.getStudentTrack(
       user,
-      input.universityId ?? UniversityId.UNIVERSITY_OF_ICELAND,
+      input.universityId as OrganizationSlugType,
       input.trackNumber,
       input.locale as Locale,
     )
 
-    if (!data) {
-      return null
-    }
-
-    const studentTrack = mapToStudentTrackModel(data)
-
-    if (!studentTrack) {
+    if (!student) {
       return null
     }
 
     return {
-      ...studentTrack,
+      ...student,
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
     }
   }

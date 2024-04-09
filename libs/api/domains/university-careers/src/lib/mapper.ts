@@ -5,9 +5,11 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
+import { Institution } from './models/institution.model'
 
 export const mapToStudent = (
   data: StudentTrackDto,
+  institutionFallback: Institution,
 ): StudentTrackTranscript | null => {
   if (
     !data ||
@@ -17,20 +19,26 @@ export const mapToStudent = (
     !data?.school ||
     !data?.faculty ||
     !data?.studyProgram ||
-    !data?.degree ||
-    !data?.institution?.displayName ||
-    !data?.institution?.id
+    !data?.degree
   ) {
     return null
+  }
+
+  let institution: Institution | undefined = undefined
+
+  if (data.institution?.id && data.institution?.displayName) {
+    institution = {
+      id: data.institution.id,
+      displayName: data.institution.displayName,
+    }
+  } else {
+    institution = institutionFallback
   }
 
   return {
     name: data.name,
     trackNumber: data.trackNumber,
-    institution: {
-      id: data.institution.id,
-      displayName: data.institution.displayName,
-    },
+    institution,
     school: data.school,
     faculty: data.faculty,
     studyProgram: data.studyProgram,
@@ -41,6 +49,7 @@ export const mapToStudent = (
 
 export const mapToStudentTrackModel = (
   data: StudentTrackOverviewDto,
+  institution: Institution,
 ): StudentTrack | null => {
   if (
     !data.transcript ||
@@ -51,7 +60,7 @@ export const mapToStudentTrackModel = (
     return null
   }
 
-  const transcript = mapToStudent(data.transcript)
+  const transcript = mapToStudent(data.transcript, institution)
 
   if (!transcript) {
     return null
