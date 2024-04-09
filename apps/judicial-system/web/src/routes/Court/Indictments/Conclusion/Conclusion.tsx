@@ -2,10 +2,16 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, InputFileUpload, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputFileUpload,
+  RadioButton,
+  toast,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -30,12 +36,13 @@ import {
 import { conclusion as m } from './Conclusion.strings'
 
 const Conclusion: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
+    useCase()
 
   const {
     uploadFiles,
@@ -76,6 +83,38 @@ const Conclusion: React.FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        <Box component="section" marginBottom={5}>
+          <BlueBox>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="conclusion-postpone"
+                name="conclusion-decision"
+                checked={false} // {defendant.defendantPlea === DefendantPlea.GUILTY}
+                onChange={() => {
+                  setAndSendCaseToServer([], workingCase, setWorkingCase)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(m.postponed)}
+              />
+            </Box>
+            <RadioButton
+              id="conclusion-judgement"
+              name="conclusion-decision"
+              checked={false} // {defendant.defendantPlea === DefendantPlea.NOT_GUILTY}
+              onChange={() => {
+                // handleUpdateDefendant({
+                //   defendantId: defendant.id,
+                //   caseId: workingCase.id,
+                //   defendantPlea: DefendantPlea.NOT_GUILTY,
+                // })
+              }}
+              large
+              backgroundColor="white"
+              label={formatMessage(m.judgement)}
+            />
+          </BlueBox>
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.courtRecordTitle)} />
           <InputFileUpload
