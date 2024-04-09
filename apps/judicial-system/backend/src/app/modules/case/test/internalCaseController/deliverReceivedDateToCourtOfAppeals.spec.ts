@@ -45,7 +45,7 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
       const then = {} as Then
 
       await internalCaseController
-        .deliverAppealReceivedDateToCourtOfAppeals(caseId, theCase, {
+        .deliverReceivedDateToCourtOfAppeals(caseId, theCase, {
           user,
         })
         .then((result) => (then.result = result))
@@ -55,7 +55,7 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
     }
   })
 
-  describe('appeal received date delivered', () => {
+  describe('received date delivered', () => {
     let then: Then
 
     beforeEach(async () => {

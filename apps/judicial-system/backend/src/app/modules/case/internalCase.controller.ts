@@ -267,25 +267,52 @@ export class InternalCaseController {
   )
   @Post(
     `case/:caseId/${
-      messageEndpoint[
-        MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE
-      ]
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE]
     }`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers an appeal received date to court of appeals',
+    description: 'Delivers a received date to court of appeals',
   })
-  deliverAppealReceivedDateToCourtOfAppeals(
+  deliverReceivedDateToCourtOfAppeals(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering the appeal received date for case ${caseId} to court of appeals`,
+      `Delivering the received date for case ${caseId} to court of appeals`,
     )
 
-    return this.internalCaseService.deliverAppealReceivedDateToCourtOfAppeals(
+    return this.internalCaseService.deliverReceivedDateToCourtOfAppeals(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers assigned roles to court of appeals',
+  })
+  deliverAssignedRolesToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the assigned roles for case ${caseId} to court of appeals`,
+    )
+
+    return this.internalCaseService.deliverAssignedRolesToCourtOfAppeals(
       theCase,
       deliverDto.user,
     )

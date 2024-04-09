@@ -16,6 +16,9 @@ const initialMapper = <T>(element: T) => {
     enabled: true,
     propertyValuation: '0',
     share: '0',
+    deceasedShare: '0',
+    deceasedShareEnabled: [],
+    deceasedShareAmount: 0,
   }
 }
 
@@ -98,6 +101,9 @@ export const expandAnswers = (
             propertyValuation: account.propertyValuation ?? '',
             exchangeRateOrInterest: account.exchangeRateOrInterest ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
+            deceasedShare: account.deceasedShare ?? '',
+            deceasedShareEnabled: account.deceasedShareEnabled ?? [],
+            deceasedShareAmount: account.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -108,6 +114,9 @@ export const expandAnswers = (
             assetNumber: claim.assetNumber ?? '',
             description: claim.description ?? '',
             propertyValuation: claim.propertyValuation ?? '',
+            deceasedShare: claim.deceasedShare ?? '',
+            deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
+            deceasedShareAmount: claim.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -118,6 +127,9 @@ export const expandAnswers = (
             assetNumber: gun.assetNumber ?? '',
             description: gun.description ?? '',
             propertyValuation: gun.propertyValuation ?? '',
+            deceasedShare: gun.deceasedShare ?? '',
+            deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
+            deceasedShareAmount: gun.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.guns?.total ?? 0,
@@ -125,16 +137,26 @@ export const expandAnswers = (
       inventory: {
         info: answers.assets.inventory?.info ?? '',
         value: answers.assets.inventory?.value ?? '',
+        deceasedShare: answers.assets.inventory?.deceasedShare ?? '',
+        deceasedShareEnabled:
+          answers.assets.inventory?.deceasedShareEnabled ?? [],
+        deceasedShareAmount: answers.assets.inventory?.deceasedShareAmount ?? 0,
       },
       money: {
         info: answers.assets.money?.info ?? '',
         value: answers.assets.money?.value ?? '',
+        deceasedShare: answers.assets.money?.deceasedShare ?? '',
+        deceasedShareEnabled: answers.assets.money?.deceasedShareEnabled ?? [],
+        deceasedShareAmount: answers.assets.money?.deceasedShareAmount ?? 0,
       },
       otherAssets: {
         data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
           return {
             info: otherAsset?.info ?? '',
             value: otherAsset?.value ?? '',
+            deceasedShare: otherAsset?.deceasedShare ?? '',
+            deceasedShareEnabled: otherAsset?.deceasedShareEnabled ?? [],
+            deceasedShareAmount: otherAsset?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.otherAssets?.total ?? 0,
@@ -146,6 +168,9 @@ export const expandAnswers = (
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
             share: realEstate.share ?? '0',
+            deceasedShare: realEstate.deceasedShare ?? '0',
+            deceasedShareEnabled: realEstate.deceasedShareEnabled ?? [],
+            deceasedShareAmount: realEstate.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.realEstate?.total ?? 0,
@@ -158,6 +183,9 @@ export const expandAnswers = (
             description: stock.description ?? '',
             exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',
+            deceasedShare: stock?.deceasedShare ?? '',
+            deceasedShareEnabled: stock?.deceasedShareEnabled ?? [],
+            deceasedShareAmount: stock?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.stocks?.total ?? 0,
@@ -168,35 +196,13 @@ export const expandAnswers = (
             assetNumber: vehicle.assetNumber ?? '',
             description: vehicle.description ?? '',
             propertyValuation: vehicle.propertyValuation ?? '',
+            deceasedShare: vehicle.deceasedShare ?? '0',
+            deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
+            deceasedShareAmount: vehicle?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.vehicles?.total ?? 0,
       },
-    },
-    business: {
-      businessAssets: {
-        data: (answers.business.businessAssets?.data ?? []).map((asset) => {
-          return {
-            description: asset.description ?? '',
-            propertyValuation: asset.propertyValuation ?? '',
-            assetType: asset.assetType ?? '',
-            assetNumber: asset.assetNumber ?? '',
-          }
-        }),
-        total: answers.business.businessAssets?.total ?? 0,
-      },
-      businessDebts: {
-        data: (answers.business.businessDebts?.data ?? []).map((debt) => {
-          return {
-            assetNumber: debt.assetNumber ?? '',
-            description: debt.description ?? '',
-            propertyValuation: debt.propertyValuation ?? 0,
-            nationalId: debt.nationalId ?? '',
-          }
-        }),
-        total: answers.business.businessDebts?.total ?? 0,
-      },
-      businessTotal: answers.business.businessTotal ?? 0,
     },
     confirmAction: answers.confirmAction,
     debts: {
@@ -266,5 +272,16 @@ export const expandAnswers = (
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',
+
+    total: answers.total ?? 0,
+    debtsTotal: answers.debtsTotal ?? 0,
+    shareTotal: answers.shareTotal ?? 0,
+    netTotal: answers.netTotal ?? 0,
+    spouseTotal: answers.spouseTotal ?? 0,
+    estateTotal: answers.estateTotal ?? 0,
+    netPropertyForExchange: answers.netPropertyForExchange ?? 0,
+    hasCustomSpouseSharePercentage:
+      answers.hasCustomSpouseSharePercentage ?? [],
+    customSpouseSharePercentage: answers.customSpouseSharePercentage ?? '50',
   }
 }

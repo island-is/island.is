@@ -1,8 +1,10 @@
+import { getValueViaPath } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
+import { YES } from '../constants'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -83,3 +85,33 @@ export const isValidRealEstate = (value: string) => {
 
   return lotRegex.test(value) || houseRegex.test(value)
 }
+
+export const getDeceasedWasMarriedAndHadAssets = (
+  application: Application,
+): boolean =>
+  application?.answers &&
+  getDeceasedHadAssets(application) &&
+  getDeceasedWasInCohabitation(application)
+
+export const getDeceasedHadAssets = (application: Application): boolean =>
+  application?.answers &&
+  getValueViaPath(application.answers, 'deceasedHadAssets') === YES
+
+export const getDeceasedWasInCohabitation = (
+  application: Application,
+): boolean =>
+  application?.answers &&
+  getValueViaPath(application.answers, 'deceasedWasMarried') === YES
+
+export const hasYes = (arr?: string[]) =>
+  Array.isArray(arr) && arr.includes(YES)
+
+export const shouldShowDeceasedShareField = (answers: FormValue) =>
+  getValueViaPath(answers, 'deceasedHadAssets') === YES &&
+  getValueViaPath(answers, 'deceasedWasMarried') === YES
+
+export const shouldShowCustomSpouseShare = (answers: FormValue) =>
+  getValueViaPath(answers, 'deceasedWasMarried') === YES
+
+export const roundedValueToNumber = (value: unknown) =>
+  Math.round(valueToNumber(value))
