@@ -508,7 +508,10 @@ export const inheritanceReportSchema = z.object({
       .refine(
         (v) => {
           if (v.length > 0) {
-            const count = v.filter((x) => x.relation === 'Maki')?.length
+            const count = v.filter(
+              (x) =>
+                x.enabled && (x.relation === 'Maki' || x.relation === 'Spouse'),
+            )?.length
             return count <= 1
           }
 

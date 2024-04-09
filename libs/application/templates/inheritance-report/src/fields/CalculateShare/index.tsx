@@ -481,13 +481,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           title={m.netProperty}
           value={roundedValueToNumber(netTotal)}
         />
-        {deceasedHadAssets ||
-          (shareTotal > 0 && (
-            <TitleRow
-              title={m.share}
-              value={roundedValueToNumber(shareTotal)}
-            />
-          ))}
+        {deceasedHadAssets && shareTotal > 0 && (
+          <TitleRow title={m.share} value={roundedValueToNumber(shareTotal)} />
+        )}
         <Box marginLeft={[0, 4]}>
           <GridRow rowGap={1}>
             <ShareItemRow item={shareValues.bankAccounts} />

@@ -175,7 +175,9 @@ export const HeirsAndPartitionRepeater: FC<
 
       // currently we can only check if heir is spouse by relation string value...
       const spouse = (heirs ?? []).filter(
-        (heir) => heir.relation === 'Maki' || heir.relation === 'Spouse',
+        (heir) =>
+          heir.enabled &&
+          (heir.relation === 'Maki' || heir.relation === 'Spouse'),
       )
 
       let isSpouse = false
@@ -188,35 +190,40 @@ export const HeirsAndPartitionRepeater: FC<
         })
       }
 
-      const netPropertyForExchange = Number(
+      const spouseTotal = valueToNumber(getValueViaPath(answers, 'spouseTotal'))
+      const netPropertyForExchange = valueToNumber(
         getValueViaPath(answers, 'netPropertyForExchange'),
       )
-      const inheritanceValue = Math.round(netPropertyForExchange * percentage)
+      const inheritanceValue =
+        netPropertyForExchange * percentage + (isSpouse ? spouseTotal : 0)
 
       const taxFreeInheritanceValue = isSpouse
         ? inheritanceValue
-        : Math.round(inheritanceTaxFreeLimit * percentage)
-      const taxableInheritanceValue = Math.round(
-        inheritanceValue - taxFreeInheritanceValue,
-      )
+        : inheritanceTaxFreeLimit * percentage
+      const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
 
-      const inheritanceTaxValue = isSpouse
-        ? 0
-        : Math.round(taxableInheritanceValue * 0.1)
+      const inheritanceTaxValue = isSpouse ? 0 : taxableInheritanceValue * 0.1
 
-      const taxFreeInheritance = String(taxFreeInheritanceValue)
-      const taxableInheritance = String(
-        taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue,
-      )
-      const inheritance = String(inheritanceValue)
-      const inheritanceTax = String(
-        inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue,
-      )
+      const taxFreeInheritance = taxFreeInheritanceValue
+      const taxableInheritance =
+        taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue
 
-      setValue(`${updateIndex}.taxFreeInheritance`, taxFreeInheritance)
-      setValue(`${updateIndex}.inheritance`, inheritance)
-      setValue(`${updateIndex}.inheritanceTax`, inheritanceTax)
-      setValue(`${updateIndex}.taxableInheritance`, taxableInheritance)
+      const inheritance = inheritanceValue
+      const inheritanceTax = inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue
+
+      setValue(
+        `${updateIndex}.taxFreeInheritance`,
+        String(Math.round(taxFreeInheritance)),
+      )
+      setValue(`${updateIndex}.inheritance`, String(Math.round(inheritance)))
+      setValue(
+        `${updateIndex}.inheritanceTax`,
+        String(Math.round(inheritanceTax)),
+      )
+      setValue(
+        `${updateIndex}.taxableInheritance`,
+        String(Math.round(taxableInheritance)),
+      )
 
       calculateTotal()
     },
