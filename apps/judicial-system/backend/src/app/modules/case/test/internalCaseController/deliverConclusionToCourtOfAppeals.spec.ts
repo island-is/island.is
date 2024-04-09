@@ -45,9 +45,9 @@ describe('InternalCaseController - Deliver conclusion to court of appeals', () =
       await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockUpdateAppealCaseWithAssignedRoles =
-      mockCourtService.updateAppealCaseWithAssignedRoles as jest.Mock
-    mockUpdateAppealCaseWithAssignedRoles.mockResolvedValue(uuid())
+    const mockUpdateAppealCaseWithConclusion =
+      mockCourtService.updateAppealCaseWithConclusion as jest.Mock
+    mockUpdateAppealCaseWithConclusion.mockResolvedValue(uuid())
 
     givenWhenThen = async () => {
       const then = {} as Then

@@ -801,7 +801,8 @@ export class InternalCaseService {
     )
     const appealRulingDate =
       appealCompletedNotifications && appealCompletedNotifications.length > 0
-        ? appealCompletedNotifications[-1].created
+        ? appealCompletedNotifications[appealCompletedNotifications.length - 1]
+            .created
         : undefined
 
     return this.courtService
