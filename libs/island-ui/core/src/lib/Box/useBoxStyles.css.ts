@@ -38,6 +38,41 @@ const spaceMapToCss = (
   )
 }
 
+export const relativePosition = {
+  top: styleVariants(spaceMapToCss(theme, 'top', 'xs')),
+  bottom: styleVariants(spaceMapToCss(theme, 'bottom', 'xs')),
+  left: styleVariants(spaceMapToCss(theme, 'left', 'xs')),
+  right: styleVariants(spaceMapToCss(theme, 'right', 'xs')),
+}
+
+export const relativePositionSm = {
+  top: styleVariants(spaceMapToCss(theme, 'top', 'sm')),
+  bottom: styleVariants(spaceMapToCss(theme, 'bottom', 'sm')),
+  left: styleVariants(spaceMapToCss(theme, 'left', 'sm')),
+  right: styleVariants(spaceMapToCss(theme, 'right', 'sm')),
+}
+
+export const relativePositionMd = {
+  top: styleVariants(spaceMapToCss(theme, 'top', 'md')),
+  bottom: styleVariants(spaceMapToCss(theme, 'bottom', 'md')),
+  left: styleVariants(spaceMapToCss(theme, 'left', 'md')),
+  right: styleVariants(spaceMapToCss(theme, 'right', 'md')),
+}
+
+export const relativePositionLg = {
+  top: styleVariants(spaceMapToCss(theme, 'top', 'lg')),
+  bottom: styleVariants(spaceMapToCss(theme, 'bottom', 'lg')),
+  left: styleVariants(spaceMapToCss(theme, 'left', 'lg')),
+  right: styleVariants(spaceMapToCss(theme, 'right', 'lg')),
+}
+
+export const relativePositionXl = {
+  top: styleVariants(spaceMapToCss(theme, 'top', 'xl')),
+  bottom: styleVariants(spaceMapToCss(theme, 'bottom', 'xl')),
+  left: styleVariants(spaceMapToCss(theme, 'left', 'xl')),
+  right: styleVariants(spaceMapToCss(theme, 'right', 'xl')),
+}
+
 export const margin = {
   top: styleVariants(spaceMapToCss(theme, 'marginTop', 'xs')),
   bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'xs')),
@@ -585,28 +620,6 @@ const minWidthRules = {
 export const minWidth = styleVariants(
   mapToStyleProperty(minWidthRules, 'minWidth'),
 ) as Record<keyof typeof minWidthRules, string> // Remove this when 'styleVariants' supports numbers as keys and it's been released to sku consumers
-
-const relativePositionRules = {
-  0: 0,
-  4: '32px',
-  20: '20px',
-}
-// Remove this when 'styleVariants' supports numbers as keys and it's been released to sku consumers,
-type PositionRulesType = Record<keyof typeof relativePositionRules, string>
-export const relativePosition = {
-  top: styleVariants(
-    mapToStyleProperty(relativePositionRules, 'top'),
-  ) as PositionRulesType,
-  bottom: styleVariants(
-    mapToStyleProperty(relativePositionRules, 'bottom'),
-  ) as PositionRulesType,
-  left: styleVariants(
-    mapToStyleProperty(relativePositionRules, 'left'),
-  ) as PositionRulesType,
-  right: styleVariants(
-    mapToStyleProperty(relativePositionRules, 'right'),
-  ) as PositionRulesType,
-}
 
 export const userSelect = styleVariants({
   none: { userSelect: 'none' },

@@ -6,14 +6,12 @@ export const DoubleColumnRow = ({
   right,
   pushRight,
   span = ['1/1', '1/2'],
-  bypass,
   children,
   ...props
 }: {
   left?: ReactNode
   right?: ReactNode
   pushRight?: boolean
-  bypass?: boolean
   children?: ReactNode
 } & GridColumnProps) => {
   const onlyLeft = left && !right

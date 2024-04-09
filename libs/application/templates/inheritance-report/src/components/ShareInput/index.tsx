@@ -43,9 +43,7 @@ const onKeydownInput: EventListener = (evt: Event) => {
   }
 }
 
-const percentageRegex = new RegExp(
-  /^([0-9]{1,2}(,\d{3})*|\d{1,2})(\.\d{1,2})?|100$/,
-)
+const percentageRegex = new RegExp(/^(\d{1,2}|\d{1,2},|\d{1,2},\d+|100)$/)
 
 export const ShareInput = ({
   name,
@@ -57,6 +55,7 @@ export const ShareInput = ({
   required,
 }: ShareInputProps) => {
   const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+  const prevLen = useRef(0)
   const { control, watch } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -107,7 +106,7 @@ export const ShareInput = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={'0%'}
+      defaultValue={'0'}
       render={({ field: { onChange, value, name } }) => (
         <Input
           ref={ref}
@@ -128,7 +127,9 @@ export const ShareInput = ({
           onChange={(e) => {
             e.preventDefault()
 
-            let val = (e.target.value || '').replace('%', '') ?? ''
+            const initial = e.target.value
+
+            let val = (initial || '').replace('%', '') ?? ''
 
             const len = val.length ?? 0
 
@@ -139,12 +140,16 @@ export const ShareInput = ({
             const validInput = percentageRegex.test(val)
             const numberValue = valueToNumber(val, ',')
 
+            const isRemoving = len < prevLen.current
+
+            prevLen.current = len
+
             if (val === '') {
               onChange('0')
               return onAfterChange?.(numberValue)
             }
 
-            if (validInput) {
+            if (isRemoving || validInput) {
               onChange(val.replace(',', '.'))
               return onAfterChange?.(numberValue)
             }

@@ -1,13 +1,12 @@
 import { Bubble, Button, theme } from '@ui'
 import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
 import { Camera, FlashMode } from 'expo-camera'
-import { ImpactFeedbackStyle, impactAsync } from 'expo-haptics'
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Alert,
   LayoutRectangle,
-  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -19,8 +18,15 @@ import {
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import flashligth from '../../assets/icons/flashlight.png'
+import {
+  useVerifyLicenseBarcodeMutation,
+  VerifyLicenseBarcodeError,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { isAndroid, isIos } from '../../utils/devices'
+import { isDefined } from '../../utils/is-defined'
+import { isJWT } from '../../utils/token'
 
 const BottomRight = styled.View`
   position: absolute;
@@ -41,6 +47,14 @@ const FlashLight = styled.View`
 const FlashImg = styled.Image`
   height: 32px;
   width: 32px;
+`
+
+const BubbleWrapper = styled.View`
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  align-items: center;
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -65,7 +79,7 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-const isSimulator = Platform.OS === 'ios' && DeviceInfo.isEmulatorSync()
+const isSimulator = isIos && DeviceInfo.isEmulatorSync()
 
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
@@ -81,8 +95,11 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   const [ratio, setRatio] = useState<string>()
   const [padding, setPadding] = useState(0)
 
-  const invalidTimeout = useRef<NodeJS.Timeout>()
+  const invalidTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
+
+  const [verifyLicenseBarcode, { data, error, loading }] =
+    useVerifyLicenseBarcodeMutation()
 
   useEffect(() => {
     Camera.requestCameraPermissionsAsync().then(({ status }) => {
@@ -108,52 +125,58 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   }, [])
 
   const onBarCodeScanned = useCallback(({ type, data }: BarCodeEvent) => {
-    let isExpired
     if (invalidTimeout.current) {
       clearTimeout(invalidTimeout.current)
     }
 
-    if (type === Constants.BarCodeType.pdf417) {
+    const isPDF417 = type === Constants.BarCodeType.pdf417
+
+    if (isPDF417 && !isJWT(data)) {
       if (!data.includes('TGLJZW') && !data.includes('passTemplateId')) {
         invalidTimeout.current = setTimeout(() => {
           setInvalid(false)
         }, 2000)
-        return setInvalid(true)
-      }
 
-      if (data.includes('expires') || data.includes('date')) {
-        try {
-          const { expires, date } = JSON.parse(data)
-          const startDate = new Date(date ?? expires)
-          const seconds = (Date.now() - startDate.getTime()) / 1000
-          isExpired = seconds > 0
-        } catch (error) {
-          // noop
-        }
+        return setInvalid(true)
       }
     }
 
-    impactAsync(ImpactFeedbackStyle.Heavy)
-    setInvalid(false)
-    setActive(false)
-    Navigation.push(componentId, {
-      component: {
-        name: ComponentRegistry.LicenseScanDetailScreen,
-        passProps: { type, data, isExpired },
-        options: {
-          topBar: {
-            visible: true,
-            title: {
-              text: intl.formatMessage({ id: 'licenseScanner.title' }),
-            },
-          },
+    void impactAsync(ImpactFeedbackStyle.Heavy)
+    void verifyLicenseBarcode({
+      variables: {
+        input: {
+          data,
         },
       },
     })
   }, [])
 
+  useEffect(() => {
+    if (data?.verifyLicenseBarcode) {
+      setInvalid(false)
+      setActive(false)
+
+      Navigation.push(componentId, {
+        component: {
+          name: ComponentRegistry.LicenseScanDetailScreen,
+          passProps: {
+            verifyLicenseBarcode: data.verifyLicenseBarcode,
+          },
+          options: {
+            topBar: {
+              visible: true,
+              title: {
+                text: intl.formatMessage({ id: 'licenseScanner.title' }),
+              },
+            },
+          },
+        },
+      })
+    }
+  }, [data, error, loading])
+
   const prepareRatio = async () => {
-    if (Platform.OS === 'android') {
+    if (isAndroid) {
       const screenRatio = layout!.height / layout!.width
       const ratios = await camera.current!.getSupportedRatiosAsync()
       // find ratio closest to screen ratio
@@ -181,6 +204,30 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     prepareRatio()
   }
 
+  const getBubbleMessage = () => {
+    if (!isDefined(hasPermission)) {
+      return 'licenseScanner.awaitingPermission'
+    } else if (!hasPermission) {
+      return 'licenseScanner.noCameraAccess'
+    } else if (error) {
+      return 'licenseScanner.errorNetwork'
+    } else if (
+      data?.verifyLicenseBarcode?.error === VerifyLicenseBarcodeError.Error
+    ) {
+      return 'licenseScanner.errorUnknown'
+    } else if (invalid) {
+      return 'licenseScanner.invalidBarcode'
+    }
+
+    return 'licenseScanner.helperMessage'
+  }
+
+  const renderBubble = () => (
+    <BubbleWrapper>
+      <Bubble>{intl.formatMessage({ id: getBubbleMessage() })}</Bubble>
+    </BubbleWrapper>
+  )
+
   if (isSimulator) {
     return (
       <View
@@ -203,6 +250,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
             })
           }}
         />
+        {renderBubble()}
       </View>
     )
   }
@@ -229,25 +277,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           style={[StyleSheet.absoluteFillObject, { marginHorizontal: padding }]}
         />
       )}
-      <View
-        style={{
-          position: 'absolute',
-          top: 64,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-        }}
-      >
-        <Bubble>
-          {typeof hasPermission === 'undefined' || hasPermission === null
-            ? intl.formatMessage({ id: 'licenseScanner.awaitingPermission' })
-            : hasPermission === false
-            ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })
-            : invalid
-            ? intl.formatMessage({ id: 'licenseScannerDetail.invalidBarcode' })
-            : intl.formatMessage({ id: 'licenseScanner.helperMessage' })}
-        </Bubble>
-      </View>
+      {renderBubble()}
       <BottomRight>
         <TouchableOpacity onPress={onFlashlightPress}>
           <FlashLight>

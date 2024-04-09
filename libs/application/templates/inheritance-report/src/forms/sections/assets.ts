@@ -8,7 +8,10 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { overviewAssets } from '../OverviewSections/OverviewAssets'
-import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  shouldShowDeceasedShareField,
+} from '../../lib/utils/helpers'
 import { Application } from '@island.is/application/types'
 
 export const assets = buildSection({
@@ -131,6 +134,20 @@ export const assets = buildSection({
               },
               variant: 'currency',
             }),
+            buildCustomField(
+              {
+                title: '',
+                condition: shouldShowDeceasedShareField,
+                id: 'assets.inventory',
+                doesNotRequireAnswer: true,
+                width: 'full',
+                component: 'DeceasedShareField',
+              },
+              {
+                id: 'assets.inventory',
+                paddingTop: 2,
+              },
+            ),
           ],
         }),
       ],
@@ -330,7 +347,7 @@ export const assets = buildSection({
                 assetKey: 'bankAccounts',
                 calcWithShareValue: false,
                 fromExternalData: 'bankAccounts',
-                skipPushRight: false,
+                skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton,
                 sumField: 'propertyValuation',
                 sumField2: 'exchangeRateOrInterest',
@@ -436,6 +453,7 @@ export const assets = buildSection({
                   {
                     title: m.stocksNationalId,
                     id: 'assetNumber',
+                    type: 'nationalId',
                     format: '######-####',
                   },
                   {
@@ -510,6 +528,20 @@ export const assets = buildSection({
                 )
               },
             }),
+            buildCustomField(
+              {
+                title: '',
+                condition: shouldShowDeceasedShareField,
+                id: 'assets.money',
+                doesNotRequireAnswer: true,
+                width: 'full',
+                component: 'DeceasedShareField',
+              },
+              {
+                id: 'assets.money',
+                paddingTop: 2,
+              },
+            ),
           ],
         }),
       ],

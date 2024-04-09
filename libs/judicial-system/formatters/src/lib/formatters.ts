@@ -22,11 +22,11 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
-export function formatDate(
+export const formatDate = (
   date: Date | string | undefined | null,
   formatPattern: string,
   shortenDayName?: boolean,
-): string | undefined {
+): string | undefined => {
   const theDate: Date = getAsDate(date)
 
   if (isValid(theDate)) {
@@ -222,7 +222,7 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
  * @param values list of strings to enumerate
  * @param endWord the word before last value is enumerated
  */
-export function enumerate(values: string[], endWord: string): string {
+export const enumerate = (values: string[], endWord: string): string => {
   return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
 }
 
@@ -244,9 +244,9 @@ const supportedCaseCustodyRestrictions: SupportedCaseCustodyRestriction[] = [
   { id: 'f', type: CaseCustodyRestrictions.WORKBAN },
 ]
 
-export function getSupportedCaseCustodyRestrictions(
+export const getSupportedCaseCustodyRestrictions = (
   requestedRestrictions?: CaseCustodyRestrictions[] | null,
-): SupportedCaseCustodyRestriction[] {
+): SupportedCaseCustodyRestriction[] => {
   const restrictions = supportedCaseCustodyRestrictions.filter((restriction) =>
     requestedRestrictions?.includes(restriction.type),
   )
@@ -258,7 +258,7 @@ export function getSupportedCaseCustodyRestrictions(
   return restrictions.sort((a, b) => (a.id > b.id ? 1 : -1))
 }
 
-export function formatGender(gender?: Gender): string {
+export const formatGender = (gender?: Gender): string => {
   switch (gender) {
     case Gender.MALE:
       return 'Karl'
@@ -270,10 +270,10 @@ export function formatGender(gender?: Gender): string {
   }
 }
 
-export function formatAppeal(
+export const formatAppeal = (
   appealDecision: CaseAppealDecision | undefined | null,
   stakeholder: string,
-): string {
+): string => {
   const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
 
   switch (appealDecision) {
@@ -298,7 +298,7 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type?: string | null): string {
+export const formatRequestCaseType = (type?: string | null): string => {
   if (!type) {
     return 'óþekkt'
   }
