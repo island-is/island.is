@@ -3,7 +3,11 @@ import { CacheField } from '@island.is/nest/graphql'
 
 import { IServiceWebPage } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
-import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
+import {
+  mapDocument,
+  safelyMapSliceUnion,
+  SliceUnion,
+} from '../unions/slice.union'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 
 @ObjectType()
@@ -40,6 +44,9 @@ export class ServiceWebPage {
 
   @CacheField(() => ServiceWebPageEmailConfig, { nullable: true })
   emailConfig?: ServiceWebPageEmailConfig
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  contactFormDisclaimer?: Array<typeof SliceUnion | null>
 }
 
 const mapServiceWebPageEmailConfig = (
@@ -75,4 +82,10 @@ export const mapServiceWebPage = ({
   emailConfig: fields.emailConfig
     ? mapServiceWebPageEmailConfig(fields.emailConfig)
     : { emails: [] },
+  contactFormDisclaimer: fields.contactFormDisclaimer
+    ? mapDocument(
+        fields.contactFormDisclaimer,
+        sys.id + ':contactFormDisclaimer',
+      )
+    : [],
 })

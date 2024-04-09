@@ -1,6 +1,6 @@
 {
   "name": "@island.is/native-app",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "scripts": {
     "release:android": "cd android && ./gradlew bundleProdRelease bundleDevRelease",
@@ -8,23 +8,24 @@
     "android:prod": "react-native run-android --variant=prodDebug",
     "ios": "react-native run-ios --scheme Ísland.dev",
     "ios:prod": "react-native run-ios --scheme Ísland.is",
-    "typecheck": "tsc --noEmit",
     "build-mock": "echo FIXME",
     "start": "react-native start",
     "fastlane:ios": "cd ios && fastlane",
     "fastlane:android": "cd android && fastlane",
-    "beta": "yarn fastlane:ios beta && yarn fastlane:android beta",
-    "alpha:upload": "yarn fastlane:ios beta apps:dev && yarn fastlane:android beta apps:dev",
-    "alpha:release": "yarn fastlane:ios promote to:alpha apps:dev && yarn fastlane:android promote to:alpha apps:dev",
-    "codepush:ios": "appcenter codepush release-react -a Stafraent-Island/Island-ios -x -d production  --plist-file ios/IslandApp/Info.plist",
-    "codepush:android": "appcenter codepush release-react -a Stafraent-Island/Island-android -x -d production",
+    "beta": "yarn prerequisites && yarn fastlane:ios beta && yarn fastlane:android beta",
+    "alpha:upload": "yarn prerequisites && yarn fastlane:ios beta apps:dev && yarn fastlane:android beta apps:dev",
+    "alpha:release": "yarn prerequisites && yarn fastlane:ios promote to:alpha apps:dev && yarn fastlane:android promote to:alpha apps:dev",
+    "codepush:ios": "yarn prerequisites && appcenter codepush release-react -a Stafraent-Island/Island-ios -x -d production  --plist-file ios/IslandApp/Info.plist",
+    "codepush:android": "yarn prerequisites && appcenter codepush release-react -a Stafraent-Island/Island-android -x -d production",
     "test": "jest",
     "test-mock": "echo FIXME",
     "storybook": "start-storybook -p 7007",
     "build-storybook": "build-storybook",
+    "nx:typecheck": "tsc --noEmit",
     "nx:codegen": "yarn run -T nx run native-app:codegen/frontend-client",
     "nx:lint": "yarn run -T nx run native-app:lint",
-    "nx:build": "yarn run -T nx run native-app:build"
+    "nx:build": "yarn run -T nx run native-app:build",
+    "prerequisites": "yarn nx:codegen && yarn nx:typecheck && yarn nx:lint"
   },
   "dependencies": {
     "@apollo/client": "3.7.7",
@@ -74,6 +75,7 @@
     "react-native-quick-actions": "0.3.13",
     "react-native-share": "7.1.1",
     "react-native-spotlight-search": "2.0.0",
+    "react-native-svg": "15.1.0",
     "react-native-webview": "11.26.1",
     "styled-components": "5.3.6",
     "zustand": "3.5.12"

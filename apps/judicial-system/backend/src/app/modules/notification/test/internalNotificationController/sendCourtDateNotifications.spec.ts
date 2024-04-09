@@ -15,7 +15,7 @@ import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: DeliverResponse

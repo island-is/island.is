@@ -1,17 +1,20 @@
 import React from 'react'
 import cn from 'classnames'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+
 import {
-  Slice as SliceType,
-  Image,
   EmbeddedVideo,
+  EmbeddedVideoProps,
+  Image,
+  ImageProps,
+  Slice as SliceType,
 } from '@island.is/island-ui/contentful'
-import { webRichText } from '@island.is/web/utils/richText'
+import { Box, Text } from '@island.is/island-ui/core'
 import { Webreader } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import { GetSingleNewsItemQuery } from '../../../graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { webRichText } from '@island.is/web/utils/richText'
 
+import { GetSingleNewsItemQuery } from '../../../graphql/schema'
 import * as styles from './NewsArticle.css'
 
 interface NewsArticleProps {
@@ -106,12 +109,16 @@ export const NewsArticle: React.FC<
             : ([] as SliceType[]),
           {
             renderComponent: {
-              // Make sure that images in the content are full width
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              Image: (slice) => (
+              Image: (slice: ImageProps) => {
+                return (
+                  <Box className={styles.clearBoth}>
+                    <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                  </Box>
+                )
+              },
+              EmbeddedVideo: (slice: EmbeddedVideoProps) => (
                 <Box className={styles.clearBoth}>
-                  <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                  <EmbeddedVideo {...slice} />
                 </Box>
               ),
             },
