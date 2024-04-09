@@ -38,6 +38,7 @@ import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
+import { Notification } from '../../notification'
 import { User } from '../../user'
 
 @Table({
@@ -1208,4 +1209,11 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   indictmentDeniedExplanation?: string
+
+  /**********
+   * The case's notifications
+   **********/
+  @HasMany(() => Notification, 'caseId')
+  @ApiPropertyOptional({ type: Notification, isArray: true })
+  notifications?: Notification[]
 }

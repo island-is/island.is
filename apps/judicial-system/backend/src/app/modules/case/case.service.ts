@@ -56,6 +56,7 @@ import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
+import { Notification } from '../notification'
 import { User } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
@@ -236,16 +237,16 @@ export const include: Includeable[] = [
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: {
-      eventType: { [Op.in]: eventTypes },
-    },
+    where: { eventType: { [Op.in]: eventTypes } },
     separate: true,
   },
+  { model: Notification, as: 'notifications' },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
 ]
 
 export const caseListInclude: Includeable[] = [
