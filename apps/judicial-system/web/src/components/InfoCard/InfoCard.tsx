@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Box, LinkV2, Text } from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   Defendant,
@@ -27,6 +27,7 @@ interface Props {
   data: Array<{ title: string; value?: React.ReactNode }>
   defendants?: { title: string; items: Defendant[] }
   defenders?: Defender[]
+  icon?: IconMapIcon
 }
 
 export const NameAndEmail = (name?: string | null, email?: string | null) => [
@@ -77,8 +78,8 @@ const UniqueDefenders: React.FC<
   )
 }
 
-const InfoCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { data, defendants, defenders, courtOfAppealData } = props
+const InfoCard: React.FC<Props> = (props) => {
+  const { data, defendants, defenders, courtOfAppealData, icon } = props
 
   return (
     <Box
@@ -87,9 +88,9 @@ const InfoCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
       data-testid="infoCard"
     >
       <Box
-        className={styles.infoCardTitleContainer}
-        marginBottom={[2, 2, 3, 3]}
-        paddingBottom={[2, 2, 3, 3]}
+        className={(defendants || defenders) && styles.infoCardTitleContainer}
+        marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
+        paddingBottom={(defendants || defenders) && [2, 2, 3, 3]}
       >
         {defendants && (
           <>
@@ -160,6 +161,11 @@ const InfoCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
               </Box>
             )
           })}
+        </Box>
+      )}
+      {icon && (
+        <Box position="absolute" top={[2, 2, 3, 3]} right={[2, 2, 3, 3]}>
+          <Icon icon={icon} type="outline" color="blue400" size="large" />
         </Box>
       )}
     </Box>
