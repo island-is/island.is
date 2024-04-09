@@ -72,7 +72,6 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
-
       [States.DONE]: {
         meta: {
           name: 'Done',
@@ -84,9 +83,9 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: defineTemplateApi({
+          /*onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
-          }),
+          }),*/
           roles: [
             {
               id: Roles.APPLICANT,
