@@ -4,14 +4,11 @@ import {
   CaseAppealState,
   CaseState,
   CaseTransition,
-  CaseType,
 } from '@island.is/judicial-system/types'
 
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
-  const type = CaseType.CUSTODY
-
   describe('open', () => {
     const allowedFromStates = [CaseState.NEW]
     const allowedFromAppealStates = [undefined]

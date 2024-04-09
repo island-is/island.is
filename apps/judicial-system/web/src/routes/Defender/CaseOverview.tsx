@@ -33,7 +33,6 @@ import {
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealDecision,
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -42,6 +41,7 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { NameAndEmail } from '../../components/InfoCard/InfoCard'
+import InfoCardCaseScheduled from '../../components/InfoCard/InfoCardCaseScheduled'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 
@@ -66,8 +66,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
-    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-      workingCase.hasBeenAppealed)
+    (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
 
   return (
     <>
@@ -130,6 +129,17 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               />
             </Box>
           )}
+          {workingCase.state === CaseState.RECEIVED &&
+            workingCase.courtDate &&
+            workingCase.court && (
+              <Box component="section" marginBottom={5}>
+                <InfoCardCaseScheduled
+                  court={workingCase.court}
+                  courtDate={workingCase.courtDate}
+                  courtRoom={workingCase.courtRoom}
+                />
+              </Box>
+            )}
           <Box marginBottom={6}>
             <InfoCard
               data={[

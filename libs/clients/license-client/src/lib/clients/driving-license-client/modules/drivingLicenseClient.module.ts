@@ -4,10 +4,12 @@ import { Module } from '@nestjs/common'
 import { SmartSolutionsApiClientModule } from '@island.is/clients/smartsolutions'
 import { ConfigType } from '@nestjs/config'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
     DrivingLicenseApiModule,
+    FeatureFlagModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (
         config: ConfigType<typeof DrivingDigitalLicenseClientConfig>,

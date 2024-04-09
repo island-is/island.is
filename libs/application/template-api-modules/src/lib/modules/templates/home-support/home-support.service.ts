@@ -1,10 +1,11 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes, YES } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   Adilar,
+  ApplicantType,
   ApplicationApi,
   Notandagogn,
 } from '@island.is/clients/workpoint/arborg'
@@ -44,6 +45,9 @@ export class HomeSupportService extends BaseTemplateApiService {
           heimili: '',
           postnumer: '',
           stadur: '',
+          tegund: contact.mainContact?.includes(YES)
+            ? ApplicantType.NUMBER_1
+            : ApplicantType.NUMBER_0,
           netfang: contact.email,
           simi: contact.phone,
           hlutverk: contact.relation,
@@ -68,13 +72,14 @@ export class HomeSupportService extends BaseTemplateApiService {
       heiti: 'Færðu þjónustu nú þegar?',
     } as Notandagogn
 
-    const exemption = {
+    // Disabled for now
+    /* const exemption = {
       guid: uuid(),
       gildi: answers.exemption as unknown as object,
       flokkur: 'exemption',
       tegund: 'text',
       heiti: 'Ég vil sækja um undanþágu',
-    } as Notandagogn
+    } as Notandagogn */
 
     const result = await this.applicationApi.applicationPost({
       applicationSystemInput: {
@@ -84,7 +89,7 @@ export class HomeSupportService extends BaseTemplateApiService {
         applicationName: 'Heimilishjálp',
         applicationType: ApplicationTypes.HOME_SUPPORT,
         dagssetning: new Date(),
-        notandagogn: [reason, needsDoctor, exemption],
+        notandagogn: [reason, needsDoctor],
       },
     })
 
