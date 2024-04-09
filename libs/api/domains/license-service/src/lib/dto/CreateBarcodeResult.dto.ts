@@ -7,8 +7,8 @@ export class CreateBarcodeResult {
   })
   token!: string
 
-  @Field(() => Date, {
-    description: 'Barcode expiration date',
+  @Field(() => Number, {
+    description: 'Barcode expire time in seconds',
   })
-  exp!: Date
+  expiresIn!: number
 }
