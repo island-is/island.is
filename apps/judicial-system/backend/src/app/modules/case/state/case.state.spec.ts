@@ -228,7 +228,7 @@ describe('Transition Case', () => {
     })
   })
 
-  describe('reveive', () => {
+  describe('receive', () => {
     const allowedFromStates = [CaseState.SUBMITTED]
     const allowedFromAppealStates = [undefined]
 
