@@ -13,7 +13,8 @@ import {
   review,
 } from '../../lib/messages'
 import {
-  NationalRegistryIndividualApi,
+  InnaApi,
+  NationalRegistryUserApi,
   ProgramApi,
   UniversityApi,
   UserProfileApi,
@@ -52,7 +53,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryIndividualApi,
+              provider: NationalRegistryUserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),
@@ -62,6 +63,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
+              provider: InnaApi,
               title: externalData.universityProfile.title,
               subTitle: externalData.universityProfile.subTitle,
             }),

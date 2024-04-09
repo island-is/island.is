@@ -76,6 +76,11 @@ export const information = {
         defaultMessage: 'Prófstaður',
         description: 'select exam location label',
       },
+      specializationLabel: {
+        id: 'uni.application:information.labels.programSelection.specializationLabel',
+        defaultMessage: 'Kjörsvið',
+        description: 'Specialization label label',
+      },
     }),
     modeOfDeliverySection: defineMessages({
       sectionTitle: {
@@ -162,6 +167,24 @@ export const information = {
         id: 'uni.application:information.labels.extraDataProvider.submitButton',
         defaultMessage: 'Staðfesta og halda áfram',
         description: 'Extra DataProvider button submit text',
+      },
+    }),
+    otherDocumentsSection: defineMessages({
+      sectionTitle: {
+        id: 'uni.application:information.labels.otherDocumentsSection.sectionTitle',
+        defaultMessage: 'Önnur fylgigögn',
+        description: 'Other documents section title',
+      },
+      title: {
+        id: 'uni.application:information.labels.otherDocumentsSection.title',
+        defaultMessage: 'Önnur fylgigögn',
+        description: 'Other documents selection title',
+      },
+      subTitle: {
+        id: 'uni.application:information.labels.otherDocumentsSection.subTitle',
+        defaultMessage:
+          'Vinsamlegast settu inn eftirfarandi fylgigögn sem nauðsynleg eru fyrir umsóknina þína.',
+        description: 'Other documents subtitle',
       },
     }),
   },

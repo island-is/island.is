@@ -40,5 +40,6 @@ export interface IProgram {
   modeOfDelivery: ModeOfDelivery[]
   extraApplicationFields?: IProgramExtraApplicationField[]
   specializations?: IProgramSpecialization[]
-  extraApplicationSettings?: IProgramUglaExtraApplicationSettings
+  applicationPeriodOpen: boolean
+  applicationInUniversityGateway: boolean
 }

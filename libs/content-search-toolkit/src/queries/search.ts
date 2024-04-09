@@ -32,6 +32,11 @@ export const searchQuery = (
   const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
+  // Handle aliases since the search engine has not been configured to support organization aliases
+  if (queryString.trim().toLowerCase() === 'tr') {
+    queryString = 'Tryggingastofnun'
+  }
+
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
