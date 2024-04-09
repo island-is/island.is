@@ -20,6 +20,7 @@ import { States, TWENTY_FOUR_HOURS_IN_MS } from './constants'
 import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { application, states } from './messages'
@@ -142,7 +143,7 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
         meta: {
           status: FormModes.IN_PROGRESS,
           name: application.general.name.defaultMessage,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(90),
           onEntry: defineTemplateApi({
             action: 'submitApplication',
             shouldPersistToExternalData: true,
