@@ -32,9 +32,9 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { courtRecord as m } from './CourtRecord.strings'
+import { conclusion as m } from './Conclusion.strings'
 
-const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Conclusion: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
@@ -158,4 +158,4 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 }
 
-export default CourtRecord
+export default Conclusion

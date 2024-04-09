@@ -1,47 +1,45 @@
 import { defineMessages } from 'react-intl'
 
-export const courtRecord = defineMessages({
+export const conclusion = defineMessages({
   title: {
-    id: 'judicial.system.core:court_record.title',
-    defaultMessage: 'Þingbók og dómur',
+    id: 'judicial.system.core:court_record.title_v1',
+    defaultMessage: 'Niðurstaða',
     description:
-      'Notaður sem titill á síðu á Þingbók og dómur ákæru skrefi í dómaraflæði.',
+      'Notaður sem titill á síðu á Niðurstaða ákæru skrefi í dómaraflæði.',
   },
   alertBannerText: {
     id: 'judicial.system.core:court_record.alert_banner_text',
     defaultMessage:
       'Ef þú vilt deila þingbók og dómi með sækjanda og verjanda í gegnum Réttarvörslugátt getur þú hlaðið skjölunum upp hér fyrir neðan.',
     description:
-      'Notaður sem texti í alert banner á Þingbók og dómur ákæru skrefi í dómaraflæði.',
+      'Notaður sem texti í alert banner á Niðurstaða ákæru skrefi í dómaraflæði.',
   },
   courtRecordTitle: {
     id: 'judicial.system.core:court_record.court_record_title',
     defaultMessage: 'Þingbók',
     description:
-      'Notaður sem titill á þingbókar hluta á Þingbók og dómur skrefi í ákærum í dómaraflæði.',
+      'Notaður sem titill á þingbókar hluta á Niðurstaða skrefi í ákærum í dómaraflæði.',
   },
   rulingTitle: {
     id: 'judicial.system.core:court_record.ruling_title',
     defaultMessage: 'Dómur',
-    description: 'Notaður sem titill á dómur hluta á Þingbók og dómur skrefi.',
+    description: 'Notaður sem titill á dómur hluta á Niðurstaða skrefi.',
   },
   inputFieldLabel: {
     id: 'judicial.system.core:court_record.input_field_label',
     defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
     description:
-      'Notaður sem titill á hlaða upp gögnum hlutum á Þingbók og dómur skrefi.',
+      'Notaður sem titill á hlaða upp gögnum hlutum á Niðurstaða skrefi.',
   },
   uploadButtonText: {
     id: 'judicial.system.core:court_record.upload_button_text',
     defaultMessage: 'Velja gögn til að hlaða upp',
-    description:
-      'Notaður sem titill á hlaða upp takka á Þingbók og dómur skrefi.',
+    description: 'Notaður sem titill á hlaða upp takka á Niðurstaða skrefi.',
   },
   nextButtonText: {
     id: 'judicial.system.core:court_record.next_button_text',
     defaultMessage: 'Ljúka máli',
-    description:
-      'Notaður sem titill á ljúka máli takka á Þingbók og dómur skrefi.',
+    description: 'Notaður sem titill á ljúka máli takka á Niðurstaða skrefi.',
   },
   modalTitle: {
     id: 'judicial.system.core:court_record.modal_title',

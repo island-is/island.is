@@ -21,7 +21,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
+import { courtRecord } from '../../routes/Court/Indictments/Conclusion/Conclusion.strings'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'
 
