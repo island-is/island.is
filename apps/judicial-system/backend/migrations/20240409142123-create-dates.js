@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface
         .createTable(
-          'date-log',
+          'date_log',
           {
             id: {
               type: Sequelize.UUID,
@@ -40,7 +40,7 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `insert into "date-log" (id, case_id, court_date)
+            `insert into "date_log" (id, case_id, court_date)
                select md5(random()::text || clock_timestamp()::text)::uuid, 
                id, 
                court_date
@@ -77,7 +77,7 @@ module.exports = {
                set court_date = d.court_date
              from (
                select distinct on (case_id) *
-               from "date-log"
+               from "date_log"
                order by case_id, created
              ) d
              where "case".id = d.case_id`,
@@ -86,7 +86,7 @@ module.exports = {
         )
         .then(() =>
           Promise.all([
-            queryInterface.dropTable('date-log', { transaction: t }),
+            queryInterface.dropTable('date_log', { transaction: t }),
           ]),
         ),
     )
