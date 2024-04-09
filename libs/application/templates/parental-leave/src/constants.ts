@@ -23,7 +23,6 @@ export const NO_MULTIPLE_BIRTHS = '1'
 export const MINIMUM_PERIOD_LENGTH = 14
 
 export enum PLEvents {
-  MODIFY = 'MODIFY',
   CLOSED = 'CLOSED',
   ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
 }
@@ -35,7 +34,6 @@ export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
-  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
   | { type: 'CLOSED' } // Ex: Close application
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
 

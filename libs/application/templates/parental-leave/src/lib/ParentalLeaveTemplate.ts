@@ -1039,6 +1039,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: birthDayLifeCycle,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
             throwOnError: true,
           }),
           roles: [
@@ -1237,7 +1238,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: PLEvents.MODIFY,
+                onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
               {
@@ -1265,7 +1266,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          MODIFY: {
+          [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: { target: States.APPROVED },
@@ -1482,7 +1483,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: PLEvents.MODIFY,
+                onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
               {
@@ -1514,7 +1515,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          MODIFY: {
+          [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: {
