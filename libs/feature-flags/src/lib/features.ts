@@ -57,6 +57,7 @@ export enum Features {
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
+  licenseServiceDrivingLicencePhotoCheckDisabled = 'isLicenseServiceDrivingLicencePhotoCheckDisabled',
 
   //Enable intellectual properties fetch
   isIntellectualPropertyModuleEnabled = 'isIntellectualPropertyModuleEnabled',

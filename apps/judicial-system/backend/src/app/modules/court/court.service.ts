@@ -1,8 +1,14 @@
 import formatISO from 'date-fns/formatISO'
+import { QueryTypes } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
@@ -110,13 +116,37 @@ export const courtSubtypes: CourtSubtypes = {
 
 @Injectable()
 export class CourtService {
+  private confidentintialClientApplication?: ConfidentialClientApplication
+
   constructor(
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
+    @InjectConnection() private readonly sequelize: Sequelize,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
     private readonly config: ConfigType<typeof courtModuleConfig>,
-  ) {}
+  ) {
+    if (config.useMicrosoftGraphApiForCourtRobot) {
+      if (
+        config.courtRobotClientId &&
+        config.courtRobotTenantId &&
+        config.courtRobotUser &&
+        config.courtRobotClientSecret
+      ) {
+        this.confidentintialClientApplication =
+          new ConfidentialClientApplication({
+            auth: {
+              clientId: config.courtRobotClientId,
+              authority: `https://login.microsoftonline.com/${config.courtRobotTenantId}`,
+              clientSecret: config.courtRobotClientSecret,
+            },
+          })
+      } else {
+        logger.error('Missing required configuration for Microsoft Graph API')
+      }
+    }
+  }
 
   private mask(value: string): string {
     const valueIsFileName = value.split('.').pop() !== value
@@ -348,7 +378,7 @@ export class CourtService {
 
         // Temporarily disabled because of a bug in court system communication
         // this.eventService.postErrorEvent(
-        //   'Failed to create an email',
+        //   'Failed to create an email at court',
         //   {
         //     caseId,
         //     actor: user.name,
@@ -391,7 +421,7 @@ export class CourtService {
         }
 
         this.eventService.postErrorEvent(
-          'Failed to update case with prosecutor',
+          'Failed to update court case with prosecutor',
           {
             caseId,
             actor: user.name,
@@ -443,7 +473,7 @@ export class CourtService {
           )
 
         this.eventService.postErrorEvent(
-          'Failed to update case with defendant',
+          'Failed to update court case with defendant',
           {
             caseId,
             actor: user.name,
@@ -468,7 +498,127 @@ export class CourtService {
     rulingDate?: Date,
     validToDate?: Date,
     isolationToDate?: Date,
-  ): Promise<string> {
+  ): Promise<unknown> {
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - lyktir`
+      const content = JSON.stringify({
+        courtName,
+        courtCaseNumber,
+        decision,
+        rulingDate,
+        validToDate,
+        isolationToDate,
+      })
+
+      return this.sendToRobot(subject, content)
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update court case with conclusion',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtName,
+          courtCaseNumber,
+          decision,
+          rulingDate: rulingDate?.toISOString(),
+          validToDate: validToDate?.toISOString(),
+          isolationToDate: isolationToDate?.toISOString(),
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateAppealCaseWithAppealReceivedDate(
+    user: User,
+    caseId: string,
+    appealCaseNumber?: string,
+    appealReceivedByCourtDate?: Date,
+  ): Promise<unknown> {
+    try {
+      const subject = `Landsréttur - ${appealCaseNumber} - móttaka`
+      const content = JSON.stringify({ appealReceivedByCourtDate })
+
+      return this.sendToRobot(subject, content)
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update appeal case with received date',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          appealCaseNumber,
+          appealReceivedByCourtDate: appealReceivedByCourtDate?.toISOString(),
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  private async getNextRobotEmailNumber() {
+    return this.sequelize
+      .query<{ nextval: number }>(`SELECT nextval('robot_email_seq')`, {
+        type: QueryTypes.SELECT,
+        plain: true,
+      })
+      .then((result) => result?.nextval ?? 0)
+  }
+
+  private async sendToRobot(subject: string, content: string) {
+    const nextval = await this.getNextRobotEmailNumber() // Default to 0 if no result
+    const subjectWithNumber = `${subject} - ${nextval}`
+
+    if (this.config.useMicrosoftGraphApiForCourtRobot) {
+      if (!this.confidentintialClientApplication) {
+        throw new ServiceUnavailableException(
+          'Microsoft Graph API not configured',
+        )
+      }
+
+      return this.confidentintialClientApplication
+        .acquireTokenByClientCredential({
+          scopes: ['https://graph.microsoft.com/.default'],
+        })
+        .then((response) => {
+          if (!response) {
+            throw new Error('Failed to acquire token')
+          }
+
+          return fetch(
+            `https://graph.microsoft.com/v1.0/users/${this.config.courtRobotUser}/sendMail`,
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                message: {
+                  toRecipients: [
+                    {
+                      emailAddress: {
+                        address: this.config.courtRobotEmail,
+                        name: this.config.courtRobotName,
+                      },
+                    },
+                  ],
+                  subject: subjectWithNumber,
+                  body: {
+                    contentType: 'Text',
+                    content,
+                  },
+                },
+              }),
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${response.accessToken}`,
+              },
+            },
+          )
+        })
+    }
+
     return this.emailService.sendEmail({
       from: {
         name: this.config.fromName,
@@ -484,15 +634,8 @@ export class CourtService {
           address: this.config.courtRobotEmail,
         },
       ],
-      subject: `${courtName} ${courtCaseNumber}`,
-      text: JSON.stringify({
-        courtName,
-        courtCaseNumber,
-        decision,
-        rulingDate,
-        validToDate,
-        isolationToDate,
-      }),
+      subject: subjectWithNumber,
+      text: content,
     })
   }
 }
