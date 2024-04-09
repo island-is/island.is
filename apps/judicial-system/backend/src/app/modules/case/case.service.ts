@@ -23,7 +23,6 @@ import {
   CaseMessage,
   MessageService,
   MessageType,
-  PoliceCaseMessage,
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -513,7 +512,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: (CaseMessage | PoliceCaseMessage)[] = [
+    const messages: CaseMessage[] = [
       {
         type: MessageType.NOTIFICATION,
         user,
@@ -533,7 +532,7 @@ export class CaseService {
           type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
           user,
           caseId: theCase.id,
-          policeCaseNumber,
+          elementId: policeCaseNumber,
         }),
       )
     }
