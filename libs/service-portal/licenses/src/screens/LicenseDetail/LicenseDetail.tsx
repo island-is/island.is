@@ -404,7 +404,6 @@ const LicenseDetail = () => {
             flexDirection={['column', 'row']}
             alignItems={['flexStart', 'center']}
             marginBottom={2}
-            columnGap={2}
             rowGap={2}
           >
             {!expired &&

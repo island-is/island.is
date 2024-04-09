@@ -72,7 +72,6 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
-
       [States.DONE]: {
         meta: {
           name: 'Done',
