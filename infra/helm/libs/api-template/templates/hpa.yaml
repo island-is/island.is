@@ -1,6 +1,6 @@
 {{- if .Values.enabled }}
 {{- $fullName := include "api-template.fullname" . -}}
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "api-template.fullname" . }}
