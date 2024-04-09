@@ -14,7 +14,7 @@ import { Image } from './models/image.model'
 import { PatentIS } from './models/patentIS.model'
 import { PatentEP } from './models/patentEP.model'
 import { SPC } from './models/spc.model'
-import { capitalize } from 'lodash'
+import capitalize from 'lodash/capitalize'
 
 const DATE_FORMAT = 'dd.MM.yyyy HH:mm:SS'
 
