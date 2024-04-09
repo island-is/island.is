@@ -330,7 +330,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  policeCaseNumber,
+                  elementId: policeCaseNumber,
                 },
               ],
             )
