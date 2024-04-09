@@ -114,9 +114,9 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     infoSubSectionDescription: {
       id: 'sia.application:applicant.info.sub.section.description#markdown',
       defaultMessage:
-        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður TR. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður á Ísland.is. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
       description:
-        'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
+        'Please review the email address and phone number to ensure that the information is correct. Email address can be changed by logging into My pages at Ísland.is. Note that if the following information is not correct, it must be changed at Registers Iceland.',
     },
     applicantEmail: {
       id: 'sia.application:info.applicant.email',

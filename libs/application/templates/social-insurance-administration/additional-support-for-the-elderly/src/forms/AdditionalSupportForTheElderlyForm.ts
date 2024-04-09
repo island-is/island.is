@@ -66,7 +66,15 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         buildSubSection({
           id: 'info',
           title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
-          children: [applicantInformationMultiField({ emailRequired: false })],
+          children: [
+            applicantInformationMultiField({
+              emailRequired: false,
+              emailDisabled: true,
+              applicantInformationDescription:
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
+            }),
+          ],
         }),
         buildSubSection({
           id: 'payment',
