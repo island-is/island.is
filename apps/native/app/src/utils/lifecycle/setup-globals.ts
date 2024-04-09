@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  DdRum,
+  DdSdkReactNative,
+  DdSdkReactNativeConfiguration,
+} from '@datadog/mobile-react-native'
+import messaging from '@react-native-firebase/messaging'
+import perf from '@react-native-firebase/perf'
+import {
   DynamicColorIOS,
   ImageStyle,
   LogBox,
   Settings,
+  StyleSheet,
   TextStyle,
   ViewStyle,
 } from 'react-native'
-import { Platform } from 'react-native'
-import KeyboardManager from 'react-native-keyboard-manager'
-import messaging from '@react-native-firebase/messaging'
-import perf from '@react-native-firebase/perf'
-import { performanceMetrics } from '../performance-metrics'
 import DeviceInfo from 'react-native-device-info'
 
 // uncomment polyfills that are needed.
@@ -31,24 +34,15 @@ import '@formatjs/intl-datetimeformat/polyfill'
 import '@formatjs/intl-datetimeformat/locale-data/en'
 import '@formatjs/intl-datetimeformat/locale-data/is'
 import '@formatjs/intl-datetimeformat/add-golden-tz'
-// import '@formatjs/intl-listformat/polyfill'
-// import '@formatjs/intl-listformat/locale-data/en'
-// import '@formatjs/intl-listformat/locale-data/is'
-// import '@formatjs/intl-displaynames/polyfill'
-// import '@formatjs/intl-displaynames/locale-data/en'
-// import '@formatjs/intl-displaynames/locale-data/is'
 import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
-import { setupQuickActions } from '../quick-actions'
+import KeyboardManager from 'react-native-keyboard-manager'
 import { Navigation } from 'react-native-navigation'
-import {
-  DdSdkReactNative,
-  DdSdkReactNativeConfiguration,
-  DdRum,
-} from '@datadog/mobile-react-native'
-import { StyleSheet } from 'react-native'
 import { getConfig } from '../../config'
+import { isIos } from '../devices'
+import { performanceMetrics } from '../performance-metrics'
+import { setupQuickActions } from '../quick-actions'
 
 type PatchedStyleSheet = typeof StyleSheet & {
   _create: typeof StyleSheet.create
@@ -146,21 +140,25 @@ LogBox.ignoreLogs([
 ])
 
 // set default timezone
-if ((global as { HermesInternal: unknown }).HermesInternal) {
+if (typeof HermesInternal === 'object' && HermesInternal !== null) {
   if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
     ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('UTC')
   }
 }
 
 // overwrite global Intl
-if (Platform.OS === 'ios') {
+if (isIos) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   global.Intl = (global as any).IntlPolyfill
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   ;(global.Intl as any).__disableRegExpRestore()
 }
 
 export function setupGlobals() {
   // keyboard manager
-  if (Platform.OS === 'ios') {
+  if (isIos) {
     KeyboardManager.setEnable(true)
     KeyboardManager.setEnableAutoToolbar(true)
     KeyboardManager.setToolbarPreviousNextButtonEnable(true)
@@ -170,7 +168,7 @@ export function setupGlobals() {
   }
 
   // set NSUserDefaults
-  if (Platform.OS === 'ios') {
+  if (isIos) {
     Settings.set({
       version_preference: DeviceInfo.getVersion(),
       build_preference: DeviceInfo.getBuildNumber(),

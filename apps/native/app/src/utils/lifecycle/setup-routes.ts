@@ -307,19 +307,6 @@ export function setupRoutes() {
             item,
             ...rest,
           },
-          options: {
-            animations: {
-              push: {
-                sharedElementTransitions: [
-                  {
-                    fromId,
-                    toId,
-                    interpolation: { type: 'spring' },
-                  },
-                ],
-              },
-            },
-          },
         },
       })
     },
@@ -336,19 +323,6 @@ export function setupRoutes() {
           passProps: {
             id: passId,
             ...rest,
-          },
-          options: {
-            animations: {
-              push: {
-                sharedElementTransitions: [
-                  {
-                    fromId,
-                    toId,
-                    interpolation: { type: 'spring' },
-                  },
-                ],
-              },
-            },
           },
         },
       })
