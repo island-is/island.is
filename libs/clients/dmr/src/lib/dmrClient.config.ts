@@ -18,7 +18,7 @@ export const DmrClientConfig = defineConfig<z.infer<typeof schema>>({
       'IS-DEV/GOV/10014/DMR-Protected/official-journal',
     ),
     fetch: {
-      timeout: 30000,
+      timeout: 10000,
       scope: [],
     },
   }),
