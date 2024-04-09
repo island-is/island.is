@@ -738,12 +738,12 @@ export class InternalCaseService {
       })
   }
 
-  async deliverAppealReceivedDateToCourtOfAppeals(
+  async deliverReceivedDateToCourtOfAppeals(
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
-      .updateAppealCaseWithAppealReceivedDate(
+      .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
         theCase.appealCaseNumber,
@@ -753,6 +753,33 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with received date`,
+          {
+            reason,
+          },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverAssignedRolesToCourtOfAppeals(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateAppealCaseWithAssignedRoles(
+        user,
+        theCase.id,
+        theCase.appealCaseNumber,
+        theCase.appealAssistant?.nationalId,
+        theCase.appealJudge1?.nationalId,
+        theCase.appealJudge2?.nationalId,
+        theCase.appealJudge3?.nationalId,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update appeal case ${theCase.id} with assigned roles`,
           {
             reason,
           },
