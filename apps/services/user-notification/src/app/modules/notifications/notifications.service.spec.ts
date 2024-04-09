@@ -71,7 +71,7 @@ describe('NotificationsService', () => {
     expect(service).toBeDefined()
   })
 
-  it('should get templates', async () => { 
+  it('should get templates', async () => {
     jest
       .spyOn(service, 'getTemplates')
       .mockImplementation(() => Promise.resolve(mockTemplates))
@@ -143,7 +143,6 @@ describe('NotificationsService', () => {
     expect(template.notificationBody).toEqual('Demo body hello')
     expect(template.clickAction).toEqual('Demo click action world')
   })
-
 
   describe('findMany', () => {
     it('should return a paginated list of notifications', async () => {

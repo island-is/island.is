@@ -32,7 +32,6 @@ import { Documentation } from '@island.is/nest/swagger'
 
 import { Locale } from './locale.enum'
 
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(NotificationsScope.read)
 @ApiSecurity('oauth2', [NotificationsScope.read])
@@ -104,7 +103,7 @@ export class MeNotificationsController {
   findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
-    @Query('locale') locale: Locale = Locale.IS
+    @Query('locale') locale: Locale = Locale.IS,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.findOne(user, id, locale)
   }
@@ -140,7 +139,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
-    @Query('locale') locale: Locale = Locale.IS
+    @Query('locale') locale: Locale = Locale.IS,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.update(
       user,

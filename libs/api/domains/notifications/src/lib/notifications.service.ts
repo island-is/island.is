@@ -48,7 +48,7 @@ export class NotificationsService {
 
     if (!notifications.data) {
       this.logger.debug('no notification found')
-      return null;
+      return null
     }
 
     return {
@@ -63,11 +63,14 @@ export class NotificationsService {
     id: number,
     locale: Locale,
     user: User,
-    ): Promise<NotificationResponse | null> {
-      this.logger.debug('getting potential single notification')
-      const notification = await this.userNotificationsWAuth(
-        user,
-      ).meNotificationsControllerFindOne({ locale: locale as MeNotificationsControllerFindOneLocaleEnum, id })
+  ): Promise<NotificationResponse | null> {
+    this.logger.debug('getting potential single notification')
+    const notification = await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerFindOne({
+      locale: locale as MeNotificationsControllerFindOneLocaleEnum,
+      id,
+    })
 
     if (!notification) {
       this.logger.debug('no notification found')
