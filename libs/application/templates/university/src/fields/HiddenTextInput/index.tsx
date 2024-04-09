@@ -6,7 +6,7 @@ import { InputController } from '@island.is/shared/form-fields'
 export const HiddenTextInput: FC<FieldBaseProps> = ({ field }) => {
   return (
     <Box hidden={true}>
-      <InputController id={field.id} defaultValue="false" />
+      <InputController id={field.id} defaultValue="true" />
     </Box>
   )
 }
