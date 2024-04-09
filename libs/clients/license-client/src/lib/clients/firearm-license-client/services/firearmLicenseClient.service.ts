@@ -121,18 +121,22 @@ export class FirearmLicenseClient
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
     if (typeof payload === 'string') {
       let jsonLicense: FirearmLicenseDto
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
         this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
-        return LicensePkPassAvailability.Unknown
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
       }
-      return this.checkLicenseValidityForPkPass(jsonLicense)
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
     }
-    return this.checkLicenseValidityForPkPass(payload as FirearmLicenseDto)
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as FirearmLicenseDto),
+    )
   }
 
   async getLicenses(user: User): Promise<Result<Array<FirearmLicenseDto>>> {
@@ -198,7 +202,7 @@ export class FirearmLicenseClient
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    const valid = await this.licenseIsValidForPkPass(license.data)
 
     if (!valid) {
       return {

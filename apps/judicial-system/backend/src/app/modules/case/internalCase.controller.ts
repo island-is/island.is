@@ -265,6 +265,37 @@ export class InternalCaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[
+        MessageType.DELIVERY_TO_COURT_OF_APPEALS_APPEAL_RECEIVED_DATE
+      ]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an appeal received date to court of appeals',
+  })
+  deliverAppealReceivedDateToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the appeal received date for case ${caseId} to court of appeals`,
+    )
+
+    return this.internalCaseService.deliverAppealReceivedDateToCourtOfAppeals(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
   @Post(`case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_POLICE_CASE]}`)
   @ApiOkResponse({
     type: DeliverResponse,
