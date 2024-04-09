@@ -78,6 +78,9 @@ export enum Features {
 
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
+
+  // New/updated delegation notification
+  isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
 }
 
 export enum ServerSideFeature {

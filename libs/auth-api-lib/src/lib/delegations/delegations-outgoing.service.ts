@@ -30,10 +30,14 @@ import { getDelegationNoActorWhereClause } from './utils/delegations'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { DelegationDirection } from './types/delegationDirection'
 import { DelegationsIndexService } from './delegations-index.service'
+import { ScopeService } from '../resources/scope.service'
 import {
   NEW_DELEGATION_TEMPLATE_ID,
   UPDATED_DELEGATION_TEMPLATE_ID,
 } from './constants'
+import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
+import { Features } from '@island.is/feature-flags'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 /**
  * Service class for outgoing delegations.
@@ -49,6 +53,8 @@ export class DelegationsOutgoingService {
     private delegationIndexService: DelegationsIndexService,
     private namesService: NamesService,
     private notificationsApi: NotificationsApi,
+    private featureFlagService: FeatureFlagService,
+    private scopeService: ScopeService,
   ) {}
 
   async findAll(
@@ -237,6 +243,70 @@ export class DelegationsOutgoingService {
     return newDelegation
   }
 
+  private async notifyDelegationUpdate(
+    user: User,
+    delegation: DelegationDTO,
+    scopes: UpdateDelegationScopeDTO[] = [],
+  ) {
+    try {
+      const allowDelegationNotification =
+        await this.featureFlagService.getValue(
+          Features.isDelegationNotificationEnabled,
+          false,
+          user,
+        )
+
+      if (!allowDelegationNotification) {
+        return
+      }
+
+      const fromDisplayName = await this.namesService.getUserName(user)
+      const scopeNames = scopes.map((scope) => scope.name)
+
+      // This yields a list of scope group names
+      // which we will only use and skip their children
+      const scopeTreeIs = await this.scopeService.findScopeTree(
+        scopeNames,
+        'is',
+      )
+      const scopeTreeEn = await this.scopeService.findScopeTree(
+        scopeNames,
+        'en',
+      )
+
+      const hasExistingScopes = scopes.length > 0
+
+      const args = [
+        { key: 'name', value: fromDisplayName },
+        // Send scope group display names in both languages and map
+        // different key to different locale in the Contentful template
+        {
+          key: 'scopesIs',
+          value: scopeTreeIs.map((scope) => scope.displayName).join(', '),
+        },
+        {
+          key: 'scopesEn',
+          value: scopeTreeEn.map((scope) => scope.displayName).join(', '),
+        },
+      ]
+
+      // Notify toNationalId of the delegation update
+      this.notificationsApi.notificationsControllerCreateHnippNotification({
+        createHnippNotificationDto: {
+          args,
+          recipient: delegation.toNationalId,
+          // If there are existing scopes we are updating the delegation
+          // else it is a new delegation
+          templateId: hasExistingScopes
+            ? UPDATED_DELEGATION_TEMPLATE_ID
+            : NEW_DELEGATION_TEMPLATE_ID,
+        },
+      })
+    } catch (e) {
+      // TODO: log error
+    }
+  }
+
   async patch(
     user: User,
     delegationId: string,
@@ -306,30 +376,11 @@ export class DelegationsOutgoingService {
       delegation.toNationalId,
     )
 
-    const fromDisplayName = await this.namesService.getUserName(user)
-    const scopes = patchedDelegation.updateScopes ?? []
-    const scopeNames = scopes.map((scope) => scope.name)
-
-    const hasExistingScopes =
-      (currentDelegation.delegationScopes?.length ?? 0) > 0
-
-    const args = [
-      { key: 'name', value: fromDisplayName },
-      { key: 'scopes', value: scopeNames.join(', ') },
-    ]
-
-    // Notify toNationalId of the delegation update
-    this.notificationsApi.notificationsControllerCreateHnippNotification({
-      createHnippNotificationDto: {
-        args,
-        recipient: delegation.toNationalId,
-        // If there are existing scopes we are updating the delegation
-        // else it is a new delegation
-        templateId: hasExistingScopes
-          ? UPDATED_DELEGATION_TEMPLATE_ID
-          : NEW_DELEGATION_TEMPLATE_ID,
-      },
-    })
+    this.notifyDelegationUpdate(
+      user,
+      delegation,
+      patchedDelegation.updateScopes,
+    )
 
     return delegation
   }
