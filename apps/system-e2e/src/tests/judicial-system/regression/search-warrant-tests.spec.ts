@@ -128,7 +128,11 @@ test.describe.serial('Search warrant tests', () => {
     await page
       .getByText('Veldu dómara/aðstoðarmann *Veldu héraðsdómara')
       .click()
-    await page.getByTestId('select-judge').getByText('Test Dómari').click()
+    await page
+      .getByTestId('select-judge')
+      .getByText('Test Dómari')
+      .last()
+      .click()
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
