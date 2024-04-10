@@ -734,6 +734,19 @@ export class CmsContentfulService {
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
+  async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
+    const params = {
+      ['content_type']: 'lifeEventPage',
+      order: 'sys.createdAt',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
+      .catch(errorHandler('getLifeEvents'))
+
+    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+  }
+
   async getLifeEventsInCategory(
     lang: string,
     slug: string,

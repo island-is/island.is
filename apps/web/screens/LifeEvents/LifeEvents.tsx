@@ -15,15 +15,15 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   type QueryGetNamespaceArgs,
   type GetNamespaceQuery,
-  GetLifeEventsQuery,
+  GetLifeEventsForOverview,
 } from '@island.is/web/graphql/schema'
 import type { Screen } from '../../types'
 import { CardWithFeaturedItems, GridItems } from '@island.is/web/components'
-import { ContentLanguage, QueryGetLifeEventsArgs } from '@island.is/api/schema'
-import { GET_LIFE_EVENTS_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import { ContentLanguage, QueryGetLifeEventsForOverviewArgs } from '@island.is/api/schema'
+import { GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { ApplicationsTexts } from './LifeEvents.types'
 
-type LifeEvents = GetLifeEventsQuery['getLifeEvents']
+type LifeEvents = GetLifeEventsForOverview['getLifeEventsForOverview']
 interface Props {
   lifeEvents: LifeEvents
   namespace: ApplicationsTexts
@@ -116,12 +116,12 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
 LifeEvents.getProps = async ({ apolloClient, locale }) => {
   const [
     {
-      data: { getLifeEvents: lifeEvents },
+      data: { getLifeEventsForOverview: lifeEvents },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetLifeEventsQuery, QueryGetLifeEventsArgs>({
-      query: GET_LIFE_EVENTS_QUERY,
+    apolloClient.query<GetLifeEventsForOverview, QueryGetLifeEventsForOverviewArgs>({
+      query: GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
