@@ -155,7 +155,8 @@ export const EstateMembersRepeater: FC<
   return (
     <Box>
       {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
-          const noContact = values?.estate?.estateMembers?.[index]?.noContactInfo?.[0]
+        const noContact =
+          values?.estate?.estateMembers?.[index]?.noContactInfo?.[0]
 
         if (member.nationalId === application.applicant) {
           const relation = getValueViaPath<string>(
@@ -290,7 +291,6 @@ export const EstateMembersRepeater: FC<
                               label: formatMessage(m.noContactInfo),
                               value: YES,
                             },
-                           
                           ]}
                           onSelect={(val) => {
                             setValue(`${id}[${index}].noContactInfo`, val)

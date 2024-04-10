@@ -132,7 +132,9 @@ export const estateSchema = z.object({
           enabled and whether member has advocate */
       .refine(
         ({ enabled, advocate, phone, noContactInfo }) => {
-          return enabled && noContactInfo?.[0] !== YES && !advocate ? isValidPhoneNumber(phone) : true
+          return enabled && noContactInfo?.[0] !== YES && !advocate
+            ? isValidPhoneNumber(phone)
+            : true
         },
         {
           path: ['phone'],
@@ -140,7 +142,9 @@ export const estateSchema = z.object({
       )
       .refine(
         ({ enabled, advocate, email, noContactInfo }) => {
-          return enabled && !advocate && noContactInfo?.[0] !== YES ? isValidEmail(email) : true
+          return enabled && !advocate && noContactInfo?.[0] !== YES
+            ? isValidEmail(email)
+            : true
         },
         {
           path: ['email'],

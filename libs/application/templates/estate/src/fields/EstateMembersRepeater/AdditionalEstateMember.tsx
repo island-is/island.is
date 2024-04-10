@@ -294,26 +294,32 @@ export const AdditionalEstateMember = ({
             </GridRow>
           </Box>
         )}
-        <GridRow>
-      <GridColumn span={selectedEstate === EstateTypes.estateWithoutAssets ? ['1/1', '1/2'] : "1/1"} paddingBottom={2}>
-        <Box width="half">
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: YES,
-              },
-            ]}
-            onSelect={(val) => {
-              setValue(foreignCitizenshipField, val)
-            }}
-          />
-          
-        </Box>
+      <GridRow>
+        <GridColumn
+          span={
+            selectedEstate === EstateTypes.estateWithoutAssets
+              ? ['1/1', '1/2']
+              : '1/1'
+          }
+          paddingBottom={2}
+        >
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
+            />
+          </Box>
         </GridColumn>
         {selectedEstate === EstateTypes.estateWithoutAssets && (
           <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -335,8 +341,7 @@ export const AdditionalEstateMember = ({
             </Box>
           </GridColumn>
         )}
-        </GridRow>
-     
+      </GridRow>
     </Box>
   )
 }
