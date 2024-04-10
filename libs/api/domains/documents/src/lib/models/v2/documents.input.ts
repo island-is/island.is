@@ -40,7 +40,7 @@ export class DocumentsInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsNationalId()
+  @IsString()
   readonly senderNationalId?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })

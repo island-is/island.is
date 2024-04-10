@@ -35,7 +35,7 @@ import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { DocumentMailAction } from './models/v2/mailAction.model.'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver(() => DocumentV2)
+@Resolver(() => PaginatedDocuments)
 export class DocumentResolverV2 {
   constructor(
     private documentServiceV2: DocumentServiceV2,
@@ -116,25 +116,30 @@ export class DocumentResolverV2 {
   }
 
   @Scopes(DocumentsScope.main)
-  @Mutation(() => DocumentMailAction, { nullable: true })
+  @Mutation(() => DocumentMailAction, {
+    nullable: true,
+    name: 'postMailActionV2',
+  })
   async postMailAction(
     @CurrentUser() user: User,
     @Args('input') input: MailActionInput,
-  ): Promise<void> {
+  ): Promise<DocumentMailAction | null> {
     if (input.documentIds.length === 0) {
-      return
+      return null
     }
 
     const ids =
       input.documentIds.length === 1 ? input.documentIds[0] : input.documentIds
 
-    if (input.documentIds)
-      await this.documentServiceV2.postMailAction(
+    if (input.documentIds) {
+      const test = await this.documentServiceV2.postMailAction(
         user.nationalId,
         ids,
         input.action,
       )
+      return test
+    }
 
-    return
+    return null
   }
 }

@@ -1,4 +1,4 @@
-query Documents($input: DocumentsV2DocumentsInput!) {
+query DocumentsV2($input: DocumentsV2DocumentsInput!) {
   documentsV2(input: $input) {
     data {
       id
@@ -25,13 +25,24 @@ query Documents($input: DocumentsV2DocumentsInput!) {
       id
       name
     }
-    types {
-      id
-      name
-    }
     senders {
       id
       name
     }
+  }
+}
+
+query GetDocumentInboxLineV2($input: DocumentInput!) {
+  documentV2(input: $input) {
+    content {
+      type
+      value
+    }
+  }
+}
+
+mutation MailActionV2($input: DocumentsV2MailActionInput!) {
+  postMailActionV2(input: $input) {
+    success
   }
 }

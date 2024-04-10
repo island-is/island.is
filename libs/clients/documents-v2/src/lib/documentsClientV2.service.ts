@@ -19,7 +19,17 @@ export class DocumentsClientV2Service {
   async getDocumentList(
     input: ListDocumentsInputDto,
   ): Promise<ListDocumentsDto | null> {
-    const documents = await this.api.customersListDocuments({
+    function sanitizeObject<T extends { [key: string]: any }>(obj: T): T {
+      const sanitizedObj = {} as T
+      for (const key in obj) {
+        if (obj[key]) {
+          sanitizedObj[key] = obj[key]
+        }
+      }
+      return sanitizedObj
+    }
+
+    const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
       senderKennitala: input.senderNationalId,
@@ -30,6 +40,8 @@ export class DocumentsClientV2Service {
         ? CustomersListDocumentsSortByEnum[input.sortBy]
         : undefined,
     })
+
+    const documents = await this.api.customersListDocuments(inputObject)
 
     if (!documents.totalCount) {
       return null
