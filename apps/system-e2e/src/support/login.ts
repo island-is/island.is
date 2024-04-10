@@ -23,6 +23,9 @@ export const cognitoLogin = async (
   authUrl: string,
   creds?: CognitoCreds,
 ) => {
+  if(page.url().startsWith('https://ids-users.auth.eu-west-1.amazoncognito.com/')) {
+    await page.getByRole('button', { name: 'ids-deprecated' }).click()
+  }
   const { username, password } = creds ?? getCognitoCredentials()
   const cognito = page.locator('form[name="cognitoSignInForm"]:visible')
   await cognito.locator('input[id="signInFormUsername"]:visible').type(username)
