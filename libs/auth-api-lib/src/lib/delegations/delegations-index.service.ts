@@ -157,7 +157,7 @@ export class DelegationsIndexService {
   async getDelegationRecords({
     scope,
     nationalId,
-    direction,
+    direction = DelegationDirection.OUTGOING,
   }: {
     scope: string
     nationalId: string
@@ -497,9 +497,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          ...(direction === DelegationDirection.OUTGOING
-            ? { fromNationalId: nationalId }
-            : { toNationalId: nationalId }),
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: AuthDelegationType.Custom,
           provider: AuthDelegationProvider.Custom,
           customDelegationScopes: { [Op.contains]: [scope.name] },
@@ -531,9 +531,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          ...(direction === DelegationDirection.OUTGOING
-            ? { fromNationalId: nationalId }
-            : { toNationalId: nationalId }),
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: {
             [Op.in]: permittedDelegationTypes,
           },
@@ -556,9 +556,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          ...(direction === DelegationDirection.OUTGOING
-            ? { fromNationalId: nationalId }
-            : { toNationalId: nationalId }),
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: {
             [Op.in]:
               delegationProviderTypeMap[AuthDelegationProvider.CompanyRegistry],
@@ -582,9 +582,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          ...(direction === DelegationDirection.OUTGOING
-            ? { fromNationalId: nationalId }
-            : { toNationalId: nationalId }),
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: {
             [Op.in]:
               delegationProviderTypeMap[
