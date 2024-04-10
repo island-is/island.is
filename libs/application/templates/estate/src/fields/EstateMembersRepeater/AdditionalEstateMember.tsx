@@ -71,9 +71,9 @@ export const AdditionalEstateMember = ({
   const currentEstateMember = values?.estate?.estateMembers?.[index]
 
   const hasForeignCitizenship =
-    currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
+    currentEstateMember?.foreignCitizenship?.[0] === YES
   const birthDate = currentEstateMember?.dateOfBirth
-  const noContactInfo = currentEstateMember?.noContactInfo?.[0] === 'Yes'
+  const noContactInfo = currentEstateMember?.noContactInfo?.[0] === YES
   const memberAge =
     hasForeignCitizenship && birthDate
       ? intervalToDuration({ start: new Date(birthDate), end: new Date() })

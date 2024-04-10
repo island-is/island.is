@@ -100,7 +100,7 @@ export const estateSchema = z.object({
         relationWithApplicant: z.string().optional(),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
-        noContactInfo: z.string().array().min(0).max(1).optional(),
+        noContactInfo: z.array(z.union([z.literal('Yes'), z.literal('No')])).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
