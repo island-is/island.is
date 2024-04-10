@@ -81,7 +81,10 @@ const UniversityStudiesHeader: React.FC<
           sidebarContent={
             !!organizationPage.organization?.logo && (
               <LinkV2
-                href={linkResolver('universitylandingpage').href}
+                href={
+                  linkResolver('universitylandingpage', [organizationPage.slug])
+                    .href
+                }
                 className={styles.iconCircle}
               >
                 <img
