@@ -1,7 +1,11 @@
 import { GetServerSideProps } from 'next'
 
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const path = context.req.url?.split('/s/haskolanam/')[1]
+  const path = safelyExtractPathnameFromUrl(context.req.url).split(
+    '/s/haskolanam/',
+  )[1]
   return {
     redirect: {
       destination: `/haskolanam/${path || ''}`,
