@@ -248,11 +248,7 @@ export class DelegationsOutgoingService {
     return newDelegation
   }
 
-  private async notifyDelegationUpdate(
-    user: User,
-    delegation: DelegationDTO,
-    scopes: UpdateDelegationScopeDTO[] = [],
-  ) {
+  private async notifyDelegationUpdate(user: User, delegation: DelegationDTO) {
     try {
       const allowDelegationNotification =
         await this.featureFlagService.getValue(
@@ -261,37 +257,29 @@ export class DelegationsOutgoingService {
           user,
         )
 
-      if (!allowDelegationNotification) {
+      if (
+        !allowDelegationNotification ||
+        !delegation.scopes ||
+        !delegation.domainName
+      ) {
         return
       }
 
       const fromDisplayName = await this.namesService.getUserName(user)
-      const scopeNames = scopes.map((scope) => scope.name)
-
-      // This yields a list of scope group names
-      // which we will only use and skip their children
-      const scopeTreeIs = await this.scopeService.findScopeTree(
-        scopeNames,
-        'is',
-      )
-      const scopeTreeEn = await this.scopeService.findScopeTree(
-        scopeNames,
-        'en',
-      )
+      const scopes = delegation.scopes.map((scope) => scope.displayName) ?? []
+      const domainName = delegation.domainName
 
       const hasExistingScopes = scopes.length > 0
 
       const args = [
         { key: 'name', value: fromDisplayName },
-        // Send scope group display names in both languages and map
-        // different key to different locale in the Contentful template
         {
-          key: 'scopesIs',
-          value: scopeTreeIs.map((scope) => scope.displayName).join(', '),
+          key: 'scopes',
+          value: scopes.join(', '),
         },
         {
-          key: 'scopesEn',
-          value: scopeTreeEn.map((scope) => scope.displayName).join(', '),
+          key: 'domainName',
+          value: domainName,
         },
       ]
 
@@ -381,11 +369,7 @@ export class DelegationsOutgoingService {
       delegation.toNationalId,
     )
 
-    this.notifyDelegationUpdate(
-      user,
-      delegation,
-      patchedDelegation.updateScopes,
-    )
+    this.notifyDelegationUpdate(user, delegation)
 
     return delegation
   }
