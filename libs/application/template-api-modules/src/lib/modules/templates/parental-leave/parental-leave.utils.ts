@@ -357,6 +357,8 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'document'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
@@ -518,7 +520,9 @@ export const checkActionName = (
     actionName === 'documentPeriod' ||
     actionName === 'period' ||
     actionName === 'empper' ||
-    actionName === 'employer'
+    actionName === 'employer' ||
+    actionName === 'empdoc' ||
+    actionName === 'empdocper'
   ) {
     return actionName
   }

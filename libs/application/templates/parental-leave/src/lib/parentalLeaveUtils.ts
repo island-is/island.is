@@ -969,6 +969,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     | 'documentPeriod'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined
 
   const previousState = getValueViaPath(answers, 'previousState') as string
