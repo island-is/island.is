@@ -138,6 +138,15 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             ></AlertMessage>
           </Box>
         )}
+        {workingCase.indictmentReturnedExplanation && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(strings.indictmentReturnedExplanationTitle)}
+              message={workingCase.indictmentReturnedExplanation}
+              type="warning"
+            ></AlertMessage>
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(strings.heading)}

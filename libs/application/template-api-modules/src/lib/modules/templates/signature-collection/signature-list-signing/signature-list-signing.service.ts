@@ -74,7 +74,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
     if (!areaId) {
       // If no area user will be stopped by can sign above
-      return null
+      return new TemplateApiError(errorMessages.areaId, 400)
     }
     const ownerId = application.answers.initialQuery as string
     // Check if user got correct ownerId, if not user has to pick list

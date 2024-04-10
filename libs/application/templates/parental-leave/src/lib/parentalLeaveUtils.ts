@@ -792,6 +792,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -1011,6 +1013,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
+    comment,
     employers,
     employerLastSixMonths,
     isNotStillEmployed,
