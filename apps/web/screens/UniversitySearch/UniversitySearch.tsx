@@ -367,7 +367,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       size: 'small',
       icon: 'arrowForward',
       iconType: 'outline',
-      disabled: item.applicationStatus === 'CLOSED',
+      disabled: !item.applicationPeriodOpen,
       href: applicationUrlParser(item.universityId),
     }
     return CTA
@@ -797,7 +797,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               display={'flex'}
               justifyContent={'spaceBetween'}
             >
-              <Box display={'flex'} style={{ gap: '0.5rem' }}>
+              <Box display={'flex'} style={{ gap: '0.5rem' }} flexWrap={'wrap'}>
                 {Object.keys(filters).map((key) =>
                   filters[key as keyof FilterProps].map((tag) => (
                     <Tag key={tag}>
@@ -846,29 +846,32 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   {filterOptions &&
                     filterOptions.map((option) => {
                       if (
-                        option.field === 'degreeType' ||
-                        option.field === 'universityId'
+                        !(
+                          option.field === 'degreeType' ||
+                          option.field === 'universityId'
+                        )
                       ) {
-                        return option.options.map((item) => {
-                          if (item === 'OTHER') return null
-                          return (
-                            <Tag
-                              onClick={() => handleFilters('degreeType', item)}
-                            >
-                              {n(
-                                option.field === 'universityId'
-                                  ? universities.filter((x) => x.id === item)[0]
-                                      ?.contentfulTitle || ''
-                                  : item,
-                                option.field === 'universityId'
-                                  ? universities.filter((x) => x.id === item)[0]
-                                      ?.contentfulTitle
-                                  : item,
-                              )}
-                            </Tag>
-                          )
-                        })
+                        return null
                       }
+                      return option.options.map((item) => {
+                        if (item === 'OTHER') return null
+                        return (
+                          <Tag
+                            onClick={() => handleFilters('degreeType', item)}
+                          >
+                            {n(
+                              option.field === 'universityId'
+                                ? universities.filter((x) => x.id === item)[0]
+                                    ?.contentfulTitle || ''
+                                : item,
+                              option.field === 'universityId'
+                                ? universities.filter((x) => x.id === item)[0]
+                                    ?.contentfulTitle
+                                : item,
+                            )}
+                          </Tag>
+                        )
+                      })
                     })}
                 </Inline>
               </Box>
@@ -1153,6 +1156,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     ? 'Specialization: '
                                     : 'Kjörsvið: ') + specializedName
                                 : undefined
+                            const contentfulUni = universities.filter(
+                              (x) => x.id === dataItem.universityId,
+                            )[0]
                             return (
                               <GridColumn
                                 span={
@@ -1166,9 +1172,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               >
                                 <ListViewCard
                                   iconText={
-                                    universities.filter(
-                                      (x) => x.id === dataItem.universityId,
-                                    )[0]?.contentfulTitle || ''
+                                    locale === 'en'
+                                      ? contentfulUni?.contentfulTitleEn || ''
+                                      : contentfulUni?.contentfulTitle || ''
                                   }
                                   heading={
                                     locale === 'en'
