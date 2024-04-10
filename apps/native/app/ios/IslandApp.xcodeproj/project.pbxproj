@@ -431,7 +431,7 @@
 				CODE_SIGN_ENTITLEMENTS = IslandApp/IslandApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 140;
+				CURRENT_PROJECT_VERSION = 141;
 				DEVELOPMENT_TEAM = J3WWZR9JLF;
 				DISPLAY_NAME = "Ísland.dev";
 				INFOPLIST_FILE = IslandApp/Info.plist;
@@ -603,7 +603,7 @@
 				CODE_SIGN_ENTITLEMENTS = IslandApp/IslandApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 140;
+				CURRENT_PROJECT_VERSION = 141;
 				DEVELOPMENT_TEAM = J3WWZR9JLF;
 				DISPLAY_NAME = "Ísland.is";
 				INFOPLIST_FILE = IslandApp/Info.plist;
@@ -716,7 +716,7 @@
 				CODE_SIGN_ENTITLEMENTS = IslandApp/IslandApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 140;
+				CURRENT_PROJECT_VERSION = 141;
 				DEVELOPMENT_TEAM = J3WWZR9JLF;
 				DISPLAY_NAME = "Ísland.dev";
 				ENABLE_BITCODE = NO;
