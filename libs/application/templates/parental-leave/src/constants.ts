@@ -66,6 +66,7 @@ export enum ApiModuleActions {
   setChildrenInformation = 'setChildrenInformation',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
+  setVMSTPeriods = 'setVMSTPeriods',
 }
 
 export enum StartDateOptions {

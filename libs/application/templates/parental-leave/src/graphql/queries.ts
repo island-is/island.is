@@ -43,6 +43,8 @@ export const GetApplicationInformation = gql`
         paid
         firstPeriodStart
         rightsCodePeriod
+        days
+        approved
       }
     }
   }

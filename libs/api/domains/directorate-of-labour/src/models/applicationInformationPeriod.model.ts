@@ -22,4 +22,8 @@ export class ApplicationInformationPeriod {
 
   @Field(() => String)
   firstPeriodStart!: string
+
+  // TODO: Á þetta að vera nullable??? (strengur eða number?)
+  @Field(() => String, { nullable: true })
+  days!: string
 }

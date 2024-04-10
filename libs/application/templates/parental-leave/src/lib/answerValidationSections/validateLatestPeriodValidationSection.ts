@@ -157,6 +157,11 @@ export const validateLatestPeriodValidationSection = (
     }
   }
 
+  // Stop checking approved periods from VMST
+  if (latestPeriod.approved) {
+    return undefined
+  }
+
   const validatedField = validatePeriod(
     latestPeriod,
     isFirstPeriod,

@@ -1528,4 +1528,36 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       throw this.parseErrors(e as VMSTError)
     }
   }
+
+  // TODO: Nýta þetta fall til að sækja líka "applicationRights"?
+  async setVMSTPeriods({ application }: TemplateApiModuleActionProps) {
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+
+    let vmstPeriod = null
+    if (applicationFundId) {
+      try {
+        const VMSTperiods =
+          await this.applicationInformationAPI.applicationGetApplicationInformation(
+            {
+              applicationId: application.id,
+            },
+          )
+
+        if (VMSTperiods?.periods) {
+          vmstPeriod = VMSTperiods
+          return vmstPeriod
+        }
+      } catch (e) {
+        this.logger.warn(
+          `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
+            .replace(`{${'applicationId'}}`, application.id)
+            .replace(`{${'error'}}`, e),
+        )
+      }
+    }
+
+    return vmstPeriod
+  }
 }

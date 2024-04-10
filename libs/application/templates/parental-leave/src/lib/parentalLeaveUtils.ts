@@ -154,6 +154,8 @@ export const formatPeriods = (
         canDelete = true
       }
     }
+    // TODO: Skoða betur þegar komin niðurstaða hvort eigi að setja default value fyrir "paid" og "approved" á ný tímabil
+    const isVMSTPeriod = 'paid' in period
 
     if (isActualDob) {
       timelinePeriods.push({
@@ -163,11 +165,17 @@ export const formatPeriods = (
         ratio: period.ratio,
         duration: calculatedLength,
         canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
-          index: index + 1,
-          ratio: period.ratio,
-        }),
+        title: formatMessage(
+          isVMSTPeriod
+            ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
+            : parentalLeaveFormMessages.reviewScreen.period,
+          {
+            index: index + 1,
+            ratio: period.ratio,
+          },
+        ),
         rawIndex: period.rawIndex ?? index,
+        paid: period.paid,
       })
     }
 
@@ -178,11 +186,17 @@ export const formatPeriods = (
         ratio: period.ratio,
         duration: calculatedLength,
         canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
-          index: index + 1,
-          ratio: period.ratio,
-        }),
+        title: formatMessage(
+          isVMSTPeriod
+            ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
+            : parentalLeaveFormMessages.reviewScreen.period,
+          {
+            index: index + 1,
+            ratio: period.ratio,
+          },
+        ),
         rawIndex: period.rawIndex ?? index,
+        paid: period.paid,
       })
     }
   })
@@ -587,6 +601,11 @@ export const getApplicationExternalData = (
     ) as string
   }
 
+  const VMSTPeriods = getValueViaPath(
+    externalData,
+    'VMSTPeriods.data',
+  ) as VMSTPeriod[]
+
   return {
     applicantName,
     applicantGenderCode,
@@ -597,6 +616,7 @@ export const getApplicationExternalData = (
     userEmail,
     userPhoneNumber,
     dateOfBirth,
+    VMSTPeriods,
   }
 }
 
@@ -1537,7 +1557,7 @@ export const synchronizeVMSTPeriods = (
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
   setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
 ) => {
-  // If periods is not sync with VMST periods, sync it
+  // If periods is not sync with VMST periods, sync it // TODO: Laga texta??
   const newPeriods: Period[] = []
   const temptVMSTPeriods: Period[] = []
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
@@ -1566,12 +1586,15 @@ export const synchronizeVMSTPeriods = (
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
+        daysToUse: period.days, // TODO: Getur verið að er ekki með days? (þarf að gera ehv svo gamalt "daysToUse" haldist ekki inni)
+        paid: period.paid,
+        approved: period.approved,
       }
 
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDay() >= 20) {
+        if (today.getDate() >= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {
@@ -1638,7 +1661,9 @@ export const synchronizeVMSTPeriods = (
           new Date(period.endDate).getTime() !==
             new Date(periods[i].endDate).getTime() ||
           period.ratio !== periods[i].ratio ||
-          period.firstPeriodStart !== periods[i].firstPeriodStart
+          period.firstPeriodStart !== periods[i].firstPeriodStart ||
+          period.paid !== periods[i].paid ||
+          period.approved !== periods[i].approved
         ) {
           isMustSync = true
         }

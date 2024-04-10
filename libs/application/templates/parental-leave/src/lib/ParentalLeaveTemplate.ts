@@ -53,6 +53,7 @@ import {
   hasDateOfBirth,
   hasEmployer,
   needsOtherParentApproval,
+  restructureVMSTPeriods,
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
@@ -550,11 +551,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             shouldPersistToExternalData: true,
             throwOnError: true,
           }),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: false,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setBirthDate,
+              externalDataId: 'dateOfBirth',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -635,6 +644,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setVMSTPeriods,
+            triggerEvent: DefaultEvents.EDIT,
+            externalDataId: 'VMSTPeriods',
+            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -934,11 +949,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: false,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setBirthDate,
+              externalDataId: 'dateOfBirth',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1003,6 +1026,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'createTempEmployers',
+          'setVMSTPeriods',
         ],
         exit: [
           'removeAddedEmployers',
@@ -1108,6 +1132,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
           }),
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setVMSTPeriods,
+            triggerEvent: DefaultEvents.EDIT,
+            externalDataId: 'VMSTPeriods',
+            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1159,6 +1189,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setVMSTPeriods,
+            triggerEvent: DefaultEvents.EDIT,
+            externalDataId: 'VMSTPeriods',
+            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -1253,6 +1289,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
           }),
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setVMSTPeriods,
+            triggerEvent: DefaultEvents.EDIT,
+            externalDataId: 'VMSTPeriods',
+            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1331,11 +1373,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               throwOnError: true,
             }),
           ],
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: false,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setBirthDate,
+              externalDataId: 'dateOfBirth',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1426,6 +1476,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setVMSTPeriods,
+            triggerEvent: DefaultEvents.EDIT,
+            externalDataId: 'VMSTPeriods',
+            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1494,6 +1550,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setVMSTPeriods,
+            triggerEvent: DefaultEvents.EDIT,
+            externalDataId: 'VMSTPeriods',
+            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -2192,6 +2254,23 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unemploymentBenefits !== UnEmployedBenefitTypes.healthInsurance
         ) {
           unset(application.answers, 'fileUpload.benefitsFile')
+        }
+
+        return context
+      }),
+      /**
+       * Copy VMST periods to periods.
+       * Applicant could have made changes on paper, so VMST most likely has the newest changes to periods.
+       */
+      setVMSTPeriods: assign((context) => {
+        console.log('========> (HERE) action')
+        const { application } = context
+        const newPeriods = restructureVMSTPeriods(context)
+
+        console.log('=====> newPeriods: ', newPeriods)
+
+        if (newPeriods.length > 0) {
+          set(application.answers, 'periods', newPeriods)
         }
 
         return context

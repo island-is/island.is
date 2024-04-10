@@ -14,7 +14,7 @@ import {
   requiresOtherParentApproval,
   residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
-import { EmployerRow } from '../types'
+import { EmployerRow, Period, YesOrNo } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
@@ -111,4 +111,45 @@ export const goToState = (
   )
   if (previousState === state) return true
   return false
+}
+
+export const restructureVMSTPeriods = (context: ApplicationContext) => {
+  const { application } = context
+  const { VMSTPeriods } = getApplicationExternalData(application.externalData)
+
+  const today = new Date()
+  const newPeriods: Period[] = []
+  VMSTPeriods?.forEach((period, index) => {
+    /*
+     ** VMST could change startDate but still return 'date_of_birth'
+     ** Make sure if period is in the past then we use the date they sent
+     */
+    let firstPeriodStart =
+      period.firstPeriodStart === 'date_of_birth'
+        ? 'actualDateOfBirth'
+        : 'specificDate'
+    if (new Date(period.from).getTime() <= today.getTime()) {
+      firstPeriodStart = 'specificDate'
+    }
+
+    if (!period.rightsCodePeriod.includes('DVAL')) {
+      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+      const obj = {
+        startDate: period.from,
+        endDate: period.to,
+        ratio: period.ratio.split(',')[0],
+        rawIndex: index,
+        firstPeriodStart: firstPeriodStart,
+        useLength: NO as YesOrNo,
+        rightCodePeriod: rightsCodePeriod,
+        daysToUse: period.days, // TODO: Getur verið að er ekki með days? (þarf að gera ehv svo gamalt "daysToUse" haldist ekki inni)
+        paid: period.paid,
+        approved: period.approved,
+      }
+      newPeriods.push(obj)
+    }
+  })
+
+  return newPeriods
 }

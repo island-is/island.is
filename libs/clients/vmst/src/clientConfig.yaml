@@ -433,6 +433,8 @@ components:
           type: string
         firstPeriodStart:
           type: string
+        days:
+          type: string
     ApplicationRights:
       type: object
       additionalProperties: false

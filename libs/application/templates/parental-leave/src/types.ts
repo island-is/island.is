@@ -64,6 +64,8 @@ export interface VMSTPeriod {
   firstPeriodStart: string
   paid: boolean
   rightsCodePeriod: string
+  days?: string // TODO: Er þetta optional?? (strengur eða number?) (Endapunkturinn skilar ekki days í dag)
+  approved: boolean
 }
 
 export interface Period {
@@ -75,6 +77,8 @@ export interface Period {
   daysToUse?: string
   rawIndex?: number
   rightCodePeriod?: string
+  paid?: boolean // TODO: Er þetta optional? (Ætti ég að setja default false á ný tímabil??)
+  approved?: boolean // TODO: Er þetta optional? (Ætti ég að setja default false á ný tímabil??)
 }
 
 export interface Payment {
