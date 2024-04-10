@@ -799,3 +799,13 @@ export const ArborgWorkpoint = new XroadConf({
     },
   },
 })
+
+export const OfficialJournalOfIceland = new XroadConf({
+  env: {
+    XROAD_OFFICIAL_JOURNAL_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
+      staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
+      prod: 'IS/GOV/10014/DMR-Protected/official-journal',
+    },
+  },
+})

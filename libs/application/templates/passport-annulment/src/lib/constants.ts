@@ -18,7 +18,7 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
 }
 
-export enum STATUS {
+export enum PassportStatus {
   LOST = 'lost',
   STOLEN = 'stolen',
 }
