@@ -98,18 +98,22 @@ export class MachineLicenseClient
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
     if (typeof payload === 'string') {
       let jsonLicense: VinnuvelaDto
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
         this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
-        return LicensePkPassAvailability.Unknown
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
       }
-      return this.checkLicenseValidityForPkPass(jsonLicense)
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
     }
-    return this.checkLicenseValidityForPkPass(payload as VinnuvelaDto)
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as VinnuvelaDto),
+    )
   }
 
   async getLicenses(user: User): Promise<Result<Array<VinnuvelaDto>>> {
@@ -167,7 +171,7 @@ export class MachineLicenseClient
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    const valid = await this.licenseIsValidForPkPass(license.data)
 
     if (!valid) {
       return {

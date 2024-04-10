@@ -100,18 +100,22 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
     if (typeof payload === 'string') {
       let jsonLicense: AdrDto
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
         this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
-        return LicensePkPassAvailability.Unknown
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
       }
-      return this.checkLicenseValidityForPkPass(jsonLicense)
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
     }
-    return this.checkLicenseValidityForPkPass(payload as AdrDto)
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as AdrDto),
+    )
   }
 
   async getLicenses(user: User): Promise<Result<Array<FlattenedAdrDto>>> {
@@ -168,7 +172,7 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    const valid = await this.licenseIsValidForPkPass(license.data)
 
     if (!valid) {
       return {
