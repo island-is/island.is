@@ -92,15 +92,34 @@ describe('DelegationsController', () => {
         // Act
         const response = await server
           .get(path)
-          .set('X-Query-From-National-Id', testCase.requestUser.fromNationalId)
-          .query({ scope: testCase.requestUser.scope })
+          .set('X-Query-National-Id', testCase.requestUser.nationalId)
+          .query({
+            scope: testCase.requestUser.scope,
+            direction: testCase.requestUser.direction,
+          })
 
         // Assert
         expect(response.status).toBe(200)
-        expect(response.body.totalCount).toEqual(testCase.expectedTo.length)
-        response.body.data.forEach((record: DelegationRecordDTO) => {
-          expect(testCase.expectedTo.includes(record.toNationalId)).toBe(true)
-        })
+
+        if (testCase.expectedTo) {
+          expect(response.body.totalCount).toEqual(testCase.expectedTo?.length)
+          response.body.data.forEach((record: DelegationRecordDTO) => {
+            expect(testCase.expectedTo?.includes(record.toNationalId)).toBe(
+              true,
+            )
+          })
+        }
+
+        if (testCase.expectedFrom) {
+          expect(response.body.totalCount).toEqual(
+            testCase.expectedFrom?.length,
+          )
+          response.body.data.forEach((record: DelegationRecordDTO) => {
+            expect(testCase.expectedFrom?.includes(record.fromNationalId)).toBe(
+              true,
+            )
+          })
+        }
       })
     },
   )
@@ -126,8 +145,11 @@ describe('DelegationsController', () => {
         // Act
         const response = await server
           .get(path)
-          .set('X-Query-From-National-Id', testCase.requestUser.fromNationalId)
-          .query({ scope: testCase.requestUser.scope })
+          .set('X-Query-National-Id', testCase.requestUser.nationalId)
+          .query({
+            scope: testCase.requestUser.scope,
+            direction: testCase.requestUser.direction,
+          })
 
         // Assert
         expect(response.status).toBe(400)
@@ -154,8 +176,11 @@ describe('DelegationsController', () => {
       // Act
       const response = await server
         .get(path)
-        .set('X-Query-From-National-Id', user.nationalId)
-        .query({ scope: testCase.requestUser.scope })
+        .set('X-Query-National-Id', user.nationalId)
+        .query({
+          scope: testCase.requestUser.scope,
+          direction: testCase.requestUser.direction,
+        })
 
       // Assert
       expect(response.status).toBe(403)
