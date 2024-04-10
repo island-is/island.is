@@ -88,6 +88,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'rulingModifiedHistory',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
+  'indictmentReturnedExplanation',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -276,6 +277,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.DISMISS,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
+    CaseTransition.RETURN_INDICTMENT,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -294,6 +296,12 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
         CaseTransition.REOPEN,
         CaseTransition.RECEIVE_APPEAL,
       ].includes(request.body.transition)
+    ) {
+      return false
+    }
+    if (
+      !isIndictmentCase(theCase.type) &&
+      request.body.transition === CaseTransition.RETURN_INDICTMENT
     ) {
       return false
     }

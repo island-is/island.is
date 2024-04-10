@@ -270,16 +270,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   }, [])
 
   const expirationTime = useMemo(() => {
-    const exp = data?.barcode?.exp
+    const expiresIn = data?.barcode?.expiresIn
 
-    if (exp) {
-      const expirationTime = new Date(exp)
-      // We subtract 5 seconds to make sure the barcode is still valid when switching to a new barcode
-      expirationTime.setSeconds(expirationTime.getSeconds() - 5)
+    if (expiresIn) {
+      const expDt = new Date()
+      // We subtract 7 seconds from the expiry time to make sure the barcode is still valid when switching to a new barcode
+      // The default expiration time is 60 seconds from the server
+      expDt.setSeconds(expDt.getSeconds() + expiresIn - 7)
 
-      return expirationTime
+      return expDt
     }
-  }, [data?.barcode?.exp])
+  }, [data?.barcode?.expiresIn])
 
   return (
     <View style={{ flex: 1 }}>
