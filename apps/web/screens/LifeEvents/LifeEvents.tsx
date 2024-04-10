@@ -15,12 +15,18 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   type QueryGetNamespaceArgs,
   type GetNamespaceQuery,
-  type GetLifeEventsForOverviewQuery
+  type GetLifeEventsForOverviewQuery,
 } from '@island.is/web/graphql/schema'
 import type { Screen } from '../../types'
 import { CardWithFeaturedItems, GridItems } from '@island.is/web/components'
-import { ContentLanguage, QueryGetLifeEventsForOverviewArgs } from '@island.is/api/schema'
-import { GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import {
+  ContentLanguage,
+  QueryGetLifeEventsForOverviewArgs,
+} from '@island.is/api/schema'
+import {
+  GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '../queries'
 import { ApplicationsTexts } from './LifeEvents.types'
 
 type LifeEvents = GetLifeEventsForOverviewQuery['getLifeEventsForOverview']
@@ -120,7 +126,10 @@ LifeEvents.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetLifeEventsForOverviewQuery, QueryGetLifeEventsForOverviewArgs>({
+    apolloClient.query<
+      GetLifeEventsForOverviewQuery,
+      QueryGetLifeEventsForOverviewArgs
+    >({
       query: GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY,
       variables: {
         input: {
