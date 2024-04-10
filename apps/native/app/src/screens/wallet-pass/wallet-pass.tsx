@@ -320,7 +320,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         topSpacing={informationTopSpacing}
       >
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
-          {/* Show info alert if PCard */}
+          {/* Show info alert if PCard or Ehic */}
           {(licenseType === GenericLicenseType.PCard ||
             licenseType === GenericLicenseType.Ehic) && (
             <View
