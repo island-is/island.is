@@ -335,7 +335,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  policeCaseNumber,
+                  elementId: policeCaseNumber,
                 },
               ],
             )
@@ -618,6 +618,14 @@ describe('CaseController - Transition', () => {
                   },
                   caseId,
                   body: { type: NotificationType.APPEAL_COMPLETED },
+                },
+                {
+                  type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
                 },
                 {
                   type: MessageType.DELIVERY_TO_POLICE_APPEAL,
