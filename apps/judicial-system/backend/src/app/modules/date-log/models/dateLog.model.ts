@@ -46,5 +46,5 @@ export class DateLog extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional()
-  courtDate?: Date
+  date?: Date
 }

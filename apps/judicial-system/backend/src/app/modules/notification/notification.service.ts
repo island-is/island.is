@@ -40,6 +40,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  DateType,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -77,6 +78,7 @@ import { formatCourtOfAppealJudgeAssignedEmailNotification } from '../../formatt
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
+import { DateLogService } from '../date-log'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
@@ -109,6 +111,7 @@ export class NotificationService {
     private readonly intlService: IntlService,
     private readonly defendantService: DefendantService,
     private readonly messageService: MessageService,
+    private readonly dateLogService: DateLogService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -309,44 +312,53 @@ export class NotificationService {
     }
   }
 
-  private createICalAttachment(theCase: Case): Attachment | undefined {
-    if (theCase.courtDate) {
-      const eventOrganizer = {
-        name: theCase.registrar
-          ? theCase.registrar.name
-          : theCase.judge
-          ? theCase.judge.name
-          : '',
-        email: theCase.registrar
-          ? theCase.registrar.email
-          : theCase.judge
-          ? theCase.judge.email
-          : '',
-      }
+  private async createICalAttachment(
+    theCase: Case,
+  ): Promise<Attachment | undefined> {
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
 
-      const courtDate = new Date(theCase.courtDate.toString().split('.')[0])
-      const courtEnd = new Date(theCase.courtDate.getTime() + 30 * 60000)
+    if (!courtDate || !courtDate.date) {
+      return
+    }
 
-      const icalendar = new ICalendar({
-        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutorsOffice?.name} gegn X`,
-        location: `${theCase.court?.name} - ${
-          theCase.courtRoom
-            ? `Dómsalur ${theCase.courtRoom}`
-            : 'Dómsalur hefur ekki verið skráður.'
-        }`,
-        start: courtDate,
-        end: courtEnd,
-      })
+    const eventOrganizer = {
+      name: theCase.registrar
+        ? theCase.registrar.name
+        : theCase.judge
+        ? theCase.judge.name
+        : '',
+      email: theCase.registrar
+        ? theCase.registrar.email
+        : theCase.judge
+        ? theCase.judge.email
+        : '',
+    }
 
-      return {
-        filename: 'court-date.ics',
-        content: icalendar
-          .addProperty(
-            `ORGANIZER;CN=${eventOrganizer.name}`,
-            `MAILTO:${eventOrganizer.email}`,
-          )
-          .render(),
-      }
+    const courtDateStart = new Date(courtDate.date.toString().split('.')[0])
+    const courtDateEnd = new Date(courtDate.date.getTime() + 30 * 60000)
+
+    const icalendar = new ICalendar({
+      title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutorsOffice?.name} gegn X`,
+      location: `${theCase.court?.name} - ${
+        theCase.courtRoom
+          ? `Dómsalur ${theCase.courtRoom}`
+          : 'Dómsalur hefur ekki verið skráður.'
+      }`,
+      start: courtDateStart,
+      end: courtDateEnd,
+    })
+
+    return {
+      filename: 'court-date.ics',
+      content: icalendar
+        .addProperty(
+          `ORGANIZER;CN=${eventOrganizer.name}`,
+          `MAILTO:${eventOrganizer.email}`,
+        )
+        .render(),
     }
   }
 
@@ -612,22 +624,28 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
+
     const { subject, body } = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
       theCase.courtCaseNumber,
       theCase.court?.name,
-      theCase.courtDate,
+      courtDate?.date,
       theCase.courtRoom,
       theCase.judge?.name,
       theCase.registrar?.name,
       theCase.defenderName,
       theCase.sessionArrangements,
     )
+
     const calendarInvite =
       theCase.sessionArrangements === SessionArrangements.NONE_PRESENT
         ? undefined
-        : this.createICalAttachment(theCase)
+        : await this.createICalAttachment(theCase)
 
     return this.sendEmail(
       subject,
@@ -658,13 +676,19 @@ export class NotificationService {
       notifications.prisonCourtDateEmail.subject,
       { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
     )
+
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
+
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
       theCase.prosecutorsOffice?.name,
       theCase.court?.name,
-      theCase.courtDate,
+      courtDate?.date,
       theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].gender
         : undefined,
@@ -686,18 +710,23 @@ export class NotificationService {
     )
   }
 
-  private sendCourtDateCalendarInviteEmailNotificationToDefender(
+  private async sendCourtDateCalendarInviteEmailNotificationToDefender(
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
+
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
-    const calendarInvite = this.createICalAttachment(theCase)
+    const calendarInvite = await this.createICalAttachment(theCase)
 
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
       theCase.court?.name,
       theCase.courtCaseNumber,
-      theCase.courtDate,
+      courtDate?.date,
       theCase.courtRoom,
       theCase.judge?.name,
       theCase.registrar?.name,
@@ -1185,21 +1214,33 @@ export class NotificationService {
     )
   }
 
-  private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
+  private async sendRevokedSmsNotificationToCourt(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
+
     const smsText = formatCourtRevokedSmsNotification(
       this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
       theCase.requestedCourtDate,
-      theCase.courtDate,
+      courtDate?.date,
     )
 
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
-  private sendRevokedEmailNotificationToPrison(
+  private async sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
+
     const subject = this.formatMessage(
       notifications.prisonRevokedEmail.subject,
       { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
@@ -1210,7 +1251,7 @@ export class NotificationService {
       theCase.type,
       theCase.prosecutorsOffice?.name,
       theCase.court?.name,
-      theCase.courtDate,
+      courtDate?.date,
       theCase.defenderName,
       Boolean(theCase.parentCase),
       theCase.courtCaseNumber,
@@ -1255,6 +1296,10 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
 
     const courtWasNotified =
       !isIndictmentCase(theCase.type) &&
@@ -1294,7 +1339,7 @@ export class NotificationService {
               defendant,
               defendant.defenderName,
               defendant.defenderEmail,
-              theCase.courtDate,
+              courtDate?.date,
               theCase.court?.name,
             ),
           )
@@ -1313,7 +1358,7 @@ export class NotificationService {
             theCase.defendants[0],
             theCase.defenderName,
             theCase.defenderEmail,
-            theCase.courtDate,
+            courtDate?.date,
             theCase.court?.name,
           ),
         )
@@ -1407,6 +1452,10 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      theCase.id,
+    )
 
     if (isIndictmentCase(theCase.type)) {
       const uniqDefendants = _uniqBy(
@@ -1432,7 +1481,7 @@ export class NotificationService {
           )
         }
       }
-    } else if (theCase.courtDate) {
+    } else if (courtDate?.date) {
       const shouldSend = await this.shouldSendDefenderAssignedNotification(
         theCase,
         theCase.defenderEmail,

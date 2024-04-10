@@ -9,6 +9,7 @@ import { MessageModule } from '@island.is/judicial-system/message'
 import {
   AwsS3Module,
   CourtModule,
+  DateLogModule,
   DefendantModule,
   EventLogModule,
   EventModule,
@@ -41,6 +42,7 @@ import { PDFService } from './pdf.service'
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
+    forwardRef(() => DateLogModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
   providers: [

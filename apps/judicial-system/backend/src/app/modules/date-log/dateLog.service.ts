@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
 import { DateType } from '@island.is/judicial-system/types'
 
 import { CreateDateLogDto } from './dto/createDateLog.dto'
@@ -16,14 +17,14 @@ export class DateLogService {
     private readonly logger: Logger,
   ) {}
 
-  async create(date: CreateDateLogDto): Promise<void> {
-    const { dateType, caseId, courtDate } = date
+  async create(dateLog: CreateDateLogDto): Promise<void> {
+    const { dateType, caseId, date } = dateLog
 
     try {
       await this.dateLogModel.create({
         dateType,
         caseId,
-        courtDate,
+        date,
       })
     } catch (error) {
       this.logger.error('Failed to create date log', error)

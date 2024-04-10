@@ -12,9 +12,10 @@ import {
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import { DateType, isIndictmentCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
+import { DateLogService } from '../date-log'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
@@ -84,15 +85,20 @@ export class EventService {
   constructor(
     @Inject(eventModuleConfig.KEY)
     private readonly config: ConfigType<typeof eventModuleConfig>,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private readonly dateLogService: DateLogService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
+  async postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
       if (!this.config.url) {
         return
       }
+
+      const courtDate = await this.dateLogService.findDateTypeByCaseId(
+        DateType.COURT_DATE,
+        theCase.id,
+      )
 
       const title =
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
@@ -124,7 +130,7 @@ export class EventService {
             }\n>Dómritari ${
               theCase.registrar?.name ?? 'er ekki skráður'
             }\n>Fyrirtaka ${
-              formatDate(theCase.courtDate, 'Pp') ?? 'er ekki skráð'
+              formatDate(courtDate?.date, 'Pp') ?? 'er ekki skráð'
             }`
           : ''
 

@@ -16,5 +16,5 @@ export class CreateDateLogDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly courtDate!: Date
+  readonly date!: Date
 }

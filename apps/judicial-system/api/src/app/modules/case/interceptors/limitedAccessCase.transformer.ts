@@ -21,7 +21,7 @@ const RequestSharedWithDefenderAllowedStates: {
   [RequestSharedWithDefender.NOT_SHARED]: completedCaseStates,
 }
 
-export function canDefenderViewRequest(theCase: Case) {
+export const canDefenderViewRequest = (theCase: Case) => {
   const { requestSharedWithDefender, state, courtDate } = theCase
 
   if (!requestSharedWithDefender) {
@@ -39,7 +39,7 @@ export function canDefenderViewRequest(theCase: Case) {
   )
 }
 
-export function transformLimitedAccessCase(theCase: Case): Case {
+export const transformLimitedAccessCase = (theCase: Case): Case => {
   return {
     ...theCase,
     caseResentExplanation: canDefenderViewRequest(theCase)

@@ -6,12 +6,24 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
+import { DateType } from '@island.is/judicial-system/types'
+
+import { DateLogService } from '../../date-log'
 import { canUserAccessCase } from '../filters/case.filter'
 
 @Injectable()
 export class CaseWriteGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+  constructor(private readonly dateLogService: DateLogService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
+
+    const caseId = request.params.caseId
+
+    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      DateType.COURT_DATE,
+      caseId,
+    )
 
     const user = request.user
 
@@ -25,7 +37,7 @@ export class CaseWriteGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    if (!canUserAccessCase(theCase, user, true)) {
+    if (!canUserAccessCase(theCase, user, true, courtDate?.date)) {
       throw new ForbiddenException(
         `User ${user.id} does not have write access to case ${theCase.id}`,
       )
