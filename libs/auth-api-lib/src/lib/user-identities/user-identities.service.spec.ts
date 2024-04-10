@@ -1,16 +1,31 @@
-import { Module } from '@nestjs/common'
-import { SequelizeModule, getModelToken } from '@nestjs/sequelize'
+import { Module, Type } from '@nestjs/common'
+import {
+  SequelizeModule,
+  getModelToken,
+  getConnectionToken,
+} from '@nestjs/sequelize'
 import assert from 'assert'
 import faker from 'faker'
+import { Sequelize } from 'sequelize-typescript'
 
-import { startPostgres } from '@island.is/testing/containers'
-import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
+import {
+  TestApp,
+  testServer,
+  truncate,
+  useDatabase,
+} from '@island.is/testing/nest'
+import { createNationalId } from '@island.is/testing/fixtures'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { SequelizeConfigService } from '../core/sequelizeConfig.service'
-import { DelegationType } from '../delegations/types/delegationType'
 import { Claim } from './models/claim.model'
 import { UserIdentitiesModule } from './user-identities.module'
-import { UserIdentitiesService } from './user-identities.service'
+import {
+  actorSubjectIdType,
+  audkenniProvider,
+  delegationProvider,
+  UserIdentitiesService,
+} from './user-identities.service'
 import { ClaimDto } from './dto/claim.dto'
 import { UserIdentity } from './models/user-identity.model'
 
@@ -36,19 +51,24 @@ describe('UserIdentitiesServices', () => {
   let app: TestApp
   let userIdentitiesService: UserIdentitiesService
   let claimModel: typeof Claim
+  let userIdentityModel: typeof UserIdentity
+  let sequelize: Sequelize
 
   beforeAll(async () => {
     app = await testServer({
       appModule: TestModule,
       hooks: [
-        // SQLite doesn't support two transactions at a time so we use postgres here
+        // SQLite doesn't support two transactions at a time, so we use postgres here
         // to be able to test parallel requests. Starting postgres is done in ../test/globalSetup.ts.
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
     })
 
+    sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+
     userIdentitiesService = app.get(UserIdentitiesService)
     claimModel = app.get(getModelToken(Claim))
+    userIdentityModel = app.get(getModelToken(UserIdentity))
 
     const createdIdentity = await userIdentitiesService.create({
       subjectId,
@@ -79,7 +99,7 @@ describe('UserIdentitiesServices', () => {
       {
         ...claimBase,
         type: 'delegation',
-        value: DelegationType.ProcurationHolder,
+        value: AuthDelegationType.ProcurationHolder,
       },
     ]
 
@@ -150,6 +170,127 @@ describe('UserIdentitiesServices', () => {
         where: { subjectId },
       })
       expect(updatedClaims).toHaveLength(0)
+    })
+  })
+
+  describe('findOrCreateSubjectId', () => {
+    const userIdentitySubjectId1 = faker.datatype.uuid()
+    const toNationalId = createNationalId('person')
+
+    beforeAll(async () => {
+      // User identity with audkenni provider
+      await userIdentitiesService.create({
+        subjectId: userIdentitySubjectId1,
+        name: faker.name.findName(),
+        providerName: audkenniProvider,
+        providerSubjectId: `IS-${toNationalId}`,
+        active: true,
+      })
+    })
+
+    afterAll(async () => {
+      await truncate(sequelize)
+    })
+
+    it('should throw NotFoundException if actor (toNationalId) not found', async () => {
+      // Arrange
+      const fromNationalId = createNationalId('person')
+      const toNationalId = createNationalId('person')
+
+      // Act
+      const act = async () =>
+        userIdentitiesService.findOrCreateSubjectId({
+          fromNationalId,
+          toNationalId,
+        })
+
+      // Assert
+      await expect(act()).rejects.toThrowError('Actor not found')
+    })
+
+    it('should return subjectId if delegation exists', async () => {
+      // Arrange
+      const fromNationalId = createNationalId('person')
+      const userIdentitySubjectId2 = faker.datatype.uuid()
+
+      // User identity with delegation provider
+      await userIdentitiesService.create({
+        subjectId: userIdentitySubjectId2,
+        name: faker.name.findName(),
+        providerName: delegationProvider,
+        providerSubjectId: `IS-${fromNationalId}`,
+        active: true,
+      })
+
+      // subject id claim
+      await claimModel.create({
+        subjectId: userIdentitySubjectId2,
+        type: actorSubjectIdType,
+        value: userIdentitySubjectId1,
+        valueType: faker.random.word(),
+        issuer: faker.random.word(),
+        originalIssuer: faker.random.word(),
+      })
+
+      // Act
+      const subjectId = await userIdentitiesService.findOrCreateSubjectId({
+        toNationalId,
+        fromNationalId,
+      })
+
+      // Assert
+      expect(subjectId).toEqual(userIdentitySubjectId2)
+    })
+
+    it('should create subjectId if delegation does not exist', async () => {
+      // Arrange
+      const fromNationalId = createNationalId('person')
+
+      // Act
+      const subjectId = await userIdentitiesService.findOrCreateSubjectId({
+        toNationalId,
+        fromNationalId,
+      })
+
+      const delegation = await userIdentityModel.findOne({
+        where: {
+          providerName: delegationProvider,
+          providerSubjectId: `IS-${fromNationalId}`,
+        },
+        include: [
+          {
+            model: Claim,
+            where: { type: actorSubjectIdType, value: userIdentitySubjectId1 },
+          },
+        ],
+      })
+
+      // Assert
+      expect(subjectId).not.toBeNull()
+      expect(delegation).not.toBeNull()
+      expect(delegation?.subjectId).toEqual(subjectId)
+      expect(delegation?.claims).toHaveLength(1)
+      expect(delegation?.claims?.[0]?.issuer).toEqual('delegationindex')
+      expect(delegation?.claims?.[0]?.originalIssuer).toEqual('delegationindex')
+    })
+
+    it('should return null if creating delegation fails', async () => {
+      // Arrange
+      const fromNationalId = createNationalId('person')
+
+      // make create fail
+      jest
+        .spyOn(userIdentitiesService, 'create')
+        .mockResolvedValueOnce(undefined)
+
+      // Act
+      const subjectId = await userIdentitiesService.findOrCreateSubjectId({
+        toNationalId,
+        fromNationalId,
+      })
+
+      // Assert
+      expect(subjectId).toBeNull()
     })
   })
 })

@@ -139,23 +139,6 @@ export class UniversityGatewayApi {
       costInformationEn: item.costInformationEn,
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
-      courses: item.courses.map((c) => ({
-        id: c.details.id,
-        externalId: c.details.externalId,
-        nameIs: c.details.nameIs,
-        nameEn: c.details.nameEn,
-        credits: c.details.credits,
-        descriptionIs: c.details.descriptionIs,
-        descriptionEn: c.details.descriptionEn,
-        externalUrlIs: c.details.externalUrlIs,
-        externalUrlEn: c.details.externalUrlEn,
-        requirement: c.requirement.toString(),
-        semesterYear: c.semesterYear,
-        semesterYearNumber: c.semesterYear
-          ? item.startingSemesterYear - c.semesterYear + 1
-          : undefined,
-        semesterSeason: c.semesterSeason.toString(),
-      })),
       extraApplicationFields: item.extraApplicationFields,
     }
   }

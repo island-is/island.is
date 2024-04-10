@@ -38,6 +38,7 @@ import {
 } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
@@ -81,6 +82,7 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
+  const { activeLocale } = useI18n()
 
   useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
@@ -131,7 +133,9 @@ const Home: Screen<HomeProps> = ({
       searchTitle={searchTitle}
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
       indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}

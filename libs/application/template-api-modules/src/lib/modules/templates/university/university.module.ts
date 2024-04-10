@@ -8,6 +8,7 @@ import {
   UniversityGatewayApiClientConfig,
   UniversityGatewayApiClientModule,
 } from '@island.is/clients/university-gateway-api'
+import { InnaClientModule } from '@island.is/clients/inna'
 
 export class UniversityModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -16,6 +17,7 @@ export class UniversityModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         NationalRegistryClientModule,
+        InnaClientModule,
         UniversityGatewayApiClientModule,
         ConfigModule.forRoot({
           isGlobal: true,

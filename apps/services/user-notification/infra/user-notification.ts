@@ -18,7 +18,7 @@ const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 
 export const userNotificationServiceSetup = (services: {
-  userProfileApi: ServiceBuilder<typeof serviceWorkerName>
+  userProfileApi: ServiceBuilder<'service-portal-api'>
 }): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(imageName)
@@ -129,6 +129,15 @@ export const userNotificationWorkerSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      AUTH_DELEGATION_API_URL: {
+        dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        staging:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        prod: 'https://auth-delegation-api.internal.innskra.island.is',
+      },
+      AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
+        '@island.is/auth/delegations/index:system',
+      ]),
     })
     .resources({
       limits: {

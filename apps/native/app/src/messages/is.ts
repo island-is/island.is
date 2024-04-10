@@ -359,16 +359,16 @@ export const is = {
   'licenseScanner.helperMessage': 'Snúðu símanum að strikamerkinu',
   'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
+  'licenseScanner.errorUnknown': 'Óþekkt villa',
+  'licenseScanner.invalidBarcode': 'Ógilt strikamerki',
+  'licenseScanner.errorNetwork': 'Net villa',
   'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
-  'licenseScannerDetail.invalidBarcode': 'Ógilt strikamerki',
   'licenseScannerResult.androidHelp':
     'Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.',
   'licenseScannerResult.iosHelp':
     'Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið því næst niður með fingur á miðjum skjánum til þess að uppfæra strikamerkið.',
 
   // license scan detail
-  'licenseScanDetail.errorUnknown': 'Óþekkt villa',
-  'licenseScanDetail.errorNetwork': 'Net villa',
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
@@ -401,6 +401,9 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
+  'licenseDetail.ehic.alert.description':
+    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',

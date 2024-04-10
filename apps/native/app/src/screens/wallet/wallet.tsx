@@ -1,4 +1,5 @@
 import { Alert, EmptyList, Skeleton, TopLine } from '@ui'
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -6,13 +7,13 @@ import {
   FlatList,
   Image,
   ListRenderItemInfo,
-  Platform,
   RefreshControl,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
+
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
@@ -27,7 +28,9 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
+import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
+import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
 
@@ -88,7 +91,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
-  const loadingTimeout = useRef<NodeJS.Timeout>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
@@ -114,7 +117,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           showPCard ? GenericLicenseType.PCard : null,
           showEhic ? GenericLicenseType.Ehic : null,
           showHuntingLicense ? GenericLicenseType.HuntingLicense : null,
-        ].filter(Boolean) as GenericLicenseType[],
+        ].filter(isDefined),
       },
     },
   })
@@ -166,7 +169,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         domain: 'licences',
       }
     })
-    if (Platform.OS === 'ios') {
+    if (isIos) {
       SpotlightSearch.indexItems(indexItems)
     }
   }, [licenseItems])
@@ -199,8 +202,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           <View style={{ paddingHorizontal: 16 }}>
             <Skeleton
               active
-              backgroundColor={theme.color.blue100}
-              overlayColor={theme.color.blue200}
+              backgroundColor={{
+                dark: theme.shades.dark.shade300,
+                light: theme.color.blue100,
+              }}
+              overlayColor={{
+                dark: theme.shades.dark.shade200,
+                light: theme.color.blue200,
+              }}
               overlayOpacity={1}
               height={111}
               style={{
@@ -225,12 +234,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const keyExtractor = useCallback((item: FlatListItem, index: number) => {
     const fallback = String(index)
-    if (item.__typename === 'GenericUserLicense') {
+    const type = item.__typename
+
+    if (type === 'GenericUserLicense') {
       return item.license.type ?? fallback
-    }
-    if (item.__typename === 'IdentityDocumentModel') {
+    } else if (type === 'IdentityDocumentModel') {
       return item.number ?? fallback
     }
+
     return (item as { id: string })?.id ?? fallback
   }, [])
 
@@ -270,7 +281,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           },
         )}
         ListHeaderComponent={
-          Platform.OS === 'ios' ? (
+          isIos ? (
             <View style={{ marginBottom: 16 }}>
               <Alert
                 type="info"

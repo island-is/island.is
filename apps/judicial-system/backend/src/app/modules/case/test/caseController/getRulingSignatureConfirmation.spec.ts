@@ -7,6 +7,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
   CaseOrigin,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -134,8 +135,13 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.RULING },
+        },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -168,9 +174,14 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_POLICE, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.RULING },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -195,9 +206,14 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_POLICE, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.RULING },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])
     })
   })
