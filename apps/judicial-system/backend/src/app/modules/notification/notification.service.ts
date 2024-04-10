@@ -2316,13 +2316,6 @@ export class NotificationService {
   //#endregion
 
   //#region API
-  async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
-    return this.notificationModel.findAll({
-      where: { caseId: theCase.id },
-      order: [['created', 'DESC']],
-    })
-  }
-
   async sendCaseNotification(
     type: NotificationType,
     theCase: Case,

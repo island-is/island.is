@@ -4,21 +4,24 @@ import {
   Application,
   ApplicationConfigurations,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  InstitutionNationalIds,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
 import { Features } from '@island.is/feature-flags'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 export enum ApplicationStates {
   REQUIREMENTS = 'requirements',
   DRAFT = 'draft',
+  SUBMITTED = 'submitted',
   COMPLETE = 'complete',
 }
 
@@ -48,6 +51,19 @@ const OJOITemplate: ApplicationTemplate<
   ],
   dataSchema: dataSchema,
   allowMultipleApplicationsInDraft: true,
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+
+        set(application, 'assignees', [
+          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+        ])
+
+        return context
+      }),
+    },
+  },
   stateMachineConfig: {
     initial: ApplicationStates.REQUIREMENTS,
     states: {
@@ -119,12 +135,13 @@ const OJOITemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-              target: ApplicationStates.COMPLETE,
+              target: ApplicationStates.SUBMITTED,
             },
           ],
         },
       },
-      [ApplicationStates.COMPLETE]: {
+      [ApplicationStates.SUBMITTED]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',
