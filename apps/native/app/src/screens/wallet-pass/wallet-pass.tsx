@@ -269,7 +269,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     void res.refetch()
   }, [])
 
-  const expirationTime = useMemo(() => {
+  const getExpirationTime = () => {
     const expiresIn = data?.barcode?.expiresIn
 
     if (expiresIn) {
@@ -280,7 +280,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
       return expDt
     }
-  }, [data?.barcode?.expiresIn])
+  }
 
   const { loading } = res
 
@@ -308,7 +308,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               value: data?.barcode?.token,
               loading: loading && !data?.barcode,
               expirationTimeCallback,
-              expirationTime,
+              expirationTime: getExpirationTime(),
               width: barcodeWidth,
               height: barcodeHeight,
             },
