@@ -405,11 +405,15 @@ export class DelegationsIndexService {
               delegation.subjectId,
           )?.subjectId ?? null
 
-        if (!subjectId) {
-          subjectId = await this.userIdentitiesService.findOrCreateSubjectId({
-            toNationalId: d.toNationalId,
-            fromNationalId: d.fromNationalId,
-          })
+        try {
+          if (!subjectId) {
+            subjectId = await this.userIdentitiesService.findOrCreateSubjectId({
+              toNationalId: d.toNationalId,
+              fromNationalId: d.fromNationalId,
+            })
+          }
+        } catch {
+          return d
         }
 
         return { ...d, subjectId }
