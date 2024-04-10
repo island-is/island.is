@@ -293,7 +293,6 @@ export class CaseController {
       case CaseTransition.DELETE:
         update.parentCaseId = null
         break
-
       case CaseTransition.SUBMIT:
         if (isIndictmentCase(theCase.type)) {
           if (!user.canConfirmIndictment) {
@@ -392,6 +391,15 @@ export class CaseController {
             `User ${user.id} does not have permission to reject indictments`,
           )
         }
+        break
+      case CaseTransition.ASK_FOR_CONFIRMATION:
+        if (theCase.indictmentReturnedExplanation) {
+          update.indictmentReturnedExplanation = ''
+        }
+        break
+      case CaseTransition.RETURN_INDICTMENT:
+        update.courtCaseNumber = ''
+        break
     }
 
     const updatedCase = await this.caseService.update(
