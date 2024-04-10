@@ -147,7 +147,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const licenseType = data?.license?.type
   const barcodeWidth =
     screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
-  const barcodeHeight = barcodeWidth / 3.3
+  const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
   const onAddPkPass = async () => {
