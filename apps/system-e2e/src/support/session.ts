@@ -22,8 +22,14 @@ async function ensureCognitoSessionIfNeeded(
   authUrlPrefix = '',
 ) {
   const cognitoSessionValidation = await page.request.get(homeUrl)
-  if ( cognitoSessionValidation.url().startsWith('https://cognito.shared.devland.is/')
-    || cognitoSessionValidation.url().startsWith('https://ids-users.auth.eu-west-1.amazoncognito.com/')) {
+  if (
+    cognitoSessionValidation
+      .url()
+      .startsWith('https://cognito.shared.devland.is/') ||
+    cognitoSessionValidation
+      .url()
+      .startsWith('https://ids-users.auth.eu-west-1.amazoncognito.com/')
+  ) {
     await page.goto(homeUrl)
     await cognitoLogin(page, homeUrl, authUrlPrefix)
   } else {
