@@ -33,6 +33,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { DateLog } from '../../date-log'
 import { Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
@@ -40,7 +41,6 @@ import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
-import { DateLog } from '../../date-log'
 
 @Table({
   tableName: 'case',

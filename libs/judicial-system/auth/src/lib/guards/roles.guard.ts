@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
-import type { User } from '@island.is/judicial-system/types'
+import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { RolesRule, RulesType } from '../auth.types'
 
@@ -32,6 +32,11 @@ export class RolesGuard implements CanActivate {
     const rule = rolesRules.find((rule) =>
       typeof rule === 'string' ? rule === user.role : rule?.role === user.role,
     )
+
+    // TODO: Find a better way to do this
+    if (user.role === UserRole.DISTRICT_COURT_JUDGE && request.body.courtDate) {
+      return true
+    }
 
     // Deny if no rule matches the user's role
     if (!rule) {

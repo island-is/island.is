@@ -281,7 +281,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
   canActivate: (request) => {
     const theCase = request.case
 
-    // Deny if the case is missing - shuould never happen
+    // Deny if the case is missing - should never happen
     if (!theCase) {
       return false
     }

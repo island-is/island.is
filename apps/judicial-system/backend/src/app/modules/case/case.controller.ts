@@ -95,6 +95,7 @@ import {
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { TransitionInterceptor } from './interceptors/transition.interceptor'
+import { UpdateCaseInterceptor } from './interceptors/updateCase.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -162,6 +163,7 @@ export class CaseController {
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
+  @UseInterceptors(UpdateCaseInterceptor)
   async update(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
