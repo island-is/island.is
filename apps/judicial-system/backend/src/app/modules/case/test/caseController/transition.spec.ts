@@ -95,19 +95,20 @@ describe('CaseController - Transition', () => {
   })
 
   each`
-      transition                | oldState                                  | newState
-      ${CaseTransition.OPEN}    | ${CaseState.NEW}                          | ${CaseState.DRAFT}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DRAFT}                        | ${CaseState.SUBMITTED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.WAITING_FOR_CONFIRMATION}     | ${CaseState.SUBMITTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.SUBMITTED}                    | ${CaseState.RECEIVED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.RECEIVED}                     | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.RECEIVED}                     | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.RECEIVED}                     | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.NEW}                          | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.DRAFT}                        | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED}                    | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}                     | ${CaseState.DELETED}
-      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}                     | ${CaseState.RECEIVED}
+      transition                          | oldState                                  | newState
+      ${CaseTransition.OPEN}              | ${CaseState.NEW}                          | ${CaseState.DRAFT}
+      ${CaseTransition.SUBMIT}            | ${CaseState.DRAFT}                        | ${CaseState.SUBMITTED}
+      ${CaseTransition.SUBMIT}            | ${CaseState.WAITING_FOR_CONFIRMATION}     | ${CaseState.SUBMITTED}
+      ${CaseTransition.RECEIVE}           | ${CaseState.SUBMITTED}                    | ${CaseState.RECEIVED}
+      ${CaseTransition.ACCEPT}            | ${CaseState.RECEIVED}                     | ${CaseState.ACCEPTED}
+      ${CaseTransition.REJECT}            | ${CaseState.RECEIVED}                     | ${CaseState.REJECTED}
+      ${CaseTransition.DISMISS}           | ${CaseState.RECEIVED}                     | ${CaseState.DISMISSED}
+      ${CaseTransition.DELETE}            | ${CaseState.NEW}                          | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}            | ${CaseState.DRAFT}                        | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}            | ${CaseState.SUBMITTED}                    | ${CaseState.DELETED}
+      ${CaseTransition.DELETE}            | ${CaseState.RECEIVED}                     | ${CaseState.DELETED}
+      ${CaseTransition.REOPEN}            | ${CaseState.ACCEPTED}                     | ${CaseState.RECEIVED}
+      ${CaseTransition.RETURN_INDICTMENT} | ${CaseState.RECEIVED}                     | ${CaseState.DRAFT}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -166,6 +167,10 @@ describe('CaseController - Transition', () => {
               state: newState,
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
+              courtCaseNumber:
+                transition === CaseTransition.RETURN_INDICTMENT
+                  ? ''
+                  : undefined,
               rulingDate: [
                 CaseTransition.ACCEPT,
                 CaseTransition.REJECT,
