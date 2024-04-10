@@ -131,6 +131,7 @@ export class NotificationsService {
       const organizationArg = notification.args.find(
         (arg) => arg.key === 'organization',
       )
+      
       // if senderId is set and args contains organization, fetch organizationtitle from senderId
       if (notification.senderId && organizationArg) {
         try {
@@ -139,7 +140,7 @@ export class NotificationsService {
             locale,
           )
           if (organizationTitle) {
-            console.log('found a org title ', organizationTitle)
+            console.log('found a org title ', notification.senderId, organizationTitle)
             organizationArg.value = organizationTitle
           } else {
             this.logger.warn('title not found ', {
