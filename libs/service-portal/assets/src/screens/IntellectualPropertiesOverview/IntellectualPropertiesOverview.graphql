@@ -1,7 +1,5 @@
-query GetIntellectualProperties(
-  $input: IntellectualPropertiesCollectionInput!
-) {
-  intellectualProperties(input: $input) {
+query GetIntellectualProperties {
+  intellectualProperties {
     __typename
     totalCount
     items {

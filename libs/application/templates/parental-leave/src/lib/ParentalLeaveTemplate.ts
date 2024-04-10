@@ -1277,6 +1277,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
           'setNavId',
+          'clearChangedPeriodsNEmployers',
         ],
         exit: [
           'clearTemp',
@@ -2132,6 +2133,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
         const actionName = findActionName(context)
         set(answers, 'actionName', actionName)
+
+        return context
+      }),
+      clearChangedPeriodsNEmployers: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'changeEmployer')
+        unset(answers, 'changePeriods')
+
         return context
       }),
       setResidenceGrant: assign((context) => {

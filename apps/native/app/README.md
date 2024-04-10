@@ -18,6 +18,55 @@ yarn run ios
 
 ### 2b. Building for Android
 
+Follow documentation for setting up android [here](https://reactnative.dev/docs/environment-setup?platform=android&guide=native).
+
+Open the project in android studio and then local.properties should be created, if you want to skip that, make sure to:
+
+Add `local.properties` file to `/apps/native/app/android`
+
+Add `google-services.json` file to `/apps/native/app/android/app`
+
+Open up an android emulator or connect a physical device
+
+in `/apps/native/app/android` run the following commands:
+
+```ts
+// Build the project
+./gradlew assembleDebug
+```
+
+If using an **emulator** do the following:
+
+```ts
+// Move to device
+adb install ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+```
+
+If using a **physical device** do the following:
+
+```ts
+// List devices and their ids
+adb devices
+
+// Use deviceId from previous command to move to physical device
+adb -s <deviceId> install  ./app/build/outputs/apk/dev/debug/app-dev-debug.apk*
+```
+
+For both emulators and physical devices:
+
+```ts
+// fix port for device
+adb reverse tcp:8081 tcp:8081
+```
+
+and finally
+
+```bash
+yarn start
+```
+
+or
+
 ```bash
 yarn run android
 ```
