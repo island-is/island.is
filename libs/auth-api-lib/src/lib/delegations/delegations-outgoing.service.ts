@@ -14,6 +14,7 @@ import { NoContentException } from '@island.is/nest/problem'
 import { NotificationsApi } from '@island.is/clients/user-notification'
 
 import { ApiScope } from '../resources/models/api-scope.model'
+import { ScopeService } from '../resources/scope.service'
 import { DelegationScopeService } from './delegation-scope.service'
 import {
   CreateDelegationDTO,
@@ -32,12 +33,10 @@ import { getDelegationNoActorWhereClause } from './utils/delegations'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { DelegationDirection } from './types/delegationDirection'
 import { DelegationsIndexService } from './delegations-index.service'
-import { ScopeService } from '../resources/scope.service'
 import {
   NEW_DELEGATION_TEMPLATE_ID,
   UPDATED_DELEGATION_TEMPLATE_ID,
 } from './constants'
-import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -248,7 +247,11 @@ export class DelegationsOutgoingService {
     return newDelegation
   }
 
-  private async notifyDelegationUpdate(user: User, delegation: DelegationDTO) {
+  private async notifyDelegationUpdate(
+    user: User,
+    delegation: DelegationDTO,
+    hasExistingScopes: boolean,
+  ) {
     try {
       const allowDelegationNotification =
         await this.featureFlagService.getValue(
@@ -266,20 +269,28 @@ export class DelegationsOutgoingService {
       }
 
       const fromDisplayName = await this.namesService.getUserName(user)
-      const scopes = delegation.scopes.map((scope) => scope.displayName) ?? []
       const domainName = delegation.domainName
 
-      const hasExistingScopes = scopes.length > 0
+      const domainNameIs = await this.delegationResourceService.findOneDomain(
+        user,
+        domainName,
+        'is',
+      )
+      const domainNameEn = await this.delegationResourceService.findOneDomain(
+        user,
+        domainName,
+        'en',
+      )
 
       const args = [
         { key: 'name', value: fromDisplayName },
         {
-          key: 'scopes',
-          value: scopes.join(', '),
+          key: 'domainNameIs',
+          value: domainNameIs.displayName,
         },
         {
-          key: 'domainName',
-          value: domainName,
+          key: 'domainNameEn',
+          value: domainNameEn.displayName,
         },
       ]
 
@@ -369,7 +380,9 @@ export class DelegationsOutgoingService {
       delegation.toNationalId,
     )
 
-    this.notifyDelegationUpdate(user, delegation)
+    const hasExistingScopes =
+      (currentDelegation.delegationScopes?.length ?? 0) > 0
+    this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
 
     return delegation
   }
