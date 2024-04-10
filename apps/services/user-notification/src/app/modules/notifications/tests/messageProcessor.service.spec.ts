@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { MessageProcessorService } from './messageProcessor.service'
+import { MessageProcessorService } from '../messageProcessor.service'
 import { LoggingModule } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { HnippTemplate } from './dto/hnippTemplate.response'
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { HnippTemplate } from '../dto/hnippTemplate.response'
+import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
-import { NotificationsService } from './notifications.service'
+import { NotificationsService } from '../notifications.service'
 import {
   UserProfile,
   UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
 import { getModelToken } from '@nestjs/sequelize'
-import { Notification } from './notification.model'
+import { Notification } from '../notification.model'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',

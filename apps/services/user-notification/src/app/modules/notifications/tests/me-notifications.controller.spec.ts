@@ -1,8 +1,8 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { AppModule } from '../../app.module'
+import { AppModule } from '../../../app.module'
 import { setupAppWithoutAuth } from '@island.is/testing/nest'
-import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 
 describe('MeNotificationsController', () => {
   let app: INestApplication
