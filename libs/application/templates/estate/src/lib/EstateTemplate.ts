@@ -170,7 +170,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.done]: {
         meta: {
           name: 'Approved',
-          status: 'approved',
+          status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({

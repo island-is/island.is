@@ -378,6 +378,7 @@ export const transformApplicationToParentalLeaveDTO = (
     employerLastSixMonths,
     language,
     otherParentRightOfAccess,
+    comment,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -429,6 +430,7 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
+    applicationComment: comment,
     employers:
       (applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits) ||
       ((applicationType === PARENTAL_GRANT ||

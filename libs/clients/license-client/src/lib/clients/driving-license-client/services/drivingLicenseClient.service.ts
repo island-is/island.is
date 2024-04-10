@@ -24,6 +24,7 @@ import {
 } from '../../../licenseClient.type'
 import { DrivingLicenseVerifyExtraData } from '../drivingLicenseClient.type'
 import { createPkPassDataInput } from '../drivingLicenseMapper'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -36,37 +37,49 @@ export class DrivingLicenseClient
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private drivingApi: DrivingLicenseApi,
     private smartApi: SmartSolutionsApi,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   clientSupportsPkPass = true
   type = LicenseType.DrivingLicense
 
-  private checkLicenseValidity(
+  private async checkLicenseValidity(
     license: DriversLicense,
-  ): LicensePkPassAvailability {
-    if (!license || license.photo === undefined) {
+    user?: User,
+  ): Promise<LicensePkPassAvailability> {
+    const photoCheckDisabled = user
+      ? await this.featureFlagService.getValue(
+          Features.licenseServiceDrivingLicencePhotoCheckDisabled,
+          false,
+          user,
+        )
+      : false
+
+    if (!license || (!photoCheckDisabled && !license.photo)) {
       return LicensePkPassAvailability.Unknown
     }
 
-    if (!license.photo.image) {
-      return LicensePkPassAvailability.NotAvailable
-    }
+    if (photoCheckDisabled || license.photo?.image)
+      return LicensePkPassAvailability.Available
 
-    return LicensePkPassAvailability.Available
+    return LicensePkPassAvailability.NotAvailable
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+  licenseIsValidForPkPass(
+    payload: unknown,
+    user?: User,
+  ): Promise<LicensePkPassAvailability> {
     if (typeof payload === 'string') {
       let jsonLicense: DriversLicense
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
         this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
-        return LicensePkPassAvailability.Unknown
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
       }
-      return this.checkLicenseValidity(jsonLicense)
+      return this.checkLicenseValidity(jsonLicense, user)
     }
-    return this.checkLicenseValidity(payload as DriversLicense)
+    return this.checkLicenseValidity(payload as DriversLicense, user)
   }
 
   private fetchCategories = () => this.drivingApi.getRemarksCodeTable()
@@ -188,7 +201,7 @@ export class DrivingLicenseClient
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license[0].data)
+    const valid = await this.licenseIsValidForPkPass(license[0].data, user)
 
     if (!valid) {
       return {

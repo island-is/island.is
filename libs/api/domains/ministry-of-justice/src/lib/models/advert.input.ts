@@ -1,11 +1,11 @@
 import { InputType, Field, registerEnumType } from '@nestjs/graphql'
 
-export enum JournalSignatureBodyTypeEnum {
+export enum AdvertSignatureBodyTypeEnum {
   Hefbundin = 'Hefðbundin',
   Nefnd = 'Nefnd',
 }
 
-registerEnumType(JournalSignatureBodyTypeEnum, {
+registerEnumType(AdvertSignatureBodyTypeEnum, {
   name: 'MinistryOfJusticeAdvertSignatureType',
 })
 
@@ -93,8 +93,8 @@ export class AdvertSignatureData {
 }
 @InputType('MinistryOfJusticeAdvertSignature')
 export class AdvertSignature {
-  @Field(() => JournalSignatureBodyTypeEnum)
-  type!: JournalSignatureBodyTypeEnum
+  @Field(() => AdvertSignatureBodyTypeEnum)
+  type!: AdvertSignatureBodyTypeEnum
 
   @Field(() => String, { nullable: true })
   additional?: string

@@ -35,10 +35,8 @@ import { UniversityGatewayWorkerService } from './worker.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../environments'
 import { InternalProgramService } from '../modules/program/internalProgram.service'
-import { InternalCourseService } from '../modules/course/internalCourse.service'
 import { InternalApplicationService } from '../modules/application/internalApplication.service'
 import { University } from '../modules/university/model/university'
-import { Course } from '../modules/course/model/course'
 import { ProgramCourse } from '../modules/program/model/programCourse'
 import { ProgramModeOfDelivery } from '../modules/program/model/programModeOfDelivery'
 import { Program } from '../modules/program/model/program'
@@ -57,7 +55,6 @@ import { Application } from '../modules/application/model/application'
     }),
     SequelizeModule.forFeature([
       University,
-      Course,
       Program,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
@@ -89,7 +86,6 @@ import { Application } from '../modules/application/model/application'
   ],
   providers: [
     InternalProgramService,
-    InternalCourseService,
     InternalApplicationService,
     UniversityGatewayWorkerService,
     UniversityApplicationService,

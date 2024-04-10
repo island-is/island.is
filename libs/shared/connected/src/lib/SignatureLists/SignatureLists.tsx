@@ -27,7 +27,7 @@ export const SignatureLists: FC<
   React.PropsWithChildren<SignatureListsProps>
 > = ({ slice }) => {
   const { collection, loading } = useGetCurrentCollection()
-  const { openLists, openListsLoading } = useGetOpenLists(collection?.id || '')
+  const { openLists, openListsLoading } = useGetOpenLists(collection)
   const t = useLocalization(slice.json)
 
   return !loading && !openListsLoading ? (
