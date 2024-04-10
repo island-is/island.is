@@ -100,7 +100,6 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
         variables: {
           params: {
             search: '',
-            page: '1',
             department: state.department,
           },
         },
