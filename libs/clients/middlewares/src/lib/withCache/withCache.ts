@@ -12,6 +12,7 @@ import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
 import { CacheResponse } from './CacheResponse'
 
 export const COMMON_HEADER_PATTERNS = ['X-Param', 'X-Query']
+const CACHE_KEY_SEPARATOR = '#'
 
 const DEBUG_NAMES = (process.env.ENHANCED_FETCH_DEBUG_CACHE ?? '')
   .split(',')
@@ -281,14 +282,22 @@ export function calculateHeadersCacheKey(requestHeaders: Headers): string {
 
   for (const [name, value] of requestHeaders) {
     for (const pattern of lowerCasedPatterns) {
-      if (name.toLowerCase().startsWith(pattern)) {
-        cacheableHeadersValues.push(value)
+      const nameLower = name.toLowerCase()
+      if (nameLower.startsWith(pattern)) {
+        cacheableHeadersValues.push(
+          `${nameLower}=${value.replace(
+            CACHE_KEY_SEPARATOR,
+            CACHE_KEY_SEPARATOR.repeat(2),
+          )}`,
+        )
       }
     }
   }
 
   return cacheableHeadersValues.length > 0
-    ? `#${cacheableHeadersValues.join('#')}`
+    ? `${CACHE_KEY_SEPARATOR}${cacheableHeadersValues.join(
+        CACHE_KEY_SEPARATOR,
+      )}`
     : ''
 }
 

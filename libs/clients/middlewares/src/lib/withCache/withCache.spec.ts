@@ -707,16 +707,19 @@ describe('EnhancedFetch#withCache', () => {
         'X-Param-Key': '123',
         Accept: 'application/json',
       })
-      expect(calculateHeadersCacheKey(headers)).toBe('#123')
+      expect(calculateHeadersCacheKey(headers)).toBe('#x-param-key=123')
     })
 
     it('should correctly calculate the cache key for multiple matching headers', () => {
       const headers = new Headers({
+        // Intentionally use the same value to assert that the key is unique
         'X-Param-Key': '123',
-        'X-Query-Key': '456',
+        'X-Query-Key': '123',
         Accept: 'application/json',
       })
-      expect(calculateHeadersCacheKey(headers)).toBe('#123#456')
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-param-key=123#x-query-key=123',
+      )
     })
 
     it('should be case-insensitive when matching header names', () => {
@@ -725,7 +728,9 @@ describe('EnhancedFetch#withCache', () => {
         'x-query-key': '456',
         Accept: 'application/json',
       })
-      expect(calculateHeadersCacheKey(headers)).toBe('#123#456')
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-param-key=123#x-query-key=456',
+      )
     })
 
     it('should handle unusual characters in header values', () => {
@@ -733,7 +738,9 @@ describe('EnhancedFetch#withCache', () => {
         'X-Param-Key': '123$%^&*',
         'X-Query-Key': '456@!~',
       })
-      expect(calculateHeadersCacheKey(headers)).toBe('#123$%^&*#456@!~')
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-param-key=123$%^&*#x-query-key=456@!~',
+      )
     })
 
     it('should handle extremely long values in headers', () => {
@@ -741,7 +748,40 @@ describe('EnhancedFetch#withCache', () => {
       const headers = new Headers({
         'X-Param-Key': longValue,
       })
-      expect(calculateHeadersCacheKey(headers)).toBe(`#${longValue}`)
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        `#x-param-key=${longValue}`,
+      )
+    })
+
+    it('should handle two different request with different optional query parameters with out cache key collision', () => {
+      // Arrange
+      const headers1 = new Headers({
+        'X-Query-Key1': '123',
+      })
+      const headers2 = new Headers({
+        'X-Query-Key2': '123',
+      })
+
+      // Act
+      const cacheKey1 = calculateHeadersCacheKey(headers1)
+      const cacheKey2 = calculateHeadersCacheKey(headers2)
+
+      // Assert
+      expect(cacheKey1).toBe('#x-query-key1=123')
+      expect(cacheKey2).toBe('#x-query-key2=123')
+      expect(cacheKey1).not.toBe(cacheKey2)
+    })
+
+    it('should escape # in header values', () => {
+      // Arrange
+      const headers = new Headers({
+        'X-Query-Key1': '123#x-query-key2=123',
+      })
+
+      // Act & Assert
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-query-key1=123##x-query-key2=123',
+      )
     })
   })
 })
