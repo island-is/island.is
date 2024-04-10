@@ -282,6 +282,13 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     }
   }, [data?.barcode?.expiresIn])
 
+  const { loading } = res
+
+  const informationTopSpacing =
+    allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP
+      : 0
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
@@ -299,7 +306,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           {...(allowLicenseBarcode && {
             barcode: {
               value: data?.barcode?.token,
-              loading: res.loading && !data?.barcode,
+              loading: loading && !data?.barcode,
               expirationTimeCallback,
               expirationTime,
               width: barcodeWidth,
@@ -310,9 +317,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       </LicenseCardWrapper>
       <Information
         contentInset={{ bottom: 162 }}
-        topSpacing={
-          allowLicenseBarcode ? barcodeHeight + LICENSE_CARD_ROW_GAP : 0
-        }
+        topSpacing={informationTopSpacing}
       >
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
           {/* Show info alert if PCard */}
@@ -340,7 +345,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               />
             </View>
           )}
-          {!data?.payload?.data && res.loading ? (
+          {!data?.payload?.data && loading ? (
             <ActivityIndicator
               size="large"
               color="#0061FF"
