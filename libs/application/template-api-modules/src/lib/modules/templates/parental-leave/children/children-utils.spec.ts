@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/types'
 
 import {
-  getChildrenAndExistingApplications,
+  getChildren,
   applicationsToExistingChildApplication,
   applicationsToChildInformation,
 } from './children-utils'
@@ -14,7 +14,6 @@ import {
   ParentalRelations,
   ChildInformationWithoutRights,
   PregnancyStatus,
-  ChildrenWithoutRightsAndExistingApplications,
   ChildInformation,
 } from '@island.is/application/templates/parental-leave'
 
@@ -87,18 +86,15 @@ describe('applicationsToChildInformation', () => {
   })
 })
 
-describe('getChildrenAndExistingApplications', () => {
+describe('getChildren', () => {
   it('should return an empty list for both if no children pregnancy', () => {
     const applicationsWhereApplicant: Application[] = []
     const applicationsWhereOtherParent: Application[] = []
     const pregnancyStatus = undefined
 
-    const expected: ChildrenWithoutRightsAndExistingApplications = {
-      children: [],
-      existingApplications: [],
-    }
+    const expected: ChildInformationWithoutRights[] = []
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParent,
       pregnancyStatus,
@@ -125,12 +121,9 @@ describe('getChildrenAndExistingApplications', () => {
       applicationsWhereApplicant,
     )
 
-    const expected: ChildrenWithoutRightsAndExistingApplications = {
-      children: [],
-      existingApplications: expectedExistingApplications,
-    }
+    const expected: ChildInformationWithoutRights[] = []
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParent,
       pregnancyStatus,
@@ -174,12 +167,9 @@ describe('getChildrenAndExistingApplications', () => {
       applicationsWhereApplicant,
     )
 
-    const expected: ChildrenWithoutRightsAndExistingApplications = {
-      children: [],
-      existingApplications: expectedExistingApplications,
-    }
+    const expected: ChildInformationWithoutRights[] = []
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParent,
       pregnancyStatus,
@@ -212,18 +202,15 @@ describe('getChildrenAndExistingApplications', () => {
       },
     ]
 
-    const expected: ChildrenWithoutRightsAndExistingApplications = {
-      children: expectedChildren,
-      existingApplications: [],
-    }
+    const expected: ChildInformationWithoutRights[] = [...expectedChildren]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
 
-    expect(result.children.length).toBe(1)
+    expect(result.length).toBe(1)
     expect(result).toEqual(expected)
   })
 
@@ -242,18 +229,15 @@ describe('getChildrenAndExistingApplications', () => {
       },
     ]
 
-    const expected: ChildrenWithoutRightsAndExistingApplications = {
-      children: expectedChildren,
-      existingApplications: [],
-    }
+    const expected: ChildInformationWithoutRights[] = [...expectedChildren]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
 
-    expect(result.children.length).toBe(1)
+    expect(result.length).toBe(1)
     expect(result).toStrictEqual(expected)
   })
 
@@ -274,24 +258,15 @@ describe('getChildrenAndExistingApplications', () => {
       expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
     }
 
-    const expected: ChildrenWithoutRightsAndExistingApplications = {
-      children: [],
-      existingApplications: [
-        {
-          applicationId: applicationsWhereApplicant[0].id,
-          expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
-        },
-      ],
-    }
+    const expected: ChildInformationWithoutRights[] = []
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
 
-    expect(result.existingApplications.length).toBe(1)
-    expect(result.children.length).toBe(0)
+    expect(result.length).toBe(0)
     expect(result).toEqual(expected)
   })
 
@@ -320,12 +295,12 @@ describe('getChildrenAndExistingApplications', () => {
       }),
     ]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       [],
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
-    expect(result.children[0].transferredDays).toBe(-45)
+    expect(result[0].transferredDays).toBe(-45)
   })
 
   it('should return the number of days given by the primary parent', () => {
@@ -355,13 +330,13 @@ describe('getChildrenAndExistingApplications', () => {
       }),
     ]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       [],
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
 
-    expect(result.children[0].transferredDays).toBe(45)
+    expect(result[0].transferredDays).toBe(45)
   })
 
   it('should return the number of "common" days primary parent left', () => {
@@ -387,12 +362,12 @@ describe('getChildrenAndExistingApplications', () => {
       }),
     ]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       [],
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
-    expect(result.children[0].multipleBirthsDays).toBe(70)
+    expect(result[0].multipleBirthsDays).toBe(70)
   })
 
   it('should return the number of days requested and "common" days is 0 by the primary parent', () => {
@@ -425,13 +400,13 @@ describe('getChildrenAndExistingApplications', () => {
       }),
     ]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       [],
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
-    expect(result.children[0].transferredDays).toBe(-30)
-    expect(result.children[0].multipleBirthsDays).toBe(0)
+    expect(result[0].transferredDays).toBe(-30)
+    expect(result[0].multipleBirthsDays).toBe(0)
   })
 
   it('should return the number of days requested is 0 and get "common" days by the primary parent', () => {
@@ -464,13 +439,13 @@ describe('getChildrenAndExistingApplications', () => {
       }),
     ]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       [],
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
-    expect(result.children[0].transferredDays).toBe(0)
-    expect(result.children[0].multipleBirthsDays).toBe(45)
+    expect(result[0].transferredDays).toBe(0)
+    expect(result[0].multipleBirthsDays).toBe(45)
   })
 
   it('should return the number of days given and "common" days by the primary parent', () => {
@@ -505,14 +480,14 @@ describe('getChildrenAndExistingApplications', () => {
       }),
     ]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       [],
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
 
-    expect(result.children[0].multipleBirthsDays).toBe(90)
-    expect(result.children[0].transferredDays).toBe(45)
+    expect(result[0].multipleBirthsDays).toBe(90)
+    expect(result[0].transferredDays).toBe(45)
   })
 
   it('should return the number of days given is 0 and "common" days by the primary parent', () => {
@@ -547,13 +522,13 @@ describe('getChildrenAndExistingApplications', () => {
       }),
     ]
 
-    const result = getChildrenAndExistingApplications(
+    const result = getChildren(
       [],
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
 
-    expect(result.children[0].multipleBirthsDays).toBe(80)
-    expect(result.children[0].transferredDays).toBe(0)
+    expect(result[0].multipleBirthsDays).toBe(80)
+    expect(result[0].transferredDays).toBe(0)
   })
 })

@@ -6,6 +6,7 @@ import getConfig from 'next/config'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Accordion,
   AccordionItem,
@@ -28,6 +29,7 @@ import {
   IconTitleCard,
   OrganizationFooter,
   OrganizationHeader,
+  Webreader,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -36,10 +38,8 @@ import {
   GetUniversityGatewayQuery,
   GetUniversityGatewayQueryVariables,
   GetUniversityGatewayUniversitiesQuery,
-  OrganizationPage,
   Query,
   QueryGetOrganizationPageArgs,
-  UniversityGatewayProgramCourse,
   UniversityGatewayProgramDetails,
   UniversityGatewayUniversity,
 } from '@island.is/web/graphql/schema'
@@ -47,6 +47,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
@@ -75,9 +76,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
-  const [sortedCourses, setSortedCourses] = useState<
-    Array<UniversityGatewayProgramCourse>
-  >([])
+  // const [sortedCourses, setSortedCourses] = useState<
+  //   Array<UniversityGatewayProgramCourse>
+  // >([])
   const { linkResolver } = useLinkResolver()
   const [isOpen, setIsOpen] = useState<Array<boolean>>([
     false,
@@ -96,19 +97,18 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     setIsOpen(newIsOpen)
   }
 
-  useEffect(() => {
-    setSortedCourses(
-      data.courses.sort((x, y) =>
-        (x.semesterSeason + x.semesterYear).localeCompare(
-          y.semesterSeason + y.semesterYear,
-        ),
-      ),
-    )
-  }, [data, sortedCourses])
+  // useEffect(() => {
+  //   setSortedCourses(
+  //     data.courses.sort((x, y) =>
+  //       (x.semesterSeason + x.semesterYear).localeCompare(
+  //         y.semesterSeason + y.semesterYear,
+  //       ),
+  //     ),
+  //   )
+  // }, [data, sortedCourses])
 
-  function mapArrayToDictionary(array: Array<unknown>, mapByKey: string) {
-    const dictionary: { [key: string]: Array<UniversityGatewayProgramCourse> } =
-      {}
+  const mapArrayToDictionary = (array: Array<unknown>, mapByKey: string) => {
+    const dictionary: { [key: string]: Array<any> } = {}
 
     array.forEach((arrayItem: any) => {
       const keyValue = arrayItem[mapByKey]
@@ -128,72 +128,73 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     return dictionary
   }
 
-  const createTabContent = () => {
-    if (sortedCourses.length === 0) {
-      return
-    }
-    const tabList: Array<TabType> = []
-    const mappedDictionary = mapArrayToDictionary(
-      sortedCourses,
-      'semesterYearNumber',
-    )
-    let index = 0
-    for (const key in mappedDictionary) {
-      const value = mappedDictionary[key]
-      const mappedBySemester = mapArrayToDictionary(value, 'semesterSeason')
+  // TODO THIS WILL BE ADDED BACK WHEN UNIVERSITIES RETURN THE COURSES FOR EACH PROGRAM
+  // const createTabContent = () => {
+  //   if (sortedCourses.length === 0) {
+  //     return
+  //   }
+  //   const tabList: Array<TabType> = []
+  //   const mappedDictionary = mapArrayToDictionary(
+  //     sortedCourses,
+  //     'semesterYearNumber',
+  //   )
+  //   let index = 0
+  //   for (const key in mappedDictionary) {
+  //     const value = mappedDictionary[key]
+  //     const mappedBySemester = mapArrayToDictionary(value, 'semesterSeason')
 
-      const contentItems: Array<React.ReactElement> = []
-      for (const x in mappedBySemester) {
-        contentItems.push(
-          <Box className={[styles.courseTypeIcon, styles.capitalizeText]}>
-            <Text variant="h4" color="blue400" paddingBottom={2} paddingTop={2}>
-              {n(x, TranslationDefaults[x])}
-            </Text>
-            {mappedBySemester[x].map((item) => {
-              return (
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  justifyContent="spaceBetween"
-                >
-                  <Text variant="h4" as="p" paddingBottom={1} paddingTop={1}>
-                    {locale === 'en' ? item.nameEn : item.nameIs}
-                  </Text>
-                  <Box className={styles.courseTypeIcon}>
-                    <Text
-                      fontWeight="semiBold"
-                      color={
-                        item.requirement === Requirement.MANDATORY
-                          ? 'red600'
-                          : item.requirement === Requirement.FREE_ELECTIVE
-                          ? 'blue600'
-                          : 'purple600'
-                      }
-                    >
-                      {item.requirement === Requirement.MANDATORY
-                        ? 'S'
-                        : item.requirement === Requirement.FREE_ELECTIVE
-                        ? 'V'
-                        : 'B'}
-                    </Text>
-                  </Box>
-                </Box>
-              )
-            })}
-          </Box>,
-        )
-      }
+  //     const contentItems: Array<React.ReactElement> = []
+  //     for (const x in mappedBySemester) {
+  //       contentItems.push(
+  //         <Box className={[styles.courseTypeIcon, styles.capitalizeText]}>
+  //           <Text variant="h4" color="blue400" paddingBottom={2} paddingTop={2}>
+  //             {n(x, TranslationDefaults[x])}
+  //           </Text>
+  //           {mappedBySemester[x].map((item) => {
+  //             return (
+  //               <Box
+  //                 display="flex"
+  //                 flexDirection="row"
+  //                 justifyContent="spaceBetween"
+  //               >
+  //                 <Text variant="h4" as="p" paddingBottom={1} paddingTop={1}>
+  //                   {locale === 'en' ? item.nameEn : item.nameIs}
+  //                 </Text>
+  //                 <Box className={styles.courseTypeIcon}>
+  //                   <Text
+  //                     fontWeight="semiBold"
+  //                     color={
+  //                       item.requirement === Requirement.MANDATORY
+  //                         ? 'red600'
+  //                         : item.requirement === Requirement.FREE_ELECTIVE
+  //                         ? 'blue600'
+  //                         : 'purple600'
+  //                     }
+  //                   >
+  //                     {item.requirement === Requirement.MANDATORY
+  //                       ? 'S'
+  //                       : item.requirement === Requirement.FREE_ELECTIVE
+  //                       ? 'V'
+  //                       : 'B'}
+  //                   </Text>
+  //                 </Box>
+  //               </Box>
+  //             )
+  //           })}
+  //         </Box>,
+  //       )
+  //     }
 
-      tabList.push({
-        id: index.toString(),
-        label: `${parseInt(key) + 1}. ${n('year', 'ár')}`,
-        content: contentItems,
-      })
-      index++
-    }
+  //     tabList.push({
+  //       id: index.toString(),
+  //       label: `${parseInt(key) + 1}. ${n('year', 'ár')}`,
+  //       content: contentItems,
+  //     })
+  //     index++
+  //   }
 
-    return tabList
-  }
+  //   return tabList
+  // }
 
   const navList: NavigationItem[] =
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
@@ -209,6 +210,66 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
   const universityData = useMemo(() => {
     return universities.filter((x) => x.id === data.universityId)[0] || {}
   }, [universities, data.universityId])
+
+  const htmlParser = (dataEn: string | undefined, dataIs: string) => {
+    return locale === 'en'
+      ? ReactHtmlParser(dataEn ? dataEn : '')
+      : ReactHtmlParser(dataIs ? dataIs : '')
+  }
+
+  const applicationUrlParser = () => {
+    switch (universityData.contentfulTitle) {
+      case 'Háskóli Íslands':
+        return 'https://ugla.hi.is/namsumsoknir/'
+      case 'Háskólinn á Akureyri':
+        return 'https://ugla.unak.is/namsumsoknir/'
+      case 'Háskólinn á Bifröst':
+        return 'https://ugla.bifrost.is/namsumsoknir/index.php'
+      case 'Háskólinn á Hólum':
+        return 'https://ugla.holar.is/namsumsoknir/'
+      case 'Háskólinn í Reykjavík':
+        return 'https://umsoknir.ru.is/'
+      case 'Landbúnaðarháskóli Íslands':
+        return 'https://ugla.lbhi.is/namsumsoknir/'
+      case 'Listaháskóli Íslands':
+        return 'https://ugla.lhi.is/namsumsoknir/'
+      default:
+        return '/'
+    }
+  }
+
+  const formatModeOfDelivery = (items: string[]): string => {
+    items = items.filter((item) => {
+      return item !== 'UNDEFINED' ? true : false
+    })
+
+    const length = items.length
+
+    if (length === 0) {
+      return ''
+    }
+
+    if (length === 1) {
+      return n(items[0], TranslationDefaults[items[0]])
+    }
+
+    if (length === 2) {
+      return `${n(items[0], TranslationDefaults[items[0]])} ${n(
+        'or',
+        'eða',
+      )} ${n(items[1], TranslationDefaults[items[1]])}`
+    }
+
+    const formattedList = items.map((item, index) => {
+      if (index === length - 1) {
+        return `${n('or', 'eða')} ${n(item, TranslationDefaults[item])}`
+      } else {
+        return `${n(item, TranslationDefaults[item])}, `
+      }
+    })
+
+    return formattedList.join('')
+  }
 
   return (
     <>
@@ -242,14 +303,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               imgSrc={universityData.contentfulLogoUrl || ''}
               alt="University infomation"
             />
-            <Box width="full">
-              <Button fluid>
-                <Box display={'flex'} style={{ gap: '0.5rem' }}>
-                  {n('applyToUniversityProgram', 'Sækja um háskólanám')}
-                  <Icon icon="open" type="outline" />
-                </Box>
-              </Button>
-            </Box>
           </Stack>
         }
       >
@@ -269,9 +322,27 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 </Button>
               </LinkV2>
             </Hidden>
-            <Text variant="h1" as="h2">
-              {locale === 'en' ? data.nameEn : data.nameIs}
-            </Text>
+            <Box
+              display={'flex'}
+              flexDirection={'column'}
+              style={{ gap: '0.5rem' }}
+            >
+              <Box style={{ marginBottom: '-16px' }}>
+                <Webreader />
+              </Box>
+              <Text variant="h1" as="h2">
+                {locale === 'en' ? data.nameEn : data.nameIs}
+              </Text>
+              {data.specializationNameIs && data.specializationNameEn && (
+                <Text variant="h3" as="h3">
+                  {`${locale === 'en' ? 'Specialization: ' : 'Kjörsvið: '}${
+                    locale === 'en'
+                      ? data.specializationNameEn
+                      : data.specializationNameIs
+                  }`}
+                </Text>
+              )}
+            </Box>
             <Box
               width="full"
               display={'flex'}
@@ -285,7 +356,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 {n('applyForProgram', 'Umsókn í háskólanám')}
               </Text>
 
-              <Button>
+              <Button onClick={() => router.push(applicationUrlParser())}>
                 <Box display={'flex'} style={{ gap: '0.5rem' }}>
                   {n('apply', 'Sækja um')}
                   <Icon icon="open" type="outline" />
@@ -294,19 +365,26 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             </Box>
             <Box marginTop={2}>
               {data.credits && data.credits > 0 ? (
-                <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+                <Text variant="default">{`${data.degreeAbbreviation} - ${
+                  data.credits
+                } ${n('units', 'einingar')}`}</Text>
               ) : (
                 <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
               )}
-              <Text marginTop={3} marginBottom={3} variant="default">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.descriptionEn ? data.descriptionEn : '',
-                    )
-                  : ReactHtmlParser(
-                      data.descriptionIs ? data.descriptionIs : '',
-                    )}
-              </Text>
+              {data.iscedCode && (
+                <Text variant="small">{`${n('isced', 'ISCED Flokkun')}: ${
+                  data.iscedCode
+                }`}</Text>
+              )}
+              <Box className="rs_read">
+                <Text marginTop={3} marginBottom={3} variant="default" as="div">
+                  {webRichText(
+                    (locale === 'is'
+                      ? [data.descriptionHtmlIs]
+                      : [data.descriptionHtmlEn]) as SliceType[],
+                  )}
+                </Text>
+              </Box>
               {data.externalUrlIs && (
                 <LinkV2
                   underlineVisibility="always"
@@ -410,16 +488,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       <Text variant="medium">{`${n(
                         'modeOfDelivery',
                         'Námsform',
-                      )}: ${data.modeOfDelivery.map((delivery, index) => {
-                        if (index !== 0) {
-                          return `, ${n(
-                            delivery,
-                            TranslationDefaults[delivery],
-                          )}`
-                        } else {
-                          return n(delivery, TranslationDefaults[delivery])
-                        }
-                      })}`}</Text>
+                      )}: ${formatModeOfDelivery(data.modeOfDelivery)}`}</Text>
                     </Box>
                   </GridColumn>
                 </GridRow>
@@ -443,17 +512,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(0)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.admissionRequirementsEn
-                              ? data.admissionRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.admissionRequirementsIs
-                              ? data.admissionRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.admissionRequirementsEn || '',
+                        data.admissionRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}
@@ -468,17 +530,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     onToggle={() => toggleIsOpen(1)}
                   >
                     <Text as="p">
-                      {locale === 'en'
-                        ? ReactHtmlParser(
-                            data.studyRequirementsEn
-                              ? data.studyRequirementsEn
-                              : '',
-                          )
-                        : ReactHtmlParser(
-                            data.studyRequirementsIs
-                              ? data.studyRequirementsIs
-                              : '',
-                          )}
+                      {htmlParser(
+                        data.studyRequirementsEn || '',
+                        data.studyRequirementsIs || '',
+                      )}
                     </Text>
                   </AccordionItem>
                 )}
@@ -593,4 +648,6 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(UniversityDetails, { showFooter: false })
+export default withMainLayout(UniversityDetails, {
+  showFooter: false,
+})

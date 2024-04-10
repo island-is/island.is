@@ -55,6 +55,7 @@ query Cases {
       email
       role
       active
+      canConfirmIndictment
     }
     registrar {
       id
@@ -79,6 +80,7 @@ query Cases {
       email
       role
       active
+      canConfirmIndictment
     }
   }
 }

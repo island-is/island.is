@@ -221,7 +221,7 @@ export const m = defineMessages({
   },
   overviewStreetAddress: {
     id: 'dl.application:overview.streetAddress',
-    defaultMessage: 'Heimili',
+    defaultMessage: 'Heimilisfang',
     description: 'Street address',
   },
   overviewPostalCode: {
@@ -347,7 +347,7 @@ export const m = defineMessages({
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
   },
-  overviewDone: {
+  applicationDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Umsókn móttekin',
     description: 'Confirmation',
@@ -414,7 +414,7 @@ export const m = defineMessages({
   },
   eligibilityRequirementTitle: {
     id: 'dl.application:eligibilityTitle',
-    defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla',
+    defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla:',
     description: 'title for requirement component',
   },
   applicationEligibilityTitle: {
@@ -462,6 +462,23 @@ export const m = defineMessages({
     id: 'dl.application:congratulationsTitle',
     defaultMessage: 'Til hamingju',
     description: 'Congratulations',
+  },
+  applicationDoneAlertMessage: {
+    id: 'dl.application:applicationDoneAlertMessage',
+    defaultMessage:
+      'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. ',
+    description: 'Application received',
+  },
+  nextStepsTitle: {
+    id: 'dl.application:nextStepsTitle',
+    defaultMessage: 'Næstu skref',
+    description: 'Next steps',
+  },
+  nextStepsDescription: {
+    id: 'dl.application:nextStepsDescription#markdown',
+    defaultMessage:
+      'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn.',
+    description: 'Next steps',
   },
   congratulationsCertificateTitle: {
     id: 'dl.application:congratulationsCertificateTitle',
@@ -653,7 +670,7 @@ export const m = defineMessages({
   },
   applicationForTempLicenseTitle: {
     id: 'dl.application:applicationForTempLicenseTitle',
-    defaultMessage: 'Almenn ökuréttindi',
+    defaultMessage: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
     description:
       'Option title for selecting to apply for temporary driving license',
   },

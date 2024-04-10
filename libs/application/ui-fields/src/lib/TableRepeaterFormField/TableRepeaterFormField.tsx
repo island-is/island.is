@@ -1,6 +1,7 @@
 import { coreMessages, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
+  StaticText,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
@@ -13,6 +14,7 @@ import {
   Tooltip,
   GridRow,
   GridColumn,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -41,6 +43,7 @@ const componentMapper = {
 export const TableRepeaterFormField: FC<Props> = ({
   application,
   field: data,
+  showFieldName,
   error,
 }) => {
   const {
@@ -50,6 +53,9 @@ export const TableRepeaterFormField: FC<Props> = ({
     description,
     marginTop = 6,
     marginBottom,
+    getStaticTableData,
+    title,
+    titleVariant = 'h4',
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
@@ -74,6 +80,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableItems = items.filter((x) => x.displayInTable !== false)
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
+  const staticData = getStaticTableData?.(application)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -88,6 +95,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const handleNewItem = () => {
     append({})
     setActiveIndex(fields.length)
+    methods.clearErrors()
   }
 
   const handleRemoveItem = (index: number) => {
@@ -106,14 +114,27 @@ export const TableRepeaterFormField: FC<Props> = ({
     return errors?.[id]
   }
 
+  const formatTableValue = (key: string, item: Record<string, string>) => {
+    const formatFn = table?.format?.[key]
+    const formatted = formatFn ? formatFn(item[key]) : item[key]
+    return typeof formatted === 'string'
+      ? formatted
+      : formatText(formatted, application, formatMessage)
+  }
+
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
+      {showFieldName && (
+        <Text variant={titleVariant} marginBottom={2}>
+          {formatText(title, application, formatMessage)}
+        </Text>
+      )}
       {description && (
         <FieldDescription
           description={formatText(description, application, formatMessage)}
         />
       )}
-      <Box marginTop={description ? 4 : 0}>
+      <Box marginTop={description ? 3 : 0}>
         <Stack space={4}>
           <T.Table>
             <T.Head>
@@ -127,6 +148,17 @@ export const TableRepeaterFormField: FC<Props> = ({
               </T.Row>
             </T.Head>
             <T.Body>
+              {staticData &&
+                staticData.map((item, index) => (
+                  <T.Row key={index}>
+                    <T.Data></T.Data>
+                    {Object.keys(item).map((key, index) => (
+                      <T.Data key={`static-${key}-${index}`}>
+                        {formatTableValue(key, item)}
+                      </T.Data>
+                    ))}
+                  </T.Row>
+                ))}
               {values &&
                 savedFields.map((field, index) => (
                   <T.Row key={field.id}>
@@ -144,21 +176,20 @@ export const TableRepeaterFormField: FC<Props> = ({
                             type="button"
                             onClick={() => handleRemoveItem(index)}
                           >
-                            <Icon icon="removeCircle" type="outline" />
+                            <Icon
+                              icon="removeCircle"
+                              type="outline"
+                              color="dark200"
+                            />
                           </button>
                         </Tooltip>
                       </Box>
                     </T.Data>
-                    {tableRows.map((item, idx) => {
-                      const formatFn = table?.format?.[item]
-                      return (
-                        <T.Data key={`${item}-${idx}`}>
-                          {formatFn
-                            ? formatFn(values[index][item])
-                            : values[index][item]}
-                        </T.Data>
-                      )
-                    })}
+                    {tableRows.map((item, idx) => (
+                      <T.Data key={`${item}-${idx}`}>
+                        {formatTableValue(item, values[index])}
+                      </T.Data>
+                    ))}
                   </T.Row>
                 ))}
             </T.Body>
@@ -187,18 +218,30 @@ export const TableRepeaterFormField: FC<Props> = ({
                   const span = isHalfColumn ? '1/2' : '1/1'
                   const Component = componentMapper[component]
                   const id = `${data.id}[${activeIndex}].${itemId}`
+                  const activeValues =
+                    activeIndex >= 0 && values ? values[activeIndex] : undefined
 
                   const translatedOptions = options?.map((option) => ({
                     ...option,
                     label: formatText(option.label, application, formatMessage),
                   }))
 
-                  if (condition && !condition(application)) {
+                  if (condition && !condition(application, activeValues)) {
                     return null
                   }
 
                   return (
                     <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
+                      {component === 'radio' && label && (
+                        <Text
+                          variant="h4"
+                          as="h4"
+                          id={id + 'title'}
+                          marginBottom={3}
+                        >
+                          {formatText(label, application, formatMessage)}
+                        </Text>
+                      )}
                       <Component
                         id={id}
                         name={id}
@@ -247,6 +290,11 @@ export const TableRepeaterFormField: FC<Props> = ({
             </Box>
           )}
         </Stack>
+        {error && typeof error === 'string' && fields.length === 0 && (
+          <Box marginTop={3}>
+            <AlertMessage type="error" title={error} />
+          </Box>
+        )}
       </Box>
     </Box>
   )

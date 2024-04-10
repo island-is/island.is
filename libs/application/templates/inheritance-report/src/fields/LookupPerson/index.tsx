@@ -6,6 +6,7 @@ import {
   Box,
   GridColumn,
   GridRow,
+  InputBackgroundColor,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -24,6 +25,7 @@ type LookupProps = {
   }
   nested?: boolean
   message?: string
+  backgroundColor?: InputBackgroundColor
   error: Record<string, string> | any
 }
 
@@ -31,6 +33,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   field,
   error,
   message,
+  backgroundColor = 'white',
   nested = false,
 }) => {
   const { formatMessage } = useLocale()
@@ -89,7 +92,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             name={`${id}.nationalId`}
             label={formatMessage(m.nationalId)}
             format="######-####"
-            backgroundColor="white"
+            backgroundColor={backgroundColor}
             loading={queryLoading}
             size={nested ? 'sm' : 'md'}
             required={props?.requiredNationalId ?? true}

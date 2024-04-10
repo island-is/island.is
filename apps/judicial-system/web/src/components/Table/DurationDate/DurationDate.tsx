@@ -6,12 +6,12 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-export function getDurationDate(
+export const getDurationDate = (
   state?: CaseState | null,
   validToDate?: string | null,
   initialRulingDate?: string | null,
   rulingDate?: string | null,
-): string | null {
+): string | null => {
   if (
     (state && [CaseState.REJECTED, CaseState.DISMISSED].includes(state)) ||
     !validToDate

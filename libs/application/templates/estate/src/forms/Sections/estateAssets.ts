@@ -350,19 +350,30 @@ export const estateAssets = buildSection({
               titleVariant: 'h3',
               marginBottom: 2,
             }),
-            buildTextField({
-              id: 'otherAssets.info',
-              title: m.otherAssetsText,
-              placeholder: m.otherAssetsPlaceholder,
-              variant: 'textarea',
-              rows: 7,
-            }),
-            buildTextField({
-              id: 'otherAssets.value',
-              title: m.otherAssetsValue,
-              width: 'half',
-              variant: 'currency',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'otherAssets',
+                component: 'OtherAssetsRepeater',
+                doesNotRequireAnswer: true,
+              },
+              {
+                fields: [
+                  {
+                    id: 'info',
+                    title: m.otherAssetsText,
+                    required: true,
+                  },
+                  {
+                    id: 'value',
+                    title: m.otherAssetsValue,
+                    required: true,
+                    currency: true,
+                  },
+                ],
+                repeaterButtonText: m.otherAssetRepeaterButton,
+              },
+            ),
           ],
         }),
       ],

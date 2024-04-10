@@ -1,35 +1,46 @@
-import { Box, Button, ResponsiveSpace } from '@island.is/island-ui/core'
+import {
+  Box,
+  FocusableBox,
+  Text,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import LinkResolver from '../LinkResolver/LinkResolver'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 interface Props {
   onClick?: () => void
-  colorScheme: 'default' | 'light'
   title: string
   marginLeft?: ResponsiveSpace
   href: string
+  isActive: boolean
 }
 
 export const SubTabItem: React.FC<Props> = ({
-  onClick,
-  colorScheme,
   title,
+  onClick,
   marginLeft = 2,
   href,
+  isActive,
 }) => {
   return (
     <Box marginLeft={marginLeft}>
-      <LinkResolver href={href}>
-        <Button
-          as="span"
-          type="button"
-          aria-label={title}
-          size="small"
-          colorScheme={colorScheme}
-          onClick={onClick}
-        >
+      <FocusableBox
+        background={isActive ? 'blue400' : 'blue100'}
+        borderRadius="standard"
+        paddingX={3}
+        paddingY={1}
+        component={LinkResolver}
+        id={href}
+        href={href}
+        onClick={onClick}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text variant="small" color={isActive ? 'white' : 'black'}>
           {title}
-        </Button>
-      </LinkResolver>
+        </Text>
+      </FocusableBox>
     </Box>
   )
 }

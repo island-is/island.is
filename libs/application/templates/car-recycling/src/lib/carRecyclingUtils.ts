@@ -2,7 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { VehicleDto } from '../shared/types'
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   const selectedVehicles = getValueViaPath(
     answers,
     'vehicles.selectedVehicles',
@@ -28,35 +28,35 @@ export function getApplicationAnswers(answers: Application['answers']) {
   }
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const applicantName = getValueViaPath(
     externalData,
-    'nationalRegistry.data.fullName',
+    'identity.data.name',
   ) as string
 
   const applicantNationalId = getValueViaPath(
     externalData,
-    'nationalRegistry.data.nationalId',
+    'identity.data.nationalId',
   ) as string
 
   const applicantAddress = getValueViaPath(
     externalData,
-    'nationalRegistry.data.address.streetAddress',
+    'identity.data.address.streetAddress',
   ) as string
 
   const applicantPostalCode = getValueViaPath(
     externalData,
-    'nationalRegistry.data.address.postalCode',
+    'identity.data.address.postalCode',
   ) as string
 
-  const applicantLocality = getValueViaPath(
+  const city = getValueViaPath(
     externalData,
-    'nationalRegistry.data.address.locality',
+    'identity.data.address.city',
   ) as string
 
-  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+  const applicantMunicipality = applicantPostalCode + ' ' + city
 
   const vehiclesList = getValueViaPath(
     externalData,

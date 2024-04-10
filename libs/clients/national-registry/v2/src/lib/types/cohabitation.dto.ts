@@ -8,9 +8,9 @@ export interface CohabitationDto {
   lastModified: Date | null
 }
 
-export function formatCohabitationDto(
+export const formatCohabitationDto = (
   cohabitation: Hjuskapur | null,
-): CohabitationDto | null {
+): CohabitationDto | null => {
   if (cohabitation == null) {
     return null
   }
@@ -44,9 +44,9 @@ export interface CohabitionCodesDto {
   description?: string | null
 }
 
-export function formatCohabitionCodesDto(
+export const formatCohabitionCodesDto = (
   cohabitionCode: Kodar | null,
-): CohabitionCodesDto | null {
+): CohabitionCodesDto | null => {
   if (cohabitionCode == null) {
     return null
   }

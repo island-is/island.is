@@ -61,6 +61,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )}`,
+      LOG_LEVEL: 'info',
     },
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {

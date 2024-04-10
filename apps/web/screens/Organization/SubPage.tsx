@@ -20,6 +20,7 @@ import {
   SignLanguageButton,
   SliceDropdown,
   SliceMachine,
+  SliceTableOfContents,
   TOC,
   Webreader,
 } from '@island.is/web/components'
@@ -124,6 +125,7 @@ const SubPage: Screen<SubPageProps> = ({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             offset={[null, null, '1/12']}
+            paddingBottom={3}
           >
             <Stack space={2}>
               {subpage?.links?.map((link) => (
@@ -272,6 +274,8 @@ const renderSlices = (
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
+    case 'SliceTableOfContents':
+      return <SliceTableOfContents slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
         if (slice.__typename === 'AnchorPageListSlice') {

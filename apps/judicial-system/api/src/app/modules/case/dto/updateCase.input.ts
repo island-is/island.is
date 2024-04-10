@@ -252,6 +252,10 @@ export class UpdateCaseInput {
 
   @Allow()
   @Field({ nullable: true })
+  readonly rulingSignatureDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly judgeId?: string
 
   @Allow()
@@ -341,4 +345,12 @@ export class UpdateCaseInput {
   @Allow()
   @Field(() => [UserRole], { nullable: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentDeniedExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentReturnedExplanation?: string
 }

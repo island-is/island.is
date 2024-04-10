@@ -28,12 +28,7 @@ export const MedicineLicense = () => {
         <Text>{formatMessage(messages.medicineLicenseIntroText)}</Text>
       </Box>
       {error ? (
-        <Problem
-          size="small"
-          noBorder={false}
-          type="internal_service_error"
-          error={error}
-        />
+        <Problem error={error} noBorder={false} />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} />
       ) : (

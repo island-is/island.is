@@ -76,6 +76,11 @@ type Debt = {
   loanIdentity?: string
 }
 
+type OtherAssets = {
+  info?: string
+  value?: string
+}
+
 type InfoValueField = {
   info?: string
   value?: string
@@ -84,6 +89,7 @@ type InfoValueField = {
 type Claim = {
   publisher?: string
   value?: string | number
+  nationalId?: string
 }
 
 type Deceased = {
@@ -124,7 +130,7 @@ export type UploadData = {
   bankAccounts: BankAccount[]
   stocks: Stock[]
   moneyAndDeposit: InfoValueField
-  otherAssets: InfoValueField
+  otherAssets: OtherAssets[]
   debts: Debt[]
   representative?: Representative
   districtCommissionerHasWill: string

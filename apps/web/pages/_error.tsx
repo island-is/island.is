@@ -2,19 +2,16 @@ import React from 'react'
 import type { GetServerSidePropsContext, NextPageContext } from 'next'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-import {
-  ErrorPageQuery,
-  ErrorPageQueryVariables,
-  GetUrlQuery,
-  GetUrlQueryVariables,
-} from '../graphql/schema'
+import { Locale } from '@island.is/shared/types'
+
+import { ErrorPageQuery, ErrorPageQueryVariables } from '../graphql/schema'
 import withApollo from '../graphql/withApollo'
-import { linkResolver, LinkType } from '../hooks'
 import { getLocaleFromPath } from '../i18n'
 import I18n from '../i18n/I18n'
 import Layout, { LayoutProps } from '../layouts/main'
 import { ErrorScreen } from '../screens/Error'
-import { GET_ERROR_PAGE, GET_URL_QUERY } from '../screens/queries'
+import { GET_ERROR_PAGE } from '../screens/queries'
+import { fetch404RedirectUrl } from '../utils/fetch404RedirectUrl'
 
 type ErrorPageProps = {
   statusCode: number
@@ -66,46 +63,19 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     const locale = getLocaleFromPath(asPath)
 
     if (statusCode === 404) {
-      const path = asPath
-        .trim()
-        .replace(/\/\/+/g, '/')
-        .replace(/\/+$/, '')
-        .toLowerCase()
-        .split('?')[0]
+      const redirectUrl = await fetch404RedirectUrl(
+        props.apolloClient,
+        asPath,
+        props.locale as Locale,
+      )
 
-      const redirectProps = await props.apolloClient.query<
-        GetUrlQuery,
-        GetUrlQueryVariables
-      >({
-        query: GET_URL_QUERY,
-        variables: {
-          input: {
-            slug: path,
-            lang: locale as string,
-          },
-        },
-      })
-
-      if (redirectProps?.data?.getUrl) {
+      if (redirectUrl) {
         const isBrowser = typeof window !== 'undefined'
-
-        const page = redirectProps.data.getUrl.page
-        const explicitRedirect = redirectProps.data.getUrl.explicitRedirect
-        if (!page && explicitRedirect) {
-          if (isBrowser) {
-            window.location.href = explicitRedirect
-          } else {
-            res?.writeHead(302, { Location: explicitRedirect })
-            res?.end()
-          }
-        } else if (page) {
-          const url = linkResolver(page.type as LinkType, [page.slug]).href
-          if (isBrowser) {
-            window.location.href = url
-          } else {
-            res?.writeHead(302, { Location: url })
-            res?.end()
-          }
+        if (isBrowser) {
+          window.location.href = redirectUrl
+        } else {
+          res?.writeHead(302, { Location: redirectUrl })
+          res?.end()
         }
       }
     }

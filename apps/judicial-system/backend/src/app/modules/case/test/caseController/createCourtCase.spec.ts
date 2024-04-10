@@ -212,26 +212,26 @@ describe('CaseController - Create court case', () => {
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVER_REQUEST_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_REQUEST,
             user,
             caseId,
           },
           {
-            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
             user,
             caseId,
           },
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId1,
+            elementId: defendantId1,
           },
           {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
             caseId,
-            defendantId: defendantId2,
+            elementId: defendantId2,
           },
         ])
       })
@@ -305,51 +305,51 @@ describe('CaseController - Create court case', () => {
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
           user,
           caseId: theCase.id,
         },
         {
-          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
           user,
           caseId,
-          policeCaseNumber: policeCaseNumber1,
+          elementId: policeCaseNumber1,
         },
         {
-          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
           user,
           caseId,
-          policeCaseNumber: policeCaseNumber2,
+          elementId: policeCaseNumber2,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: coverLetterId,
+          elementId: coverLetterId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: indictmentId,
+          elementId: indictmentId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: criminalRecordId,
+          elementId: criminalRecordId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: costBreakdownId,
+          elementId: costBreakdownId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: uncategorisedId,
+          elementId: uncategorisedId,
         },
       ])
     })

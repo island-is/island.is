@@ -1,4 +1,4 @@
-query ListStatus($input: SignatureCollectionIdInput!) {
+query ListStatus($input: SignatureCollectionListIdInput!) {
   signatureCollectionAdminListStatus(input: $input) {
     status
   }

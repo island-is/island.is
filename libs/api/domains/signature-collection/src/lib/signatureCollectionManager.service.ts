@@ -4,10 +4,8 @@ import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionManagerClientService } from '@island.is/clients/signature-collection'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  SignatureCollectionListStatus,
-  SignatureCollectionStatus,
-} from './models/status.model'
+import { SignatureCollectionListStatus } from './models/status.model'
+import { SignatureCollectionIdInput } from './dto/collectionId.input'
 
 @Injectable()
 export class SignatureCollectionManagerService {
@@ -15,16 +13,15 @@ export class SignatureCollectionManagerService {
     private signatureCollectionClientService: SignatureCollectionManagerClientService,
   ) {}
 
+  async currentCollection(user: User): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.currentCollection(user)
+  }
+
   async allLists(
-    collection: SignatureCollection,
+    input: SignatureCollectionIdInput,
     user: User,
   ): Promise<SignatureCollectionList[]> {
-    return await this.signatureCollectionClientService.getLists(
-      {
-        collectionId: collection.id,
-      },
-      user,
-    )
+    return await this.signatureCollectionClientService.getLists(input, user)
   }
 
   async list(listId: string, user: User): Promise<SignatureCollectionList> {
@@ -39,13 +36,6 @@ export class SignatureCollectionManagerService {
       listId,
       user,
     )
-  }
-
-  async collectionStatus(user: User): Promise<SignatureCollectionStatus> {
-    const status = await this.signatureCollectionClientService.collectionStatus(
-      user,
-    )
-    return { status }
   }
 
   async listStatus(

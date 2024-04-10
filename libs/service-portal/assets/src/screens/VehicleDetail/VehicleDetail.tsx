@@ -135,7 +135,11 @@ const VehicleDetail = () => {
   const hasPrivateRegistration =
     basicInfo?.regno && basicInfo?.permno !== basicInfo?.regno
 
-  const dropdownArray = [
+  const dropdownArray: {
+    title: string
+    href?: string
+    onClick?: () => void
+  }[] = [
     {
       title: formatMessage(messages.orderRegistrationLicense),
       href: formatMessage(urls.regCert),
@@ -149,6 +153,13 @@ const VehicleDetail = () => {
       href: formatMessage(urls.operator),
     },
   ]
+
+  if (downloadServiceURL) {
+    dropdownArray.push({
+      title: formatMessage(messages.vehicleHistoryReport),
+      onClick: () => formSubmit(`${downloadServiceURL}`),
+    })
+  }
 
   if (hasPrivateRegistration) {
     dropdownArray.unshift({
@@ -218,21 +229,25 @@ const VehicleDetail = () => {
                     />
                   </Box>
                 )}
-                {downloadServiceURL && (
-                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                  <a
+                    href={formatMessage(urls.ownerChange)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Button
+                      as="span"
+                      unfocusable
                       colorScheme="default"
-                      icon="receipt"
+                      icon="open"
                       iconType="outline"
                       size="default"
-                      type="button"
                       variant="utility"
-                      onClick={() => formSubmit(`${downloadServiceURL}`)}
                     >
-                      {formatMessage(messages.vehicleHistoryReport)}
+                      {formatMessage(messages.changeOfOwnership)}
                     </Button>
-                  </Box>
-                )}
+                  </a>
+                </Box>
                 <Box paddingRight={2}>
                   <Dropdown
                     label={formatMessage(messages.actions)}

@@ -53,6 +53,9 @@ export class Chart {
 
   @Field({ nullable: true })
   xAxisValueType?: string
+
+  @Field({ nullable: true })
+  customStyleConfig?: string
 }
 
 export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
@@ -74,6 +77,9 @@ export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
     components: fields.components.map(mapChartComponent),
     sourceData: fields.sourceData
       ? JSON.stringify(fields.sourceData)
+      : undefined,
+    customStyleConfig: fields.customStyleConfig
+      ? JSON.stringify(fields.customStyleConfig)
       : undefined,
   }
 }

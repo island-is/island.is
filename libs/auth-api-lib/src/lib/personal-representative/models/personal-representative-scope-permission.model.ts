@@ -18,6 +18,7 @@ import { PersonalRepresentativeRightType } from './personal-representative-right
   indexes: [
     {
       unique: true,
+      name: 'personal_representative_scope_permission_rtc_asn_key',
       fields: ['right_type_code', 'api_scope_name'],
     },
   ],

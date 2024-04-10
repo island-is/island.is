@@ -145,6 +145,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
     ),
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: () =>
+    import('@island.is/application-templates-official-journal-of-iceland'),
   [ApplicationTypes.ENERGY_FUNDS]: () =>
     import('@island.is/application/templates/energy-funds'),
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>
@@ -163,6 +165,12 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/change-machine-supervisor'),
   [ApplicationTypes.UNIVERSITY]: () =>
     import('@island.is/application/templates/university'),
+  [ApplicationTypes.DEREGISTER_MACHINE]: () =>
+    import('@island.is/application/templates/aosh/deregister-machine'),
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
+    import('@island.is/application/templates/grindavik-housing-buyout'),
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
+    import('@island.is/application/templates/aosh/request-for-inspection'),
 }
 
 export default templates

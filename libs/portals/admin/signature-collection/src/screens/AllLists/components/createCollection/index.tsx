@@ -17,7 +17,7 @@ import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 
-const CompareLists = () => {
+const CompareLists = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
 
@@ -32,6 +32,7 @@ const CompareLists = () => {
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
+        collectionId,
         owner: {
           name: name,
           nationalId: nationalIdInput,
@@ -61,7 +62,7 @@ const CompareLists = () => {
       candidateLookup({
         variables: {
           input: {
-            id: nationalIdInput,
+            nationalId: nationalIdInput,
           },
         },
       }).then((res) => {

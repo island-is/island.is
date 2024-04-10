@@ -8,31 +8,28 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Application, FormText, StaticText } from '@island.is/application/types'
-import { MessageDescriptor } from 'react-intl'
 import { conclusion } from './messages'
 
 type Props = Partial<{
-  alertTitle: MessageDescriptor
-  alertMessage: MessageDescriptor
+  alertTitle: StaticText
+  alertMessage: StaticText
   alertType: 'success' | 'warning' | 'error' | 'info'
-  multiFieldTitle: MessageDescriptor
-  secondButtonLink: MessageDescriptor
-  secondButtonLabel: MessageDescriptor
-  secondButtonMessage: MessageDescriptor
-  expandableHeader: MessageDescriptor
-  expandableIntro: MessageDescriptor
+  multiFieldTitle: StaticText
+  secondButtonLink: StaticText
+  secondButtonLabel: StaticText
+  secondButtonMessage: StaticText
+  expandableHeader: StaticText
+  expandableIntro: StaticText
   expandableDescription:
-    | MessageDescriptor
-    | ((
-        application: Application,
-      ) => MessageDescriptor | StaticText | null | undefined)
+    | StaticText
+    | ((application: Application) => StaticText | StaticText | null | undefined)
   conclusionLinkS3FileKey: FormText
   conclusionLink: string
-  conclusionLinkLabel: MessageDescriptor
-  sectionTitle: MessageDescriptor
+  conclusionLinkLabel: StaticText
+  sectionTitle: StaticText
   bottomButtonLink: string
-  bottomButtonLabel: MessageDescriptor
-  bottomButtonMessage: MessageDescriptor
+  bottomButtonLabel: StaticText
+  bottomButtonMessage: StaticText
 }>
 
 /**
@@ -106,6 +103,7 @@ export const buildFormConclusionSection = ({
             url: bottomButtonLink,
             buttonTitle: bottomButtonLabel,
             message: bottomButtonMessage,
+            marginBottom: [4, 4, 12],
           }),
         ],
       }),

@@ -10,11 +10,15 @@ describe('processDataFromSource', () => {
     const expected = {
       data: {
         testkey1: Array.from({ length: 4 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: 10 + i * 10,
         })),
         testkey2: Array.from({ length: 4 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: 10 + i * 10 + 2,
         })),
       },
@@ -38,11 +42,15 @@ describe('processDataFromSource', () => {
     const expected = {
       data: {
         testkey1: Array.from({ length: 4 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: (10 + i * 10) / 100,
         })),
         testkey2: Array.from({ length: 4 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: (10 + i * 10 + 2) / 100,
         })),
       },
@@ -66,11 +74,15 @@ describe('processDataFromSource', () => {
     const expected = {
       data: {
         testkey1: Array.from({ length: 4 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: (10 + i * 10) * (i % 2 === 0 ? 0.01 : 1),
         })),
         testkey2: Array.from({ length: 4 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: (10 + i * 10 + 2) / 100,
         })),
       },
@@ -94,17 +106,21 @@ describe('processDataFromSource', () => {
     const expected = {
       data: {
         testkey1: Array.from({ length: 4 }, (_, i) => ({
-          date:
-            i === 2
-              ? endOfDay(new Date(2023, 11, 15))
-              : endOfMonth(new Date(2023, 9 + i)),
+          header: (i === 2
+            ? endOfDay(new Date(2023, 11, 15))
+            : endOfMonth(new Date(2023, 9 + i))
+          )
+            .getTime()
+            .toString(),
           value: 10 + i * 10,
         })),
         testkey2: Array.from({ length: 4 }, (_, i) => ({
-          date:
-            i === 2
-              ? endOfDay(new Date(2023, 11, 15))
-              : endOfMonth(new Date(2023, 9 + i)),
+          header: (i === 2
+            ? endOfDay(new Date(2023, 11, 15))
+            : endOfMonth(new Date(2023, 9 + i))
+          )
+            .getTime()
+            .toString(),
           value: 10 + i * 10 + 2,
         })),
       },
@@ -128,11 +144,15 @@ describe('processDataFromSource', () => {
     const expected = {
       data: {
         testkey1: Array.from({ length: 6 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: i < 4 ? 10 + i * 10 : null,
         })),
         testkey2: Array.from({ length: 6 }, (_, i) => ({
-          date: endOfMonth(new Date(2023, 9 + i)),
+          header: endOfMonth(new Date(2023, 9 + i))
+            .getTime()
+            .toString(),
           value: i < 4 ? 10 + i * 10 : null,
         })),
       },
@@ -142,6 +162,34 @@ describe('processDataFromSource', () => {
         ,,,Okt 23, Nóv 23, Des 23, Jan 24, Feb 24, Mar 24
         testkey1,,,10,20,30,40,,
         testkey2,,,10,20,30,40,   ,
+        `
+
+    // Act
+    const processed = processDataFromSource(csv)
+
+    // Assert
+    expect(processed).toEqual(expected)
+  })
+
+  it('should handle non-date columns', () => {
+    // Arrange
+    const expected = {
+      data: {
+        testkey1: Array.from({ length: 4 }, (_, i) => ({
+          header: String.fromCharCode(65 + i),
+          value: 10 + i * 10,
+        })),
+        testkey2: Array.from({ length: 4 }, (_, i) => ({
+          header: String.fromCharCode(65 + i),
+          value: 10 + i * 10 + 2,
+        })),
+      },
+    }
+
+    const csv = `
+        ,,,A, B, C, D
+        testkey1,,,10,20,30,40
+        testkey2,,,12,22,32,42
         `
 
     // Act

@@ -28,7 +28,7 @@ const ActionReviewComplete = ({
       const res = await toggleListReviewMutation({
         variables: {
           input: {
-            id: listId,
+            listId,
           },
         },
       })

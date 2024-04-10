@@ -237,6 +237,19 @@ export const watsonConfig: Record<
       },
     },
 
+    // Kaup ríkisins á íbúðarhúsnæði í Grindavík
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2r6181rqgbxScVvCOUb4k8
+    '2r6181rqgbxScVvCOUb4k8': {
+      ...defaultWatsonConfig.en,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kaupaibudarhusnaedum',
+          defaultWatsonConfig.en.integrationID,
+        )
+      },
+    },
+
     // Samgöngustofa - Organization
     '6IZT17s7stKJAmtPutjpD7': {
       integrationID: '1e649a3f-9476-4995-ba24-0e72040b0cc0',
@@ -266,6 +279,19 @@ export const watsonConfig: Record<
         setupOneScreenWatsonChatBot(
           instance,
           'kilometragjald',
+          defaultWatsonConfig.is.integrationID,
+        )
+      },
+    },
+
+    // Kaup ríkisins á íbúðarhúsnæði í Grindavík
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2r6181rqgbxScVvCOUb4k8
+    '2r6181rqgbxScVvCOUb4k8': {
+      ...defaultWatsonConfig.is,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kaupaibudarhusnaedum',
           defaultWatsonConfig.is.integrationID,
         )
       },
@@ -555,6 +581,105 @@ export const watsonConfig: Record<
     // Sýslumenn - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
     kENblMMMvZ3DlyXw1dwxQ: {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á Austurlandi
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm
+    Xnes7x1ccvBvuZxInRXDm: {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á höfuðborgarsvæðinu
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6puIJvhGxFBzxExVHxi5sr
+    '6puIJvhGxFBzxExVHxi5sr': {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á Norðurlandi eystra
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/12JLsyDmODBfZedYPOQXtX
+    '12JLsyDmODBfZedYPOQXtX': {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á Vestfjörðum
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5MDZoq1DGsJospUnQz4y98
+    '5MDZoq1DGsJospUnQz4y98': {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn í Vestmannaeyjum
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/145ctmpqLPrOM7rHZIpC6F
+    '145ctmpqLPrOM7rHZIpC6F': {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á Suðurnesjum
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/cRCuTTXXSrpBj27nBiLbc?focusedField=title&focusedLocale=is-IS
+    cRCuTTXXSrpBj27nBiLbc: {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á Suðurlandi
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2uyNnLcRooCNk7u6CMpsIv
+    '2uyNnLcRooCNk7u6CMpsIv': {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á Norðurlandi vestra
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ZefqpCw4y5oy9lREilQY3
+    ZefqpCw4y5oy9lREilQY3: {
+      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sýslumaðurinn á Vesturlandi
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/43KqapFNoM9m4MNXXc8UPU
+    '43KqapFNoM9m4MNXXc8UPU': {
       integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',

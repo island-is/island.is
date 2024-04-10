@@ -184,10 +184,6 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/court`)
   }
 
-  getCaseNotifications(id: string): Promise<Notification[]> {
-    return this.get(`case/${id}/notifications`)
-  }
-
   createCasePresignedPost(
     id: string,
     createPresignedPost: unknown,

@@ -154,6 +154,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Box>
               <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
+                  Getur staðfest ákærur
+                </Text>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
+                <Text as="span" fontWeight="regular">
                   Innskráningar
                 </Text>
               </Box>
@@ -187,6 +192,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">
+                    {user.canConfirmIndictment ? 'Já' : 'Nei'}
+                  </Text>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
+                  <Text as="span">
                     {user.latestLogin
                       ? `${formatDate(user.latestLogin, 'yyy-MM-dd HH:mm')} - ${
                           user.loginCount
@@ -203,7 +213,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <AlertMessage
             type="info"
             title="Enginn notandi fannst"
-            message="Vinsamlegast veldur aðra stofnun"
+            message="Vinsamlegast veldu aðra stofnun"
           />
         </Box>
       )}

@@ -13,6 +13,10 @@ export class SignatureCollectionListNationalIdsInput {
 }
 @InputType()
 export class SignatureCollectionNationalIdsInput {
+  @Field()
+  @IsString()
+  collectionId!: string
+
   @Field(() => [String])
   @IsArray()
   nationalIds!: string[]

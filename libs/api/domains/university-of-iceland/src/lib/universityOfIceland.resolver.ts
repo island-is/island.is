@@ -38,7 +38,10 @@ export class UniversityOfIcelandResolver {
     >,
   ) {}
 
-  @Query(() => StudentInfo, { name: 'universityOfIcelandStudentInfo' })
+  @Query(() => StudentInfo, {
+    name: 'universityOfIcelandStudentInfo',
+    nullable: true,
+  })
   @Audit()
   async studentInfo(
     @CurrentUser() user: User,
@@ -53,7 +56,7 @@ export class UniversityOfIcelandResolver {
     }
   }
 
-  @ResolveField('track', () => StudentTrackModel)
+  @ResolveField('track', () => StudentTrackModel, { nullable: true })
   @Audit()
   async resolveTrack(
     @Args('input') input: StudentInfoInput,
@@ -67,6 +70,10 @@ export class UniversityOfIcelandResolver {
       input.trackNumber,
       input.locale as NemandiFerillFerillGetLocaleEnum,
     )) as StudentTrackModel
+
+    if (!data || !data.transcript) {
+      return null
+    }
 
     const transcriptData = {
       ...data.transcript,

@@ -246,7 +246,7 @@ export const titles = {
       description: 'Notaður sem titill fyrir Kæra til Landsréttar skjá',
     }),
     withdrawAppeal: defineMessage({
-      id: 'judicial.system.core:titles.shared.appeal_to_court_of_appeals',
+      id: 'judicial.system.core:titles.shared.withdraw_appeal',
       defaultMessage: 'Niðurfelling kæru - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir Niðurfelling kæru skjá',
     }),

@@ -228,6 +228,10 @@ export type EstateMember = {
   advocate?: Advocate
 }
 
+export type InheritanceEstateMember = EstateMember & {
+  address?: string
+}
+
 export type EstateAsset = {
   description: string
   assetNumber: string
@@ -277,6 +281,50 @@ interface EstateCommon {
 export interface EstateInfo extends EstateCommon {
   addressOfDeceased: string
   availableSettlements?: AvailableSettlements
+}
+
+export interface InheritanceTax {
+  validFrom: Date
+  inheritanceTax: number
+  taxExemptionLimit: number
+}
+
+export interface InheritanceReportAsset {
+  description?: string
+  assetNumber?: string
+  share: number
+  propertyValuation?: string
+  amount: string
+  exchangeRateOrInterest: string
+}
+
+export interface InheritanceReportInfo {
+  assets: Array<InheritanceReportAsset>
+  vehicles: Array<InheritanceReportAsset>
+  ships: Array<InheritanceReportAsset>
+  cash: Array<InheritanceReportAsset>
+  flyers: Array<InheritanceReportAsset>
+  otherAssets: Array<InheritanceReportAsset>
+  stocks: Array<InheritanceReportAsset>
+  bankAccounts: Array<InheritanceReportAsset>
+  depositsAndMoney: Array<InheritanceReportAsset>
+  guns: Array<InheritanceReportAsset>
+  sharesAndClaims: Array<InheritanceReportAsset>
+  funeralCosts: Array<InheritanceReportAsset>
+  officialFees: Array<InheritanceReportAsset>
+  otherDebts: Array<InheritanceReportAsset>
+  assetsInBusiness: Array<InheritanceReportAsset>
+  debtsInBusiness: Array<InheritanceReportAsset>
+  heirs: Array<EstateMember>
+  caseNumber?: string
+  dateOfDeath?: Date
+  will?: string
+  settlement?: boolean
+  knowledgeOfOtherWill?: boolean
+  nationalId?: string
+  addressOfDeceased?: string
+  nameOfDeceased?: string
+  inheritanceTax?: InheritanceTax
 }
 
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use

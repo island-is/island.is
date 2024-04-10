@@ -38,12 +38,13 @@ import {
   NationalIdWithNameField,
   ActionCardListField,
   TableRepeaterField,
+  StaticTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
-import { SpanType } from '@island.is/island-ui/core/types'
+import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (
@@ -386,6 +387,9 @@ export function buildKeyValueField(data: {
   colSpan?: SpanType
   condition?: Condition
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }): KeyValueField {
   const {
     label,
@@ -394,6 +398,9 @@ export function buildKeyValueField(data: {
     width = 'full',
     colSpan,
     display = 'block',
+    divider = false,
+    paddingX,
+    paddingY,
   } = data
 
   return {
@@ -406,9 +413,12 @@ export function buildKeyValueField(data: {
     colSpan,
     label,
     value,
+    divider,
     type: FieldTypes.KEY_VALUE,
     component: FieldComponents.KEY_VALUE,
     display,
+    paddingX,
+    paddingY,
   }
 }
 
@@ -485,7 +495,7 @@ export function buildPaymentPendingField(data: {
 export function buildMessageWithLinkButtonField(
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField {
-  const { id, title, url, message, buttonTitle } = data
+  const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
     children: undefined,
     id,
@@ -493,6 +503,8 @@ export function buildMessageWithLinkButtonField(
     url,
     message,
     buttonTitle,
+    marginTop,
+    marginBottom,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
   }
@@ -726,9 +738,11 @@ export function buildTableRepeaterField(
     formTitle,
     marginTop,
     marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
   } = data
 
   return {
@@ -741,8 +755,57 @@ export function buildTableRepeaterField(
     formTitle,
     marginTop,
     marginBottom,
+    titleVariant,
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    getStaticTableData,
+  }
+}
+
+export function buildStaticTableField(
+  data: Omit<
+    StaticTableField,
+    | 'type'
+    | 'component'
+    | 'children'
+    | 'id'
+    | 'doesNotRequireAnswer'
+    | 'colSpan'
+    | 'defaultValue'
+    | 'disabled'
+    | 'width'
+  >,
+): StaticTableField {
+  const {
+    header,
+    condition,
+    dataTestId,
+    title,
+    description,
+    rows,
+    summary,
+    marginBottom,
+    marginTop = 2,
+    titleVariant = 'h4',
+  } = data
+
+  return {
+    id: '',
+    title,
+    width: 'full',
+    doesNotRequireAnswer: true,
+    condition,
+    description,
+    dataTestId,
+    children: undefined,
+    type: FieldTypes.STATIC_TABLE,
+    component: FieldComponents.STATIC_TABLE,
+    header,
+    rows,
+    summary,
+    marginTop,
+    marginBottom,
+    titleVariant,
   }
 }

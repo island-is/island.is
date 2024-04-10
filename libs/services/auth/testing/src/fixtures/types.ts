@@ -6,8 +6,11 @@ import {
   ClientClaim,
   ClientGrantType,
   DelegationDTO,
+  DelegationIndex,
   DelegationScopeDTO,
   IdentityResource,
+  PersonalRepresentativeRightTypeDTO,
+  PersonalRepresentativeTypeDTO,
 } from '@island.is/auth-api-lib'
 
 export type CreateClientClaim = Optional<
@@ -33,4 +36,53 @@ export type CreateCustomDelegation = Optional<
 > & {
   domainName: string
   scopes?: CreateCustomDelegationScope[]
+}
+
+export type CreatePersonalRepresentativeType = Optional<
+  Pick<PersonalRepresentativeTypeDTO, 'validTo' | 'name' | 'description'>,
+  'validTo' | 'name' | 'description'
+> & {
+  code: string
+}
+
+export type CreatePersonalRepresentativeRightType = Optional<
+  Pick<
+    PersonalRepresentativeRightTypeDTO,
+    'validFrom' | 'validTo' | 'description' | 'code'
+  >,
+  'validFrom' | 'validTo' | 'description' | 'code'
+>
+
+export type CreatePersonalRepresentativeDelegation = Optional<
+  Pick<
+    DelegationDTO,
+    'toNationalId' | 'fromNationalId' | 'fromName' | 'validTo'
+  >,
+  'toNationalId' | 'fromNationalId' | 'fromName' | 'validTo'
+> & {
+  type?: CreatePersonalRepresentativeType
+  rightTypes?: CreatePersonalRepresentativeRightType[]
+}
+
+export type CreateDelegationIndexRecord = Optional<
+  Pick<
+    DelegationIndex,
+    | 'fromNationalId'
+    | 'toNationalId'
+    | 'provider'
+    | 'type'
+    | 'validTo'
+    | 'customDelegationScopes'
+  >,
+  | 'fromNationalId'
+  | 'toNationalId'
+  | 'provider'
+  | 'type'
+  | 'validTo'
+  | 'customDelegationScopes'
+>
+
+export type CreatePersonalRepresentativeScopePermission = {
+  rightTypeCode: string
+  apiScopeName: string
 }

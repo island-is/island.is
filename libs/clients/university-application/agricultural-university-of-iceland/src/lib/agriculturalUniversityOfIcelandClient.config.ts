@@ -21,7 +21,7 @@ export const AgriculturalUniversityOfIcelandApplicationClientConfig =
         fetchTimeout:
           env.optionalJSON(
             'XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_TIMEOUT',
-          ) ?? 120000,
+          ) ?? 10000,
       }
     },
   })

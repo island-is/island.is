@@ -16,20 +16,4 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild',
     description: 'National ID error message',
   },
-  invalidIsatNumber: {
-    id: `ls.application:errors.invalidIsatNumber`,
-    defaultMessage: 'ÍSAT númer verður að byrja á 84',
-    description: 'Invalid ÍSAT number error message',
-  },
-  invalidIsatMessage: {
-    id: `ls.application:errors.invalidIsatNumber`,
-    defaultMessage:
-      'Innskráningarþjónusta Ísland.is er einungis í boði fyrir opinberar stofnanir',
-    description: 'Invalid ÍSAT generic text',
-  },
-  invalidIsatPdfUrl: {
-    id: `ls.application:errors.invalidIsatPdfUrl`,
-    defaultMessage: 'https://www.hagstofa.is/media/49171/isat2008.pdf',
-    description: 'ÍSAT pdf url',
-  },
 })
