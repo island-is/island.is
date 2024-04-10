@@ -83,7 +83,7 @@ export class NotificationsService {
     }
   }
 
-  async getOrganizationTitle(
+  async getSenderTitle(
     senderId: string,
     locale: Locale = Locale.IS,
   ): Promise<string> {
@@ -106,16 +106,14 @@ export class NotificationsService {
     const organizationTitle = res.data.organizationCollection.items[0]?.title
 
     if (!organizationTitle) {
-      throw new NotFoundException(
-        `Organization title not found for ID: ${senderId}`,
-      )
+      this.logger.warn(`Organization title not found for senderId: ${senderId}`)
     }
-
-    await this.cacheManager.set(cacheKey, organizationTitle)
+    // return value or empty string
+    await this.cacheManager.set(cacheKey, `${senderId}_${organizationTitle}`)
     return organizationTitle
   }
 
-  private async formatAndMapNotification(
+  async formatAndMapNotification(
     notification: Notification,
     templateId: string,
     locale: Locale,
@@ -131,17 +129,19 @@ export class NotificationsService {
       const organizationArg = notification.args.find(
         (arg) => arg.key === 'organization',
       )
+      console.log(notification.senderId,"organizationArg",organizationArg)
       
-      // if senderId is set and args contains organization, fetch organizationtitle from senderId
+      // if senderId is set and args contains organization, fetch senderTitle from senderId
       if (notification.senderId && organizationArg) {
         try {
-          const organizationTitle = await this.getOrganizationTitle(
+          const senderTitle = await this.getSenderTitle(
             notification.senderId,
             locale,
           )
-          if (organizationTitle) {
-            console.log('found a org title ', notification.senderId, organizationTitle)
-            organizationArg.value = organizationTitle
+          if (senderTitle) {
+            console.log(notification.senderId,'found a org title ', notification.senderId, senderTitle)
+            organizationArg.value = senderTitle
+            console.log(notification.senderId,"organizationArg.value",organizationArg.value) 
           } else {
             this.logger.warn('title not found ', {
               senderId: notification.senderId,
