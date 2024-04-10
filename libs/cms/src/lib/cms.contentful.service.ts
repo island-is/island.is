@@ -734,7 +734,7 @@ export class CmsContentfulService {
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
-  async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]>: Promise<LifeEventPage[]> {
+  async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
       order: 'sys.createdAt',
