@@ -925,6 +925,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Tímabil í gangi, ekki hægt að breyta',
       description: 'Period in progress, unable to edit',
     },
+    additionalInformationSection: {
+      id: 'pl.application:additional.information.section',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
   }),
 
   selectChild: defineMessages({
