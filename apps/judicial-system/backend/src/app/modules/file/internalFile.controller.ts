@@ -12,6 +12,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import {
+  messageEndpoint,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
@@ -29,7 +33,7 @@ import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
 @UseGuards(TokenGuard)
-@Controller('api/internal/case/:caseId/file/:fileId')
+@Controller('api/internal/case/:caseId')
 @ApiTags('internal files')
 export class InternalFileController {
   constructor(
@@ -38,7 +42,7 @@ export class InternalFileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
-  @Post('deliverToCourt')
+  @Post(`${messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILE]}/:fileId`)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Delivers a case file to court',
@@ -66,7 +70,7 @@ export class InternalFileController {
     new CaseTypeGuard(indictmentCases),
     CaseFileExistsGuard,
   )
-  @Post('archive')
+  @Post(`${messageEndpoint[MessageType.ARCHIVING_CASE_FILE]}/:fileId`)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Archives a case file',

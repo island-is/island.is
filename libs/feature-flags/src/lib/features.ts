@@ -57,6 +57,7 @@ export enum Features {
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
+  licenseServiceDrivingLicencePhotoCheckDisabled = 'isLicenseServiceDrivingLicencePhotoCheckDisabled',
 
   //Enable intellectual properties fetch
   isIntellectualPropertyModuleEnabled = 'isIntellectualPropertyModuleEnabled',
@@ -81,6 +82,8 @@ export enum Features {
 
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
+
+  shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 }
 
 export enum ServerSideFeature {

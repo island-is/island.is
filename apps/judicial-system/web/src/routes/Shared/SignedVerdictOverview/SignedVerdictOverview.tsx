@@ -57,7 +57,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
-  CaseAppealDecision,
   CaseAppealState,
   CaseDecision,
   CaseState,
@@ -419,8 +418,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const shouldDisplayAlertBanner =
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
-    (isProsecutionUser(user) &&
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) ||
+    (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
     workingCase.appealState === CaseAppealState.COMPLETED
 
   return (

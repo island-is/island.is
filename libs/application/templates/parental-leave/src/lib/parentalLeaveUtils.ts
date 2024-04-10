@@ -792,6 +792,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -979,6 +981,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const language = getValueViaPath(answers, 'applicant.language') as string
 
+  const changeEmployer = getValueViaPath(answers, 'changeEmployer') as boolean
+  const changePeriods = getValueViaPath(answers, 'changePeriods') as boolean
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -1008,6 +1013,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
+    comment,
     employers,
     employerLastSixMonths,
     isNotStillEmployed,
@@ -1046,6 +1052,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     tempPeriods,
     tempEmployers,
     language,
+    changeEmployer,
+    changePeriods,
   }
 }
 

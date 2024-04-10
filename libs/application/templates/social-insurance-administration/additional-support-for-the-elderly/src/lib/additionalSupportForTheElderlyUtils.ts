@@ -19,7 +19,7 @@ import {
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
@@ -104,9 +104,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
   }
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const applicantName = getValueViaPath(
     externalData,
     'nationalRegistry.data.fullName',
@@ -153,7 +153,7 @@ export function getApplicationExternalData(
   }
 }
 
-export function getAttachments(application: Application) {
+export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
     attachmentType: AttachmentTypes,
@@ -196,7 +196,7 @@ export function getAttachments(application: Application) {
 
 // returns available years. Available period is
 // 3 months back in time and 6 months in the future.
-export function getAvailableYears() {
+export const getAvailableYears = () => {
   const threeMonthsBackInTime = subMonths(new Date(), 3).getFullYear()
   const sixMonthsInTheFuture = addMonths(new Date(), 6).getFullYear()
 

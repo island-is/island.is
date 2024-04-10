@@ -23,13 +23,17 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
-import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import {
+  getDeceasedHadAssets,
+  getEstateDataFromApplication,
+} from '../../lib/utils/helpers'
 import {
   InheritanceReportAsset,
   InheritanceReportInfo,
 } from '@island.is/clients/syslumenn'
 import { valueToNumber } from '../../lib/utils/helpers'
 import NumberInput from '../../components/NumberInput'
+import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
   field: {
@@ -42,6 +46,7 @@ type RepeaterProps = {
       sumField2: string
       fromExternalData?: string
       calcWithShareValue?: boolean
+      hideDeceasedShare?: boolean
       skipPushRight?: boolean
     }
   }
@@ -55,6 +60,8 @@ export const ReportFieldsRepeater: FC<
   const { answers, externalData } = application
 
   const { id, props } = field
+
+  const deceasedHadAssets = getDeceasedHadAssets(application)
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
@@ -258,7 +265,10 @@ export const ReportFieldsRepeater: FC<
         itemIndex += 1
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  let shouldPushRight = false
 
   return (
     <Box>
@@ -293,6 +303,8 @@ export const ReportFieldsRepeater: FC<
                 const shouldRecalculateTotal =
                   props.sumField === field.id || props.sumField2 === field.id
 
+                shouldPushRight = pushRight
+
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
                     <Text
@@ -320,6 +332,7 @@ export const ReportFieldsRepeater: FC<
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
                         defaultValue={[]}
+                        spacing={0}
                         options={[
                           {
                             label: formatMessage(m.bankAccountForeignLabel),
@@ -338,7 +351,8 @@ export const ReportFieldsRepeater: FC<
                           )
                         }}
                       />
-                    ) : field.id === 'accountNumber' ? (
+                    ) : field.type !== 'nationalId' &&
+                      field.id === 'assetNumber' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(m.bankAccount)}
@@ -400,7 +414,7 @@ export const ReportFieldsRepeater: FC<
                           repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={formatMessage(field.title)}
+                        label={formatMessage(field.title) + 'hey'}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}
@@ -427,6 +441,13 @@ export const ReportFieldsRepeater: FC<
                 )
               })}
             </GridRow>
+            {!props?.hideDeceasedShare && deceasedHadAssets && (
+              <DeceasedShare
+                id={fieldIndex}
+                paddingBottom={2}
+                pushRight={shouldPushRight}
+              />
+            )}
           </Box>
         )
       })}
