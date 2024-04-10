@@ -497,7 +497,10 @@ describe('DelegationsIndexService', () => {
     it('should reuse subjectId from delegations with same fromNationalId and toNationalId', async () => {
       const fromNationalId = testCase.customDelegations[0].fromNationalId
 
-      const spy = jest.spyOn(userIdentitiesService, 'findOrCreateSubjectId')
+      const findOrCreateSubjectIdSpy = jest.spyOn(
+        userIdentitiesService,
+        'findOrCreateSubjectId',
+      )
 
       // Arrange
       // create delegation and delegation index record with same to and from national id
@@ -531,7 +534,7 @@ describe('DelegationsIndexService', () => {
       // should not call findOrCreateSubjectId because we are reusing subjectId from delegation in the index
       expect(userIdentitiesService.findOrCreateSubjectId).not.toHaveBeenCalled()
 
-      spy.mockClear()
+      findOrCreateSubjectIdSpy.mockClear()
     })
 
     it('should fetch subjectId if userIdentity exits', async () => {

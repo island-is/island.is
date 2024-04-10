@@ -405,6 +405,7 @@ export class DelegationsIndexService {
               delegation.subjectId,
           )?.subjectId ?? null
 
+        // don't fail indexing if we can't find or create a subjectId
         try {
           if (!subjectId) {
             subjectId = await this.userIdentitiesService.findOrCreateSubjectId({
