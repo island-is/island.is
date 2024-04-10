@@ -359,14 +359,6 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [LifeEventPage])
-  getLifeEvents(
-    @Args('input') input: GetLifeEventsInput,
-  ): Promise<LifeEventPage[]> {
-    return this.cmsContentfulService.getLifeEvents(input.lang)
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => [LifeEventPage])
   getLifeEventsForOverview(
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
