@@ -132,6 +132,8 @@ export class NotificationsService {
       console.log(notification.senderId,"organizationArg",organizationArg)
       
       // if senderId is set and args contains organization, fetch senderTitle from senderId
+
+      // if senderId is set and args contains organization, fetch organizationtitle from senderId
       if (notification.senderId && organizationArg) {
         try {
           const senderTitle = await this.getSenderTitle(
