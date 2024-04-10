@@ -275,20 +275,18 @@ export const OccupationalLicenses = new XroadConf({
   },
 })
 
-export const DistrictCommissionersLicenses = new XroadConf({
+export const DistrictCommissionersPCard = new XroadConf({
   env: {
-    XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: {
-      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis/RettindiFyrirIslandIs',
-      staging:
-        'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis/RettindiFyrirIslandIs',
-      prod: 'IS/GOV/5512201410/Syslumenn-Protected/RettindiIslandis/RettindiFyrirIslandIs',
+    XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
     },
   },
 })
-
-export const DistrictCommissionersPCard = new XroadConf({
+export const DistrictCommissionersLicenses = new XroadConf({
   env: {
-    XROAD_DISTRICT_COMMISSIONERS_PCARD_PATH: {
+    XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: {
       dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
