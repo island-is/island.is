@@ -9,7 +9,7 @@ query GetLicense($input: GetGenericLicenseInput!) {
     ...GenericUserLicenseFragment
     barcode {
       token
-      exp
+      expiresIn
     }
   }
 }
