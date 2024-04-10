@@ -326,6 +326,13 @@ export class DelegationsOutgoingService {
           getDelegationNoActorWhereClause(user),
         ],
       },
+      include: [
+        {
+          model: DelegationScope,
+          required: false,
+          as: 'delegationScopes',
+        },
+      ],
     })
     if (!currentDelegation) {
       throw new NoContentException()
