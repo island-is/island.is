@@ -10,6 +10,8 @@ air-discount-scheme-api:
     AUTH_AUDIENCE: 'loftbru.island.is'
     BACKEND_URL: 'http://web-air-discount-scheme-backend'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -86,6 +88,8 @@ air-discount-scheme-backend:
     DB_NAME: 'air_discount_scheme_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'air_discount_scheme_backend'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     ENVIRONMENT: 'prod'
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -190,6 +194,8 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     ENVIRONMENT: 'prod'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
     LOG_LEVEL: 'info'
@@ -278,6 +284,8 @@ api:
     CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi.island.is'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
     ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api.thinglysing.is/business/tolfraedi'
@@ -565,6 +573,8 @@ application-system-api:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     EHIC_XROAD_PROVIDER_ID: 'IS/GOV/4804080550/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -793,6 +803,8 @@ application-system-api-worker:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     EHIC_XROAD_PROVIDER_ID: 'IS/GOV/4804080550/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-prod-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
@@ -883,6 +895,8 @@ application-system-form:
   enabled: true
   env:
     BASEPATH: '/umsoknir'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -956,6 +970,8 @@ consultation-portal:
     API_URL: 'http://web-api.islandis.svc.cluster.local'
     BACKEND_DL_URL: 'https://samradapi.island.is/api/Documents/'
     BASEPATH: '/consultation-portal'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     ENVIRONMENT: 'prod'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
     LOG_LEVEL: 'info'
@@ -1023,6 +1039,8 @@ consultation-portal:
 contentful-apps:
   enabled: true
   env:
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1086,6 +1104,8 @@ contentful-apps:
 download-service:
   enabled: true
   env:
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -1187,6 +1207,8 @@ endorsement-system-api:
     DB_NAME: 'services_endorsements_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_endorsements_api'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     EMAIL_FROM_ADDRESS: 'noreply@island.is'
     EMAIL_FROM_NAME: 'island.is'
     EMAIL_REGION: 'eu-west-1'
@@ -1301,6 +1323,8 @@ icelandic-names-registry-backend:
     DB_NAME: 'icelandic_names_registry_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'icelandic_names_registry_backend'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -1387,6 +1411,8 @@ icelandic-names-registry-backend:
 island-ui-storybook:
   enabled: true
   env:
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1444,6 +1470,8 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -1562,6 +1590,8 @@ portals-admin:
   enabled: true
   env:
     BASEPATH: '/stjornbord'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1632,6 +1662,8 @@ regulations-admin-backend:
     DB_NAME: 'regulations_admin_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'regulations_admin_backend'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -1727,6 +1759,8 @@ search-indexer-service:
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     ENVIRONMENT: 'prod'
@@ -1855,6 +1889,8 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1931,6 +1967,8 @@ service-portal-api:
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'service_portal_api'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
@@ -2048,6 +2086,8 @@ service-portal-api-worker:
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'service_portal_api'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
@@ -2123,6 +2163,8 @@ services-documents:
     DB_NAME: 'services_documents'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_documents'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -2201,6 +2243,8 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions_read'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
@@ -2274,6 +2318,8 @@ services-sessions-worker:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
@@ -2367,6 +2413,8 @@ services-university-gateway:
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_university_gateway'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -2495,6 +2543,8 @@ services-university-gateway-worker:
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_university_gateway'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -2570,6 +2620,8 @@ skilavottord-web:
   enabled: true
   env:
     API_URL: 'http://web-skilavottord-ws'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     ENVIRONMENT: 'prod'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -2643,6 +2695,8 @@ skilavottord-ws:
     DB_NAME: 'skilavottord'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'skilavottord'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
@@ -2749,6 +2803,8 @@ user-notification:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -2844,6 +2900,8 @@ user-notification-cleanup-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2937,6 +2995,8 @@ user-notification-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -3037,6 +3097,8 @@ web:
   enabled: true
   env:
     API_URL: 'http://web-api'
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
@@ -3116,6 +3178,8 @@ xroad-collector:
     - 'node'
   enabled: true
   env:
+    DD_GIT_COMMIT_SHA: 'efa5b4ad3825cbcfa82a6ccc76963a99e1e88609'
+    DD_GIT_REPOSITORY_URL: 'github.com/island-is/island.is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'

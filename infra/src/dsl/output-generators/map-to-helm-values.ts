@@ -1,3 +1,4 @@
+import { exec } from 'child_process'
 import {
   AccessModes,
   IngressForEnv,
@@ -22,6 +23,8 @@ import {
   postgresIdentifier,
   resolveWithMaxLength,
   serializeEnvironmentVariables,
+  getRepoUrl,
+  getCommitSha,
 } from './serialization-helpers'
 
 import { getScaledValue } from '../utils/scale-value'
@@ -62,6 +65,8 @@ const serializeService: SerializeMethod<HelmService> = async (
         serviceDef.resources.limits.memory,
       )}`,
       LOG_LEVEL: 'info',
+      DD_GIT_COMMIT_SHA: await getCommitSha(),
+      DD_GIT_REPOSITORY_URL: await getRepoUrl(),
     },
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {

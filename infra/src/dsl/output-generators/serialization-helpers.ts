@@ -1,3 +1,4 @@
+import { exec } from 'child_process'
 import {
   EnvironmentVariablesForEnv,
   ServiceDefinitionForEnv,
@@ -5,6 +6,29 @@ import {
 } from '../types/input-types'
 import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
 import { ContainerEnvironmentVariables } from '../types/output-types'
+
+const runCommand = (command: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error || stderr || !stdout) {
+        reject(new Error(`Error running "${command}": ${error || stderr}`))
+        return
+      }
+      resolve(stdout.trim())
+    })
+  })
+}
+
+export const getRepoUrl = async (): Promise<string> => {
+  const out = await runCommand('git remote get-url origin')
+  const parsed = out.replace('git@', '').replace(':', '/').replace('.git', '')
+  return parsed
+}
+
+export const getCommitSha = async (): Promise<string> => {
+  const out = await runCommand('git rev-parse HEAD')
+  return out
+}
 
 export const resolveWithMaxLength = (str: string, max: number) => {
   if (str.length > max) {
