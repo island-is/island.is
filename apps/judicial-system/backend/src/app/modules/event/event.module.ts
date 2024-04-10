@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { DateLogModule } from '..'
+import { DateLogModule } from '../index'
 import { EventService } from './event.service'
 
 @Module({
