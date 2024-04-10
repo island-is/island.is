@@ -274,7 +274,7 @@ const SvgPathContainer = ({
 }
 
 /**
- * @deprecated Use something else?
+ * @deprecated Use IconRC instead
  */
 export const Icon = ({
   type,
