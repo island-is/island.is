@@ -51,19 +51,20 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { DateLog } from '../date-log'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
+import { Notification } from '../notification'
 import { User } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
-import { DateLog } from '../date-log'
 
 export interface UpdateCase
   extends Pick<
@@ -147,6 +148,7 @@ export interface UpdateCase
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
     | 'indictmentDeniedExplanation'
+    | 'indictmentReturnedExplanation'
   > {
   type?: CaseType
   state?: CaseState
@@ -238,9 +240,7 @@ export const include: Includeable[] = [
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: {
-      eventType: { [Op.in]: eventTypes },
-    },
+    where: { eventType: { [Op.in]: eventTypes } },
     separate: true,
   },
   {
@@ -250,11 +250,13 @@ export const include: Includeable[] = [
     where: { dateType: { [Op.in]: dateTypes } },
     separate: true,
   },
+  { model: Notification, as: 'notifications' },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
 ]
 
 export const caseListInclude: Includeable[] = [
@@ -841,7 +843,7 @@ export class CaseService {
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
             caseFile.category &&
-            CaseFileCategory.APPEAL_RULING === caseFile.category,
+            caseFile.category === CaseFileCategory.APPEAL_RULING,
         )
         .map((caseFile) => ({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
@@ -849,12 +851,19 @@ export class CaseService {
           caseId: theCase.id,
           elementId: caseFile.id,
         })) ?? []
-    messages.push({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: NotificationType.APPEAL_COMPLETED },
-    })
+    messages.push(
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_COMPLETED },
+      },
+      {
+        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
+        user,
+        caseId: theCase.id,
+      },
+    )
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
