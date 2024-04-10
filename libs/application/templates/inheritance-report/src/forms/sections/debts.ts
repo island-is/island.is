@@ -67,6 +67,7 @@ export const debts = buildSection({
                     currency: true,
                   },
                 ],
+                hideDeceasedShare: true,
                 repeaterButtonText: m.debtsRepeaterButton,
                 fromExternalData: 'otherDebts',
                 sumField: 'propertyValuation',

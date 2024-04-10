@@ -58,9 +58,10 @@ describe('NotificationController - Send appeal judges assigned notification', ()
     it('should queue message for delivery', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
+          body: { type: NotificationType.APPEAL_JUDGES_ASSIGNED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })

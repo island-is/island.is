@@ -15,15 +15,9 @@ import { Problem } from '@island.is/react-spa/shared'
 
 const IntellectualPropertiesOverview = () => {
   useNamespaces('sp.intellectual-property')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
-  const { loading, data, error } = useGetIntellectualPropertiesQuery({
-    variables: {
-      input: {
-        locale,
-      },
-    },
-  })
+  const { loading, data, error } = useGetIntellectualPropertiesQuery()
 
   const generateActionCard = (
     index: number,

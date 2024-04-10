@@ -7,6 +7,10 @@ query ListLicenses($input: GetGenericLicensesInput!, $locale: String) {
 query GetLicense($input: GetGenericLicenseInput!) {
   genericLicense(input: $input) {
     ...GenericUserLicenseFragment
+    barcode {
+      token
+      expiresIn
+    }
   }
 }
 
@@ -25,6 +29,22 @@ mutation VerifyPkPass($input: VerifyPkPassInput!) {
       message
       data
     }
+  }
+}
+
+mutation VerifyLicenseBarcode($input: VerifyLicenseBarcodeInput!) {
+  verifyLicenseBarcode(input: $input) {
+    data {
+      ... on LicenseDriverLicenseData {
+        nationalId
+        name
+        picture
+      }
+    }
+    valid
+    error
+    licenseType
+    barcodeType
   }
 }
 

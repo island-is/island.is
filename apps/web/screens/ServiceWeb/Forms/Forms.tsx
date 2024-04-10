@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from 'react'
+import { ReactNode, useEffect, useMemo } from 'react'
 import { Locale } from 'locale'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 
 import {
   AlertBanner,
@@ -13,6 +14,7 @@ import {
   GridRow,
   Link,
   LinkContext,
+  LinkV2,
   Text,
   toast,
   ToastContainer,
@@ -38,7 +40,9 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import { Screen } from '../../../types'
 import {
@@ -86,6 +90,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutation,
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
+  const { activeLocale } = useI18n()
 
   useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
@@ -178,7 +183,9 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       smallBackground
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
       pageData={serviceWebPage}
     >
@@ -270,6 +277,48 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                       )}
                     </Text>
                   </GridColumn>
+
+                  {typeof serviceWebPage?.contactFormDisclaimer?.length ===
+                    'number' &&
+                    serviceWebPage.contactFormDisclaimer.length > 0 && (
+                      <GridColumn paddingTop={2}>
+                        {webRichText(serviceWebPage.contactFormDisclaimer, {
+                          renderNode: {
+                            [BLOCKS.PARAGRAPH]: (
+                              _node: unknown,
+                              children: ReactNode,
+                            ) => {
+                              return (
+                                <GridRow>
+                                  <GridColumn span="12/12">
+                                    <Text as="div" variant="intro">
+                                      {children}
+                                    </Text>
+                                  </GridColumn>
+                                </GridRow>
+                              )
+                            },
+                            [INLINES.HYPERLINK]: (
+                              node: { data?: { uri?: string } },
+                              children: ReactNode,
+                            ) => {
+                              return (
+                                <Box display="inlineBlock">
+                                  <LinkV2
+                                    underlineVisibility="always"
+                                    underline="small"
+                                    color="blue400"
+                                    href={node?.data?.uri ?? ''}
+                                  >
+                                    {children}
+                                  </LinkV2>
+                                </Box>
+                              )
+                            },
+                          },
+                        })}
+                      </GridColumn>
+                    )}
                 </GridRow>
                 {successfullySent ? (
                   <Box marginTop={6}>
