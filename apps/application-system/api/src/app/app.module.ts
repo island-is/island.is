@@ -35,6 +35,8 @@ import { CarRecyclingClientConfig } from '@island.is/clients/car-recycling'
 import { ArborgWorkpoinClientConfig } from '@island.is/clients/workpoint/arborg'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
+import { InnaClientConfig } from '@island.is/clients/inna'
+import { DmrClientConfig } from '@island.is/clients/dmr'
 
 @Module({
   imports: [
@@ -73,6 +75,8 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
         ArborgWorkpoinClientConfig,
         SocialInsuranceAdministrationClientConfig,
         SignatureCollectionClientConfig,
+        InnaClientConfig,
+        DmrClientConfig,
       ],
     }),
   ],

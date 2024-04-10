@@ -38,6 +38,7 @@ import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
+import { Notification } from '../../notification'
 import { User } from '../../user'
 
 @Table({
@@ -1198,4 +1199,31 @@ export class Case extends Model {
   @BelongsTo(() => Institution, 'prosecutorsOfficeId')
   @ApiPropertyOptional({ type: () => Institution })
   prosecutorsOffice?: Institution
+
+  /**********
+   * The explanation given for a denial of an indictment
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentDeniedExplanation?: string
+
+  /**********
+   * The explanation given for the return of an indictment by the district court
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReturnedExplanation?: string
+
+  /**********
+   * The case's notifications
+   **********/
+  @HasMany(() => Notification, 'caseId')
+  @ApiPropertyOptional({ type: Notification, isArray: true })
+  notifications?: Notification[]
 }

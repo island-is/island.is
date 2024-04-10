@@ -19,6 +19,11 @@ export enum OtherPropertiesEnum {
   ASSETS_ABROAD = 'assetsAbroad',
 }
 
+export type DeceasedShare = {
+  deceasedShare: string
+  deceasedShareEnabled: string[]
+}
+
 export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
 
 export type Answers = {
@@ -104,43 +109,49 @@ export interface Guns {
   total: number
 }
 
-export interface GunsData {
+export interface GunsData extends DeceasedShare {
   assetNumber: string
   description: string
   propertyValuation: string
   taxFreeInheritance: number
 }
 
-export interface Money {
+export interface Money extends DeceasedShare {
   info: string
   value: string
 }
 
-export interface ClaimsData {
+export interface ClaimsData extends DeceasedShare {
   value: string
+  propertyValuation: string
+  description: string
   issuer: string
   nationalId: string
   taxFreeInheritance: number
 }
+
 export interface Claims {
   data: ClaimsData[]
   total: number
 }
 
-export interface StocksData {
+export interface StocksData extends DeceasedShare {
   value: string
+  amount: string
   faceValue: string
   nationalId: string
   organization: string
   rateOfExchange: string
+  exchangeRateOrInterest: string
   taxFreeInheritance: number
 }
+
 export interface Stocks {
   data: StocksData[]
   total: number
 }
 
-export interface VehiclesData {
+export interface VehiclesData extends DeceasedShare {
   assetNumber: string
   description: string
   propertyValuation: string
@@ -153,12 +164,12 @@ export interface Vehicles {
   total: number
 }
 
-export interface Inventory {
+export interface Inventory extends DeceasedShare {
   info: string
   value: string
 }
 
-export interface RealEstateData {
+export interface RealEstateData extends DeceasedShare {
   share: string
   assetNumber: string
   description: string
@@ -172,19 +183,21 @@ export interface RealEstate {
   total: number
 }
 
-export interface otherassetsData {
-  otherAssets: string
-  otherAssetsValue: string
+export interface OtherAssetsData extends DeceasedShare {
+  info: string
+  value: string
   taxFreeInheritance: number
 }
 export interface OtherAssets {
-  data: otherassetsData[]
+  data: OtherAssetsData[]
   total: number
 }
 
-export interface BankAccountsData {
-  balance: string
-  accountNumber: string
+export interface BankAccountsData extends DeceasedShare {
+  exchangeRateOrInterest: string
+  propertyNumber: string
+  assetNumber: string
+  propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
 }

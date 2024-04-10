@@ -8,6 +8,7 @@ import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
+import airplaneIcon from '../../assets/icons/airplane.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -18,7 +19,8 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
 const Row = styled.View`
-  margin-top: 16px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   margin-left: -${({ theme }) => theme.spacing[2]}px;
   margin-right: -${({ theme }) => theme.spacing[2]}px;
   flex-direction: column;
@@ -65,11 +67,17 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
   const intl = useIntl()
   const showFinances = useFeatureFlag('isFinancesEnabled', false)
+  const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
+
   useNavigationOptions(componentId)
   return (
     <>
       <ScrollView
-        style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16 }}
+        style={{
+          flex: 1,
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+        }}
       >
         <SafeAreaView>
           <UserCard
@@ -89,7 +97,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo(`/family`)}
             icon={
               <Image
-                source={familyIcon as any}
+                source={familyIcon}
                 style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
@@ -100,7 +108,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo(`/vehicles`)}
             icon={
               <Image
-                source={vehicleIcon as any}
+                source={vehicleIcon}
                 style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
@@ -111,7 +119,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             onPress={() => navigateTo(`/assets`)}
             icon={
               <Image
-                source={assetsIcon as any}
+                source={assetsIcon}
                 style={{ width: 24, height: 24 }}
                 resizeMode="contain"
               />
@@ -123,7 +131,20 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
               onPress={() => navigateTo(`/finance`)}
               icon={
                 <Image
-                  source={financeIcon as any}
+                  source={financeIcon}
+                  style={{ width: 24, height: 24 }}
+                  resizeMode="contain"
+                />
+              }
+            />
+          )}
+          {showAirDiscount && (
+            <ListButton
+              title={intl.formatMessage({ id: 'profile.airDiscount' })}
+              onPress={() => navigateTo(`/air-discount`)}
+              icon={
+                <Image
+                  source={airplaneIcon}
                   style={{ width: 24, height: 24 }}
                   resizeMode="contain"
                 />

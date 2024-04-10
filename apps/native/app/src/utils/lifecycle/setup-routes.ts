@@ -90,6 +90,17 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/air-discount', async (passProps) => {
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.AirDiscountScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {
@@ -296,19 +307,6 @@ export function setupRoutes() {
             item,
             ...rest,
           },
-          options: {
-            animations: {
-              push: {
-                sharedElementTransitions: [
-                  {
-                    fromId,
-                    toId,
-                    interpolation: { type: 'spring' },
-                  },
-                ],
-              },
-            },
-          },
         },
       })
     },
@@ -325,19 +323,6 @@ export function setupRoutes() {
           passProps: {
             id: passId,
             ...rest,
-          },
-          options: {
-            animations: {
-              push: {
-                sharedElementTransitions: [
-                  {
-                    fromId,
-                    toId,
-                    interpolation: { type: 'spring' },
-                  },
-                ],
-              },
-            },
           },
         },
       })

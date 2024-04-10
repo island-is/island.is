@@ -548,6 +548,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Period'
+        applicationComment:
+          type: string
+          nullable: true
         employers:
           type: array
           items:
@@ -573,6 +576,8 @@ components:
           nullable: true
         language:
           type: string
+        otherParentBlocked:
+          type: boolean
     PaymentInfo:
       type: object
       additionalProperties: false

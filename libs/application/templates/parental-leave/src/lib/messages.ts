@@ -1,8 +1,6 @@
-import { defineMessages, MessageDescriptor } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
-type MessageDir = Record<string, Record<string, MessageDescriptor>>
-
-export const parentalLeaveFormMessages: MessageDir = {
+export const parentalLeaveFormMessages = {
   // Messages shared across the Parental Leave application templates
   shared: defineMessages({
     institution: {
@@ -216,11 +214,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:otherParent.title',
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
-    },
-    otherParentSubTitle: {
-      id: 'pl.application:otherParent.sub.title',
-      defaultMessage: 'Hitt foreldrið',
-      description: 'Other parent',
     },
     otherParentName: {
       id: 'pl.application:otherParent.name',
@@ -897,11 +890,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Breyta eða bæta við vinnuveitanda',
       description: 'Edit or add an employer',
     },
-    periodReview: {
-      id: 'pl.application:periodReview',
-      defaultMessage: 'Tímabil',
-      description: 'Period',
-    },
     editOrAddInfoSection: {
       id: 'pl.application:editOrAddInfoSection',
       defaultMessage: 'Upplýsingar',
@@ -1087,6 +1075,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:applicant.english',
       defaultMessage: 'Enska',
       description: 'english',
+    },
+    commentSection: {
+      id: 'pl.application:applicant.comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    commentDescription: {
+      id: 'pl.application:applicant.comment.description',
+      defaultMessage:
+        'Hafir þú einhverja athugasemd skildu hana eftir hér. Athugið að athugasemdir takmarkast við 250 stafabil. Ef nauðsyn krefur getur þú hlaðið upp skjali með lengri athugasemdum á skjánum hér á undan.',
+      description:
+        'Please leave any additional comments below. Note that comments are limited to 250 characters. If needed, please upload a document with longer comments on the previous screen.',
+    },
+    commentPlaceholder: {
+      id: 'pl.application:applicant.comment.placeholder',
+      defaultMessage: 'Skrifaðu athugasemd hér',
+      description: 'Your comment',
     },
   }),
 
@@ -1592,6 +1597,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
+    uploadHeader: {
+      id: 'pl.application:fileUpload.upload.title',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
     uploadDescription: {
       id: 'pl.application:fileUpload.upload.description',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
@@ -1783,37 +1793,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     buttonsEdit: {
       id: 'pl.application:review.buttonsEdit',
-      defaultMessage: 'Breyta / bæta við tímabilum',
-      description: 'Edit or add periods to the application',
-    },
-    editApplicationModalTitle: {
-      id: 'pl.application:review.edit.modal.title',
-      defaultMessage: 'Breyta umsókn?',
-      description: 'Edit application?',
-    },
-    editApplicationModalDesc: {
-      id: 'pl.application:review.edit.modal.desc',
-      defaultMessage:
-        'Ef þú heldur áfram að breyta umsókn þinni, þá verður að endurtaka sumar eða allar samþykktirnar.',
-      description:
-        'If you continue to edit your submitted application, then some or all of the approvals will have to be repeated.',
-    },
-    editApplicationModalAria: {
-      id: 'pl.application:review.edit.modal.aria',
-      defaultMessage:
-        'Venjulegur valmynd til að staðfesta hvort þú viljir breyta forritinu.',
-      description:
-        'A modal dialog to confirm if you want to edit your application.',
-    },
-    editApplicationModalConfirmButton: {
-      id: 'pl.application:review.edit.modal.confirmButton',
-      defaultMessage: 'Haltu áfram',
-      description: 'Continue',
-    },
-    editApplicationModalCancelButton: {
-      id: 'pl.application:review.edit.modal.cancelButton',
-      defaultMessage: 'Hætta við',
-      description: 'Cancel',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
@@ -1932,6 +1913,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Language to use in communication with the Parental Leave Fund',
     },
+    benefits: {
+      id: 'pl.application:review.benefits',
+      defaultMessage: 'Bætur',
+      description: 'Benefits',
+    },
   }),
 
   draftFlow: defineMessages({
@@ -1942,26 +1928,24 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     draftNotApprovedOtherParentDesc: {
       id: 'pl.application:draftFlow.requiresAction.otherParentDesc',
-      defaultMessage: 'The other parent did not approve your request.',
-      description: 'The other parent did not approve your request.',
+      defaultMessage:
+        'Hitt foreldrið samþykkti ekki beiðni þína. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
+      description:
+        'The other parent did not approve your request. You can make edits to your application and resubmit for review.',
     },
     draftNotApprovedEmployerDesc: {
       id: 'pl.application:draftFlow.requiresAction.employerDesc',
       defaultMessage:
-        'Vinnuveitandi þinn samþykkti ekki valið tímabil en óskar eftir nýju og breyttu tímabili.',
+        'Vinnuveitandi þinn samþykkti ekki valin tímabil. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
       description:
-        'Your employer did not approve the selected period and requests that you resubmit an alternative period.',
+        'Your employer did not approve the selected periods. You can make edits to your application and resubmit for review.',
     },
     draftNotApprovedVMLSTDesc: {
       id: 'pl.application:draftFlow.requiresAction.VMLSTDesc',
-      defaultMessage: 'Vinnumalastofnun did not approve your application.',
-      description: 'Vinnumalastofnun did not approve your application.',
-    },
-    draftAdditionalDocumentRequiredDesc: {
-      id: 'pl.application:draftFlow.requiresAction.additionalDocument',
       defaultMessage:
-        'Vinnumalastofnun vantar frekari gögn vegna umsóknarinnar',
-      description: 'Additional document required',
+        'Vinnumálastofnun samþykkti ekki umsókn þína. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
+      description:
+        'The Directorate of Labour did not approve your application. You can make edits to your application and resubmit for review.',
     },
     modifyDraftDesc: {
       id: 'pl.application:draftFlow.modifyDesc',
@@ -1969,11 +1953,6 @@ export const parentalLeaveFormMessages: MessageDir = {
         'You can make edits to your application and re-submit for consideration.',
       description:
         'You can make edits to your application and re-submit for consideration.',
-    },
-    modifyDraftButton: {
-      id: 'pl.application:draftFlow.modifyDraftButton',
-      defaultMessage: 'Make changes',
-      description: 'Make changes',
     },
   }),
 
@@ -1995,36 +1974,26 @@ export const parentalLeaveFormMessages: MessageDir = {
     // For Requires Action screen (when edits are not approved)
     editsNotApprovedTitle: {
       id: 'pl.application:editFlow.requiresAction.title',
-      defaultMessage: 'Your edits were not approved',
+      defaultMessage: 'Breytingar þínar voru ekki samþykktar',
       description: 'Your edits were not approved',
     },
     editsNotApprovedEmployerDesc: {
       id: 'pl.application:editFlow.requiresAction.employerDesc',
       defaultMessage:
-        'Your edits were not approved by your employer, you can choose to modify them and re-submit or discard the modifications.',
+        'Breytingar þínar voru ekki samþykktar af vinnuveitanda þínum, þú getur valið að eyða breytingunum eða breytt umsókn og sent aftur til skoðunar.',
       description:
-        'Your edits were not approved by your employer, you can choose to modify them and re-submit or discard the modifications.',
+        'Your edits were not approved by your employer. You can choose to discard your previous edits or edit the application and resend it for review.',
     },
     editsNotApprovedVMLSTDesc: {
       id: 'pl.application:editFlow.requiresAction.VMLSTDesc',
       defaultMessage:
-        'Your edits were not approved by Vinnumalastofnun, you can choose to modify them and re-submit or discard the modifications.',
+        'Breytingar þínar voru ekki samþykktar af Vinnumálastofnun, þú getur valið að eyða breytingunum eða breytt umsókn og sent aftur til skoðunar.',
       description:
-        'Your edits were not approved by Vinnumalastofnun, you can choose to modify them and re-submit or discard the modifications.',
-    },
-    editsNotApprovedCTA: {
-      id: 'pl.application:editFlow.requiresAction.CTA',
-      defaultMessage: 'What action would you like to take?',
-      description: 'What action would you like to take?',
-    },
-    editsNotApprovedEditButton: {
-      id: 'pl.application:editFlow.requiresAction.editButtonLabel',
-      defaultMessage: 'Modify my edits and re-submit',
-      description: 'Modify my edits and re-submit',
+        'Your edits were not approved by the Directorate of Labour. You can choose to discard your previous edits or edit the application and resend it for review.',
     },
     editsNotApprovedDiscardButton: {
       id: 'pl.application:editFlow.requiresAction.discardButtonLabel',
-      defaultMessage: 'Discard my edits',
+      defaultMessage: 'Eyða breytingum',
       description: 'Discard my edits',
     },
   }),
@@ -2040,15 +2009,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Fela allt',
       description: 'Collapse all',
     },
-    section: {
-      id: 'pl.application:confirmation.section',
-      defaultMessage: 'Samþykkja',
-      description: 'Confirmation',
-    },
     title: {
       id: 'pl.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Review and submit',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
     },
     cancel: {
       id: 'pl.application:confirmation.cancel',
@@ -2061,6 +2025,11 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description:
         'Please review your information before submitting the application.',
+    },
+    submitButton: {
+      id: 'pl.application:confirmation.submit.button',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
     },
   }),
 
@@ -2214,42 +2183,22 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Þú getur ekki sótt um ennþá.',
       description: 'You can not apply yet.',
     },
-    residenceGrantPeriodDescriptionLineOne: {
-      id: 'pl.application:residence.grant.period.description.line.one',
-      defaultMessage:
-        'Heimilt er að greiða dvalarkostnað barnshafandi foreldris fjarri heimili 14 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
-      description:
-        'It is permitted to pay the expenses of a pregnant parent´s stay away from home 14 days before the expected date of birth and until the birth',
-    },
-    residenceGrantPeriodDescriptionLineTwo: {
-      id: 'pl.application:residence.grant.period.description.line.two',
-      defaultMessage:
-        'Ef um fjölburameðgöngu er að ræða er heimilt að byrja að greiða dvalarkostnað 28 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
-      description:
-        'In the case of a multiple pregnancy, it is permitted to start paying accommodation expenses 28 days before the expected date of birth and until the birth',
-    },
-
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
       defaultMessage: 'Sækja um dvalarstyrk',
       description: 'Apply for residence grant',
     },
-    residenceGrantApplyHeader: {
-      id: 'pl.application:residence.grant.apply.header',
-      defaultMessage: 'Tímabil dvalarstyrks',
-      description: 'Period of residency',
-    },
     residenceGrantAttachmentTitle: {
       id: 'pl.application:residence.grant.attachment.title',
-      defaultMessage: 'Vottorð um dvalarstyrk',
-      description: 'A residence grant certificate',
+      defaultMessage: 'Vottorð vegna dvalarstyrks',
+      description: 'Residence grant medical certificate',
     },
     residenceGrantAttachmentDescription: {
       id: 'pl.application:residence.grant.attachment.description',
       defaultMessage:
-        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Til að sækja um dvalarstyrk þarf að senda inn vottorð sérfræðilæknis sem annast hefur barnshafandi foreldrið. Vottorðið skal berast á því formi sem aðgengilegt er í sjúkraskrárkerfi heilbrigðisstofnana. Þar þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að nauðsynlegt hafi verið að foreldrið dvaldi fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag s.s. vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu. Einnig þarf að koma fram á vottorðinu hvort foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Styrkurinn er greiddur eftir á. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
-        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
+        'To apply for a residence grant, a medical certificate from the birthing parent’s specialist doctor needs to be submitted. The medical certificate must be one that is available in the medical record system. The certificate must stipulate the specialist’s reasoning for the necessity of the birthing parent to live away from their home for a certain amount of time before the expected date of delivery, such as, distance, bad weather, strike action or pregnancy risk factors. The certificate must also include information regarding whether the parent stayed in a hospital or a health institute during this period. The original certificate must be submitted with a doctor’s signature. The grant is paid retroactively. Note that the document needs to be on .pdf format.',
     },
     residenceGrantOpen: {
       id: 'pl.application:residence.grant.open',
@@ -2271,13 +2220,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Ekki senda inn',
       description: 'Reject',
     },
-
     residenceGrantSelectPeriodSubmitDescription: {
       id: 'pl.application:residence.grant.select.period.submit.description',
       defaultMessage: 'Sendu inn umsókn til að sækja um dvalarstyrk',
       description: 'Send in you application to apply for residence grant',
     },
-
     residenceGrantApplicationSendInformation: {
       id: 'pl.application:residence.grant.application.send.information',
       defaultMessage:
@@ -2338,8 +2285,8 @@ export const employerFormMessages = defineMessages({
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'pl.application:inReview.form.title',
-    defaultMessage: 'Fæðingarorlof',
-    description: 'Parental Leave',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: 'Application Overview',
   },
 })
 

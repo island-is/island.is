@@ -13,18 +13,20 @@ export class HnippTemplate {
   @ApiProperty({ example: 'Some extra text ...' })
   notificationDataCopy?: string
 
+  // DEPRECATED - LEGACY SUPPORT
   @ApiProperty({ example: '//inbox/{{documentId}}' })
   clickAction?: string
 
+  // DEPRECATED - WILL BE REMOVED
   @ApiProperty({ example: 'https://island.is/minarsidur/postholf' })
   clickActionWeb?: string
+
+  @ApiProperty({ example: 'https://island.is/minarsidur/postholf' })
+  clickActionUrl?: string
 
   @ApiProperty({ example: 'NEW_DOCUMENT' })
   category?: string
 
   @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]
-
-  // @ApiProperty({ example: '1234567890' })
-  // senderId!: string
 }

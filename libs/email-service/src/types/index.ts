@@ -73,6 +73,13 @@ interface TextWithLinkComponent {
   }
 }
 
+interface TagComponent {
+  component: 'Tag'
+  context: {
+    label: string
+  }
+}
+
 export type Body =
   | ImageComponent
   | HeadingComponent
@@ -82,6 +89,7 @@ export type Body =
   | SubtitleComponent
   | SpacerComponent
   | TextWithLinkComponent
+  | TagComponent
 
 export interface Template {
   title: string

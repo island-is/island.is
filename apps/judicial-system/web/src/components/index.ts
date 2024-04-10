@@ -65,7 +65,6 @@ export {
   useRequestRulingSignature,
 } from './SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
-export { default as Table } from './ReactTable/Table'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { UserProvider, UserContext } from './UserProvider/UserProvider'
 export {
@@ -96,3 +95,7 @@ export {
   useIndictmentsLawsBroken,
 } from './AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
+export {
+  default as WithdrawAppealContextMenuModal,
+  useWithdrawAppealMenuOption,
+} from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'

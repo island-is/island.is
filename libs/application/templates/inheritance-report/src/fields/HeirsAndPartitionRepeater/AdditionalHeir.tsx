@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
@@ -23,6 +24,7 @@ import { EstateMember } from '../../types'
 import { ErrorValue } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
+import ShareInput from '../../components/ShareInput'
 
 export const AdditionalHeir = ({
   field,
@@ -38,7 +40,7 @@ export const AdditionalHeir = ({
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
-  updateValues: (updateIndex: string, value: number) => void
+  updateValues: (updateIndex: string, value: number, index?: number) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
   error: Record<string, string>
@@ -251,6 +253,9 @@ export const AdditionalHeir = ({
                     label={formatMessage(
                       m.inheritanceRelationWithApplicantLabel,
                     )}
+                    onSelect={() => {
+                      clearErrors()
+                    }}
                     defaultValue={currentHeir.relation}
                     options={relationOptions}
                     error={error?.relation}
@@ -261,24 +266,14 @@ export const AdditionalHeir = ({
                 </GridColumn>
               ) : customField.id === 'heirsPercentage' ? (
                 <GridColumn span="1/2" paddingBottom={2}>
-                  <InputController
-                    id={`${fieldIndex}.${customField.id}`}
+                  <ShareInput
                     name={`${fieldIndex}.${customField.id}`}
                     disabled={!currentHeir.enabled}
-                    label={customField.title}
-                    defaultValue={defaultValue ? defaultValue : '0'}
-                    type="number"
-                    suffix="%"
-                    backgroundColor="blue"
-                    onChange={(
-                      event: React.ChangeEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                      >,
-                    ) => {
-                      const val = parseInt(event.target.value, 10)
-                      updateValues(fieldIndex, val)
+                    label={formatMessage(customField.title)}
+                    onAfterChange={(val) => {
+                      updateValues(fieldIndex, val, customFieldIndex)
                     }}
-                    error={
+                    errorMessage={
                       error && error[index]
                         ? error[index][customField.id]
                         : undefined
@@ -294,7 +289,7 @@ export const AdditionalHeir = ({
                     disabled={!currentHeir.enabled}
                     defaultValue={defaultValue ? defaultValue : ''}
                     format={customField.format}
-                    label={customField.title}
+                    label={formatMessage(customField.title)}
                     currency
                     readOnly
                     error={

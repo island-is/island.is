@@ -123,6 +123,16 @@
                 ]
               },
               {
+                "sourceTag": "scope:license",
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:license"
+                ]
+              },
+              {
                 "sourceTag": "scope:judicial-system-api",
                 "onlyDependOnLibsWithTags": [
                   "lib:judicial-system-api",

@@ -225,16 +225,16 @@ export const en: TranslatedMessages = {
   'licenseScanner.helperMessage': 'Point device at barcode',
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
+  'licenseScanner.errorUnknown': 'Unknown error',
+  'licenseScanner.invalidBarcode': 'Invalid barcode',
+  'licenseScanner.errorNetwork': 'Network error',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
-  'licenseScannerDetail.invalidBarcode': 'Invalid barcode',
   'licenseScannerResult.androidHelp':
     'Press button below the license to get updated barcode.',
   'licenseScannerResult.iosHelp':
     'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
 
   // license scan detail
-  'licenseScanDetail.errorUnknown': 'Unknown error',
-  'licenseScanDetail.errorNetwork': 'Network error',
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
@@ -267,6 +267,9 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as a European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',
@@ -282,6 +285,7 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
+  'profile.airDiscount': 'Air discount scheme',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -472,4 +476,28 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
+
+  // air discount
+  'airDiscount.screenTitle': 'Air discount scheme',
+  'airDiscount.headingTitle': 'Lower airfares with Air Discount Scheme',
+  'airDiscount.headingSubtitle':
+    'Each individual is entitled to lower fares on up to three round trips to and from Reykjavík per year (six flights). By using the Loftbrú discount you are acknowledging that you have read the Air Discount scheme terms and conditions.',
+  'airDiscount.tosLinkText': 'Terms and conditions',
+  'airDiscount.alertTitle': 'Attention',
+  'airDiscount.alertDescription':
+    'Code gets renewed after 1 usage\n(expires in 24 hours)',
+  'airDiscount.myRights': 'My benefits',
+  'airDiscount.remainingFares': 'Remaining fares {remaining} of {total}',
+  'airDiscount.copyDiscountCode': 'Copy code',
+  'airDiscount.bulletPointDiscount':
+    'Each discount amounts to 40% of the airfare.',
+  'airDiscount.bulletPointUsage':
+    "Code enables a discount when booking on airline's booking engine.",
+  'airDiscount.activeConnectionCodes': 'Active codes for connecting flights',
+  'airDiscount.flight': 'Flight path: {flight}',
+  'airDiscount.validTo': 'Valid to: {date} {time}',
+  'airDiscount.airfaresUsage': 'Usage in the current season',
+  'airDiscount.emptyListTitle': 'No benefits',
+  'airDiscount.emptyListDescription':
+    'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
 }

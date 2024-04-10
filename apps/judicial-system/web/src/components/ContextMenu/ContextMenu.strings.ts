@@ -17,10 +17,9 @@ export const contextMenu = defineMessages({
     description:
       'Notaður sem texti í "Opna mál í nýjum flipa" valmöguleika í fellilista.',
   },
-  withdrawAppeal: {
-    id: 'judicial.system.core:context_menu.withdraw_appeal',
-    defaultMessage: 'Afturkalla kæru',
-    description:
-      'Notaður sem texti í "Afturkalla kæru" valmöguleika í fellilista.',
+  deleteCase: {
+    id: 'judicial.system.core:context_menu.delete_case',
+    defaultMessage: 'Afturkalla',
+    description: 'Notaður sem texti í valmynd fyrir mál til að afturkalla mál',
   },
 })

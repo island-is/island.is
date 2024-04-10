@@ -16,12 +16,10 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
   requestCourtDate,
-  ruling,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
@@ -41,10 +39,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
@@ -53,38 +49,13 @@ import {
 import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-    isCaseUpToDate,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer } = useCase()
+
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-
-  const initialize = useCallback(() => {
-    setAndSendCaseToServer(
-      [
-        {
-          ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
-            : isAcceptingCaseDecision(workingCase.decision)
-            ? workingCase.parentCase.ruling
-            : undefined,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
-
-  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -133,7 +104,17 @@ const Overview = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
-
+        {workingCase.state === CaseState.RECEIVED &&
+          workingCase.courtDate &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={workingCase.courtDate}
+                courtRoom={workingCase.courtRoom}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

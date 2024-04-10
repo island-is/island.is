@@ -1,28 +1,40 @@
-import { CustomLicenseType, LicenceCard } from '@ui'
+import { CustomLicenseType, LicenseCard } from '@ui'
 import React from 'react'
-import { SafeAreaView, TouchableHighlight, View } from 'react-native'
+import { SafeAreaView } from 'react-native'
+import styled from 'styled-components/native'
+import { Pressable as PressableRaw } from '../../../components/pressable/pressable'
 import {
   GenericUserLicense,
   IdentityDocumentModel,
 } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 
+const Container = styled.View`
+  padding-left: ${({ theme }) => theme.spacing[2]}px;
+  padding-right: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const Pressable = styled(PressableRaw)`
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  border-radius: ${({ theme }) => theme.border.radius.extraLarge};
+`
+
 export const WalletItem = React.memo(
   ({ item }: { item: GenericUserLicense | IdentityDocumentModel }) => {
     let cardHeight = 140
+    const type = item.__typename
 
     // Passport card
-    if (item.__typename === 'IdentityDocumentModel') {
+    if (type === 'IdentityDocumentModel') {
       const isInvalid = item?.status?.toLowerCase() === 'invalid'
+
       return (
-        <View
-          style={{ paddingHorizontal: 16 }}
+        <Container
           onLayout={(e) => {
             cardHeight = Math.round(e.nativeEvent.layout.height)
           }}
         >
-          <TouchableHighlight
-            style={{ marginBottom: 16, borderRadius: 16 }}
+          <Pressable
             onPress={() => {
               navigateTo(`/walletpassport/${item?.number}`, {
                 fromId: `license-${CustomLicenseType.Passport}_source`,
@@ -32,38 +44,39 @@ export const WalletItem = React.memo(
             }}
           >
             <SafeAreaView>
-              <LicenceCard
+              <LicenseCard
                 nativeID={`license-${CustomLicenseType.Passport}_source`}
                 type={CustomLicenseType.Passport}
-                date={new Date(item?.expirationDate)}
+                date={
+                  item?.expirationDate
+                    ? new Date(item?.expirationDate)
+                    : undefined
+                }
                 status={isInvalid ? 'NOT_VALID' : 'VALID'}
               />
             </SafeAreaView>
-          </TouchableHighlight>
-        </View>
+          </Pressable>
+        </Container>
       )
-    }
-    if (item.__typename === 'GenericUserLicense') {
+    } else if (type === 'GenericUserLicense') {
       return (
-        <View
-          style={{ paddingHorizontal: 16 }}
+        <Container
           onLayout={(e) => {
             cardHeight = Math.round(e.nativeEvent.layout.height)
           }}
         >
-          <TouchableHighlight
-            style={{ marginBottom: 16, borderRadius: 16 }}
+          <Pressable
             onPress={() => {
               navigateTo(`/wallet/${item?.license?.type}`, {
                 item,
                 fromId: `license-${item?.license?.type}_source`,
                 toId: `license-${item?.license?.type}_destination`,
-                cardHeight: cardHeight,
+                cardHeight,
               })
             }}
           >
             <SafeAreaView>
-              <LicenceCard
+              <LicenseCard
                 nativeID={`license-${item?.license?.type}_source`}
                 type={item?.license?.type}
                 date={new Date(Number(item.fetch.updated))}
@@ -72,10 +85,11 @@ export const WalletItem = React.memo(
                 }
               />
             </SafeAreaView>
-          </TouchableHighlight>
-        </View>
+          </Pressable>
+        </Container>
       )
     }
+
     return null
   },
 )

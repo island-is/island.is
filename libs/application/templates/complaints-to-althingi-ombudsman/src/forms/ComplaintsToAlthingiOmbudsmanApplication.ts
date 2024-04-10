@@ -1,9 +1,8 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDataProviderItem,
   buildDateField,
-  buildExternalDataProvider,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -34,7 +33,6 @@ import {
   complainee,
   complaintDescription,
   complaintInformation,
-  dataProvider,
   information,
   section,
   attachments,
@@ -44,6 +42,7 @@ import {
   confirmation,
   complaintOverview,
   previousOmbudsmanComplaint,
+  application as applicationMessage,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -57,42 +56,13 @@ import {
   isGovernmentComplainee,
   isPreviousOmbudsmanComplaint,
 } from '../utils'
-import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
-  title: 'Kvörtun til umboðsmanns Alþingis',
+  title: applicationMessage.general.name,
   mode: FormModes.DRAFT,
   logo: Logo,
   children: [
-    buildSection({
-      id: 'conditions',
-      title: section.dataCollection,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: dataProvider.dataProviderHeader,
-          subTitle: dataProvider.dataProviderSubTitle,
-          checkboxLabel: dataProvider.dataProviderCheckboxLabel,
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: dataProvider.nationalRegistryTitle,
-              subTitle: dataProvider.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: dataProvider.userProfileTitle,
-              subTitle: dataProvider.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
-              title: dataProvider.notificationTitle,
-              subTitle: dataProvider.notificationSubTitle,
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSection({
       id: 'information',
       title: section.information,
@@ -183,18 +153,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               backgroundColor: 'blue',
               defaultValue: '',
             }),
-            buildCustomField(
-              {
-                id: 'complainedForInformation.titleField',
-                title: complainedFor.information.fieldTitle,
-                component: 'FieldTitle',
-                doesNotRequireAnswer: true,
-              },
-              {
-                marginTop: 7,
-                marginBottom: 3,
-              },
-            ),
+            buildDescriptionField({
+              id: 'complainedForInformation.titleField',
+              title: complainedFor.information.fieldTitle,
+              marginTop: 7,
+              marginBottom: 3,
+            }),
             buildTextField({
               id: 'complainedForInformation.connection',
               title: complainedFor.information.textareaTitle,
@@ -204,18 +168,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               variant: 'textarea',
               rows: 6,
             }),
-            buildCustomField(
-              {
-                id: 'complainedForInformation.uploadTitleField',
-                title: complainedFor.labels.powerOfAttorney,
-                component: 'FieldTitle',
-                doesNotRequireAnswer: true,
-              },
-              {
-                marginTop: 7,
-                marginBottom: 3,
-              },
-            ),
+            buildDescriptionField({
+              id: 'complainedForInformation.uploadTitleField',
+              title: complainedFor.labels.powerOfAttorney,
+              marginTop: 7,
+              marginBottom: 3,
+            }),
             buildFileUploadField({
               id: 'complainedForInformation.powerOfAttorney',
               title: '',
@@ -511,6 +469,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
+      alertMessage: confirmation.general.alertMessage,
+      multiFieldTitle: confirmation.general.multiFieldTitle,
       expandableHeader: confirmation.information.title,
       expandableIntro: confirmation.information.intro,
       expandableDescription: confirmation.information.bulletList,

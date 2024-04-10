@@ -48,4 +48,9 @@ export const error = defineMessages({
     defaultMessage: 'Umsækjandi er ekki orðinn 18 ára',
     description: 'Applicant is not old enough',
   },
+  passportDateError: {
+    id: 'doi.cs.application:error.passportDateError',
+    defaultMessage: 'Útgáfudagsetning verður að vera á undan gildistíma',
+    description: 'Passport date validation error',
+  },
 })

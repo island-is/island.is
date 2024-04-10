@@ -14,6 +14,7 @@ import { format as formatNationalId } from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { AllDebts, ApplicationDebts } from '../../types'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 
 export const debts = buildSection({
   id: 'debts',
@@ -47,27 +48,29 @@ export const debts = buildSection({
               {
                 fields: [
                   {
-                    title: m.debtsCreditorName.defaultMessage,
-                    id: 'creditorName',
+                    title: m.debtsCreditorName,
+                    id: 'description',
                   },
                   {
-                    title: m.creditorsNationalId.defaultMessage,
+                    title: m.creditorsNationalId,
                     id: 'nationalId',
                     format: '######-####',
                   },
                   {
-                    title: m.debtsLoanIdentity.defaultMessage,
-                    id: 'loanIdentity',
+                    title: m.debtsLoanIdentity,
+                    id: 'assetNumber',
                   },
                   {
-                    title: m.debtsBalance.defaultMessage,
-                    id: 'balance',
+                    title: m.debtsBalance,
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
                 ],
-                repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-                sumField: 'balance',
+                hideDeceasedShare: true,
+                repeaterButtonText: m.debtsRepeaterButton,
+                fromExternalData: 'otherDebts',
+                sumField: 'propertyValuation',
               },
             ),
           ],
@@ -98,6 +101,13 @@ export const debts = buildSection({
               id: 'debts.publicCharges',
               width: 'half',
               variant: 'currency',
+              defaultValue: (application: Application) => {
+                return (
+                  getEstateDataFromApplication(application)
+                    ?.inheritanceReportInfo?.officialFees?.[0]
+                    ?.propertyValuation ?? '0'
+                )
+              },
             }),
           ],
         }),

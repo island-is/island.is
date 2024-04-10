@@ -5,12 +5,35 @@ export const uppercase = style({
   textTransform: 'uppercase',
 })
 
+export const ownPopertyShareContainer = style({
+  borderRadius: theme.border.radius.large,
+  padding: 24,
+  border: `1px solid ${theme.color.blue200}`,
+})
+
+export const ownPropertyShareCheckboxContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+})
+
 export const removeFieldButton = style({
   top: 0,
   right: 0,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      top: theme.spacing['9'],
+      top: theme.spacing['3'],
+      right: -theme.spacing['6'],
+    },
+  },
+})
+
+export const removeFieldButtonSingle = style({
+  top: 0,
+  right: 0,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      top: theme.spacing['3'],
       right: -theme.spacing['6'],
     },
   },

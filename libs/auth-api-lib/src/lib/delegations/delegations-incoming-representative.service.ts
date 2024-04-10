@@ -1,4 +1,3 @@
-import { User } from '@island.is/auth-nest-tools'
 import {
   IndividualDto,
   NationalRegistryClientService,
@@ -9,10 +8,13 @@ import { Inject, Logger } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
-import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
+import { DelegationDTO } from './dto/delegation.dto'
 import { partitionWithIndex } from './utils/partitionWithIndex'
-import { DelegationType } from './types/delegationType'
 import { ApiScopeInfo } from './delegations-incoming.service'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -57,8 +59,9 @@ export class DelegationsIncomingRepresentativeService {
         toNationalId: representative.nationalIdPersonalRepresentative,
         fromNationalId: representative.nationalIdRepresentedPerson,
         fromName: name,
-        type: DelegationType.PersonalRepresentative,
-        provider: DelegationProvider.PersonalRepresentativeRegistry,
+        type: AuthDelegationType.PersonalRepresentative,
+        provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        rights: representative.rights,
       })
 
       const personalRepresentatives =
@@ -84,7 +87,7 @@ export class DelegationsIncomingRepresentativeService {
       const [alive, deceased] = partitionWithIndex(
         personalRepresentatives,
         ({ nationalIdRepresentedPerson }, index) =>
-          // Pass through altough Þjóðskrá API throws an error since it is not required to view the personal representative.
+          // Pass through although Þjóðskrá API throws an error since it is not required to view the personal representative.
           persons[index] instanceof Error ||
           // Make sure we can match the person to the personal representatives, i.e. not deceased
           (persons[index] as IndividualDto)?.nationalId ===

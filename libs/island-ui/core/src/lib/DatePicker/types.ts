@@ -55,6 +55,7 @@ export interface DatePickerProps {
    */
   maxYear?: number
   readOnly?: boolean
+  calendarStartDay?: number
 }
 
 export interface DatePickerCustomHeaderProps {

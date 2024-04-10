@@ -62,20 +62,6 @@ export const cases = {
         'Notaður sem label á filter sem notandi getur notað til að sía mál',
     },
   }),
-  contextMenu: defineMessages({
-    openCase: {
-      id: 'judicial.system.core:cases.context_menu.open_case',
-      defaultMessage: 'Opna mál í nýjum flipa',
-      description:
-        'Notaður sem texti í valmynd fyrir mál til að opna mál í nýjum glugga',
-    },
-    deleteCase: {
-      id: 'judicial.system.core:cases.context_menu.delete_case',
-      defaultMessage: 'Afturkalla',
-      description:
-        'Notaður sem texti í valmynd fyrir mál til að afturkalla mál',
-    },
-  }),
   activeRequests: {
     table: {
       headers: defineMessages({
@@ -85,7 +71,6 @@ export const cases = {
           description:
             'Notaður sem titill fyrir tegund dálk í lista yfir mál í vinnslu.',
         },
-
         date: {
           id: 'judicial.system.core:cases.active_requests.table.headers.date',
           defaultMessage: 'Stofnað/Fyrirtaka',
@@ -98,11 +83,10 @@ export const cases = {
           description:
             'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
         },
-        hearing: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.hearing',
-          defaultMessage: 'Fyrirtaka',
-          description:
-            'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
+        prosecutor: {
+          id: 'judicial.system.core:cases.active_requests.table.headers.prosecutor',
+          defaultMessage: 'Sækjandi',
+          description: 'Notaður sem titill fyrir sækjanda í málalista.',
         },
       }),
     },
