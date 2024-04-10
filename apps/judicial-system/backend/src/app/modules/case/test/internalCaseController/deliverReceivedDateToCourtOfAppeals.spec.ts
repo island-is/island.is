@@ -37,9 +37,9 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
       await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockUpdateAppealCaseWithAppealReceivedDate =
-      mockCourtService.updateAppealCaseWithAppealReceivedDate as jest.Mock
-    mockUpdateAppealCaseWithAppealReceivedDate.mockResolvedValue(uuid())
+    const mockUpdateAppealCaseWithReceivedDate =
+      mockCourtService.updateAppealCaseWithReceivedDate as jest.Mock
+    mockUpdateAppealCaseWithReceivedDate.mockResolvedValue(uuid())
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -64,7 +64,7 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
 
     it('should return success', () => {
       expect(
-        mockCourtService.updateAppealCaseWithAppealReceivedDate,
+        mockCourtService.updateAppealCaseWithReceivedDate,
       ).toHaveBeenCalledWith(
         user,
         caseId,
