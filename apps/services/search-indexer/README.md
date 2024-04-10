@@ -19,6 +19,12 @@ The indexer server currently has two endpoints:
 - `/re-sync` indexes all supported entries into elasticsearch
 - `/sync` indexes all supported entries **since last sync** into elasticsearch
 
+## Nested entries
+
+If a nested entry (like an accordion) gets updated then for that change to be visible on the web, it's page (an article) would need to be re-indexed.
+
+This process can take a while, especially if a long time has passed since the last sync. That is why by default locally it's turned off but if you'd like to turn it back on you can set the `FORCE_SEARCH_INDEXER_TO_RESOLVE_NESTED_ENTRIES` environment variable to a truthy string value.
+
 ## Code owners and maintainers
 
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members)
