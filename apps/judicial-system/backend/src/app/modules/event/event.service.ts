@@ -154,7 +154,7 @@ export class EventService {
 
   postErrorEvent(
     message: string,
-    info: { [key: string]: string | boolean | undefined },
+    info: { [key: string]: string | boolean | Date | undefined },
     reason: Error,
   ) {
     try {

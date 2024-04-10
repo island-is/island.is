@@ -1008,6 +1008,44 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Assets to share
+  assetsToShareDescription: {
+    id: 'ir.application:assetsToShareDescription',
+    defaultMessage:
+      'Frá dregst búshluti eftirlifandi maka samkvæmt reglum hjúskaparlaga nr. 31/1993.',
+    description: '',
+  },
+  assetsToShareTotalAssets: {
+    id: 'ir.application:assetsToShareTotalAssets',
+    defaultMessage: 'Heildareignir',
+    description: '',
+  },
+  assetsToShareTotalDebts: {
+    id: 'ir.application:assetsToShareTotalDebts',
+    defaultMessage: 'Heildarskuldir',
+    description: '',
+  },
+  assetsToShareSpouseShare: {
+    id: 'ir.application:assetsToShareSpouseShare',
+    defaultMessage: 'Búshluti makans',
+    description: '',
+  },
+  assetsToShareEstateShare: {
+    id: 'ir.application:assetsToShareEstateShare',
+    defaultMessage: 'Búshluti dánarbús',
+    description: '',
+  },
+  assetsToShareHasCustomSpousePercentage: {
+    id: 'ir.application:assetsToShareHasCustomSpousePercentage',
+    defaultMessage: 'Maki hefur annan búshluta en 50%',
+    description: '',
+  },
+  assetsToShareCustomSpousePercentage: {
+    id: 'ir.application:assetsToShareCustomSpousePercentage',
+    defaultMessage: 'Búshluti',
+    description: '',
+  },
+
   // Heirs
   spousesShare: {
     id: 'ir.application:spousesShare',
@@ -1017,6 +1055,16 @@ export const m = defineMessages({
   deceasedSeparateProperty: {
     id: 'ir.application:deceasedSeparateProperty',
     defaultMessage: 'Séreign hins látna',
+    description: '',
+  },
+  share: {
+    id: 'ir.application:share',
+    defaultMessage: 'Séreign',
+    description: '',
+  },
+  deceasedShare: {
+    id: 'ir.application:deceasedShare',
+    defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
   spousesShareDescription: {
@@ -1034,6 +1082,11 @@ export const m = defineMessages({
     id: 'ir.application:hadSeparateProperty',
     defaultMessage:
       'Átti hinn látni séreign í hjúskapnum samkvæmt kaupmála eða fyrirmælum í erfðaskrá?',
+    description: '',
+  },
+  hadSeparatePropertyTitle: {
+    id: 'ir.application:hadSeparatePropertyTitle',
+    defaultMessage: 'Látni átti séreign í eigninni',
     description: '',
   },
   totalSeparateProperty: {
@@ -1078,9 +1131,19 @@ export const m = defineMessages({
     defaultMessage: 'Eign til skipta og erfingjar',
     description: '',
   },
+  propertyForExchangeAlternative: {
+    id: 'ir.application:propertyForExchangeAlternative',
+    defaultMessage: 'Eign til skipta',
+    description: '',
+  },
   totalDeduction: {
     id: 'ir.application:totalDeduction',
     defaultMessage: 'Samtals frádráttur (búshluti maka)',
+    description: '',
+  },
+  totalDeductionAlternative: {
+    id: 'ir.application:totalDeductionAlternative',
+    defaultMessage: 'Samtals frádráttur',
     description: '',
   },
   netProperty: {
@@ -1213,6 +1276,11 @@ export const m = defineMessages({
     id: 'ir.application:inheritanceAdvocateLabel',
     defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
+  },
+  errorSpouseCount: {
+    id: 'ir.application:errorSpouseCount',
+    defaultMessage: 'Aðeins er hægt að hafa einn erfingja sem maka',
+    description: '',
   },
   inheritanceUnder18Error: {
     id: 'ir.application:inheritanceUnder18Error',

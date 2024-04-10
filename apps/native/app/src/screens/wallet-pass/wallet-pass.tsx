@@ -1,6 +1,11 @@
-import { dynamicColor, Alert as InfoAlert, LicenceCard } from '@ui'
+import {
+  Alert as InfoAlert,
+  dynamicColor,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '@ui'
 import * as FileSystem from 'expo-file-system'
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
@@ -15,6 +20,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
   GenericUserLicense,
@@ -23,9 +29,23 @@ import {
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { isAndroid, isIos } from '../../utils/devices'
+import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
 
-const Information = styled.ScrollView`
+const INFORMATION_BASE_TOP_SPACING = 70
+
+const getImageFromRawData = (rawData: string) => {
+  try {
+    const parsedData: { photo?: { image?: string } } = JSON.parse(rawData)
+
+    return parsedData?.photo?.image
+  } catch (e) {
+    return undefined
+  }
+}
+
+const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
   background-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade100,
@@ -33,10 +53,28 @@ const Information = styled.ScrollView`
   }))};
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  margin-top: -70px;
-  padding-top: 70px;
+  margin-top: -${INFORMATION_BASE_TOP_SPACING}px;
+  padding-top: ${({ topSpacing = 0 }) =>
+    topSpacing + INFORMATION_BASE_TOP_SPACING}px;
   z-index: 10;
 `
+
+const LicenseCardWrapper = styled(SafeAreaView)`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+`
+
+const ButtonWrapper = styled(SafeAreaView)`
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const LoadingOverlay = styled.View`
   flex: 1;
   justify-content: center;
@@ -87,6 +125,10 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   const theme = useTheme()
   const intl = useIntl()
+  const [addingToWallet, setAddingToWallet] = useState(false)
+  const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+
+  const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
     variables: {
       input: {
@@ -94,10 +136,19 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       },
     },
   })
-  const [generatePkPass] = useGeneratePkPassMutation()
 
-  const [addingToWallet, setAddingToWallet] = useState(false)
   const data = res.data?.genericLicense ?? item
+  const fields = data?.payload?.data ?? []
+  const pkPassAllowed =
+    data?.license?.pkpass &&
+    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
+  const allowLicenseBarcode =
+    isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
+  const licenseType = data?.license?.type
+  const barcodeWidth =
+    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeHeight = barcodeWidth / 3.3
+  const updated = data?.fetch?.updated
 
   const onAddPkPass = async () => {
     const { canAddPasses, addPass } = Platform.select({
@@ -107,7 +158,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
     const canAddPass = await canAddPasses()
 
-    if (canAddPass || Platform.OS === 'android') {
+    if (canAddPass || isAndroid) {
       try {
         setAddingToWallet(true)
         const { data } = await generatePkPass({
@@ -120,7 +171,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         if (!data?.generatePkPass.pkpassUrl) {
           throw Error('Failed to generate pkpass')
         }
-        if (Platform.OS === 'android') {
+        if (isAndroid) {
           const pkPassUri =
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             FileSystem.documentDirectory! + Date.now() + '.pkpass'
@@ -214,32 +265,73 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     }
   }
 
-  const fields = data?.payload?.data ?? []
-  const hasPkpass = data?.license?.pkpass
-  const hasValidPkpass =
-    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
-  // this is coming soon.. disable add button if not true.
-  // const hasValidatedPkpass = data?.license?.pkpassValidation;
+  const expirationTimeCallback = useCallback(() => {
+    void res.refetch()
+  }, [])
+
+  const expirationTime = useMemo(() => {
+    const expiresIn = data?.barcode?.expiresIn
+
+    if (expiresIn) {
+      const expDt = new Date()
+      // We subtract 7 seconds from the expiry time to make sure the barcode is still valid when switching to a new barcode
+      // The default expiration time is 60 seconds from the server
+      expDt.setSeconds(expDt.getSeconds() + expiresIn - 7)
+
+      return expDt
+    }
+  }, [data?.barcode?.expiresIn])
 
   return (
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
-      <Information contentInset={{ bottom: 162 }}>
-        <SafeAreaView style={{ marginHorizontal: 16 }}>
-          {/* Show info alert if PCard or Ehic */}
-          {(data?.license?.type === GenericLicenseType.PCard ||
-            data?.license?.type === GenericLicenseType.Ehic) && (
-            <View style={{ paddingTop: 24 }}>
+      <LicenseCardWrapper>
+        <LicenseCard
+          nativeID={`license-${licenseType}_destination`}
+          type={licenseType}
+          logo={
+            data?.license?.type === GenericLicenseType.DriversLicense
+              ? getImageFromRawData(data?.payload?.rawData)
+              : undefined
+          }
+          date={updated ? new Date(Number(updated)) : undefined}
+          status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
+          {...(allowLicenseBarcode && {
+            barcode: {
+              value: data?.barcode?.token,
+              loading: res.loading && !data?.barcode,
+              expirationTimeCallback,
+              expirationTime,
+              width: barcodeWidth,
+              height: barcodeHeight,
+            },
+          })}
+        />
+      </LicenseCardWrapper>
+      <Information
+        contentInset={{ bottom: 162 }}
+        topSpacing={
+          allowLicenseBarcode ? barcodeHeight + LICENSE_CARD_ROW_GAP : 0
+        }
+      >
+        <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
+          {/* Show info alert if PCard */}
+          {licenseType === GenericLicenseType.PCard && (
+            <View
+              style={{
+                paddingTop: theme.spacing[3],
+              }}
+            >
               <InfoAlert
                 title={intl.formatMessage({
                   id:
-                    data?.license?.type === GenericLicenseType.PCard
+                    licenseType === GenericLicenseType.PCard
                       ? 'licenseDetail.pcard.alert.title'
                       : 'licenseDetail.ehic.alert.title',
                 })}
                 message={intl.formatMessage({
                   id:
-                    data?.license?.type === GenericLicenseType.PCard
+                    licenseType === GenericLicenseType.PCard
                       ? 'licenseDetail.pcard.alert.description'
                       : 'licenseDetail.ehic.alert.description',
                 })}
@@ -252,62 +344,36 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             <ActivityIndicator
               size="large"
               color="#0061FF"
-              style={{ marginTop: 32 }}
+              style={{ marginTop: theme.spacing[4] }}
             />
           ) : (
-            <FieldRender data={fields} licenseType={data?.license?.type} />
+            <FieldRender data={fields} licenseType={licenseType} />
           )}
         </SafeAreaView>
-        {Platform.OS === 'android' && <Spacer />}
+        {isAndroid && <Spacer />}
+        {pkPassAllowed && (
+          <ButtonWrapper>
+            {isIos ? (
+              <AddPassButton
+                style={{ height: 52 }}
+                addPassButtonStyle={
+                  theme.isDark
+                    ? PassKit.AddPassButtonStyle.blackOutline
+                    : PassKit.AddPassButtonStyle.black
+                }
+                onPress={onAddPkPass}
+              />
+            ) : (
+              <Button
+                title="Add to Wallet"
+                onPress={onAddPkPass}
+                color="#111111"
+              />
+            )}
+          </ButtonWrapper>
+        )}
       </Information>
-      <SafeAreaView
-        style={{
-          marginTop: 16,
-          marginHorizontal: 16,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-        }}
-      >
-        <LicenceCard
-          nativeID={`license-${data?.license?.type}_destination`}
-          type={data?.license?.type}
-          date={new Date(Number(data?.fetch?.updated))}
-          status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
-        />
-      </SafeAreaView>
-      {hasPkpass && hasValidPkpass && (
-        <SafeAreaView
-          style={{
-            position: 'absolute',
-            bottom: 24,
-            left: 0,
-            right: 0,
-            marginHorizontal: 16,
-            zIndex: 100,
-          }}
-        >
-          {Platform.OS === 'ios' ? (
-            <AddPassButton
-              style={{ height: 52 }}
-              addPassButtonStyle={
-                theme.isDark
-                  ? PassKit.AddPassButtonStyle.blackOutline
-                  : PassKit.AddPassButtonStyle.black
-              }
-              onPress={onAddPkPass}
-            />
-          ) : (
-            <Button
-              title="Add to Wallet"
-              onPress={onAddPkPass}
-              color="#111111"
-            />
-          )}
-        </SafeAreaView>
-      )}
+
       {addingToWallet && (
         <LoadingOverlay>
           <ActivityIndicator
