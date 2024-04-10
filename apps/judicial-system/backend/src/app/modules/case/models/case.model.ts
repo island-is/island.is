@@ -1208,4 +1208,14 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   indictmentDeniedExplanation?: string
+
+  /**********
+   * The explanation given for the return of an indictment by the district court
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReturnedExplanation?: string
 }
