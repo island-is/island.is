@@ -15,7 +15,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   type QueryGetNamespaceArgs,
   type GetNamespaceQuery,
-  GetLifeEventsForOverview,
+  type GetLifeEventsForOverview,
 } from '@island.is/web/graphql/schema'
 import type { Screen } from '../../types'
 import { CardWithFeaturedItems, GridItems } from '@island.is/web/components'
