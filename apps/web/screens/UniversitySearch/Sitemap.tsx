@@ -25,7 +25,7 @@ Sitemap.getProps = async ({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS,
   })
 
-  const host = req.headers?.host
+  const host = req.headers?.host ?? 'island.is'
   const protocol = `http${host?.startsWith('localhost') ? '' : 's'}://`
   const baseUrl = `${protocol}${host}`
 
