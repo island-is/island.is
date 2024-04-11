@@ -52,7 +52,10 @@ setup.
 
 First time you run Playwright, you'll need to set up its runtime environment with
 `yarn playwright install`. Then, you can list tests with the `--list` flag or run
-tests in various ways:
+tests in various ways. The `-g` flag is the short version of Playwright's
+`--grep` flag to filter tests by regular expressions.
+
+To run tests, use any of the following:
 
 - Using playwright directly: `yarn playwright test -c apps/system-e2e '<name-of-your-app>/.*/<smoke|acceptance>'`
 - Specific test file: `yarn system-e2e -g '<path/to/your/test/file>'`
