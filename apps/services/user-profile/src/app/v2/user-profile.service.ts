@@ -391,10 +391,7 @@ export class UserProfileService {
       isRestricted: false,
     }
 
-    if (
-      (this.config.migrationDate ?? addMonths(new Date(), 1)) >
-      userProfile.lastNudge
-    ) {
+    if ((this.config.migrationDate ?? new Date()) > userProfile.lastNudge) {
       filteredUserProfile = {
         ...filteredUserProfile,
         email: isFirstParty ? userProfile.email : null,

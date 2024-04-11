@@ -17,7 +17,7 @@ export const UserProfileConfig = defineConfig({
   load(env) {
     return {
       migrationDate: new Date(
-        env.optional('USER_PROFILE_MIGRATION_DATE') ?? '2024-04-10',
+        env.optional('USER_PROFILE_MIGRATION_DATE') ?? '2024-04-12',
       ),
       workerProcessPageSize: env.optionalJSON<number>(
         'USER_PROFILE_WORKER_PAGE_SIZE',
