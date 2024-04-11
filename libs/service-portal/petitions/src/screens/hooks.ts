@@ -43,7 +43,6 @@ export const useGetAllPetitionLists = () => {
           limit: 1000,
         },
       },
-      pollInterval: 20000,
     },
   )
 
@@ -59,7 +58,6 @@ export const useGetListsUserSigned = () => {
           limit: 1000,
         },
       },
-      pollInterval: 20000,
     },
   )
   return endorsementResponse?.endorsementSystemUserEndorsements ?? []
@@ -75,7 +73,6 @@ export const useListsUserOwns = () => {
           limit: 1000,
         },
       },
-      pollInterval: 20000,
     },
   )
   return endorsementResponse?.endorsementSystemUserEndorsementLists ?? []
@@ -107,7 +104,6 @@ export const useGetSingleEndorsement = (listId: string) => {
           listId: listId,
         },
       },
-      pollInterval: 20000,
     },
   )
   return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
@@ -125,7 +121,6 @@ export const useGetSinglePetitionEndorsements = (listId: string) => {
         limit: 1000,
       },
     },
-    pollInterval: 20000,
   })
 
   const petitionEndorsements =
