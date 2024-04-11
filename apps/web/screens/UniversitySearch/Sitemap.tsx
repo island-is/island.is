@@ -2,7 +2,9 @@ import { NextApiResponse } from 'next/types'
 import { NormalizedCacheObject } from '@apollo/client/cache/inmemory/types'
 import { ApolloClient } from '@apollo/client/core/ApolloClient'
 
+import { Locale } from '@island.is/shared/types'
 import { GetUniversityGatewayProgramsQuery } from '@island.is/web/graphql/schema'
+import { linkResolver } from '@island.is/web/hooks'
 
 import { GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS } from '../queries/UniversityGateway'
 
@@ -15,19 +17,18 @@ Sitemap.getProps = async ({
 }: {
   apolloClient: ApolloClient<NormalizedCacheObject>
   res: NextApiResponse
-  locale: string
+  locale: Locale
 }) => {
   const { data } = await apolloClient.query<GetUniversityGatewayProgramsQuery>({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS,
   })
 
-  const baseUrl =
-    locale === 'is'
-      ? 'https://island.is/haskolanam/'
-      : 'https://island.is/en/university-studies/'
-
+  const islandIsUrl = 'https://island.is'
   const programUrls = data.universityGatewayPrograms.data.map((item) => {
-    return baseUrl + item.id
+    return (
+      islandIsUrl +
+      linkResolver('universitysearchdetails', [item.id], locale).href
+    )
   })
 
   // Generate sitemap content
