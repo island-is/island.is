@@ -24,7 +24,7 @@ const testUserProfile = {
   mobilePhoneNumber: createPhoneNumber(),
 }
 
-const MIGRATION_DATE = new Date('2024-03-10')
+const MIGRATION_DATE = new Date('2024-05-10')
 
 describe('UserProfileController', () => {
   describe('No auth', () => {

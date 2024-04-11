@@ -30,7 +30,7 @@ import { ClientType } from '../../types/ClientType'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
 
-const MIGRATION_DATE = new Date('2024-03-10')
+const MIGRATION_DATE = new Date('2024-05-10')
 
 const testUserProfile = {
   nationalId: createNationalId(),
