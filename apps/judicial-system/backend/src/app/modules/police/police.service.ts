@@ -60,6 +60,17 @@ const getChapter = (category?: string): number | undefined => {
   return +chapter[1] - 1
 }
 
+const formatCrimeScenePlace = (
+  street?: string,
+  streetNumber?: string,
+  municipality?: string,
+) => {
+  if (!street && !streetNumber && !municipality) {
+    return ''
+  }
+  return `${street}${streetNumber ? ` ${streetNumber}` : ''}, ${municipality}`
+}
+
 @Injectable()
 export class PoliceService {
   private xRoadPath: string
@@ -78,6 +89,10 @@ export class PoliceService {
     brotFra: z.optional(z.string()),
     upprunalegtMalsnumer: z.string(),
     licencePlate: z.optional(z.string()),
+    gotuHeiti: z.optional(z.string()),
+    gotuNumer: z.optional(z.string()),
+    sveitafelag: z.optional(z.string()),
+    postnumer: z.optional(z.string()),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -307,9 +322,17 @@ export class PoliceService {
               vettvangur?: string
               brotFra?: string
               licencePlate?: string
+              gotuHeiti?: string
+              gotuNumer?: string
+              sveitafelag?: string
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
-              const place = (info.vettvangur || '').trim()
+
+              const place = formatCrimeScenePlace(
+                info.gotuHeiti,
+                info.gotuNumer,
+                info.sveitafelag,
+              ).trim()
               const date = info.brotFra ? new Date(info.brotFra) : undefined
               const licencePlate = info.licencePlate
 
