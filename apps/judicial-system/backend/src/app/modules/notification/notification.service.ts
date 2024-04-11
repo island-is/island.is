@@ -1571,6 +1571,7 @@ export class NotificationService {
     )
   }
   //#endregion
+
   //#region Appeal notifications
   //#region COURT_OF_APPEAL_JUDGE_ASSIGNED notifications
   private async sendCourtOfAppealJudgeAssignedNotification(
