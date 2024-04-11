@@ -85,7 +85,6 @@ export const useMailAction = () => {
         },
         onError: (_) => toast.error(formatMessage(m.errorTitle)),
         onCompleted: (mData) => {
-          console.log('mData', mData)
           if (mData.postMailActionV2?.success) {
             if (refetch) {
               refetch(fetchObject)
