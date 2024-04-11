@@ -34,7 +34,6 @@ import { wait } from './helpers'
 import { Notification } from '../notification.model'
 import { FIREBASE_PROVIDER } from '../../../../constants'
 import { NotificationsService } from '../notifications.service'
-import { isPerson, isValid } from 'kennitala'
 
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
