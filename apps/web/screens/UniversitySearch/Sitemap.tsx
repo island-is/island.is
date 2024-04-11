@@ -11,34 +11,34 @@ const Sitemap = () => null
 Sitemap.getProps = async ({
   apolloClient,
   res,
+  locale,
 }: {
   apolloClient: ApolloClient<NormalizedCacheObject>
   res: NextApiResponse
+  locale: string
 }) => {
   const { data } = await apolloClient.query<GetUniversityGatewayProgramsQuery>({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS,
   })
 
+  const baseUrl =
+    locale === 'is'
+      ? 'https://island.is/haskolanam/'
+      : 'https://island.is/en/university-studies/'
+
   const programUrls = data.universityGatewayPrograms.data.map((item) => {
-    return [
-      `https://island.is/haskolanam/${item.id}`,
-      `https://island.is/en/university-studies/${item.id}`,
-    ]
+    return baseUrl + item.id
   })
 
   // Generate sitemap content
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
         ${programUrls
-          .map((urls) => {
+          .map((url) => {
             return `
             <url>
               <changefreq>weekly</changefreq>
-              <loc>${urls[0]}</loc>
-            </url>
-            <url>
-              <changefreq>weekly</changefreq>
-              <loc>${urls[1]}</loc>
+              <loc>${url}</loc>
             </url>
           `
           })
