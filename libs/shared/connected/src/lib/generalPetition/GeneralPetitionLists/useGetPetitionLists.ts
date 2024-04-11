@@ -62,7 +62,6 @@ export const useGetPetitionLists = () => {
           limit: 20,
         },
       },
-      pollInterval: 20000,
     },
   )
 
