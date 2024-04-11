@@ -281,7 +281,7 @@ jobs:
           SHA=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
           PACKAGE_JSON_HASH="${SHA}-${ENGINE_VERSIONS}"
           echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+          export NODE_MODULES_HASH=${{ runner.os }}-${{ runner.arch}}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
           echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
 
