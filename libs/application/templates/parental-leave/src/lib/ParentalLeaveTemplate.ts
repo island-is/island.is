@@ -546,13 +546,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: birthDayLifeCycle,
           onEntry: [
             defineTemplateApi({
-              triggerEvent: DefaultEvents.SUBMIT,
-              action: ApiModuleActions.sendApplication,
-              shouldPersistToExternalData: true,
-              throwOnError: true,
-            }),
-            defineTemplateApi({
-              triggerEvent: DefaultEvents.APPROVE,
+              triggerEvent: [DefaultEvents.SUBMIT, DefaultEvents.APPROVE],
               action: ApiModuleActions.sendApplication,
               shouldPersistToExternalData: true,
               throwOnError: true,
