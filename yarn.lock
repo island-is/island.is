@@ -11450,15 +11450,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/linter@npm:16.9.1":
-  version: 16.9.1
-  resolution: "@nrwl/linter@npm:16.9.1"
-  dependencies:
-    "@nx/linter": 16.9.1
-  checksum: 914e64569b4f521eeb9b9bb6d6a9126863b7b5781d581600d5dd7bc8c07db15305592d80d46c6c21f0f760c4ddc4a83a06f415517ebdb89317f5c09b38e5cdbc
-  languageName: node
-  linkType: hard
-
 "@nrwl/nest@npm:*":
   version: 16.9.0
   resolution: "@nrwl/nest@npm:16.9.0"
@@ -11951,26 +11942,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/linter@npm:16.9.1":
-  version: 16.9.1
-  resolution: "@nx/linter@npm:16.9.1"
-  dependencies:
-    "@nrwl/linter": 16.9.1
-    "@nx/devkit": 16.9.1
-    "@nx/js": 16.9.1
-    "@phenomnomnominal/tsquery": ~5.0.1
-    tmp: ~0.2.1
-    tslib: ^2.3.0
-    typescript: ~5.1.3
-  peerDependencies:
-    eslint: ^8.0.0
-  peerDependenciesMeta:
-    eslint:
-      optional: true
-  checksum: 0ed708d83763fcd046d2a033138754a3e918eba366f204947d89c974471e6bd975ce25a515eab51738eb6d93ece69c8fed49b77d0e89e8309255a8bd4b0369fe
-  languageName: node
-  linkType: hard
-
 "@nx/nest@npm:16.9.0":
   version: 16.9.0
   resolution: "@nx/nest@npm:16.9.0"
@@ -12171,19 +12142,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/playwright@npm:16.9":
-  version: 16.9.1
-  resolution: "@nx/playwright@npm:16.9.1"
+"@nx/playwright@npm:16.9.0":
+  version: 16.9.0
+  resolution: "@nx/playwright@npm:16.9.0"
   dependencies:
-    "@nx/devkit": 16.9.1
-    "@nx/linter": 16.9.1
+    "@nx/devkit": 16.9.0
+    "@nx/linter": 16.9.0
     tslib: ^2.3.0
   peerDependencies:
     "@playwright/test": ^1.36.0
   peerDependenciesMeta:
     "@playwright/test":
       optional: true
-  checksum: 30c9ec7cf6a43b9a904d3c7cb0ac35cdc17283dc859fc9ea0709a258da89f0c3473ae635ab9b36aa92420d797fc1011d381e52af788e026681ec60fcb00eb9e7
+  checksum: 23f2f244751fc4a94dd3470cc019833d2fdd1c06730b9efaf0f01f02562b022bb022985b7e0b1f51928e49abc83e089d2c12cf3f2ba54fbe9bd0110a0c40453b
   languageName: node
   linkType: hard
 
@@ -32678,7 +32649,7 @@ __metadata:
     "@nx/nest": 16.9.0
     "@nx/next": 16.9.0
     "@nx/node": 16.9.0
-    "@nx/playwright": 16.9
+    "@nx/playwright": 16.9.0
     "@nx/react": 16.9.0
     "@nx/storybook": 16.9.0
     "@nx/web": 16.9.0
@@ -32905,7 +32876,7 @@ __metadata:
     pg: 8.1.0
     pg-hstore: 2.3.4
     playwright: 1.42.0
-    playwright-tesults-reporter: ^1.0.1
+    playwright-tesults-reporter: 1.0.1
     powerbi-client: 2.21.1
     powerbi-client-react: 1.3.5
     prettier: 2.6.2
@@ -32952,7 +32923,7 @@ __metadata:
     sequelize-typescript: 2.1.3
     short-unique-id: 5.0.3
     shorthash: 0.0.2
-    slack-notify: ^2.0.3
+    slack-notify: 2.0.3
     slate: 0.70.0
     slate-history: 0.66.0
     slate-hyperscript: 0.67.0
@@ -41032,12 +41003,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-tesults-reporter@npm:^1.0.1":
-  version: 1.1.0
-  resolution: "playwright-tesults-reporter@npm:1.1.0"
+"playwright-tesults-reporter@npm:1.0.1":
+  version: 1.0.1
+  resolution: "playwright-tesults-reporter@npm:1.0.1"
   dependencies:
     tesults: ^1.1.3
-  checksum: 68015f65da9443e9ec3f8d1f11102fee24ae479e5f99b788cd241309babe4cd47e5197551ff63fa86a0429eb0e0ea1663efe7e816355dc11836565305b54ef71
+  checksum: 21de0bd7aeaf354cded5dc2634b0511d74d693d24e16da6bf72d4a217ba07b6a32b8d81c67a34624c5450816cc6ed401c854b8a0f5d4a4c70c0beb41d7d26b28
   languageName: node
   linkType: hard
 
@@ -45986,10 +45957,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"slack-notify@npm:^2.0.3":
-  version: 2.0.7
-  resolution: "slack-notify@npm:2.0.7"
-  checksum: 6efb4aa17ef147d6e3f0ac48b4530495b967c8790748a8e18cca9a30bf808c8abc502cdd999819b9bbce85ac2ac17dd1bad2dcb4fc04724937949dd800710caa
+"slack-notify@npm:2.0.3":
+  version: 2.0.3
+  resolution: "slack-notify@npm:2.0.3"
+  checksum: d1b9ec8d55c5177da0aba0ca0cee5a2d632deedb800a63179cf94f68bf5b5d43199c732fe48e4232d7d053104e2452d0ff38c6fb93a26ae7435cb4107db0e8be
   languageName: node
   linkType: hard
 
