@@ -1,5 +1,5 @@
 import { createNationalId } from '@island.is/testing/fixtures'
-import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
+import { setupAppWithoutAuth, TestApp } from '@island.is/testing/nest'
 
 import { FixtureFactory } from '../../../test/fixture.factory'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
@@ -7,20 +7,17 @@ import { Session } from '../sessions/session.model'
 import { SessionsCleanupWorkerModule } from './cleanup-worker.module'
 import { SessionsCleanupService } from './cleanup-worker.service'
 
-const setupWithoutAuth = async (): Promise<TestApp> =>
-  testServer({
-    appModule: SessionsCleanupWorkerModule,
-    enableVersioning: true,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
-  })
-
 describe('SessionsService', () => {
   let app: TestApp
   let sessionsCleanupService: SessionsCleanupService
   let factory: FixtureFactory
 
   beforeAll(async () => {
-    app = await setupWithoutAuth()
+    app = await setupAppWithoutAuth({
+      AppModule: SessionsCleanupWorkerModule,
+      SequelizeConfigService,
+      dbType: 'sqlite',
+    })
     factory = new FixtureFactory(app)
 
     sessionsCleanupService = app.get(SessionsCleanupService)
