@@ -1,13 +1,13 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { join } from 'path'
 import { InjectModel } from '@nestjs/sequelize'
-import { isCompany, isPerson } from 'kennitala'
+import { isCompany } from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
-import { EmailService, Message, Body } from '@island.is/email-service'
+import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
