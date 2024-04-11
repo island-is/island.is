@@ -1,4 +1,4 @@
-import { NextApiResponse } from 'next/types'
+import { NextApiRequest, NextApiResponse } from 'next/types'
 import { NormalizedCacheObject } from '@apollo/client/cache/inmemory/types'
 import { ApolloClient } from '@apollo/client/core/ApolloClient'
 
@@ -13,21 +13,25 @@ const Sitemap = () => null
 Sitemap.getProps = async ({
   apolloClient,
   res,
+  req,
   locale,
 }: {
   apolloClient: ApolloClient<NormalizedCacheObject>
   res: NextApiResponse
+  req: NextApiRequest
   locale: Locale
 }) => {
   const { data } = await apolloClient.query<GetUniversityGatewayProgramsQuery>({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS,
   })
 
-  const islandIsUrl = 'https://island.is'
+  const host = req.headers?.host
+  const protocol = `http${host?.startsWith('localhost') ? '' : 's'}://`
+  const baseUrl = `${protocol}${host}`
+
   const programUrls = data.universityGatewayPrograms.data.map((item) => {
     return (
-      islandIsUrl +
-      linkResolver('universitysearchdetails', [item.id], locale).href
+      baseUrl + linkResolver('universitysearchdetails', [item.id], locale).href
     )
   })
 
