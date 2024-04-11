@@ -56,7 +56,10 @@ export class UserProfileWorkerService {
       return this.userProfileModel.upsert({
         nationalId: advaniaProfile.ssn,
         lastNudge: advaniaProfile.nudgeLastAsked,
-        nextNudge: addMonths(advaniaProfile.nudgeLastAsked, NUDGE_INTERVAL),
+        nextNudge:
+          advaniaProfile.nudgeLastAsked !== null
+            ? addMonths(advaniaProfile.nudgeLastAsked, NUDGE_INTERVAL)
+            : null,
       })
     }
 
