@@ -1,7 +1,5 @@
 import { Locale } from 'locale'
 
-import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
-
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
@@ -30,6 +28,13 @@ export const liveChatIncConfig: Record<
       license: 15092154,
       version: '2.0',
     },
+
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      license: 13346703,
+      version: '2.0',
+      showLauncher: false,
+    },
   },
   en: {
     // HSN - Organization
@@ -49,6 +54,13 @@ export const liveChatIncConfig: Record<
     Un4jJk0rPybt9fu8gk94m: {
       license: 15092154,
       version: '2.0',
+    },
+
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      license: 13346703,
+      version: '2.0',
+      showLauncher: false,
     },
   },
 }

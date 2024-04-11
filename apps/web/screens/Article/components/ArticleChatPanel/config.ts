@@ -10,8 +10,22 @@ export const liveChatIncConfig: Record<
   Locale,
   Record<string, LiveChatIncChatPanelProps>
 > = {
-  is: {},
-  en: {},
+  is: {
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      license: 13346703,
+      version: '2.0',
+      showLauncher: false,
+    },
+  },
+  en: {
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      license: 13346703,
+      version: '2.0',
+      showLauncher: false,
+    },
+  },
 }
 
 export const defaultWatsonConfig: Record<Locale, WatsonChatPanelProps> = {

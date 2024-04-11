@@ -1,4 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@apollo/client'
+
+import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+
+import { ChatBubble } from '../ChatBubble'
 import { LiveChatIncChatPanelProps } from '../types'
 
 const SCRIPT_SRC = 'https://cdn.livechatinc.com/tracking.js'
@@ -61,14 +69,49 @@ export const LiveChatIncChatPanel = ({
   license,
   version,
   group,
+  showLauncher,
+  pushUp,
 }: LiveChatIncChatPanelProps) => {
+  const [widget, setWidget] = useState(null)
+  const { activeLocale } = useI18n()
+  const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
+    variables: {
+      input: {
+        lang: activeLocale,
+        namespace: 'ChatPanels',
+      },
+    },
+  })
+
+  const namespace = useMemo(
+    () => JSON.parse(data?.getNamespace?.fields || '{}'),
+    [data?.getNamespace?.fields],
+  )
+
+  const n = useNamespace(namespace)
+
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const widget: any = activateWidget(license, version, group)
+    setWidget(widget)
+
     return () => widget?.call('destroy')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  return null
+
+  if (showLauncher) {
+    return null
+  }
+
+  return (
+    <ChatBubble
+      text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
+      onClick={() => {
+        widget?.call('maximize')
+      }}
+      pushUp={pushUp}
+    />
+  )
 }
 
 export default LiveChatIncChatPanel
