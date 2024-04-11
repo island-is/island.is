@@ -1,6 +1,8 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import { DateType } from '@island.is/judicial-system/types'
+
+registerEnumType(DateType, { name: 'DateType' })
 
 @ObjectType()
 export class DateLog {
