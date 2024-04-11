@@ -14,6 +14,7 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
       opened
       bookmarked
       archived
+      downloadUrl
       content {
         type
         value

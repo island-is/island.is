@@ -42,6 +42,12 @@ export class Document {
 
   @Field(() => DocumentContent, { nullable: true })
   content?: DocumentContent
+
+  @Field({
+    nullable: true,
+    description: 'URL in download service. For downloading PDFs',
+  })
+  downloadUrl?: string
 }
 
 @ObjectType('DocumentsV2')

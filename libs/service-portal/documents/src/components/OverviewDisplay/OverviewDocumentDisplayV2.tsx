@@ -1,17 +1,13 @@
 import { FC } from 'react'
 import { theme } from '@island.is/island-ui/theme'
 import { DocumentsV2Category } from '@island.is/api/schema'
-import { ActiveDocumentType } from '../../lib/types'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import DesktopOverview from './DesktopOverviewV2'
 import MobileOverview from './MobileOverviewV2'
 import NoPDF from '../NoPDF/NoPDF'
 
 export interface Props {
-  activeDocument: ActiveDocumentType | null
   onPressBack: () => void
-  onRefetch: () => void
-  activeArchive: boolean
   activeBookmark: boolean
   loading?: boolean
   error?: {

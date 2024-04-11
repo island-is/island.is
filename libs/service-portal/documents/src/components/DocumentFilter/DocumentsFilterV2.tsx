@@ -22,18 +22,11 @@ import {
   DocumentsV2Category,
   DocumentsV2Sender,
 } from '@island.is/api/schema'
+import { useDocumentFilters } from '../../hooks/useDocumentFilters'
 
 interface Props {
   filterValue: FilterValuesType
   debounceChange: (e: any) => void
-  handleClearFilters: () => void
-  handleShowUnread: (value: boolean) => void
-  handleShowArchived: (value: boolean) => void
-  handleShowBookmarked: (value: boolean) => void
-  handleCategoriesChange: (values: string[]) => void
-  handleSendersChange: (values: string[]) => void
-  handleDateFromChange: (date: Date | null) => void
-  handleDateToChange: (date: Date | null) => void
   clearCategories: () => void
   clearSenders: () => void
   categories: DocumentsV2Category[]
@@ -43,14 +36,6 @@ interface Props {
 const DocumentsFilter = ({
   filterValue,
   debounceChange,
-  handleClearFilters,
-  handleShowUnread,
-  handleShowArchived,
-  handleShowBookmarked,
-  handleCategoriesChange,
-  handleSendersChange,
-  handleDateFromChange,
-  handleDateToChange,
   clearCategories,
   clearSenders,
   categories,
@@ -59,6 +44,17 @@ const DocumentsFilter = ({
 }: Props) => {
   useNamespaces('sp.documents')
   const { formatMessage, lang } = useLocale()
+
+  const {
+    handleSendersChange,
+    handleCategoriesChange,
+    handleDateFromInput,
+    handleDateToInput,
+    handleClearFilters,
+    handleShowUnread,
+    handleShowBookmarked,
+    handleShowArchived,
+  } = useDocumentFilters()
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
 
@@ -208,7 +204,7 @@ const DocumentsFilter = ({
                       backgroundColor="blue"
                       size="xs"
                       selected={filterValue.dateFrom}
-                      handleChange={handleDateFromChange}
+                      handleChange={handleDateFromInput}
                       appearInline
                     />
                   </Box>
@@ -220,7 +216,7 @@ const DocumentsFilter = ({
                       backgroundColor="blue"
                       size="xs"
                       selected={filterValue.dateTo}
-                      handleChange={handleDateToChange}
+                      handleChange={handleDateToInput}
                       appearInline
                       minDate={filterValue.dateFrom || undefined}
                     />
@@ -238,14 +234,6 @@ const DocumentsFilter = ({
               filterValue={filterValue}
               categories={categoriesAvailable}
               senders={sendersAvailable}
-              handleCategoriesChange={handleCategoriesChange}
-              handleSendersChange={handleSendersChange}
-              handleDateFromChange={handleDateFromChange}
-              handleDateToChange={handleDateToChange}
-              handleShowUnread={handleShowUnread}
-              handleClearFilters={handleClearFilters}
-              handleShowArchived={handleShowArchived}
-              handleShowBookmarked={handleShowBookmarked}
             />
 
             <Text

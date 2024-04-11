@@ -1,39 +1,31 @@
 import { FC } from 'react'
+import FocusLock from 'react-focus-lock'
 import { LoadModal, m } from '@island.is/service-portal/core'
 import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserInfo } from '@island.is/auth/react'
-import { DocumentRenderer } from '../../components/DocumentRenderer'
-import { DocumentHeader } from '../../components/DocumentHeader'
-import { DocumentActionBar } from '../../components/DocumentActionBar'
-import { downloadFile } from '../../utils/downloadDocument'
-import { ActiveDocumentType } from '../../lib/types'
-import FocusLock from 'react-focus-lock'
+import { DocumentRenderer } from '../DocumentRenderer/DocumentRendererV2'
+import { DocumentHeader } from '../../components/DocumentHeader/DocumentHeaderV2'
+import { DocumentActionBar } from '../../components/DocumentActionBar/DocumentActionBarV2'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
 
 interface Props {
-  activeDocument: ActiveDocumentType | null
   onPressBack: () => void
-  onRefetch: () => void
-  activeArchive: boolean
   activeBookmark: boolean
   loading?: boolean
   category?: DocumentsV2Category
 }
 
 export const MobileOverview: FC<Props> = ({
-  activeDocument,
   onPressBack,
-  onRefetch,
-  activeArchive,
   activeBookmark,
   category,
   loading,
 }) => {
   useNamespaces('sp.documents')
-  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
+  const { activeDocument } = useDocumentContext()
 
   if (loading) {
     return <LoadModal />
@@ -51,16 +43,7 @@ export const MobileOverview: FC<Props> = ({
             <Box className={styles.modalHeader}>
               <DocumentActionBar
                 onGoBack={onPressBack}
-                documentId={activeDocument.id}
-                archived={activeArchive}
                 bookmarked={activeBookmark}
-                refetchInboxItems={onRefetch}
-                activeDocument={activeDocument}
-                onPrintClick={
-                  activeDocument
-                    ? () => downloadFile(activeDocument, userInfo)
-                    : undefined
-                }
               />
             </Box>
             <Box className={styles.modalContent}>

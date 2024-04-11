@@ -12,13 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useOrganizations } from '@island.is/service-portal/graphql'
 import { GoBack, m, useScrollTopOnUpdate } from '@island.is/service-portal/core'
-import { Document } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import debounce from 'lodash/debounce'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilterV2'
-import DocumentLine from '../../components/DocumentLine/DocumentLine'
+import DocumentLine from '../../components/DocumentLine/DocumentLineV2'
 import { useKeyDown } from '../../hooks/useKeyDown'
 import { FavAndStash } from '../../components/FavAndStash'
 import { messages } from '../../utils/messages'
@@ -51,13 +50,10 @@ export const ServicePortalDocumentsV2 = () => {
     setSelectedLines,
     setActiveDocument,
     setFilterValue,
-    setDocLoading,
-    setDocumentDisplayError,
   } = useDocumentContext()
 
   const {
     fetchObject,
-    data,
     loading,
     error,
     refetch,
@@ -67,18 +63,7 @@ export const ServicePortalDocumentsV2 = () => {
     totalCount,
   } = useDocumetList()
 
-  const {
-    handleDateFromInput,
-    handleDateToInput,
-    handlePageChange,
-    handleCategoriesChange,
-    handleSendersChange,
-    handleClearFilters,
-    handleShowUnread,
-    handleShowArchived,
-    handleShowBookmarked,
-    handleSearchChange,
-  } = useDocumentFilters()
+  const { handlePageChange, handleSearchChange } = useDocumentFilters()
 
   const { submitBatchAction, loading: batchActionLoading } = useMailAction()
 
@@ -165,14 +150,6 @@ export const ServicePortalDocumentsV2 = () => {
                 activeSenders: [],
               }))
             }
-            handleCategoriesChange={handleCategoriesChange}
-            handleSendersChange={handleSendersChange}
-            handleDateFromChange={handleDateFromInput}
-            handleDateToChange={handleDateToInput}
-            handleShowUnread={handleShowUnread}
-            handleShowArchived={handleShowArchived}
-            handleShowBookmarked={handleShowBookmarked}
-            handleClearFilters={handleClearFilters}
             documentsLength={totalCount}
           />
           <Box marginTop={4}>
@@ -245,29 +222,10 @@ export const ServicePortalDocumentsV2 = () => {
                           )
                         : undefined
                     }
-                    documentLine={
-                      {
-                        // TODO: Refactor.
-                        ...doc,
-                        fileType: '',
-                        senderName: doc.sender.name ?? '',
-                        senderNatReg: doc.sender.id,
-                        date: doc.documentDate,
-                        url: '',
-                      } as Document
-                    }
-                    onClick={setActiveDocument}
-                    onError={(err) => setDocumentDisplayError(err)}
-                    onLoading={(l) => setDocLoading(l)}
+                    documentLine={doc}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
                     selected={selectedLines.includes(doc.id)}
-                    archived={activeArchive}
-                    refetchInboxItems={() => {
-                      if (refetch) {
-                        refetch(fetchObject)
-                      }
-                    }}
                     setSelectLine={(docId) => {
                       if (selectedLines.includes(doc.id)) {
                         const filtered = selectedLines.filter(
@@ -305,8 +263,6 @@ export const ServicePortalDocumentsV2 = () => {
           position="relative"
         >
           <DocumentDisplay
-            activeDocument={activeDocument}
-            activeArchive={activeArchive}
             activeBookmark={
               !!filteredDocuments?.filter(
                 (doc) => doc?.id === activeDocument?.id,
@@ -320,11 +276,6 @@ export const ServicePortalDocumentsV2 = () => {
               navigate(DocumentsPaths.ElectronicDocumentsRoot, {
                 replace: true,
               })
-            }}
-            onRefetch={() => {
-              if (refetch) {
-                refetch(fetchObject)
-              }
             }}
             error={{
               message: error

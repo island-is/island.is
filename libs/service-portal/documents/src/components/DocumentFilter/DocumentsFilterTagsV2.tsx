@@ -1,41 +1,33 @@
+import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import React from 'react'
-import FilterTag from '../FilterTag/FilterTag'
 import { m } from '@island.is/service-portal/core'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
+import FilterTag from '../FilterTag/FilterTag'
 import { messages } from '../../utils/messages'
 import { FilterValuesType } from '../../utils/types'
+import { useDocumentFilters } from '../../hooks/useDocumentFilters'
 
 interface Props {
   filterValue: FilterValuesType
-  handleShowUnread: (value: boolean) => void
-  handleCategoriesChange: (values: string[]) => void
-  handleSendersChange: (values: string[]) => void
-  handleDateFromChange: (date: Date | null) => void
-  handleDateToChange: (date: Date | null) => void
-  handleClearFilters: () => void
-  handleShowArchived: (value: boolean) => void
-  handleShowBookmarked: (value: boolean) => void
   categories: { label?: string | null; value: string }[]
   senders: { label?: string | null; value: string }[]
 }
-const DocumentsFilterTags = ({
-  filterValue,
-  handleClearFilters,
-  handleShowUnread,
-  handleCategoriesChange,
-  handleSendersChange,
-  handleDateFromChange,
-  handleDateToChange,
-  handleShowArchived,
-  handleShowBookmarked,
-  categories,
-  senders,
-}: Props) => {
+const DocumentsFilterTags = ({ filterValue, categories, senders }: Props) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
+
+  const {
+    handleCategoriesChange,
+    handleSendersChange,
+    handleClearFilters,
+    handleShowUnread,
+    handleShowArchived,
+    handleShowBookmarked,
+    handleDateFromInput,
+    handleDateToInput,
+  } = useDocumentFilters()
 
   const getCategoryTitle = (id: string) => {
     if (categories.length === 0) {
@@ -81,7 +73,7 @@ const DocumentsFilterTags = ({
         ))}
       {filterValue.dateFrom && (
         <FilterTag
-          onClick={() => handleDateFromChange(null)}
+          onClick={() => handleDateFromInput(null)}
           title={`${formatMessage(m.datepickerFromLabel)} - ${format(
             filterValue.dateFrom,
             dateFormat.is,
@@ -90,7 +82,7 @@ const DocumentsFilterTags = ({
       )}
       {filterValue.dateTo && (
         <FilterTag
-          onClick={() => handleDateToChange(null)}
+          onClick={() => handleDateToInput(null)}
           title={`${formatMessage(m.datepickerToLabel)} - ${format(
             filterValue.dateTo,
             dateFormat.is,

@@ -3,35 +3,29 @@ import { m } from '@island.is/service-portal/core'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserInfo } from '@island.is/auth/react'
-import { DocumentRenderer } from '../DocumentRenderer'
-import { DocumentHeader } from '../DocumentHeader'
-import { downloadFile } from '../../utils/downloadDocument'
-import { ActiveDocumentType } from '../../lib/types'
-import * as styles from './OverviewDisplay.css'
+import { DocumentRenderer } from '../DocumentRenderer/DocumentRendererV2'
+import { DocumentHeader } from '../DocumentHeader/DocumentHeaderV2'
 import NoPDF from '../NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import * as styles from './OverviewDisplay.css'
+import { useDocumetList } from '../../hooks/useDocumentList'
 
 interface Props {
-  activeDocument: ActiveDocumentType | null
-  onRefetch: () => void
-  activeArchive: boolean
   activeBookmark: boolean
   loading?: boolean
   category?: DocumentsV2Category
 }
 
 export const DesktopOverview: FC<Props> = ({
-  activeDocument,
-  onRefetch,
-  activeArchive,
   activeBookmark,
   category,
   loading,
 }) => {
   useNamespaces('sp.documents')
-  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
+  const { activeDocument } = useDocumentContext()
+  const { activeArchive } = useDocumetList()
 
   if (loading) {
     return (
@@ -74,14 +68,8 @@ export const DesktopOverview: FC<Props> = ({
           subject: activeDocument.subject,
         })}
         actionBar={{
-          activeDocument: activeDocument,
-          documentId: activeDocument.id,
           archived: activeArchive,
           bookmarked: activeBookmark,
-          refetchInboxItems: onRefetch,
-          onPrintClick: activeDocument
-            ? () => downloadFile(activeDocument, userInfo)
-            : undefined,
         }}
       />
       <Box>{<DocumentRenderer document={activeDocument} />}</Box>

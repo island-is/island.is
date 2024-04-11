@@ -132,12 +132,11 @@ export class DocumentResolverV2 {
       input.documentIds.length === 1 ? input.documentIds[0] : input.documentIds
 
     if (input.documentIds) {
-      const test = await this.documentServiceV2.postMailAction(
+      return await this.documentServiceV2.postMailAction(
         user.nationalId,
         ids,
         input.action,
       )
-      return test
     }
 
     return null

@@ -12,12 +12,12 @@ import {
   useState,
   useContext,
 } from 'react'
-import { ActiveDocumentType } from '../../lib/types'
+import { ActiveDocumentType2 } from '../../lib/types'
 import { FilterValuesType, defaultFilterValues } from '../../utils/types'
 import { useLoaderData } from 'react-router-dom'
 
 type SelectedLineType = Array<string>
-type ActiveDocumentStateType = ActiveDocumentType | null
+type ActiveDocumentStateType = ActiveDocumentType2 | null
 
 export type DocumentsStateProps = {
   selectedLines: SelectedLineType
