@@ -11,7 +11,7 @@ export const DocumentIndex = () => {
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthPaymentPageEnabled`,
+        `isServicePortalDocumentsV2PageEnabled`,
         false,
       )
       if (ffEnabled) {

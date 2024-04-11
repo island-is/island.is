@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import AvatarImage from '../DocumentLine/AvatarImage'
-import { DocumentCategory, DocumentsV2Category } from '@island.is/api/schema'
+import { DocumentsV2Category } from '@island.is/api/schema'
 import * as styles from './DocumentHeader.css'
 import {
   DocumentActionBar,

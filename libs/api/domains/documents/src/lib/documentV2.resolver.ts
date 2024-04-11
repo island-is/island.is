@@ -6,7 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { UseGuards, Inject } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -33,6 +33,9 @@ import { Sender } from './models/v2/sender.model'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { DocumentMailAction } from './models/v2/mailAction.model.'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+
+const LOG_CATEGORY = 'documents-resolver'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => PaginatedDocuments)
@@ -40,6 +43,7 @@ export class DocumentResolverV2 {
   constructor(
     private documentServiceV2: DocumentServiceV2,
     private readonly auditService: AuditService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Scopes(DocumentsScope.main)
@@ -48,15 +52,24 @@ export class DocumentResolverV2 {
     @Args('input') input: DocumentInput,
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace: '@island.is/api/document-v2',
-        action: 'getDocument',
-        resources: input.id,
-      },
-      this.documentServiceV2.findDocumentById(user.nationalId, input.id),
-    )
+    try {
+      return this.auditService.auditPromise(
+        {
+          auth: user,
+          namespace: '@island.is/api/document-v2',
+          action: 'getDocument',
+          resources: input.id,
+        },
+        this.documentServiceV2.findDocumentById(user.nationalId, input.id),
+      )
+    } catch (e) {
+      this.logger.error('failed to get single document', {
+        category: LOG_CATEGORY,
+        provider: input.provider,
+        error: e,
+      })
+      throw e
+    }
   }
 
   @Scopes(DocumentsScope.main)
@@ -65,22 +78,54 @@ export class DocumentResolverV2 {
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
-    return this.documentServiceV2.listDocuments(user.nationalId, input)
+    try {
+      return this.documentServiceV2.listDocuments(user.nationalId, input)
+    } catch (e) {
+      this.logger.error('failed to get document list', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
   }
 
   @ResolveField('categories', () => [Category])
   documentCategories(@CurrentUser() user: User): Promise<Array<Category>> {
-    return this.documentServiceV2.getCategories(user.nationalId)
+    try {
+      return this.documentServiceV2.getCategories(user.nationalId)
+    } catch (e) {
+      this.logger.error('failed to get document categories', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
   }
 
   @ResolveField('senders', () => [Sender])
   documentSenders(@CurrentUser() user: User): Promise<Array<Sender>> {
-    return this.documentServiceV2.getSenders(user.nationalId)
+    try {
+      return this.documentServiceV2.getSenders(user.nationalId)
+    } catch (e) {
+      this.logger.error('failed to get document senders', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
   }
 
   @ResolveField('types', () => [Type])
   documentTypes(@CurrentUser() user: User): Promise<Array<Type>> {
-    return this.documentServiceV2.getTypes(user.nationalId)
+    try {
+      return this.documentServiceV2.getTypes(user.nationalId)
+    } catch (e) {
+      this.logger.error('failed to get document types', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
   }
 
   @ResolveField('pageNumber', () => Int)
@@ -88,11 +133,19 @@ export class DocumentResolverV2 {
     @CurrentUser() user: User,
     @Args('input') input: DocumentInput,
   ) {
-    return this.documentServiceV2.getPageNumber(
-      user.nationalId,
-      input.id,
-      input.pageSize,
-    )
+    try {
+      return this.documentServiceV2.getPageNumber(
+        user.nationalId,
+        input.id,
+        input.pageSize,
+      )
+    } catch (e) {
+      this.logger.error('failed to get document pageNumber', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
   }
 
   @Scopes(DocumentsScope.main)
@@ -132,11 +185,20 @@ export class DocumentResolverV2 {
       input.documentIds.length === 1 ? input.documentIds[0] : input.documentIds
 
     if (input.documentIds) {
-      return await this.documentServiceV2.postMailAction(
-        user.nationalId,
-        ids,
-        input.action,
-      )
+      try {
+        return await this.documentServiceV2.postMailAction(
+          user.nationalId,
+          ids,
+          input.action,
+        )
+      } catch (e) {
+        this.logger.error('failed to post document action', {
+          category: LOG_CATEGORY,
+          action: input.action,
+          error: e,
+        })
+        throw e
+      }
     }
 
     return null

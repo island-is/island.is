@@ -53,10 +53,8 @@ export const ServicePortalDocumentsV2 = () => {
   } = useDocumentContext()
 
   const {
-    fetchObject,
     loading,
     error,
-    refetch,
     activeArchive,
     totalPages,
     filteredDocuments,
