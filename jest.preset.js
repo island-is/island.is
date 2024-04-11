@@ -3,6 +3,9 @@ const nxPreset = require('@nx/jest/preset').default
 const { transform, ...nxPresetRest } = nxPreset
 const customResolver = path.join(__dirname, 'jest.resolver.js')
 
+/** Hack: setImmediate is not available in one test */
+global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
+
 module.exports = {
   ...nxPresetRest,
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
