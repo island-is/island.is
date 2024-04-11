@@ -1,0 +1,14 @@
+diff --git a/packages/dd-trace/index.js b/packages/dd-trace/index.js
+index a64e691d8734d3fa5403e7eebc9ecbed3d96db65..00969895b767e07b38835cb5952c6e43ffe7b256 100644
+--- a/packages/dd-trace/index.js
++++ b/packages/dd-trace/index.js
+@@ -1,5 +1,9 @@
+ 'use strict'
+ 
++if (!global.setImmediate) {
++  global.setImmediate = (cb) => setTimeout(cb, 0);
++}
++
+ if (!global._ddtrace) {
+   const TracerProxy = require('./src')
+ 
