@@ -24,7 +24,12 @@ interface MachineSearchFieldProps {
 
 export const MachineSelectField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, setFieldLoadingState }) => {
+> = ({
+  currentMachineList,
+  application,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const machineValue = getValueViaPath(
@@ -114,8 +119,20 @@ export const MachineSelectField: FC<
   }
 
   useEffect(() => {
+    if (selectedMachine) {
+      if (selectedMachine.disabled) {
+        setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+      } else {
+        setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+      }
+    }
     setFieldLoadingState?.(isLoading)
-  }, [isLoading, setFieldLoadingState])
+  }, [
+    selectedMachine,
+    isLoading,
+    setFieldLoadingState,
+    setSubmitButtonDisabled,
+  ])
 
   return (
     <Box>

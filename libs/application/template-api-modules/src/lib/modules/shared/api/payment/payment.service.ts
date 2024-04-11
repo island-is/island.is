@@ -27,7 +27,7 @@ export class PaymentService extends BaseTemplateApiService {
     if (!params?.organizationId) {
       throw Error('Missing performing organization ID')
     }
-
+    console.log('params', params)
     const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
       params.organizationId,
     )
@@ -41,7 +41,7 @@ export class PaymentService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const { organizationId, chargeItemCodes, extraData } = params ?? {}
-
+    console.log('CreateCharge!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     if (!organizationId) throw Error('Missing performing organization ID')
     if (!chargeItemCodes) throw Error('No selected charge item code')
 

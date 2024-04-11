@@ -7,7 +7,10 @@ import {
   WorkMachinesClientConfig,
   WorkMachinesClientModule,
 } from '@island.is/clients/work-machines'
-import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import {
+  ChargeFjsV2ClientConfig,
+  ChargeFjsV2ClientModule,
+} from '@island.is/clients/charge-fjs-v2'
 
 export class StreetRegistrationTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -16,6 +19,7 @@ export class StreetRegistrationTemplateModule {
       imports: [
         SharedTemplateAPIModule.register(config),
         WorkMachinesClientModule,
+        ChargeFjsV2ClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [WorkMachinesClientConfig, ChargeFjsV2ClientConfig],

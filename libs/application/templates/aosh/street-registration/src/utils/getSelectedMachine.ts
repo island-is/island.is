@@ -1,7 +1,13 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import {
+  ExternalData,
+  ExtraData,
+  FormValue,
+  Application as ApplicationType,
+} from '@island.is/application/types'
 import { Machine } from '../shared/types'
 import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
+import { MachineAnswers } from '../lib/dataSchema'
 
 export const getSelectedMachine = (
   externalData: ExternalData,
@@ -27,4 +33,12 @@ export const mustInspectBeforeStreetRegistration = (
   ) as string[]
   console.log('inspectBeforeTypes', inspectBeforeTypes)
   return inspectBeforeTypes?.includes(regNumber.substring(0, 2)) || false
+}
+
+export const getExtraData = (application: ApplicationType): ExtraData[] => {
+  const streetAnswers = application.answers as MachineAnswers
+  return [
+    { name: 'regNumber', value: streetAnswers.machine.regNumber || '' },
+    { name: 'date', value: streetAnswers.machine?.date || '' },
+  ]
 }

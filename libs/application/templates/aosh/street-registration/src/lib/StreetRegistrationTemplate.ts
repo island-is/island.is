@@ -29,11 +29,13 @@ import {
   UserProfileApi,
   MachinesApi,
   MustInspectBeforeRegistrationApi,
+  VinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { getChargeItemCodes } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
+import { getExtraData } from '../utils/getSelectedMachine'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -111,6 +113,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 MachinesApi,
                 MustInspectBeforeRegistrationApi,
+                VinnueftirlitidPaymentCatalogApi,
               ],
             },
           ],
@@ -160,17 +163,18 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      // [States.PAYMENT]: buildPaymentState({
-      //   organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-      //   chargeItemCodes: getChargeItemCodes,
-      //   submitTarget: States.COMPLETED,
-      //   onExit: [
-      //     defineTemplateApi({
-      //       action: ApiActions.submitApplication,
-      //       triggerEvent: DefaultEvents.SUBMIT,
-      //     }),
-      //   ],
-      // }),
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+        chargeItemCodes: getChargeItemCodes,
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+        extraData: getExtraData,
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

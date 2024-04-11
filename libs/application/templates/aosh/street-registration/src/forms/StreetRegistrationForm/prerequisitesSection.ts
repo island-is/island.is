@@ -11,6 +11,7 @@ import {
   UserProfileApi,
   MachinesApi,
   MustInspectBeforeRegistrationApi,
+  VinnueftirlitidPaymentCatalogApi,
 } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
@@ -56,6 +57,10 @@ export const prerequisitesSection = buildSection({
           provider: MustInspectBeforeRegistrationApi,
           title: '',
           subTitle: '',
+        }),
+        buildDataProviderItem({
+          provider: VinnueftirlitidPaymentCatalogApi,
+          title: '',
         }),
       ],
     }),

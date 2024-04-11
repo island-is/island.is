@@ -240,21 +240,26 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const setMachineValues = (machineDetails: MachineDetails) => {
-    const mustInspect = mustInspectBeforeStreetRegistration(
-      application?.externalData,
-      machineDetails.regNumber || '',
-    )
-    if (mustInspect && !machineDetails.disabled) {
-      machineDetails = {
-        ...machineDetails,
-        disabled: true,
-        status: formatText(
-          'inspectBeforeRegistration',
-          application,
-          formatMessage,
-        ),
+    if (application.typeId === 'StreetRegistration') {
+      const mustInspect = mustInspectBeforeStreetRegistration(
+        application?.externalData,
+        machineDetails.regNumber || '',
+      )
+      if (mustInspect && !machineDetails.disabled) {
+        machineDetails = {
+          ...machineDetails,
+          disabled: true,
+          status:
+            validationErrors &&
+            formatText(
+              validationErrors.inspectBeforeRegistration,
+              application,
+              formatMessage,
+            ),
+        }
       }
     }
+
     setValue(`${field.id}.regNumber`, machineDetails.regNumber)
     setValue(`${field.id}.category`, machineDetails.category)
     setValue(`${field.id}.type`, machineDetails.type || '')
@@ -266,6 +271,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.date`, new Date().toISOString())
     setValue('pickMachine.isValid', machineDetails.disabled ? undefined : true)
     setMachineId(machineDetails?.id || '')
+    setSubmitButtonDisabled &&
+      setSubmitButtonDisabled(!machineDetails.disabled || false)
     setMachineDetails(machineDetails)
   }
 
@@ -305,7 +312,13 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       setSubmitButtonDisabledCalled(true)
     }
     if (plate.length === MAX_LENGTH) {
+      console.log('called')
       setButtonDisabled(false)
+    }
+    if (machineDetails && machineDetails.disabled) {
+      console.log('machineDetails', machineDetails)
+      console.log('last')
+      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
     }
     setFieldLoadingState?.(isLoading)
   }, [isLoading])

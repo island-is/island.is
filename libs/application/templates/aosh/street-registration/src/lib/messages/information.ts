@@ -3,23 +3,23 @@ import { defineMessages } from 'react-intl'
 export const information = {
   general: defineMessages({
     sectionTitle: {
-      id: 'aosh.drm.application:information.general.sectionTitle',
+      id: 'aosh.sr.application:information.general.sectionTitle',
       defaultMessage: 'Upplýsingar',
       description: 'Title of information section',
     },
     pageTitle: {
-      id: 'aosh.drm.application:information.general.pageTitle',
+      id: 'aosh.sr.application:information.general.pageTitle',
       defaultMessage: 'Upplýsingar',
       description: 'Title of information page',
     },
     description: {
-      id: 'aosh.drm.application:information.general.description',
+      id: 'aosh.sr.application:information.general.description',
       defaultMessage:
         'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
       description: 'Description of information page',
     },
     dividerTitle: {
-      id: 'aosh.drm.application:information.general.deviderTitle',
+      id: 'aosh.sr.application:information.general.deviderTitle',
       defaultMessage: 'Tengiliðaupplýsingar',
       description: 'Title of information devider',
     },
@@ -27,178 +27,178 @@ export const information = {
   labels: {
     pickMachine: defineMessages({
       sectionTitle: {
-        id: 'aosh.drm.application:information.labels.pickMachine.sectionTitle',
+        id: 'aosh.sr.application:information.labels.pickMachine.sectionTitle',
         defaultMessage: 'Veldu tæki',
         description: 'Pick machine section title',
       },
       title: {
-        id: 'aosh.drm.application:information.labels.pickMachine.title',
+        id: 'aosh.sr.application:information.labels.pickMachine.title',
         defaultMessage: 'Veldu tæki',
         description: 'Pick machine title',
       },
       description: {
-        id: 'aosh.drm.application:information.labels.pickMachine.description',
+        id: 'aosh.sr.application:information.labels.pickMachine.description',
         defaultMessage:
           'Hér að neðan er listi yfir vélar og tæki í þinni eigu.',
         description: 'Pick machine description',
       },
       vehicle: {
-        id: 'aosh.drm.application:information.labels.pickMachine.vehicle',
+        id: 'aosh.sr.application:information.labels.pickMachine.vehicle',
         defaultMessage: 'Tæki',
         description: 'Pick machine label',
       },
       placeholder: {
-        id: 'aosh.drm.application:information.labels.pickMachine.placeholder',
+        id: 'aosh.sr.application:information.labels.pickMachine.placeholder',
         defaultMessage: 'Veldu tæki',
         description: 'Pick machine placeholder',
       },
       hasErrorTitle: {
-        id: 'aosh.drm.application:information.labels.pickMachine.hasErrorTitle',
-        defaultMessage: 'Ekki er hægt að selja þetta tæki vegna:',
+        id: 'aosh.sr.application:information.labels.pickMachine.hasErrorTitle',
+        defaultMessage: 'Ekki er hægt að götuskrá þetta tæki vegna:',
         description: 'Pick machine has an error title',
       },
       notFoundTitle: {
-        id: 'aosh.drm.application:information.labels.pickMachine.notFoundTitle',
+        id: 'aosh.sr.application:information.labels.pickMachine.notFoundTitle',
         defaultMessage: 'Eitthvað fór úrskeiðis',
         description: 'Pick machine not found title',
       },
       notFoundMessage: {
-        id: 'aosh.drm.application:information.labels.pickMachine.notFoundMessage',
+        id: 'aosh.sr.application:information.labels.pickMachine.notFoundMessage',
         defaultMessage: 'Tæki fannst ekki',
         description: 'Pick machine not found message',
       },
       findRegistrationNumberPlaceholder: {
-        id: 'aosh.drm.application:information.labels.pickMachine.findRegistrationNumberPlaceholder',
+        id: 'aosh.sr.application:information.labels.pickMachine.findRegistrationNumberPlaceholder',
         defaultMessage: 'Sláðu inn skráningarnúmer',
         description: 'Pick machine find registration number placeholder',
       },
       findButton: {
-        id: 'aosh.drm.application:information.labels.pickMachine.findButton',
+        id: 'aosh.sr.application:information.labels.pickMachine.findButton',
         defaultMessage: 'Leita',
         description: 'Pick machine find button',
       },
       inspectBeforeRegistration: {
-        id: 'aosh.drm.application:information.labels.pickMachine.inspectBeforeRegistration',
+        id: 'aosh.sr.application:information.labels.pickMachine.inspectBeforeRegistration',
         defaultMessage: 'Hafið samband við Vinnueftirlitið til að götuskrá',
         description: 'Pick machine inspect before registration',
       },
     }),
     machine: defineMessages({
       sectionTitle: {
-        id: 'aosh.drm.application:information.labels.machine.sectionTitle',
+        id: 'aosh.sr.application:information.labels.machine.sectionTitle',
         defaultMessage: 'Tæki',
         description: 'Machine section title',
       },
       title: {
-        id: 'aosh.drm.application:information.labels.machine.title',
+        id: 'aosh.sr.application:information.labels.machine.title',
         defaultMessage: 'Tæki',
         description: 'Machine title',
       },
       description: {
-        id: 'aosh.drm.application:information.labels.machine.description',
+        id: 'aosh.sr.application:information.labels.machine.description',
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
         description: 'Machine description',
       },
       plate: {
-        id: 'aosh.drm.application:information.labels.machine.plate',
+        id: 'aosh.sr.application:information.labels.machine.plate',
         defaultMessage: 'Plötuskráningarnúmer',
         description: 'Machine plate number label',
       },
       type: {
-        id: 'aosh.drm.application:information.labels.machine.type',
+        id: 'aosh.sr.application:information.labels.machine.type',
         defaultMessage: 'Tegund',
         description: 'Machine type label',
       },
       date: {
-        id: 'aosh.drm.application:information.labels.machine.date',
+        id: 'aosh.sr.application:information.labels.machine.date',
         defaultMessage: 'Dagsetning kaupsamnings',
         description: 'Date of purchase agreement label',
       },
       registrationNumber: {
-        id: 'aosh.drm.application:information.labels.machine.registrationNumber',
+        id: 'aosh.sr.application:information.labels.machine.registrationNumber',
         defaultMessage: 'Skráningarnúmer',
         description: 'Registration number label',
       },
       category: {
-        id: 'aosh.drm.application:information.labels.machine.category',
+        id: 'aosh.sr.application:information.labels.machine.category',
         defaultMessage: 'Yfirflokkur',
         description: 'Category label',
       },
       ownerNumber: {
-        id: 'aosh.drm.application:information.labels.machine.ownerNumber',
+        id: 'aosh.sr.application:information.labels.machine.ownerNumber',
         defaultMessage: 'Eigandanúmer',
         description: 'Owner number label',
       },
       subType: {
-        id: 'aosh.drm.application:information.labels.machine.subType',
+        id: 'aosh.sr.application:information.labels.machine.subType',
         defaultMessage: 'Gerð',
         description: 'Sub type label',
       },
     }),
     seller: defineMessages({
       sectionTitle: {
-        id: 'aosh.drm.application:information.labels.seller.sectionTitle',
+        id: 'aosh.sr.application:information.labels.seller.sectionTitle',
         defaultMessage: 'Seljandi',
         description: 'Seller section title',
       },
       title: {
-        id: 'aosh.drm.application:information.labels.seller.title',
+        id: 'aosh.sr.application:information.labels.seller.title',
         defaultMessage: 'Seljandi',
         description: 'Seller title',
       },
       subtitle: {
-        id: 'aosh.drm.application:information.labels.seller.subtitle',
+        id: 'aosh.sr.application:information.labels.seller.subtitle',
         defaultMessage: 'Aðaleigandi',
         description: 'Main owner title',
       },
       description: {
-        id: 'aosh.drm.application:information.labels.seller.description',
+        id: 'aosh.sr.application:information.labels.seller.description',
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
         description: 'Seller description',
       },
       nationalId: {
-        id: 'aosh.drm.application:information.labels.seller.nationalId',
+        id: 'aosh.sr.application:information.labels.seller.nationalId',
         defaultMessage: 'Kennitala seljanda',
         description: 'Seller national ID label',
       },
       name: {
-        id: 'aosh.drm.application:information.labels.seller.name',
+        id: 'aosh.sr.application:information.labels.seller.name',
         defaultMessage: 'Nafn seljanda',
         description: 'Seller name label',
       },
       email: {
-        id: 'aosh.drm.application:information.labels.seller.email',
+        id: 'aosh.sr.application:information.labels.seller.email',
         defaultMessage: 'Netfang',
         description: 'Seller email label',
       },
       phone: {
-        id: 'aosh.drm.application:information.labels.seller.phone',
+        id: 'aosh.sr.application:information.labels.seller.phone',
         defaultMessage: 'Gsm númer',
         description: 'Seller phone number label',
       },
     }),
     machineSubSection: defineMessages({
       error: {
-        id: 'aosh.drm.application:information.labels.machineSubSection.error',
+        id: 'aosh.sr.application:information.labels.machineSubSection.error',
         defaultMessage: 'Það kom upp villa við að sækja upplýsingar um tæki',
         description: 'Machine error message',
       },
     }),
     contact: defineMessages({
       name: {
-        id: 'aosh.drm.application:information.labels.contact.name',
+        id: 'aosh.sr.application:information.labels.contact.name',
         defaultMessage: 'Nafn',
         description: 'Contact name label',
       },
       email: {
-        id: 'aosh.drm.application:information.labels.contact.email',
+        id: 'aosh.sr.application:information.labels.contact.email',
         defaultMessage: 'Netfang',
         description: 'Contact email label',
       },
       phone: {
-        id: 'aosh.drm.application:information.labels.contact.phone',
+        id: 'aosh.sr.application:information.labels.contact.phone',
         defaultMessage: 'Gsm númer',
         description: 'Contact phone number label',
       },

@@ -18,22 +18,6 @@ import {
 import { conclusion, externalData, payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
 
-const determineMessageFromApplicationAnswers = (
-  application: Application,
-): StaticText | undefined => {
-  const regNumber =
-    getValueViaPath(application.answers, 'machine.regNumber', undefined) ||
-    ('' as string)
-  console.log('application', application)
-  return {
-    ...conclusion.default.accordionTitle,
-    defaultMessage: conclusion.default.accordionTitle.defaultMessage.replace(
-      '{value}',
-      regNumber,
-    ),
-  }
-}
-
 export const TransferOfMachineOwnershipForm: Form = buildForm({
   id: 'TransferOfMachineOwnershipFormDraft',
   title: '',
@@ -48,13 +32,13 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
       children: [],
     }),
     informationSection,
-    // buildFormPaymentChargeOverviewSection({
-    //   sectionTitle: payment.general.title,
-    //   getSelectedChargeItems: (_) =>
-    //     getChargeItemCodes().map((x) => ({
-    //       chargeItemCode: x,
-    //     })),
-    // }),
+    buildFormPaymentChargeOverviewSection({
+      sectionTitle: payment.general.title,
+      getSelectedChargeItems: (_) =>
+        getChargeItemCodes().map((x) => ({
+          chargeItemCode: x,
+        })),
+    }),
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,

@@ -1,4 +1,8 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import {
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+  defineTemplateApi,
+} from '@island.is/application/types'
 
 export { IdentityApi, UserProfileApi } from '@island.is/application/types'
 
@@ -10,4 +14,11 @@ export const MachinesApi = defineTemplateApi({
 export const MustInspectBeforeRegistrationApi = defineTemplateApi({
   action: 'getTypesMustInspectBeforeRegistration',
   externalDataId: 'typesMustInspectBeforeRegistration',
+})
+
+export const VinnueftirlitidPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+  },
+  externalDataId: 'payment',
 })

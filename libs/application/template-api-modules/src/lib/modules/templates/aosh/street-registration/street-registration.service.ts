@@ -70,6 +70,28 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Validate payment
+    console.log('application.externalData', application.externalData)
+    // 1a. Make sure a paymentUrl was created
+    const paymentUrl =
+      (application.externalData.createCharge?.data as { paymentUrl?: string })
+        ?.paymentUrl || ''
+
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
     const answers = application.answers as StreetRegistrationAnswers
 
     if (auth.nationalId !== application.applicant) {
