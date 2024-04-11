@@ -401,10 +401,17 @@ export class ContentfulService {
 
     const isDeltaUpdate = syncType !== 'full'
 
-    const shouldResolveNestedEntries = await this.featureFlagService.getValue(
-      Features.shouldSearchIndexerResolveNestedEntries,
-      true,
-    )
+    let shouldResolveNestedEntries = false
+    if (environment.runtimeEnvironment === 'local') {
+      shouldResolveNestedEntries = Boolean(
+        environment.forceSearchIndexerToResolveNestedEntries,
+      )
+    } else {
+      shouldResolveNestedEntries = await this.featureFlagService.getValue(
+        Features.shouldSearchIndexerResolveNestedEntries,
+        true,
+      )
+    }
 
     // In case of delta updates, we need to resolve embedded entries to their root model
     if (isDeltaUpdate && shouldResolveNestedEntries) {
