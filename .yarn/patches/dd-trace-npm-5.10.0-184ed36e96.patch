@@ -1,14 +1,11 @@
-diff --git a/packages/dd-trace/index.js b/packages/dd-trace/index.js
-index a64e691d8734d3fa5403e7eebc9ecbed3d96db65..00969895b767e07b38835cb5952c6e43ffe7b256 100644
---- a/packages/dd-trace/index.js
-+++ b/packages/dd-trace/index.js
-@@ -1,5 +1,9 @@
+diff --git a/index.js b/index.js
+index a8c61274ad89430b5d0bc4081a8a3bd729b4f197..9197eb14652c4d0da6a115a912b55747a4c163c0 100644
+--- a/index.js
++++ b/index.js
+@@ -1,3 +1,6 @@
  'use strict'
  
-+if (!global.setImmediate) {
-+  global.setImmediate = (cb) => setTimeout(cb, 0);
-+}
++/** Hack: setImmediate is not available in one test */
++global.setImmediate = setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
 +
- if (!global._ddtrace) {
-   const TracerProxy = require('./src')
- 
+ module.exports = require('./packages/dd-trace')
