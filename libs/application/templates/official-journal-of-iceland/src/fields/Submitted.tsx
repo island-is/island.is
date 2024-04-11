@@ -2,7 +2,11 @@ import { FormGroup } from '../components/form/FormGroup'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { Box, Button, LinkV2 } from '@island.is/island-ui/core'
 import { CompleteImage } from '../assets/CompleteImage'
+import { submitted } from '../lib/messages/submitted'
+import { useLocale } from '@island.is/localization'
 export const Submitted = (props: OJOIFieldBaseProps) => {
+  const { formatMessage } = useLocale()
+
   const path = window.location.origin
   const isLocalhost = path.includes('localhost')
   const href = isLocalhost
@@ -16,7 +20,9 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
       </Box>
       <Box display="flex" justifyContent="flexEnd">
         <LinkV2 href={href}>
-          <Button>Fara til baka á mínar síður</Button>
+          <Button>
+            {formatMessage(submitted.general.returnToServicePortal)}
+          </Button>
         </LinkV2>
       </Box>
     </FormGroup>

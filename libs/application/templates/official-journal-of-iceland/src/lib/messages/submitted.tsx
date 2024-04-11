@@ -7,6 +7,16 @@ export const submitted = {
       defaultMessage: 'Mál hefur verið sent inn til yfirferðar',
       description: 'Title of the submitted screen',
     },
+    returnToServicePortal: {
+      id: 'ojoi.application:submitted.general.returnToServicePortal',
+      defaultMessage: 'Fara til baka á mínar síður',
+      description: 'Return to service portal button text',
+    },
+    section: {
+      id: 'ojoi.application:submitted.general.section',
+      defaultMessage: 'Staðfesting',
+      description: 'Section title of the submitted screen',
+    },
   }),
   bullets: defineMessages({
     first: {

@@ -14,9 +14,10 @@ import {
   preview,
   publishing,
 } from '../lib/messages'
+import { submitted } from '../lib/messages/submitted'
 export const Submitted: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
-  title: 'Skilyrði',
+  title: '',
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -51,7 +52,7 @@ export const Submitted: Form = buildForm({
     }),
     buildSection({
       id: Routes.COMPLETE,
-      title: 'Staðfesting',
+      title: submitted.general.section,
       children: [
         buildMultiField({
           title: '',
