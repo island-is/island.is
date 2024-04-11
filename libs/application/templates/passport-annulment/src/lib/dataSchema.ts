@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { error } from './error'
+import { YES } from '@island.is/application/types'
 import { PassportStatus } from './constants'
 
 export const dataSchema = z.object({
@@ -7,8 +8,8 @@ export const dataSchema = z.object({
   passportNumber: z.string().min(1),
   passportName: z.string().min(1),
   productionRequestID: z.string().min(1),
-  status: z.enum([PassportStatus.LOST, PassportStatus.STOLEN]),
-  comment: z.string().min(1),
+  confirmAnnulment: z.array(z.enum([YES])).length(1),
+  passportStatus: z.enum([PassportStatus.LOST, PassportStatus.STOLEN]),
   passport: z
     .object({
       userPassport: z.string(),

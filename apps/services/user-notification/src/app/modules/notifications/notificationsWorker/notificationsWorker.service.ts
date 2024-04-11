@@ -376,7 +376,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               const delegations =
                 await this.delegationsApi.delegationsControllerGetDelegationRecords(
                   {
-                    xQueryFromNationalId: message.recipient,
+                    xQueryNationalId: message.recipient,
                     scope: DocumentsScope.main,
                   },
                 )

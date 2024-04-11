@@ -148,11 +148,11 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
 
 export class MockDelegationsService {
   delegationsControllerGetDelegationRecords({
-    xQueryFromNationalId,
+    xQueryNationalId,
   }: {
-    xQueryFromNationalId: string
+    xQueryNationalId: string
   }) {
-    return { data: delegations[xQueryFromNationalId] ?? [] }
+    return { data: delegations[xQueryNationalId] ?? [] }
   }
 }
 
