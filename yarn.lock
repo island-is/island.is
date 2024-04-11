@@ -24478,7 +24478,7 @@ __metadata:
 
 "dd-trace@patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch::locator=island.is%40workspace%3A.":
   version: 5.10.0
-  resolution: "dd-trace@patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch::version=5.10.0&hash=5f150f&locator=island.is%40workspace%3A."
+  resolution: "dd-trace@patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch::version=5.10.0&hash=4535a9&locator=island.is%40workspace%3A."
   dependencies:
     "@datadog/native-appsec": 7.1.1
     "@datadog/native-iast-rewriter": 2.3.0
@@ -24512,7 +24512,7 @@ __metadata:
     semver: ^7.5.4
     shell-quote: ^1.8.1
     tlhunter-sorted-set: ^0.1.0
-  checksum: 8a20e7bddf44bb3cb891a3bc0fcc5e5948a3e5fd8042e29aa9f68bd55c833d02ec4ee166512fcd474e341abf63a5e2e4c6ae5f5455fdd65db7d926883008a413
+  checksum: 3b3058098d84d234892bb1b2ab59abade38c87df6087c6e795f1baa57b7ba0b3bb512e6abd80eec525074c9b37ed339c65d17b25d0ed88eefa10207ced317b83
   languageName: node
   linkType: hard
 
