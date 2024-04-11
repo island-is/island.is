@@ -8,7 +8,9 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
+  Application,
   ApplicationTypes,
+  ApplicationWithAttachments,
   FormValue,
   InstitutionNationalIds,
 } from '@island.is/application/types'
@@ -28,6 +30,8 @@ import {
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
 import { removeCountryCode } from './utils'
+import AmazonS3URI from 'amazon-s3-uri'
+import { S3 } from 'aws-sdk'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -35,12 +39,14 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
 
 @Injectable()
 export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
+  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
+    this.s3 = new S3()
   }
 
   async createCharge({
@@ -92,7 +98,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth)
+      result = await this.createLicense(nationalId, application, auth)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -131,12 +137,15 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
   private async createLicense(
     nationalId: string,
-    answers: FormValue,
+    application: ApplicationWithAttachments,
     auth: User,
   ): Promise<NewDrivingLicenseResult> {
+    const { answers } = application
     const applicationFor =
-      getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
-      'B-full'
+      getValueViaPath<'B-full' | 'B-temp' | 'B-full-renewal-65'>(
+        answers,
+        'applicationFor',
+      ) ?? 'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
@@ -166,7 +175,18 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         })
     }
 
-    if (applicationFor === 'B-full') {
+    if (applicationFor === 'B-full-renewal-65') {
+      const healthCertificate: string = await this.getBase64EncodedAttachment(
+        application,
+      )
+      return this.drivingLicenseService.renewDrivingLicense65AndOver(
+        auth.authorization.replace('Bearer ', ''),
+        {
+          districtId: jurisdictionId as number,
+          Base64EncodedHealthCertificate: healthCertificate,
+        },
+      )
+    } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
@@ -242,5 +262,40 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return !!license.comments?.some((comment) => comment.nr?.includes('01'))
     })
     return hasGlasses
+  }
+
+  private async getBase64EncodedAttachment(
+    application: ApplicationWithAttachments,
+  ): Promise<string> {
+    const attachments = getValueViaPath(
+      application.answers,
+      'healthDeclarationAge65.attachment',
+    ) as Array<{ key: string; name: string }>
+
+    const hasAttachments = attachments && attachments?.length > 0
+
+    if (!hasAttachments) {
+      return Promise.reject({})
+    }
+
+    const attachmentKey = attachments[0].key
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    const uploadBucket = bucket
+    const file = await this.s3
+      .getObject({
+        Bucket: uploadBucket,
+        Key: key,
+      })
+      .promise()
+    const fileContent = file.Body as Buffer
+
+    return fileContent?.toString('base64') || ''
   }
 }

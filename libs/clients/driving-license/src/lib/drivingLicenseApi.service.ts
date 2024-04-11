@@ -475,6 +475,22 @@ export class DrivingLicenseApi {
     return handledResponse.success
   }
 
+  async postRenewLicenseOver65(params: {
+    districtId: number
+    healthCertificate: string
+    auth: string
+  }) {
+    return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.auth,
+      postRenewal65AndOver: {
+        districtId: params.districtId,
+        healtCertificate: params.healthCertificate,
+      },
+    })
+  }
+
   async postCanApplyForPracticePermit(params: {
     token: string
     studentSSN: string

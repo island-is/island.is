@@ -102,3 +102,8 @@ export interface StudentAssessment {
 export interface DrivingSchool {
   hasFinishedSchool: boolean
 }
+
+export interface Renewal65AndOver {
+  districtId: number
+  Base64EncodedHealthCertificate: string
+}

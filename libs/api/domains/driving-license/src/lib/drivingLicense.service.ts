@@ -14,6 +14,7 @@ import {
   NewTemporaryDrivingLicenseInput,
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
+  Renewal65AndOver,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -446,6 +447,21 @@ export class DrivingLicenseService {
     return {
       success: response,
       errorMessage: null,
+    }
+  }
+
+  async renewDrivingLicense65AndOver(
+    auth: string,
+    input: Renewal65AndOver,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postRenewLicenseOver65({
+      districtId: input.districtId,
+      healthCertificate: input.Base64EncodedHealthCertificate,
+      auth: auth,
+    })
+    return {
+      success: response.isOk ?? false,
+      errorMessage: response.errorCode ?? null,
     }
   }
 
