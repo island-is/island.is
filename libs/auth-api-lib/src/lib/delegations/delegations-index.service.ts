@@ -35,7 +35,6 @@ import {
 } from './utils/delegations'
 import { DelegationDirection } from './types/delegationDirection'
 import { UserIdentitiesService } from '../user-identities/user-identities.service'
-import { UserIdentitiesService } from '../user-identities/user-identities.service'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
