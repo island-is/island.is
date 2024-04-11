@@ -23,6 +23,8 @@ describe('MeNotificationsController', () => {
     let server: SuperTest<Test>
 
     beforeAll(async () => {
+      process.env.INIT_SCHEMA = 'true'; // Example of disabling Firebase init
+
       app = await setupAppWithoutAuth({
         AppModule: AppModule,
         SequelizeConfigService: SequelizeConfigService,
