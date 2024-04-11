@@ -252,16 +252,4 @@ export class CaseResolver {
       input.caseId,
     )
   }
-
-  @ResolveField(() => [Notification])
-  async notifications(
-    @Parent() theCase: Case,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
-  ): Promise<Notification[]> {
-    const { id } = theCase
-
-    this.logger.debug(`Resolving notifications for case ${id}`)
-
-    return backendApi.getCaseNotifications(id).catch(() => [] as Notification[])
-  }
 }

@@ -147,7 +147,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const licenseType = data?.license?.type
   const barcodeWidth =
     screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
-  const barcodeHeight = barcodeWidth / 3.3
+  const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
   const onAddPkPass = async () => {
@@ -269,17 +269,25 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     void res.refetch()
   }, [])
 
-  const expirationTime = useMemo(() => {
-    const exp = data?.barcode?.exp
+  const getExpirationTime = () => {
+    const expiresIn = data?.barcode?.expiresIn
 
-    if (exp) {
-      const expirationTime = new Date(exp)
-      // We subtract 5 seconds to make sure the barcode is still valid when switching to a new barcode
-      expirationTime.setSeconds(expirationTime.getSeconds() - 5)
+    if (expiresIn) {
+      const expDt = new Date()
+      // We subtract 7 seconds from the expiry time to make sure the barcode is still valid when switching to a new barcode
+      // The default expiration time is 60 seconds from the server
+      expDt.setSeconds(expDt.getSeconds() + expiresIn - 7)
 
-      return expirationTime
+      return expDt
     }
-  }, [data?.barcode?.exp])
+  }
+
+  const { loading } = res
+
+  const informationTopSpacing =
+    allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP
+      : 0
 
   return (
     <View style={{ flex: 1 }}>
@@ -298,9 +306,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           {...(allowLicenseBarcode && {
             barcode: {
               value: data?.barcode?.token,
-              loading: res.loading && !data?.barcode,
+              loading: loading && !data?.barcode,
               expirationTimeCallback,
-              expirationTime,
+              expirationTime: getExpirationTime(),
               width: barcodeWidth,
               height: barcodeHeight,
             },
@@ -309,13 +317,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       </LicenseCardWrapper>
       <Information
         contentInset={{ bottom: 162 }}
-        topSpacing={
-          allowLicenseBarcode ? barcodeHeight + LICENSE_CARD_ROW_GAP : 0
-        }
+        topSpacing={informationTopSpacing}
       >
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
-          {/* Show info alert if PCard */}
-          {licenseType === GenericLicenseType.PCard && (
+          {/* Show info alert if PCard or Ehic */}
+          {(licenseType === GenericLicenseType.PCard ||
+            licenseType === GenericLicenseType.Ehic) && (
             <View
               style={{
                 paddingTop: theme.spacing[3],
@@ -339,7 +346,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               />
             </View>
           )}
-          {!data?.payload?.data && res.loading ? (
+          {!data?.payload?.data && loading ? (
             <ActivityIndicator
               size="large"
               color="#0061FF"

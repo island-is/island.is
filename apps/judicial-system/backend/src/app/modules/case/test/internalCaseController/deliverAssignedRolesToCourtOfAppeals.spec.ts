@@ -68,7 +68,7 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
     }
   })
 
-  describe('received date delivered', () => {
+  describe('assigned roles delivered', () => {
     let then: Then
 
     beforeEach(async () => {
