@@ -994,8 +994,8 @@ export class CaseService {
       ) {
         await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
       } else if (
-        updatedCase.state === CaseState.RECEIVED &&
-        theCase.state === CaseState.DRAFT &&
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.RECEIVED &&
         isIndictment
       ) {
         await this.addMessagesForReturnedIndictmentCaseToQueue(
@@ -1038,7 +1038,10 @@ export class CaseService {
     }
 
     if (updatedCase.courtCaseNumber) {
-      if (updatedCase.courtCaseNumber !== theCase.courtCaseNumber) {
+      if (
+        updatedCase.courtCaseNumber !== theCase.courtCaseNumber &&
+        updatedCase.courtCaseNumber !== ''
+      ) {
         // New court case number
         if (isIndictmentCase(updatedCase.type)) {
           await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
