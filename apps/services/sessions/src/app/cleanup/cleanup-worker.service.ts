@@ -29,7 +29,7 @@ export class SessionsCleanupService {
   }
 
   private async deleteOlderSessions() {
-    this.logger.info(`Checking for rows to delete...`)
+    this.logger.info(`Deleting...`)
 
     const filter = {
       where: {
@@ -39,13 +39,9 @@ export class SessionsCleanupService {
       },
     }
 
-    const rowsRemaining = await this.sessionModel.count(filter)
+    const affectedRows: number = await this.sessionModel.destroy(filter)
 
-    if (rowsRemaining > 0) {
-      this.logger.info(`Found ${rowsRemaining} rows to delete, deleting...`)
-
-      const affectedRows: number = await this.sessionModel.destroy(filter)
-
+    if (affectedRows > 0) {
       this.logger.info(`Finished deleting ${affectedRows} rows.`)
     } else {
       this.logger.info(`No rows found to delete.`)
