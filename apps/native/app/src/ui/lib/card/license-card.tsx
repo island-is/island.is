@@ -28,7 +28,7 @@ import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
 import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
-import BackgroundHuntingCard from '../../assets/card/veidikort.png'
+import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import { dynamicColor, theme } from '../../utils'
@@ -191,8 +191,8 @@ const LicenseCardPresets: Record<LicenseType, CardPreset> = {
     backgroundImage: BackgroundHuntingCard,
     backgroundColor: '#E2EDFF',
     barcode: {
-      background: '#F6F9F2',
-      overlay: '#EEF4E7',
+      background: '#DBECF4',
+      overlay: '#B3D3E3',
     },
   },
   Ehic: {
