@@ -83,9 +83,9 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          /*onEntry: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
-          }),*/
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

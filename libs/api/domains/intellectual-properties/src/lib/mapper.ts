@@ -1,9 +1,12 @@
 import { HUXELSAPICommonTrademarkModelsTrademarks } from '@island.is/clients/intellectual-properties'
 import { TrademarkSubType, TrademarkType } from './models/trademark.model'
 import { isDefined } from '@island.is/shared/utils'
-import { TranslationsDict } from '@island.is/cms-translations'
 
 export const mapTrademarkType = (type: string | null | undefined) => {
+  if (!type) {
+    return null
+  }
+
   switch (type) {
     case 'margmiðlunarmerki':
       return TrademarkType.MULTIMEDIA
@@ -19,43 +22,6 @@ export const mapTrademarkType = (type: string | null | undefined) => {
       return TrademarkType.TEXT_AND_IMAGE
     default:
       return TrademarkType.UNKNOWN
-  }
-}
-
-export const formatReadableTrademarkType = (
-  type: TrademarkType,
-  namespace: TranslationsDict,
-) => {
-  switch (type) {
-    case TrademarkType.MULTIMEDIA:
-      return (
-        namespace?.['sp.intellectual-property:multimedia-trademark'] ??
-        'Margmiðlunarmerki'
-      )
-    case TrademarkType.ANIMATION:
-      return (
-        namespace?.['sp.intellectual-property:animation-trademark'] ??
-        'Hreyfimerki'
-      )
-    case TrademarkType.AUDIO:
-      return (
-        namespace?.['sp.intellectual-property:audio-trademark'] ?? 'Hljóðmerki'
-      )
-    case TrademarkType.TEXT:
-      return (
-        namespace?.['sp.intellectual-property:text-trademark'] ?? 'Textamerki'
-      )
-    case TrademarkType.IMAGE:
-      return (
-        namespace?.['sp.intellectual-property:image-trademark'] ?? 'Myndmerki'
-      )
-    case TrademarkType.TEXT_AND_IMAGE:
-      return (
-        namespace?.['sp.intellectual-property:text-and-image-trademark'] ??
-        'Orð- og myndmerki'
-      )
-    default:
-      return undefined
   }
 }
 
