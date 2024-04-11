@@ -244,6 +244,7 @@ query Case($input: CaseQueryInput!) {
       id
       caseId
       dateType
+      date
     }
     prosecutorsOffice {
       id

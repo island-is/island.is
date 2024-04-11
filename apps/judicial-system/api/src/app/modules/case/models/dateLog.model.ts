@@ -19,5 +19,5 @@ export class DateLog {
   readonly dateType?: DateType
 
   @Field({ nullable: true })
-  readonly courtDate?: string
+  readonly date?: string
 }
