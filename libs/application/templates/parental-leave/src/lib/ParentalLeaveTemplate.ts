@@ -1236,13 +1236,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: birthDayLifeCycle,
           onEntry: [
             defineTemplateApi({
-              triggerEvent: DefaultEvents.APPROVE,
+              triggerEvent: [DefaultEvents.APPROVE, DefaultEvents.SUBMIT],
               action: ApiModuleActions.sendApplication,
+              params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
-            defineTemplateApi({
-              triggerEvent: DefaultEvents.SUBMIT,
               action: ApiModuleActions.sendApplication,
               params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
