@@ -103,9 +103,9 @@ describe('MeNotificationsController', () => {
       server = request(app.getHttpServer())
     })
 
-    afterAll(async () => {
-      await app.cleanUp()
-    })
+    // afterAll(async () => {
+    //   await app.cleanUp()
+    // })
 
     it('GET /me/notifications should return 200 when user is authenticated', async () => {
       // Act

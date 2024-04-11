@@ -130,8 +130,7 @@ export class NotificationsService {
         (arg) => arg.key === 'organization',
       )
       console.log(notification.senderId,"organizationArg",organizationArg)
-      
-      // if senderId is set and args contains organization, fetch senderTitle from senderId
+
 
       // if senderId is set and args contains organization, fetch organizationtitle from senderId
       if (notification.senderId && organizationArg) {
@@ -140,6 +139,8 @@ export class NotificationsService {
             notification.senderId,
             locale,
           )
+          notification.messageId = senderTitle
+          
           if (senderTitle) {
             console.log(notification.senderId,'found a org title ', notification.senderId, senderTitle)
             organizationArg.value = senderTitle
