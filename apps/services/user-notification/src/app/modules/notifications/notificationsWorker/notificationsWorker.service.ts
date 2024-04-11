@@ -1,6 +1,7 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { join } from 'path'
 import { InjectModel } from '@nestjs/sequelize'
+import { isCompany, isPerson } from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
@@ -69,7 +70,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     messageId,
     message,
   }: HandleNotification) {
-    // don't send message unless user wants this type of notification
+    // don't send message unless user wants this type of notification and national id is a person.
+    if (isCompany(profile.nationalId)) {
+      this.logger.info(
+        'User is not a person and will not receive document notifications',
+        { messageId },
+      )
+
+      return
+    }
     if (!profile.documentNotifications) {
       this.logger.info(
         'User does not have notifications enabled this message type',
