@@ -4,6 +4,7 @@ import {
   buildTextField,
   buildSubSection,
   buildCustomField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { VehiclesCurrentVehicle } from '../../../shared'
@@ -46,13 +47,21 @@ export const vehicleSubSection = buildSubSection({
             return vehicle.make
           },
         }),
-        // Note: when buildHiddenInputField is ready, we can use that (to set vehicleMileage.isRequired)
-        // with buildTextField instead of this custom component
-        buildCustomField({
-          component: 'MileageField',
+        buildHiddenInput({
+          id: 'vehicleMileage.isRequired',
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle.requireMileage || false
+          },
+        }),
+        buildTextField({
           id: 'vehicleMileage.value',
           title: information.labels.vehicle.mileage,
-          description: '',
+          width: 'half',
+          variant: 'number',
         }),
       ],
     }),

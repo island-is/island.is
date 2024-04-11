@@ -14,6 +14,7 @@ import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
 import { ApiActions, InheritanceReportEvent, Roles, States } from './constants'
 import { Features } from '@island.is/feature-flags'
+import { EstateOnEntryApi } from '../dataProviders'
 
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -35,11 +36,6 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.15,
           lifecycle: EphemeralStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.syslumennOnEntry,
-            shouldPersistToExternalData: true,
-            throwOnError: false,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -50,7 +46,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryUserApi, UserProfileApi, EstateOnEntryApi],
             },
           ],
         },

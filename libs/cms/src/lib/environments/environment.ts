@@ -95,6 +95,10 @@ export default {
     'chart',
     'chartComponent',
     'featuredEvents',
+    'bigBulletList',
+    'iconBullet',
+    'numberBulletSection',
+    'numberBullet',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

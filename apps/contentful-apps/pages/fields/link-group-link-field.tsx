@@ -18,31 +18,25 @@ const getSubpageContentTypeId = (pageContentTypeId?: string) => {
   return null
 }
 
-const LinkGroupLinkField = () => {
+interface SubpageData {
+  pageAbove: EntryProps | null
+  subpageContentType: ContentTypeProps | null
+  loading: boolean
+}
+
+const useSubpageData = (): SubpageData => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
-  const [pageAbove, setPageAbove] = useState<EntryProps | null>(null)
-  const [subpageContentType, setSubpageContentType] =
-    useState<ContentTypeProps | null>(null)
-
-  // Handle iframe resizing when item count changes
-  useEffect(() => {
-    const unregister = sdk.field.onValueChanged((items) => {
-      if (items?.length > 1) {
-        sdk.window.startAutoResizer()
-      } else {
-        sdk.window.stopAutoResizer()
-        sdk.window.updateHeight(!items?.length ? 210 : 300)
-      }
-    })
-
-    return () => {
-      unregister()
-    }
-  }, [sdk.field, sdk.window])
+  const [data, setData] = useState<SubpageData>({
+    pageAbove: null,
+    subpageContentType: null,
+    loading: true,
+  })
 
   useEffect(() => {
-    const fetchPageAbove = async (pageAboveContentTypeId: string) => {
+    const fetchPageAbove = async (
+      pageAboveContentTypeId: string,
+    ): Promise<boolean> => {
       const pageAboveResponse = await cma.entry.getMany({
         query: {
           links_to_entry: sdk.entry.getSys().id,
@@ -52,26 +46,92 @@ const LinkGroupLinkField = () => {
 
       if (pageAboveResponse.items.length > 0) {
         const pageAboveEntry = pageAboveResponse.items[0]
-        setPageAbove(pageAboveEntry)
 
         const subpageContentTypeId = getSubpageContentTypeId(
           pageAboveEntry.sys.contentType.sys.id,
         )
 
-        if (subpageContentTypeId) {
-          setSubpageContentType(
-            await cma.contentType.get({
-              contentTypeId: subpageContentTypeId,
-            }),
-          )
-        }
+        setData({
+          loading: false,
+          pageAbove: pageAboveEntry,
+          subpageContentType: subpageContentTypeId
+            ? await cma.contentType.get({
+                contentTypeId: subpageContentTypeId,
+              })
+            : null,
+        })
+        return true
       }
+      return false
     }
 
-    // Check for all possible pages and whether they are linking to us
-    fetchPageAbove('organizationPage')
-    fetchPageAbove('projectPage')
+    Promise.allSettled(
+      // Check for all possible pages and whether they are linking to us
+      [fetchPageAbove('organizationPage'), fetchPageAbove('projectPage')],
+    )
+      .then((results) => {
+        const subpageDataWasFound = results.some(
+          (result) => result.status === 'fulfilled' && result.value,
+        )
+        if (!subpageDataWasFound) {
+          setData({
+            loading: false,
+            pageAbove: null,
+            subpageContentType: null,
+          })
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+        setData({
+          loading: false,
+          pageAbove: null,
+          subpageContentType: null,
+        })
+      })
   }, [cma.contentType, cma.entry, sdk.entry])
+
+  return data
+}
+
+const LinkGroupLinkField = () => {
+  const sdk = useSDK<FieldExtensionSDK>()
+  const cma = useCMA()
+
+  const {
+    loading: loadingSubpageData,
+    pageAbove,
+    subpageContentType,
+  } = useSubpageData()
+
+  const [linkContentType, setLinkContentType] =
+    useState<ContentTypeProps | null>(null)
+
+  // Handle iframe resizing when item count changes
+  useEffect(() => {
+    const unregister = sdk.field.onValueChanged((items) => {
+      if (items?.length > 1) {
+        sdk.window.startAutoResizer()
+      } else {
+        sdk.window.stopAutoResizer()
+        sdk.window.updateHeight(!items?.length ? 240 : 340)
+      }
+    })
+
+    return () => {
+      unregister()
+    }
+  }, [sdk.field, sdk.window])
+
+  useEffect(() => {
+    cma.contentType
+      .get({
+        contentTypeId: 'link',
+      })
+      .then((response) => {
+        setLinkContentType(response)
+      })
+  }, [cma.contentType])
 
   const handleCreateEntry = async (
     contentTypeId: string,
@@ -145,7 +205,9 @@ const LinkGroupLinkField = () => {
         : sdk.dialogs.selectMultipleEntries
 
     selectEntriesFunction({
-      contentTypes: contentTypeToSelect ? [contentTypeToSelect] : [],
+      contentTypes: contentTypeToSelect
+        ? [contentTypeToSelect, 'link']
+        : ['link'],
     }).then((entries: EntryProps[]) => {
       entries = Array.isArray(entries) ? entries : [entries]
       entries = entries.filter((entry) => entry?.sys?.id) // Make sure the entries are non-empty
@@ -153,15 +215,17 @@ const LinkGroupLinkField = () => {
     })
   }
 
-  const selectableContentTypes = subpageContentType ? [subpageContentType] : []
-
-  if (!subpageContentType) {
+  if (!linkContentType || loadingSubpageData) {
     return (
       <Flex paddingTop="spacingM" justifyContent="center">
         <Spinner />
       </Flex>
     )
   }
+
+  const selectableContentTypes = subpageContentType
+    ? [subpageContentType, linkContentType]
+    : [linkContentType]
 
   if (sdk.ids.field === 'primaryLink') {
     return (
@@ -173,12 +237,14 @@ const LinkGroupLinkField = () => {
         parameters={{
           instance: {
             showCreateEntityAction: true,
-            showLinkEntityAction: true,
+            showLinkEntityAction: selectableContentTypes.length > 1,
           },
         }}
         renderCustomActions={(props) => (
           <CombinedLinkActions
             {...props}
+            canLinkEntity={true}
+            canCreateEntity={true}
             contentTypes={selectableContentTypes}
             onLinkExisting={() => handleLinkExisting(props)}
             onCreate={(contentTypeId) =>
@@ -199,12 +265,14 @@ const LinkGroupLinkField = () => {
       parameters={{
         instance: {
           showCreateEntityAction: true,
-          showLinkEntityAction: true,
+          showLinkEntityAction: selectableContentTypes.length > 1,
         },
       }}
       renderCustomActions={(props) => (
         <CombinedLinkActions
           {...props}
+          canLinkEntity={true}
+          canCreateEntity={true}
           contentTypes={selectableContentTypes}
           onLinkExisting={() => handleLinkExisting(props)}
           onCreate={(contentTypeId) => handleCreateEntry(contentTypeId, props)}

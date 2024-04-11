@@ -8,6 +8,7 @@ import { estateSchema } from '@island.is/application/templates/estate'
 import { infer as zinfer } from 'zod'
 import { UploadData } from '../types'
 import { filterEmptyObjects } from './filters'
+import { info } from 'kennitala'
 
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
@@ -35,6 +36,8 @@ const estateMemberMapper = (element: EstateMember) => {
           phone: '',
           email: '',
         }
+      : info(element?.nationalId).age < 18
+      ? { nationalId: '', name: '', phone: '', email: '' }
       : undefined,
   }
 }
@@ -103,6 +106,7 @@ export const expandClaims = (
     expandedClaims.push({
       publisher: claim?.publisher ?? '',
       value: claim?.value ?? '',
+      nationalId: claim?.nationalId ?? '',
     })
   })
   return expandedClaims
@@ -187,4 +191,19 @@ export const expandStocks = (
   })
 
   return expandedStocks
+}
+
+export const expandOtherAssets = (
+  otherAssets: UploadData['otherAssets'],
+): UploadData['otherAssets'] => {
+  const expandedOtherAssets: UploadData['otherAssets'] = []
+
+  otherAssets.filter(filterEmptyObjects).forEach((otherAsset) => {
+    expandedOtherAssets.push({
+      info: otherAsset.info ?? '',
+      value: otherAsset.value ?? '',
+    })
+  })
+
+  return expandedOtherAssets
 }

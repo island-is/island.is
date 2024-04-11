@@ -33,6 +33,7 @@ import { Cache } from 'cache-manager'
 import * as faker from 'faker'
 
 import ShortUniqueId from 'short-unique-id'
+import { BARCODE_EXPIRE_TIME_IN_SEC } from '@island.is/services/license'
 import { VerifyInputData } from '../dto/verifyLicense.input'
 import { LicenseService } from '../license.service'
 import {
@@ -45,7 +46,7 @@ const { randomUUID } = new ShortUniqueId({ length: 16 })
 const cacheStore = new Map<string, unknown>()
 const licenseIds = Object.values(LicenseId)
 
-const createCahceData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
+const createCacheData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
   nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
   licenseType: getLicenseType(licenseId),
   extraData: {
@@ -62,6 +63,8 @@ const getLicenseType = (id: LicenseId) => {
       return LicenseType.DisabilityLicense
     case LicenseId.FIREARM_LICENSE:
       return LicenseType.FirearmLicense
+    case LicenseId.HUNTING_LICENSE:
+      return LicenseType.HuntingLicense
   }
 }
 
@@ -316,13 +319,13 @@ describe('LicenseService', () => {
         const code = randomUUID()
         const data =
           licenseId === LicenseId.DRIVING_LICENSE
-            ? createCahceData(licenseId)
+            ? createCacheData(licenseId)
             : undefined
 
         // Create token
         const token = await barcodeService.createToken({
           v: '1',
-          t: '1',
+          t: getLicenseType(licenseId),
           c: code,
         })
 
@@ -332,7 +335,7 @@ describe('LicenseService', () => {
         }
 
         const result = await licenseService.verifyLicense({
-          barcodeData: token,
+          barcodeData: token.token,
         })
 
         // Assert
@@ -359,32 +362,29 @@ describe('LicenseService', () => {
 
         // Act
         const code = randomUUID()
-        const data = createCahceData(licenseId)
+        const data = createCacheData(licenseId)
 
         // Create token
-        const token = await barcodeService.createToken(
-          {
-            v: '1',
-            t: '1',
-            c: code,
-          },
-          { expiresIn: 1 },
-        )
+        const token = await barcodeService.createToken({
+          v: '1',
+          t: getLicenseType(licenseId),
+          c: code,
+        })
 
         // Put data in cache
         await barcodeService.setCache(code, data)
 
         // Let the token expire
-        jest.advanceTimersByTime(1000)
+        jest.advanceTimersByTime(BARCODE_EXPIRE_TIME_IN_SEC * 1000)
 
         // Assert
-        const result = licenseService.verifyLicense({
-          barcodeData: token,
+        const result = await licenseService.verifyLicense({
+          barcodeData: token.token,
         })
 
-        await expect(result).rejects.toThrow(
-          new BadRequestException(TOKEN_EXPIRED_ERROR),
-        )
+        expect(result).toEqual({
+          valid: false,
+        })
       })
 
       it(`should fail to verify the ${licenseId}  license`, async () => {

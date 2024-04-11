@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
 import { theme } from '@island.is/island-ui/theme'
 import {
@@ -37,7 +38,11 @@ export const Footer = ({
 }: FooterProps) => {
   const { width } = useWindowSize()
 
-  const isMobileScreenWidth = width < theme.breakpoints.sm
+  const [isMobileScreenWidth, setIsMobileScreenWidth] = useState(false)
+
+  useEffect(() => {
+    setIsMobileScreenWidth(width < theme.breakpoints.sm)
+  }, [width])
 
   return (
     <footer className={styles.footer} style={{ background }}>

@@ -79,7 +79,7 @@ const SjukratryggingarHeader: React.FC<
                   <div className={styles.titleImage}></div>
                 </Hidden>
                 <Hidden above="sm">
-                  <Text variant="h1" color="blueberry600">
+                  <Text variant="h1" as="h1" color="blueberry600">
                     {organizationPage.title}
                   </Text>
                 </Hidden>

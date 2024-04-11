@@ -207,6 +207,11 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
     },
+    XROAD_HMS_HOUSING_BENEFITS_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
+    },
   },
 })
 
@@ -791,6 +796,16 @@ export const ArborgWorkpoint = new XroadConf({
       dev: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1',
       staging: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1',
       prod: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1',
+    },
+  },
+})
+
+export const OfficialJournalOfIceland = new XroadConf({
+  env: {
+    XROAD_OFFICIAL_JOURNAL_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
+      staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
+      prod: 'IS/GOV/10014/DMR-Protected/official-journal',
     },
   },
 })

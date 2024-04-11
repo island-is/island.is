@@ -153,6 +153,12 @@ export class UserProfileService {
         ? formatPhoneNumber(userProfile.mobilePhoneNumber)
         : undefined
 
+      const currentUserProfile = await this.userProfileModel.findOne({
+        where: { nationalId },
+        transaction,
+        useMaster: true,
+      })
+
       const update = {
         nationalId,
         ...(isEmailDefined && {
@@ -160,6 +166,8 @@ export class UserProfileService {
           emailVerified: userProfile.email !== '',
           emailStatus: userProfile.email
             ? DataStatus.VERIFIED
+            : currentUserProfile.emailStatus === DataStatus.NOT_VERIFIED
+            ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
         ...(isMobilePhoneNumberDefined && {
@@ -167,6 +175,8 @@ export class UserProfileService {
           mobilePhoneNumberVerified: formattedPhoneNumber !== '',
           mobileStatus: formattedPhoneNumber
             ? DataStatus.VERIFIED
+            : currentUserProfile.mobileStatus === DataStatus.NOT_VERIFIED
+            ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
         ...(isDefined(userProfile.locale) && {
@@ -179,12 +189,6 @@ export class UserProfileService {
           documentNotifications: userProfile.documentNotifications,
         }),
       }
-
-      const currentUserProfile = await this.userProfileModel.findOne({
-        where: { nationalId },
-        transaction,
-        useMaster: true,
-      })
 
       await this.userProfileModel.upsert(
         {
@@ -288,13 +292,11 @@ export class UserProfileService {
         nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
       ),
       ...(currentProfile?.emailStatus === DataStatus.NOT_DEFINED &&
-        (nudgeType === NudgeType.SKIP_EMAIL ||
-          nudgeType === NudgeType.NUDGE) && {
+        nudgeType === NudgeType.NUDGE && {
           emailStatus: DataStatus.EMPTY,
         }),
       ...(currentProfile?.mobileStatus === DataStatus.NOT_DEFINED &&
-        (nudgeType === NudgeType.SKIP_PHONE ||
-          nudgeType === NudgeType.NUDGE) && {
+        nudgeType === NudgeType.NUDGE && {
           mobileStatus: DataStatus.EMPTY,
         }),
     })

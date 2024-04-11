@@ -79,7 +79,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
 
   useQuery<MinistryOfJusticeGraphqlResponse<'categories'>>(CATEGORIES_QUERY, {
     variables: {
-      input: {
+      params: {
         search: '',
       },
     },

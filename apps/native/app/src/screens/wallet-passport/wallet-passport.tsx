@@ -7,7 +7,7 @@ import {
   font,
   Input,
   InputRow,
-  LicenceCard,
+  LicenseCard,
   LinkText,
 } from '@ui'
 import React from 'react'
@@ -365,10 +365,12 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
           zIndex: 100,
         }}
       >
-        <LicenceCard
+        <LicenseCard
           nativeID={`license-${CustomLicenseType.Passport}_destination`}
           type={CustomLicenseType.Passport}
-          date={new Date(item?.expirationDate)}
+          date={
+            item?.expirationDate ? new Date(item?.expirationDate) : undefined
+          }
           status={isInvalid ? 'NOT_VALID' : 'VALID'}
         />
       </SafeAreaView>

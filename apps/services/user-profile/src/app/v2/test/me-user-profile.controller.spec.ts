@@ -987,7 +987,6 @@ describe('MeUserProfileController', () => {
 
       expect(userProfile.lastNudge).not.toBeNull()
       expect(userProfile.nextNudge).toEqual(addMonths(userProfile.lastNudge, 1))
-      expect(userProfile.emailStatus).toBe(DataStatus.EMPTY)
     })
 
     it('POST /v2/me/nudge with  nudgeType=NudgeType.SKIP_PHONE should return 200 and update the lastNudge and set nextNudge to 1 month after lastNudge', async () => {
@@ -1012,7 +1011,6 @@ describe('MeUserProfileController', () => {
 
       expect(userProfile.lastNudge).not.toBeNull()
       expect(userProfile.nextNudge).toEqual(addMonths(userProfile.lastNudge, 1))
-      expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
     })
 
     it('POST /v2/me/nudge with nudgeType=NudgeType.NUDGE should return 200 and update the lastNudge and set nextNudge to 6 month after lastNudge', async () => {
@@ -1040,11 +1038,9 @@ describe('MeUserProfileController', () => {
     })
 
     it.each`
-      nudgeType               | field
-      ${NudgeType.SKIP_EMAIL} | ${'emailStatus'}
-      ${NudgeType.SKIP_PHONE} | ${'mobileStatus'}
-      ${NudgeType.NUDGE}      | ${'emailStatus'}
-      ${NudgeType.NUDGE}      | ${'mobileStatus'}
+      nudgeType          | field
+      ${NudgeType.NUDGE} | ${'emailStatus'}
+      ${NudgeType.NUDGE} | ${'mobileStatus'}
     `(
       'POST /v2/me/nudge with nudgeType=$nudgeType should only update $field to EMPTY when it is NOT_DEFINED',
       async ({

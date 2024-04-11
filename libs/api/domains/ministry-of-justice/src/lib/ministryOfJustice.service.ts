@@ -14,6 +14,8 @@ import {
 import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
+  AdvertInstitutionsResponse,
+  AdvertMainCategoriesResponse,
   AdvertResponse,
   AdvertsResponse,
   AdvertTypeResponse,
@@ -27,12 +29,22 @@ export class MinistryOfJusticeService {
     return await this.dmrService.departments(params)
   }
 
+  async mainCategories(
+    params: QueryParams,
+  ): Promise<AdvertMainCategoriesResponse> {
+    return await this.dmrService.mainCategories(params)
+  }
+
   async categories(params: QueryParams): Promise<AdvertCategoryResponse> {
     return await this.dmrService.categories(params)
   }
 
   async types(params: TypeQueryParams): Promise<AdvertTypeResponse> {
     return await this.dmrService.types(params)
+  }
+
+  async institutions(params: QueryParams): Promise<AdvertInstitutionsResponse> {
+    return await this.dmrService.institutions(params)
   }
 
   async advert(params: AdvertQueryParams): Promise<AdvertResponse> {
@@ -67,7 +79,7 @@ export class MinistryOfJusticeService {
 
   async submitApplication(auth: User, input: SubmitApplicationInput) {
     return await this.dmrService.submitApplication(auth, {
-      journalPostApplicationBody: input,
+      postApplicationBody: input,
     })
   }
 }
