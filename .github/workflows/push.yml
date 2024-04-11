@@ -168,9 +168,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.8.0'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -450,10 +450,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
+            node-version-file: 'package.json'
       - name: Setup yarn
         run: npm install -g yarn
 
@@ -517,14 +516,14 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
