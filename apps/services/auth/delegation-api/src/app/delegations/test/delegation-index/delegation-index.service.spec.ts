@@ -11,11 +11,18 @@ import {
   DelegationIndexMeta,
   Delegation,
   DelegationScope,
-  DelegationType,
+  audkenniProvider,
+  delegationProvider,
+  actorSubjectIdType,
+  UserIdentitiesService,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
 import { domainName, TestCase, user } from './delegations-index-types'
@@ -34,6 +41,9 @@ describe('DelegationsIndexService', () => {
   let rskApi: RskRelationshipsClient
   let delegationModel: typeof Delegation
   let delegationScopeModel: typeof DelegationScope
+  let userIdentitiesService: UserIdentitiesService
+
+  const userIdentitySubjectId1 = faker.datatype.uuid()
 
   const setup = async (testCase: TestCase) => {
     await truncate(sequelize)
@@ -58,6 +68,15 @@ describe('DelegationsIndexService', () => {
       ),
     )
 
+    // Create user identity for user with audkenni provider
+    await factory.createUserIdentity({
+      subjectId: userIdentitySubjectId1,
+      name: faker.name.findName(),
+      providerName: audkenniProvider,
+      providerSubjectId: `IS-${user.nationalId}`,
+      active: true,
+    })
+
     // mock national registry for ward delegations
     jest
       .spyOn(nationalRegistryApi, 'getCustodyChildren')
@@ -75,6 +94,8 @@ describe('DelegationsIndexService', () => {
     })
 
     delegationIndexService = app.get(DelegationsIndexService)
+    userIdentitiesService = app.get(UserIdentitiesService)
+
     delegationIndexModel = app.get(getModelToken(DelegationIndex))
     delegationIndexMetaModel = app.get(getModelToken(DelegationIndexMeta))
     delegationModel = app.get(getModelToken(Delegation))
@@ -244,7 +265,7 @@ describe('DelegationsIndexService', () => {
           where: {
             fromNationalId,
             toNationalId: user.nationalId,
-            type: DelegationType.Custom,
+            type: AuthDelegationType.Custom,
           },
         })
 
@@ -456,9 +477,120 @@ describe('DelegationsIndexService', () => {
         expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
         expect(delegation.toNationalId).toBe(user.nationalId)
         expect(delegation.type).toBe(
-          `${DelegationType.PersonalRepresentative}:${prRight1}`,
+          `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
         )
       })
+    })
+  })
+
+  describe('SubjectId', () => {
+    const testCase = indexingTestCases.singleCustomDelegation
+
+    beforeEach(async () => setup(testCase))
+
+    afterEach(async () => {
+      // remove all data
+      await delegationIndexMetaModel.destroy({ where: {} })
+      await delegationIndexModel.destroy({ where: {} })
+    })
+
+    it('should reuse subjectId from delegations with same fromNationalId and toNationalId', async () => {
+      const fromNationalId = testCase.customDelegations[0].fromNationalId
+
+      const findOrCreateSubjectIdSpy = jest.spyOn(
+        userIdentitiesService,
+        'findOrCreateSubjectId',
+      )
+
+      // Arrange
+      // create delegation and delegation index record with same to and from national id
+      await factory.createPersonalRepresentativeDelegation({
+        fromNationalId,
+        toNationalId: user.nationalId,
+        rightTypes: [{ code: 'right' }],
+      })
+      await factory.createDelegationIndexRecord({
+        fromNationalId,
+        toNationalId: user.nationalId,
+        provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        type: `${AuthDelegationType.PersonalRepresentative}:right`,
+        subjectId: userIdentitySubjectId1,
+      })
+
+      // Act
+      await delegationIndexService.indexDelegations(user)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: user.nationalId,
+          fromNationalId,
+        },
+      })
+
+      // Should have two delegations with the same subjectId
+      expect(delegations.length).toEqual(2)
+
+      // should not call findOrCreateSubjectId because we are reusing subjectId from delegation in the index
+      expect(userIdentitiesService.findOrCreateSubjectId).not.toHaveBeenCalled()
+
+      findOrCreateSubjectIdSpy.mockClear()
+    })
+
+    it('should fetch subjectId if userIdentity exits', async () => {
+      const fromNationalId = testCase.customDelegations[0].fromNationalId
+      const userIdentitySubjectId2 = faker.datatype.uuid()
+
+      // User identity with delegation provider
+      await factory.createUserIdentity({
+        subjectId: userIdentitySubjectId2,
+        name: faker.name.findName(),
+        providerName: delegationProvider,
+        providerSubjectId: `IS-${fromNationalId}`,
+        active: true,
+      })
+
+      // delegation claim
+      await factory.createClaim({
+        subjectId: userIdentitySubjectId2,
+        type: actorSubjectIdType,
+        value: userIdentitySubjectId1,
+        valueType: faker.random.word(),
+        issuer: faker.random.word(),
+        originalIssuer: faker.random.word(),
+      })
+
+      // Act
+      await delegationIndexService.indexDelegations(user)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: user.nationalId,
+          fromNationalId,
+          subjectId: userIdentitySubjectId2,
+        },
+      })
+
+      expect(delegations.length).toEqual(1)
+    })
+
+    it('should create subjectId if userIdentity does not exits', async () => {
+      const fromNationalId = testCase.customDelegations[0].fromNationalId
+
+      // Act
+      await delegationIndexService.indexDelegations(user)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: user.nationalId,
+          fromNationalId,
+        },
+      })
+
+      expect(delegations.length).toEqual(1)
+      expect(delegations[0].subjectId).toBeDefined()
     })
   })
 })
